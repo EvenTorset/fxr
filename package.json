@@ -1,0 +1,37 @@
+{
+  "name": "@cccode/fxr",
+  "version": "1.0.0",
+  "description": "JavaScript library for editing FXR files from Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
+  "author": "CCCode",
+  "type": "module",
+  "types": "js/fxr.d.ts",
+  "main": "js/fxr.js",
+  "scripts": {
+    "docs": "npx typedoc",
+    "build": "npx tsc && npx terser js/fxr.js -o js/fxr.min.js --ecma 2020 -c \"keep_fargs,keep_infinity,reduce_funcs=false,passes=2,module\" --source-map \"content='js/fxr.js.map',filename='js/fxr.min.js.map'\" && npx cpy js/fxr.d.ts --rename=fxr.min.d.ts --flat js",
+    "watch": "npx tsc --watch"
+  },
+  "files": [
+    "/js"
+  ],
+  "keywords": [
+    "typescript",
+    "souls",
+    "modding"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EvenTorset/fxr.git"
+  },
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/EvenTorset/fxr/issues"
+  },
+  "homepage": "https://github.com/EvenTorset/fxr#readme",
+  "devDependencies": {
+    "cpy-cli": "^5.0.0",
+    "terser": "^5.26.0",
+    "typedoc": "^0.25.6",
+    "typescript": "^5.3.3"
+  }
+}
