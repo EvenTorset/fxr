@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/EvenTorset/fxr/issues"
   },
-  "homepage": "https://github.com/EvenTorset/fxr#readme",
+  "homepage": "https://fxr-docs.pages.dev/",
   "devDependencies": {
     "cpy-cli": "^5.0.0",
     "terser": "^5.26.0",
