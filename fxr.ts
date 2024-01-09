@@ -10,6 +10,11 @@ export enum FXRVersion {
 }
 
 export enum ContainerType {
+  /**
+   * A root container.
+   * 
+   * This container type has a specialized subclass: {@link RootContainer}
+   */
   Root = 2000,
   Proxy = 2001,
   LevelOfDetail = 2002,
