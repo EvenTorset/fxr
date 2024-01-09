@@ -3,11 +3,17 @@ This is a JavaScript library for creating and editing FXR files for Dark Souls 3
 
 While it does support all of those games, its focus is on Elden Ring and some utility features may not work for the other games right now.
 
+## Installation
+While the library does not have any dependencies, it *does* have some dev dependencies for compiling TypeScript and generating docs. To avoid installing those, include `--omit=dev` when running the installation command:
+```
+npm i @cccode/fxr --omit=dev
+```
+
 ## WitchyBND
 While it has evolved quite a bit, this library started out as a JS port of [WitchyBND's C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/Fxr3.cs). Most of the code for reading and writing the format is based on that.
 
 ## Unknowns & to-dos
-The FXR format is still being reverse-engineered, and so there are a lot of unknown fields and properties everywhere, as well as some placeholder names (like Section10s) for things. This library does not hide anything that is still unknown, you are able to set any unknown value to whatever you want, allowing you to use it for your own research. If you discover something that is not documented by this library or the [ER FXR sheet](https://docs.google.com/spreadsheets/d/12hKQg5kBvOJ_M0Udoz5GqS_2RX-d8YtaBapwpSJ2Csg/edit#gid=1424830463), please make a comment on the sheet or a pull request to this repo.
+The FXR format is still being reverse-engineered, so there are a lot of unknown fields and properties everywhere, as well as some placeholder names (like Section10s) for things. This library does not hide anything that is still unknown, you are able to set any unknown value to whatever you want, allowing you to use it for your own research. If you discover something that is not documented by this library or the [ER FXR sheet](https://docs.google.com/spreadsheets/d/12hKQg5kBvOJ_M0Udoz5GqS_2RX-d8YtaBapwpSJ2Csg/edit#gid=1424830463), please make a comment on the sheet or a pull request to this repo.
 
 In addition to the unknowns, there are lots of known things that are not yet implemented in this library. The goal is to eventually have specialized subclasses for every action type, property function, and modifier type. That would make it much easier to work with FXR files. The actions that have specialized subclasses so far have been tested pretty thoroughly to make sure that everything is correct (in Elden Ring).
 
@@ -38,90 +44,43 @@ Creating brand new FXR files from scratch requires some knowledge about their st
 import fs from 'node:fs/promises'
 
 import {
-  ContainerType,
-  EffectType,
-  FieldType,
-  ValueType,
-  BlendMode,
   FXR,
-  Container,
-  Effect,
-  Section10,
-  Action,
-  StateEffectMap,
+  BasicContainer,
+  BasicEffect,
+  StaticTransform,
   PeriodicEmitter,
   CylinderEmitterShape,
+  ParticleLifetime,
   RectangleParticle,
-  Field,
-  ZeroProperty,
-  OneProperty,
-  ConstantProperty,
+  BlendMode,
   LinearProperty,
 } from '@cccode/fxr'
-
-// Just making the field types easier to use, since there will be a lot of them
-const {
-  Boolean: B,
-  Integer: I,
-  Float: F,
-} = FieldType
 
 // Let's make a replacement for the ghostflame torch effect in Elden Ring.
 // Its ID is 402030.
 const fxr = new FXR(402030)
 
 fxr.rootContainer.containers.push(
-  new Container(ContainerType.Normal, [
-    // Container actions, which for normal containers is just StateEffectMap
-    new StateEffectMap([
-      new Section10([
-        new Field(I, 0)
-      ])
-    ])
-  ], [
+  // BasicContainer and BasicEffect are classes that significantly simplifies
+  // the structure of the FXR format. They have default actions for everything,
+  // meaning you only need to replace what you care about for your FXR
+  new BasicContainer([
     // Container effects
-    new Effect(EffectType.Normal, [
+    new BasicEffect([
       // Effect actions
-      // The first parameter for actions is the action ID
-      new Action(128, false, true, 0, [
-        new Field(I, 0),
-        new Field(I, 1),
-        new Field(I, 1),
-        new Field(F, 0),
-      ], [], [
-        new ConstantProperty(-1) // Effect duration
-      ]),
-      new Action(35, false, true, 0, [ // Effect translation
-        new Field(F, 0),
-        new Field(F, 0.5),
-        new Field(F, 0),
-        new Field(F, 0),
-        new Field(F, 0),
-        new Field(F, 0),
-      ]),
-      new Action, // The default params for actions create an empty 0 action
-      new Action,
+
+      // The BasicEffect class does not care about the order of the actions
+      // you give it. Put them in any order you want and it'll take care of it
+      // for you automatically.
+
       // Some actions have special classes that make them easier to create.
       // You can use the generic action class as well, this is just better for
-      // readability and makes the code a lot simpler
-      new PeriodicEmitter(0.1, 10, -1), // Emit 10 particles every 0.1 seconds
-      new CylinderEmitterShape(true, 0.2, 1, true),
-      new Action(500),
-      new Action(131, false, true, 0, [
-        new Field,
-      ], [], [
-        new ZeroProperty,
-        new OneProperty,
-        new OneProperty,
-        new OneProperty,
-        new OneProperty(ValueType.Vector4)
-      ]),
-      new Action(129, false, true, 0, [
-        new Field(B, true),
-      ], [], [
-        new ConstantProperty(1) // Particle duration
-      ]),
-      new RectangleParticle({
+      // readability and makes the code a lot simpler.
+      new StaticTransform(0, 0.5, 0), // Action 35, used here for translation
+      new PeriodicEmitter(0.1, 10, -1), // Action 300, emitter
+      new CylinderEmitterShape(true, 0.2, 1, true), // Action 405, emitter shape
+      new ParticleLifetime(1), // Action 129, particle duration
+      new RectangleParticle({ // Action 602
         blendMode: BlendMode.Normal,
         width: 0.01,
         height: 0.1,
@@ -133,30 +92,8 @@ fxr.rootContainer.containers.push(
         ]),
         endColor: [0, 0, 0, 0],
       }),
-      new Action,
-      new Action,
-      new Action(130, false, true, 0, [
-        new Field(I, 1),
-        new Field, // Integer, 0
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-      ], [], [
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-      ]),
-      new Action,
-      new Action,
+      // The BasicEffect class will fill in all of the actions that are missing
+      // here, so this is all we need.
     ])
   ])
 )

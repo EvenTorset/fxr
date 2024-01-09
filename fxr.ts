@@ -11,16 +11,16 @@ export enum FXRVersion {
 
 export enum ContainerType {
   Root = 2000,
-  FXRReference = 2001,
+  Proxy = 2001,
   LevelOfDetail = 2002,
-  Normal = 2200, //TODO: Better name?
-  Unk0 = 2202,
+  Basic = 2200,
+  Randomizer = 2202,
 }
 
 export enum EffectType {
   LODThresholds = 1002,
-  Normal = 1004, //TODO: Better name?
-  Unk0 = 1005,
+  Basic = 1004,
+  Randomizer = 1005,
 }
 
 export enum ActionType {
@@ -45,15 +45,18 @@ export enum ActionType {
   Unk121 = 121,
   Unk122 = 122,
   Unk123 = 123,
-  Unk128 = 128,
-  Unk129 = 129,
+  EffectLifetime = 128,
+  ParticleLifetime = 129,
   Unk130 = 130,
-  Unk131 = 131,
+  ParticleMultiplier = 131,
   FXRReference = 132,
   LODThresholds = 133,
   StateEffectMap = 199,
   Unk200 = 200,
-  Unk201 = 201,
+  /**
+   * Controls the weights for picking random subcontainers. Used in {@link EffectType.Randomizer}.
+   */
+  ContainerWeights = 201,
   PeriodicEmitter = 300,
   MotionEmitter = 301,
   OneTimeEmitter = 399,
@@ -93,6 +96,7 @@ export enum ActionType {
   Unk10300 = 10300,
   Unk10400 = 10400, // Root container action
   Unk10500 = 10500, // Root container action
+  Unk11000 = 11000,
 }
 
 export enum ValueType {
@@ -210,6 +214,7 @@ export enum BlendMode {
 export enum ExternalValue {
   Unk0 = 0,
   Unk1 = 1, // Boolean? Only 0 or 1
+  Unk3 = 3,
   HitEffectVariation = 2000,
   Unk2100 = 2100, // Blood related?
   Unk2200 = 2200, // Blood related?
@@ -223,10 +228,10 @@ export enum ExternalValue {
 }
 
 export enum Operator {
-  Equal = 0,
-  NotEqual = 1,
-  LessThan = 2,
-  LessThanOrEqual = 3,
+  NotEqual = 0,
+  Equal = 1,
+  GreaterThanOrEqual = 2,
+  GreaterThan = 3,
 }
 
 export enum OperandType {
@@ -247,11 +252,174 @@ export enum OperandType {
    */
   UnkMinus2 = -2,
   /**
-   * The time since the effect was created in seconds.
+   * The time since the effect changed state in seconds.
    * 
    * Does not require a field.
    */
-  Age = -1,
+  StateTime = -1,
+}
+
+export enum AttachMode {
+  /**
+   * Completely detached.
+   */
+  None = 0,
+  /**
+   * Translates and rotates with the parent.
+   */
+  Parent = 1,
+  /**
+   * Translates and rotates with the attachment point (dummypoly). Parent transformations are ignored.
+   */
+  DummyPoly = 2,
+  /**
+   * Only translates with the parent. Rotations are entirely ignored.
+   */
+  ParentTranslation = 3,
+  /**
+   * Only translates with the attachment point (dummypoly). Rotations are entirely ignored.
+   */
+  DummyPolyTranslation = 4
+}
+
+export const EffectActionSlots = {
+  [EffectType.Basic]: [
+    [
+      ActionType.EffectLifetime
+    ],
+    [
+      ActionType.StaticTransform,
+      ActionType.Unk36
+    ],
+    [
+      ActionType.Unk1,
+      ActionType.Unk15,
+      ActionType.Spin,
+      ActionType.Unk46,
+      ActionType.Unk83,
+      ActionType.Unk106,
+      ActionType.Unk113,
+      ActionType.Unk120,
+      ActionType.Unk121,
+      ActionType.Unk123
+    ],
+    [
+      ActionType.PlaySound
+    ],
+    [
+      ActionType.PeriodicEmitter,
+      ActionType.MotionEmitter,
+      ActionType.OneTimeEmitter
+    ],
+    [
+      ActionType.PointEmitterShape,
+      ActionType.DiskEmitterShape,
+      ActionType.RectangleEmitterShape,
+      ActionType.SphereEmitterShape,
+      ActionType.CuboidEmitterShape,
+      ActionType.CylinderEmitterShape
+    ],
+    [
+      ActionType.Unk500,
+      ActionType.Unk501,
+      ActionType.Unk502,
+      ActionType.Unk503
+    ],
+    [
+      ActionType.ParticleMultiplier
+    ],
+    [
+      ActionType.ParticleLifetime
+    ],
+    [
+      ActionType.Unk600,
+      ActionType.Unk601,
+      ActionType.RectangleParticle,
+      ActionType.Unk603,
+      ActionType.Unk604,
+      ActionType.Unk605,
+      ActionType.Unk606,
+      ActionType.Unk607,
+      ActionType.Unk608,
+      ActionType.PointLightSource,
+      ActionType.Unk10000,
+      ActionType.Unk10001,
+      ActionType.Unk10012,
+      ActionType.Unk10013,
+      ActionType.Unk10014,
+      ActionType.Unk10015,
+      ActionType.Unk10300,
+      ActionType.Unk11000
+    ],
+    [
+      ActionType.Unk55,
+      ActionType.Unk60,
+      ActionType.Unk64,
+      ActionType.Unk65,
+      ActionType.Unk84,
+      ActionType.Unk105
+    ],
+    [],
+    [
+      ActionType.Unk130
+    ],
+    [
+      ActionType.Unk731
+    ],
+    [
+      ActionType.Unk732,
+      ActionType.Unk734
+    ]
+  ],
+  [EffectType.Randomizer]: [
+    [
+      ActionType.EffectLifetime
+    ],
+    [
+      ActionType.StaticTransform,
+      ActionType.Unk36
+    ],
+    [
+      ActionType.Unk1,
+      ActionType.Unk15,
+      ActionType.Spin,
+      ActionType.Unk46,
+      ActionType.Unk83,
+      ActionType.Unk106,
+      ActionType.Unk113,
+      ActionType.Unk120,
+      ActionType.Unk121,
+      ActionType.Unk123
+    ],
+    [
+      ActionType.PlaySound
+    ],
+    [
+      ActionType.PeriodicEmitter,
+      ActionType.MotionEmitter,
+      ActionType.OneTimeEmitter
+    ],
+    [
+      ActionType.PointEmitterShape,
+      ActionType.DiskEmitterShape,
+      ActionType.RectangleEmitterShape,
+      ActionType.SphereEmitterShape,
+      ActionType.CuboidEmitterShape,
+      ActionType.CylinderEmitterShape
+    ],
+    [
+      ActionType.Unk500,
+      ActionType.Unk501,
+      ActionType.Unk502,
+      ActionType.Unk503
+    ],
+    [
+      ActionType.Unk200,
+      ActionType.ContainerWeights
+    ],
+    [],
+    [],
+  ]
 }
 
 function arrayOf<T>(size: number, func: (index: number) => T): T[] {
@@ -630,7 +798,7 @@ export class FXR {
     rootContainer: Container = new RootContainer,
     rootStateMachine: StateMachine = new StateMachine([
       new State([
-        new StateCondition(Operator.LessThanOrEqual, 2, -1, OperandType.Literal, 1, OperandType.External, 0)
+        new StateCondition(Operator.GreaterThan, 2, -1, OperandType.Literal, 1, OperandType.External, 0)
       ])
     ]),
     references: number[] = [],
@@ -971,16 +1139,45 @@ export class StateCondition {
 
   operator: Operator
   unk1: number
-  targetStateIndex: number
+  elseIndex: number
   leftOperandType: OperandType
   leftOperandValue: number | null
   rightOperandType: OperandType
   rightOperandValue: number | null
 
+  /**
+   * A condition for a state. The state is active if all of its conditions are
+   * true. If the condition is false, the state at the {@link elseIndex} is
+   * checked next.
+   * @param operator Controls what operation should be used for the condition.
+   * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
+   * to make the condition always true.
+   * @param elseIndex If the condition is false, the state at this index will
+   * be checked instead. Set it to -1 to disable the container if the condition
+   * is false.
+   * @param leftOperandType Controls what type of value the operand to the left
+   * of the operator should be.
+   * @param leftOperandValue This does different things depending on the
+   * {@link leftOperandType}:
+   * - {@link OperandType.Literal}: This value is the operand's value.
+   * - {@link OperandType.External}: This value refers to an external value to
+   * use as the operand's value.
+   * - {@link OperandType.UnkMinus2}: This value is ignored and should be null.
+   * - {@link OperandType.StateTime}: This value is ignored and should be null.
+   * @param rightOperandType Controls what type of value the operand to the
+   * right of the operator should be.
+   * @param rightOperandValue This does different things depending on the
+   * {@link rightOperandType}:
+   * - {@link OperandType.Literal}: This value is the operand's value.
+   * - {@link OperandType.External}: This value refers to an external value to
+   * use as the operand's value.
+   * - {@link OperandType.UnkMinus2}: This value is ignored and should be null.
+   * - {@link OperandType.StateTime}: This value is ignored and should be null.
+   */
   constructor(
     operator: Operator,
     unk1: number,
-    targetStateIndex: number,
+    elseIndex: number,
     leftOperandType: OperandType,
     leftOperandValue: number | null,
     rightOperandType: OperandType,
@@ -988,7 +1185,7 @@ export class StateCondition {
   ) {
     this.operator = operator
     this.unk1 = unk1
-    this.targetStateIndex = targetStateIndex
+    this.elseIndex = elseIndex
     this.leftOperandType = leftOperandType
     this.leftOperandValue = leftOperandValue
     this.rightOperandType = rightOperandType
@@ -1049,12 +1246,12 @@ export class StateCondition {
       }
       case OperandType.External: {
         br.stepIn(offset)
-        const value = br.readFloat32()
+        const value = br.readInt32()
         br.stepOut()
         return value
       }
       case OperandType.UnkMinus2:
-      case OperandType.Age:
+      case OperandType.StateTime:
         throw new Error('Unexpected value for operand without value: ' + OperandType[type])
     }
   }
@@ -1065,7 +1262,7 @@ export class StateCondition {
     bw.writeUint8(0)
     bw.writeUint8(1)
     bw.writeInt32(0)
-    bw.writeInt32(this.targetStateIndex)
+    bw.writeInt32(this.elseIndex)
     bw.writeInt32(0)
     bw.writeInt16(this.leftOperandType)
     bw.writeInt8(0)
@@ -1264,6 +1461,21 @@ export class RootContainer extends Container {
 
 }
 
+export class BasicContainer extends Container {
+
+  constructor(effects: Effect[] = [], containers: Container[] = []) {
+    super(ContainerType.Basic, [
+      new StateEffectMap(0)
+    ], effects, containers)
+  }
+
+  mapStates(...effectIndices: number[]) {
+    this.actions = [new StateEffectMap(...effectIndices)]
+    return this
+  }
+
+}
+
 export class Effect {
 
   type: EffectType
@@ -1315,9 +1527,141 @@ export class Effect {
 
 }
 
+export class BasicEffect extends Effect {
+
+  /**
+   * Utility class for creating basic effects without needing to know the order
+   * of actions, and without needing to create actions that have defaults.
+   * 
+   * Default actions:
+   * Index | Action
+   * ------|----------
+   * 0     | {@link ActionType.EffectLifetime}
+   * 1     | {@link ActionType.None}
+   * 2     | {@link ActionType.None}
+   * 3     | {@link ActionType.None}
+   * 4     | {@link ActionType.OneTimeEmitter}
+   * 5     | {@link ActionType.PointEmitterShape}
+   * 6     | {@link ActionType.Unk500}
+   * 7     | {@link ActionType.ParticleMultiplier}
+   * 8     | {@link ActionType.ParticleLifetime}
+   * 9     | {@link ActionType.None}
+   * 10    | {@link ActionType.None}
+   * 11    | {@link ActionType.None}
+   * 12    | {@link ActionType.Unk130}
+   * 13    | {@link ActionType.None}
+   * 14    | {@link ActionType.None}
+   * @param actions Actions to use in the effect. The order does not matter,
+   * and it does not need to be a complete list. Actions will be placed in the
+   * slots they fit in.
+   */
+  constructor(actions: Action[] = []) {
+    super(EffectType.Basic, [
+      new EffectLifetime,
+      new Action,
+      new Action,
+      new Action,
+      new OneTimeEmitter,
+      new PointEmitterShape,
+      new Action(ActionType.Unk500),
+      new ParticleMultiplier,
+      new ParticleLifetime,
+      new Action,
+      new Action,
+      new Action,
+      new Action(ActionType.Unk130, false, true, 0, [
+        new Field(FieldType.Integer, 1),
+        new Field,
+        new Field,
+        new Field,
+        new Field,
+        new Field,
+        new Field,
+        new Field,
+        new Field,
+      ], [], [
+        new ZeroProperty,
+        new ZeroProperty,
+        new ZeroProperty,
+        new ZeroProperty,
+        new ZeroProperty,
+        new ZeroProperty,
+        new ZeroProperty,
+        new ZeroProperty,
+      ]),
+      new Action,
+      new Action,
+    ])
+    for (const action of actions) {
+      const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.id))
+      if (index >= 0) {
+        this.actions[index] = action
+      } else {
+        throw new Error('No slot for action: ' + action.id)
+      }
+    }
+  }
+
+}
+
+export class RandomizerEffect extends Effect {
+  
+  /**
+   * Utility class for creating randomizer effects without needing to know the
+   * order of actions, and without needing to create actions that have
+   * defaults.
+   * 
+   * Default actions:
+   * Index | Action
+   * ------|----------
+   * 0     | {@link ActionType.EffectLifetime}
+   * 1     | {@link ActionType.None}
+   * 2     | {@link ActionType.None}
+   * 3     | {@link ActionType.None}
+   * 4     | {@link ActionType.OneTimeEmitter}
+   * 5     | {@link ActionType.PointEmitterShape}
+   * 6     | {@link ActionType.Unk500}
+   * 7     | {@link ActionType.Unk200}
+   * 13    | {@link ActionType.None}
+   * 14    | {@link ActionType.None}
+   * @param actions Actions to use in the effect. The order does not matter,
+   * and it does not need to be a complete list. Actions will be placed in the
+   * slots they fit in.
+   */
+  constructor(actions: Action[] = []) {
+    super(EffectType.Randomizer, [
+      new EffectLifetime,
+      new Action,
+      new Action,
+      new Action,
+      new OneTimeEmitter,
+      new PointEmitterShape,
+      new Action(ActionType.Unk500),
+      new Action(ActionType.Unk200),
+      new Action,
+      new Action,
+    ])
+    for (const action of actions) {
+      const index = EffectActionSlots[EffectType.Randomizer].findIndex(a => a.includes(action.id))
+      if (index >= 0) {
+        this.actions[index] = action
+      } else {
+        throw new Error('No slot for action: ' + action.id)
+      }
+    }
+  }
+
+}
+
 type FieldTypeList = (FieldType | null)[]
 
 const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: FieldTypeList } } = {
+  [ActionType.Spin]: {
+    Fields1: [
+      FieldType.Integer
+    ],
+    Fields2: []
+  },
   [ActionType.StaticTransform]: {
     Fields1: [
       FieldType.Float,
@@ -1326,6 +1670,12 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
       FieldType.Float,
       FieldType.Float,
       FieldType.Float,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleLifetime]: {
+    Fields1: [
+      FieldType.Integer
     ],
     Fields2: []
   },
@@ -1678,12 +2028,12 @@ export class Spin extends Action {
     super(ActionType.Spin, false, true, 0, [
       new Field(FieldType.Integer, unkField)
     ], [], [
-      spinX instanceof Property ? spinX : new ConstantProperty(spinX as number),
-      spinXMult instanceof Property ? spinXMult : new ConstantProperty(spinXMult as number),
-      spinY instanceof Property ? spinY : new ConstantProperty(spinY as number),
-      spinYMult instanceof Property ? spinYMult : new ConstantProperty(spinYMult as number),
-      spinZ instanceof Property ? spinZ : new ConstantProperty(spinZ as number),
-      spinZMult instanceof Property ? spinZMult : new ConstantProperty(spinZMult as number),
+      spinX instanceof Property ? spinX : new ConstantProperty(spinX),
+      spinXMult instanceof Property ? spinXMult : new ConstantProperty(spinXMult),
+      spinY instanceof Property ? spinY : new ConstantProperty(spinY),
+      spinYMult instanceof Property ? spinYMult : new ConstantProperty(spinYMult),
+      spinZ instanceof Property ? spinZ : new ConstantProperty(spinZ),
+      spinZMult instanceof Property ? spinZMult : new ConstantProperty(spinZMult),
     ])
   }
 
@@ -1730,11 +2080,173 @@ export class StaticTransform extends Action {
 
 }
 
+export class EffectLifetime extends Action {
+
+  /**
+   * Controls various things about the container, like its duration, and how
+   * it is attached to the parent container.
+   * 
+   * Fields1:
+   * Index | Value
+   * ------|------
+   * 0     | delay
+   * 1     | unkField1
+   * 2     | attachment
+   * 3     | unkField3
+   * 
+   * Properties1:
+   * Index | Value
+   * ------|------
+   * 0     | duration
+   * @param duration The emitter duration in seconds. Defaults to -1
+   * (infinite).
+   * @param delay The delay before the emitter begins emitting. Defaults to 0.
+   * @param attachment Controls how the container is attached to its parent.
+   * Defaults to {@link AttachMode.Parent}.
+   * @param unkField1 Unknown int. Fields1, index 1. Possibly a boolean field.
+   * Defaults to 1.
+   * @param unkField3 Unknown float. Fields1, index 3. Defaults to 0.
+   */
+  constructor(
+    duration: number | Property = -1,
+    delay: number = 0,
+    attachment: AttachMode = AttachMode.Parent,
+    unkField1: number = 1,
+    unkField3: number = 0,
+  ) {
+    super(ActionType.EffectLifetime, false, true, 0, [
+      new Field(FieldType.Float, delay),
+      new Field(FieldType.Integer, unkField1),
+      new Field(FieldType.Integer, attachment),
+      new Field(FieldType.Float, unkField3),
+    ], [], [
+      duration instanceof Property ? duration : new ConstantProperty(duration)
+    ])
+  }
+
+}
+
+export class ParticleLifetime extends Action {
+
+  /**
+   * Controls various things about the particles emitted by the effect, like
+   * their duration, and how they are attached to the parent container.
+   * 
+   * Fields1:
+   * Index | Value
+   * ------|------
+   * 0     | attachment
+   * 
+   * Properties1:
+   * Index | Value
+   * ------|------
+   * 0     | duration
+   * @param duration The particle duration in seconds. Defaults to -1
+   * (infinite).
+   * @param attachment Controls how the particle is attached to its parent.
+   * Defaults to {@link AttachMode.Parent}.
+   */
+  constructor(
+    duration: number | Property = -1,
+    attachment: AttachMode = AttachMode.Parent
+  ) {
+    super(ActionType.ParticleLifetime, false, true, 0, [
+      new Field(FieldType.Integer, attachment)
+    ], [], [
+      duration instanceof Property ? duration : new ConstantProperty(duration)
+    ])
+  }
+
+}
+
+export class ParticleMultiplier extends Action {
+
+  /**
+   * Controls various multipliers as well as the acceleration of particles.
+   * 
+   * Fields1:
+   * Index | Value
+   * ------|------
+   * 0     | uniformScale
+   * 
+   * Properties1:
+   * Index | Value
+   * ------|------
+   * 0     | acceleration
+   * 1     | scaleX
+   * 2     | scaleY
+   * 3     | scaleZ
+   * 4     | color
+   * @param uniformScale Scales the model uniformly based on {@link scaleX}.
+   * The other scale properties in this action have no effect when this is
+   * enabled.
+   * @param acceleration Controls the acceleration of the particles, but only
+   * if they have an action that allows them to accelerate. The direction of
+   * the acceleration depends on the emitter shape.
+   * 
+   * **Argument**: Effect age.
+   * @param scaleX Multiplier for the scale along the X-axis. If
+   * {@link uniformScale} is enabled, this scales the particles uniformly.
+   * 
+   * **Argument**: Effect age.
+   * @param scaleY Multiplier for the scale along the Y-axis. If
+   * {@link uniformScale} is enabled, this property is ignored.
+   * 
+   * **Argument**: Effect age.
+   * @param scaleZ Multiplier for the scale along the Z-axis. If
+   * {@link uniformScale} is enabled, this property is ignored.
+   * 
+   * **Argument**: Effect age.
+   * @param color Color multiplier.
+   * 
+   * **Argument**: Effect age.
+   */
+  constructor(
+    uniformScale: boolean = true,
+    acceleration: number | Property = 0,
+    scaleX: number | Property = 1,
+    scaleY: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
+    scaleZ: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
+    color: Vector4 | Property = [1, 1, 1, 1],
+  ) {
+    super(ActionType.ParticleMultiplier, false, true, 0, [
+      new Field(FieldType.Boolean, uniformScale),
+    ], [], [
+      acceleration instanceof Property ? acceleration : new ConstantProperty(acceleration),
+      scaleX instanceof Property ? scaleX : new ConstantProperty(scaleX),
+      scaleY instanceof Property ? scaleY : new ConstantProperty(scaleY),
+      scaleZ instanceof Property ? scaleZ : new ConstantProperty(scaleZ),
+      color instanceof Property ? color : new ConstantProperty(...color),
+    ])
+  }
+
+}
+
+/**
+ * Maps states to effects in the parent container.
+ * 
+ * The index of each value represents the index of the state, and the value
+ * represents the index of the effect that should be active when the state is
+ * active.
+ */
 export class StateEffectMap extends Action {
 
   constructor(...effectIndices: number[]) {
     super(ActionType.StateEffectMap, true, false, 0, [], [], [], [], [
       new Section10(effectIndices.map(i => new Field(FieldType.Integer, i)))
+    ])
+  }
+
+}
+
+/**
+ * Controls the weights for picking random subcontainers. Used in {@link EffectType.Randomizer}.
+ */
+export class ContainerWeights extends Action {
+
+  constructor(...weights: number[]) {
+    super(ActionType.ContainerWeights, false, true, 1, [], [], [], [], [
+      new Section10(weights.map(w => new Field(FieldType.Integer, w)))
     ])
   }
 
@@ -2407,7 +2919,11 @@ export class PointLightSource extends Action {
 export const Actions = {
   [ActionType.Spin]: Spin, Spin,
   [ActionType.StaticTransform]: StaticTransform, StaticTransform,
+  [ActionType.EffectLifetime]: EffectLifetime, EffectLifetime,
+  [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
+  [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
+  [ActionType.ContainerWeights]: ContainerWeights, ContainerWeights,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.MotionEmitter]: MotionEmitter, MotionEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
@@ -2806,7 +3322,9 @@ export class Property {
                 case 'value': {
                   const i = prop.#valueIndex
                   for (let j = 0; j < comps; j++) {
-                    prop.fields[i + comps * n + j].value = typeof v === 'number' ? v : v[j]
+                    const field = prop.fields[i + comps * n + j]
+                    field.type = FieldType.Float
+                    field.value = typeof v === 'number' ? v : v[j]
                   }
                   return true
                 }
@@ -2817,7 +3335,9 @@ export class Property {
                   if (i === -1) {
                     throw new Error('Unable to set field values in property without fields.')
                   } else {
-                    prop.fields[i + comps * n].value = v
+                    const field = prop.fields[i + comps * n]
+                    field.type = FieldType.Float
+                    field.value = v
                   }
                   return true
                 }
@@ -2829,7 +3349,9 @@ export class Property {
                   if (i === -1) {
                     throw new Error('Unable to set field values in property without fields.')
                   } else {
-                    prop.fields[i + comps * n + 1].value = v
+                    const field = prop.fields[i + comps * n + 1]
+                    field.type = FieldType.Float
+                    field.value = v
                   }
                   return true
                 }
@@ -2841,7 +3363,9 @@ export class Property {
                   if (i === -1) {
                     throw new Error('Unable to set field values in property without fields.')
                   } else {
-                    prop.fields[i + comps * n + 2].value = v
+                    const field = prop.fields[i + comps * n + 2]
+                    field.type = FieldType.Float
+                    field.value = v
                   }
                   return true
                 }
@@ -2853,7 +3377,9 @@ export class Property {
                   if (i === -1) {
                     throw new Error('Unable to set field values in property without fields.')
                   } else {
-                    prop.fields[i + comps * n + 3].value = v
+                    const field = prop.fields[i + comps * n + 3]
+                    field.type = FieldType.Float
+                    field.value = v
                   }
                   return true
                 }
@@ -3203,8 +3729,8 @@ export class Modifier {
   }
 
   set valueType(value) {
-    this.#typeEnumA = (this.#typeEnumA & 0xffffffe0) | value
-    this.#typeEnumB = (this.#typeEnumB & 0xffe0) | value
+    this.#typeEnumA = (this.#typeEnumA & 0xfffffffc) | value
+    this.#typeEnumB = (this.#typeEnumB & 0xfffc) | value
   }
 
 }
