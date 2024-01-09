@@ -13,13 +13,32 @@ export enum ContainerType {
   Root = 2000,
   Proxy = 2001,
   LevelOfDetail = 2002,
+  /**
+   * A basic container.
+   * 
+   * This container type has a specialized subclass: {@link BasicContainer}
+   */
   Basic = 2200,
   Randomizer = 2202,
 }
 
 export enum EffectType {
   LODThresholds = 1002,
+  /**
+   * A basic effect that can emit particles of many different types.
+   * 
+   * This effect type has a specialized subclass: {@link BasicEffect}
+   */
   Basic = 1004,
+  /**
+   * An effect used to modify how the subcontainers of a
+   * {@link ContainerType.Randomizer randomizer container} are picked.
+   * 
+   * May also be used for applying transforms to those subcontainers, and
+   * possibly other, still unknown things.
+   * 
+   * This effect type has a specialized subclass: {@link RandomizerEffect}
+   */
   Randomizer = 1005,
 }
 
@@ -27,7 +46,17 @@ export enum ActionType {
   None = 0,
   Unk1 = 1,
   Unk15 = 15,
+  /**
+   * Makes the container spin.
+   * 
+   * This action type has a specialized subclass: {@link Spin}
+   */
   Spin = 34,
+  /**
+   * Sets the translation and rotation of the container.
+   * 
+   * This action type has a specialized subclass: {@link StaticTransform}
+   */
   StaticTransform = 35,
   Unk36 = 36,
   Unk46 = 46,
@@ -35,6 +64,9 @@ export enum ActionType {
   Unk60 = 60,
   Unk64 = 64,
   Unk65 = 65,
+  /**
+   * Plays a sound.
+   */
   PlaySound = 75,
   Unk83 = 83,
   Unk84 = 84,
@@ -45,26 +77,104 @@ export enum ActionType {
   Unk121 = 121,
   Unk122 = 122,
   Unk123 = 123,
+  /**
+   * Controls various things about the container, like its duration, and how
+   * it is attached to the parent container.
+   * 
+   * This action type has a specialized subclass: {@link EffectLifetime}
+   */
   EffectLifetime = 128,
+  /**
+   * Controls various things about the particles emitted by the effect, like
+   * their duration, and how they are attached to the parent container.
+   * 
+   * This action type has a specialized subclass: {@link ParticleLifetime}
+   */
   ParticleLifetime = 129,
   Unk130 = 130,
+  /**
+   * Controls various multipliers as well as the acceleration of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMultiplier}
+   */
   ParticleMultiplier = 131,
+  /**
+   * References a different FXR file by its ID.
+   */
   FXRReference = 132,
+  /**
+   * Controls the level of detail (LOD) distance thresholds for the
+   * subcontainers.
+   */
   LODThresholds = 133,
+  /**
+   * Maps states to effects in the parent container.
+   * 
+   * This action type has a specialized subclass: {@link StateEffectMap}
+   */
   StateEffectMap = 199,
   Unk200 = 200,
   /**
-   * Controls the weights for picking random subcontainers. Used in {@link EffectType.Randomizer}.
+   * Controls the weights for picking random subcontainers. Used in
+   * {@link EffectType.Randomizer}.
+   * 
+   * This action type has a specialized subclass: {@link ContainerWeights}
    */
   ContainerWeights = 201,
+  /**
+   * Emits particles periodically.
+   * 
+   * This action type has a specialized subclass: {@link PeriodicEmitter}
+   */
   PeriodicEmitter = 300,
+  /**
+   * Emits particles once it has moved a certain distance from where it last
+   * emitted particles.
+   * 
+   * This action type has a specialized subclass: {@link MotionEmitter}
+   */
   MotionEmitter = 301,
+  /**
+   * Emits one particle once.
+   * 
+   * This action type has a specialized subclass: {@link OneTimeEmitter}
+   */
   OneTimeEmitter = 399,
+  /**
+   * Makes the emitter a single point.
+   * 
+   * This action type has a specialized subclass: {@link PointEmitterShape}
+   */
   PointEmitterShape = 400,
+  /**
+   * Makes the emitter disk-shaped.
+   * 
+   * This action type has a specialized subclass: {@link DiskEmitterShape}
+   */
   DiskEmitterShape = 401,
+  /**
+   * Makes the emitter rectangle-shaped.
+   * 
+   * This action type has a specialized subclass: {@link RectangleEmitterShape}
+   */
   RectangleEmitterShape = 402,
+  /**
+   * Makes the emitter spherical.
+   * 
+   * This action type has a specialized subclass: {@link SphereEmitterShape}
+   */
   SphereEmitterShape =  403,
+  /**
+   * Makes the emitter cuboidal.
+   * 
+   * This action type has a specialized subclass: {@link CuboidEmitterShape}
+   */
   CuboidEmitterShape = 404,
+  /**
+   * Makes the emitter cylindrical.
+   * 
+   * This action type has a specialized subclass: {@link CylinderEmitterShape}
+   */
   CylinderEmitterShape = 405,
   Unk500 = 500,
   Unk501 = 501,
@@ -72,6 +182,11 @@ export enum ActionType {
   Unk503 = 503,
   Unk600 = 600,
   Unk601 = 601,
+  /**
+   * Colored rectangle particle.
+   * 
+   * This action type has a specialized subclass: {@link RectangleParticle}
+   */
   RectangleParticle = 602,
   Unk603 = 603,
   Unk604 = 604,
@@ -79,6 +194,11 @@ export enum ActionType {
   Unk606 = 606,
   Unk607 = 607,
   Unk608 = 608,
+  /**
+   * Point light source "particle".
+   * 
+   * This action type has a specialized subclass: {@link PointLightSource}
+   */
   PointLightSource = 609,
   Unk700 = 700, // Root container action
   Unk701 = 701, // Root container action
@@ -223,6 +343,9 @@ export enum ExternalValue {
    * - Off: `-1`
    * - On: `0`
    * - Mild: `1`
+   * 
+   * This external value has a specialized modifier subclass:
+   * {@link BloodVisibilityModifier}
    */
   DisplayBlood = 10000,
 }
@@ -1992,7 +2115,7 @@ export class Action {
 export class Spin extends Action {
 
   /**
-   * Makes the emitter spin.
+   * Makes the container spin.
    * 
    * Fields1:
    * Index | Value
@@ -2042,7 +2165,7 @@ export class Spin extends Action {
 export class StaticTransform extends Action {
 
   /**
-   * Sets the translation and rotation of the effect.
+   * Sets the translation and rotation of the container.
    * 
    * Fields1:
    * Index | Value
@@ -2098,7 +2221,7 @@ export class EffectLifetime extends Action {
    * Index | Value
    * ------|------
    * 0     | duration
-   * @param duration The emitter duration in seconds. Defaults to -1
+   * @param duration The container duration in seconds. Defaults to -1
    * (infinite).
    * @param delay The delay before the emitter begins emitting. Defaults to 0.
    * @param attachment Controls how the container is attached to its parent.
@@ -2312,7 +2435,8 @@ export class PeriodicEmitter extends Action {
 export class MotionEmitter extends Action {
 
   /**
-   * Emits particles once it has moved a certain distance from where it last emitted particles.			
+   * Emits particles once it has moved a certain distance from where it last
+   * emitted particles.
    * 
    * Fields1:
    * Index | Value
@@ -2326,8 +2450,10 @@ export class MotionEmitter extends Action {
    * 0     | threshold
    * 1     | unkProp
    * 2     | maxConcurrent
-   * @param threshold How much the emitter must move to trigger emission. Defaults to 0.1.
-   * @param maxConcurrent How many particles from this emitter are allowed at the same time. Defaults to 100.
+   * @param threshold How much the emitter must move to trigger emission.
+   * Defaults to 0.1.
+   * @param maxConcurrent How many particles from this emitter are allowed at
+   * the same time. Defaults to 100.
    * @param unkField0 Unknown. Fields1, index 0. Defaults to 1.
    * @param unkField1 Unknown. Fields1, index 1. Defaults to 0.
    * @param unkProp Unknown. Properties1, index 1. Defaults to -1.
@@ -2386,7 +2512,8 @@ export class PointEmitterShape extends Action {
 export class DiskEmitterShape extends Action {
 
   /**
-   * Makes the emitter disk-shaped. The normal of the disk is aligned with the Z-axis.
+   * Makes the emitter disk-shaped. The normal of the disk is aligned with the
+   * Z-axis.
    * 
    * Fields1:
    * Index | Value
@@ -2400,11 +2527,16 @@ export class DiskEmitterShape extends Action {
    * 1     | centerWeight
    * @param radius The radius of the disk in meters. Defaults to 1.
    * @param centerWeight
-   *   Controls the weight of the center of the disk for picking random positions to emit from.
-   *   At 0, particles are equally likely to emit from anywhere inside the disk.
-   *   At 1, particles have a 100% chance of being emitted from the center point.
-   *   At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
-   *   Defaults to 0.
+   * Controls the weight of the center of the disk for picking random
+   * positions to emit from.
+   * - At 0, particles are equally likely to emit from anywhere inside the
+   * disk.
+   * - At 1, particles have a 100% chance of being emitted from the center
+   * point.
+   * - At -1, particles have a 100% chance of being emitted from the perimeter
+   * circle of the disk.
+   * 
+   * Defaults to 0.
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(
@@ -2425,7 +2557,8 @@ export class DiskEmitterShape extends Action {
 export class RectangleEmitterShape extends Action {
 
   /**
-   * Makes the emitter rectangle-shaped. The normal of the rectangle is aligned with the Z-axis.
+   * Makes the emitter rectangle-shaped. The normal of the rectangle is aligned
+   * with the Z-axis.
    * 
    * Fields1:
    * Index | Value
@@ -2441,11 +2574,16 @@ export class RectangleEmitterShape extends Action {
    * @param sizeX Width of the rectangle. Defaults to 1.
    * @param sizeY Height of the rectangle. Defaults to sizeX.
    * @param centerWeight
-   *   Controls the weight of the center of the rectangle for picking random positions to emit from.
-   *   At 0, particles are equally likely to emit from anywhere inside the rectangle.
-   *   At 1, particles have a 100% chance of being emitted from the center point.
-   *   At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
-   *   Defaults to 0.
+   * Controls the weight of the center of the rectangle for picking random
+   * positions to emit from.
+   * - At 0, particles are equally likely to emit from anywhere inside the
+   * rectangle.
+   * - At 1, particles have a 100% chance of being emitted from the center
+   * point.
+   * - At -1, particles have a 100% chance of being emitted from the perimeter
+   * of the rectangle.
+   * 
+   * Defaults to 0.
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(
@@ -2479,7 +2617,9 @@ export class SphereEmitterShape extends Action {
    * Index | Value
    * ------|------
    * 0     | radius
-   * @param volume If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted from the surface of the sphere. Defaults to true.
+   * @param volume If true, particles will be emitted from anywhere within the
+   * sphere. Otherwise the particles will be emitted from the surface of the
+   * sphere. Defaults to true.
    * @param radius The radius of the sphere in meters. Defaults to 1.
    */
   constructor(
@@ -2512,7 +2652,9 @@ export class CuboidEmitterShape extends Action {
    * 0     | sizeX
    * 1     | sizeY
    * 2     | sizeZ
-   * @param volume If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted from the surface of the cuboid. Defaults to true.
+   * @param volume If true, particles will be emitted from anywhere within the
+   * cuboid. Otherwise the particles will be emitted from the surface of the
+   * cuboid. Defaults to true.
    * @param sizeX Width of the cuboid. Defaults to 1.
    * @param sizeY Height of the cuboid. Defaults to sizeX.
    * @param sizeZ Depth of the cuboid. Defaults to sizeX.
@@ -2554,10 +2696,13 @@ export class CylinderEmitterShape extends Action {
    * ------|------
    * 0     | radius
    * 1     | height
-   * @param volume If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted from the surface of the cylinder. Defaults to true.
+   * @param volume If true, particles will be emitted from anywhere within the
+   * cylinder. Otherwise the particles will be emitted from the surface of the
+   * cylinder. Defaults to true.
    * @param radius The radius of the cylinder. Defaults to 1.
    * @param height The height of the cylinder. Defaults to 1.
-   * @param yAxis If true, the cylinder will be aligned with the Y-axis instead of the Z-axis. Defaults to true.
+   * @param yAxis If true, the cylinder will be aligned with the Y-axis instead
+   * of the Z-axis. Defaults to true.
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(
