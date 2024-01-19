@@ -1350,14 +1350,14 @@ export class State {
    * conditions are true.
    * 
    * Syntax:
-   * ```txt
+   * ```text
    * stateString = <conditionExpression>[ && <conditionExpression>[...]]
    * ```
    * See {@link StateCondition.from} for more information about
    * `conditionExpression`.
    * 
    * Examples:
-   * ```txt
+   * ```text
    * time < 0.5 else 1 && ext(2000) == 2
    * ext(0) < 1 && time < 2 && 1 == 1
    * ```
@@ -1497,7 +1497,7 @@ export class StateCondition {
    * `else` statement with a state index.
    * 
    * ## Syntax:
-   * ```txt
+   * ```text
    * expression = <operand> <operator> <operand>[ else[ goto] <stateIndex>]
    * operand = <number> | External(<integer>) | StateTime | UnkMinus2
    * operator = != | == | > | >= | < | <=
@@ -1506,7 +1506,7 @@ export class StateCondition {
    * 
    * `External`, `StateTime`, and `UnkMinus2` are all case-insensitive and have
    * shorter variations available. Here are some examples:
-   * ```txt
+   * ```text
    * ext(0)
    * stateTime
    * time
@@ -1514,7 +1514,7 @@ export class StateCondition {
    * ```
    * 
    * ## Examples:
-   * ```txt
+   * ```text
    * ext(0) > 1
    * time < 5 else goto 2
    * 1 != External(10000) else 1
