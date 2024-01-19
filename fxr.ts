@@ -3131,158 +3131,9 @@ export class CylinderEmitterShape extends Action {
 
 }
 
-//TODO: Maybe revert adding the common 6xx fields2 stuff, the fields don't
-// always work the same way in the actions that use it.
-export interface CommonAction6xxFields2Params {
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3,
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number,
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number,
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number,
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera. Defaults to 0.
-   * 
-   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
-   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  negativeDepthOffset?: number,
-  /**
-   * Controls how dark shaded parts of the particle are. Defaults to 0.
-   */
-  shadowDarkness?: number,
-  /**
-   * Controls whether or not specular highlights should be visible. Defaults to
-   * false.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: boolean,
-  /**
-   * Controls how sharp the specular highlights are. Defaults to 0.25.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number,
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information. Defaults to {@link LightingMode.Unlit}.
-   */
-  lighting?: LightingMode,
-  /**
-   * Controls how bright the specular highlights are. Defaults to 0.5.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number,
-}
-export function createCommonAction6xxFields2({
-  bloomColor = [1, 1, 1],
-  bloomStrength = 0,
-  minDistance = -1,
-  maxDistance = -1,
-  negativeDepthOffset = 0,
-  shadowDarkness = 0,
-  specular = false,
-  glossiness = 0.25,
-  lighting = LightingMode.Unlit,
-  specularity = 0.5,
-}: CommonAction6xxFields2Params = {}) {
-  return [
-    /*  0 */ new Field(FieldType.Integer, 0),
-    /*  1 */ new Field(FieldType.Integer, 0),
-    /*  2 */ new Field(FieldType.Integer, 8),
-    /*  3 */ new Field(FieldType.Integer, 0),
-    /*  4 */ new Field(FieldType.Integer, 1),
-    /*  5 */ new Field(FieldType.Float, bloomColor[0]),
-    /*  6 */ new Field(FieldType.Float, bloomColor[1]),
-    /*  7 */ new Field(FieldType.Float, bloomColor[2]),
-    /*  8 */ new Field(FieldType.Float, bloomStrength),
-    /*  9 */ new Field(FieldType.Integer, 0),
-    /* 10 */ new Field(FieldType.Integer, 0),
-    /* 11 */ new Field(FieldType.Integer, 0),
-    /* 12 */ new Field(FieldType.Integer, 0),
-    /* 13 */ new Field(FieldType.Integer, 0),
-    /* 14 */ new Field(FieldType.Float, -1),
-    /* 15 */ new Field(FieldType.Float, -1),
-    /* 16 */ new Field(FieldType.Float, -1),
-    /* 17 */ new Field(FieldType.Float, -1),
-    /* 18 */ new Field(FieldType.Float, minDistance),
-    /* 19 */ new Field(FieldType.Float, maxDistance),
-    /* 20 */ new Field(FieldType.Integer, 0),
-    /* 21 */ new Field(FieldType.Integer, 0),
-    /* 22 */ new Field(FieldType.Integer, 0),
-    /* 23 */ new Field(FieldType.Integer, 0),
-    /* 24 */ new Field(FieldType.Integer, 0),
-    /* 25 */ new Field(FieldType.Float, 1),
-    /* 26 */ new Field(FieldType.Float, negativeDepthOffset),
-    /* 27 */ new Field(FieldType.Integer, 1),
-    /* 28 */ new Field(FieldType.Integer, 0),
-    /* 29 */ new Field(FieldType.Float, 5),
-    /* 30 */ new Field(FieldType.Float, shadowDarkness),
-    /* 31 */ new Field(FieldType.Integer, 0),
-    /* 32 */ new Field(FieldType.Integer, 1),
-    /* 33 */ new Field(FieldType.Boolean, specular),
-    /* 34 */ new Field(FieldType.Float, glossiness),
-    /* 35 */ new Field(FieldType.Integer, lighting),
-    /* 36 */ new Field(FieldType.Integer, -2),
-    /* 37 */ new Field(FieldType.Integer, 0),
-    /* 38 */ new Field(FieldType.Float, specularity),
-    /* 39 */ new Field(FieldType.Integer, 1),
-  ]
-}
 /**
- * Super class for all specialized action classes using the common action 6xx
- * fields2 lists with accessors for each known field.
+ * Super class for some of the 6xx actions that share part of their fields2
+ * structure with other 6xx actions.
  */
 export class CommonAction6xxFields2Action extends Action {
 
@@ -3344,68 +3195,9 @@ export class CommonAction6xxFields2Action extends Action {
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
 
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera.
-   * 
-   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
-   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  get negativeDepthOffset() { return this.fields2[26].value as number }
-  set negativeDepthOffset(value) { this.fields2[26].value = value }
-
-  /**
-   * Controls how dark shaded parts of the particle are.
-   */
-  get shadowDarkness() { return this.fields2[30].value as number }
-  set shadowDarkness(value) { this.fields2[30].value = value }
-
-  /**
-   * Controls whether or not specular highlights should be visible.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  get specular() { return this.fields2[33].value as number }
-  set specular(value) { this.fields2[33].value = value }
-
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  get glossiness() { return this.fields2[34].value as number }
-  set glossiness(value) { this.fields2[34].value = value }
-
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information.
-   */
-  get lighting() { return this.fields2[35].value as LightingMode }
-  set lighting(value) { this.fields2[35].value = value }
-
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  get specularity() { return this.fields2[38].value as number }
-  set specularity(value) { this.fields2[38].value = value }
-
 }
 
-export interface RectangleParticleParams extends CommonAction6xxFields2Params {
+export interface GradientParticleParams {
   blendMode?: BlendMode | Property
   width?: number | Property
   height?: number | Property
@@ -3451,6 +3243,48 @@ export interface RectangleParticleParams extends CommonAction6xxFields2Params {
   color3?: Vector4 | Property
   rgbMultiplier?: number | Property
   alphaMultiplier?: number | Property
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
   unkScalarProp2_2?: number | Property
   unkVec4Prop2_3?: Vector4 | Property
   unkVec4Prop2_4?: Vector4 | Property
@@ -3490,17 +3324,53 @@ export class GradientParticle extends CommonAction6xxFields2Action {
     unkVec4Prop2_4 = [1, 1, 1, 1],
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
-  }: RectangleParticleParams = {}) {
+  }: GradientParticleParams = {}) {
     super(ActionType.GradientParticle, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, -1),
       /*  1 */ new Field(FieldType.Integer, 1),
       /*  2 */ new Field(FieldType.Integer, 1),
-    ], createCommonAction6xxFields2({
-      bloomColor,
-      bloomStrength,
-      minDistance,
-      maxDistance,
-    }), [ // Properties1
+    ], [
+      /*  0 */ new Field(FieldType.Integer, 0),
+      /*  1 */ new Field(FieldType.Integer, 0),
+      /*  2 */ new Field(FieldType.Integer, 8),
+      /*  3 */ new Field(FieldType.Integer, 0),
+      /*  4 */ new Field(FieldType.Integer, 1),
+      /*  5 */ new Field(FieldType.Float, bloomColor[0]),
+      /*  6 */ new Field(FieldType.Float, bloomColor[1]),
+      /*  7 */ new Field(FieldType.Float, bloomColor[2]),
+      /*  8 */ new Field(FieldType.Float, bloomStrength),
+      /*  9 */ new Field(FieldType.Integer, 0),
+      /* 10 */ new Field(FieldType.Integer, 0),
+      /* 11 */ new Field(FieldType.Integer, 0),
+      /* 12 */ new Field(FieldType.Integer, 0),
+      /* 13 */ new Field(FieldType.Integer, 0),
+      /* 14 */ new Field(FieldType.Float, -1),
+      /* 15 */ new Field(FieldType.Float, -1),
+      /* 16 */ new Field(FieldType.Float, -1),
+      /* 17 */ new Field(FieldType.Float, -1),
+      /* 18 */ new Field(FieldType.Float, minDistance),
+      /* 19 */ new Field(FieldType.Float, maxDistance),
+      /* 20 */ new Field(FieldType.Integer, 0),
+      /* 21 */ new Field(FieldType.Integer, 0),
+      /* 22 */ new Field(FieldType.Integer, 0),
+      /* 23 */ new Field(FieldType.Integer, 0),
+      /* 24 */ new Field(FieldType.Integer, 0),
+      /* 25 */ new Field(FieldType.Float, 1),
+      /* 26 */ new Field(FieldType.Float, 0),
+      /* 27 */ new Field(FieldType.Integer, 1),
+      /* 28 */ new Field(FieldType.Integer, 0),
+      /* 29 */ new Field(FieldType.Float, 5),
+      /* 30 */ new Field(FieldType.Float, 0),
+      /* 31 */ new Field(FieldType.Integer, 0),
+      /* 32 */ new Field(FieldType.Integer, 1),
+      /* 33 */ new Field(FieldType.Boolean, false),
+      /* 34 */ new Field(FieldType.Float, 0),
+      /* 35 */ new Field(FieldType.Integer, -1),
+      /* 36 */ new Field(FieldType.Integer, -2),
+      /* 37 */ new Field(FieldType.Integer, 0),
+      /* 38 */ new Field(FieldType.Float, 0),
+      /* 39 */ new Field(FieldType.Integer, 1),
+    ], [ // Properties1
       /*  0 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
       /*  1 */ width instanceof Property ? width : new ConstantProperty(width),
       /*  2 */ height instanceof Property ? height : new ConstantProperty(height),
@@ -3592,34 +3462,28 @@ export class GradientParticle extends CommonAction6xxFields2Action {
   get alphaMultiplier() { return this.properties2[1] }
   set alphaMultiplier(value: Property | PropertyValue) { setPropertyInList(this.properties2, 1, value) }
 
-  get minViewDistance() { return this.fields2[18].value as number }
-  set minViewDistance(value) { this.fields2[18].value = value }
-
-  get maxViewDistance() { return this.fields2[19].value as number }
-  set maxViewDistance(value) { this.fields2[19].value = value }
-
 }
 
-export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Params {
+export interface AnimatedTextureParticleParams {
   /**
    * Texture ID. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  texture?: number | Property,
+  texture?: number | Property
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  blendMode?: BlendMode | Property,
+  blendMode?: BlendMode | Property
   /**
    * Offset for the position of the particle. Each axis has its own property.
    * Defaults to [0, 0, 0].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  offset?: Vector3 | Property[],
+  offset?: Vector3 | Property[]
   /**
    * The width of the particle.
    * 
@@ -3630,7 +3494,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  width?: number | Property,
+  width?: number | Property
   /**
    * The height of the particle.
    * 
@@ -3642,53 +3506,53 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  height?: number | Property,
+  height?: number | Property
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  color1?: Vector4 | Property,
+  color1?: Vector4 | Property
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4 | Property,
+  color2?: Vector4 | Property
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
    */
-  color3?: Vector4 | Property,
+  color3?: Vector4 | Property
   /**
    * Parts of the particle with less opacity than this threshold will be
    * invisible. The range is 0-255. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaThreshold?: number | Property,
+  alphaThreshold?: number | Property
   /**
    * Rotation in degrees. Each axis has its own property. Defaults to
    * [0, 0, 0].
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  rotation?: Vector3 | Property[],
+  rotation?: Vector3 | Property[]
   /**
    * Rotation speed in degrees per second. Each axis has its own property.
    * Defaults to [0, 0, 0].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  rotationSpeed?: Vector3 | Property[],
+  rotationSpeed?: Vector3 | Property[]
   /**
    * Rotation speed multiplier. Each axis has its own property. Defaults to
    * [1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  rotationSpeedMultiplier?: Vector3 | Property[],
+  rotationSpeedMultiplier?: Vector3 | Property[]
   /**
    * Positive values will make the particle draw in front of objects closer to
    * the camera, while negative values will make it draw behind objects farther
@@ -3699,7 +3563,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * See also:
    * - {@link negativeDepthOffset}
    */
-  depthOffset?: number | Property,
+  depthOffset?: number | Property
   /**
    * The index of the frame to show from the texture atlas. Can be animated
    * using a {@link PropertyFunction.Linear linear property} or similar.
@@ -3711,7 +3575,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  frameIndex?: number | Property,
+  frameIndex?: number | Property
   /**
    * Seemingly identical to
    * {@link AnimatedTextureParticleParams.frameIndex frameIndex}? The sum of
@@ -3720,30 +3584,30 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  frameIndexOffset?: number | Property,
+  frameIndexOffset?: number | Property
   /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: number | Property,
+  rgbMultiplier?: number | Property
   /**
    * Alpha multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: number | Property,
+  alphaMultiplier?: number | Property
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
    * {@link OrientationMode.Camera}.
    */
-  orientation?: OrientationMode,
+  orientation?: OrientationMode
   /**
    * Normal map ID. Defaults to 0.
    */
-  normalMap?: number,
+  normalMap?: number
   /**
    * Each particle will pick a random number between this value and 1, and the
    * width of the particle will be multiplied by this number. For example,
@@ -3757,7 +3621,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * See also:
    * - {@link AnimatedTextureParticleParams.randomHeightMultiplier randomHeightMultiplier}
    */
-  randomWidthMultiplier?: number,
+  randomWidthMultiplier?: number
   /**
    * Each particle will pick a random number between this value and 1, and the
    * height of the particle will be multiplied by this number. For example,
@@ -3770,7 +3634,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * {@link AnimatedTextureParticleParams.randomWidthMultiplier randomWidthMultiplier}
    * also affects the height, and this field is ignored.
    */
-  randomHeightMultiplier?: number,
+  randomHeightMultiplier?: number
   /**
    * If enabled, the particle width-related properties and fields will control
    * both the width and height of the particles, and the height counterparts
@@ -3782,7 +3646,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * - {@link AnimatedTextureParticleParams.randomWidthMultiplier randomWidthMultiplier}
    * - {@link AnimatedTextureParticleParams.randomHeightMultiplier randomHeightMultiplier}
    */
-  uniformScale?: boolean,
+  uniformScale?: boolean
   /**
    * To split the texture into multiple animation frames, this value must be
    * set to the number of columns in the texture. It should equal
@@ -3791,7 +3655,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * See also:
    * - {@link AnimatedTextureParticleParams.totalFrames totalFrames}
    */
-  columns?: number,
+  columns?: number
   /**
    * To split the texture into multiple animation frames, this value must be
    * set to the total number of frames in the texture. Defaults to 1.
@@ -3799,7 +3663,7 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * See also:
    * - {@link AnimatedTextureParticleParams.columns columns}
    */
-  totalFrames?: number,
+  totalFrames?: number
   /**
    * If enabled, the texture animation will use linear interpolation to mix
    * frames when the frame index is not a whole number. For example, if the
@@ -3813,14 +3677,104 @@ export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Par
    * See also:
    * - {@link AnimatedTextureParticleParams.frameIndex frameIndex}
    */
-  interpolateFrames?: boolean,
-  unkScalarProp1_23?: number | Property,
-  unkScalarProp1_24?: number | Property,
-  unkScalarProp2_2?: number | Property,
-  unkVec4Prop2_3?: Vector4 | Property,
-  unkVec4Prop2_4?: Vector4 | Property,
-  unkVec4Prop2_5?: Vector4 | Property,
-  unkScalarProp2_6?: number | Property,
+  interpolateFrames?: boolean
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera. Defaults to 0.
+   * 
+   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
+   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  negativeDepthOffset?: number
+  /**
+   * Controls how dark shaded parts of the particle are. Defaults to 0.
+   */
+  shadowDarkness?: number
+  /**
+   * Controls whether or not specular highlights should be visible. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: boolean
+  /**
+   * Controls how sharp the specular highlights are. Defaults to 0.25.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Unlit}.
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  unkScalarProp1_23?: number | Property
+  unkScalarProp1_24?: number | Property
+  unkScalarProp2_2?: number | Property
+  unkVec4Prop2_3?: Vector4 | Property
+  unkVec4Prop2_4?: Vector4 | Property
+  unkVec4Prop2_5?: Vector4 | Property
+  unkScalarProp2_6?: number | Property
 }
 /**
  * Particle with a texture that may be animated. This is the most common
@@ -3891,24 +3845,53 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
       /* 15 */ new Field(FieldType.Integer, 1),
       /* 16 */ new Field(FieldType.Integer, 1),
       /* 17 */ new Field(FieldType.Integer, 0),
-    ], createCommonAction6xxFields2({
-      bloomColor,
-      bloomStrength,
-      minDistance,
-      maxDistance,
-      negativeDepthOffset,
-      shadowDarkness,
-      specular,
-      glossiness,
-      lighting,
-      specularity,
-    }).concat(
+    ], [
+      /*  0 */ new Field(FieldType.Integer, 0),
+      /*  1 */ new Field(FieldType.Integer, 0),
+      /*  2 */ new Field(FieldType.Integer, 8),
+      /*  3 */ new Field(FieldType.Integer, 0),
+      /*  4 */ new Field(FieldType.Integer, 1),
+      /*  5 */ new Field(FieldType.Float, bloomColor[0]),
+      /*  6 */ new Field(FieldType.Float, bloomColor[1]),
+      /*  7 */ new Field(FieldType.Float, bloomColor[2]),
+      /*  8 */ new Field(FieldType.Float, bloomStrength),
+      /*  9 */ new Field(FieldType.Integer, 0),
+      /* 10 */ new Field(FieldType.Integer, 0),
+      /* 11 */ new Field(FieldType.Integer, 0),
+      /* 12 */ new Field(FieldType.Integer, 0),
+      /* 13 */ new Field(FieldType.Integer, 0),
+      /* 14 */ new Field(FieldType.Float, -1),
+      /* 15 */ new Field(FieldType.Float, -1),
+      /* 16 */ new Field(FieldType.Float, -1),
+      /* 17 */ new Field(FieldType.Float, -1),
+      /* 18 */ new Field(FieldType.Float, minDistance),
+      /* 19 */ new Field(FieldType.Float, maxDistance),
+      /* 20 */ new Field(FieldType.Integer, 0),
+      /* 21 */ new Field(FieldType.Integer, 0),
+      /* 22 */ new Field(FieldType.Integer, 0),
+      /* 23 */ new Field(FieldType.Integer, 0),
+      /* 24 */ new Field(FieldType.Integer, 0),
+      /* 25 */ new Field(FieldType.Float, 1),
+      /* 26 */ new Field(FieldType.Float, negativeDepthOffset),
+      /* 27 */ new Field(FieldType.Integer, 1),
+      /* 28 */ new Field(FieldType.Integer, 0),
+      /* 29 */ new Field(FieldType.Float, 5),
+      /* 30 */ new Field(FieldType.Float, shadowDarkness),
+      /* 31 */ new Field(FieldType.Integer, 0),
+      /* 32 */ new Field(FieldType.Integer, 1),
+      /* 33 */ new Field(FieldType.Boolean, specular),
+      /* 34 */ new Field(FieldType.Float, glossiness),
+      /* 35 */ new Field(FieldType.Integer, lighting),
+      /* 36 */ new Field(FieldType.Integer, -2),
+      /* 37 */ new Field(FieldType.Integer, 0),
+      /* 38 */ new Field(FieldType.Float, specularity),
+      /* 39 */ new Field(FieldType.Integer, 1),
       /* 40 */ new Field(FieldType.Integer, 0),
       /* 41 */ new Field(FieldType.Integer, 0),
       /* 42 */ new Field(FieldType.Integer, 0),
       /* 43 */ new Field(FieldType.Integer, 0),
       /* 44 */ new Field(FieldType.Integer, 0),
-    ), [
+    ], [
       /*  0 */ texture instanceof Property ? texture : new ConstantProperty(texture),
       /*  1 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
       /*  2 */ offset[0] instanceof Property ? offset[0] : new ConstantProperty(offset[0]),
@@ -4078,20 +4061,79 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
   get interpolateFrames() { return this.fields1[8].value as number }
   set interpolateFrames(value) { this.fields1[8].value = value }
 
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera.
+   * 
+   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
+   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  get negativeDepthOffset() { return this.fields2[26].value as number }
+  set negativeDepthOffset(value) { this.fields2[26].value = value }
+
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  get shadowDarkness() { return this.fields2[30].value as number }
+  set shadowDarkness(value) { this.fields2[30].value = value }
+
+  /**
+   * Controls whether or not specular highlights should be visible.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  get specular() { return this.fields2[33].value as number }
+  set specular(value) { this.fields2[33].value = value }
+
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  get glossiness() { return this.fields2[34].value as number }
+  set glossiness(value) { this.fields2[34].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  get specularity() { return this.fields2[38].value as number }
+  set specularity(value) { this.fields2[38].value = value }
+
 }
 
 export interface PointLightSourceParams {
-  diffuseColor?: Vector4 | Property,
-  specularColor?: Vector4 | Property,
-  radius?: number | Property,
-  diffuseMultiplier?: Vector4 | Property,
-  specularMultiplier?: Vector4 | Property,
-  castShadows?: boolean,
-  separateSpecular?: boolean,
-  fadeOutTime?: number,
-  shadowDarkness?: number,
-  glow?: number,
-  glowConcentration?: number,
+  diffuseColor?: Vector4 | Property
+  specularColor?: Vector4 | Property
+  radius?: number | Property
+  diffuseMultiplier?: Vector4 | Property
+  specularMultiplier?: Vector4 | Property
+  castShadows?: boolean
+  separateSpecular?: boolean
+  fadeOutTime?: number
+  shadowDarkness?: number
+  glow?: number
+  glowConcentration?: number
 }
 /**
  * Point light source.
