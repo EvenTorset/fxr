@@ -158,7 +158,7 @@ export enum ActionType {
    */
   DiskEmitterShape = 401,
   /**
-   * Makes the emitter rectangle-shaped.
+   * Makes the emitter rectangular.
    * 
    * This action type has a specialized subclass: {@link RectangleEmitterShape}
    */
@@ -188,12 +188,17 @@ export enum ActionType {
   Unk600 = 600,
   Unk601 = 601,
   /**
-   * Colored rectangle particle.
+   * Simple rectangular gradient particle.
    * 
-   * This action type has a specialized subclass: {@link RectangleParticle}
+   * This action type has a specialized subclass: {@link GradientParticle}
    */
-  RectangleParticle = 602,
-  Unk603 = 603,
+  GradientParticle = 602,
+  /**
+   * Particle with a texture that may animate.
+   * 
+   * This action type has a specialized subclass: {@link AnimatedTextureParticle}
+   */
+  AnimatedTextureParticle = 603,
   Unk604 = 604,
   Unk605 = 605,
   Unk606 = 606,
@@ -234,22 +239,33 @@ export enum ValueType {
 export enum PropertyFunction {
   /**
    * Always returns 0 for each component.
+   * 
+   * This property function has a specialized subclass: {@link ZeroProperty}
    */
   Zero = 0,
   /**
    * Always returns 1 for each component.
+   * 
+   * This property function has a specialized subclass: {@link OneProperty}
    */
   One = 1,
   /**
    * Always returns the value in the property's fields.
+   * 
+   * This property function has a specialized subclass:
+   * {@link ConstantProperty}
    */
   Constant = 2,
   /**
    * Uses step interpolation to interpolate the property's values.
+   * 
+   * This property function has a specialized subclass: {@link SteppedProperty}
    */
   Stepped = 3,
   /**
    * Uses linear interpolation to interpolate the property's values.
+   * 
+   * This property function has a specialized subclass: {@link LinearProperty}
    */
   Linear = 4,
   /**
@@ -262,6 +278,8 @@ export enum PropertyFunction {
    * Uses a custom curve to interpolate the property's values.
    * 
    * The difference between this and {@link Curve1} is currently unknown.
+   * 
+   * This property function has a specialized subclass: {@link Curve2Property}
    */
   Curve2 = 6,
   /**
@@ -300,6 +318,10 @@ export enum ModifierType {
    * The factor is controlled by the modifier's only property. The external
    * value is given as the property function's argument, so a linear property
    * can be used to change the factor based on the external value.
+   * 
+   * This modifier type has two specialized subclasses:
+   * - {@link ExternalValueModifier}
+   * - {@link BloodVisibilityModifier}
    */
   ExternalValue1 = 2,
   /**
@@ -410,6 +432,88 @@ export enum AttachMode {
   DummyPolyTranslation = 4
 }
 
+export enum PropertyArgument {
+  /**
+   * A constant value, usually just 0.
+   */
+  Constant,
+  /**
+   * Time in seconds since the particle was emitted.
+   */
+  ParticleAge,
+  /**
+   * Time in seconds since the effect was created.
+   */
+  EffectAge,
+  /**
+   * Time in seconds between the effect being created and the particle being
+   * emitted. Stays constant per particle.
+   */
+  EmissionTime
+}
+
+export enum OrientationMode {
+  /**
+   * Faces south.
+   * 
+   * Seemingly identical to {@link UnkSouth}?
+   */
+  South = 0,
+  /**
+   * Faces the camera.
+   * 
+   * Seemingly identical to {@link UnkCamera}?
+   */
+  Camera = 1,
+  /**
+   * Faces the -Z direction of the parent container.
+   */
+  ParentNegativeZ = 2,
+  /**
+   * Faces south.
+   * 
+   * Seemingly identical to {@link South}?
+   */
+  UnkSouth = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical
+   * axis.
+   */
+  GlobalYaw = 4,
+  /**
+   * Faces east.
+   */
+  East = 5,
+  /**
+   * Faces the camera.
+   * 
+   * Seemingly identical to {@link Camera}?
+   */
+  UnkCamera = 6,
+  /**
+   * Tries to face the camera, but is limited to rotation around the Y axis of
+   * the parent container.
+   */
+  ParentYaw = 7,
+}
+
+export enum LightingMode {
+  /**
+   * Same as {@link Lit}, but this seems to sometimes have an extra light
+   * source from somewhere?
+   */
+  UnkMinus2 = -2,
+  /**
+   * Lighting does not affect the particles. No shadows or specular
+   * hightlights.
+   */
+  Unlit = -1,
+  /**
+   * Lighting affects the particles just like most regular objects.
+   */
+  Lit = 0,
+}
+
 export const EffectActionSlots = {
   [EffectType.Basic]: [
     [
@@ -462,8 +566,8 @@ export const EffectActionSlots = {
     [
       ActionType.Unk600,
       ActionType.Unk601,
-      ActionType.RectangleParticle,
-      ActionType.Unk603,
+      ActionType.GradientParticle,
+      ActionType.AnimatedTextureParticle,
       ActionType.Unk604,
       ActionType.Unk605,
       ActionType.Unk606,
@@ -554,6 +658,10 @@ function arrayOf<T>(size: number, func: (index: number) => T): T[] {
   return Array(size).fill(null).map((e, i) => func(i))
 }
 
+function randomInt32() {
+  return Math.random() * 2**32 | 0
+}
+
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
 export type Vector4 = [red: number, green: number, blue: number, alpha: number]
@@ -593,7 +701,8 @@ class BinaryReader extends DataView {
   }
 
   getFloat32(offset: number) {
-    return super.getFloat32(offset, this.littleEndian)
+    // Rounding to get rid of most errors from precision loss
+    return Math.round(super.getFloat32(offset, this.littleEndian) * 1e7) / 1e7
   }
 
   getFloat64(offset: number) {
@@ -1233,6 +1342,31 @@ export class State {
     this.conditions = conditions
   }
 
+  /**
+   * Parses a logical expression in a string and creates a
+   * {@link State} from it.
+   * @param stateString A logical expression comprised of one or more
+   * conditions separated by `&&`. The state may only be active if all of its
+   * conditions are true.
+   * 
+   * Syntax:
+   * ```txt
+   * stateString = <conditionExpression>[ && <conditionExpression>[...]]
+   * ```
+   * See {@link StateCondition.from} for more information about
+   * `conditionExpression`.
+   * 
+   * Examples:
+   * ```txt
+   * time < 0.5 else 1 && ext(2000) == 2
+   * ext(0) < 1 && time < 2 && 1 == 1
+   * ```
+   * @returns The new state.
+   */
+  static from(stateString: string) {
+    return new State(stateString.split('&&').map(e => StateCondition.from(e)))
+  }
+
   static read(br: BinaryReader) {
     br.assertInt32(0)
     const count = br.readInt32()
@@ -1259,6 +1393,10 @@ export class State {
     for (const condition of this.conditions) {
       condition.write(bw, conditions)
     }
+  }
+
+  toString() {
+    return this.conditions.map(c => c.toString()).join(' && ')
   }
 
 }
@@ -1318,6 +1456,114 @@ export class StateCondition {
     this.leftOperandValue = leftOperandValue
     this.rightOperandType = rightOperandType
     this.rightOperandValue = rightOperandValue
+  }
+
+  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|\d+(?:\.\d+)?|\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|\d+(?:\.\d+)?|\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|stop|disable))?\s*$/i
+  static #reLiteralOperand = /^\d+(?:\.\d+)?|\.\d+$/
+  static #reExternalOperand = /^[Ee]xt(?:ernal)?\((\d+)\)$/
+
+  static #parseOperand(op: string) {
+    switch (op.toLowerCase()) {
+      case 'time':
+      case 'statetime':
+        return {
+          type: OperandType.StateTime,
+          value: null
+        }
+      case 'minus2':
+      case 'unkminus2':
+        return {
+          type: OperandType.UnkMinus2,
+          value: null
+        }
+      default: if (this.#reLiteralOperand.test(op)) {
+        return {
+          type: OperandType.Literal,
+          value: parseFloat(op)
+        }
+      } else {
+        return {
+          type: OperandType.External,
+          value: parseInt(op.match(this.#reExternalOperand)[1])
+        }
+      }
+    }
+  }
+
+  /**
+   * Parses a logical expression in a string and creates a
+   * {@link StateCondition} from it.
+   * @param expression A string with a logical expression and optionally an
+   * `else` statement with a state index.
+   * 
+   * ## Syntax:
+   * ```txt
+   * expression = <operand> <operator> <operand>[ else[ goto] <stateIndex>]
+   * operand = <number> | External(<integer>) | StateTime | UnkMinus2
+   * operator = != | == | > | >= | < | <=
+   * stateIndex = <integer> | stop | disable
+   * ```
+   * 
+   * `External`, `StateTime`, and `UnkMinus2` are all case-insensitive and have
+   * shorter variations available. Here are some examples:
+   * ```txt
+   * ext(0)
+   * stateTime
+   * time
+   * minus2
+   * ```
+   * 
+   * ## Examples:
+   * ```txt
+   * ext(0) > 1
+   * time < 5 else goto 2
+   * 1 != External(10000) else 1
+   * ```
+   * 
+   * @returns A new {@link StateCondition} based on the expression.
+   */
+  static from(expression: string) {
+    const m = expression.match(this.#reExpression)
+    if (m === null) {
+      throw new Error('Syntax error in condition expression: ' + expression)
+    }
+    let op: Operator
+    let flipOperands = false
+    switch (m.groups.op) {
+      case '!=':
+        op = Operator.NotEqual
+        break
+      case '=':
+      case '==':
+        op = Operator.Equal
+        break
+      case '<':
+        flipOperands = true
+      case '>':
+        op = Operator.GreaterThan
+        break
+      case '<=':
+        flipOperands = true
+      case '>=':
+        op = Operator.GreaterThanOrEqual
+        break
+    }
+    const left = this.#parseOperand(flipOperands ? m.groups.right : m.groups.left)
+    const right = this.#parseOperand(flipOperands ? m.groups.left : m.groups.right)
+    let elseIndex = -1
+    if ('else' in m.groups) {
+      switch (m.groups.else) {
+        case '-1':
+        case 'stop':
+        case 'disable':
+        case undefined:
+          break
+        default:
+          elseIndex = parseInt(m.groups.else)
+          break
+      }
+    }
+    return new StateCondition(op, 2, elseIndex, left.type, left.value, right.type, right.value)
   }
 
   static read(br: BinaryReader) {
@@ -1446,6 +1692,60 @@ export class StateCondition {
       count++
     }
     return count
+  }
+
+  toString() {
+    let left, op, right
+    if (this.leftOperandType === OperandType.Literal && this.rightOperandType !== OperandType.Literal) {
+      right = this.leftOperandValue
+      switch (this.rightOperandType) {
+        case OperandType.External:
+          left = `External(${this.rightOperandValue})`
+          break
+        case OperandType.UnkMinus2:
+        case OperandType.StateTime:
+          left = OperandType[this.rightOperandType]
+          break
+      }
+      switch (this.operator) {
+        case Operator.NotEqual: op = '!='; break
+        case Operator.Equal: op = '=='; break
+        case Operator.GreaterThan: op = '<'; break
+        case Operator.GreaterThanOrEqual: op = '<='; break
+      }
+    } else {
+      switch (this.leftOperandType) {
+        case OperandType.External:
+          left = `External(${this.leftOperandValue})`
+          break
+        case OperandType.UnkMinus2:
+        case OperandType.StateTime:
+          left = OperandType[this.leftOperandType]
+          break
+        case OperandType.Literal:
+          left = this.leftOperandValue
+          break
+      }
+      switch (this.rightOperandType) {
+        case OperandType.External:
+          right = `External(${this.rightOperandValue})`
+          break
+        case OperandType.UnkMinus2:
+        case OperandType.StateTime:
+          right = OperandType[this.rightOperandType]
+          break
+        case OperandType.Literal:
+          right = this.rightOperandValue
+          break
+      }
+      switch (this.operator) {
+        case Operator.NotEqual: op = '!='; break
+        case Operator.Equal: op = '=='; break
+        case Operator.GreaterThan: op = '>'; break
+        case Operator.GreaterThanOrEqual: op = '>='; break
+      }
+    }
+    return `${left} ${op} ${right} else ${this.elseIndex}`
   }
 
 }
@@ -1783,6 +2083,53 @@ export class RandomizerEffect extends Effect {
 
 type FieldTypeList = (FieldType | null)[]
 
+const commonAction6xxFields2Types = [
+  null,
+  null,
+  FieldType.Integer,
+  null,
+  FieldType.Integer,
+  FieldType.Float, // Bloom - Red multiplier
+  FieldType.Float, // Bloom - Green multiplier
+  FieldType.Float, // Bloom - Blue multiplier
+  FieldType.Float, // Bloom strength
+  null,
+  null,
+  null,
+  null,
+  null,
+  FieldType.Float, // Distance Fade: Close 0
+  FieldType.Float, // Distance Fade: Close 1
+  FieldType.Float, // Distance Fade: Far 0
+  FieldType.Float, // Distance Fade: Far 1
+  FieldType.Float, // Minimum view distance
+  FieldType.Float, // Maximum view distance
+  null,
+  null,
+  null,
+  null,
+  null,
+  FieldType.Float,
+  null,
+  FieldType.Integer,
+  null,
+  FieldType.Float,
+  FieldType.Float, // Shadow darkness
+  null,
+  FieldType.Integer,
+  FieldType.Boolean, // Specular
+  FieldType.Float, // Glossiness
+  FieldType.Integer, // Lighting mode
+  FieldType.Integer,
+  null,
+  FieldType.Float, // Specularity
+  FieldType.Integer,
+  null,
+  null,
+  null,
+  null,
+  null,
+]
 const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: FieldTypeList } } = {
   [ActionType.Spin]: {
     Fields1: [
@@ -1803,6 +2150,20 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
   },
   [ActionType.ParticleLifetime]: {
     Fields1: [
+      FieldType.Integer
+    ],
+    Fields2: []
+  },
+  [ActionType.Unk130]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
       FieldType.Integer
     ],
     Fields2: []
@@ -1846,54 +2207,36 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
     ],
     Fields2: []
   },
-  [ActionType.RectangleParticle]: {
+  [ActionType.GradientParticle]: {
     Fields1: [
-      FieldType.Integer, // Blend mode
+      FieldType.Integer,
       null,
       null,
     ],
-    Fields2: [
-      null,
-      null,
-      null,
-      null,
-      null,
-      FieldType.Float, // Red multiplier? Doesn't seem to work?
-      FieldType.Float, // Green multiplier? Doesn't seem to work?
-      FieldType.Float, // Blue multiplier? Doesn't seem to work?
-      FieldType.Float, // Alpha multiplier? Doesn't seem to work?
-      null,
-      null,
-      null,
-      null,
-      null,
-      FieldType.Float, // Distance Fade: Close 0
-      FieldType.Float, // Distance Fade: Close 1
-      FieldType.Float, // Distance Fade: Far 0
-      FieldType.Float, // Distance Fade: Far 1
-      FieldType.Float, // Minimum view distance
-      FieldType.Float, // Maximum view distance
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
+    Fields2: commonAction6xxFields2Types
+  },
+  [ActionType.AnimatedTextureParticle]: {
+    Fields1: [
+      FieldType.Integer, // Orientation mode
+      FieldType.Integer, // Normal map ID
+      FieldType.Float, // Random width mult
+      FieldType.Float, // Random height mult
+      FieldType.Boolean, // Uniform scale
+      FieldType.Integer,
+      FieldType.Integer, // Columns
+      FieldType.Integer, // Total frames
+      FieldType.Boolean, // Interpolate frames
+      FieldType.Integer,
+      FieldType.Integer,
       FieldType.Float,
+      FieldType.Integer,
       null,
       null,
+      FieldType.Integer,
+      FieldType.Integer,
       null,
-      null,
-      null,
-    ]
+    ],
+    Fields2: commonAction6xxFields2Types
   },
   [ActionType.PointLightSource]: {
     Fields1: [
@@ -1916,13 +2259,13 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
       FieldType.Integer, // Fade-out time
       FieldType.Float, // Shadow darkness
       FieldType.Boolean, // Unk. Related to the 3 floats below
-      null,
-      null,
+      FieldType.Integer, // Always 2?
+      FieldType.Integer,
       FieldType.Float,
       FieldType.Float,
       FieldType.Float,
-      null,
-      null, // Always 100, integer?
+      FieldType.Integer,
+      FieldType.Integer, // Always 100?
       null,
       null,
       FieldType.Float, // Glow
@@ -1930,9 +2273,9 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
       null,
       FieldType.Float, // Glow concentration
       FieldType.Float,
-      null,
-      null,
-      null,
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Integer,
       null,
     ]
   }
@@ -2117,11 +2460,12 @@ export class Action {
 
 }
 
+/**
+ * Makes the container spin.
+ */
 export class Spin extends Action {
 
   /**
-   * Makes the container spin.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2167,11 +2511,12 @@ export class Spin extends Action {
 
 }
 
+/**
+ * Sets the translation and rotation of the container.
+ */
 export class StaticTransform extends Action {
 
   /**
-   * Sets the translation and rotation of the container.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2208,12 +2553,40 @@ export class StaticTransform extends Action {
 
 }
 
+export class UnkAction105 extends Action {
+
+  constructor(
+    acceleration: number | Property = 0,
+    followFactor: number | Property = 0,
+    maxRandomTurnAngle: number | Property = 0,
+    unkProp1: number | Property = 0,
+    unkProp2: number | Property = 0,
+    unkField0: number = 0,
+    unkField1: number = 0,
+    unkField2: number = 0,
+  ) {
+    super(ActionType.Unk105, false, true, 0, [
+      new Field(FieldType.Integer, unkField0),
+      new Field(FieldType.Integer, unkField1),
+      new Field(FieldType.Integer, unkField2), // Boolean? "Follow translation only"
+    ], [], [
+      acceleration instanceof Property ? acceleration : new ConstantProperty(acceleration),
+      unkProp1 instanceof Property ? unkProp1 : new ConstantProperty(unkProp1),
+      unkProp2 instanceof Property ? unkProp2 : new ConstantProperty(unkProp2),
+      maxRandomTurnAngle instanceof Property ? maxRandomTurnAngle : new ConstantProperty(maxRandomTurnAngle),
+      followFactor instanceof Property ? followFactor : new ConstantProperty(followFactor),
+    ])
+  }
+
+}
+
+/**
+ * Controls various things about the container, like its duration, and how
+ * it is attached to the parent container.
+ */
 export class EffectLifetime extends Action {
 
   /**
-   * Controls various things about the container, like its duration, and how
-   * it is attached to the parent container.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2254,12 +2627,13 @@ export class EffectLifetime extends Action {
 
 }
 
+/**
+ * Controls various things about the particles emitted by the effect, like
+ * their duration, and how they are attached to the parent container.
+ */
 export class ParticleLifetime extends Action {
 
   /**
-   * Controls various things about the particles emitted by the effect, like
-   * their duration, and how they are attached to the parent container.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2287,11 +2661,12 @@ export class ParticleLifetime extends Action {
 
 }
 
+/**
+ * Controls various multipliers as well as the acceleration of particles.
+ */
 export class ParticleMultiplier extends Action {
 
   /**
-   * Controls various multipliers as well as the acceleration of particles.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2312,22 +2687,22 @@ export class ParticleMultiplier extends Action {
    * if they have an action that allows them to accelerate. The direction of
    * the acceleration depends on the emitter shape.
    * 
-   * **Argument**: Effect age.
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    * @param scaleX Multiplier for the scale along the X-axis. If
    * {@link uniformScale} is enabled, this scales the particles uniformly.
    * 
-   * **Argument**: Effect age.
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    * @param scaleY Multiplier for the scale along the Y-axis. If
    * {@link uniformScale} is enabled, this property is ignored.
    * 
-   * **Argument**: Effect age.
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    * @param scaleZ Multiplier for the scale along the Z-axis. If
    * {@link uniformScale} is enabled, this property is ignored.
    * 
-   * **Argument**: Effect age.
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    * @param color Color multiplier.
    * 
-   * **Argument**: Effect age.
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   constructor(
     uniformScale: boolean = true,
@@ -2380,11 +2755,12 @@ export class ContainerWeights extends Action {
 
 }
 
+/**
+ * Emits particles periodically.
+ */
 export class PeriodicEmitter extends Action {
 
   /**
-   * Emits particles periodically.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2396,18 +2772,21 @@ export class PeriodicEmitter extends Action {
    * 0     | interval
    * 1     | perInterval
    * 2     | totalIntervals
-   * 3     | unkProp
+   * 3     | maxConcurrent
    * @param interval Time between emitting new particles in seconds.
-   * @param perInterval The number of particles to emit per interval. They all spawn at the same time per interval.
-   * @param totalIntervals The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting.
-   * @param unkProp Unknown. Properties1, index 3.
+   * @param perInterval The number of particles to emit per interval. They all
+   * spawn at the same time per interval.
+   * @param totalIntervals The total number of intervals to emit particles.
+   * Once this limit is reached, the emitter is will stop emitting.
+   * @param maxConcurrent Maximum number of concurrent particles. Defaults to
+   * -1 (infinite).
    * @param unkField Unknown. Fields1, index 0.
    */
   constructor(
     interval: number | Property = 1,
     perInterval: number | Property = 1,
     totalIntervals: number | Property = -1,
-    unkProp: number | Property = -1,
+    maxConcurrent: number | Property = -1,
     unkField: number = 1
   ) {
     super(ActionType.PeriodicEmitter, false, true, 0, [
@@ -2416,7 +2795,7 @@ export class PeriodicEmitter extends Action {
       interval instanceof Property ? interval : new ConstantProperty(interval as number),
       perInterval instanceof Property ? perInterval : new ConstantProperty(perInterval as number),
       totalIntervals instanceof Property ? totalIntervals : new ConstantProperty(totalIntervals as number),
-      unkProp instanceof Property ? unkProp : new ConstantProperty(unkProp as number),
+      maxConcurrent instanceof Property ? maxConcurrent : new ConstantProperty(maxConcurrent as number),
     ])
   }
 
@@ -2429,20 +2808,21 @@ export class PeriodicEmitter extends Action {
   get total() { return this.properties1[2] }
   set total(value) { this.properties1[2] = value }
 
-  get unkProp() { return this.properties1[3] }
-  set unkProp(value) { this.properties1[3] = value }
+  get maxConcurrent() { return this.properties1[3] }
+  set maxConcurrent(value) { this.properties1[3] = value }
 
   get unkField() { return this.fields1[0].value }
   set unkField(value) { this.fields1[0].value = value }
 
 }
 
+/**
+ * Emits particles once it has moved a certain distance from where it last
+ * emitted particles.
+ */
 export class MotionEmitter extends Action {
 
   /**
-   * Emits particles once it has moved a certain distance from where it last
-   * emitted particles.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2481,25 +2861,25 @@ export class MotionEmitter extends Action {
   }
 
 }
-
+/**
+ * Emits one particle once.
+ * 
+ * Contains no fields or properties.
+ */
 export class OneTimeEmitter extends Action {
 
-  /**
-   * Emits one particle once.
-   * 
-   * Contains no fields or properties.
-   */
   constructor() {
     super(ActionType.OneTimeEmitter, false, true, 2)
   }
 
 }
 
+/**
+ * Makes the emitter a single point.
+ */
 export class PointEmitterShape extends Action {
 
   /**
-   * Makes the emitter a single point.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2514,12 +2894,13 @@ export class PointEmitterShape extends Action {
 
 }
 
+/**
+ * Makes the emitter disk-shaped. The normal of the disk is aligned with the
+ * Z-axis.
+ */
 export class DiskEmitterShape extends Action {
 
   /**
-   * Makes the emitter disk-shaped. The normal of the disk is aligned with the
-   * Z-axis.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2559,12 +2940,13 @@ export class DiskEmitterShape extends Action {
 
 }
 
+/**
+ * Makes the emitter rectangular. The normal of the rectangle is aligned
+ * with the Z-axis.
+ */
 export class RectangleEmitterShape extends Action {
 
   /**
-   * Makes the emitter rectangle-shaped. The normal of the rectangle is aligned
-   * with the Z-axis.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2608,11 +2990,12 @@ export class RectangleEmitterShape extends Action {
 
 }
 
+/**
+ * Makes the emitter spherical.
+ */
 export class SphereEmitterShape extends Action {
 
   /**
-   * Makes the emitter spherical.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2640,11 +3023,12 @@ export class SphereEmitterShape extends Action {
 
 }
 
+/**
+ * Makes the emitter cuboidal.
+ */
 export class CuboidEmitterShape extends Action {
 
   /**
-   * Makes the emitter cuboidal.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2684,11 +3068,12 @@ export class CuboidEmitterShape extends Action {
 
 }
 
+/**
+ * Makes the emitter cylindrical.
+ */
 export class CylinderEmitterShape extends Action {
 
   /**
-   * Makes the emitter cylindrical.
-   * 
    * Fields1:
    * Index | Value
    * ------|------
@@ -2729,40 +3114,317 @@ export class CylinderEmitterShape extends Action {
 
 }
 
-export type RectangleParticleParams = {
+export interface CommonAction6xxFields2Params {
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3,
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number,
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number,
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number,
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera. Defaults to 0.
+   * 
+   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
+   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  negativeDepthOffset?: number,
+  /**
+   * Controls how dark shaded parts of the particle are. Defaults to 0.
+   */
+  shadowDarkness?: number,
+  /**
+   * Controls whether or not specular highlights should be visible. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: boolean,
+  /**
+   * Controls how sharp the specular highlights are. Defaults to 0.25.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number,
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Unlit}.
+   */
+  lighting?: LightingMode,
+  /**
+   * Controls how bright the specular highlights are. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number,
+}
+export function createCommonAction6xxFields2({
+  bloomColor = [1, 1, 1],
+  bloomStrength = 0,
+  minDistance = -1,
+  maxDistance = -1,
+  negativeDepthOffset = 0,
+  shadowDarkness = 0,
+  specular = false,
+  glossiness = 0.25,
+  lighting = LightingMode.Unlit,
+  specularity = 0.5,
+}: CommonAction6xxFields2Params = {}) {
+  return [
+    /*  0 */ new Field(FieldType.Integer, 0),
+    /*  1 */ new Field(FieldType.Integer, 0),
+    /*  2 */ new Field(FieldType.Integer, 8),
+    /*  3 */ new Field(FieldType.Integer, 0),
+    /*  4 */ new Field(FieldType.Integer, 1),
+    /*  5 */ new Field(FieldType.Float, bloomColor[0]),
+    /*  6 */ new Field(FieldType.Float, bloomColor[1]),
+    /*  7 */ new Field(FieldType.Float, bloomColor[2]),
+    /*  8 */ new Field(FieldType.Float, bloomStrength),
+    /*  9 */ new Field(FieldType.Integer, 0),
+    /* 10 */ new Field(FieldType.Integer, 0),
+    /* 11 */ new Field(FieldType.Integer, 0),
+    /* 12 */ new Field(FieldType.Integer, 0),
+    /* 13 */ new Field(FieldType.Integer, 0),
+    /* 14 */ new Field(FieldType.Float, -1),
+    /* 15 */ new Field(FieldType.Float, -1),
+    /* 16 */ new Field(FieldType.Float, -1),
+    /* 17 */ new Field(FieldType.Float, -1),
+    /* 18 */ new Field(FieldType.Float, minDistance),
+    /* 19 */ new Field(FieldType.Float, maxDistance),
+    /* 20 */ new Field(FieldType.Integer, 0),
+    /* 21 */ new Field(FieldType.Integer, 0),
+    /* 22 */ new Field(FieldType.Integer, 0),
+    /* 23 */ new Field(FieldType.Integer, 0),
+    /* 24 */ new Field(FieldType.Integer, 0),
+    /* 25 */ new Field(FieldType.Float, 1),
+    /* 26 */ new Field(FieldType.Float, negativeDepthOffset),
+    /* 27 */ new Field(FieldType.Integer, 1),
+    /* 28 */ new Field(FieldType.Integer, 0),
+    /* 29 */ new Field(FieldType.Float, 5),
+    /* 30 */ new Field(FieldType.Float, shadowDarkness),
+    /* 31 */ new Field(FieldType.Integer, 0),
+    /* 32 */ new Field(FieldType.Integer, 1),
+    /* 33 */ new Field(FieldType.Boolean, specular),
+    /* 34 */ new Field(FieldType.Float, glossiness),
+    /* 35 */ new Field(FieldType.Integer, lighting),
+    /* 36 */ new Field(FieldType.Integer, -2),
+    /* 37 */ new Field(FieldType.Integer, 0),
+    /* 38 */ new Field(FieldType.Float, specularity),
+    /* 39 */ new Field(FieldType.Integer, 1),
+    /* 40 */ new Field(FieldType.Integer, 0),
+    /* 41 */ new Field(FieldType.Integer, 0),
+    /* 42 */ new Field(FieldType.Integer, 0),
+    /* 43 */ new Field(FieldType.Integer, 0),
+    /* 44 */ new Field(FieldType.Integer, 0),
+  ]
+}
+/**
+ * Super class for all specialized action classes using the common action 6xx
+ * fields2 lists with accessors for each known field.
+ */
+export class CommonAction6xxFields2Action extends Action {
+
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  get bloomColor() {
+    return [
+      this.fields2[5].value as number,
+      this.fields2[6].value as number,
+      this.fields2[7].value as number,
+    ] as Vector3
+  }
+  set bloomColor([r, g, b]) {
+    this.fields2[5].value = r
+    this.fields2[6].value = g
+    this.fields2[7].value = b
+  }
+
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  get bloomStrength() { return this.fields2[8].value as number }
+  set bloomStrength(value) { this.fields2[8].value = value }
+
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  get minDistance() { return this.fields2[18].value as number }
+  set minDistance(value) { this.fields2[18].value = value }
+
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  get maxDistance() { return this.fields2[19].value as number }
+  set maxDistance(value) { this.fields2[19].value = value }
+
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera.
+   * 
+   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
+   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  get negativeDepthOffset() { return this.fields2[26].value as number }
+  set negativeDepthOffset(value) { this.fields2[26].value = value }
+
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  get shadowDarkness() { return this.fields2[30].value as number }
+  set shadowDarkness(value) { this.fields2[30].value = value }
+
+  /**
+   * Controls whether or not specular highlights should be visible.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  get specular() { return this.fields2[33].value as number }
+  set specular(value) { this.fields2[33].value = value }
+
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  get glossiness() { return this.fields2[34].value as number }
+  set glossiness(value) { this.fields2[34].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  get specularity() { return this.fields2[38].value as number }
+  set specularity(value) { this.fields2[38].value = value }
+
+}
+
+export interface RectangleParticleParams extends CommonAction6xxFields2Params {
   blendMode?: BlendMode | Property
   width?: number | Property
   height?: number | Property
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * Seemingly identical to {@link RectangleParticleParams.colorMultiplier2 colorMultiplier2}?
+   * Seemingly identical to {@link color2}?
    * 
-   * **Argument**: Particle age
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  colorMultiplier1?: Vector4 | Property
+  color1?: Vector4 | Property
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * Seemingly identical to {@link RectangleParticleParams.colorMultiplier1 colorMultiplier1}?
+   * Seemingly identical to {@link color1}?
    * 
-   * **Argument**: Particle age
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  colorMultiplier2?: Vector4 | Property
+  color2?: Vector4 | Property
   /**
    * The color for the "start" edge of the rectangle.
    * 
-   * This color transitions linearly into the {@link RectangleParticleParams.endColor end color} across the rectangle.
+   * This color transitions linearly into the {@link endColor end color} across the rectangle.
    * 
-   * **Argument**: Effect age
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   startColor?: Vector4 | Property
   /**
    * The color for the "end" edge of the rectangle.
    * 
-   * This color transitions linearly into the {@link RectangleParticleParams.startColor start color} across the rectangle.
+   * This color transitions linearly into the {@link startColor start color} across the rectangle.
    * 
-   * **Argument**: Effect age
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   endColor?: Vector4 | Property
   widthMultiplier?: number | Property
@@ -2770,9 +3432,9 @@ export type RectangleParticleParams = {
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * **Argument**: Effect age
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  colorMultiplier3?: Vector4 | Property
+  color3?: Vector4 | Property
   rgbMultiplier?: number | Property
   alphaMultiplier?: number | Property
   unkScalarProp2_2?: number | Property
@@ -2781,83 +3443,72 @@ export type RectangleParticleParams = {
   unkVec4Prop2_5?: Vector4 | Property
   unkScalarProp2_6?: number | Property
 }
-export class RectangleParticle extends Action {
+/**
+ * Simple particle with a gradient. Very primitive, but easy to create and use.
+ * 
+ * This action is really only good for creating simple rectangular particles
+ * with a gradient and nothing fancy. In most cases, you probably want
+ * {@link AnimatedTextureParticle} instead if you are making or modifying an
+ * effect to use in a mod, as it has almost everything this action does, and
+ * a lot more.
+ */
+export class GradientParticle extends CommonAction6xxFields2Action {
 
   constructor({
     blendMode = BlendMode.Normal,
     width = 1,
     height = 1,
-    colorMultiplier1 = [1, 1, 1, 1],
-    colorMultiplier2 = [1, 1, 1, 1],
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
     startColor = [1, 1, 1, 1],
     endColor = [1, 1, 1, 1],
     widthMultiplier = 1,
     heightMultiplier = 1,
-    colorMultiplier3 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
     rgbMultiplier = 1,
     alphaMultiplier = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    negativeDepthOffset = 0,
+    shadowDarkness = 0,
+    specular = false,
+    glossiness = 0.25,
+    lighting = LightingMode.Unlit,
+    specularity = 0.5,
     unkScalarProp2_2 = 0,
     unkVec4Prop2_3 = [1, 1, 1, 1],
     unkVec4Prop2_4 = [1, 1, 1, 1],
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
   }: RectangleParticleParams = {}) {
-    super(ActionType.RectangleParticle, false, true, 0, [
+    super(ActionType.GradientParticle, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, -1),
       /*  1 */ new Field(FieldType.Integer, 1),
       /*  2 */ new Field(FieldType.Integer, 1),
-    ], [ // Fields2
-      /*  0 */ new Field(FieldType.Integer, 0),
-      /*  1 */ new Field(FieldType.Integer, 0),
-      /*  2 */ new Field(FieldType.Integer, 8),
-      /*  3 */ new Field(FieldType.Integer, 0),
-      /*  4 */ new Field(FieldType.Integer, 1),
-      /*  5 */ new Field(FieldType.Float, 1),
-      /*  6 */ new Field(FieldType.Float, 1),
-      /*  7 */ new Field(FieldType.Float, 1),
-      /*  8 */ new Field(FieldType.Float, 1),
-      /*  9 */ new Field(FieldType.Integer, 1),
-      /* 10 */ new Field(FieldType.Integer, 0),
-      /* 11 */ new Field(FieldType.Integer, 0),
-      /* 12 */ new Field(FieldType.Integer, 0),
-      /* 13 */ new Field(FieldType.Integer, 0),
-      /* 14 */ new Field(FieldType.Float, -1),
-      /* 15 */ new Field(FieldType.Float, -1),
-      /* 16 */ new Field(FieldType.Float, -1),
-      /* 17 */ new Field(FieldType.Float, -1),
-      /* 18 */ new Field(FieldType.Float, -1),
-      /* 19 */ new Field(FieldType.Float, -1),
-      /* 20 */ new Field(FieldType.Integer, 0),
-      /* 21 */ new Field(FieldType.Integer, 0),
-      /* 22 */ new Field(FieldType.Integer, 0),
-      /* 23 */ new Field(FieldType.Integer, 0),
-      /* 24 */ new Field(FieldType.Integer, 0),
-      /* 25 */ new Field(FieldType.Float, 1),
-      /* 26 */ new Field(FieldType.Integer, 0),
-      /* 27 */ new Field(FieldType.Integer, 1),
-      /* 28 */ new Field(FieldType.Integer, 0),
-      /* 29 */ new Field(FieldType.Integer, 0),
-      /* 30 */ new Field(FieldType.Integer, 0),
-      /* 31 */ new Field(FieldType.Integer, 0),
-      /* 32 */ new Field(FieldType.Integer, 1),
-      /* 33 */ new Field(FieldType.Integer, 0),
-      /* 34 */ new Field(FieldType.Float, 0.5),
-      /* 35 */ new Field(FieldType.Integer, -2),
-      /* 36 */ new Field(FieldType.Integer, -2),
-      /* 37 */ new Field(FieldType.Integer, 0),
-      /* 38 */ new Field(FieldType.Integer, 0),
-      /* 39 */ new Field(FieldType.Integer, 0),
-    ], [ // Properties1
+    ], createCommonAction6xxFields2({
+      bloomColor,
+      bloomStrength,
+      minDistance,
+      maxDistance,
+      negativeDepthOffset,
+      shadowDarkness,
+      specular,
+      glossiness,
+      lighting,
+      specularity,
+    }), [ // Properties1
       /*  0 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
       /*  1 */ width instanceof Property ? width : new ConstantProperty(width),
       /*  2 */ height instanceof Property ? height : new ConstantProperty(height),
-      /*  3 */ colorMultiplier1 instanceof Property ? colorMultiplier1 : new ConstantProperty(...colorMultiplier1),
-      /*  4 */ colorMultiplier2 instanceof Property ? colorMultiplier2 : new ConstantProperty(...colorMultiplier2),
+      /*  3 */ color1 instanceof Property ? color1 : new ConstantProperty(...color1),
+      /*  4 */ color2 instanceof Property ? color2 : new ConstantProperty(...color2),
       /*  5 */ startColor instanceof Property ? startColor : new ConstantProperty(...startColor),
       /*  6 */ endColor instanceof Property ? endColor : new ConstantProperty(...endColor),
       /*  7 */ widthMultiplier instanceof Property ? widthMultiplier : new ConstantProperty(widthMultiplier),
       /*  8 */ heightMultiplier instanceof Property ? heightMultiplier : new ConstantProperty(heightMultiplier),
-      /*  9 */ colorMultiplier3 instanceof Property ? colorMultiplier3 : new ConstantProperty(...colorMultiplier3),
+      /*  9 */ color3 instanceof Property ? color3 : new ConstantProperty(...color3),
     ], [ // Properties2
       /*  0 */ rgbMultiplier instanceof Property ? rgbMultiplier : new ConstantProperty(rgbMultiplier),
       /*  1 */ alphaMultiplier instanceof Property ? alphaMultiplier : new ConstantProperty(alphaMultiplier),
@@ -2871,6 +3522,7 @@ export class RectangleParticle extends Action {
 
   get blendMode() { return this.properties1[0].stops[0].value as BlendMode }
   set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
+  get blendModeProperty() { return this.properties1[0] }
 
   get width() { return this.properties1[1] }
   set width(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
@@ -2883,7 +3535,7 @@ export class RectangleParticle extends Action {
    * 
    * Seemingly identical to {@link colorMultiplier2}?
    * 
-   * **Argument**: Particle age
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   get colorMultiplier1() { return this.properties1[3] }
   set colorMultiplier1(value: Property | PropertyValue) { setPropertyInList(this.properties1, 3, value) }
@@ -2893,7 +3545,7 @@ export class RectangleParticle extends Action {
    * 
    * Seemingly identical to {@link colorMultiplier1}?
    * 
-   * **Argument**: Particle age
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   get colorMultiplier2() { return this.properties1[4] }
   set colorMultiplier2(value: Property | PropertyValue) { setPropertyInList(this.properties1, 4, value) }
@@ -2903,7 +3555,7 @@ export class RectangleParticle extends Action {
    * 
    * This color transitions linearly into the {@link endColor end color} across the rectangle.
    * 
-   * **Argument**: Effect age
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get startColor() { return this.properties1[5] }
   set startColor(value: Property | PropertyValue) { setPropertyInList(this.properties1, 5, value) }
@@ -2913,7 +3565,7 @@ export class RectangleParticle extends Action {
    * 
    * This color transitions linearly into the {@link startColor start color} across the rectangle.
    * 
-   * **Argument**: Effect age
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get endColor() { return this.properties1[6] }
   set endColor(value: Property | PropertyValue) { setPropertyInList(this.properties1, 6, value) }
@@ -2927,7 +3579,7 @@ export class RectangleParticle extends Action {
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * **Argument**: Effect age
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get colorMultiplier3() { return this.properties1[9] }
   set colorMultiplier3(value: Property | PropertyValue) { setPropertyInList(this.properties1, 9, value) }
@@ -2946,6 +3598,480 @@ export class RectangleParticle extends Action {
 
 }
 
+export interface AnimatedTextureParticleParams extends CommonAction6xxFields2Params {
+  /**
+   * Texture ID. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  texture?: number | Property,
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | Property,
+  /**
+   * Offset for the position of the particle. Each axis has its own property.
+   * Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offset?: Vector3 | Property[],
+  /**
+   * The width of the particle.
+   * 
+   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: number | Property,
+  /**
+   * The height of the particle.
+   * 
+   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * enabled, {@link AnimatedTextureParticleParams.width width} also controls
+   * the height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: number | Property,
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4 | Property,
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4 | Property,
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  color3?: Vector4 | Property,
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold?: number | Property,
+  /**
+   * Rotation in degrees. Each axis has its own property. Defaults to
+   * [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  rotation?: Vector3 | Property[],
+  /**
+   * Rotation speed in degrees per second. Each axis has its own property.
+   * Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  rotationSpeed?: Vector3 | Property[],
+  /**
+   * Rotation speed multiplier. Each axis has its own property. Defaults to
+   * [1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  rotationSpeedMultiplier?: Vector3 | Property[],
+  /**
+   * Positive values will make the particle draw in front of objects closer to
+   * the camera, while negative values will make it draw behind objects farther
+   * away from the camera. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link negativeDepthOffset}
+   */
+  depthOffset?: number | Property,
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * Defaults to 0.
+   * 
+   * Seemingly identical to
+   * {@link AnimatedTextureParticleParams.frameIndexOffset unkProp1_22}? The sum of
+   * these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: number | Property,
+  /**
+   * Seemingly identical to
+   * {@link AnimatedTextureParticleParams.frameIndex frameIndex}? The sum of
+   * these two properties is the actual frame index that gets used. Defaults to
+   * 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: number | Property,
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: number | Property,
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: number | Property,
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information. Defaults to
+   * {@link OrientationMode.Camera}.
+   */
+  orientation?: OrientationMode,
+  /**
+   * Normal map ID. Defaults to 0.
+   */
+  normalMap?: number,
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * Defaults to 1.
+   * 
+   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link AnimatedTextureParticleParams.randomHeightMultiplier randomHeightMultiplier}
+   */
+  randomWidthMultiplier?: number,
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height. Defaults to 1.
+   * 
+   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * enabled,
+   * {@link AnimatedTextureParticleParams.randomWidthMultiplier randomWidthMultiplier}
+   * also affects the height, and this field is ignored.
+   */
+  randomHeightMultiplier?: number,
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored. Defaults to true.
+   * 
+   * See also:
+   * - {@link AnimatedTextureParticleParams.width width}
+   * - {@link AnimatedTextureParticleParams.height height}
+   * - {@link AnimatedTextureParticleParams.randomWidthMultiplier randomWidthMultiplier}
+   * - {@link AnimatedTextureParticleParams.randomHeightMultiplier randomHeightMultiplier}
+   */
+  uniformScale?: boolean,
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`. Defaults to 1.
+   * 
+   * See also:
+   * - {@link AnimatedTextureParticleParams.totalFrames totalFrames}
+   */
+  columns?: number,
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture. Defaults to 1.
+   * 
+   * See also:
+   * - {@link AnimatedTextureParticleParams.columns columns}
+   */
+  totalFrames?: number,
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix
+   * frames when the frame index is not a whole number. For example, if the
+   * frame index is 0.5, enabling this will cause the average of the first two
+   * frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will just be truncated to get a whole number.
+   * 
+   * Defaults to true.
+   * 
+   * See also:
+   * - {@link AnimatedTextureParticleParams.frameIndex frameIndex}
+   */
+  interpolateFrames?: boolean,
+  unkScalarProp1_23?: number | Property,
+  unkScalarProp1_24?: number | Property,
+  unkScalarProp2_2?: number | Property,
+  unkVec4Prop2_3?: Vector4 | Property,
+  unkVec4Prop2_4?: Vector4 | Property,
+  unkVec4Prop2_5?: Vector4 | Property,
+  unkScalarProp2_6?: number | Property,
+}
+/**
+ * Particle with a texture that may be animated. This is the most common
+ * particle type and it has a lot of useful fields and properties.
+ */
+export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
+
+  constructor({
+    texture = 1,
+    blendMode = BlendMode.Normal,
+    offset = [0, 0, 0],
+    width = 1,
+    height = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    alphaThreshold = 0,
+    rotation = [0, 0, 0],
+    rotationSpeed = [0, 0, 0],
+    rotationSpeedMultiplier = [1, 1, 1],
+    depthOffset = 0,
+    frameIndex = 0,
+    frameIndexOffset = 0,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+    orientation = OrientationMode.Camera,
+    normalMap = 0,
+    randomWidthMultiplier = 1,
+    randomHeightMultiplier = 1,
+    uniformScale = true,
+    columns = 1,
+    totalFrames = 1,
+    interpolateFrames = true,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    negativeDepthOffset = 0,
+    shadowDarkness = 0,
+    specular = false,
+    glossiness = 0.25,
+    lighting = LightingMode.Unlit,
+    specularity = 0.5,
+    unkScalarProp1_23 = 0,
+    unkScalarProp1_24 = 0,
+    unkScalarProp2_2 = 0,
+    unkVec4Prop2_3 = [1, 1, 1, 1],
+    unkVec4Prop2_4 = [1, 1, 1, 1],
+    unkVec4Prop2_5 = [1, 1, 1, 1],
+    unkScalarProp2_6 = 0,
+  }: AnimatedTextureParticleParams = {}) {
+    super(ActionType.AnimatedTextureParticle, false, true, 0, [
+      /*  0 */ new Field(FieldType.Integer, orientation),
+      /*  1 */ new Field(FieldType.Integer, normalMap),
+      /*  2 */ new Field(FieldType.Float, randomWidthMultiplier),
+      /*  3 */ new Field(FieldType.Float, randomHeightMultiplier),
+      /*  4 */ new Field(FieldType.Boolean, uniformScale),
+      /*  5 */ new Field(FieldType.Integer, 0),
+      /*  6 */ new Field(FieldType.Integer, columns),
+      /*  7 */ new Field(FieldType.Integer, totalFrames),
+      /*  8 */ new Field(FieldType.Boolean, interpolateFrames),
+      /*  9 */ new Field(FieldType.Integer, 0),
+      /* 10 */ new Field(FieldType.Integer, 0),
+      /* 11 */ new Field(FieldType.Float, -1),
+      /* 12 */ new Field(FieldType.Integer, 1),
+      /* 13 */ new Field(FieldType.Integer, 0),
+      /* 14 */ new Field(FieldType.Integer, 0),
+      /* 15 */ new Field(FieldType.Integer, 1),
+      /* 16 */ new Field(FieldType.Integer, 1),
+      /* 17 */ new Field(FieldType.Integer, 0),
+    ], createCommonAction6xxFields2({
+      bloomColor,
+      bloomStrength,
+      minDistance,
+      maxDistance,
+      negativeDepthOffset,
+      shadowDarkness,
+      specular,
+      glossiness,
+      lighting,
+      specularity,
+    }), [
+      /*  0 */ texture instanceof Property ? texture : new ConstantProperty(texture),
+      /*  1 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
+      /*  2 */ offset[0] instanceof Property ? offset[0] : new ConstantProperty(offset[0]),
+      /*  3 */ offset[1] instanceof Property ? offset[1] : new ConstantProperty(offset[1]),
+      /*  4 */ offset[2] instanceof Property ? offset[2] : new ConstantProperty(offset[2]),
+      /*  5 */ width instanceof Property ? width : new ConstantProperty(width),
+      /*  6 */ height instanceof Property ? height : new ConstantProperty(height),
+      /*  7 */ color1 instanceof Property ? color1 : new ConstantProperty(...color1),
+      /*  8 */ color2 instanceof Property ? color2 : new ConstantProperty(...color2),
+      /*  9 */ color3 instanceof Property ? color3 : new ConstantProperty(...color3),
+      /* 10 */ alphaThreshold instanceof Property ? alphaThreshold : new ConstantProperty(alphaThreshold),
+      /* 11 */ rotation[0] instanceof Property ? rotation[0] : new ConstantProperty(rotation[0]),
+      /* 12 */ rotation[1] instanceof Property ? rotation[1] : new ConstantProperty(rotation[1]),
+      /* 13 */ rotation[2] instanceof Property ? rotation[2] : new ConstantProperty(rotation[2]),
+      /* 14 */ rotationSpeed[0] instanceof Property ? rotationSpeed[0] : new ConstantProperty(rotationSpeed[0]),
+      /* 15 */ rotationSpeedMultiplier[0] instanceof Property ? rotationSpeedMultiplier[0] : new ConstantProperty(rotationSpeedMultiplier[0]),
+      /* 16 */ rotationSpeed[1] instanceof Property ? rotationSpeed[1] : new ConstantProperty(rotationSpeed[1]),
+      /* 17 */ rotationSpeedMultiplier[1] instanceof Property ? rotationSpeedMultiplier[1] : new ConstantProperty(rotationSpeedMultiplier[1]),
+      /* 18 */ rotationSpeed[2] instanceof Property ? rotationSpeed[2] : new ConstantProperty(rotationSpeed[2]),
+      /* 19 */ rotationSpeedMultiplier[2] instanceof Property ? rotationSpeedMultiplier[2] : new ConstantProperty(rotationSpeedMultiplier[2]),
+      /* 20 */ depthOffset instanceof Property ? depthOffset : new ConstantProperty(depthOffset),
+      /* 21 */ frameIndex instanceof Property ? frameIndex : new ConstantProperty(frameIndex),
+      /* 22 */ frameIndexOffset instanceof Property ? frameIndexOffset : new ConstantProperty(frameIndexOffset),
+      /* 23 */ unkScalarProp1_23 instanceof Property ? unkScalarProp1_23 : new ConstantProperty(unkScalarProp1_23),
+      /* 24 */ unkScalarProp1_24 instanceof Property ? unkScalarProp1_24 : new ConstantProperty(unkScalarProp1_24),
+    ], [
+      /*  0 */ rgbMultiplier instanceof Property ? rgbMultiplier : new ConstantProperty(rgbMultiplier),
+      /*  1 */ alphaMultiplier instanceof Property ? alphaMultiplier : new ConstantProperty(alphaMultiplier),
+      /*  2 */ unkScalarProp2_2 instanceof Property ? unkScalarProp2_2 : new ConstantProperty(unkScalarProp2_2),
+      /*  3 */ unkVec4Prop2_3 instanceof Property ? unkVec4Prop2_3 : new ConstantProperty(...unkVec4Prop2_3),
+      /*  4 */ unkVec4Prop2_4 instanceof Property ? unkVec4Prop2_4 : new ConstantProperty(...unkVec4Prop2_4),
+      /*  5 */ unkVec4Prop2_5 instanceof Property ? unkVec4Prop2_5 : new ConstantProperty(...unkVec4Prop2_5),
+      /*  6 */ unkScalarProp2_6 instanceof Property ? unkScalarProp2_6 : new ConstantProperty(unkScalarProp2_6),
+    ])
+  }
+
+  get texture() { return this.properties1[0] }
+  set texture(value) { setPropertyInList(this.properties1, 0, value) }
+
+  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
+  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
+  get blendModeProperty() { return this.properties1[1] }
+
+  get offsetX() { return this.properties1[2] }
+  set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
+
+  get offsetY() { return this.properties1[3] }
+  set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
+
+  get offsetZ() { return this.properties1[4] }
+  set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
+
+  get offset() { return this.properties1.slice(2, 5) }
+  set offset(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 2 + i, value[i])
+    }
+  }
+
+  get width() { return this.properties1[5] }
+  set width(value) { setPropertyInList(this.properties1, 5, value) }
+
+  get height() { return this.properties1[6] }
+  set height(value) { setPropertyInList(this.properties1, 6, value) }
+
+  get color1() { return this.properties1[7] }
+  set color1(value) { setPropertyInList(this.properties1, 7, value) }
+
+  get color2() { return this.properties1[8] }
+  set color2(value) { setPropertyInList(this.properties1, 8, value) }
+
+  get color3() { return this.properties1[9] }
+  set color3(value) { setPropertyInList(this.properties1, 9, value) }
+
+  get alphaThreshold() { return this.properties1[10] }
+  set alphaThreshold(value) { setPropertyInList(this.properties1, 10, value) }
+
+  get rotationX() { return this.properties1[11] }
+  set rotationX(value) { setPropertyInList(this.properties1, 11, value) }
+
+  get rotationY() { return this.properties1[12] }
+  set rotationY(value) { setPropertyInList(this.properties1, 12, value) }
+
+  get rotationZ() { return this.properties1[13] }
+  set rotationZ(value) { setPropertyInList(this.properties1, 13, value) }
+
+  get rotation() { return this.properties1.slice(11, 14) }
+  set rotation(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 11 + i, value[i])
+    }
+  }
+
+  get rotationSpeedX() { return this.properties1[14] }
+  set rotationSpeedX(value) { setPropertyInList(this.properties1, 14, value) }
+
+  get rotationSpeedY() { return this.properties1[16] }
+  set rotationSpeedY(value) { setPropertyInList(this.properties1, 16, value) }
+
+  get rotationSpeedZ() { return this.properties1[18] }
+  set rotationSpeedZ(value) { setPropertyInList(this.properties1, 18, value) }
+
+  get rotationSpeed() { return [
+    this.properties1[14],
+    this.properties1[16],
+    this.properties1[18],
+  ] }
+  set rotationSpeed(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 14 + i * 2, value[i])
+    }
+  }
+
+  get rotationSpeedMultiplierX() { return this.properties1[15] }
+  set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 15, value) }
+
+  get rotationSpeedMultiplierY() { return this.properties1[17] }
+  set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 17, value) }
+
+  get rotationSpeedMultiplierZ() { return this.properties1[19] }
+  set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 19, value) }
+
+  get rotationSpeedMultiplier() { return [
+    this.properties1[15],
+    this.properties1[17],
+    this.properties1[19],
+  ] }
+  set rotationSpeedMultiplier(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 15 + i * 2, value[i])
+    }
+  }
+
+  get depthOffset() { return this.properties1[20] }
+  set depthOffset(value) { setPropertyInList(this.properties1, 20, value) }
+
+  get frameIndex() { return this.properties1[21] }
+  set frameIndex(value) { setPropertyInList(this.properties1, 21, value) }
+
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+  get orientation() { return this.fields1[0].value as OrientationMode }
+  set orientation(value) { this.fields1[0].value = value }
+
+  get normalMap() { return this.fields1[1].value as number }
+  set normalMap(value) { this.fields1[1].value = value }
+
+  get randomWidthMultiplier() { return this.fields1[2].value as number }
+  set randomWidthMultiplier(value) { this.fields1[2].value = value }
+
+  get randomHeightMultiplier() { return this.fields1[3].value as number }
+  set randomHeightMultiplier(value) { this.fields1[3].value = value }
+
+  get uniformScale() { return this.fields1[4].value as boolean }
+  set uniformScale(value) { this.fields1[4].value = value }
+
+  get columns() { return this.fields1[6].value as number }
+  set columns(value) { this.fields1[6].value = value }
+
+  get totalFrames() { return this.fields1[7].value as number }
+  set totalFrames(value) { this.fields1[7].value = value }
+
+  get interpolateFrames() { return this.fields1[8].value as number }
+  set interpolateFrames(value) { this.fields1[8].value = value }
+
+}
+
 export type PointLightSourceParams = {
   diffuseColor?: Vector4 | Property,
   specularColor?: Vector4 | Property,
@@ -2959,6 +4085,9 @@ export type PointLightSourceParams = {
   glow?: number,
   glowConcentration?: number,
 }
+/**
+ * Point light source.
+ */
 export class PointLightSource extends Action {
 
   constructor({
@@ -2992,9 +4121,9 @@ export class PointLightSource extends Action {
       /* 11 */ new Field(FieldType.Boolean, separateSpecular),
       /* 12 */ new Field(FieldType.Integer, fadeOutTime),
       /* 13 */ new Field(FieldType.Float, shadowDarkness),
-      /* 14 */ new Field(FieldType.Boolean, 0),
+      /* 14 */ new Field(FieldType.Boolean, false),
       /* 15 */ new Field(FieldType.Integer, 2),
-      /* 16 */ new Field(FieldType.Boolean, 0),
+      /* 16 */ new Field(FieldType.Boolean, false),
       /* 17 */ new Field(FieldType.Float, 0.5),
       /* 18 */ new Field(FieldType.Float, 0.5),
       /* 19 */ new Field(FieldType.Float, 0.5),
@@ -3032,19 +4161,19 @@ export class PointLightSource extends Action {
   }
 
   get diffuseColor() { return this.properties1[0] }
-  set diffuseColor(value) { this.properties1[0] = value }
+  set diffuseColor(value) { setPropertyInList(this.properties1, 0, value) }
 
   get specularColor() { return this.properties1[1] }
-  set specularColor(value) { this.properties1[1] = value }
+  set specularColor(value) { setPropertyInList(this.properties1, 1, value) }
 
   get radius() { return this.properties1[2] }
-  set radius(value) { this.properties1[2] = value }
+  set radius(value) { setPropertyInList(this.properties1, 2, value) }
 
   get diffuseMultiplier() { return this.properties2[3] }
-  set diffuseMultiplier(value) { this.properties2[3] = value }
+  set diffuseMultiplier(value) { setPropertyInList(this.properties2, 3, value) }
 
   get specularMultiplier() { return this.properties1[4] }
-  set specularMultiplier(value) { this.properties2[4] = value }
+  set specularMultiplier(value) { setPropertyInList(this.properties2, 4, value) }
 
   get castShadows() { return this.fields2[10].value as boolean }
   set castShadows(value) { this.fields2[10].value = value }
@@ -3069,6 +4198,7 @@ export class PointLightSource extends Action {
 export const Actions = {
   [ActionType.Spin]: Spin, Spin,
   [ActionType.StaticTransform]: StaticTransform, StaticTransform,
+  [ActionType.Unk105]: UnkAction105, UnkAction105,
   [ActionType.EffectLifetime]: EffectLifetime, EffectLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
@@ -3083,7 +4213,8 @@ export const Actions = {
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.CuboidEmitterShape]: CuboidEmitterShape, CuboidEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
-  [ActionType.RectangleParticle]: RectangleParticle, RectangleParticle,
+  [ActionType.GradientParticle]: GradientParticle, GradientParticle,
+  [ActionType.AnimatedTextureParticle]: AnimatedTextureParticle, AnimatedTextureParticle,
   [ActionType.PointLightSource]: PointLightSource, PointLightSource,
 }
 
@@ -3605,7 +4736,7 @@ export class Property {
           case PropertyFunction.Curve2: {
             const i = this.#valueIndex
             const cc = this.componentCount
-            this.fields.splice(0, this.fields.length, ...this.fields.slice(i, i + cc))
+            this.fields.splice(0, this.fields.length, ...this.fields.slice(FieldType.Integer, i + cc))
             break
           }
           case PropertyFunction.CompCurve: {
@@ -3707,7 +4838,7 @@ export class SteppedProperty extends Property {
 
   constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
     if (stops.length === 0) {
-      throw new Error ('Not enough arguments given. Properties with a linear function must have at least 2 stops.')
+      throw new Error ('Properties with a stepped function must have at least 2 stops.')
     }
     const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
     super(comps - 1, PropertyFunction.Stepped, loop, [
@@ -3728,7 +4859,7 @@ export class LinearProperty extends Property {
 
   constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
     if (stops.length === 0) {
-      throw new Error ('Not enough arguments given. Properties with a linear function must have at least 2 stops.')
+      throw new Error ('Properties with a linear function must have at least 2 stops.')
     }
     const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
     super(comps - 1, PropertyFunction.Linear, loop, [
@@ -3740,6 +4871,51 @@ export class LinearProperty extends Property {
       :
         (s.value as number[]).map(v => new Field(FieldType.Float, v))
       ),
+    ])
+  }
+
+}
+
+/**
+ * A {@link LinearProperty linear property} with only two stops. A bit
+ * limited, but very easy to create.
+ */
+export class BasicLinearProperty extends LinearProperty {
+
+  constructor(
+    loop: boolean,
+    endPosition: number,
+    startValue: PropertyValue,
+    endValue: PropertyValue
+  ) {
+    super(loop, [
+      { position: 0, value: startValue },
+      { position: endPosition, value: endValue },
+    ])
+  }
+
+}
+
+export class Curve2Property extends Property {
+
+  constructor(loop: boolean, stops: { position: number, value: PropertyValue, inSlope: number, outSlope: number}[], unk1: number, unk2: number) {
+    if (stops.length === 0) {
+      throw new Error ('Properties with a curve function must have at least 2 stops.')
+    }
+    const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
+    super(comps - 1, PropertyFunction.Curve2, loop, [
+      new Field(FieldType.Integer, stops.length),
+      ...arrayOf(comps * 2, () => new Field(FieldType.Float, 0)),
+      ...stops.map(s => new Field(FieldType.Float, s.position)),
+      ...stops.flatMap(s => comps === 1 ?
+        new Field(FieldType.Float, s.value as number)
+      :
+        (s.value as number[]).map(v => new Field(FieldType.Float, v))
+      ),
+      ...stops.slice(0, -1).flatMap(s => arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(s.outSlope) ? s.outSlope[i] : s.outSlope))),
+      ...arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(unk1) ? unk1[i] : unk1)),
+      ...stops.slice(1).flatMap(s => arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(s.inSlope) ? s.inSlope[i] : s.inSlope))),
+      ...arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(unk2) ? unk2[i] : unk2)),
     ])
   }
 
@@ -3763,37 +4939,37 @@ export class Modifier {
     4: 61520,
   }
 
-  #typeEnumA: number = 0
-  #typeEnumB: number = 0
-
+  typeEnumA: number
+  typeEnumB: number
   fields: Field[]
   properties: Property[]
 
   constructor(
-    type: ModifierType,
-    valueType: ValueType = ValueType.Scalar,
+    typeEnumA: number,
+    typeEnumB: number,
     fields: Field[] = [],
     properties: Property[] = []
   ) {
-    this.type = type
-    this.valueType = valueType
+    this.typeEnumA = typeEnumA
+    this.typeEnumB = typeEnumB
     this.fields = fields
     this.properties = properties
   }
 
   static read(br: BinaryReader) {
     const typeEnumA = br.readUint16()
-    if (!Modifier.#knownTypeEnumAs.has(typeEnumA & 0b11111111_11111100)) {
-      throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
-    }
+    // if (!Modifier.#knownTypeEnumAs.has(typeEnumA & 0b11111111_11111100)) {
+    //   throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
+    // }
     br.assertUint8(0)
     br.assertUint8(1)
     const typeEnumB = br.readUint32()
-    if ((typeEnumB & 0xffffffe0) !== 0) {
-      throw new Error('Unknown property modifier type enum B: ' + typeEnumB)
-    }
-    const modifierType = (typeEnumB & 0b11100) >>> 2
-    const valueType = typeEnumB & 0b11
+    // if ((typeEnumB & 0xffffffe0) !== 0) {
+    //   throw new Error('Unknown property modifier type enum B: ' + typeEnumB)
+    // }
+    // This is apparently wrong in some cases. Needs to be looked into more.
+    // const modifierType = (typeEnumB & 0b11100) >>> 2
+    // const valueType = typeEnumB & 0b11
     const fieldCount = br.readInt32()
     const propertyCount = br.readInt32()
     const fieldOffset = br.readInt32()
@@ -3807,13 +4983,13 @@ export class Modifier {
     }
     br.stepOut()
     const fields = Field.readManyAt(br, fieldOffset, fieldCount, this)
-    return new Modifier(modifierType, valueType, fields, properties)
+    return new Modifier(typeEnumA, typeEnumB, fields, properties)
   }
 
   static copy(mod: Modifier) {
     return new Modifier(
-      mod.type,
-      mod.valueType,
+      mod.typeEnumA,
+      mod.typeEnumB,
       mod.fields.map(f => Field.copy(f)),
       mod.properties.map(p => Property.copy(p))
     )
@@ -3821,10 +4997,10 @@ export class Modifier {
 
   write(bw: BinaryWriter, modifiers: Modifier[]) {
     const count = modifiers.length
-    bw.writeInt16(this.#typeEnumA)
+    bw.writeInt16(this.typeEnumA)
     bw.writeUint8(0)
     bw.writeUint8(1)
-    bw.writeInt32(this.#typeEnumB)
+    bw.writeInt32(this.typeEnumB)
     bw.writeInt32(this.fields.length)
     bw.writeInt32(this.properties.length)
     bw.reserveInt32(`Section8FieldsOffset${count}`)
@@ -3849,20 +5025,18 @@ export class Modifier {
     return this.fields.length
   }
 
-  get typeEnumA() { return this.#typeEnumA }
-  set typeEnumA(value) { this.#typeEnumA = value }
-
-  get typeEnumB() { return this.#typeEnumB }
-  set typeEnumB(value) { this.#typeEnumB = value }
-
   get type(): ModifierType {
-    return (this.#typeEnumB & 0b11100) >>> 2
+    //TODO: This does not always work correctly. For example, in AC6, some
+    // vanilla FXRs have 53376 modifiers with typeEnumB set to 0 instead of 4.
+    return (this.typeEnumB & 0b11100) >>> 2
   }
 
   set type(value) {
     const valueType = this.valueType
-    this.#typeEnumA = Modifier.#typeEnumAValues[value] | valueType
-    this.#typeEnumB = (value << 2) | valueType
+    this.typeEnumA = Modifier.#typeEnumAValues[value] | valueType
+    //TODO: This does not always work correctly. For example, in AC6, some
+    // vanilla FXRs have 53376 modifiers with typeEnumB set to 0 instead of 4.
+    this.typeEnumB = (value << 2) | valueType
   }
 
   /**
@@ -3875,23 +5049,35 @@ export class Modifier {
   }
 
   get valueType(): ValueType {
-    return this.#typeEnumB & 0b11
+    return this.typeEnumA & 0b11
   }
 
   set valueType(value) {
-    this.#typeEnumA = (this.#typeEnumA & 0xfffffffc) | value
-    this.#typeEnumB = (this.#typeEnumB & 0xfffc) | value
+    this.typeEnumA = (this.typeEnumA & 0xfffc) | value
+    this.typeEnumB = (this.typeEnumB & 0xfffffffc) | value
+  }
+
+  /**
+   * Sets the value type and returns the modifier.
+   * @param type The new value type for the modifier.
+   */
+  withValueType(type: ValueType) {
+    this.valueType = type
+    return this
   }
 
 }
 
+/**
+ * A property modifier that changes the property value depending on an
+ * {@link ExternalValue external value}.
+ * 
+ * The property value wil be multiplied by the values in this modifier.
+ */
 export class ExternalValueModifier extends Modifier {
 
   /**
-   * Makes the value of the property depend on an external value.
-   * 
-   * The property value wil be multiplied by the values in this modifier.
-   * @param extVal The ID of the external value to get.
+   * @param extVal The ID of the external value to use.
    * @param stops An array of objects with `position` and `value` properties
    * representing the external value and the modifier value it maps to. For
    * example, the value of {@link ExternalValue.DisplayBlood} is -1 when the
@@ -3903,7 +5089,7 @@ export class ExternalValueModifier extends Modifier {
     stops: { position: number, value: PropertyValue }[],
   ) {
     const valueType = typeof stops[0].value === 'number' ? 0 : stops[0].value.length - 1
-    super(ModifierType.ExternalValue1, valueType, [
+    super(57440 | valueType, 8 | valueType, [
       new Field(FieldType.Integer, extVal)
     ], [
       new LinearProperty(false, stops)
@@ -3917,13 +5103,15 @@ export class ExternalValueModifier extends Modifier {
 
 }
 
+/**
+ * A property modifier that changes the property value depending on the
+ * "Display Blood" option.
+ * 
+ * The property value wil be multiplied by the values in this modifier.
+ */
 export class BloodVisibilityModifier extends ExternalValueModifier {
 
   /**
-   * Makes the value of the property depend on the "Display Blood" option in
-   * the settings menu.
-   * 
-   * The property value wil be multiplied by the values in this modifier.
    * @param onValue The value when "Display Blood" is set to "On".
    * @param mildValue The value when "Display Blood" is set to "Mild".
    * @param offValue The value when "Display Blood" is set to "Off".
@@ -3954,6 +5142,59 @@ export class BloodVisibilityModifier extends ExternalValueModifier {
 
   get mildValue() { return this.properties[0].stops[2].value }
   set mildValue(value) { this.properties[0].stops[2].value = value }
+
+}
+
+/**
+ * A property modifer that changes the property value by a random amount in a
+ * given range.
+ */
+export class Randomizer extends Modifier {
+
+  constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
+    if (Array.isArray(minValue)) {
+      if (!Array.isArray(maxValue) || maxValue.length !== minValue.length) {
+        throw new Error(`Incompatible min and max values for randomizer modifier: Min: ${minValue.toString()}, Max: ${maxValue.toString()}`)
+      }
+      if (minValue.length < 1 || minValue.length > 4) {
+        throw new Error(`Invalid number of vector components: ${minValue.length}`)
+      }
+      const seedArray = Array.isArray(seed) ? seed : [seed]
+      const valueType = minValue.length - 1
+      super(53376 | valueType, 4 | valueType, [
+        ...arrayOf(minValue.length, i => new Field(FieldType.Integer, seedArray[i % seedArray.length])),
+        ...minValue.map(e => new Field(FieldType.Float, e)),
+        ...maxValue.map(e => new Field(FieldType.Float, e)),
+      ])
+    } else {
+      if (Array.isArray(maxValue)) {
+        throw new Error(`Incompatible min and max values for randomizer modifier: Min: ${minValue}, Max: ${maxValue.toString()}`)
+      }
+      if (Array.isArray(seed)) {
+        throw new Error('Random scalar modifiers cannot use vector seeds.')
+      }
+      super(53376, 4, [
+        new Field(FieldType.Integer, seed),
+        new Field(FieldType.Float, minValue),
+        new Field(FieldType.Float, maxValue),
+      ])
+    }
+  }
+
+}
+
+/**
+ * A property with random values in a given range.
+ * 
+ * Uses a {@link Randomizer} modifier.
+ */
+export class RandomProperty extends Property {
+
+  constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
+    super(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, PropertyFunction.Zero, false, [], [
+      new Randomizer(minValue, maxValue, seed)
+    ])
+  }
 
 }
 
