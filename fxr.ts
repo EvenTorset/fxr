@@ -1955,30 +1955,32 @@ export class Effect {
 
 }
 
-export class BasicEffect extends Effect {
-
-  /**
-   * Utility class for creating basic effects without needing to know the order
+/**
+ * Utility class for creating basic effects without needing to know the order
    * of actions, and without needing to create actions that have defaults.
    * 
    * Default actions:
    * Index | Action
    * ------|----------
-   * 0     | {@link ActionType.EffectLifetime}
-   * 1     | {@link ActionType.None}
-   * 2     | {@link ActionType.None}
-   * 3     | {@link ActionType.None}
-   * 4     | {@link ActionType.OneTimeEmitter}
-   * 5     | {@link ActionType.PointEmitterShape}
-   * 6     | {@link ActionType.Unk500}
-   * 7     | {@link ActionType.ParticleMultiplier}
-   * 8     | {@link ActionType.ParticleLifetime}
-   * 9     | {@link ActionType.None}
-   * 10    | {@link ActionType.None}
-   * 11    | {@link ActionType.None}
-   * 12    | {@link ActionType.Unk130}
-   * 13    | {@link ActionType.None}
-   * 14    | {@link ActionType.None}
+   * 0     | {@link ActionType.EffectLifetime EffectLifetime}
+   * 1     | {@link ActionType.None None}
+   * 2     | {@link ActionType.None None}
+   * 3     | {@link ActionType.None None}
+   * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+   * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
+   * 6     | {@link ActionType.Unk500 Unk500}
+   * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
+   * 8     | {@link ActionType.ParticleLifetime ParticleLifetime}
+   * 9     | {@link ActionType.None None}
+   * 10    | {@link ActionType.None None}
+   * 11    | {@link ActionType.None None}
+   * 12    | {@link ActionType.Unk130 Unk130}
+   * 13    | {@link ActionType.None None}
+   * 14    | {@link ActionType.None None}
+ */
+export class BasicEffect extends Effect {
+
+  /**
    * @param actions Actions to use in the effect. The order does not matter,
    * and it does not need to be a complete list. Actions will be placed in the
    * slots they fit in.
@@ -2032,26 +2034,28 @@ export class BasicEffect extends Effect {
 
 }
 
-export class RandomizerEffect extends Effect {
-  
-  /**
-   * Utility class for creating randomizer effects without needing to know the
+/**
+ * Utility class for creating randomizer effects without needing to know the
    * order of actions, and without needing to create actions that have
    * defaults.
    * 
    * Default actions:
    * Index | Action
    * ------|----------
-   * 0     | {@link ActionType.EffectLifetime}
-   * 1     | {@link ActionType.None}
-   * 2     | {@link ActionType.None}
-   * 3     | {@link ActionType.None}
-   * 4     | {@link ActionType.OneTimeEmitter}
-   * 5     | {@link ActionType.PointEmitterShape}
-   * 6     | {@link ActionType.Unk500}
-   * 7     | {@link ActionType.Unk200}
-   * 13    | {@link ActionType.None}
-   * 14    | {@link ActionType.None}
+   * 0     | {@link ActionType.EffectLifetime EffectLifetime}
+   * 1     | {@link ActionType.None None}
+   * 2     | {@link ActionType.None None}
+   * 3     | {@link ActionType.None None}
+   * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+   * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
+   * 6     | {@link ActionType.Unk500 Unk500}
+   * 7     | {@link ActionType.Unk200 Unk200}
+   * 13    | {@link ActionType.None None}
+   * 14    | {@link ActionType.None None}
+ */
+export class RandomizerEffect extends Effect {
+  
+  /**
    * @param actions Actions to use in the effect. The order does not matter,
    * and it does not need to be a complete list. Actions will be placed in the
    * slots they fit in.
@@ -2462,24 +2466,25 @@ export class Action {
 
 /**
  * Makes the container spin.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | spinX
+ * 1     | spinXMult
+ * 2     | spinY
+ * 3     | spinYMult
+ * 4     | spinZ
+ * 5     | spinZMult
  */
 export class Spin extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | spinX
-   * 1     | spinXMult
-   * 2     | spinY
-   * 3     | spinYMult
-   * 4     | spinZ
-   * 5     | spinZMult
    * @param spinX X spin in degrees per second. Defaults to 0.
    * @param spinY Y spin in degrees per second. Defaults to 0.
    * @param spinZ Z spin in degrees per second. Defaults to 0.
@@ -2513,19 +2518,20 @@ export class Spin extends Action {
 
 /**
  * Sets the translation and rotation of the container.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | translateX
+ * 1     | translateY
+ * 2     | translateZ
+ * 3     | rotateX
+ * 4     | rotateY
+ * 5     | rotateZ
  */
 export class StaticTransform extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | translateX
-   * 1     | translateY
-   * 2     | translateZ
-   * 3     | rotateX
-   * 4     | rotateY
-   * 5     | rotateZ
    * @param translateX X translation. Defaults to 0.
    * @param translateY Y translation. Defaults to 0.
    * @param translateZ Z translation. Defaults to 0.
@@ -2583,22 +2589,23 @@ export class UnkAction105 extends Action {
 /**
  * Controls various things about the container, like its duration, and how
  * it is attached to the parent container.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | delay
+ * 1     | unkField1
+ * 2     | attachment
+ * 3     | unkField3
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | duration
  */
 export class EffectLifetime extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | delay
-   * 1     | unkField1
-   * 2     | attachment
-   * 3     | unkField3
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | duration
    * @param duration The container duration in seconds. Defaults to -1
    * (infinite).
    * @param delay The delay before the emitter begins emitting. Defaults to 0.
@@ -2630,19 +2637,20 @@ export class EffectLifetime extends Action {
 /**
  * Controls various things about the particles emitted by the effect, like
  * their duration, and how they are attached to the parent container.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | attachment
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | duration
  */
 export class ParticleLifetime extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | attachment
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | duration
    * @param duration The particle duration in seconds. Defaults to -1
    * (infinite).
    * @param attachment Controls how the particle is attached to its parent.
@@ -2663,23 +2671,24 @@ export class ParticleLifetime extends Action {
 
 /**
  * Controls various multipliers as well as the acceleration of particles.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | uniformScale
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | acceleration
+ * 1     | scaleX
+ * 2     | scaleY
+ * 3     | scaleZ
+ * 4     | color
  */
 export class ParticleMultiplier extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | uniformScale
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | acceleration
-   * 1     | scaleX
-   * 2     | scaleY
-   * 3     | scaleZ
-   * 4     | color
    * @param uniformScale Scales the model uniformly based on {@link scaleX}.
    * The other scale properties in this action have no effect when this is
    * enabled.
@@ -2757,22 +2766,23 @@ export class ContainerWeights extends Action {
 
 /**
  * Emits particles periodically.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | interval
+ * 1     | perInterval
+ * 2     | totalIntervals
+ * 3     | maxConcurrent
  */
 export class PeriodicEmitter extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | interval
-   * 1     | perInterval
-   * 2     | totalIntervals
-   * 3     | maxConcurrent
    * @param interval Time between emitting new particles in seconds.
    * @param perInterval The number of particles to emit per interval. They all
    * spawn at the same time per interval.
@@ -2819,22 +2829,23 @@ export class PeriodicEmitter extends Action {
 /**
  * Emits particles once it has moved a certain distance from where it last
  * emitted particles.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField0
+ * 1     | unkField1
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | threshold
+ * 1     | unkProp
+ * 2     | maxConcurrent
  */
 export class MotionEmitter extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField0
-   * 1     | unkField1
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | threshold
-   * 1     | unkProp
-   * 2     | maxConcurrent
    * @param threshold How much the emitter must move to trigger emission.
    * Defaults to 0.1.
    * @param maxConcurrent How many particles from this emitter are allowed at
@@ -2876,14 +2887,15 @@ export class OneTimeEmitter extends Action {
 
 /**
  * Makes the emitter a single point.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
  */
 export class PointEmitterShape extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(unkField: number = 5) {
@@ -2897,20 +2909,21 @@ export class PointEmitterShape extends Action {
 /**
  * Makes the emitter disk-shaped. The normal of the disk is aligned with the
  * Z-axis.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | radius
+ * 1     | centerWeight
  */
 export class DiskEmitterShape extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | radius
-   * 1     | centerWeight
    * @param radius The radius of the disk in meters. Defaults to 1.
    * @param centerWeight
    * Controls the weight of the center of the disk for picking random
@@ -2943,21 +2956,22 @@ export class DiskEmitterShape extends Action {
 /**
  * Makes the emitter rectangular. The normal of the rectangle is aligned
  * with the Z-axis.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | sizeX
+ * 1     | sizeY
+ * 2     | centerWeight
  */
 export class RectangleEmitterShape extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | sizeX
-   * 1     | sizeY
-   * 2     | centerWeight
    * @param sizeX Width of the rectangle. Defaults to 1.
    * @param sizeY Height of the rectangle. Defaults to sizeX.
    * @param centerWeight
@@ -2992,19 +3006,20 @@ export class RectangleEmitterShape extends Action {
 
 /**
  * Makes the emitter spherical.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | volume
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | radius
  */
 export class SphereEmitterShape extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | volume
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | radius
    * @param volume If true, particles will be emitted from anywhere within the
    * sphere. Otherwise the particles will be emitted from the surface of the
    * sphere. Defaults to true.
@@ -3025,22 +3040,23 @@ export class SphereEmitterShape extends Action {
 
 /**
  * Makes the emitter cuboidal.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 1     | volume
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | sizeX
+ * 1     | sizeY
+ * 2     | sizeZ
  */
 export class CuboidEmitterShape extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
-   * 1     | volume
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | sizeX
-   * 1     | sizeY
-   * 2     | sizeZ
    * @param volume If true, particles will be emitted from anywhere within the
    * cuboid. Otherwise the particles will be emitted from the surface of the
    * cuboid. Defaults to true.
@@ -3070,22 +3086,23 @@ export class CuboidEmitterShape extends Action {
 
 /**
  * Makes the emitter cylindrical.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 1     | volume
+ * 2     | yAxis
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | radius
+ * 1     | height
  */
 export class CylinderEmitterShape extends Action {
 
   /**
-   * Fields1:
-   * Index | Value
-   * ------|------
-   * 0     | unkField
-   * 1     | volume
-   * 2     | yAxis
-   * 
-   * Properties1:
-   * Index | Value
-   * ------|------
-   * 0     | radius
-   * 1     | height
    * @param volume If true, particles will be emitted from anywhere within the
    * cylinder. Otherwise the particles will be emitted from the surface of the
    * cylinder. Defaults to true.
@@ -3114,6 +3131,8 @@ export class CylinderEmitterShape extends Action {
 
 }
 
+//TODO: Maybe revert adding the common 6xx fields2 stuff, the fields don't
+// always work the same way in the actions that use it.
 export interface CommonAction6xxFields2Params {
   /**
    * Controls the color of the additional bloom effect. The colors of the
@@ -3259,11 +3278,6 @@ export function createCommonAction6xxFields2({
     /* 37 */ new Field(FieldType.Integer, 0),
     /* 38 */ new Field(FieldType.Float, specularity),
     /* 39 */ new Field(FieldType.Integer, 1),
-    /* 40 */ new Field(FieldType.Integer, 0),
-    /* 41 */ new Field(FieldType.Integer, 0),
-    /* 42 */ new Field(FieldType.Integer, 0),
-    /* 43 */ new Field(FieldType.Integer, 0),
-    /* 44 */ new Field(FieldType.Integer, 0),
   ]
 }
 /**
@@ -3471,12 +3485,6 @@ export class GradientParticle extends CommonAction6xxFields2Action {
     bloomStrength = 0,
     minDistance = -1,
     maxDistance = -1,
-    negativeDepthOffset = 0,
-    shadowDarkness = 0,
-    specular = false,
-    glossiness = 0.25,
-    lighting = LightingMode.Unlit,
-    specularity = 0.5,
     unkScalarProp2_2 = 0,
     unkVec4Prop2_3 = [1, 1, 1, 1],
     unkVec4Prop2_4 = [1, 1, 1, 1],
@@ -3492,12 +3500,6 @@ export class GradientParticle extends CommonAction6xxFields2Action {
       bloomStrength,
       minDistance,
       maxDistance,
-      negativeDepthOffset,
-      shadowDarkness,
-      specular,
-      glossiness,
-      lighting,
-      specularity,
     }), [ // Properties1
       /*  0 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
       /*  1 */ width instanceof Property ? width : new ConstantProperty(width),
@@ -3900,7 +3902,13 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
       glossiness,
       lighting,
       specularity,
-    }), [
+    }).concat(
+      /* 40 */ new Field(FieldType.Integer, 0),
+      /* 41 */ new Field(FieldType.Integer, 0),
+      /* 42 */ new Field(FieldType.Integer, 0),
+      /* 43 */ new Field(FieldType.Integer, 0),
+      /* 44 */ new Field(FieldType.Integer, 0),
+    ), [
       /*  0 */ texture instanceof Property ? texture : new ConstantProperty(texture),
       /*  1 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
       /*  2 */ offset[0] instanceof Property ? offset[0] : new ConstantProperty(offset[0]),
@@ -4814,14 +4822,14 @@ export class Property {
 }
 
 export class ZeroProperty extends Property {
-  constructor(type: ValueType = ValueType.Scalar) {
-    super(type)
+  constructor(type: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
+    super(type, PropertyFunction.Zero, false, [], modifiers)
   }
 }
 
 export class OneProperty extends Property {
-  constructor(type: ValueType = ValueType.Scalar) {
-    super(type, PropertyFunction.One)
+  constructor(type: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
+    super(type, PropertyFunction.One, false, [], modifiers)
   }
 }
 
@@ -5149,7 +5157,7 @@ export class BloodVisibilityModifier extends ExternalValueModifier {
  * A property modifer that changes the property value by a random amount in a
  * given range.
  */
-export class Randomizer extends Modifier {
+export class RandomizerModifier extends Modifier {
 
   constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
     if (Array.isArray(minValue)) {
@@ -5186,13 +5194,14 @@ export class Randomizer extends Modifier {
 /**
  * A property with random values in a given range.
  * 
- * Uses a {@link Randomizer} modifier.
+ * This is technically just a {@link ZeroProperty} with a
+ * {@link RandomizerModifier}.
  */
-export class RandomProperty extends Property {
+export class RandomProperty extends ZeroProperty {
 
   constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
-    super(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, PropertyFunction.Zero, false, [], [
-      new Randomizer(minValue, maxValue, seed)
+    super(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
+      new RandomizerModifier(minValue, maxValue, seed)
     ])
   }
 
