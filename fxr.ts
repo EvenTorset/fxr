@@ -4072,7 +4072,7 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
 
 }
 
-export type PointLightSourceParams = {
+export interface PointLightSourceParams {
   diffuseColor?: Vector4 | Property,
   specularColor?: Vector4 | Property,
   radius?: number | Property,
