@@ -51,7 +51,7 @@ import {
   PeriodicEmitter,
   CylinderEmitterShape,
   ParticleLifetime,
-  RectangleParticle,
+  GradientParticle,
   BlendMode,
   LinearProperty,
 } from '@cccode/fxr'
@@ -80,7 +80,7 @@ fxr.rootContainer.containers.push(
       new PeriodicEmitter(0.1, 10, -1), // Action 300, emitter
       new CylinderEmitterShape(true, 0.2, 1, true), // Action 405, emitter shape
       new ParticleLifetime(1), // Action 129, particle duration
-      new RectangleParticle({ // Action 602
+      new GradientParticle({ // Action 602
         blendMode: BlendMode.Normal,
         width: 0.01,
         height: 0.1,
