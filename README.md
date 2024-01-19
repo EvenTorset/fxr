@@ -10,7 +10,7 @@ npm i @cccode/fxr --omit=dev
 ```
 
 ## WitchyBND
-While it has evolved quite a bit, this library started out as a JS port of [WitchyBND's C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/Fxr3.cs). Most of the code for reading and writing the format is based on that.
+While it has evolved quite a bit, this library started out as a JS port of [WitchyBND's C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/RSFXR.cs). Most of the code for reading and writing the format is based on that.
 
 ## Unknowns & to-dos
 The FXR format is still being reverse-engineered, so there are a lot of unknown fields and properties everywhere, as well as some placeholder names (like Section10s) for things. This library does not hide anything that is still unknown, you are able to set any unknown value to whatever you want, allowing you to use it for your own research. If you discover something that is not documented by this library or the [ER FXR sheet](https://docs.google.com/spreadsheets/d/12hKQg5kBvOJ_M0Udoz5GqS_2RX-d8YtaBapwpSJ2Csg/edit#gid=1424830463), please make a comment on the sheet or a pull request to this repo.
