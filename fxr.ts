@@ -1458,8 +1458,8 @@ export class StateCondition {
     this.rightOperandValue = rightOperandValue
   }
 
-  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|\d+(?:\.\d+)?|\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|\d+(?:\.\d+)?|\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|stop|disable))?\s*$/i
-  static #reLiteralOperand = /^\d+(?:\.\d+)?|\.\d+$/
+  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|stop|disable))?\s*$/i
+  static #reLiteralOperand = /^-?\d+(?:\.\d+)?|-?\.\d+$/
   static #reExternalOperand = /^[Ee]xt(?:ernal)?\((\d+)\)$/
 
   static #parseOperand(op: string) {
