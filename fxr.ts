@@ -1022,7 +1022,7 @@ export class FXR {
   rootContainer: Container
 
   references: number[]
-  unkExternalValues: number[]
+  externalValues: number[]
   unkBloodEnabler: number[]
   unkEmpty: number[]
 
@@ -1039,7 +1039,7 @@ export class FXR {
       ])
     ]),
     references: number[] = [],
-    unkExternalValues: number[] = [0],
+    externalValues: number[] = [0],
     unkBloodEnabler: number[] = [],
     unkEmpty: number[] = [],
   ) {
@@ -1048,7 +1048,7 @@ export class FXR {
     this.rootContainer = rootContainer
     this.stateMachine = rootStateMachine
     this.references = references
-    this.unkExternalValues = unkExternalValues
+    this.externalValues = externalValues
     this.unkBloodEnabler = unkBloodEnabler
     this.unkEmpty = unkEmpty
   }
@@ -1174,7 +1174,7 @@ export class FXR {
       bw.reserveInt32('Section12Offset')
       bw.writeInt32(this.references.length)
       bw.reserveInt32('Section13Offset')
-      bw.writeInt32(this.unkExternalValues.length)
+      bw.writeInt32(this.externalValues.length)
       bw.reserveInt32('Section14Offset')
       bw.writeInt32(this.unkBloodEnabler.length)
       bw.reserveInt32('Section15Offset')
@@ -1276,7 +1276,7 @@ export class FXR {
     bw.pad(16)
 
     bw.fill('Section13Offset', bw.position)
-    bw.writeInt32s(this.unkExternalValues)
+    bw.writeInt32s(this.externalValues)
     bw.pad(16)
 
     bw.fill('Section14Offset', bw.position)
