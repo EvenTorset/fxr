@@ -359,9 +359,17 @@ export enum BlendMode {
 }
 
 export enum ExternalValue {
-  Unk0 = 0,
+  /**
+   * This value will be set to 1 when the effect is meant to end due to the
+   * source of the effect going away, for example when a fire pot explodes and
+   * disappears. The value is otherwise 0.
+   */
+  Terminate = 0,
   Unk1 = 1, // Boolean? Only 0 or 1
   Unk3 = 3,
+  /**
+   * This value is set through the Special Attribute param field on weapons.
+   */
   HitEffectVariation = 2000,
   Unk2100 = 2100, // Blood related?
   Unk2200 = 2200, // Blood related?
