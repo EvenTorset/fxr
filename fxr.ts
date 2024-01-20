@@ -1032,7 +1032,7 @@ export class FXR {
   references: number[]
   externalValues: number[]
   unkBloodEnabler: number[]
-  unkEmpty: number[]
+  // unkEmpty: number[]
 
   /**
    * Creates a new effects resource (FXR) for FromSoftware's game engine.
@@ -1049,7 +1049,7 @@ export class FXR {
     references: number[] = [],
     externalValues: number[] = [0],
     unkBloodEnabler: number[] = [],
-    unkEmpty: number[] = [],
+    // unkEmpty: number[] = [],
   ) {
     this.id = id
     this.version = version
@@ -1058,7 +1058,7 @@ export class FXR {
     this.references = references
     this.externalValues = externalValues
     this.unkBloodEnabler = unkBloodEnabler
-    this.unkEmpty = unkEmpty
+    // this.unkEmpty = unkEmpty
   }
 
   /**
@@ -1106,7 +1106,7 @@ export class FXR {
     let references: number[] = []
     let externalValues: number[] = []
     let unkBloodEnabler: number[] = []
-    let unkEmpty: number[] = []
+    // let unkEmpty: number[] = []
 
     if (version === FXRVersion.Sekiro) {
       const referencesOffset = br.readInt32()
@@ -1115,13 +1115,15 @@ export class FXR {
       const externalValuesCount  = br.readInt32()
       const unkBloodEnablerOffset = br.readInt32()
       const unkBloodEnablerCount  = br.readInt32()
-      const unkEmptyOffset = br.readInt32()
-      const unkEmptyCount  = br.readInt32()
+      br.readInt32()
+      br.assertInt32(0)
+      // const unkEmptyOffset = br.readInt32()
+      // const unkEmptyCount  = br.readInt32()
 
       references = br.getInt32s(referencesOffset, referencesCount)
       externalValues = br.getInt32s(externalValuesOffset, externalValuesCount)
       unkBloodEnabler = br.getInt32s(unkBloodEnablerOffset, unkBloodEnablerCount)
-      unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
+      // unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
     }
 
     br.position = stateListOffset
@@ -1147,7 +1149,7 @@ export class FXR {
       references,
       externalValues,
       unkBloodEnabler,
-      unkEmpty,
+      // unkEmpty,
     )
   }
 
@@ -1194,8 +1196,10 @@ export class FXR {
       bw.writeInt32(this.externalValues.length)
       bw.reserveInt32('UnkBloodEnablerOffset')
       bw.writeInt32(this.unkBloodEnabler.length)
-      bw.reserveInt32('UnkEmptyOffset')
-      bw.writeInt32(this.unkEmpty.length)
+      // bw.reserveInt32('UnkEmptyOffset')
+      // bw.writeInt32(this.unkEmpty.length)
+      bw.writeInt32(0)
+      bw.writeInt32(0)
     }
 
     bw.fill('StateListOffset', bw.position)
@@ -1306,13 +1310,13 @@ export class FXR {
     bw.writeInt32s(this.unkBloodEnabler)
     bw.pad(16)
 
-    if (this.unkEmpty.length > 0) {
-      bw.fill('UnkEmptyOffset', bw.position)
-      bw.writeInt32s(this.unkEmpty)
-      bw.pad(16)
-    } else {
-      bw.fill('UnkEmptyOffset', 0)
-    }
+    // if (this.unkEmpty.length > 0) {
+    //   bw.fill('UnkEmptyOffset', bw.position)
+    //   bw.writeInt32s(this.unkEmpty)
+    //   bw.pad(16)
+    // } else {
+    //   bw.fill('UnkEmptyOffset', 0)
+    // }
 
     return bw.getArrayBuffer()
   }
