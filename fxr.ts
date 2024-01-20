@@ -1026,7 +1026,7 @@ export class FXR {
   id: number
   version: FXRVersion
 
-  stateMachine: StateMachine
+  states: State[]
   rootContainer: Container
 
   references: number[]
@@ -1041,11 +1041,11 @@ export class FXR {
     id: number,
     version = FXRVersion.Sekiro,
     rootContainer: Container = new RootContainer,
-    rootStateMachine: StateMachine = new StateMachine([
+    states: State[] = [
       new State([
         new StateCondition(Operator.GreaterThan, 2, -1, OperandType.Literal, 1, OperandType.External, 0)
       ])
-    ]),
+    ],
     references: number[] = [],
     externalValues: number[] = [0],
     unkBloodEnabler: number[] = [],
@@ -1054,7 +1054,7 @@ export class FXR {
     this.id = id
     this.version = version
     this.rootContainer = rootContainer
-    this.stateMachine = rootStateMachine
+    this.states = states
     this.references = references
     this.externalValues = externalValues
     this.unkBloodEnabler = unkBloodEnabler
@@ -1076,7 +1076,7 @@ export class FXR {
     )
     br.assertInt32(1)
     const id = br.readInt32()
-    const stateMachineOffset = br.readInt32()
+    const stateListOffset = br.readInt32()
     br.assertInt32(1) // StateMachineCount
     br.position += 4 * 4
     // br.readInt32() // StateOffset
@@ -1104,28 +1104,37 @@ export class FXR {
     br.assertInt32(0)
 
     let references: number[] = []
-    let unkExternalValues: number[] = []
+    let externalValues: number[] = []
     let unkBloodEnabler: number[] = []
     let unkEmpty: number[] = []
 
     if (version === FXRVersion.Sekiro) {
-      const section12Offset = br.readInt32()
-      const section12Count  = br.readInt32()
-      const section13Offset = br.readInt32()
-      const section13Count  = br.readInt32()
-      const section14Offset = br.readInt32()
-      const section14Count  = br.readInt32()
-      const section15Offset = br.readInt32()
-      const section15Count  = br.readInt32()
+      const referencesOffset = br.readInt32()
+      const referencesCount  = br.readInt32()
+      const externalValuesOffset = br.readInt32()
+      const externalValuesCount  = br.readInt32()
+      const unkBloodEnablerOffset = br.readInt32()
+      const unkBloodEnablerCount  = br.readInt32()
+      const unkEmptyOffset = br.readInt32()
+      const unkEmptyCount  = br.readInt32()
 
-      references = br.getInt32s(section12Offset, section12Count)
-      unkExternalValues = br.getInt32s(section13Offset, section13Count)
-      unkBloodEnabler = br.getInt32s(section14Offset, section14Count)
-      unkEmpty = br.getInt32s(section15Offset, section15Count)
+      references = br.getInt32s(referencesOffset, referencesCount)
+      externalValues = br.getInt32s(externalValuesOffset, externalValuesCount)
+      unkBloodEnabler = br.getInt32s(unkBloodEnablerOffset, unkBloodEnablerCount)
+      unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
     }
 
-    br.position = stateMachineOffset
-    const rootStateMachine = StateMachine.read(br)
+    br.position = stateListOffset
+    br.assertInt32(0)
+    const stateCount = br.readInt32()
+    const statesOffset = br.readInt32()
+    br.assertInt32(0)
+    br.stepIn(statesOffset)
+    const states = []
+    for (let i = 0; i < stateCount; ++i) {
+      states.push(State.read(br))
+    }
+    br.stepOut()
 
     br.position = containerOffset
     const rootContainer = Container.read(br)
@@ -1134,9 +1143,9 @@ export class FXR {
       id,
       version,
       rootContainer,
-      rootStateMachine,
+      states,
       references,
-      unkExternalValues,
+      externalValues,
       unkBloodEnabler,
       unkEmpty,
     )
@@ -1153,10 +1162,10 @@ export class FXR {
     bw.writeUint16(this.version)
     bw.writeInt32(1)
     bw.writeInt32(this.id)
-    bw.reserveInt32('StateMachineOffset')
+    bw.reserveInt32('StateListOffset')
     bw.writeInt32(1)
-    bw.reserveInt32('StateOffset')
-    bw.writeInt32(this.stateMachine.states.length)
+    bw.reserveInt32('StatesOffset1')
+    bw.writeInt32(this.states.length)
     bw.reserveInt32('ConditionOffset')
     bw.reserveInt32('ConditionCount')
     bw.reserveInt32('ContainerOffset')
@@ -1179,27 +1188,33 @@ export class FXR {
     bw.writeInt32(0)
 
     if (this.version === FXRVersion.Sekiro) {
-      bw.reserveInt32('Section12Offset')
+      bw.reserveInt32('ReferencesOffset')
       bw.writeInt32(this.references.length)
-      bw.reserveInt32('Section13Offset')
+      bw.reserveInt32('ExternalValuesOffset')
       bw.writeInt32(this.externalValues.length)
-      bw.reserveInt32('Section14Offset')
+      bw.reserveInt32('UnkBloodEnablerOffset')
       bw.writeInt32(this.unkBloodEnabler.length)
-      bw.reserveInt32('Section15Offset')
+      bw.reserveInt32('UnkEmptyOffset')
       bw.writeInt32(this.unkEmpty.length)
     }
 
-    bw.fill('StateMachineOffset', bw.position)
-    this.stateMachine.write(bw)
+    bw.fill('StateListOffset', bw.position)
+    bw.writeInt32(0)
+    bw.writeInt32(this.states.length)
+    bw.reserveInt32('StatesOffset2')
+    bw.writeInt32(0)
     bw.pad(16)
-    bw.fill('StateOffset', bw.position)
-    this.stateMachine.writeStates(bw)
+    bw.fill('StatesOffset1', bw.position)
+    bw.fill('StatesOffset2', bw.position)
+    for (let i = 0; i < this.states.length; ++i) {
+      this.states[i].write(bw, i)
+    }
+
     bw.pad(16)
     bw.fill('ConditionOffset', bw.position)
-    const states = this.stateMachine.states
     const conditions: StateCondition[] = []
-    for (let i = 0; i < states.length; ++i) {
-      states[i].writeConditions(bw, i, conditions)
+    for (let i = 0; i < this.states.length; ++i) {
+      this.states[i].writeConditions(bw, i, conditions)
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
@@ -1279,64 +1294,67 @@ export class FXR {
       return bw.getArrayBuffer()
     }
 
-    bw.fill('Section12Offset', bw.position)
+    bw.fill('ReferencesOffset', bw.position)
     bw.writeInt32s(this.references)
     bw.pad(16)
 
-    bw.fill('Section13Offset', bw.position)
+    bw.fill('ExternalValuesOffset', bw.position)
     bw.writeInt32s(this.externalValues)
     bw.pad(16)
 
-    bw.fill('Section14Offset', bw.position)
+    bw.fill('UnkBloodEnablerOffset', bw.position)
     bw.writeInt32s(this.unkBloodEnabler)
     bw.pad(16)
 
     if (this.unkEmpty.length > 0) {
-      bw.fill('Section15Offset', bw.position)
+      bw.fill('UnkEmptyOffset', bw.position)
       bw.writeInt32s(this.unkEmpty)
       bw.pad(16)
     } else {
-      bw.fill('Section15Offset', 0)
+      bw.fill('UnkEmptyOffset', 0)
     }
 
     return bw.getArrayBuffer()
   }
 
-}
-
-export class StateMachine {
-
-  states: State[] = []
-
-  constructor(states: State[] = []) {
-    this.states = states
+  static fromJSON({
+    id,
+    version,
+    states,
+    root,
+    references,
+    externalValues,
+    unkBloodEnabler
+  }: {
+    id: number
+    version: string
+    states: string[]
+    root: any
+    references: number[]
+    externalValues: number[]
+    unkBloodEnabler: number[]
+    unkEmpty: number[]
+  }) {
+    return new FXR(
+      id,
+      FXRVersion[version],
+      Container.fromJSON(root),
+      states.map(state => State.from(state)),
+      references,
+      externalValues,
+      unkBloodEnabler
+    )
   }
 
-  static read(br: BinaryReader) {
-    br.assertInt32(0)
-    const count = br.readInt32()
-    const offset = br.readInt32()
-    br.assertInt32(0)
-    br.stepIn(offset)
-    const states = []
-    for (let i = 0; i < count; ++i) {
-      states.push(State.read(br))
-    }
-    br.stepOut()
-    return new StateMachine(states)
-  }
-
-  write(bw: BinaryWriter) {
-    bw.writeInt32(0)
-    bw.writeInt32(this.states.length)
-    bw.reserveInt32('Section1StatesOffset')
-    bw.writeInt32(0)
-  }
-
-  writeStates(bw: BinaryWriter) {
-    bw.fill('Section1StatesOffset', bw.position)
-    for (let i = 0; i < this.states.length; ++i) {
-      this.states[i].write(bw, i)
+  toJSON() {
+    return {
+      id: this.id,
+      version: FXRVersion[this.version],
+      states: this.states.map(state => state.toString()),
+      references: this.references,
+      externalValues: this.externalValues,
+      unkBloodEnabler: this.unkBloodEnabler,
+      root: this.rootContainer.toJSON(),
     }
   }
 
@@ -1867,6 +1885,34 @@ export class Container {
     effectCounter.value += this.effects.length
   }
 
+  static fromJSON({
+    type,
+    actions,
+    effects,
+    containers
+  }: {
+    type: number
+    actions: []
+    effects: []
+    containers: []
+  }) {
+    return new Container(
+      type,
+      actions.map(action => Action.fromJSON(action)),
+      effects.map(effect => Effect.fromJSON(effect)),
+      containers.map(container => Container.fromJSON(container)),
+    )
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      actions: this.actions.map(action => action.toJSON()),
+      effects: this.effects.map(effect => effect.toJSON()),
+      containers: this.containers.map(container => container.toJSON()),
+    }
+  }
+
 }
 
 export class RootContainer extends Container {
@@ -1886,12 +1932,12 @@ export class RootContainer extends Container {
     ], effects, containers)
   }
 
-  get rateOfTime(): number { return this.actions.find(a => a.id === ActionType.Unk10500)?.properties1[0].stops[0].value as number }
+  get rateOfTime(): number { return this.actions.find(a => a.type === ActionType.Unk10500)?.properties1[0].stops[0].value as number }
   set rateOfTime(value: number | Property) {
     if (value instanceof Property) {
-      this.actions.find(a => a.id === ActionType.Unk10500).properties1[0] = value
+      this.actions.find(a => a.type === ActionType.Unk10500).properties1[0] = value
     } else {
-      this.actions.find(a => a.id === ActionType.Unk10500).properties1[0] = new ConstantProperty(value as number)
+      this.actions.find(a => a.type === ActionType.Unk10500).properties1[0] = new ConstantProperty(value as number)
     }
   }
 
@@ -1958,6 +2004,23 @@ export class Effect {
     bw.fill(`EffectActionsOffset${index}`, bw.position)
     for (const action of this.actions) {
       action.write(bw, actions)
+    }
+  }
+
+  static fromJSON({
+    type,
+    actions
+  }: {
+    type: number
+    actions: []
+  }) {
+    return new Effect(type, actions.map(action => Action.fromJSON(action)))
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      actions: this.actions.map(action => action.toJSON())
     }
   }
 
@@ -2031,11 +2094,11 @@ export class BasicEffect extends Effect {
       new Action,
     ])
     for (const action of actions) {
-      const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.id))
+      const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
       if (index >= 0) {
         this.actions[index] = action
       } else {
-        throw new Error('No slot for action: ' + action.id)
+        throw new Error('No slot for action: ' + action.type)
       }
     }
   }
@@ -2082,11 +2145,11 @@ export class RandomizerEffect extends Effect {
       new Action,
     ])
     for (const action of actions) {
-      const index = EffectActionSlots[EffectType.Randomizer].findIndex(a => a.includes(action.id))
+      const index = EffectActionSlots[EffectType.Randomizer].findIndex(a => a.includes(action.type))
       if (index >= 0) {
         this.actions[index] = action
       } else {
-        throw new Error('No slot for action: ' + action.id)
+        throw new Error('No slot for action: ' + action.type)
       }
     }
   }
@@ -2295,7 +2358,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
 
 export class Action {
 
-  id: ActionType
+  type: ActionType
   unk02: boolean
   unk03: boolean
   unk04: number
@@ -2306,7 +2369,7 @@ export class Action {
   section10s: Section10[]
 
   constructor(
-    id: number = ActionType.None,
+    type: number = ActionType.None,
     unk02: boolean = false,
     unk03: boolean = true,
     unk04: number = 0,
@@ -2316,7 +2379,7 @@ export class Action {
     properties2: Property[] = [],
     section10s: Section10[] = [],
   ) {
-    this.id = id
+    this.type = type
     this.unk02 = unk02
     this.unk03 = unk03
     this.unk04 = unk04
@@ -2328,7 +2391,7 @@ export class Action {
   }
 
   static read(br: BinaryReader): Action {
-    const id = br.readInt16()
+    const type = br.readInt16()
     const unk02 = br.readBool()
     const unk03 = br.readBool()
     const unk04 = br.readInt32()
@@ -2367,17 +2430,17 @@ export class Action {
 
     br.stepIn(fieldOffset)
     let fields1: Field[], fields2: Field[]
-    if (id in ActionFieldTypes) {
-      fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[id].Fields1, this)
-      fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[id].Fields2, this)
+    if (type in ActionFieldTypes) {
+      fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
+      fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
     } else {
       fields1 = Field.readMany(br, fieldCount1, this)
       fields2 = Field.readMany(br, fieldCount2, this)
     }
     br.stepOut()
-    if (id in Actions) {
-      const action = new Actions[id]()
-      action.id = id,
+    if (type in Actions) {
+      const action = new Actions[type]()
+      action.type = type
       action.unk02 = unk02
       action.unk03 = unk03
       action.unk04 = unk04
@@ -2388,13 +2451,13 @@ export class Action {
       action.section10s = section10s
       return action
     } else {
-      return new Action(id, unk02, unk03, unk04, fields1, fields2, properties1, properties2, section10s)
+      return new Action(type, unk02, unk03, unk04, fields1, fields2, properties1, properties2, section10s)
     }
   }
 
   write(bw: BinaryWriter, actions: Action[]) {
     const count = actions.length
-    bw.writeInt16(this.id)
+    bw.writeInt16(this.type)
     bw.writeBool(this.unk02)
     bw.writeBool(this.unk03)
     bw.writeInt32(this.unk04)
@@ -2468,6 +2531,63 @@ export class Action {
       }
     }
     return this
+  }
+
+  static fromJSON({
+    type,
+    unk02 = false,
+    unk03 = true,
+    unk04 = 0,
+    fields1 = [],
+    fields2 = [],
+    properties1 = [],
+    properties2 = [],
+    section10s = [],
+  }: {
+    type: ActionType
+    unk02?: boolean
+    unk03?: boolean
+    unk04?: number
+    fields1?: []
+    fields2?: []
+    properties1?: []
+    properties2?: []
+    section10s?: []
+  }) {
+    return new Action(
+      type,
+      unk02,
+      unk03,
+      unk04,
+      fields1,
+      fields2,
+      properties1,
+      properties2,
+      section10s
+    )
+  }
+
+  toJSON() {
+    const o: {
+      type: ActionType
+      unk02?: boolean
+      unk03?: boolean
+      unk04?: number
+      fields1?: any[]
+      fields2?: any[]
+      properties1?: any[]
+      properties2?: any[]
+      section10s?: any[]
+    } = { type: this.type }
+    if (this.unk02 !== false) o.unk02 = this.unk02
+    if (this.unk03 !== true) o.unk03 = this.unk03
+    if (this.unk04 !== 0) o.unk04 = this.unk04
+    if (this.fields1.length > 0) o.fields1 = this.fields1.map(field => field.toJSON())
+    if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
+    if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
+    if (this.properties2.length > 0) o.properties2 = this.properties2.map(prop => prop.toJSON())
+    if (this.section10s.length > 0) o.section10s = this.section10s.map(s10 => s10.toJSON())
+    return o
   }
 
 }
@@ -4384,6 +4504,23 @@ export class Field {
     }
   }
 
+  static fromJSON({
+    type,
+    value
+  }: {
+    type: string
+    value: number
+  }) {
+    return new Field(FieldType[type], value)
+  }
+
+  toJSON() {
+    return {
+      type: FieldType[this.type],
+      value: this.value
+    }
+  }
+
 }
 
 export type Stop = {
@@ -4869,6 +5006,45 @@ export class Property {
     return this
   }
 
+  static fromJSON({
+    type,
+    function: func,
+    loop = false,
+    fields = [],
+    modifiers = []
+  }: {
+    type: string
+    function: string
+    loop?: boolean
+    fields?: []
+    modifiers?: []
+  }) {
+    return new Property(
+      ValueType[type],
+      PropertyFunction[func],
+      loop,
+      fields.map(field => Field.fromJSON(field)),
+      modifiers.map(mod => Modifier.fromJSON(mod))
+    )
+  }
+
+  toJSON() {
+    const o: {
+      type: string
+      function: string
+      loop?: boolean
+      fields?: any[]
+      modifiers?: any[]
+    } = {
+      type: ValueType[this.valueType],
+      function: PropertyFunction[this.function],
+    }
+    if (this.function > PropertyFunction.Constant) o.loop = this.loop
+    if (this.fields.length > 0) o.fields = this.fields.map(field => field.toJSON())
+    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+    return o
+  }
+
 }
 
 export class ZeroProperty extends Property {
@@ -5124,6 +5300,40 @@ export class Modifier {
     return this
   }
 
+  static fromJSON({
+    typeEnumA,
+    typeEnumB,
+    fields,
+    properties = [],
+  }: {
+    typeEnumA: number
+    typeEnumB: number
+    fields: []
+    properties?: []
+  }) {
+    return new Modifier(
+      typeEnumA,
+      typeEnumB,
+      fields.map(field => Field.fromJSON(field)),
+      properties.map(prop => Property.fromJSON(prop))
+    )
+  }
+
+  toJSON() {
+    const o: {
+      typeEnumA: number
+      typeEnumB: number
+      fields: any[]
+      properties?: any[]
+    } = {
+      typeEnumA: this.typeEnumA,
+      typeEnumB: this.typeEnumB,
+      fields: this.fields.map(field => field.toJSON()),
+    }
+    if (this.properties.length > 0) o.properties = this.properties.map(prop => prop.toJSON())
+    return o
+  }
+
 }
 
 /**
@@ -5288,6 +5498,14 @@ export class Section10 {
       field.write(bw)
     }
     return this.fields.length
+  }
+
+  static fromJSON(fields: []) {
+    return new Section10(fields.map(field => Field.fromJSON(field)))
+  }
+
+  toJSON() {
+    return this.fields.map(field => field.toJSON())
   }
 
 }
