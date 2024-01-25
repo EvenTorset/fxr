@@ -12,7 +12,8 @@
     "watch": "npx tsc --watch"
   },
   "files": [
-    "/js"
+    "/js",
+    "/fxr.ts"
   ],
   "keywords": [
     "typescript",
