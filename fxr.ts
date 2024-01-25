@@ -185,8 +185,14 @@ export enum ActionType {
   Unk501 = 501,
   Unk502 = 502,
   Unk503 = 503,
-  Unk600 = 600,
-  Unk601 = 601,
+  /**
+   * A very basic textured particle with very few options.
+   * 
+   * Very similar to {@link PointSprite}, but much simpler. In most cases, you
+   * probably want to use that instead.
+   */
+  BasicPointSprite = 600,
+  LineParticle = 601,
   /**
    * Simple rectangular gradient particle.
    * 
@@ -196,20 +202,20 @@ export enum ActionType {
   /**
    * Particle with a texture that may animate.
    * 
-   * This action type has a specialized subclass: {@link AnimatedTextureParticle}
+   * This action type has a specialized subclass: {@link PointSprite}
    */
-  AnimatedTextureParticle = 603,
-  Unk604 = 604,
-  Unk605 = 605,
-  Unk606 = 606,
+  PointSprite = 603,
+  MultiTextureParticle = 604,
+  ModelParticle = 605,
+  Streak = 606,
   Unk607 = 607,
   Unk608 = 608,
   /**
    * Point light source "particle".
    * 
-   * This action type has a specialized subclass: {@link PointLightSource}
+   * This action type has a specialized subclass: {@link PointLight}
    */
-  PointLightSource = 609,
+  PointLight = 609,
   Unk700 = 700, // Root container action
   Unk701 = 701, // Root container action
   Unk702 = 702, // Root container action
@@ -572,16 +578,16 @@ export const EffectActionSlots = {
       ActionType.ParticleLifetime
     ],
     [
-      ActionType.Unk600,
-      ActionType.Unk601,
+      ActionType.BasicPointSprite,
+      ActionType.LineParticle,
       ActionType.GradientParticle,
-      ActionType.AnimatedTextureParticle,
-      ActionType.Unk604,
-      ActionType.Unk605,
-      ActionType.Unk606,
+      ActionType.PointSprite,
+      ActionType.MultiTextureParticle,
+      ActionType.ModelParticle,
+      ActionType.Streak,
       ActionType.Unk607,
       ActionType.Unk608,
-      ActionType.PointLightSource,
+      ActionType.PointLight,
       ActionType.Unk10000,
       ActionType.Unk10001,
       ActionType.Unk10012,
@@ -2294,7 +2300,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
     ],
     Fields2: commonAction6xxFields2Types
   },
-  [ActionType.AnimatedTextureParticle]: {
+  [ActionType.PointSprite]: {
     Fields1: [
       FieldType.Integer, // Orientation mode
       FieldType.Integer, // Normal map ID
@@ -2317,7 +2323,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
     ],
     Fields2: commonAction6xxFields2Types
   },
-  [ActionType.PointLightSource]: {
+  [ActionType.PointLight]: {
     Fields1: [
       null,
       FieldType.Float,
@@ -2337,7 +2343,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
       FieldType.Boolean, // Separate specular
       FieldType.Integer, // Fade-out time
       FieldType.Float, // Shadow darkness
-      FieldType.Boolean, // Unk. Related to the 3 floats below
+      FieldType.Integer, // Shadow caching behavior?
       FieldType.Integer, // Always 2?
       FieldType.Integer,
       FieldType.Float,
@@ -3428,7 +3434,7 @@ export interface GradientParticleParams {
  * 
  * This action is really only good for creating simple rectangular particles
  * with a gradient and nothing fancy. In most cases, you probably want
- * {@link AnimatedTextureParticle} instead if you are making or modifying an
+ * {@link PointSprite} instead if you are making or modifying an
  * effect to use in a mod, as it has almost everything this action does, and
  * a lot more.
  */
@@ -3596,7 +3602,7 @@ export class GradientParticle extends CommonAction6xxFields2Action {
 
 }
 
-export interface AnimatedTextureParticleParams {
+export interface PointSpriteParams {
   /**
    * Texture ID. Defaults to 1.
    * 
@@ -3619,7 +3625,7 @@ export interface AnimatedTextureParticleParams {
   /**
    * The width of the particle.
    * 
-   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * If {@link PointSpriteParams.uniformScale uniformScale} is
    * enabled, this also controls the height.
    * 
    * Defaults to 1.
@@ -3630,8 +3636,8 @@ export interface AnimatedTextureParticleParams {
   /**
    * The height of the particle.
    * 
-   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
-   * enabled, {@link AnimatedTextureParticleParams.width width} also controls
+   * If {@link PointSpriteParams.uniformScale uniformScale} is
+   * enabled, {@link PointSpriteParams.width width} also controls
    * the height, and this property is ignored.
    * 
    * Defaults to 1.
@@ -3702,7 +3708,7 @@ export interface AnimatedTextureParticleParams {
    * Defaults to 0.
    * 
    * Seemingly identical to
-   * {@link AnimatedTextureParticleParams.frameIndexOffset unkProp1_22}? The sum of
+   * {@link PointSpriteParams.frameIndexOffset unkProp1_22}? The sum of
    * these two properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
@@ -3710,7 +3716,7 @@ export interface AnimatedTextureParticleParams {
   frameIndex?: number | Property
   /**
    * Seemingly identical to
-   * {@link AnimatedTextureParticleParams.frameIndex frameIndex}? The sum of
+   * {@link PointSpriteParams.frameIndex frameIndex}? The sum of
    * these two properties is the actual frame index that gets used. Defaults to
    * 0.
    * 
@@ -3747,11 +3753,11 @@ export interface AnimatedTextureParticleParams {
    * width. Setting it to 2 will make them randomly wider, up to double width.
    * Defaults to 1.
    * 
-   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * If {@link PointSpriteParams.uniformScale uniformScale} is
    * enabled, this also affects the height.
    * 
    * See also:
-   * - {@link AnimatedTextureParticleParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link PointSpriteParams.randomHeightMultiplier randomHeightMultiplier}
    */
   randomWidthMultiplier?: number
   /**
@@ -3761,9 +3767,9 @@ export interface AnimatedTextureParticleParams {
    * height. Setting it to 2 will make them randomly taller, up to double
    * height. Defaults to 1.
    * 
-   * If {@link AnimatedTextureParticleParams.uniformScale uniformScale} is
+   * If {@link PointSpriteParams.uniformScale uniformScale} is
    * enabled,
-   * {@link AnimatedTextureParticleParams.randomWidthMultiplier randomWidthMultiplier}
+   * {@link PointSpriteParams.randomWidthMultiplier randomWidthMultiplier}
    * also affects the height, and this field is ignored.
    */
   randomHeightMultiplier?: number
@@ -3773,10 +3779,10 @@ export interface AnimatedTextureParticleParams {
    * will be ignored. Defaults to true.
    * 
    * See also:
-   * - {@link AnimatedTextureParticleParams.width width}
-   * - {@link AnimatedTextureParticleParams.height height}
-   * - {@link AnimatedTextureParticleParams.randomWidthMultiplier randomWidthMultiplier}
-   * - {@link AnimatedTextureParticleParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link PointSpriteParams.width width}
+   * - {@link PointSpriteParams.height height}
+   * - {@link PointSpriteParams.randomWidthMultiplier randomWidthMultiplier}
+   * - {@link PointSpriteParams.randomHeightMultiplier randomHeightMultiplier}
    */
   uniformScale?: boolean
   /**
@@ -3785,7 +3791,7 @@ export interface AnimatedTextureParticleParams {
    * `textureWidth / frameWidth`. Defaults to 1.
    * 
    * See also:
-   * - {@link AnimatedTextureParticleParams.totalFrames totalFrames}
+   * - {@link PointSpriteParams.totalFrames totalFrames}
    */
   columns?: number
   /**
@@ -3793,7 +3799,7 @@ export interface AnimatedTextureParticleParams {
    * set to the total number of frames in the texture. Defaults to 1.
    * 
    * See also:
-   * - {@link AnimatedTextureParticleParams.columns columns}
+   * - {@link PointSpriteParams.columns columns}
    */
   totalFrames?: number
   /**
@@ -3807,7 +3813,7 @@ export interface AnimatedTextureParticleParams {
    * Defaults to true.
    * 
    * See also:
-   * - {@link AnimatedTextureParticleParams.frameIndex frameIndex}
+   * - {@link PointSpriteParams.frameIndex frameIndex}
    */
   interpolateFrames?: boolean
   /**
@@ -3857,8 +3863,8 @@ export interface AnimatedTextureParticleParams {
    * the camera, while positive values will make it draw behind objects farther
    * away from the camera. Defaults to 0.
    * 
-   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
-   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
+   * {@link ActionType.PointSprite AnimatedTextureParticle} has a
+   * {@link PointSpriteParams.depthOffset property} that works the
    * same way, but reversed. Since that property was discovered before this
    * field, this field was given the "negative" name.
    */
@@ -3912,7 +3918,7 @@ export interface AnimatedTextureParticleParams {
  * Particle with a texture that may be animated. This is the most common
  * particle type and it has a lot of useful fields and properties.
  */
-export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
+export class PointSprite extends CommonAction6xxFields2Action {
 
   constructor({
     texture = 1,
@@ -3957,8 +3963,8 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
     unkVec4Prop2_4 = [1, 1, 1, 1],
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
-  }: AnimatedTextureParticleParams = {}) {
-    super(ActionType.AnimatedTextureParticle, false, true, 0, [
+  }: PointSpriteParams = {}) {
+    super(ActionType.PointSprite, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, orientation),
       /*  1 */ new Field(FieldType.Integer, normalMap),
       /*  2 */ new Field(FieldType.Float, randomWidthMultiplier),
@@ -4198,8 +4204,8 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
    * the camera, while positive values will make it draw behind objects farther
    * away from the camera.
    * 
-   * {@link ActionType.AnimatedTextureParticle AnimatedTextureParticle} has a
-   * {@link AnimatedTextureParticleParams.depthOffset property} that works the
+   * {@link ActionType.PointSprite AnimatedTextureParticle} has a
+   * {@link PointSpriteParams.depthOffset property} that works the
    * same way, but reversed. Since that property was discovered before this
    * field, this field was given the "negative" name.
    */
@@ -4254,7 +4260,7 @@ export class AnimatedTextureParticle extends CommonAction6xxFields2Action {
 
 }
 
-export interface PointLightSourceParams {
+export interface PointLightParams {
   diffuseColor?: Vector4 | Property
   specularColor?: Vector4 | Property
   radius?: number | Property
@@ -4270,7 +4276,7 @@ export interface PointLightSourceParams {
 /**
  * Point light source.
  */
-export class PointLightSource extends Action {
+export class PointLight extends Action {
 
   constructor({
     diffuseColor = [1, 1, 1, 1],
@@ -4284,8 +4290,8 @@ export class PointLightSource extends Action {
     shadowDarkness = 1,
     glow = 0,
     glowConcentration = 0.5,
-  }: PointLightSourceParams = {}) {
-    super(ActionType.PointLightSource, false, true, 0, [
+  }: PointLightParams = {}) {
+    super(ActionType.PointLight, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, 0),
       /*  1 */ new Field(FieldType.Float, 0),
     ], [ // Fields 2
@@ -4396,8 +4402,8 @@ export const Actions = {
   [ActionType.CuboidEmitterShape]: CuboidEmitterShape, CuboidEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
   [ActionType.GradientParticle]: GradientParticle, GradientParticle,
-  [ActionType.AnimatedTextureParticle]: AnimatedTextureParticle, AnimatedTextureParticle,
-  [ActionType.PointLightSource]: PointLightSource, PointLightSource,
+  [ActionType.PointSprite]: PointSprite, PointSprite,
+  [ActionType.PointLight]: PointLight, PointLight,
 }
 
 export class Field {
