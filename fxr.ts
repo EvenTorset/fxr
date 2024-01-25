@@ -1956,6 +1956,12 @@ export class RootContainer extends Container {
 export class BasicContainer extends Container {
 
   constructor(effects: Effect[] = [], containers: Container[] = []) {
+    if (!Array.isArray(effects) || effects.some(e => !(e instanceof Effect))) {
+      throw new Error('Non-effect passed as effect to BasicContainer.')
+    }
+    if (!Array.isArray(containers) || containers.some(e => !(e instanceof Container))) {
+      throw new Error('Non-container passed as container to BasicContainer.')
+    }
     super(ContainerType.Basic, [
       new StateEffectMap(0)
     ], effects, containers)
