@@ -74,14 +74,14 @@ export enum ActionType {
    */
   PlaySound = 75,
   Unk83 = 83,
-  Unk84 = 84,
-  Unk105 = 105,
+  Unk84_Swing = 84,
+  PartialFollow = 105,
   Unk106 = 106,
   Unk113 = 113,
   Unk120 = 120,
   Unk121 = 121,
   Unk122 = 122,
-  Unk123 = 123,
+  Unk123_Rotation = 123,
   /**
    * Controls various things about the container, like its duration, and how
    * it is attached to the parent container.
@@ -136,9 +136,9 @@ export enum ActionType {
    * Emits particles once it has moved a certain distance from where it last
    * emitted particles.
    * 
-   * This action type has a specialized subclass: {@link MotionEmitter}
+   * This action type has a specialized subclass: {@link EqualDistanceEmitter}
    */
-  MotionEmitter = 301,
+  EqualDistanceEmitter = 301,
   /**
    * Emits one particle once.
    * 
@@ -172,9 +172,9 @@ export enum ActionType {
   /**
    * Makes the emitter cuboidal.
    * 
-   * This action type has a specialized subclass: {@link CuboidEmitterShape}
+   * This action type has a specialized subclass: {@link BoxEmitterShape}
    */
-  CuboidEmitterShape = 404,
+  BoxEmitterShape = 404,
   /**
    * Makes the emitter cylindrical.
    * 
@@ -185,31 +185,25 @@ export enum ActionType {
   Unk501 = 501,
   Unk502 = 502,
   Unk503 = 503,
-  /**
-   * A very basic textured particle with very few options.
-   * 
-   * Very similar to {@link PointSprite}, but much simpler. In most cases, you
-   * probably want to use that instead.
-   */
-  BasicPointSprite = 600,
-  LineParticle = 601,
+  PointSprite = 600,
+  Line = 601,
   /**
    * Simple rectangular gradient particle.
    * 
-   * This action type has a specialized subclass: {@link GradientParticle}
+   * This action type has a specialized subclass: {@link QuadLine}
    */
-  GradientParticle = 602,
+  QuadLine = 602,
   /**
    * Particle with a texture that may animate.
    * 
-   * This action type has a specialized subclass: {@link PointSprite}
+   * This action type has a specialized subclass: {@link BillboardEx}
    */
-  PointSprite = 603,
-  MultiTextureParticle = 604,
-  ModelParticle = 605,
-  Streak = 606,
-  Unk607 = 607,
-  Unk608 = 608,
+  BillboardEx = 603,
+  MultiTextureBillboardEx = 604,
+  Model = 605,
+  Tracer = 606,
+  Distortion = 607,
+  RadialBlur = 608,
   /**
    * Point light source "particle".
    * 
@@ -222,17 +216,26 @@ export enum ActionType {
   Unk731 = 731,
   Unk732 = 732,
   Unk734 = 734,
-  Unk10000 = 10000,
-  Unk10001 = 10001,
-  Unk10012 = 10012,
-  Unk10013 = 10013,
-  Unk10014 = 10014,
-  Unk10015 = 10015,
+  Unk10000_StandardParticle = 10000,
+  Unk10001_StandardCorrectParticle = 10001,
+  Unk10002_Fluid = 10002,
+  Unk10003_LightShaft = 10003,
+  Unk10008_SparkParticle = 10008,
+  Unk10009_SparkCorrectParticle = 10009,
+  Unk10010_Tracer = 10010,
+  Unk10012_Tracer = 10012,
+  Unk10013_WaterInteractionSimulation = 10013,
+  Unk10014_LensFlare = 10014,
+  Unk10015_RichModel = 10015,
   Unk10100 = 10100, // Root container action
-  Unk10300 = 10300,
+  Unk10200_ForceFieldCancelArea = 10200,
+  Unk10300_ForceFieldWindArea = 10300,
+  Unk10301_ForceFieldGravityArea = 10301,
+  Unk10302_CollisionFieldArea = 10302,
+  Unk10303_ForceFieldTurbulenceArea = 10303,
   Unk10400 = 10400, // Root container action
   Unk10500 = 10500, // Root container action
-  Unk11000 = 11000,
+  Unk11000_SpotLight = 11000,
 }
 
 export enum ValueType {
@@ -547,14 +550,15 @@ export const EffectActionSlots = {
       ActionType.Unk113,
       ActionType.Unk120,
       ActionType.Unk121,
-      ActionType.Unk123
+      ActionType.Unk122,
+      ActionType.Unk123_Rotation
     ],
     [
       ActionType.PlaySound
     ],
     [
       ActionType.PeriodicEmitter,
-      ActionType.MotionEmitter,
+      ActionType.EqualDistanceEmitter,
       ActionType.OneTimeEmitter
     ],
     [
@@ -562,7 +566,7 @@ export const EffectActionSlots = {
       ActionType.DiskEmitterShape,
       ActionType.RectangleEmitterShape,
       ActionType.SphereEmitterShape,
-      ActionType.CuboidEmitterShape,
+      ActionType.BoxEmitterShape,
       ActionType.CylinderEmitterShape
     ],
     [
@@ -578,32 +582,41 @@ export const EffectActionSlots = {
       ActionType.ParticleLifetime
     ],
     [
-      ActionType.BasicPointSprite,
-      ActionType.LineParticle,
-      ActionType.GradientParticle,
       ActionType.PointSprite,
-      ActionType.MultiTextureParticle,
-      ActionType.ModelParticle,
-      ActionType.Streak,
-      ActionType.Unk607,
-      ActionType.Unk608,
+      ActionType.Line,
+      ActionType.QuadLine,
+      ActionType.BillboardEx,
+      ActionType.MultiTextureBillboardEx,
+      ActionType.Model,
+      ActionType.Tracer,
+      ActionType.Distortion,
+      ActionType.RadialBlur,
       ActionType.PointLight,
-      ActionType.Unk10000,
-      ActionType.Unk10001,
-      ActionType.Unk10012,
-      ActionType.Unk10013,
-      ActionType.Unk10014,
-      ActionType.Unk10015,
-      ActionType.Unk10300,
-      ActionType.Unk11000
+      ActionType.Unk10000_StandardParticle,
+      ActionType.Unk10001_StandardCorrectParticle,
+      ActionType.Unk10002_Fluid,
+      ActionType.Unk10003_LightShaft,
+      ActionType.Unk10008_SparkParticle,
+      ActionType.Unk10009_SparkCorrectParticle,
+      ActionType.Unk10010_Tracer,
+      ActionType.Unk10012_Tracer,
+      ActionType.Unk10013_WaterInteractionSimulation,
+      ActionType.Unk10014_LensFlare,
+      ActionType.Unk10015_RichModel,
+      ActionType.Unk10200_ForceFieldCancelArea,
+      ActionType.Unk10300_ForceFieldWindArea,
+      ActionType.Unk10301_ForceFieldGravityArea,
+      ActionType.Unk10302_CollisionFieldArea,
+      ActionType.Unk10303_ForceFieldTurbulenceArea,
+      ActionType.Unk11000_SpotLight
     ],
     [
       ActionType.Unk55,
       ActionType.Unk60,
       ActionType.Unk64,
       ActionType.Unk65,
-      ActionType.Unk84,
-      ActionType.Unk105
+      ActionType.Unk84_Swing,
+      ActionType.PartialFollow
     ],
     [],
     [
@@ -635,14 +648,14 @@ export const EffectActionSlots = {
       ActionType.Unk113,
       ActionType.Unk120,
       ActionType.Unk121,
-      ActionType.Unk123
+      ActionType.Unk123_Rotation
     ],
     [
       ActionType.PlaySound
     ],
     [
       ActionType.PeriodicEmitter,
-      ActionType.MotionEmitter,
+      ActionType.EqualDistanceEmitter,
       ActionType.OneTimeEmitter
     ],
     [
@@ -650,7 +663,7 @@ export const EffectActionSlots = {
       ActionType.DiskEmitterShape,
       ActionType.RectangleEmitterShape,
       ActionType.SphereEmitterShape,
-      ActionType.CuboidEmitterShape,
+      ActionType.BoxEmitterShape,
       ActionType.CylinderEmitterShape
     ],
     [
@@ -2283,7 +2296,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
     ],
     Fields2: []
   },
-  [ActionType.CuboidEmitterShape]: {
+  [ActionType.BoxEmitterShape]: {
     Fields1: [
       FieldType.Integer,
       FieldType.Boolean,
@@ -2298,7 +2311,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
     ],
     Fields2: []
   },
-  [ActionType.GradientParticle]: {
+  [ActionType.QuadLine]: {
     Fields1: [
       FieldType.Integer,
       null,
@@ -2306,7 +2319,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
     ],
     Fields2: commonAction6xxFields2Types
   },
-  [ActionType.PointSprite]: {
+  [ActionType.BillboardEx]: {
     Fields1: [
       FieldType.Integer, // Orientation mode
       FieldType.Integer, // Normal map ID
@@ -2703,7 +2716,7 @@ export class StaticTransform extends Action {
 
 }
 
-export class UnkAction105 extends Action {
+export class PartialFollow extends Action {
 
   constructor(
     acceleration: number | Property = 0,
@@ -2715,7 +2728,7 @@ export class UnkAction105 extends Action {
     unkField1: number = 0,
     unkField2: number = 0,
   ) {
-    super(ActionType.Unk105, false, true, 0, [
+    super(ActionType.PartialFollow, false, true, 0, [
       new Field(FieldType.Integer, unkField0),
       new Field(FieldType.Integer, unkField1),
       new Field(FieldType.Integer, unkField2), // Boolean? "Follow translation only"
@@ -2987,7 +3000,7 @@ export class PeriodicEmitter extends Action {
  * 1     | unkProp
  * 2     | maxConcurrent
  */
-export class MotionEmitter extends Action {
+export class EqualDistanceEmitter extends Action {
 
   /**
    * @param threshold How much the emitter must move to trigger emission.
@@ -3005,7 +3018,7 @@ export class MotionEmitter extends Action {
     unkField1: number = 0,
     unkProp: number | Property = -1
   ) {
-    super(ActionType.MotionEmitter, false, true, 0, [
+    super(ActionType.EqualDistanceEmitter, false, true, 0, [
       new Field(FieldType.Integer, unkField0),
       new Field(FieldType.Integer, unkField1),
     ], [], [
@@ -3198,7 +3211,7 @@ export class SphereEmitterShape extends Action {
  * 1     | sizeY
  * 2     | sizeZ
  */
-export class CuboidEmitterShape extends Action {
+export class BoxEmitterShape extends Action {
 
   /**
    * @param volume If true, particles will be emitted from anywhere within the
@@ -3216,7 +3229,7 @@ export class CuboidEmitterShape extends Action {
     sizeZ: number | Property = sizeX instanceof Property ? Property.copy(sizeX) : sizeX,
     unkField: number = 0,
   ) {
-    super(ActionType.CuboidEmitterShape, false, true, 0, [
+    super(ActionType.BoxEmitterShape, false, true, 0, [
       new Field(FieldType.Integer, unkField),
       new Field(FieldType.Boolean, volume),
     ], [], [
@@ -3341,7 +3354,7 @@ export class CommonAction6xxFields2Action extends Action {
 
 }
 
-export interface GradientParticleParams {
+export interface QuadLineParams {
   blendMode?: BlendMode | Property
   width?: number | Property
   height?: number | Property
@@ -3440,11 +3453,11 @@ export interface GradientParticleParams {
  * 
  * This action is really only good for creating simple rectangular particles
  * with a gradient and nothing fancy. In most cases, you probably want
- * {@link PointSprite} instead if you are making or modifying an
+ * {@link BillboardEx} instead if you are making or modifying an
  * effect to use in a mod, as it has almost everything this action does, and
  * a lot more.
  */
-export class GradientParticle extends CommonAction6xxFields2Action {
+export class QuadLine extends CommonAction6xxFields2Action {
 
   constructor({
     blendMode = BlendMode.Normal,
@@ -3468,8 +3481,8 @@ export class GradientParticle extends CommonAction6xxFields2Action {
     unkVec4Prop2_4 = [1, 1, 1, 1],
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
-  }: GradientParticleParams = {}) {
-    super(ActionType.GradientParticle, false, true, 0, [
+  }: QuadLineParams = {}) {
+    super(ActionType.QuadLine, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, -1),
       /*  1 */ new Field(FieldType.Integer, 1),
       /*  2 */ new Field(FieldType.Integer, 1),
@@ -3608,7 +3621,7 @@ export class GradientParticle extends CommonAction6xxFields2Action {
 
 }
 
-export interface PointSpriteParams {
+export interface BillboardExParams {
   /**
    * Texture ID. Defaults to 1.
    * 
@@ -3631,7 +3644,7 @@ export interface PointSpriteParams {
   /**
    * The width of the particle.
    * 
-   * If {@link PointSpriteParams.uniformScale uniformScale} is
+   * If {@link BillboardExParams.uniformScale uniformScale} is
    * enabled, this also controls the height.
    * 
    * Defaults to 1.
@@ -3642,8 +3655,8 @@ export interface PointSpriteParams {
   /**
    * The height of the particle.
    * 
-   * If {@link PointSpriteParams.uniformScale uniformScale} is
-   * enabled, {@link PointSpriteParams.width width} also controls
+   * If {@link BillboardExParams.uniformScale uniformScale} is
+   * enabled, {@link BillboardExParams.width width} also controls
    * the height, and this property is ignored.
    * 
    * Defaults to 1.
@@ -3714,7 +3727,7 @@ export interface PointSpriteParams {
    * Defaults to 0.
    * 
    * Seemingly identical to
-   * {@link PointSpriteParams.frameIndexOffset unkProp1_22}? The sum of
+   * {@link BillboardExParams.frameIndexOffset unkProp1_22}? The sum of
    * these two properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
@@ -3722,7 +3735,7 @@ export interface PointSpriteParams {
   frameIndex?: number | Property
   /**
    * Seemingly identical to
-   * {@link PointSpriteParams.frameIndex frameIndex}? The sum of
+   * {@link BillboardExParams.frameIndex frameIndex}? The sum of
    * these two properties is the actual frame index that gets used. Defaults to
    * 0.
    * 
@@ -3759,11 +3772,11 @@ export interface PointSpriteParams {
    * width. Setting it to 2 will make them randomly wider, up to double width.
    * Defaults to 1.
    * 
-   * If {@link PointSpriteParams.uniformScale uniformScale} is
+   * If {@link BillboardExParams.uniformScale uniformScale} is
    * enabled, this also affects the height.
    * 
    * See also:
-   * - {@link PointSpriteParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link BillboardExParams.randomHeightMultiplier randomHeightMultiplier}
    */
   randomWidthMultiplier?: number
   /**
@@ -3773,9 +3786,9 @@ export interface PointSpriteParams {
    * height. Setting it to 2 will make them randomly taller, up to double
    * height. Defaults to 1.
    * 
-   * If {@link PointSpriteParams.uniformScale uniformScale} is
+   * If {@link BillboardExParams.uniformScale uniformScale} is
    * enabled,
-   * {@link PointSpriteParams.randomWidthMultiplier randomWidthMultiplier}
+   * {@link BillboardExParams.randomWidthMultiplier randomWidthMultiplier}
    * also affects the height, and this field is ignored.
    */
   randomHeightMultiplier?: number
@@ -3785,10 +3798,10 @@ export interface PointSpriteParams {
    * will be ignored. Defaults to true.
    * 
    * See also:
-   * - {@link PointSpriteParams.width width}
-   * - {@link PointSpriteParams.height height}
-   * - {@link PointSpriteParams.randomWidthMultiplier randomWidthMultiplier}
-   * - {@link PointSpriteParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link BillboardExParams.width width}
+   * - {@link BillboardExParams.height height}
+   * - {@link BillboardExParams.randomWidthMultiplier randomWidthMultiplier}
+   * - {@link BillboardExParams.randomHeightMultiplier randomHeightMultiplier}
    */
   uniformScale?: boolean
   /**
@@ -3797,7 +3810,7 @@ export interface PointSpriteParams {
    * `textureWidth / frameWidth`. Defaults to 1.
    * 
    * See also:
-   * - {@link PointSpriteParams.totalFrames totalFrames}
+   * - {@link BillboardExParams.totalFrames totalFrames}
    */
   columns?: number
   /**
@@ -3805,7 +3818,7 @@ export interface PointSpriteParams {
    * set to the total number of frames in the texture. Defaults to 1.
    * 
    * See also:
-   * - {@link PointSpriteParams.columns columns}
+   * - {@link BillboardExParams.columns columns}
    */
   totalFrames?: number
   /**
@@ -3819,7 +3832,7 @@ export interface PointSpriteParams {
    * Defaults to true.
    * 
    * See also:
-   * - {@link PointSpriteParams.frameIndex frameIndex}
+   * - {@link BillboardExParams.frameIndex frameIndex}
    */
   interpolateFrames?: boolean
   /**
@@ -3869,8 +3882,8 @@ export interface PointSpriteParams {
    * the camera, while positive values will make it draw behind objects farther
    * away from the camera. Defaults to 0.
    * 
-   * {@link ActionType.PointSprite AnimatedTextureParticle} has a
-   * {@link PointSpriteParams.depthOffset property} that works the
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
    * same way, but reversed. Since that property was discovered before this
    * field, this field was given the "negative" name.
    */
@@ -3924,7 +3937,7 @@ export interface PointSpriteParams {
  * Particle with a texture that may be animated. This is the most common
  * particle type and it has a lot of useful fields and properties.
  */
-export class PointSprite extends CommonAction6xxFields2Action {
+export class BillboardEx extends CommonAction6xxFields2Action {
 
   constructor({
     texture = 1,
@@ -3969,8 +3982,8 @@ export class PointSprite extends CommonAction6xxFields2Action {
     unkVec4Prop2_4 = [1, 1, 1, 1],
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
-  }: PointSpriteParams = {}) {
-    super(ActionType.PointSprite, false, true, 0, [
+  }: BillboardExParams = {}) {
+    super(ActionType.BillboardEx, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, orientation),
       /*  1 */ new Field(FieldType.Integer, normalMap),
       /*  2 */ new Field(FieldType.Float, randomWidthMultiplier),
@@ -4210,8 +4223,8 @@ export class PointSprite extends CommonAction6xxFields2Action {
    * the camera, while positive values will make it draw behind objects farther
    * away from the camera.
    * 
-   * {@link ActionType.PointSprite AnimatedTextureParticle} has a
-   * {@link PointSpriteParams.depthOffset property} that works the
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
    * same way, but reversed. Since that property was discovered before this
    * field, this field was given the "negative" name.
    */
@@ -4392,23 +4405,23 @@ export class PointLight extends Action {
 export const Actions = {
   [ActionType.Spin]: Spin, Spin,
   [ActionType.StaticTransform]: StaticTransform, StaticTransform,
-  [ActionType.Unk105]: UnkAction105, UnkAction105,
+  [ActionType.PartialFollow]: PartialFollow, PartialFollow,
   [ActionType.EffectLifetime]: EffectLifetime, EffectLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.ContainerWeights]: ContainerWeights, ContainerWeights,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
-  [ActionType.MotionEmitter]: MotionEmitter, MotionEmitter,
+  [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
   [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
   [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
-  [ActionType.CuboidEmitterShape]: CuboidEmitterShape, CuboidEmitterShape,
+  [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
-  [ActionType.GradientParticle]: GradientParticle, GradientParticle,
-  [ActionType.PointSprite]: PointSprite, PointSprite,
+  [ActionType.QuadLine]: QuadLine, QuadLine,
+  [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.PointLight]: PointLight, PointLight,
 }
 
