@@ -1,4 +1,4 @@
-export enum FXRVersion {
+enum FXRVersion {
   /**
    * Used in Dark Souls 3.
    */
@@ -9,7 +9,7 @@ export enum FXRVersion {
   Sekiro = 5,
 }
 
-export enum ContainerType {
+enum ContainerType {
   /**
    * A root container.
    * 
@@ -27,7 +27,7 @@ export enum ContainerType {
   Randomizer = 2202,
 }
 
-export enum EffectType {
+enum EffectType {
   LODThresholds = 1002,
   /**
    * A basic effect that can emit particles of many different types.
@@ -47,10 +47,10 @@ export enum EffectType {
   Randomizer = 1005,
 }
 
-export enum ActionType {
+enum ActionType {
   None = 0,
   Unk1 = 1,
-  Unk15 = 15,
+  Translation = 15,
   /**
    * Makes the container spin.
    * 
@@ -60,15 +60,20 @@ export enum ActionType {
   /**
    * Sets the translation and rotation of the container.
    * 
-   * This action type has a specialized subclass: {@link StaticTransform}
+   * This action type has a specialized subclass: {@link Transform}
    */
   StaticTransform = 35,
-  Unk36 = 36,
+  /**
+   * Sets and randomizes the translation and rotation of the container.
+   * 
+   * This action type has a specialized subclass: {@link Transform}
+   */
+  RandomTransform = 36,
   Unk46 = 46,
-  Unk55 = 55,
-  Unk60 = 60,
-  Unk64 = 64,
-  Unk65 = 65,
+  Unk55_Acceleration = 55,
+  Unk60_Speed = 60,
+  Unk64_SpeedSwing = 64,
+  Unk65_SpeedPartialFollow = 65,
   /**
    * Plays a sound.
    */
@@ -245,14 +250,14 @@ export enum ActionType {
   SpotLight = 11000,
 }
 
-export enum ValueType {
+enum ValueType {
   Scalar = 0,
   Vector2 = 1,
   Vector3 = 2,
   Vector4 = 3
 }
 
-export enum PropertyFunction {
+enum PropertyFunction {
   /**
    * Always returns 0 for each component.
    * 
@@ -307,7 +312,7 @@ export enum PropertyFunction {
   CompCurve = 7
 }
 
-export enum ModifierType {
+enum ModifierType {
   /**
    * Adds a random value between `-x` and `x` to the property's value, where
    * `x` is the "max change" value set in the modifier's fields.
@@ -357,13 +362,13 @@ export enum ModifierType {
   Randomizer3 = 4,
 }
 
-export enum FieldType {
+enum FieldType {
   Boolean,
   Integer,
   Float,
 }
 
-export enum BlendMode {
+enum BlendMode {
   Unk0 = 0,
   Unk1 = 1,
   Normal = 2,
@@ -374,7 +379,7 @@ export enum BlendMode {
   Screen = 7,
 }
 
-export enum ExternalValue {
+enum ExternalValue {
   /**
    * This value will be set to 1 when the effect is meant to end due to the
    * source of the effect going away, for example when a fire pot explodes and
@@ -401,14 +406,14 @@ export enum ExternalValue {
   DisplayBlood = 10000,
 }
 
-export enum Operator {
+enum Operator {
   NotEqual = 0,
   Equal = 1,
   GreaterThanOrEqual = 2,
   GreaterThan = 3,
 }
 
-export enum OperandType {
+enum OperandType {
   /**
    * The field's value, literally.
    */
@@ -433,7 +438,7 @@ export enum OperandType {
   StateTime = -1,
 }
 
-export enum AttachMode {
+enum AttachMode {
   /**
    * Completely detached.
    */
@@ -456,7 +461,7 @@ export enum AttachMode {
   DummyPolyTranslation = 4
 }
 
-export enum PropertyArgument {
+enum PropertyArgument {
   /**
    * A constant value, usually just 0.
    */
@@ -476,7 +481,7 @@ export enum PropertyArgument {
   EmissionTime
 }
 
-export enum OrientationMode {
+enum OrientationMode {
   /**
    * Faces south.
    * 
@@ -521,7 +526,7 @@ export enum OrientationMode {
   ParentYaw = 7,
 }
 
-export enum LightingMode {
+enum LightingMode {
   /**
    * Same as {@link Lit}, but this seems to sometimes have an extra light
    * source from somewhere?
@@ -538,18 +543,18 @@ export enum LightingMode {
   Lit = 0,
 }
 
-export const EffectActionSlots = {
+const EffectActionSlots = {
   [EffectType.Basic]: [
     [
       ActionType.EffectLifetime
     ],
     [
       ActionType.StaticTransform,
-      ActionType.Unk36
+      ActionType.RandomTransform
     ],
     [
       ActionType.Unk1,
-      ActionType.Unk15,
+      ActionType.Translation,
       ActionType.Spin,
       ActionType.Unk46,
       ActionType.Unk83,
@@ -618,10 +623,10 @@ export const EffectActionSlots = {
       ActionType.SpotLight
     ],
     [
-      ActionType.Unk55,
-      ActionType.Unk60,
-      ActionType.Unk64,
-      ActionType.Unk65,
+      ActionType.Unk55_Acceleration,
+      ActionType.Unk60_Speed,
+      ActionType.Unk64_SpeedSwing,
+      ActionType.Unk65_SpeedPartialFollow,
       ActionType.Unk84_Swing,
       ActionType.PartialFollow
     ],
@@ -643,11 +648,11 @@ export const EffectActionSlots = {
     ],
     [
       ActionType.StaticTransform,
-      ActionType.Unk36
+      ActionType.RandomTransform
     ],
     [
       ActionType.Unk1,
-      ActionType.Unk15,
+      ActionType.Translation,
       ActionType.Spin,
       ActionType.Unk46,
       ActionType.Unk83,
@@ -1047,7 +1052,7 @@ class BinaryWriter {
 
 }
 
-export class FXR {
+class FXR {
 
   id: number
   version: FXRVersion
@@ -1388,9 +1393,27 @@ export class FXR {
     }
   }
 
+  /**
+   * Creates a minified version of this FXR.
+   * 
+   * The minified FXR might result in a smaller file size, but should be
+   * functionally identical to the FXR it was made from.
+   */
+  minify() {
+    return new FXR(
+      this.id,
+      this.version,
+      this.rootContainer.minify(),
+      this.states,
+      this.references,
+      this.externalValues,
+      this.unkBloodEnabler
+    )
+  }
+
 }
 
-export class State {
+class State {
 
   conditions: StateCondition[] = []
 
@@ -1457,7 +1480,7 @@ export class State {
 
 }
 
-export class StateCondition {
+class StateCondition {
 
   operator: Operator
   unk1: number
@@ -1806,7 +1829,7 @@ export class StateCondition {
 
 }
 
-export class Container {
+class Container {
 
   type: ContainerType
   actions: Action[] = []
@@ -1943,9 +1966,18 @@ export class Container {
     }
   }
 
+  minify() {
+    return new Container(
+      this.type,
+      this.actions.map(action => action.minify()),
+      this.effects.map(effect => effect.minify()),
+      this.containers.map(container => container.minify())
+    )
+  }
+
 }
 
-export class RootContainer extends Container {
+class RootContainer extends Container {
 
   constructor(
     rateOfTime: number | Property = 1,
@@ -1954,9 +1986,9 @@ export class RootContainer extends Container {
   ) {
     super(ContainerType.Root, [
       new Action(ActionType.Unk700),
-      new Action(ActionType.Unk10100, false, true, 0, arrayOf(56, () => new Field(FieldType.Integer, 0))),
-      new Action(ActionType.Unk10400, false, true, 0, arrayOf(65, () => new Field(FieldType.Integer, 1))),
-      new Action(ActionType.Unk10500, false, true, 0, arrayOf(10, () => new Field(FieldType.Integer, 0)), [], [
+      new Action(ActionType.Unk10100, false, true, 0, arrayOf(56, () => new IntField(0))),
+      new Action(ActionType.Unk10400, false, true, 0, arrayOf(65, () => new IntField(1))),
+      new Action(ActionType.Unk10500, false, true, 0, arrayOf(10, () => new IntField(0)), [], [
         rateOfTime instanceof Property ? rateOfTime : new ConstantProperty(rateOfTime as number)
       ]),
     ], effects, containers)
@@ -1973,7 +2005,7 @@ export class RootContainer extends Container {
 
 }
 
-export class BasicContainer extends Container {
+class BasicContainer extends Container {
 
   constructor(effects: Effect[] = [], containers: Container[] = []) {
     if (!Array.isArray(effects) || effects.some(e => !(e instanceof Effect))) {
@@ -1994,7 +2026,7 @@ export class BasicContainer extends Container {
 
 }
 
-export class Effect {
+class Effect {
 
   type: EffectType
   actions: Action[]
@@ -2060,6 +2092,10 @@ export class Effect {
     }
   }
 
+  minify() {
+    return new Effect(this.type, this.actions.map(action => action.minify()))
+  }
+
 }
 
 /**
@@ -2085,7 +2121,7 @@ export class Effect {
    * 13    | {@link ActionType.None None}
    * 14    | {@link ActionType.None None}
  */
-export class BasicEffect extends Effect {
+class BasicEffect extends Effect {
 
   /**
    * @param actions Actions to use in the effect. The order does not matter,
@@ -2107,7 +2143,7 @@ export class BasicEffect extends Effect {
       new Action,
       new Action,
       new Action(ActionType.Unk130, false, true, 0, [
-        new Field(FieldType.Integer, 1),
+        new IntField(1),
         new Field,
         new Field,
         new Field,
@@ -2160,7 +2196,7 @@ export class BasicEffect extends Effect {
    * 13    | {@link ActionType.None None}
    * 14    | {@link ActionType.None None}
  */
-export class RandomizerEffect extends Effect {
+class RandomizerEffect extends Effect {
   
   /**
    * @param actions Actions to use in the effect. The order does not matter,
@@ -2248,6 +2284,23 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
   },
   [ActionType.StaticTransform]: {
     Fields1: [
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+    ],
+    Fields2: []
+  },
+  [ActionType.RandomTransform]: {
+    Fields1: [
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
       FieldType.Float,
       FieldType.Float,
       FieldType.Float,
@@ -2421,7 +2474,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
   }
 }
 
-export class Action {
+class Action {
 
   type: ActionType
   unk02: boolean
@@ -2655,6 +2708,17 @@ export class Action {
     return o
   }
 
+  /**
+   * Creates a minified version of this action.
+   * 
+   * Some actions can be minified to make the output smaller. This is done by
+   * creating a simpler action that is functionally equivalent to this action.
+   * 
+   * Most actions can't be minified without losing functionality, and so this
+   * just returns the same action, unmodified, for those.
+   */
+  minify() { return this }
+
 }
 
 /**
@@ -2675,7 +2739,7 @@ export class Action {
  * 4     | spinZ
  * 5     | spinZMult
  */
-export class Spin extends Action {
+class Spin extends Action {
 
   /**
    * @param spinX X spin in degrees per second. Defaults to 0.
@@ -2696,7 +2760,7 @@ export class Spin extends Action {
     unkField: number = 1
   ) {
     super(ActionType.Spin, false, true, 0, [
-      new Field(FieldType.Integer, unkField)
+      new IntField(unkField)
     ], [], [
       spinX instanceof Property ? spinX : new ConstantProperty(spinX),
       spinXMult instanceof Property ? spinXMult : new ConstantProperty(spinXMult),
@@ -2709,50 +2773,269 @@ export class Spin extends Action {
 
 }
 
-/**
- * Sets the translation and rotation of the container.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | translateX
- * 1     | translateY
- * 2     | translateZ
- * 3     | rotateX
- * 4     | rotateY
- * 5     | rotateZ
- */
-export class StaticTransform extends Action {
-
+export interface TransformParams {
   /**
-   * @param translateX X translation. Defaults to 0.
-   * @param translateY Y translation. Defaults to 0.
-   * @param translateZ Z translation. Defaults to 0.
-   * @param rotateX X rotation in degrees. Defaults to 0.
-   * @param rotateY Y rotation in degrees. Defaults to 0.
-   * @param rotateZ Z rotation in degrees. Defaults to 0.
+   * Translates the container along the X-axis. Defaults to 0.
    */
-  constructor(
-    translateX: number = 0,
-    translateY: number = 0,
-    translateZ: number = 0,
-    rotateX: number = 0,
-    rotateY: number = 0,
-    rotateZ: number = 0
-  ) {
-    super(ActionType.StaticTransform, false, true, 0, [
-      new Field(FieldType.Float, translateX),
-      new Field(FieldType.Float, translateY),
-      new Field(FieldType.Float, translateZ),
-      new Field(FieldType.Float, rotateX),
-      new Field(FieldType.Float, rotateY),
-      new Field(FieldType.Float, rotateZ),
-    ])
+  translateX?: number
+  /**
+   * Translates the container along the Y-axis. Defaults to 0.
+   */
+  translateY?: number
+  /**
+   * Translates the container along the Z-axis. Defaults to 0.
+   */
+  translateZ?: number
+  /**
+   * Container rotation around the X-axis in degrees. Defaults to 0.
+   */
+  rotateX?: number
+  /**
+   * Container rotation around the Y-axis in degrees. Defaults to 0.
+   */
+  rotateY?: number
+  /**
+   * Container rotation around the Z-axis in degrees. Defaults to 0.
+   */
+  rotateZ?: number
+  /**
+   * The maximum change in translation along the X-axis from
+   * {@link translateX the base value} caused by randomization. When the
+   * container is created, its translation along this axis will be a random
+   * number between the base value minus this value and the base value plus
+   * this value. Defaults to 0.
+   */
+  randomTranslationX?: number
+  /**
+   * The maximum change in translation along the Y-axis from
+   * {@link translateY the base value} caused by randomization. When the
+   * container is created, its translation along this axis will be a random
+   * number between the base value minus this value and the base value plus
+   * this value. Defaults to 0.
+   */
+  randomTranslationY?: number
+  /**
+   * The maximum change in translation along the Z-axis from
+   * {@link translateZ the base value} caused by randomization. When the
+   * container is created, its translation along this axis will be a random
+   * number between the base value minus this value and the base value plus
+   * this value. Defaults to 0.
+   */
+  randomTranslationZ?: number
+  /**
+   * The maximum change in rotation around the X-axis from
+   * {@link rotateX the base value} caused by randomization. When the container
+   * is created, its rotation around this axis will be a random number between
+   * the base value minus this value and the base value plus this value.
+   * Defaults to 0.
+   */
+  randomRotationX?: number
+  /**
+   * The maximum change in rotation around the Y-axis from
+   * {@link rotateY the base value} caused by randomization. When the container
+   * is created, its rotation around this axis will be a random number between
+   * the base value minus this value and the base value plus this value.
+   * Defaults to 0.
+   */
+  randomRotationY?: number
+  /**
+   * The maximum change in rotation around the Z-axis from
+   * {@link rotateZ the base value} caused by randomization. When the container
+   * is created, its rotation around this axis will be a random number between
+   * the base value minus this value and the base value plus this value.
+   * Defaults to 0.
+   */
+  randomRotationZ?: number
+}
+/**
+ * Sets the translation and rotation of the container. Optionally randomizes
+ * the translation and rotation.
+ * 
+ * If any of the randomization parameters are not 0, it will create a
+ * {@link ActionType.RandomTransform RandomTransform action} instead of a
+ * {@link ActionType.StaticTransform StaticTransform action}, which have
+ * different numbers of fields.
+ */
+class Transform extends Action {
+
+  declare fields1: FloatField[]
+
+  constructor({
+    translateX = 0,
+    translateY = 0,
+    translateZ = 0,
+    rotateX = 0,
+    rotateY = 0,
+    rotateZ = 0,
+    randomTranslationX = 0,
+    randomTranslationY = 0,
+    randomTranslationZ = 0,
+    randomRotationX = 0,
+    randomRotationY = 0,
+    randomRotationZ = 0,
+  }: TransformParams = {}) {
+    if (
+      randomTranslationX === 0 &&
+      randomTranslationY === 0 &&
+      randomTranslationZ === 0 &&
+      randomRotationX === 0 &&
+      randomRotationY === 0 &&
+      randomRotationZ === 0
+    ) {
+      super(ActionType.StaticTransform, false, true, 0, [
+        new FloatField(translateX),
+        new FloatField(translateY),
+        new FloatField(translateZ),
+        new FloatField(rotateX),
+        new FloatField(rotateY),
+        new FloatField(rotateZ),
+      ])
+    } else {
+      super(ActionType.RandomTransform, false, true, 0, [
+        new FloatField(translateX),
+        new FloatField(translateY),
+        new FloatField(translateZ),
+        /*
+          For some reason the X rotation is reversed in action 36 compared to
+          action 35. None of the other fields are, just this one.
+          Thanks, FromSoft.
+        */
+        new FloatField(-rotateX),
+        new FloatField(rotateY),
+        new FloatField(rotateZ),
+        new FloatField(randomTranslationX),
+        new FloatField(randomTranslationY),
+        new FloatField(randomTranslationZ),
+        new FloatField(randomRotationX),
+        new FloatField(randomRotationY),
+        new FloatField(randomRotationZ),
+      ])
+    }
+  }
+
+  get translateX() { return this.fields1[0].value }
+  set translateX(value) { this.fields1[0].value = value }
+
+  get translateY() { return this.fields1[1].value }
+  set translateY(value) { this.fields1[1].value = value }
+
+  get translateZ() { return this.fields1[2].value }
+  set translateZ(value) { this.fields1[2].value = value }
+
+  get rotateX() {
+    switch (this.type) {
+      case ActionType.StaticTransform: return this.fields1[3].value
+      case ActionType.RandomTransform: return -this.fields1[3].value
+    }
+  }
+  set rotateX(value) {
+    switch (this.type) {
+      case ActionType.StaticTransform: this.fields1[3].value = value; break
+      case ActionType.RandomTransform: this.fields1[3].value = -value; break
+    }
+  }
+
+  get rotateY() { return this.fields1[4].value }
+  set rotateY(value) { this.fields1[4].value = value }
+
+  get rotateZ() { return this.fields1[5].value }
+  set rotateZ(value) { this.fields1[5].value = value }
+
+  #setRandomizationField(index: number, value: number) {
+    if (value !== 0 && this.type === ActionType.StaticTransform) {
+      this.type = ActionType.RandomTransform
+      // The X rotation field needs to swap sign because it rotates the
+      // opposite direction in RandomTransform for some reason.
+      this.fields1[3].value *= -1
+      this.fields1.push(
+        new FloatField(0),
+        new FloatField(0),
+        new FloatField(0),
+        new FloatField(0),
+        new FloatField(0),
+        new FloatField(0),
+      )
+    }
+    this.fields1[index].value = value
+  }
+
+  get randomTranslationX() { return this.fields1[6]?.value ?? 0 }
+  set randomTranslationX(value) { this.#setRandomizationField(6, value) }
+
+  get randomTranslationY() { return this.fields1[7]?.value ?? 0 }
+  set randomTranslationY(value) { this.#setRandomizationField(7, value) }
+
+  get randomTranslationZ() { return this.fields1[8]?.value ?? 0 }
+  set randomTranslationZ(value) { this.#setRandomizationField(8, value) }
+
+  get randomRotationX() { return this.fields1[9]?.value ?? 0 }
+  set randomRotationX(value) { this.#setRandomizationField(9, value) }
+
+  get randomRotationY() { return this.fields1[10]?.value ?? 0 }
+  set randomRotationY(value) { this.#setRandomizationField(10, value) }
+
+  get randomRotationZ() { return this.fields1[11]?.value ?? 0 }
+  set randomRotationZ(value) { this.#setRandomizationField(11, value) }
+
+  minify() {
+    if (this.type === ActionType.RandomTransform) {
+      if (
+        this.fields1[6].value === 0 &&
+        this.fields1[7].value === 0 &&
+        this.fields1[8].value === 0 &&
+        this.fields1[9].value === 0 &&
+        this.fields1[10].value === 0 &&
+        this.fields1[11].value === 0
+      ) {
+        if (
+          this.fields1[0].value === 0 &&
+          this.fields1[1].value === 0 &&
+          this.fields1[2].value === 0 &&
+          this.fields1[3].value === 0 &&
+          this.fields1[4].value === 0 &&
+          this.fields1[5].value === 0
+        ) {
+          // This transform doesn't do anything, return a None action.
+          return new Action
+        } else {
+          // This doesn't use the randomization fields, return a static
+          // transform action instead
+          return new Action(ActionType.StaticTransform, false, true, 0, [
+            this.fields1[0],
+            this.fields1[1],
+            this.fields1[2],
+            new FloatField(-this.fields1[3].value),
+            this.fields1[4],
+            this.fields1[5],
+          ])
+        }
+      } else {
+        // This action can't be minified more without losing functionality,
+        // return it without any changes
+        return this
+      }
+    } else {
+      if (
+        this.fields1[0].value === 0 &&
+        this.fields1[1].value === 0 &&
+        this.fields1[2].value === 0 &&
+        this.fields1[3].value === 0 &&
+        this.fields1[4].value === 0 &&
+        this.fields1[5].value === 0
+      ) {
+        // This transform doesn't do anything, return a None action.
+        return new Action
+      } else {
+        // This action can't be minified more without losing functionality,
+        // return it without any changes
+        return this
+      }
+    }
   }
 
 }
 
-export class PartialFollow extends Action {
+class PartialFollow extends Action {
 
   constructor(
     acceleration: number | Property = 0,
@@ -2765,9 +3048,9 @@ export class PartialFollow extends Action {
     unkField2: number = 0,
   ) {
     super(ActionType.PartialFollow, false, true, 0, [
-      new Field(FieldType.Integer, unkField0),
-      new Field(FieldType.Integer, unkField1),
-      new Field(FieldType.Integer, unkField2), // Boolean? "Follow translation only"
+      new IntField(unkField0),
+      new IntField(unkField1),
+      new IntField(unkField2), // Boolean? "Follow translation only"
     ], [], [
       acceleration instanceof Property ? acceleration : new ConstantProperty(acceleration),
       unkProp1 instanceof Property ? unkProp1 : new ConstantProperty(unkProp1),
@@ -2796,7 +3079,7 @@ export class PartialFollow extends Action {
  * ------|------
  * 0     | duration
  */
-export class EffectLifetime extends Action {
+class EffectLifetime extends Action {
 
   /**
    * @param duration The container duration in seconds. Defaults to -1
@@ -2816,10 +3099,10 @@ export class EffectLifetime extends Action {
     unkField3: number = 0,
   ) {
     super(ActionType.EffectLifetime, false, true, 0, [
-      new Field(FieldType.Float, delay),
-      new Field(FieldType.Integer, unkField1),
-      new Field(FieldType.Integer, attachment),
-      new Field(FieldType.Float, unkField3),
+      new FloatField(delay),
+      new IntField(unkField1),
+      new IntField(attachment),
+      new FloatField(unkField3),
     ], [], [
       duration instanceof Property ? duration : new ConstantProperty(duration)
     ])
@@ -2841,7 +3124,7 @@ export class EffectLifetime extends Action {
  * ------|------
  * 0     | duration
  */
-export class ParticleLifetime extends Action {
+class ParticleLifetime extends Action {
 
   /**
    * @param duration The particle duration in seconds. Defaults to -1
@@ -2854,7 +3137,7 @@ export class ParticleLifetime extends Action {
     attachment: AttachMode = AttachMode.Parent
   ) {
     super(ActionType.ParticleLifetime, false, true, 0, [
-      new Field(FieldType.Integer, attachment)
+      new IntField(attachment)
     ], [], [
       duration instanceof Property ? duration : new ConstantProperty(duration)
     ])
@@ -2879,7 +3162,7 @@ export class ParticleLifetime extends Action {
  * 3     | scaleZ
  * 4     | color
  */
-export class ParticleMultiplier extends Action {
+class ParticleMultiplier extends Action {
 
   /**
    * @param uniformScale Scales the model uniformly based on {@link scaleX}.
@@ -2915,7 +3198,7 @@ export class ParticleMultiplier extends Action {
     color: Vector4 | Property = [1, 1, 1, 1],
   ) {
     super(ActionType.ParticleMultiplier, false, true, 0, [
-      new Field(FieldType.Boolean, uniformScale),
+      new BoolField(uniformScale),
     ], [], [
       acceleration instanceof Property ? acceleration : new ConstantProperty(acceleration),
       scaleX instanceof Property ? scaleX : new ConstantProperty(scaleX),
@@ -2934,11 +3217,11 @@ export class ParticleMultiplier extends Action {
  * represents the index of the effect that should be active when the state is
  * active.
  */
-export class StateEffectMap extends Action {
+class StateEffectMap extends Action {
 
   constructor(...effectIndices: number[]) {
     super(ActionType.StateEffectMap, true, false, 0, [], [], [], [], [
-      new Section10(effectIndices.map(i => new Field(FieldType.Integer, i)))
+      new Section10(effectIndices.map(i => new IntField(i)))
     ])
   }
 
@@ -2947,11 +3230,11 @@ export class StateEffectMap extends Action {
 /**
  * Controls the weights for picking random subcontainers. Used in {@link EffectType.Randomizer}.
  */
-export class ContainerWeights extends Action {
+class ContainerWeights extends Action {
 
   constructor(...weights: number[]) {
     super(ActionType.ContainerWeights, false, true, 1, [], [], [], [], [
-      new Section10(weights.map(w => new Field(FieldType.Integer, w)))
+      new Section10(weights.map(w => new IntField(w)))
     ])
   }
 
@@ -2973,7 +3256,7 @@ export class ContainerWeights extends Action {
  * 2     | totalIntervals
  * 3     | maxConcurrent
  */
-export class PeriodicEmitter extends Action {
+class PeriodicEmitter extends Action {
 
   /**
    * @param interval Time between emitting new particles in seconds.
@@ -2993,7 +3276,7 @@ export class PeriodicEmitter extends Action {
     unkField: number = 1
   ) {
     super(ActionType.PeriodicEmitter, false, true, 0, [
-      new Field(FieldType.Integer, unkField)
+      new IntField(unkField)
     ], [], [
       interval instanceof Property ? interval : new ConstantProperty(interval as number),
       perInterval instanceof Property ? perInterval : new ConstantProperty(perInterval as number),
@@ -3036,7 +3319,7 @@ export class PeriodicEmitter extends Action {
  * 1     | unkProp
  * 2     | maxConcurrent
  */
-export class EqualDistanceEmitter extends Action {
+class EqualDistanceEmitter extends Action {
 
   /**
    * @param threshold How much the emitter must move to trigger emission.
@@ -3055,8 +3338,8 @@ export class EqualDistanceEmitter extends Action {
     unkProp: number | Property = -1
   ) {
     super(ActionType.EqualDistanceEmitter, false, true, 0, [
-      new Field(FieldType.Integer, unkField0),
-      new Field(FieldType.Integer, unkField1),
+      new IntField(unkField0),
+      new IntField(unkField1),
     ], [], [
       threshold instanceof Property ? threshold : new ConstantProperty(threshold as number),
       unkProp instanceof Property ? unkProp : new ConstantProperty(unkProp as number),
@@ -3070,7 +3353,7 @@ export class EqualDistanceEmitter extends Action {
  * 
  * Contains no fields or properties.
  */
-export class OneTimeEmitter extends Action {
+class OneTimeEmitter extends Action {
 
   constructor() {
     super(ActionType.OneTimeEmitter, false, true, 2)
@@ -3086,14 +3369,14 @@ export class OneTimeEmitter extends Action {
  * ------|------
  * 0     | unkField
  */
-export class PointEmitterShape extends Action {
+class PointEmitterShape extends Action {
 
   /**
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(unkField: number = 5) {
     super(ActionType.PointEmitterShape, false, true, 0, [
-      new Field(FieldType.Integer, unkField)
+      new IntField(unkField)
     ])
   }
 
@@ -3114,7 +3397,7 @@ export class PointEmitterShape extends Action {
  * 0     | radius
  * 1     | centerWeight
  */
-export class DiskEmitterShape extends Action {
+class DiskEmitterShape extends Action {
 
   /**
    * @param radius The radius of the disk in meters. Defaults to 1.
@@ -3137,7 +3420,7 @@ export class DiskEmitterShape extends Action {
     unkField: number = 5
   ) {
     super(ActionType.DiskEmitterShape, false, true, 0, [
-      new Field(FieldType.Integer, unkField)
+      new IntField(unkField)
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
       centerWeight instanceof Property ? centerWeight : new ConstantProperty(centerWeight as number),
@@ -3162,7 +3445,7 @@ export class DiskEmitterShape extends Action {
  * 1     | sizeY
  * 2     | centerWeight
  */
-export class RectangleEmitterShape extends Action {
+class RectangleEmitterShape extends Action {
 
   /**
    * @param sizeX Width of the rectangle. Defaults to 1.
@@ -3187,7 +3470,7 @@ export class RectangleEmitterShape extends Action {
     unkField: number = 5
   ) {
     super(ActionType.RectangleEmitterShape, false, true, 0, [
-      new Field(FieldType.Integer, unkField)
+      new IntField(unkField)
     ], [], [
       sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
       sizeY instanceof Property ? sizeY : new ConstantProperty(sizeY as number),
@@ -3210,7 +3493,7 @@ export class RectangleEmitterShape extends Action {
  * ------|------
  * 0     | radius
  */
-export class SphereEmitterShape extends Action {
+class SphereEmitterShape extends Action {
 
   /**
    * @param volume If true, particles will be emitted from anywhere within the
@@ -3223,7 +3506,7 @@ export class SphereEmitterShape extends Action {
     radius: number | Property = 1,
   ) {
     super(ActionType.SphereEmitterShape, false, true, 0, [
-      new Field(FieldType.Boolean, volume)
+      new BoolField(volume)
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
     ])
@@ -3247,7 +3530,7 @@ export class SphereEmitterShape extends Action {
  * 1     | sizeY
  * 2     | sizeZ
  */
-export class BoxEmitterShape extends Action {
+class BoxEmitterShape extends Action {
 
   /**
    * @param volume If true, particles will be emitted from anywhere within the
@@ -3266,8 +3549,8 @@ export class BoxEmitterShape extends Action {
     unkField: number = 0,
   ) {
     super(ActionType.BoxEmitterShape, false, true, 0, [
-      new Field(FieldType.Integer, unkField),
-      new Field(FieldType.Boolean, volume),
+      new IntField(unkField),
+      new BoolField(volume),
     ], [], [
       sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
       sizeY instanceof Property ? sizeY : new ConstantProperty(sizeY as number),
@@ -3293,7 +3576,7 @@ export class BoxEmitterShape extends Action {
  * 0     | radius
  * 1     | height
  */
-export class CylinderEmitterShape extends Action {
+class CylinderEmitterShape extends Action {
 
   /**
    * @param volume If true, particles will be emitted from anywhere within the
@@ -3313,9 +3596,9 @@ export class CylinderEmitterShape extends Action {
     unkField: number = 5,
   ) {
     super(ActionType.CylinderEmitterShape, false, true, 0, [
-      new Field(FieldType.Integer, unkField),
-      new Field(FieldType.Boolean, volume),
-      new Field(FieldType.Integer, yAxis),
+      new IntField(unkField),
+      new BoolField(volume),
+      new BoolField(yAxis),
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
       height instanceof Property ? height : new ConstantProperty(height as number),
@@ -3328,7 +3611,7 @@ export class CylinderEmitterShape extends Action {
  * Super class for some of the 6xx actions that share part of their fields2
  * structure with other 6xx actions.
  */
-export class CommonAction6xxFields2Action extends Action {
+class CommonAction6xxFields2Action extends Action {
 
   /**
    * Controls the color of the additional bloom effect. The colors of the
@@ -3493,7 +3776,7 @@ export interface QuadLineParams {
  * effect to use in a mod, as it has almost everything this action does, and
  * a lot more.
  */
-export class QuadLine extends CommonAction6xxFields2Action {
+class QuadLine extends CommonAction6xxFields2Action {
 
   constructor({
     blendMode = BlendMode.Normal,
@@ -3519,50 +3802,50 @@ export class QuadLine extends CommonAction6xxFields2Action {
     unkScalarProp2_6 = 0,
   }: QuadLineParams = {}) {
     super(ActionType.QuadLine, false, true, 0, [
-      /*  0 */ new Field(FieldType.Integer, -1),
-      /*  1 */ new Field(FieldType.Integer, 1),
-      /*  2 */ new Field(FieldType.Integer, 1),
+      /*  0 */ new IntField(-1),
+      /*  1 */ new IntField(1),
+      /*  2 */ new IntField(1),
     ], [
-      /*  0 */ new Field(FieldType.Integer, 0),
-      /*  1 */ new Field(FieldType.Integer, 0),
-      /*  2 */ new Field(FieldType.Integer, 8),
-      /*  3 */ new Field(FieldType.Integer, 0),
-      /*  4 */ new Field(FieldType.Integer, 1),
-      /*  5 */ new Field(FieldType.Float, bloomColor[0]),
-      /*  6 */ new Field(FieldType.Float, bloomColor[1]),
-      /*  7 */ new Field(FieldType.Float, bloomColor[2]),
-      /*  8 */ new Field(FieldType.Float, bloomStrength),
-      /*  9 */ new Field(FieldType.Integer, 0),
-      /* 10 */ new Field(FieldType.Integer, 0),
-      /* 11 */ new Field(FieldType.Integer, 0),
-      /* 12 */ new Field(FieldType.Integer, 0),
-      /* 13 */ new Field(FieldType.Integer, 0),
-      /* 14 */ new Field(FieldType.Float, -1),
-      /* 15 */ new Field(FieldType.Float, -1),
-      /* 16 */ new Field(FieldType.Float, -1),
-      /* 17 */ new Field(FieldType.Float, -1),
-      /* 18 */ new Field(FieldType.Float, minDistance),
-      /* 19 */ new Field(FieldType.Float, maxDistance),
-      /* 20 */ new Field(FieldType.Integer, 0),
-      /* 21 */ new Field(FieldType.Integer, 0),
-      /* 22 */ new Field(FieldType.Integer, 0),
-      /* 23 */ new Field(FieldType.Integer, 0),
-      /* 24 */ new Field(FieldType.Integer, 0),
-      /* 25 */ new Field(FieldType.Float, 1),
-      /* 26 */ new Field(FieldType.Float, 0),
-      /* 27 */ new Field(FieldType.Integer, 1),
-      /* 28 */ new Field(FieldType.Integer, 0),
-      /* 29 */ new Field(FieldType.Float, 5),
-      /* 30 */ new Field(FieldType.Float, 0),
-      /* 31 */ new Field(FieldType.Integer, 0),
-      /* 32 */ new Field(FieldType.Integer, 1),
-      /* 33 */ new Field(FieldType.Boolean, false),
-      /* 34 */ new Field(FieldType.Float, 0),
-      /* 35 */ new Field(FieldType.Integer, -1),
-      /* 36 */ new Field(FieldType.Integer, -2),
-      /* 37 */ new Field(FieldType.Integer, 0),
-      /* 38 */ new Field(FieldType.Float, 0),
-      /* 39 */ new Field(FieldType.Integer, 1),
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(5),
+      /* 30 */ new FloatField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(false),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(-1),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new FloatField(0),
+      /* 39 */ new IntField(1),
     ], [ // Properties1
       /*  0 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
       /*  1 */ width instanceof Property ? width : new ConstantProperty(width),
@@ -3973,7 +4256,7 @@ export interface BillboardExParams {
  * Particle with a texture that may be animated. This is the most common
  * particle type and it has a lot of useful fields and properties.
  */
-export class BillboardEx extends CommonAction6xxFields2Action {
+class BillboardEx extends CommonAction6xxFields2Action {
 
   constructor({
     texture = 1,
@@ -4020,70 +4303,70 @@ export class BillboardEx extends CommonAction6xxFields2Action {
     unkScalarProp2_6 = 0,
   }: BillboardExParams = {}) {
     super(ActionType.BillboardEx, false, true, 0, [
-      /*  0 */ new Field(FieldType.Integer, orientation),
-      /*  1 */ new Field(FieldType.Integer, normalMap),
-      /*  2 */ new Field(FieldType.Float, randomWidthMultiplier),
-      /*  3 */ new Field(FieldType.Float, randomHeightMultiplier),
-      /*  4 */ new Field(FieldType.Boolean, uniformScale),
-      /*  5 */ new Field(FieldType.Integer, 0),
-      /*  6 */ new Field(FieldType.Integer, columns),
-      /*  7 */ new Field(FieldType.Integer, totalFrames),
-      /*  8 */ new Field(FieldType.Boolean, interpolateFrames),
-      /*  9 */ new Field(FieldType.Integer, 0),
-      /* 10 */ new Field(FieldType.Integer, 0),
-      /* 11 */ new Field(FieldType.Float, -1),
-      /* 12 */ new Field(FieldType.Integer, 1),
-      /* 13 */ new Field(FieldType.Integer, 0),
-      /* 14 */ new Field(FieldType.Integer, 0),
-      /* 15 */ new Field(FieldType.Integer, 1),
-      /* 16 */ new Field(FieldType.Integer, 1),
-      /* 17 */ new Field(FieldType.Integer, 0),
+      /*  0 */ new IntField(orientation),
+      /*  1 */ new IntField(normalMap),
+      /*  2 */ new FloatField(randomWidthMultiplier),
+      /*  3 */ new FloatField(randomHeightMultiplier),
+      /*  4 */ new BoolField(uniformScale),
+      /*  5 */ new IntField(0),
+      /*  6 */ new IntField(columns),
+      /*  7 */ new IntField(totalFrames),
+      /*  8 */ new BoolField(interpolateFrames),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new FloatField(-1),
+      /* 12 */ new IntField(1),
+      /* 13 */ new IntField(0),
+      /* 14 */ new IntField(0),
+      /* 15 */ new IntField(1),
+      /* 16 */ new IntField(1),
+      /* 17 */ new IntField(0),
     ], [
-      /*  0 */ new Field(FieldType.Integer, 0),
-      /*  1 */ new Field(FieldType.Integer, 0),
-      /*  2 */ new Field(FieldType.Integer, 8),
-      /*  3 */ new Field(FieldType.Integer, 0),
-      /*  4 */ new Field(FieldType.Integer, 1),
-      /*  5 */ new Field(FieldType.Float, bloomColor[0]),
-      /*  6 */ new Field(FieldType.Float, bloomColor[1]),
-      /*  7 */ new Field(FieldType.Float, bloomColor[2]),
-      /*  8 */ new Field(FieldType.Float, bloomStrength),
-      /*  9 */ new Field(FieldType.Integer, 0),
-      /* 10 */ new Field(FieldType.Integer, 0),
-      /* 11 */ new Field(FieldType.Integer, 0),
-      /* 12 */ new Field(FieldType.Integer, 0),
-      /* 13 */ new Field(FieldType.Integer, 0),
-      /* 14 */ new Field(FieldType.Float, -1),
-      /* 15 */ new Field(FieldType.Float, -1),
-      /* 16 */ new Field(FieldType.Float, -1),
-      /* 17 */ new Field(FieldType.Float, -1),
-      /* 18 */ new Field(FieldType.Float, minDistance),
-      /* 19 */ new Field(FieldType.Float, maxDistance),
-      /* 20 */ new Field(FieldType.Integer, 0),
-      /* 21 */ new Field(FieldType.Integer, 0),
-      /* 22 */ new Field(FieldType.Integer, 0),
-      /* 23 */ new Field(FieldType.Integer, 0),
-      /* 24 */ new Field(FieldType.Integer, 0),
-      /* 25 */ new Field(FieldType.Float, 1),
-      /* 26 */ new Field(FieldType.Float, negativeDepthOffset),
-      /* 27 */ new Field(FieldType.Integer, 1),
-      /* 28 */ new Field(FieldType.Integer, 0),
-      /* 29 */ new Field(FieldType.Float, 5),
-      /* 30 */ new Field(FieldType.Float, shadowDarkness),
-      /* 31 */ new Field(FieldType.Integer, 0),
-      /* 32 */ new Field(FieldType.Integer, 1),
-      /* 33 */ new Field(FieldType.Boolean, specular),
-      /* 34 */ new Field(FieldType.Float, glossiness),
-      /* 35 */ new Field(FieldType.Integer, lighting),
-      /* 36 */ new Field(FieldType.Integer, -2),
-      /* 37 */ new Field(FieldType.Integer, 0),
-      /* 38 */ new Field(FieldType.Float, specularity),
-      /* 39 */ new Field(FieldType.Integer, 1),
-      /* 40 */ new Field(FieldType.Integer, 0),
-      /* 41 */ new Field(FieldType.Integer, 0),
-      /* 42 */ new Field(FieldType.Integer, 0),
-      /* 43 */ new Field(FieldType.Integer, 0),
-      /* 44 */ new Field(FieldType.Integer, 0),
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(negativeDepthOffset),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(5),
+      /* 30 */ new FloatField(shadowDarkness),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(specular),
+      /* 34 */ new FloatField(glossiness),
+      /* 35 */ new IntField(lighting),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new FloatField(specularity),
+      /* 39 */ new IntField(1),
+      /* 40 */ new IntField(0),
+      /* 41 */ new IntField(0),
+      /* 42 */ new IntField(0),
+      /* 43 */ new IntField(0),
+      /* 44 */ new IntField(0),
     ], [
       /*  0 */ texture instanceof Property ? texture : new ConstantProperty(texture),
       /*  1 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
@@ -4452,7 +4735,7 @@ export interface PointLightParams {
 /**
  * Point light source.
  */
-export class PointLight extends Action {
+class PointLight extends Action {
 
   constructor({
     diffuseColor = [1, 1, 1, 1],
@@ -4470,42 +4753,42 @@ export class PointLight extends Action {
     falloffExponent = 1,
   }: PointLightParams = {}) {
     super(ActionType.PointLight, false, true, 0, [
-      /*  0 */ new Field(FieldType.Integer, 0),
-      /*  1 */ new Field(FieldType.Float, 0),
+      /*  0 */ new IntField(0),
+      /*  1 */ new FloatField(0),
     ], [ // Fields 2
-      /*  0 */ new Field(FieldType.Integer, 0),
-      /*  1 */ new Field(FieldType.Boolean, false),
-      /*  2 */ new Field(FieldType.Float, 0),
-      /*  3 */ new Field(FieldType.Float, 0),
-      /*  4 */ new Field(FieldType.Float, 0),
-      /*  5 */ new Field(FieldType.Float, 0),
-      /*  6 */ new Field(FieldType.Float, 0),
-      /*  7 */ new Field(FieldType.Float, 0),
-      /*  8 */ new Field(FieldType.Float, 0),
-      /*  9 */ new Field(FieldType.Float, 0),
-      /* 10 */ new Field(FieldType.Boolean, shadows),
-      /* 11 */ new Field(FieldType.Boolean, separateSpecular),
-      /* 12 */ new Field(FieldType.Integer, Math.round(fadeOutTime * 30)),
-      /* 13 */ new Field(FieldType.Float, shadowDarkness),
-      /* 14 */ new Field(FieldType.Boolean, false),
-      /* 15 */ new Field(FieldType.Integer, 2),
-      /* 16 */ new Field(FieldType.Boolean, false),
-      /* 17 */ new Field(FieldType.Float, 0.5),
-      /* 18 */ new Field(FieldType.Float, 0.5),
-      /* 19 */ new Field(FieldType.Float, 0.5),
-      /* 20 */ new Field(FieldType.Integer, 1),
-      /* 21 */ new Field(FieldType.Integer, 100),
-      /* 22 */ new Field(FieldType.Integer, 1),
-      /* 23 */ new Field(FieldType.Integer, 1),
-      /* 24 */ new Field(FieldType.Float, fogDensity),
-      /* 25 */ new Field(FieldType.Float, 0),
-      /* 26 */ new Field(FieldType.Boolean, phaseFunction),
-      /* 27 */ new Field(FieldType.Float, asymmetryParam),
-      /* 28 */ new Field(FieldType.Float, falloffExponent),
-      /* 29 */ new Field(FieldType.Integer, 1),
-      /* 30 */ new Field(FieldType.Float, 1),
-      /* 31 */ new Field(FieldType.Integer, 1),
-      /* 32 */ new Field(FieldType.Integer, 1),
+      /*  0 */ new IntField(0),
+      /*  1 */ new BoolField(false),
+      /*  2 */ new FloatField(0),
+      /*  3 */ new FloatField(0),
+      /*  4 */ new FloatField(0),
+      /*  5 */ new FloatField(0),
+      /*  6 */ new FloatField(0),
+      /*  7 */ new FloatField(0),
+      /*  8 */ new FloatField(0),
+      /*  9 */ new FloatField(0),
+      /* 10 */ new BoolField(shadows),
+      /* 11 */ new BoolField(separateSpecular),
+      /* 12 */ new IntField(Math.round(fadeOutTime * 30)),
+      /* 13 */ new FloatField(shadowDarkness),
+      /* 14 */ new BoolField(false),
+      /* 15 */ new IntField(2),
+      /* 16 */ new BoolField(false),
+      /* 17 */ new FloatField(0.5),
+      /* 18 */ new FloatField(0.5),
+      /* 19 */ new FloatField(0.5),
+      /* 20 */ new IntField(1),
+      /* 21 */ new IntField(100),
+      /* 22 */ new IntField(1),
+      /* 23 */ new IntField(1),
+      /* 24 */ new FloatField(fogDensity),
+      /* 25 */ new FloatField(0),
+      /* 26 */ new BoolField(phaseFunction),
+      /* 27 */ new FloatField(asymmetryParam),
+      /* 28 */ new FloatField(falloffExponent),
+      /* 29 */ new IntField(1),
+      /* 30 */ new FloatField(1),
+      /* 31 */ new IntField(1),
+      /* 32 */ new IntField(1),
     ], [ // Properties1
       /*  0 */ diffuseColor instanceof Property ? diffuseColor : new ConstantProperty(...diffuseColor),
       /*  1 */ specularColor instanceof Property ? specularColor : new ConstantProperty(...specularColor),
@@ -4839,7 +5122,7 @@ export interface SpotLightParams {
  * 
  * It points towards +Z.
  */
-export class SpotLight extends Action {
+class SpotLight extends Action {
 
   constructor({
     diffuseColor = [1, 1, 1, 1],
@@ -4864,32 +5147,32 @@ export class SpotLight extends Action {
     unkScalarProp10 = 1,
   }: SpotLightParams = {}) {
     super(ActionType.SpotLight, false, true, 0, [
-      /*  0 */ new Field(FieldType.Integer, 0),
-      /*  1 */ new Field(FieldType.Boolean, false), // Animation toggle?
-      /*  2 */ new Field(FieldType.Float, 0),
-      /*  3 */ new Field(FieldType.Float, 0),
-      /*  4 */ new Field(FieldType.Float, 0), // X jitter
-      /*  5 */ new Field(FieldType.Float, 0), // Y jitter
-      /*  6 */ new Field(FieldType.Float, 0), // Z jitter
-      /*  7 */ new Field(FieldType.Float, 0), // Pulse period 1?
-      /*  8 */ new Field(FieldType.Float, 0), // Pulse period 2?
-      /*  9 */ new Field(FieldType.Float, 1), // Pulse brightness
-      /* 10 */ new Field(FieldType.Boolean, shadows),
-      /* 11 */ new Field(FieldType.Boolean, separateSpecular),
-      /* 12 */ new Field(FieldType.Float, shadowDarkness),
-      /* 13 */ new Field(FieldType.Integer, 2),
-      /* 14 */ new Field(FieldType.Integer, 1),
-      /* 15 */ new Field(FieldType.Integer, Math.round(fadeOutTime * 30)),
-      /* 16 */ new Field(FieldType.Integer, 100),
-      /* 17 */ new Field(FieldType.Integer, 0),
-      /* 18 */ new Field(FieldType.Float, 0),
-      /* 19 */ new Field(FieldType.Float, fogDensity),
-      /* 20 */ new Field(FieldType.Float, 0),
-      /* 21 */ new Field(FieldType.Boolean, phaseFunction),
-      /* 22 */ new Field(FieldType.Float, asymmetryParam),
-      /* 23 */ new Field(FieldType.Float, falloffExponent),
-      /* 24 */ new Field(FieldType.Integer, 1),
-      /* 25 */ new Field(FieldType.Float, 1),
+      /*  0 */ new IntField(0),
+      /*  1 */ new BoolField(false), // Animation toggle?
+      /*  2 */ new FloatField(0),
+      /*  3 */ new FloatField(0),
+      /*  4 */ new FloatField(0), // X jitter
+      /*  5 */ new FloatField(0), // Y jitter
+      /*  6 */ new FloatField(0), // Z jitter
+      /*  7 */ new FloatField(0), // Pulse period 1?
+      /*  8 */ new FloatField(0), // Pulse period 2?
+      /*  9 */ new FloatField(1), // Pulse brightness
+      /* 10 */ new BoolField(shadows),
+      /* 11 */ new BoolField(separateSpecular),
+      /* 12 */ new FloatField(shadowDarkness),
+      /* 13 */ new IntField(2),
+      /* 14 */ new IntField(1),
+      /* 15 */ new IntField(Math.round(fadeOutTime * 30)),
+      /* 16 */ new IntField(100),
+      /* 17 */ new IntField(0),
+      /* 18 */ new FloatField(0),
+      /* 19 */ new FloatField(fogDensity),
+      /* 20 */ new FloatField(0),
+      /* 21 */ new BoolField(phaseFunction),
+      /* 22 */ new FloatField(asymmetryParam),
+      /* 23 */ new FloatField(falloffExponent),
+      /* 24 */ new IntField(1),
+      /* 25 */ new FloatField(1),
     ], [], [
       /*  0 */ diffuseColor instanceof Property ? diffuseColor : new ConstantProperty(...diffuseColor),
       /*  1 */ specularColor instanceof Property ? specularColor : new ConstantProperty(...specularColor),
@@ -5073,9 +5356,11 @@ export class SpotLight extends Action {
 
 }
 
-export const Actions = {
+const Actions = {
   [ActionType.Spin]: Spin, Spin,
-  [ActionType.StaticTransform]: StaticTransform, StaticTransform,
+  Transform,
+  [ActionType.StaticTransform]: Transform, StaticTransform: Transform,
+  [ActionType.RandomTransform]: Transform, RandomTransform: Transform,
   [ActionType.PartialFollow]: PartialFollow, PartialFollow,
   [ActionType.EffectLifetime]: EffectLifetime, EffectLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
@@ -5097,7 +5382,7 @@ export const Actions = {
   [ActionType.SpotLight]: SpotLight, SpotLight,
 }
 
-export class Field {
+class Field {
 
   type: FieldType
   value: number | boolean
@@ -5128,7 +5413,7 @@ export class Field {
       if (single >=  9.99999974737875E-05 && single <  1000000.0 ||
           single <= -9.99999974737875E-05 && single > -1000000.0
       ) {
-        ffxField = new Field(FieldType.Float, single)
+        ffxField = new FloatField(single)
       } else {
         isInt = true
       }
@@ -5136,9 +5421,9 @@ export class Field {
 
     if (ffxField === null) {
       if (isInt) {
-        ffxField = new Field(FieldType.Integer, br.getInt32(br.position))
+        ffxField = new IntField(br.getInt32(br.position))
       } else {
-        ffxField = new Field(FieldType.Float, br.getFloat32(br.position))
+        ffxField = new FloatField(br.getFloat32(br.position))
       }
     }
 
@@ -5172,11 +5457,11 @@ export class Field {
     return arrayOf(count, i => {
       switch (types[i]) {
         case FieldType.Boolean:
-          return new Field(FieldType.Boolean, !!br.readInt32())
+          return new BoolField(!!br.readInt32())
         case FieldType.Integer:
-          return new Field(FieldType.Integer, br.readInt32())
+          return new IntField(br.readInt32())
         case FieldType.Float:
-          return new Field(FieldType.Float, br.readFloat32())
+          return new FloatField(br.readFloat32())
         default:
           return Field.read(br, context, 0)
       }
@@ -5224,6 +5509,36 @@ export class Field {
 
 }
 
+class BoolField extends Field {
+
+  declare value: boolean
+
+  constructor(value: boolean) {
+    super(FieldType.Boolean, value)
+  }
+
+}
+
+class IntField extends Field {
+
+  declare value: number
+
+  constructor(value: number) {
+    super(FieldType.Integer, value)
+  }
+
+}
+
+class FloatField extends Field {
+
+  declare value: number
+
+  constructor(value: number) {
+    super(FieldType.Float, value)
+  }
+
+}
+
 export type Stop = {
   value: PropertyValue,
   x: number,
@@ -5247,7 +5562,7 @@ export type StopList = {
   add: (position: number, value: PropertyValue) => void,
 }
 
-export class Property {
+class Property {
 
   valueType: ValueType
   function: PropertyFunction
@@ -5593,8 +5908,8 @@ export class Property {
             }
             const sc = +prop.fields[0].value
             const cc = prop.componentCount
-            prop.fields.splice(1 + cc * (2 + sc) + sc, 0, ...valuesArray.map(v => new Field(FieldType.Float, v)))
-            prop.fields.splice(1 + cc * 2 + sc, 0, new Field(FieldType.Float, position))
+            prop.fields.splice(1 + cc * (2 + sc) + sc, 0, ...valuesArray.map(v => new FloatField(v)))
+            prop.fields.splice(1 + cc * 2 + sc, 0, new FloatField(position))
             prop.fields[0].value = sc + 1
           }
         } else if (sk === Symbol.iterator) {
@@ -5619,10 +5934,10 @@ export class Property {
       case PropertyFunction.Constant:
         switch (this.function) {
           case PropertyFunction.Zero:
-            this.fields.push(...arrayOf(this.componentCount, () => new Field(FieldType.Float, 0)))
+            this.fields.push(...arrayOf(this.componentCount, () => new FloatField(0)))
             break
           case PropertyFunction.One:
-            this.fields.push(...arrayOf(this.componentCount, () => new Field(FieldType.Float, 1)))
+            this.fields.push(...arrayOf(this.componentCount, () => new FloatField(1)))
             break
           case PropertyFunction.Constant:
             break
@@ -5648,7 +5963,7 @@ export class Property {
         switch (this.function) {
           case PropertyFunction.Zero: {
             const cc = this.componentCount
-            this.fields.push(...arrayOf(3 + 4 * cc, () => new Field(FieldType.Float, 0)))
+            this.fields.push(...arrayOf(3 + 4 * cc, () => new FloatField(0)))
             this.fields[0].type = FieldType.Integer
             this.fields[0].value = 2
             this.fields[2 + cc * 2].value = 1 // Stop 2 position
@@ -5656,7 +5971,7 @@ export class Property {
           }
           case PropertyFunction.One: {
             const cc = this.componentCount
-            this.fields.push(...arrayOf(3 + 4 * cc, () => new Field(FieldType.Float, 1)))
+            this.fields.push(...arrayOf(3 + 4 * cc, () => new FloatField(1)))
             this.fields[0].type = FieldType.Integer
             this.fields[0].value = 2
             this.fields[1 + cc * 2].value = 0 // Stop 1 position
@@ -5664,10 +5979,10 @@ export class Property {
           }
           case PropertyFunction.Constant: {
             const cc = this.componentCount
-            this.fields.push(...this.fields.map(f => new Field(FieldType.Float, f.value)))
+            this.fields.push(...this.fields.map(f => new FloatField(f.value as number)))
             this.fields.splice(0, 0,
-              new Field(FieldType.Integer, 2),
-              ...arrayOf(cc * 2 + 2, () => new Field(FieldType.Float, 0))
+              new IntField(2),
+              ...arrayOf(cc * 2 + 2, () => new FloatField(0))
             )
             this.fields[2 + cc * 2].value = 1 // Stop 2 position
             break
@@ -5748,28 +6063,28 @@ export class Property {
 
 }
 
-export class ZeroProperty extends Property {
+class ZeroProperty extends Property {
   constructor(type: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
     super(type, PropertyFunction.Zero, false, [], modifiers)
   }
 }
 
-export class OneProperty extends Property {
+class OneProperty extends Property {
   constructor(type: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
     super(type, PropertyFunction.One, false, [], modifiers)
   }
 }
 
-export class ConstantProperty extends Property {
+class ConstantProperty extends Property {
   constructor(...args: [value: number] | Vector) {
     if (args.length < 1 || args.length > 4) {
       throw new Error(`Invalid number of arguments for ConstantProperty: ${args.length}`)
     }
-    super(args.length - 1, PropertyFunction.Constant, false, args.map(v => new Field(FieldType.Float, v)))
+    super(args.length - 1, PropertyFunction.Constant, false, args.map(v => new FloatField(v)))
   }
 }
 
-export class SteppedProperty extends Property {
+class SteppedProperty extends Property {
 
   constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
     if (stops.length === 0) {
@@ -5777,20 +6092,20 @@ export class SteppedProperty extends Property {
     }
     const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
     super(comps - 1, PropertyFunction.Stepped, loop, [
-      new Field(FieldType.Integer, stops.length),
-      ...arrayOf(comps * 2, () => new Field(FieldType.Float, 0)),
-      ...stops.map(s => new Field(FieldType.Float, s.position)),
+      new IntField(stops.length),
+      ...arrayOf(comps * 2, () => new FloatField(0)),
+      ...stops.map(s => new FloatField(s.position)),
       ...stops.flatMap(s => comps === 1 ?
-        new Field(FieldType.Float, s.value as number)
+        new FloatField(s.value as number)
       :
-        (s.value as number[]).map(v => new Field(FieldType.Float, v))
+        (s.value as number[]).map(v => new FloatField(v))
       ),
     ])
   }
 
 }
 
-export class LinearProperty extends Property {
+class LinearProperty extends Property {
 
   constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
     if (stops.length === 0) {
@@ -5798,13 +6113,13 @@ export class LinearProperty extends Property {
     }
     const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
     super(comps - 1, PropertyFunction.Linear, loop, [
-      new Field(FieldType.Integer, stops.length),
-      ...arrayOf(comps * 2, () => new Field(FieldType.Float, 0)),
-      ...stops.map(s => new Field(FieldType.Float, s.position)),
+      new IntField(stops.length),
+      ...arrayOf(comps * 2, () => new FloatField(0)),
+      ...stops.map(s => new FloatField(s.position)),
       ...stops.flatMap(s => comps === 1 ?
-        new Field(FieldType.Float, s.value as number)
+        new FloatField(s.value as number)
       :
-        (s.value as number[]).map(v => new Field(FieldType.Float, v))
+        (s.value as number[]).map(v => new FloatField(v))
       ),
     ])
   }
@@ -5815,7 +6130,7 @@ export class LinearProperty extends Property {
  * A {@link LinearProperty linear property} with only two stops. A bit
  * limited, but very easy to create.
  */
-export class BasicLinearProperty extends LinearProperty {
+class BasicLinearProperty extends LinearProperty {
 
   constructor(
     loop: boolean,
@@ -5831,7 +6146,7 @@ export class BasicLinearProperty extends LinearProperty {
 
 }
 
-export class Curve2Property extends Property {
+class Curve2Property extends Property {
 
   constructor(loop: boolean, stops: { position: number, value: PropertyValue, inSlope: number, outSlope: number}[], unk1: number, unk2: number) {
     if (stops.length === 0) {
@@ -5839,24 +6154,24 @@ export class Curve2Property extends Property {
     }
     const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
     super(comps - 1, PropertyFunction.Curve2, loop, [
-      new Field(FieldType.Integer, stops.length),
-      ...arrayOf(comps * 2, () => new Field(FieldType.Float, 0)),
-      ...stops.map(s => new Field(FieldType.Float, s.position)),
+      new IntField(stops.length),
+      ...arrayOf(comps * 2, () => new FloatField(0)),
+      ...stops.map(s => new FloatField(s.position)),
       ...stops.flatMap(s => comps === 1 ?
-        new Field(FieldType.Float, s.value as number)
+        new FloatField(s.value as number)
       :
-        (s.value as number[]).map(v => new Field(FieldType.Float, v))
+        (s.value as number[]).map(v => new FloatField(v))
       ),
-      ...stops.slice(0, -1).flatMap(s => arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(s.outSlope) ? s.outSlope[i] : s.outSlope))),
-      ...arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(unk1) ? unk1[i] : unk1)),
-      ...stops.slice(1).flatMap(s => arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(s.inSlope) ? s.inSlope[i] : s.inSlope))),
-      ...arrayOf(comps, i => new Field(FieldType.Float, Array.isArray(unk2) ? unk2[i] : unk2)),
+      ...stops.slice(0, -1).flatMap(s => arrayOf(comps, i => new FloatField(Array.isArray(s.outSlope) ? s.outSlope[i] : s.outSlope))),
+      ...arrayOf(comps, i => new FloatField(Array.isArray(unk1) ? unk1[i] : unk1)),
+      ...stops.slice(1).flatMap(s => arrayOf(comps, i => new FloatField(Array.isArray(s.inSlope) ? s.inSlope[i] : s.inSlope))),
+      ...arrayOf(comps, i => new FloatField(Array.isArray(unk2) ? unk2[i] : unk2)),
     ])
   }
 
 }
 
-export class Modifier {
+class Modifier {
 
   static #knownTypeEnumAs = new Set([
     53328,
@@ -6043,7 +6358,7 @@ export class Modifier {
  * 
  * The property value wil be multiplied by the values in this modifier.
  */
-export class ExternalValueModifier extends Modifier {
+class ExternalValueModifier extends Modifier {
 
   /**
    * @param extVal The ID of the external value to use.
@@ -6059,7 +6374,7 @@ export class ExternalValueModifier extends Modifier {
   ) {
     const valueType = typeof stops[0].value === 'number' ? 0 : stops[0].value.length - 1
     super(57440 | valueType, 8 | valueType, [
-      new Field(FieldType.Integer, extVal)
+      new IntField(extVal)
     ], [
       new LinearProperty(false, stops)
     ])
@@ -6078,7 +6393,7 @@ export class ExternalValueModifier extends Modifier {
  * 
  * The property value wil be multiplied by the values in this modifier.
  */
-export class BloodVisibilityModifier extends ExternalValueModifier {
+class BloodVisibilityModifier extends ExternalValueModifier {
 
   /**
    * @param onValue The value when "Display Blood" is set to "On".
@@ -6118,7 +6433,7 @@ export class BloodVisibilityModifier extends ExternalValueModifier {
  * A property modifer that changes the property value by a random amount in a
  * given range.
  */
-export class RandomizerModifier extends Modifier {
+class RandomizerModifier extends Modifier {
 
   constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
     if (Array.isArray(minValue)) {
@@ -6131,9 +6446,9 @@ export class RandomizerModifier extends Modifier {
       const seedArray = Array.isArray(seed) ? seed : [seed]
       const valueType = minValue.length - 1
       super(53376 | valueType, 4 | valueType, [
-        ...arrayOf(minValue.length, i => new Field(FieldType.Integer, seedArray[i % seedArray.length])),
-        ...minValue.map(e => new Field(FieldType.Float, e)),
-        ...maxValue.map(e => new Field(FieldType.Float, e)),
+        ...arrayOf(minValue.length, i => new IntField(seedArray[i % seedArray.length])),
+        ...minValue.map(e => new FloatField(e)),
+        ...maxValue.map(e => new FloatField(e)),
       ])
     } else {
       if (Array.isArray(maxValue)) {
@@ -6143,9 +6458,9 @@ export class RandomizerModifier extends Modifier {
         throw new Error('Random scalar modifiers cannot use vector seeds.')
       }
       super(53376, 4, [
-        new Field(FieldType.Integer, seed),
-        new Field(FieldType.Float, minValue),
-        new Field(FieldType.Float, maxValue),
+        new IntField(seed),
+        new FloatField(minValue),
+        new FloatField(maxValue),
       ])
     }
   }
@@ -6158,7 +6473,7 @@ export class RandomizerModifier extends Modifier {
  * This is technically just a {@link ZeroProperty} with a
  * {@link RandomizerModifier}.
  */
-export class RandomProperty extends ZeroProperty {
+class RandomProperty extends ZeroProperty {
 
   constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
     super(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
@@ -6168,7 +6483,7 @@ export class RandomProperty extends ZeroProperty {
 
 }
 
-export class Section10 {
+class Section10 {
 
   fields: Field[]
 
@@ -6209,4 +6524,75 @@ export class Section10 {
     return this.fields.map(field => field.toJSON())
   }
 
+}
+
+export {
+  FXRVersion,
+  ContainerType,
+  EffectType,
+  ActionType,
+  ValueType,
+  PropertyFunction,
+  ModifierType,
+  FieldType,
+  BlendMode,
+  ExternalValue,
+  Operator,
+  OperandType,
+  AttachMode,
+  PropertyArgument,
+  OrientationMode,
+  LightingMode,
+  EffectActionSlots,
+  FXR,
+  State,
+  StateCondition,
+  Container,
+  RootContainer,
+  BasicContainer,
+  Effect,
+  BasicEffect,
+  RandomizerEffect,
+  Action,
+  Spin,
+  Transform,
+  PartialFollow,
+  EffectLifetime,
+  ParticleLifetime,
+  ParticleMultiplier,
+  StateEffectMap,
+  ContainerWeights,
+  PeriodicEmitter,
+  EqualDistanceEmitter,
+  OneTimeEmitter,
+  PointEmitterShape,
+  DiskEmitterShape,
+  RectangleEmitterShape,
+  SphereEmitterShape,
+  BoxEmitterShape,
+  CylinderEmitterShape,
+  CommonAction6xxFields2Action,
+  QuadLine,
+  BillboardEx,
+  PointLight,
+  SpotLight,
+  Actions,
+  Field,
+  BoolField,
+  IntField,
+  FloatField,
+  Property,
+  ZeroProperty,
+  OneProperty,
+  ConstantProperty,
+  SteppedProperty,
+  LinearProperty,
+  BasicLinearProperty,
+  Curve2Property,
+  Modifier,
+  ExternalValueModifier,
+  BloodVisibilityModifier,
+  RandomizerModifier,
+  RandomProperty,
+  Section10
 }

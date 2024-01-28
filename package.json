@@ -8,7 +8,7 @@
   "main": "js/fxr.js",
   "scripts": {
     "docs": "npx typedoc",
-    "build": "npx tsc && npx terser js/fxr.js -o js/fxr.min.js --ecma 2020 -c \"keep_fargs,keep_infinity,reduce_funcs=false,passes=2,module\" --source-map \"content='js/fxr.js.map',filename='js/fxr.min.js.map'\" && npx cpy js/fxr.d.ts --rename=fxr.min.d.ts --flat js",
+    "build": "npx tsc && npx terser js/fxr.js -o js/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='js/fxr.js.map',filename='js/fxr.min.js.map'\" && npx cpy js/fxr.d.ts --rename=fxr.min.d.ts --flat js",
     "watch": "npx tsc --watch"
   },
   "files": [
