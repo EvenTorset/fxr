@@ -33,7 +33,7 @@ const { buffer } = await fs.readFile('f002002000.fxr')
 const fxr = FXR.read(buffer)
 
 // Make some changes, for example changing this effect to be red
-fxr.rootContainer.containers[0].effects[0].actions[9].properties1[7] = new ConstantProperty(1, 0, 0, 1)
+fxr.rootNode.nodes[0].effects[0].actions[9].properties1[7] = new ConstantProperty(1, 0, 0, 1)
 
 // Write the modified file
 await fs.writeFile('f002002000_edit.fxr', Buffer.from(fxr.toArrayBuffer()))
@@ -45,7 +45,7 @@ import fs from 'node:fs/promises'
 
 import {
   FXR,
-  BasicContainer,
+  BasicNode,
   BasicEffect,
   Transform,
   PeriodicEmitter,
@@ -60,12 +60,12 @@ import {
 // Its ID is 402030.
 const fxr = new FXR(402030)
 
-fxr.rootContainer.containers.push(
-  // BasicContainer and BasicEffect are classes that significantly simplifies
+fxr.rootNode.nodes.push(
+  // BasicNode and BasicEffect are classes that significantly simplifies
   // the structure of the FXR format. They have default actions for everything,
   // meaning you only need to replace what you care about for your FXR
-  new BasicContainer([
-    // Container effects
+  new BasicNode([
+    // Node effects
     new BasicEffect([
       // Effect actions
 

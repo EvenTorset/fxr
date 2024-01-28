@@ -9,19 +9,19 @@ enum FXRVersion {
   Sekiro = 5,
 }
 
-enum ContainerType {
+enum NodeType {
   /**
-   * A root container.
+   * A root node.
    * 
-   * This container type has a specialized subclass: {@link RootContainer}
+   * This node type has a specialized subclass: {@link RootNode}
    */
   Root = 2000,
   Proxy = 2001,
   LevelOfDetail = 2002,
   /**
-   * A basic container.
+   * A basic node.
    * 
-   * This container type has a specialized subclass: {@link BasicContainer}
+   * This node type has a specialized subclass: {@link BasicNode}
    */
   Basic = 2200,
   Randomizer = 2202,
@@ -36,10 +36,10 @@ enum EffectType {
    */
   Basic = 1004,
   /**
-   * An effect used to modify how the subcontainers of a
-   * {@link ContainerType.Randomizer randomizer container} are picked.
+   * An effect used to modify how the subnodes of a
+   * {@link NodeType.Randomizer randomizer node} are picked.
    * 
-   * May also be used for applying transforms to those subcontainers, and
+   * May also be used for applying transforms to those subnodes, and
    * possibly other, still unknown things.
    * 
    * This effect type has a specialized subclass: {@link RandomizerEffect}
@@ -52,19 +52,19 @@ enum ActionType {
   Unk1 = 1,
   Translation = 15,
   /**
-   * Makes the container spin.
+   * Makes the node spin.
    * 
    * This action type has a specialized subclass: {@link Spin}
    */
   Spin = 34,
   /**
-   * Sets the translation and rotation of the container.
+   * Sets the translation and rotation of the node.
    * 
    * This action type has a specialized subclass: {@link Transform}
    */
   StaticTransform = 35,
   /**
-   * Sets and randomizes the translation and rotation of the container.
+   * Sets and randomizes the translation and rotation of the node.
    * 
    * This action type has a specialized subclass: {@link Transform}
    */
@@ -88,15 +88,15 @@ enum ActionType {
   Unk122 = 122,
   Unk123_Rotation = 123,
   /**
-   * Controls various things about the container, like its duration, and how
-   * it is attached to the parent container.
+   * Controls various things about the node, like its duration, and how
+   * it is attached to the parent node.
    * 
    * This action type has a specialized subclass: {@link EffectLifetime}
    */
   EffectLifetime = 128,
   /**
    * Controls various things about the particles emitted by the effect, like
-   * their duration, and how they are attached to the parent container.
+   * their duration, and how they are attached to the parent node.
    * 
    * This action type has a specialized subclass: {@link ParticleLifetime}
    */
@@ -114,23 +114,23 @@ enum ActionType {
   FXRReference = 132,
   /**
    * Controls the level of detail (LOD) distance thresholds for the
-   * subcontainers.
+   * subnodes.
    */
   LODThresholds = 133,
   /**
-   * Maps states to effects in the parent container.
+   * Maps states to effects in the parent node.
    * 
    * This action type has a specialized subclass: {@link StateEffectMap}
    */
   StateEffectMap = 199,
   Unk200 = 200,
   /**
-   * Controls the weights for picking random subcontainers. Used in
+   * Controls the weights for picking random subnodes. Used in
    * {@link EffectType.Randomizer}.
    * 
-   * This action type has a specialized subclass: {@link ContainerWeights}
+   * This action type has a specialized subclass: {@link NodeWeights}
    */
-  ContainerWeights = 201,
+  NodeWeights = 201,
   /**
    * Emits particles periodically.
    * 
@@ -217,9 +217,9 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
-  Unk700 = 700, // Root container action
-  Unk701 = 701, // Root container action
-  Unk702 = 702, // Root container action
+  Unk700 = 700, // Root node action
+  Unk701 = 701, // Root node action
+  Unk702 = 702, // Root node action
   Unk731 = 731,
   Unk732 = 732,
   Unk734 = 734,
@@ -234,14 +234,14 @@ enum ActionType {
   Unk10013_WaterInteractionSimulation = 10013,
   Unk10014_LensFlare = 10014,
   Unk10015_RichModel = 10015,
-  Unk10100 = 10100, // Root container action
+  Unk10100 = 10100, // Root node action
   Unk10200_ForceFieldCancelArea = 10200,
   Unk10300_ForceFieldWindArea = 10300,
   Unk10301_ForceFieldGravityArea = 10301,
   Unk10302_CollisionFieldArea = 10302,
   Unk10303_ForceFieldTurbulenceArea = 10303,
-  Unk10400 = 10400, // Root container action
-  Unk10500 = 10500, // Root container action
+  Unk10400 = 10400, // Root node action
+  Unk10500 = 10500, // Root node action
   /**
    * Spot light source.
    * 
@@ -495,7 +495,7 @@ enum OrientationMode {
    */
   Camera = 1,
   /**
-   * Faces the -Z direction of the parent container.
+   * Faces the -Z direction of the parent node.
    */
   ParentNegativeZ = 2,
   /**
@@ -521,7 +521,7 @@ enum OrientationMode {
   UnkCamera = 6,
   /**
    * Tries to face the camera, but is limited to rotation around the Y axis of
-   * the parent container.
+   * the parent node.
    */
   ParentYaw = 7,
 }
@@ -686,7 +686,7 @@ const EffectActionSlots = {
     ],
     [
       ActionType.Unk200,
-      ActionType.ContainerWeights
+      ActionType.NodeWeights
     ],
     [],
     [],
@@ -1058,7 +1058,7 @@ class FXR {
   version: FXRVersion
 
   states: State[]
-  rootContainer: Container
+  rootNode: Node
 
   references: number[]
   externalValues: number[]
@@ -1071,7 +1071,7 @@ class FXR {
   constructor(
     id: number,
     version = FXRVersion.Sekiro,
-    rootContainer: Container = new RootContainer,
+    rootNode: Node = new RootNode,
     states: State[] = [
       new State([
         new StateCondition(Operator.GreaterThan, 2, -1, OperandType.Literal, 1, OperandType.External, 0)
@@ -1084,7 +1084,7 @@ class FXR {
   ) {
     this.id = id
     this.version = version
-    this.rootContainer = rootContainer
+    this.rootNode = rootNode
     this.states = states
     this.references = references
     this.externalValues = externalValues
@@ -1114,9 +1114,9 @@ class FXR {
     // br.readInt32() // StateCount
     // br.readInt32() // ConditionOffset
     // br.readInt32() // ConditionCount
-    const containerOffset = br.readInt32()
+    const nodeOffset = br.readInt32()
     br.position += 15 * 4
-    // br.readInt32() // ContainerCount
+    // br.readInt32() // NodeCount
     // br.readInt32() // EffectOffset
     // br.readInt32() // EffectCount
     // br.readInt32() // ActionOffset
@@ -1169,13 +1169,13 @@ class FXR {
     }
     br.stepOut()
 
-    br.position = containerOffset
-    const rootContainer = Container.read(br)
+    br.position = nodeOffset
+    const rootNode = Node.read(br)
 
     return new FXR(
       id,
       version,
-      rootContainer,
+      rootNode,
       states,
       references,
       externalValues,
@@ -1201,8 +1201,8 @@ class FXR {
     bw.writeInt32(this.states.length)
     bw.reserveInt32('ConditionOffset')
     bw.reserveInt32('ConditionCount')
-    bw.reserveInt32('ContainerOffset')
-    bw.reserveInt32('ContainerCount')
+    bw.reserveInt32('NodeOffset')
+    bw.reserveInt32('NodeCount')
     bw.reserveInt32('EffectOffset')
     bw.reserveInt32('EffectCount')
     bw.reserveInt32('ActionOffset')
@@ -1253,24 +1253,24 @@ class FXR {
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
-    bw.fill('ContainerOffset', bw.position)
-    const containers: Container[] = []
-    this.rootContainer.write(bw, containers)
-    this.rootContainer.writeContainers(bw, containers)
-    bw.fill('ContainerCount', containers.length)
+    bw.fill('NodeOffset', bw.position)
+    const nodes: Node[] = []
+    this.rootNode.write(bw, nodes)
+    this.rootNode.writeNodes(bw, nodes)
+    bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
     let counter = { value: 0 }
-    for (let i = 0; i < containers.length; ++i) {
-      containers[i].writeEffects(bw, i, counter)
+    for (let i = 0; i < nodes.length; ++i) {
+      nodes[i].writeEffects(bw, i, counter)
     }
     bw.fill('EffectCount', counter.value)
     bw.pad(16)
     bw.fill('ActionOffset', bw.position)
     counter.value = 0
     const actions: Action[] = []
-    for (let i = 0; i < containers.length; ++i) {
-      containers[i].writeActions(bw, i, counter, actions)
+    for (let i = 0; i < nodes.length; ++i) {
+      nodes[i].writeActions(bw, i, counter, actions)
     }
     bw.fill('ActionCount', actions.length)
     bw.pad(16)
@@ -1373,7 +1373,7 @@ class FXR {
     return new FXR(
       id,
       FXRVersion[version],
-      Container.fromJSON(root),
+      Node.fromJSON(root),
       states.map(state => State.from(state)),
       references,
       externalValues,
@@ -1389,7 +1389,7 @@ class FXR {
       references: this.references,
       externalValues: this.externalValues,
       unkBloodEnabler: this.unkBloodEnabler,
-      root: this.rootContainer.toJSON(),
+      root: this.rootNode.toJSON(),
     }
   }
 
@@ -1403,7 +1403,7 @@ class FXR {
     return new FXR(
       this.id,
       this.version,
-      this.rootContainer.minify(),
+      this.rootNode.minify(),
       this.states,
       this.references,
       this.externalValues,
@@ -1498,7 +1498,7 @@ class StateCondition {
    * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
    * to make the condition always true.
    * @param elseIndex If the condition is false, the state at this index will
-   * be checked instead. Set it to -1 to disable the container if the condition
+   * be checked instead. Set it to -1 to disable the node if the condition
    * is false.
    * @param leftOperandType Controls what type of value the operand to the left
    * of the operator should be.
@@ -1829,97 +1829,103 @@ class StateCondition {
 
 }
 
-class Container {
+/**
+ * The base class for all nodes.
+ * 
+ * A node is a container with actions, effects, and other nodes, and they form
+ * the general structure of the FXR.
+ */
+class Node {
 
-  type: ContainerType
+  type: NodeType
   actions: Action[] = []
   effects: Effect[] = []
-  containers: Container[] = []
+  nodes: Node[] = []
 
   constructor(
-    type: ContainerType,
+    type: NodeType,
     actions: Action[] = [],
     effects: Effect[] = [],
-    containers: Container[] = []
+    nodes: Node[] = []
   ) {
     this.type = type
     this.actions = actions
     this.effects = effects
-    this.containers = containers
+    this.nodes = nodes
   }
 
   static read(br: BinaryReader) {
-    const container = new Container(br.readInt16())
+    const node = new Node(br.readInt16())
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
     const effectCount = br.readInt32()
     const actionCount = br.readInt32()
-    const containerCount = br.readInt32()
+    const nodeCount = br.readInt32()
     br.assertInt32(0)
     const effectOffset = br.readInt32()
     br.assertInt32(0)
     const actionOffset = br.readInt32()
     br.assertInt32(0)
-    const containerOffset = br.readInt32()
+    const nodeOffset = br.readInt32()
     br.assertInt32(0)
-    br.stepIn(containerOffset)
-    for (let i = 0; i < containerCount; ++i) {
-      container.containers.push(Container.read(br))
+    br.stepIn(nodeOffset)
+    for (let i = 0; i < nodeCount; ++i) {
+      node.nodes.push(Node.read(br))
     }
     br.stepOut()
     br.stepIn(effectOffset)
     for (let i = 0; i < effectCount; ++i) {
-      container.effects.push(Effect.read(br))
+      node.effects.push(Effect.read(br))
     }
     br.stepOut()
     br.stepIn(actionOffset)
     for (let i = 0; i < actionCount; ++i) {
-      container.actions.push(Action.read(br))
+      node.actions.push(Action.read(br))
     }
     br.stepOut()
-    return container
+    return node
   }
 
-  write(bw: BinaryWriter, containers: Container[]) {
-    const count = containers.length
+  write(bw: BinaryWriter, nodes: Node[]) {
+    const count = nodes.length
     bw.writeInt16(this.type)
     bw.writeUint8(0)
     bw.writeUint8(1)
     bw.writeInt32(0)
     bw.writeInt32(this.effects.length)
     bw.writeInt32(this.actions.length)
-    bw.writeInt32(this.containers.length)
+    bw.writeInt32(this.nodes.length)
     bw.writeInt32(0)
-    bw.reserveInt32(`ContainerEffectsOffset${count}`)
+    bw.reserveInt32(`NodeEffectsOffset${count}`)
     bw.writeInt32(0)
-    bw.reserveInt32(`ContainerActionsOffset${count}`)
+    bw.reserveInt32(`NodeActionsOffset${count}`)
     bw.writeInt32(0)
-    bw.reserveInt32(`ContainerChildContainersOffset${count}`)
+    bw.reserveInt32(`NodeChildNodesOffset${count}`)
     bw.writeInt32(0)
-    containers.push(this)
+    nodes.push(this)
   }
 
-  writeContainers(bw: BinaryWriter, containers: Container[]) {
-    const num = containers.indexOf(this)
-    if (this.containers.length === 0) {
-      bw.fill(`ContainerChildContainersOffset${num}`, 0)
+  writeNodes(bw: BinaryWriter, nodes: Node[]) {
+    const num = nodes.indexOf(this)
+    if (this.nodes.length === 0) {
+      bw.fill(`NodeChildNodesOffset${num}`, 0)
     } else {
-      bw.fill(`ContainerChildContainersOffset${num}`, bw.position)
-      for (const container of this.containers) {
-        container.write(bw, containers)
+      bw.fill(`NodeChildNodesOffset${num}`, bw.position)
+      for (const node of this.nodes) {
+        node.write(bw, nodes)
       }
-      for (const container of this.containers) {
-        container.writeContainers(bw, containers)
+      for (const node of this.nodes) {
+        node.writeNodes(bw, nodes)
       }
     }
   }
 
   writeEffects(bw: BinaryWriter, index: number, effectCounter: { value: number }) {
     if (this.effects.length === 0) {
-      bw.fill(`ContainerEffectsOffset${index}`, 0)
+      bw.fill(`NodeEffectsOffset${index}`, 0)
     } else {
-      bw.fill(`ContainerEffectsOffset${index}`, bw.position)
+      bw.fill(`NodeEffectsOffset${index}`, bw.position)
       for (let i = 0; i < this.effects.length; ++i) {
         this.effects[i].write(bw, effectCounter.value + i)
       }
@@ -1928,7 +1934,7 @@ class Container {
   }
 
   writeActions(bw: BinaryWriter, index: number, effectCounter: { value: number }, actions: Action[]) {
-    bw.fill(`ContainerActionsOffset${index}`, bw.position)
+    bw.fill(`NodeActionsOffset${index}`, bw.position)
     for (const action of this.actions) {
       action.write(bw, actions)
     }
@@ -1942,18 +1948,18 @@ class Container {
     type,
     actions,
     effects,
-    containers
+    nodes
   }: {
     type: number
     actions: []
     effects: []
-    containers: []
+    nodes: []
   }) {
-    return new Container(
+    return new Node(
       type,
       actions.map(action => Action.fromJSON(action)),
       effects.map(effect => Effect.fromJSON(effect)),
-      containers.map(container => Container.fromJSON(container)),
+      nodes.map(node => Node.fromJSON(node)),
     )
   }
 
@@ -1962,36 +1968,40 @@ class Container {
       type: this.type,
       actions: this.actions.map(action => action.toJSON()),
       effects: this.effects.map(effect => effect.toJSON()),
-      containers: this.containers.map(container => container.toJSON()),
+      nodes: this.nodes.map(node => node.toJSON()),
     }
   }
 
   minify() {
-    return new Container(
+    return new Node(
       this.type,
       this.actions.map(action => action.minify()),
       this.effects.map(effect => effect.minify()),
-      this.containers.map(container => container.minify())
+      this.nodes.map(node => node.minify())
     )
   }
 
 }
 
-class RootContainer extends Container {
+/**
+ * Simplifies the creation of new {@link NodeType.Root root nodes} by giving
+ * them default actions.
+ */
+class RootNode extends Node {
 
   constructor(
     rateOfTime: number | Property = 1,
     effects: Effect[] = [],
-    containers: Container[] = [],
+    nodes: Node[] = [],
   ) {
-    super(ContainerType.Root, [
+    super(NodeType.Root, [
       new Action(ActionType.Unk700),
       new Action(ActionType.Unk10100, false, true, 0, arrayOf(56, () => new IntField(0))),
       new Action(ActionType.Unk10400, false, true, 0, arrayOf(65, () => new IntField(1))),
       new Action(ActionType.Unk10500, false, true, 0, arrayOf(10, () => new IntField(0)), [], [
         rateOfTime instanceof Property ? rateOfTime : new ConstantProperty(rateOfTime as number)
       ]),
-    ], effects, containers)
+    ], effects, nodes)
   }
 
   get rateOfTime(): number { return this.actions.find(a => a.type === ActionType.Unk10500)?.properties1[0].stops[0].value as number }
@@ -2005,18 +2015,23 @@ class RootContainer extends Container {
 
 }
 
-class BasicContainer extends Container {
+/**
+ * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
+ * them a default {@link ActionType.StateEffectMap state-effect map} and a
+ * simpler way to modify the map.
+ */
+class BasicNode extends Node {
 
-  constructor(effects: Effect[] = [], containers: Container[] = []) {
+  constructor(effects: Effect[] = [], nodes: Node[] = []) {
     if (!Array.isArray(effects) || effects.some(e => !(e instanceof Effect))) {
-      throw new Error('Non-effect passed as effect to BasicContainer.')
+      throw new Error('Non-effect passed as effect to BasicNode.')
     }
-    if (!Array.isArray(containers) || containers.some(e => !(e instanceof Container))) {
-      throw new Error('Non-container passed as container to BasicContainer.')
+    if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
+      throw new Error('Non-node passed as node to BasicNode.')
     }
-    super(ContainerType.Basic, [
+    super(NodeType.Basic, [
       new StateEffectMap(0)
-    ], effects, containers)
+    ], effects, nodes)
   }
 
   mapStates(...effectIndices: number[]) {
@@ -2733,7 +2748,7 @@ class Action {
 }
 
 /**
- * Makes the container spin.
+ * Makes the node spin.
  * 
  * Fields1:
  * Index | Value
@@ -2786,33 +2801,33 @@ class Spin extends Action {
 
 export interface TransformParams {
   /**
-   * Translates the container along the X-axis. Defaults to 0.
+   * Translates the node along the X-axis. Defaults to 0.
    */
   translateX?: number
   /**
-   * Translates the container along the Y-axis. Defaults to 0.
+   * Translates the node along the Y-axis. Defaults to 0.
    */
   translateY?: number
   /**
-   * Translates the container along the Z-axis. Defaults to 0.
+   * Translates the node along the Z-axis. Defaults to 0.
    */
   translateZ?: number
   /**
-   * Container rotation around the X-axis in degrees. Defaults to 0.
+   * Node rotation around the X-axis in degrees. Defaults to 0.
    */
   rotateX?: number
   /**
-   * Container rotation around the Y-axis in degrees. Defaults to 0.
+   * Node rotation around the Y-axis in degrees. Defaults to 0.
    */
   rotateY?: number
   /**
-   * Container rotation around the Z-axis in degrees. Defaults to 0.
+   * Node rotation around the Z-axis in degrees. Defaults to 0.
    */
   rotateZ?: number
   /**
    * The maximum change in translation along the X-axis from
    * {@link translateX the base value} caused by randomization. When the
-   * container is created, its translation along this axis will be a random
+   * node is created, its translation along this axis will be a random
    * number between the base value minus this value and the base value plus
    * this value. Defaults to 0.
    */
@@ -2820,7 +2835,7 @@ export interface TransformParams {
   /**
    * The maximum change in translation along the Y-axis from
    * {@link translateY the base value} caused by randomization. When the
-   * container is created, its translation along this axis will be a random
+   * node is created, its translation along this axis will be a random
    * number between the base value minus this value and the base value plus
    * this value. Defaults to 0.
    */
@@ -2828,14 +2843,14 @@ export interface TransformParams {
   /**
    * The maximum change in translation along the Z-axis from
    * {@link translateZ the base value} caused by randomization. When the
-   * container is created, its translation along this axis will be a random
+   * node is created, its translation along this axis will be a random
    * number between the base value minus this value and the base value plus
    * this value. Defaults to 0.
    */
   randomTranslationZ?: number
   /**
    * The maximum change in rotation around the X-axis from
-   * {@link rotateX the base value} caused by randomization. When the container
+   * {@link rotateX the base value} caused by randomization. When the node
    * is created, its rotation around this axis will be a random number between
    * the base value minus this value and the base value plus this value.
    * Defaults to 0.
@@ -2843,7 +2858,7 @@ export interface TransformParams {
   randomRotationX?: number
   /**
    * The maximum change in rotation around the Y-axis from
-   * {@link rotateY the base value} caused by randomization. When the container
+   * {@link rotateY the base value} caused by randomization. When the node
    * is created, its rotation around this axis will be a random number between
    * the base value minus this value and the base value plus this value.
    * Defaults to 0.
@@ -2851,7 +2866,7 @@ export interface TransformParams {
   randomRotationY?: number
   /**
    * The maximum change in rotation around the Z-axis from
-   * {@link rotateZ the base value} caused by randomization. When the container
+   * {@link rotateZ the base value} caused by randomization. When the node
    * is created, its rotation around this axis will be a random number between
    * the base value minus this value and the base value plus this value.
    * Defaults to 0.
@@ -2859,7 +2874,7 @@ export interface TransformParams {
   randomRotationZ?: number
 }
 /**
- * Sets the translation and rotation of the container. Optionally randomizes
+ * Sets the translation and rotation of the node. Optionally randomizes
  * the translation and rotation.
  * 
  * If any of the randomization parameters are not 0, it will create a
@@ -3074,8 +3089,8 @@ class PartialFollow extends Action {
 }
 
 /**
- * Controls various things about the container, like its duration, and how
- * it is attached to the parent container.
+ * Controls various things about the node, like its duration, and how
+ * it is attached to the parent node.
  * 
  * Fields1:
  * Index | Value
@@ -3093,10 +3108,10 @@ class PartialFollow extends Action {
 class EffectLifetime extends Action {
 
   /**
-   * @param duration The container duration in seconds. Defaults to -1
+   * @param duration The node duration in seconds. Defaults to -1
    * (infinite).
    * @param delay The delay before the emitter begins emitting. Defaults to 0.
-   * @param attachment Controls how the container is attached to its parent.
+   * @param attachment Controls how the node is attached to its parent.
    * Defaults to {@link AttachMode.Parent}.
    * @param unkField1 Unknown int. Fields1, index 1. Possibly a boolean field.
    * Defaults to 1.
@@ -3123,7 +3138,7 @@ class EffectLifetime extends Action {
 
 /**
  * Controls various things about the particles emitted by the effect, like
- * their duration, and how they are attached to the parent container.
+ * their duration, and how they are attached to the parent node.
  * 
  * Fields1:
  * Index | Value
@@ -3222,7 +3237,7 @@ class ParticleMultiplier extends Action {
 }
 
 /**
- * Maps states to effects in the parent container.
+ * Maps states to effects in the parent node.
  * 
  * The index of each value represents the index of the state, and the value
  * represents the index of the effect that should be active when the state is
@@ -3239,12 +3254,12 @@ class StateEffectMap extends Action {
 }
 
 /**
- * Controls the weights for picking random subcontainers. Used in {@link EffectType.Randomizer}.
+ * Controls the weights for picking random subnodes. Used in {@link EffectType.Randomizer}.
  */
-class ContainerWeights extends Action {
+class NodeWeights extends Action {
 
   constructor(...weights: number[]) {
-    super(ActionType.ContainerWeights, false, true, 1, [], [], [], [], [
+    super(ActionType.NodeWeights, false, true, 1, [], [], [], [], [
       new Section10(weights.map(w => new IntField(w)))
     ])
   }
@@ -5377,7 +5392,7 @@ const Actions = {
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.ContainerWeights]: ContainerWeights, ContainerWeights,
+  [ActionType.NodeWeights]: NodeWeights, NodeWeights,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
@@ -6538,7 +6553,7 @@ class Section10 {
 
 export {
   FXRVersion,
-  ContainerType,
+  NodeType,
   EffectType,
   ActionType,
   ValueType,
@@ -6562,9 +6577,9 @@ export {
   State,
   StateCondition,
 
-  Container,
-  RootContainer,
-  BasicContainer,
+  Node,
+  RootNode,
+  BasicNode,
 
   Effect,
   BasicEffect,
@@ -6578,7 +6593,7 @@ export {
   ParticleLifetime,
   ParticleMultiplier,
   StateEffectMap,
-  ContainerWeights,
+  NodeWeights,
   PeriodicEmitter,
   EqualDistanceEmitter,
   OneTimeEmitter,
