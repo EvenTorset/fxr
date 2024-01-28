@@ -2714,10 +2714,21 @@ class Action {
    * Some actions can be minified to make the output smaller. This is done by
    * creating a simpler action that is functionally equivalent to this action.
    * 
-   * Most actions can't be minified without losing functionality, and so this
-   * just returns the same action, unmodified, for those.
+   * Actions that can not be minified will not be changed.
    */
-  minify() { return this }
+  minify() {
+    return new Action(
+      this.type,
+      this.unk02,
+      this.unk03,
+      this.unk04,
+      this.fields1,
+      this.fields2,
+      this.properties1.map(prop => prop.minify()),
+      this.properties2.map(prop => prop.minify()),
+      this.section10s
+    )
+  }
 
 }
 
@@ -5625,21 +5636,6 @@ class Property {
   }
 
   write(bw: BinaryWriter, properties: Property[], conditional: boolean) {
-    // Optimize constant properties with 0 and 1 values
-    // Note: Doing this means reading and writing an FXR file does not produce
-    // byte-perfect copies of the original, but it can make the file smaller,
-    // and they should be functionally identical.
-    if (this.function === PropertyFunction.Constant) {
-      if (this.fields.every(f => f.value === 0)) {
-        // Constant with only 0 fields, might as well be a ZeroProperty
-        return new ZeroProperty(this.valueType).withModifiers(...this.modifiers).write(bw, properties, conditional)
-      }
-      if (this.fields.every(f => f.value === 1)) {
-        // Constant with only 1 fields, might as well be a OneProperty
-        return new OneProperty(this.valueType).withModifiers(...this.modifiers).write(bw, properties, conditional)
-      }
-    }
-
     const count = properties.length
     const typeEnumA = this.valueType | this.function << 4 | +this.loop << 12
     const typeEnumB = this.valueType | this.function << 2 | +this.loop << 4
@@ -6059,6 +6055,20 @@ class Property {
     if (this.fields.length > 0) o.fields = this.fields.map(field => field.toJSON())
     if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
     return o
+  }
+
+  minify() {
+    if (this.function === PropertyFunction.Constant) {
+      if (this.fields.every(f => f.value === 0)) {
+        // Constant with only 0 fields, might as well be a ZeroProperty
+        return new ZeroProperty(this.valueType, this.modifiers)
+      }
+      if (this.fields.every(f => f.value === 1)) {
+        // Constant with only 1 fields, might as well be a OneProperty
+        return new OneProperty(this.valueType, this.modifiers)
+      }
+    }
+    return this
   }
 
 }
@@ -6543,16 +6553,23 @@ export {
   PropertyArgument,
   OrientationMode,
   LightingMode,
+
   EffectActionSlots,
+  Actions,
+
   FXR,
+
   State,
   StateCondition,
+
   Container,
   RootContainer,
   BasicContainer,
+
   Effect,
   BasicEffect,
   RandomizerEffect,
+
   Action,
   Spin,
   Transform,
@@ -6576,11 +6593,12 @@ export {
   BillboardEx,
   PointLight,
   SpotLight,
-  Actions,
+
   Field,
   BoolField,
   IntField,
   FloatField,
+
   Property,
   ZeroProperty,
   OneProperty,
@@ -6589,10 +6607,12 @@ export {
   LinearProperty,
   BasicLinearProperty,
   Curve2Property,
+  RandomProperty,
+
   Modifier,
   ExternalValueModifier,
   BloodVisibilityModifier,
   RandomizerModifier,
-  RandomProperty,
+
   Section10
 }
