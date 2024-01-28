@@ -2192,8 +2192,6 @@ export class RandomizerEffect extends Effect {
 
 }
 
-type FieldTypeList = (FieldType | null)[]
-
 const commonAction6xxFields2Types = [
   null,
   null,
@@ -2241,7 +2239,7 @@ const commonAction6xxFields2Types = [
   null,
   null,
 ]
-const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: FieldTypeList } } = {
+const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: FieldType[] } } = {
   [ActionType.Spin]: {
     Fields1: [
       FieldType.Integer
