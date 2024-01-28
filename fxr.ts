@@ -188,7 +188,9 @@ export enum ActionType {
   PointSprite = 600,
   Line = 601,
   /**
-   * Simple rectangular gradient particle.
+   * Simple rectangular gradient particle. Similar to
+   * {@link ActionType.Line Line}, but with a width that can be controlled by
+   * a property.
    * 
    * This action type has a specialized subclass: {@link QuadLine}
    */
@@ -205,7 +207,7 @@ export enum ActionType {
   Distortion = 607,
   RadialBlur = 608,
   /**
-   * Point light source "particle".
+   * Point light source.
    * 
    * This action type has a specialized subclass: {@link PointLight}
    */
@@ -235,7 +237,12 @@ export enum ActionType {
   Unk10303_ForceFieldTurbulenceArea = 10303,
   Unk10400 = 10400, // Root container action
   Unk10500 = 10500, // Root container action
-  Unk11000_SpotLight = 11000,
+  /**
+   * Spot light source.
+   * 
+   * This action type has a specialized subclass: {@link SpotLight}
+   */
+  SpotLight = 11000,
 }
 
 export enum ValueType {
@@ -608,7 +615,7 @@ export const EffectActionSlots = {
       ActionType.Unk10301_ForceFieldGravityArea,
       ActionType.Unk10302_CollisionFieldArea,
       ActionType.Unk10303_ForceFieldTurbulenceArea,
-      ActionType.Unk11000_SpotLight
+      ActionType.SpotLight
     ],
     [
       ActionType.Unk55,
@@ -2382,6 +2389,37 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldTypeList, Fields2: Fi
       FieldType.Integer,
       null,
     ]
+  },
+  [ActionType.SpotLight]: {
+    Fields1: [
+      null,
+      FieldType.Boolean,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Boolean,
+      FieldType.Boolean,
+      FieldType.Float,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Boolean,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Integer,
+      FieldType.Float,
+    ],
+    Fields2: []
   }
 }
 
@@ -4280,17 +4318,138 @@ export class BillboardEx extends CommonAction6xxFields2Action {
 }
 
 export interface PointLightParams {
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular
+   * color of the light.
+   * 
+   * Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   diffuseColor?: Vector4 | Property
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and
+   * {@link diffuseColor} controls both the diffuse as well as the specular
+   * color.
+   * 
+   * Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   specularColor?: Vector4 | Property
+  /**
+   * The maximum distance that the light may travel from the source, and the
+   * radius of the sphere in which other effects caused by the light source
+   * (for example {@link fogDensity} and its related fields) may act. Defaults
+   * to 10.
+   */
   radius?: number | Property
-  diffuseMultiplier?: Vector4 | Property
-  specularMultiplier?: Vector4 | Property
-  castShadows?: boolean
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
+   * easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular
+   * color of the light.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseMultiplier?: number | Property
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularMultiplier?: number | Property
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Objects also have a setting for casting shadows, and both must be
+   * enabled for an object to cast shadows from this light source.
+   * 
+   * Defaults to false.
+   */
+  shadows?: boolean
+  /**
+   * When enabled, this allows other properties and fields of the action to
+   * control the specular color independently of the diffuse color. When
+   * disabled, the diffuse counterpart of the properties or fields will affect
+   * both the diffuse and specular color. Defaults to false.
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
   separateSpecular?: boolean
+  /**
+   * The number of seconds the light takes to fade to nothing after being
+   * destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to
+   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
+   * as the units.
+   * 
+   * Defaults to 0.
+   */
   fadeOutTime?: number
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows
+   * will be entirely invisible. Defaults to 1.
+   */
   shadowDarkness?: number
-  glow?: number
-  glowConcentration?: number
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the
+   * light. The fog does not affect the actual light produced by the source and
+   * is not affected by shadows. Defaults to 0.
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  fogDensity?: number
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from
+   * {@link fogDensity}. Defaults to true.
+   */
+  phaseFunction?: boolean
+  /**
+   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * value is ignored if {@link phaseFunction} is disabled, and the fog will
+   * scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward,
+   * in the same direction as the light was already traveling. This means that
+   * the fake fog will be less visible from the side or behind, and more
+   * visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely
+   * invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens
+   * the fog instead.
+   * 
+   * Defaults to 0.75.
+   */
+  asymmetryParam?: number
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar
+   * to a falloff exponent in a few ways.
+   * 
+   * Defaults to 1.
+   */
+  falloffExponent?: number
 }
 /**
  * Point light source.
@@ -4301,14 +4460,16 @@ export class PointLight extends Action {
     diffuseColor = [1, 1, 1, 1],
     specularColor = diffuseColor instanceof Property ? Property.copy(diffuseColor) : diffuseColor.slice(),
     radius = 10,
-    diffuseMultiplier = [1, 1, 1, 1],
-    specularMultiplier = [1, 1, 1, 1],
-    castShadows = false,
+    diffuseMultiplier = 1,
+    specularMultiplier = 1,
+    shadows = false,
     separateSpecular = false,
     fadeOutTime = 0,
     shadowDarkness = 1,
-    glow = 0,
-    glowConcentration = 0.5,
+    fogDensity = 0,
+    phaseFunction = true,
+    asymmetryParam = 0.5,
+    falloffExponent = 1,
   }: PointLightParams = {}) {
     super(ActionType.PointLight, false, true, 0, [
       /*  0 */ new Field(FieldType.Integer, 0),
@@ -4324,9 +4485,9 @@ export class PointLight extends Action {
       /*  7 */ new Field(FieldType.Float, 0),
       /*  8 */ new Field(FieldType.Float, 0),
       /*  9 */ new Field(FieldType.Float, 0),
-      /* 10 */ new Field(FieldType.Boolean, castShadows),
+      /* 10 */ new Field(FieldType.Boolean, shadows),
       /* 11 */ new Field(FieldType.Boolean, separateSpecular),
-      /* 12 */ new Field(FieldType.Integer, fadeOutTime),
+      /* 12 */ new Field(FieldType.Integer, Math.round(fadeOutTime * 30)),
       /* 13 */ new Field(FieldType.Float, shadowDarkness),
       /* 14 */ new Field(FieldType.Boolean, false),
       /* 15 */ new Field(FieldType.Integer, 2),
@@ -4338,11 +4499,11 @@ export class PointLight extends Action {
       /* 21 */ new Field(FieldType.Integer, 100),
       /* 22 */ new Field(FieldType.Integer, 1),
       /* 23 */ new Field(FieldType.Integer, 1),
-      /* 24 */ new Field(FieldType.Float, glow),
-      /* 25 */ new Field(FieldType.Float, 100),
-      /* 26 */ new Field(FieldType.Integer, 1),
-      /* 27 */ new Field(FieldType.Float, glowConcentration),
-      /* 28 */ new Field(FieldType.Float, 1),
+      /* 24 */ new Field(FieldType.Float, fogDensity),
+      /* 25 */ new Field(FieldType.Float, 0),
+      /* 26 */ new Field(FieldType.Boolean, phaseFunction),
+      /* 27 */ new Field(FieldType.Float, asymmetryParam),
+      /* 28 */ new Field(FieldType.Float, falloffExponent),
       /* 29 */ new Field(FieldType.Integer, 1),
       /* 30 */ new Field(FieldType.Float, 1),
       /* 31 */ new Field(FieldType.Integer, 1),
@@ -4362,43 +4523,555 @@ export class PointLight extends Action {
       /*  0 */ new ConstantProperty(1),
       /*  1 */ new ConstantProperty(1),
       /*  2 */ new ConstantProperty(1),
-      /*  3 */ diffuseMultiplier instanceof Property ? diffuseMultiplier : new ConstantProperty(...diffuseMultiplier),
-      /*  4 */ specularMultiplier instanceof Property ? specularMultiplier : new ConstantProperty(...specularMultiplier),
+      /*  3 */ diffuseMultiplier instanceof Property ? diffuseMultiplier : new ConstantProperty(diffuseMultiplier),
+      /*  4 */ specularMultiplier instanceof Property ? specularMultiplier : new ConstantProperty(specularMultiplier),
     ])
   }
 
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular
+   * color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get diffuseColor() { return this.properties1[0] }
   set diffuseColor(value) { setPropertyInList(this.properties1, 0, value) }
 
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and
+   * {@link diffuseColor} controls both the diffuse as well as the specular
+   * color.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get specularColor() { return this.properties1[1] }
   set specularColor(value) { setPropertyInList(this.properties1, 1, value) }
 
+  /**
+   * The maximum distance that the light may travel from the source, and the
+   * radius of the sphere in which other effects caused by the light source
+   * (for example {@link fogDensity} and its related fields) may act.
+   */
   get radius() { return this.properties1[2] }
   set radius(value) { setPropertyInList(this.properties1, 2, value) }
 
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
+   * easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular
+   * color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get diffuseMultiplier() { return this.properties2[3] }
   set diffuseMultiplier(value) { setPropertyInList(this.properties2, 3, value) }
 
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get specularMultiplier() { return this.properties1[4] }
   set specularMultiplier(value) { setPropertyInList(this.properties2, 4, value) }
 
-  get castShadows() { return this.fields2[10].value as boolean }
-  set castShadows(value) { this.fields2[10].value = value }
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Objects also have a setting for casting shadows, and both must be
+   * enabled for an object to cast shadows from this light source.
+   */
+  get shadows() { return this.fields2[10].value as boolean }
+  set shadows(value) { this.fields2[10].value = value }
 
+  /**
+   * When enabled, this allows other properties and fields of the action to
+   * control the specular color independently of the diffuse color. When
+   * disabled, the diffuse counterpart of the properties or fields will affect
+   * both the diffuse and specular color.
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
   get separateSpecular() { return this.fields2[11].value as boolean }
   set separateSpecular(value) { this.fields2[11].value = value }
 
-  get fadeOutTime() { return this.fields2[12].value as number }
-  set fadeOutTime(value) { this.fields2[12].value = value }
+  /**
+   * The number of seconds the light takes to fade to nothing after being
+   * destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to
+   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
+   * as the units.
+   */
+  get fadeOutTime() { return (this.fields2[12].value as number) / 30 }
+  set fadeOutTime(value) { this.fields2[12].value = Math.round(value * 30) }
 
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows
+   * will be entirely invisible.
+   */
   get shadowDarkness() { return this.fields2[13].value as number }
   set shadowDarkness(value) { this.fields2[13].value = value }
 
-  get glow() { return this.fields2[24].value as number }
-  set glow(value) { this.fields2[24].value = value }
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the
+   * light. The fog does not affect the actual light produced by the source and
+   * is not affected by shadows.
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  get fogDensity() { return this.fields2[24].value as number }
+  set fogDensity(value) { this.fields2[24].value = value }
 
-  get glowConcentration() { return this.fields2[27].value as number }
-  set glowConcentration(value) { this.fields2[27].value = value }
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from
+   * {@link fogDensity}.
+   */
+  get phaseFunction() { return this.fields2[26].value as boolean }
+  set phaseFunction(value) { this.fields2[26].value = value }
+
+  /**
+   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * value is ignored if {@link phaseFunction} is disabled, and the fog will
+   * scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward,
+   * in the same direction as the light was already traveling. This means that
+   * the fake fog will be less visible from the side or behind, and more
+   * visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely
+   * invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens
+   * the fog instead.
+   */
+  get asymmetryParam() { return this.fields2[27].value as number }
+  set asymmetryParam(value) { this.fields2[27].value = value }
+
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar
+   * to a falloff exponent in a few ways.
+   */
+  get falloffExponent() { return this.fields2[28].value as number }
+  set falloffExponent(value) { this.fields2[28].value = value }
+
+}
+
+export interface SpotLightParams {
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular
+   * color of the light.
+   * 
+   * Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseColor?: Vector4 | Property
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and
+   * {@link diffuseColor} controls both the diffuse as well as the specular
+   * color.
+   * 
+   * Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularColor?: Vector4 | Property
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
+   * easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular
+   * color of the light.
+   * 
+   * Defaults to 100.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseMultiplier?: number | Property
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * Defaults to 100.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularMultiplier?: number | Property
+  /**
+   * Controls where the light starts in the cone. It bascially "slices off" the
+   * tip of the cone. If set to 0, it acts as if it is set to 0.5. Defaults to
+   * 0.01.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  near?: number | Property
+  /**
+   * Controls how far away the base of the cone is from the light source.
+   * Defaults to 50.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  far?: number | Property
+  /**
+   * The default value for {@link xRadius} and {@link yRadius}. Just a
+   * convenient way to control both at the same time. This value is not used if
+   * {@link xRadius} and {@link yRadius} are given values. Defaults to 50.
+   */
+  radius?: number | Property
+  /**
+   * The X radius for the elliptic base of the cone. Defaults to
+   * {@link radius}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  xRadius?: number | Property
+  /**
+   * The Y radius for the elliptic base of the cone. Defaults to
+   * {@link radius}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  yRadius?: number | Property
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Objects also have a setting for casting shadows, and both must be
+   * enabled for an object to cast shadows from this light source.
+   * 
+   * Defaults to false.
+   */
+  shadows?: boolean
+  /**
+   * When enabled, this allows other properties and fields of the action to
+   * control the specular color independently of the diffuse color. When
+   * disabled, the diffuse counterpart of the properties or fields will affect
+   * both the diffuse and specular color. Defaults to false.
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
+  separateSpecular?: boolean
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows
+   * will be entirely invisible. Defaults to 1.
+   */
+  shadowDarkness?: number
+  /**
+   * The number of seconds the light takes to fade to nothing after being
+   * destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to
+   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
+   * as the units.
+   * 
+   * Defaults to 0.
+   */
+  fadeOutTime?: number
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the
+   * light. The fog does not affect the actual light produced by the source and
+   * is not affected by shadows. Defaults to 0.
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  fogDensity?: number
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from
+   * {@link fogDensity}. Defaults to true.
+   */
+  phaseFunction?: boolean
+  /**
+   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * value is ignored if {@link phaseFunction} is disabled, and the fog will
+   * scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward,
+   * in the same direction as the light was already traveling. This means that
+   * the fake fog will be less visible from the side or behind, and more
+   * visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely
+   * invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens
+   * the fog instead.
+   * 
+   * Defaults to 0.75.
+   */
+  asymmetryParam?: number
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar
+   * to a falloff exponent in a few ways.
+   * 
+   * Defaults to 1.
+   */
+  falloffExponent?: number
+  unkScalarProp8?: number | Property
+  unkScalarProp9?: number | Property
+  unkScalarProp10?: number | Property
+}
+/**
+ * Light source with an elliptic cone shape, a spot light.
+ * 
+ * It points towards +Z.
+ */
+export class SpotLight extends Action {
+
+  constructor({
+    diffuseColor = [1, 1, 1, 1],
+    specularColor = [1, 1, 1, 1],
+    diffuseMultiplier = 100,
+    specularMultiplier = 100,
+    near = 0.01,
+    far = 50,
+    radius = 50,
+    xRadius = radius instanceof Property ? Property.copy(radius) : radius,
+    yRadius = radius instanceof Property ? Property.copy(radius) : radius,
+    shadows = false,
+    separateSpecular = false,
+    shadowDarkness = 1,
+    fadeOutTime = 0,
+    fogDensity = 0,
+    phaseFunction = true,
+    asymmetryParam = 0.75,
+    falloffExponent = 1,
+    unkScalarProp8 = 1,
+    unkScalarProp9 = 1,
+    unkScalarProp10 = 1,
+  }: SpotLightParams = {}) {
+    super(ActionType.SpotLight, false, true, 0, [
+      /*  0 */ new Field(FieldType.Integer, 0),
+      /*  1 */ new Field(FieldType.Boolean, false), // Animation toggle?
+      /*  2 */ new Field(FieldType.Float, 0),
+      /*  3 */ new Field(FieldType.Float, 0),
+      /*  4 */ new Field(FieldType.Float, 0), // X jitter
+      /*  5 */ new Field(FieldType.Float, 0), // Y jitter
+      /*  6 */ new Field(FieldType.Float, 0), // Z jitter
+      /*  7 */ new Field(FieldType.Float, 0), // Pulse period 1?
+      /*  8 */ new Field(FieldType.Float, 0), // Pulse period 2?
+      /*  9 */ new Field(FieldType.Float, 1), // Pulse brightness
+      /* 10 */ new Field(FieldType.Boolean, shadows),
+      /* 11 */ new Field(FieldType.Boolean, separateSpecular),
+      /* 12 */ new Field(FieldType.Float, shadowDarkness),
+      /* 13 */ new Field(FieldType.Integer, 2),
+      /* 14 */ new Field(FieldType.Integer, 1),
+      /* 15 */ new Field(FieldType.Integer, Math.round(fadeOutTime * 30)),
+      /* 16 */ new Field(FieldType.Integer, 100),
+      /* 17 */ new Field(FieldType.Integer, 0),
+      /* 18 */ new Field(FieldType.Float, 0),
+      /* 19 */ new Field(FieldType.Float, fogDensity),
+      /* 20 */ new Field(FieldType.Float, 0),
+      /* 21 */ new Field(FieldType.Boolean, phaseFunction),
+      /* 22 */ new Field(FieldType.Float, asymmetryParam),
+      /* 23 */ new Field(FieldType.Float, falloffExponent),
+      /* 24 */ new Field(FieldType.Integer, 1),
+      /* 25 */ new Field(FieldType.Float, 1),
+    ], [], [
+      /*  0 */ diffuseColor instanceof Property ? diffuseColor : new ConstantProperty(...diffuseColor),
+      /*  1 */ specularColor instanceof Property ? specularColor : new ConstantProperty(...specularColor),
+      /*  2 */ diffuseMultiplier instanceof Property ? diffuseMultiplier : new ConstantProperty(diffuseMultiplier),
+      /*  3 */ specularMultiplier instanceof Property ? specularMultiplier : new ConstantProperty(specularMultiplier),
+      /*  4 */ near instanceof Property ? near : new ConstantProperty(near),
+      /*  5 */ far instanceof Property ? far : new ConstantProperty(far),
+      /*  6 */ xRadius instanceof Property ? xRadius : new ConstantProperty(xRadius),
+      /*  7 */ yRadius instanceof Property ? yRadius : new ConstantProperty(yRadius),
+      /*  8 */ unkScalarProp8 instanceof Property ? unkScalarProp8 : new ConstantProperty(unkScalarProp8),
+      /*  9 */ unkScalarProp9 instanceof Property ? unkScalarProp9 : new ConstantProperty(unkScalarProp9),
+      /* 10 */ unkScalarProp10 instanceof Property ? unkScalarProp10 : new ConstantProperty(unkScalarProp10),
+    ])
+  }
+
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular
+   * color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get diffuseColor() { return this.properties1[0] }
+  set diffuseColor(value) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and
+   * {@link diffuseColor} controls both the diffuse as well as the specular
+   * color.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get specularColor() { return this.properties1[1] }
+  set specularColor(value) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
+   * easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular
+   * color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get diffuseMultiplier() { return this.properties1[2] }
+  set diffuseMultiplier(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get specularMultiplier() { return this.properties1[3] }
+  set specularMultiplier(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Controls where the light starts in the cone. It bascially "slices off" the
+   * tip of the cone. If set to 0, it acts as if it is set to 0.5.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get near() { return this.properties1[4] }
+  set near(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * Controls how far away the base of the cone is from the light source.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get far() { return this.properties1[5] }
+  set far(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * The X radius for the elliptic base of the cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get xRadius() { return this.properties1[6] }
+  set xRadius(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * The Y radius for the elliptic base of the cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get yRadius() { return this.properties1[7] }
+  set yRadius(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Objects also have a setting for casting shadows, and both must be
+   * enabled for an object to cast shadows from this light source.
+   */
+  get shadows() { return this.fields1[10].value as boolean }
+  set shadows(value) { this.fields1[10].value = value }
+
+  /**
+   * When enabled, this allows other properties and fields of the action to
+   * control the specular color independently of the diffuse color. When
+   * disabled, the diffuse counterpart of the properties or fields will affect
+   * both the diffuse and specular color.
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
+  get separateSpecular() { return this.fields1[11].value as boolean }
+  set separateSpecular(value) { this.fields1[11].value = value }
+
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows
+   * will be entirely invisible.
+   */
+  get shadowDarkness() { return this.fields1[12].value as number }
+  set shadowDarkness(value) { this.fields1[12].value = value }
+
+  /**
+   * The number of seconds the light takes to fade to nothing after being
+   * destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to
+   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
+   * as the units.
+   */
+  get fadeOutTime() { return (this.fields1[15].value as number) / 30 }
+  set fadeOutTime(value) { this.fields1[15].value = Math.round(value * 30) }
+
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the
+   * light. The fog does not affect the actual light produced by the source and
+   * is not affected by shadows.
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  get fogDensity() { return this.fields1[19].value as number }
+  set fogDensity(value) { this.fields1[19].value = value }
+
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from
+   * {@link fogDensity}.
+   */
+  get phaseFunction() { return this.fields1[21].value as boolean }
+  set phaseFunction(value) { this.fields1[21].value = value }
+
+  /**
+   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * value is ignored if {@link phaseFunction} is disabled, and the fog will
+   * scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward,
+   * in the same direction as the light was already traveling. This means that
+   * the fake fog will be less visible from the side or behind, and more
+   * visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely
+   * invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens
+   * the fog instead.
+   */
+  get asymmetryParam() { return this.fields1[22].value as number }
+  set asymmetryParam(value) { this.fields1[22].value = value }
+
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar
+   * to a falloff exponent in a few ways.
+   */
+  get falloffExponent() { return this.fields1[23].value as number }
+  set falloffExponent(value) { this.fields1[23].value = value }
 
 }
 
@@ -4423,6 +5096,7 @@ export const Actions = {
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.SpotLight]: SpotLight, SpotLight,
 }
 
 export class Field {
