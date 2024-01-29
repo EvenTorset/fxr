@@ -2931,13 +2931,13 @@ export interface NodeTransformParams {
  * the translation and rotation.
  * 
  * If any of the randomization parameters are not 0, it will create a
- * {@link ActionType.RandomNodeTransform RandomTransform action} instead of a
- * {@link ActionType.StaticNodeTransform StaticTransform action}, which have
- * different numbers of fields.
+ * {@link ActionType.RandomNodeTransform RandomNodeTransform action} instead of
+ * a {@link ActionType.StaticNodeTransform StaticNodeTransform action}, which
+ * have different numbers of fields.
  * 
  * **Note about the X-axis**:  
  * Both of the action types represented by this class have the X-axis reversed.
- * RandomTransform only has it reversed for translation, not rotation. This
+ * RandomNodeTransform only has it reversed for translation, not rotation. This
  * class will automatically handle these strange inconsitencies and correct
  * them when using its accessors or contructor parameters, but it is important
  * to keep in mind if you are manually editing the fields of the action.
