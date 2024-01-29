@@ -50,7 +50,12 @@ enum EffectType {
 enum ActionType {
   None = 0,
   Unk1 = 1,
-  Translation = 15,
+  /**
+   * Translates the node with a property, meaning the offset can be animated.
+   * 
+   * This action type has a specialized subclass: {@link Translate}
+   */
+  Translate = 15,
   /**
    * Makes the node spin.
    * 
@@ -554,7 +559,7 @@ const EffectActionSlots = {
     ],
     [
       ActionType.Unk1,
-      ActionType.Translation,
+      ActionType.Translate,
       ActionType.Spin,
       ActionType.Unk46,
       ActionType.Unk83,
@@ -652,7 +657,7 @@ const EffectActionSlots = {
     ],
     [
       ActionType.Unk1,
-      ActionType.Translation,
+      ActionType.Translate,
       ActionType.Spin,
       ActionType.Unk46,
       ActionType.Unk83,
@@ -715,6 +720,14 @@ function setPropertyInList(list: Property[], index: number, value: Property | Pr
   } else {
     list[index] = new ConstantProperty(...value)
   }
+}
+
+function scalarFromArg(scalar: number | Property) {
+  return scalar instanceof Property ? scalar : new ConstantProperty(scalar)
+}
+
+function vectorFromArg(vector: Vector | Property) {
+  return vector instanceof Property ? vector : new ConstantProperty(...vector)
 }
 
 class BinaryReader extends DataView {
@@ -2291,6 +2304,12 @@ const commonAction6xxFields2Types = [
   null,
 ]
 const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: FieldType[] } } = {
+  [ActionType.Translate]: {
+    Fields1: [
+      FieldType.Integer
+    ],
+    Fields2: []
+  },
   [ActionType.Spin]: {
     Fields1: [
       FieldType.Integer
@@ -2748,6 +2767,40 @@ class Action {
 }
 
 /**
+ * Translates the node using a property, meaning it can be animated. This can
+ * be useful if you need the node to follow a specific path.
+ * 
+ * Fields1:
+ * Index | Value
+ * ------|------
+ * 0     | unkField
+ * 
+ * Properties1:
+ * Index | Value
+ * ------|------
+ * 0     | translation
+ */
+class Translate extends Action {
+
+  /**
+   * @param translation A 3D vector used as an offset for the position of the
+   * node. Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * @param unkField Unknown. Fields1, index 0. An integer that has at least
+   * three valid values: 0, 1, 2. Defaults to 0.
+   */
+  constructor(translation: Vector3 | Property = [0, 0, 0], unkField: number = 0) {
+    super(ActionType.Translate, false, true, 0, [
+      new IntField(0)
+    ], [], [
+      vectorFromArg(translation)
+    ])
+  }
+
+}
+
+/**
  * Makes the node spin.
  * 
  * Fields1:
@@ -2788,12 +2841,12 @@ class Spin extends Action {
     super(ActionType.Spin, false, true, 0, [
       new IntField(unkField)
     ], [], [
-      spinX instanceof Property ? spinX : new ConstantProperty(spinX),
-      spinXMult instanceof Property ? spinXMult : new ConstantProperty(spinXMult),
-      spinY instanceof Property ? spinY : new ConstantProperty(spinY),
-      spinYMult instanceof Property ? spinYMult : new ConstantProperty(spinYMult),
-      spinZ instanceof Property ? spinZ : new ConstantProperty(spinZ),
-      spinZMult instanceof Property ? spinZMult : new ConstantProperty(spinZMult),
+      scalarFromArg(spinX),
+      scalarFromArg(spinXMult),
+      scalarFromArg(spinY),
+      scalarFromArg(spinYMult),
+      scalarFromArg(spinZ),
+      scalarFromArg(spinZMult),
     ])
   }
 
@@ -3078,11 +3131,11 @@ class PartialFollow extends Action {
       new IntField(unkField1),
       new IntField(unkField2), // Boolean? "Follow translation only"
     ], [], [
-      acceleration instanceof Property ? acceleration : new ConstantProperty(acceleration),
-      unkProp1 instanceof Property ? unkProp1 : new ConstantProperty(unkProp1),
-      unkProp2 instanceof Property ? unkProp2 : new ConstantProperty(unkProp2),
-      maxRandomTurnAngle instanceof Property ? maxRandomTurnAngle : new ConstantProperty(maxRandomTurnAngle),
-      followFactor instanceof Property ? followFactor : new ConstantProperty(followFactor),
+      scalarFromArg(acceleration),
+      scalarFromArg(unkProp1),
+      scalarFromArg(unkProp2),
+      scalarFromArg(maxRandomTurnAngle),
+      scalarFromArg(followFactor),
     ])
   }
 
@@ -3130,7 +3183,7 @@ class EffectLifetime extends Action {
       new IntField(attachment),
       new FloatField(unkField3),
     ], [], [
-      duration instanceof Property ? duration : new ConstantProperty(duration)
+      scalarFromArg(duration)
     ])
   }
 
@@ -3165,7 +3218,7 @@ class ParticleLifetime extends Action {
     super(ActionType.ParticleLifetime, false, true, 0, [
       new IntField(attachment)
     ], [], [
-      duration instanceof Property ? duration : new ConstantProperty(duration)
+      scalarFromArg(duration)
     ])
   }
 
@@ -3226,11 +3279,11 @@ class ParticleMultiplier extends Action {
     super(ActionType.ParticleMultiplier, false, true, 0, [
       new BoolField(uniformScale),
     ], [], [
-      acceleration instanceof Property ? acceleration : new ConstantProperty(acceleration),
-      scaleX instanceof Property ? scaleX : new ConstantProperty(scaleX),
-      scaleY instanceof Property ? scaleY : new ConstantProperty(scaleY),
-      scaleZ instanceof Property ? scaleZ : new ConstantProperty(scaleZ),
-      color instanceof Property ? color : new ConstantProperty(...color),
+      scalarFromArg(acceleration),
+      scalarFromArg(scaleX),
+      scalarFromArg(scaleY),
+      scalarFromArg(scaleZ),
+      vectorFromArg(color),
     ])
   }
 
@@ -3873,24 +3926,24 @@ class QuadLine extends CommonAction6xxFields2Action {
       /* 38 */ new FloatField(0),
       /* 39 */ new IntField(1),
     ], [ // Properties1
-      /*  0 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
-      /*  1 */ width instanceof Property ? width : new ConstantProperty(width),
-      /*  2 */ height instanceof Property ? height : new ConstantProperty(height),
-      /*  3 */ color1 instanceof Property ? color1 : new ConstantProperty(...color1),
-      /*  4 */ color2 instanceof Property ? color2 : new ConstantProperty(...color2),
-      /*  5 */ startColor instanceof Property ? startColor : new ConstantProperty(...startColor),
-      /*  6 */ endColor instanceof Property ? endColor : new ConstantProperty(...endColor),
-      /*  7 */ widthMultiplier instanceof Property ? widthMultiplier : new ConstantProperty(widthMultiplier),
-      /*  8 */ heightMultiplier instanceof Property ? heightMultiplier : new ConstantProperty(heightMultiplier),
-      /*  9 */ color3 instanceof Property ? color3 : new ConstantProperty(...color3),
+      /*  0 */ scalarFromArg(blendMode),
+      /*  1 */ scalarFromArg(width),
+      /*  2 */ scalarFromArg(height),
+      /*  3 */ vectorFromArg(color1),
+      /*  4 */ vectorFromArg(color2),
+      /*  5 */ vectorFromArg(startColor),
+      /*  6 */ vectorFromArg(endColor),
+      /*  7 */ scalarFromArg(widthMultiplier),
+      /*  8 */ scalarFromArg(heightMultiplier),
+      /*  9 */ vectorFromArg(color3),
     ], [ // Properties2
-      /*  0 */ rgbMultiplier instanceof Property ? rgbMultiplier : new ConstantProperty(rgbMultiplier),
-      /*  1 */ alphaMultiplier instanceof Property ? alphaMultiplier : new ConstantProperty(alphaMultiplier),
-      /*  2 */ unkScalarProp2_2 instanceof Property ? unkScalarProp2_2 : new ConstantProperty(unkScalarProp2_2),
-      /*  3 */ unkVec4Prop2_3 instanceof Property ? unkVec4Prop2_3 : new ConstantProperty(...unkVec4Prop2_3),
-      /*  4 */ unkVec4Prop2_4 instanceof Property ? unkVec4Prop2_4 : new ConstantProperty(...unkVec4Prop2_4),
-      /*  5 */ unkVec4Prop2_5 instanceof Property ? unkVec4Prop2_5 : new ConstantProperty(...unkVec4Prop2_5),
-      /*  6 */ unkScalarProp2_6 instanceof Property ? unkScalarProp2_6 : new ConstantProperty(unkScalarProp2_6),
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ scalarFromArg(unkScalarProp2_2),
+      /*  3 */ vectorFromArg(unkVec4Prop2_3),
+      /*  4 */ vectorFromArg(unkVec4Prop2_4),
+      /*  5 */ vectorFromArg(unkVec4Prop2_5),
+      /*  6 */ scalarFromArg(unkScalarProp2_6),
     ])
   }
 
@@ -4394,39 +4447,39 @@ class BillboardEx extends CommonAction6xxFields2Action {
       /* 43 */ new IntField(0),
       /* 44 */ new IntField(0),
     ], [
-      /*  0 */ texture instanceof Property ? texture : new ConstantProperty(texture),
-      /*  1 */ blendMode instanceof Property ? blendMode : new ConstantProperty(blendMode),
-      /*  2 */ offset[0] instanceof Property ? offset[0] : new ConstantProperty(offset[0]),
-      /*  3 */ offset[1] instanceof Property ? offset[1] : new ConstantProperty(offset[1]),
-      /*  4 */ offset[2] instanceof Property ? offset[2] : new ConstantProperty(offset[2]),
-      /*  5 */ width instanceof Property ? width : new ConstantProperty(width),
-      /*  6 */ height instanceof Property ? height : new ConstantProperty(height),
-      /*  7 */ color1 instanceof Property ? color1 : new ConstantProperty(...color1),
-      /*  8 */ color2 instanceof Property ? color2 : new ConstantProperty(...color2),
-      /*  9 */ color3 instanceof Property ? color3 : new ConstantProperty(...color3),
-      /* 10 */ alphaThreshold instanceof Property ? alphaThreshold : new ConstantProperty(alphaThreshold),
-      /* 11 */ rotation[0] instanceof Property ? rotation[0] : new ConstantProperty(rotation[0]),
-      /* 12 */ rotation[1] instanceof Property ? rotation[1] : new ConstantProperty(rotation[1]),
-      /* 13 */ rotation[2] instanceof Property ? rotation[2] : new ConstantProperty(rotation[2]),
-      /* 14 */ rotationSpeed[0] instanceof Property ? rotationSpeed[0] : new ConstantProperty(rotationSpeed[0]),
-      /* 15 */ rotationSpeedMultiplier[0] instanceof Property ? rotationSpeedMultiplier[0] : new ConstantProperty(rotationSpeedMultiplier[0]),
-      /* 16 */ rotationSpeed[1] instanceof Property ? rotationSpeed[1] : new ConstantProperty(rotationSpeed[1]),
-      /* 17 */ rotationSpeedMultiplier[1] instanceof Property ? rotationSpeedMultiplier[1] : new ConstantProperty(rotationSpeedMultiplier[1]),
-      /* 18 */ rotationSpeed[2] instanceof Property ? rotationSpeed[2] : new ConstantProperty(rotationSpeed[2]),
-      /* 19 */ rotationSpeedMultiplier[2] instanceof Property ? rotationSpeedMultiplier[2] : new ConstantProperty(rotationSpeedMultiplier[2]),
-      /* 20 */ depthOffset instanceof Property ? depthOffset : new ConstantProperty(depthOffset),
-      /* 21 */ frameIndex instanceof Property ? frameIndex : new ConstantProperty(frameIndex),
-      /* 22 */ frameIndexOffset instanceof Property ? frameIndexOffset : new ConstantProperty(frameIndexOffset),
-      /* 23 */ unkScalarProp1_23 instanceof Property ? unkScalarProp1_23 : new ConstantProperty(unkScalarProp1_23),
-      /* 24 */ unkScalarProp1_24 instanceof Property ? unkScalarProp1_24 : new ConstantProperty(unkScalarProp1_24),
+      /*  0 */ scalarFromArg(texture),
+      /*  1 */ scalarFromArg(blendMode),
+      /*  2 */ scalarFromArg(offset[0]),
+      /*  3 */ scalarFromArg(offset[1]),
+      /*  4 */ scalarFromArg(offset[2]),
+      /*  5 */ scalarFromArg(width),
+      /*  6 */ scalarFromArg(height),
+      /*  7 */ vectorFromArg(color1),
+      /*  8 */ vectorFromArg(color2),
+      /*  9 */ vectorFromArg(color3),
+      /* 10 */ scalarFromArg(alphaThreshold),
+      /* 11 */ scalarFromArg(rotation[0]),
+      /* 12 */ scalarFromArg(rotation[1]),
+      /* 13 */ scalarFromArg(rotation[2]),
+      /* 14 */ scalarFromArg(rotationSpeed[0]),
+      /* 15 */ scalarFromArg(rotationSpeedMultiplier[0]),
+      /* 16 */ scalarFromArg(rotationSpeed[1]),
+      /* 17 */ scalarFromArg(rotationSpeedMultiplier[1]),
+      /* 18 */ scalarFromArg(rotationSpeed[2]),
+      /* 19 */ scalarFromArg(rotationSpeedMultiplier[2]),
+      /* 20 */ scalarFromArg(depthOffset),
+      /* 21 */ scalarFromArg(frameIndex),
+      /* 22 */ scalarFromArg(frameIndexOffset),
+      /* 23 */ scalarFromArg(unkScalarProp1_23),
+      /* 24 */ scalarFromArg(unkScalarProp1_24),
     ], [
-      /*  0 */ rgbMultiplier instanceof Property ? rgbMultiplier : new ConstantProperty(rgbMultiplier),
-      /*  1 */ alphaMultiplier instanceof Property ? alphaMultiplier : new ConstantProperty(alphaMultiplier),
-      /*  2 */ unkScalarProp2_2 instanceof Property ? unkScalarProp2_2 : new ConstantProperty(unkScalarProp2_2),
-      /*  3 */ unkVec4Prop2_3 instanceof Property ? unkVec4Prop2_3 : new ConstantProperty(...unkVec4Prop2_3),
-      /*  4 */ unkVec4Prop2_4 instanceof Property ? unkVec4Prop2_4 : new ConstantProperty(...unkVec4Prop2_4),
-      /*  5 */ unkVec4Prop2_5 instanceof Property ? unkVec4Prop2_5 : new ConstantProperty(...unkVec4Prop2_5),
-      /*  6 */ unkScalarProp2_6 instanceof Property ? unkScalarProp2_6 : new ConstantProperty(unkScalarProp2_6),
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ scalarFromArg(unkScalarProp2_2),
+      /*  3 */ vectorFromArg(unkVec4Prop2_3),
+      /*  4 */ vectorFromArg(unkVec4Prop2_4),
+      /*  5 */ vectorFromArg(unkVec4Prop2_5),
+      /*  6 */ scalarFromArg(unkScalarProp2_6),
     ])
   }
 
@@ -4816,9 +4869,9 @@ class PointLight extends Action {
       /* 31 */ new IntField(1),
       /* 32 */ new IntField(1),
     ], [ // Properties1
-      /*  0 */ diffuseColor instanceof Property ? diffuseColor : new ConstantProperty(...diffuseColor),
-      /*  1 */ specularColor instanceof Property ? specularColor : new ConstantProperty(...specularColor),
-      /*  2 */ radius instanceof Property ? radius : new ConstantProperty(radius),
+      /*  0 */ vectorFromArg(diffuseColor),
+      /*  1 */ vectorFromArg(specularColor),
+      /*  2 */ scalarFromArg(radius),
       /*  3 */ new ConstantProperty(0),
       /*  4 */ new ConstantProperty(0),
       /*  5 */ new ConstantProperty(0),
@@ -4830,8 +4883,8 @@ class PointLight extends Action {
       /*  0 */ new ConstantProperty(1),
       /*  1 */ new ConstantProperty(1),
       /*  2 */ new ConstantProperty(1),
-      /*  3 */ diffuseMultiplier instanceof Property ? diffuseMultiplier : new ConstantProperty(diffuseMultiplier),
-      /*  4 */ specularMultiplier instanceof Property ? specularMultiplier : new ConstantProperty(specularMultiplier),
+      /*  3 */ scalarFromArg(diffuseMultiplier),
+      /*  4 */ scalarFromArg(specularMultiplier),
     ])
   }
 
@@ -5200,17 +5253,17 @@ class SpotLight extends Action {
       /* 24 */ new IntField(1),
       /* 25 */ new FloatField(1),
     ], [], [
-      /*  0 */ diffuseColor instanceof Property ? diffuseColor : new ConstantProperty(...diffuseColor),
-      /*  1 */ specularColor instanceof Property ? specularColor : new ConstantProperty(...specularColor),
-      /*  2 */ diffuseMultiplier instanceof Property ? diffuseMultiplier : new ConstantProperty(diffuseMultiplier),
-      /*  3 */ specularMultiplier instanceof Property ? specularMultiplier : new ConstantProperty(specularMultiplier),
-      /*  4 */ near instanceof Property ? near : new ConstantProperty(near),
-      /*  5 */ far instanceof Property ? far : new ConstantProperty(far),
-      /*  6 */ xRadius instanceof Property ? xRadius : new ConstantProperty(xRadius),
-      /*  7 */ yRadius instanceof Property ? yRadius : new ConstantProperty(yRadius),
-      /*  8 */ unkScalarProp8 instanceof Property ? unkScalarProp8 : new ConstantProperty(unkScalarProp8),
-      /*  9 */ unkScalarProp9 instanceof Property ? unkScalarProp9 : new ConstantProperty(unkScalarProp9),
-      /* 10 */ unkScalarProp10 instanceof Property ? unkScalarProp10 : new ConstantProperty(unkScalarProp10),
+      /*  0 */ vectorFromArg(diffuseColor),
+      /*  1 */ vectorFromArg(specularColor),
+      /*  2 */ scalarFromArg(diffuseMultiplier),
+      /*  3 */ scalarFromArg(specularMultiplier),
+      /*  4 */ scalarFromArg(near),
+      /*  5 */ scalarFromArg(far),
+      /*  6 */ scalarFromArg(xRadius),
+      /*  7 */ scalarFromArg(yRadius),
+      /*  8 */ scalarFromArg(unkScalarProp8),
+      /*  9 */ scalarFromArg(unkScalarProp9),
+      /* 10 */ scalarFromArg(unkScalarProp10),
     ])
   }
 
@@ -5383,6 +5436,7 @@ class SpotLight extends Action {
 }
 
 const Actions = {
+  [ActionType.Translate]: Translate, Translate,
   [ActionType.Spin]: Spin, Spin,
   Transform,
   [ActionType.StaticTransform]: Transform, StaticTransform: Transform,
@@ -6586,6 +6640,7 @@ export {
   RandomizerEffect,
 
   Action,
+  Translate,
   Spin,
   Transform,
   PartialFollow,
