@@ -198,9 +198,9 @@ enum ActionType {
   PointSprite = 600,
   Line = 601,
   /**
-   * Simple rectangular gradient particle. Similar to
-   * {@link ActionType.Line Line}, but with a width that can be controlled by
-   * a property.
+   * Simple rectangular particle with a gradient. Most commonly used to create
+   * lines, like the {@link ActionType.Line Line action}, but this has a
+   * configurable width, so the lines can be made wider than the regular lines.
    * 
    * This action type has a specialized subclass: {@link QuadLine}
    */
@@ -3847,13 +3847,9 @@ export interface QuadLineParams {
   unkScalarProp2_6?: number | Property
 }
 /**
- * Simple particle with a gradient. Very primitive, but easy to create and use.
- * 
- * This action is really only good for creating simple rectangular particles
- * with a gradient and nothing fancy. In most cases, you probably want
- * {@link BillboardEx} instead if you are making or modifying an
- * effect to use in a mod, as it has almost everything this action does, and
- * a lot more.
+ * Simple rectangular particle with a gradient. Most commonly used to create
+ * lines, like the {@link ActionType.Line Line action}, but this has a
+ * configurable width, so the lines can be made wider than the regular lines.
  */
 class QuadLine extends CommonAction6xxFields2Action {
 
