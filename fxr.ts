@@ -53,27 +53,27 @@ enum ActionType {
   /**
    * Translates the node with a property, meaning the offset can be animated.
    * 
-   * This action type has a specialized subclass: {@link Translate}
+   * This action type has a specialized subclass: {@link NodeTranslation}
    */
-  Translate = 15,
+  NodeTranslation = 15,
   /**
    * Makes the node spin.
    * 
-   * This action type has a specialized subclass: {@link Spin}
+   * This action type has a specialized subclass: {@link NodeSpin}
    */
-  Spin = 34,
+  NodeSpin = 34,
   /**
    * Sets the translation and rotation of the node.
    * 
-   * This action type has a specialized subclass: {@link Transform}
+   * This action type has a specialized subclass: {@link NodeTransform}
    */
-  StaticTransform = 35,
+  StaticNodeTransform = 35,
   /**
    * Sets and randomizes the translation and rotation of the node.
    * 
-   * This action type has a specialized subclass: {@link Transform}
+   * This action type has a specialized subclass: {@link NodeTransform}
    */
-  RandomTransform = 36,
+  RandomNodeTransform = 36,
   Unk46 = 46,
   Unk55_Acceleration = 55,
   Unk60_Speed = 60,
@@ -96,9 +96,9 @@ enum ActionType {
    * Controls various things about the node, like its duration, and how
    * it is attached to the parent node.
    * 
-   * This action type has a specialized subclass: {@link EffectLifetime}
+   * This action type has a specialized subclass: {@link NodeLifetime}
    */
-  EffectLifetime = 128,
+  NodeLifetime = 128,
   /**
    * Controls various things about the particles emitted by the effect, like
    * their duration, and how they are attached to the parent node.
@@ -551,16 +551,16 @@ enum LightingMode {
 const EffectActionSlots = {
   [EffectType.Basic]: [
     [
-      ActionType.EffectLifetime
+      ActionType.NodeLifetime
     ],
     [
-      ActionType.StaticTransform,
-      ActionType.RandomTransform
+      ActionType.StaticNodeTransform,
+      ActionType.RandomNodeTransform
     ],
     [
       ActionType.Unk1,
-      ActionType.Translate,
-      ActionType.Spin,
+      ActionType.NodeTranslation,
+      ActionType.NodeSpin,
       ActionType.Unk46,
       ActionType.Unk83,
       ActionType.Unk106,
@@ -649,16 +649,16 @@ const EffectActionSlots = {
   ],
   [EffectType.Randomizer]: [
     [
-      ActionType.EffectLifetime
+      ActionType.NodeLifetime
     ],
     [
-      ActionType.StaticTransform,
-      ActionType.RandomTransform
+      ActionType.StaticNodeTransform,
+      ActionType.RandomNodeTransform
     ],
     [
       ActionType.Unk1,
-      ActionType.Translate,
-      ActionType.Spin,
+      ActionType.NodeTranslation,
+      ActionType.NodeSpin,
       ActionType.Unk46,
       ActionType.Unk83,
       ActionType.Unk106,
@@ -2133,7 +2133,7 @@ class Effect {
    * Default actions:
    * Index | Action
    * ------|----------
-   * 0     | {@link ActionType.EffectLifetime EffectLifetime}
+   * 0     | {@link ActionType.NodeLifetime NodeLifetime}
    * 1     | {@link ActionType.None None}
    * 2     | {@link ActionType.None None}
    * 3     | {@link ActionType.None None}
@@ -2158,7 +2158,7 @@ class BasicEffect extends Effect {
    */
   constructor(actions: Action[] = []) {
     super(EffectType.Basic, [
-      new EffectLifetime,
+      new NodeLifetime,
       new Action,
       new Action,
       new Action,
@@ -2213,7 +2213,7 @@ class BasicEffect extends Effect {
    * Default actions:
    * Index | Action
    * ------|----------
-   * 0     | {@link ActionType.EffectLifetime EffectLifetime}
+   * 0     | {@link ActionType.NodeLifetime NodeLifetime}
    * 1     | {@link ActionType.None None}
    * 2     | {@link ActionType.None None}
    * 3     | {@link ActionType.None None}
@@ -2233,7 +2233,7 @@ class RandomizerEffect extends Effect {
    */
   constructor(actions: Action[] = []) {
     super(EffectType.Randomizer, [
-      new EffectLifetime,
+      new NodeLifetime,
       new Action,
       new Action,
       new Action,
@@ -2304,19 +2304,19 @@ const commonAction6xxFields2Types = [
   null,
 ]
 const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: FieldType[] } } = {
-  [ActionType.Translate]: {
+  [ActionType.NodeTranslation]: {
     Fields1: [
       FieldType.Integer
     ],
     Fields2: []
   },
-  [ActionType.Spin]: {
+  [ActionType.NodeSpin]: {
     Fields1: [
       FieldType.Integer
     ],
     Fields2: []
   },
-  [ActionType.StaticTransform]: {
+  [ActionType.StaticNodeTransform]: {
     Fields1: [
       FieldType.Float,
       FieldType.Float,
@@ -2327,7 +2327,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
-  [ActionType.RandomTransform]: {
+  [ActionType.RandomNodeTransform]: {
     Fields1: [
       FieldType.Float,
       FieldType.Float,
@@ -2780,7 +2780,7 @@ class Action {
  * ------|------
  * 0     | translation
  */
-class Translate extends Action {
+class NodeTranslation extends Action {
 
   /**
    * @param translation A 3D vector used as an offset for the position of the
@@ -2791,7 +2791,7 @@ class Translate extends Action {
    * three valid values: 0, 1, 2. Defaults to 0.
    */
   constructor(translation: Vector3 | Property = [0, 0, 0], unkField: number = 0) {
-    super(ActionType.Translate, false, true, 0, [
+    super(ActionType.NodeTranslation, false, true, 0, [
       new IntField(0)
     ], [], [
       vectorFromArg(translation)
@@ -2818,7 +2818,7 @@ class Translate extends Action {
  * 4     | spinZ
  * 5     | spinZMult
  */
-class Spin extends Action {
+class NodeSpin extends Action {
 
   /**
    * @param spinX X spin in degrees per second. Defaults to 0.
@@ -2838,7 +2838,7 @@ class Spin extends Action {
     spinZMult: number | Property = 1,
     unkField: number = 1
   ) {
-    super(ActionType.Spin, false, true, 0, [
+    super(ActionType.NodeSpin, false, true, 0, [
       new IntField(unkField)
     ], [], [
       scalarFromArg(spinX),
@@ -2852,7 +2852,7 @@ class Spin extends Action {
 
 }
 
-export interface TransformParams {
+export interface NodeTransformParams {
   /**
    * Translates the node along the X-axis. Defaults to 0.
    */
@@ -2931,8 +2931,8 @@ export interface TransformParams {
  * the translation and rotation.
  * 
  * If any of the randomization parameters are not 0, it will create a
- * {@link ActionType.RandomTransform RandomTransform action} instead of a
- * {@link ActionType.StaticTransform StaticTransform action}, which have
+ * {@link ActionType.RandomNodeTransform RandomTransform action} instead of a
+ * {@link ActionType.StaticNodeTransform StaticTransform action}, which have
  * different numbers of fields.
  * 
  * **Note about the X-axis**:  
@@ -2942,7 +2942,7 @@ export interface TransformParams {
  * them when using its accessors or contructor parameters, but it is important
  * to keep in mind if you are manually editing the fields of the action.
  */
-class Transform extends Action {
+class NodeTransform extends Action {
 
   declare fields1: FloatField[]
 
@@ -2959,7 +2959,7 @@ class Transform extends Action {
     randomRotationX = 0,
     randomRotationY = 0,
     randomRotationZ = 0,
-  }: TransformParams = {}) {
+  }: NodeTransformParams = {}) {
     if (
       randomTranslationX === 0 &&
       randomTranslationY === 0 &&
@@ -2968,7 +2968,7 @@ class Transform extends Action {
       randomRotationY === 0 &&
       randomRotationZ === 0
     ) {
-      super(ActionType.StaticTransform, false, true, 0, [
+      super(ActionType.StaticNodeTransform, false, true, 0, [
         // These two actions have their X-axis reversed for some reason
         new FloatField(-translateX),
         new FloatField(translateY),
@@ -2978,7 +2978,7 @@ class Transform extends Action {
         new FloatField(rotateZ),
       ])
     } else {
-      super(ActionType.RandomTransform, false, true, 0, [
+      super(ActionType.RandomNodeTransform, false, true, 0, [
         new FloatField(-translateX),
         new FloatField(translateY),
         new FloatField(translateZ),
@@ -3008,14 +3008,14 @@ class Transform extends Action {
 
   get rotateX() {
     switch (this.type) {
-      case ActionType.StaticTransform: return -this.fields1[3].value
-      case ActionType.RandomTransform: return this.fields1[3].value
+      case ActionType.StaticNodeTransform: return -this.fields1[3].value
+      case ActionType.RandomNodeTransform: return this.fields1[3].value
     }
   }
   set rotateX(value) {
     switch (this.type) {
-      case ActionType.StaticTransform: this.fields1[3].value = -value; break
-      case ActionType.RandomTransform: this.fields1[3].value = value; break
+      case ActionType.StaticNodeTransform: this.fields1[3].value = -value; break
+      case ActionType.RandomNodeTransform: this.fields1[3].value = value; break
     }
   }
 
@@ -3026,8 +3026,8 @@ class Transform extends Action {
   set rotateZ(value) { this.fields1[5].value = value }
 
   #setRandomizationField(index: number, value: number) {
-    if (value !== 0 && this.type === ActionType.StaticTransform) {
-      this.type = ActionType.RandomTransform
+    if (value !== 0 && this.type === ActionType.StaticNodeTransform) {
+      this.type = ActionType.RandomNodeTransform
       // The X rotation field needs to swap sign because it rotates the
       // opposite direction in action 35 for some reason.
       this.fields1[3].value *= -1
@@ -3062,7 +3062,7 @@ class Transform extends Action {
   set randomRotationZ(value) { this.#setRandomizationField(11, value) }
 
   minify() {
-    if (this.type === ActionType.RandomTransform) {
+    if (this.type === ActionType.RandomNodeTransform) {
       if (
         this.fields1[6].value === 0 &&
         this.fields1[7].value === 0 &&
@@ -3084,7 +3084,7 @@ class Transform extends Action {
         } else {
           // This doesn't use the randomization fields, return a static
           // transform action instead
-          return new Action(ActionType.StaticTransform, false, true, 0, [
+          return new Action(ActionType.StaticNodeTransform, false, true, 0, [
             this.fields1[0],
             this.fields1[1],
             this.fields1[2],
@@ -3163,7 +3163,7 @@ class PartialFollow extends Action {
  * ------|------
  * 0     | duration
  */
-class EffectLifetime extends Action {
+class NodeLifetime extends Action {
 
   /**
    * @param duration The node duration in seconds. Defaults to -1
@@ -3182,7 +3182,7 @@ class EffectLifetime extends Action {
     unkField1: number = 1,
     unkField3: number = 0,
   ) {
-    super(ActionType.EffectLifetime, false, true, 0, [
+    super(ActionType.NodeLifetime, false, true, 0, [
       new FloatField(delay),
       new IntField(unkField1),
       new IntField(attachment),
@@ -5437,13 +5437,13 @@ class SpotLight extends Action {
 }
 
 const Actions = {
-  [ActionType.Translate]: Translate, Translate,
-  [ActionType.Spin]: Spin, Spin,
-  Transform,
-  [ActionType.StaticTransform]: Transform, StaticTransform: Transform,
-  [ActionType.RandomTransform]: Transform, RandomTransform: Transform,
+  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
+  [ActionType.NodeSpin]: NodeSpin, NodeSpin,
+  NodeTransform,
+  [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
+  [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
   [ActionType.PartialFollow]: PartialFollow, PartialFollow,
-  [ActionType.EffectLifetime]: EffectLifetime, EffectLifetime,
+  [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
@@ -6667,11 +6667,11 @@ export {
   RandomizerEffect,
 
   Action,
-  Translate,
-  Spin,
-  Transform,
+  NodeTranslation,
+  NodeSpin,
+  NodeTransform,
   PartialFollow,
-  EffectLifetime,
+  NodeLifetime,
   ParticleLifetime,
   ParticleMultiplier,
   StateEffectMap,
