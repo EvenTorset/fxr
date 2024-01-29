@@ -2934,6 +2934,13 @@ export interface TransformParams {
  * {@link ActionType.RandomTransform RandomTransform action} instead of a
  * {@link ActionType.StaticTransform StaticTransform action}, which have
  * different numbers of fields.
+ * 
+ * **Note about the X-axis**:  
+ * Both of the action types represented by this class have the X-axis reversed.
+ * RandomTransform only has it reversed for translation, not rotation. This
+ * class will automatically handle these strange inconsitencies and correct
+ * them when using its accessors or contructor parameters, but it is important
+ * to keep in mind if you are manually editing the fields of the action.
  */
 class Transform extends Action {
 
@@ -2962,24 +2969,22 @@ class Transform extends Action {
       randomRotationZ === 0
     ) {
       super(ActionType.StaticTransform, false, true, 0, [
-        new FloatField(translateX),
+        // These two actions have their X-axis reversed for some reason
+        new FloatField(-translateX),
         new FloatField(translateY),
         new FloatField(translateZ),
-        new FloatField(rotateX),
+        new FloatField(-rotateX),
         new FloatField(rotateY),
         new FloatField(rotateZ),
       ])
     } else {
       super(ActionType.RandomTransform, false, true, 0, [
-        new FloatField(translateX),
+        new FloatField(-translateX),
         new FloatField(translateY),
         new FloatField(translateZ),
-        /*
-          For some reason the X rotation is reversed in action 36 compared to
-          action 35. None of the other fields are, just this one.
-          Thanks, FromSoft.
-        */
-        new FloatField(-rotateX),
+        // While action 35 has the X-axis reversed for both translation and
+        // rotation, action 36 only has it reversed for translation
+        new FloatField(rotateX),
         new FloatField(rotateY),
         new FloatField(rotateZ),
         new FloatField(randomTranslationX),
@@ -2992,8 +2997,8 @@ class Transform extends Action {
     }
   }
 
-  get translateX() { return this.fields1[0].value }
-  set translateX(value) { this.fields1[0].value = value }
+  get translateX() { return -this.fields1[0].value }
+  set translateX(value) { this.fields1[0].value = -value }
 
   get translateY() { return this.fields1[1].value }
   set translateY(value) { this.fields1[1].value = value }
@@ -3003,14 +3008,14 @@ class Transform extends Action {
 
   get rotateX() {
     switch (this.type) {
-      case ActionType.StaticTransform: return this.fields1[3].value
-      case ActionType.RandomTransform: return -this.fields1[3].value
+      case ActionType.StaticTransform: return -this.fields1[3].value
+      case ActionType.RandomTransform: return this.fields1[3].value
     }
   }
   set rotateX(value) {
     switch (this.type) {
-      case ActionType.StaticTransform: this.fields1[3].value = value; break
-      case ActionType.RandomTransform: this.fields1[3].value = -value; break
+      case ActionType.StaticTransform: this.fields1[3].value = -value; break
+      case ActionType.RandomTransform: this.fields1[3].value = value; break
     }
   }
 
@@ -3024,7 +3029,7 @@ class Transform extends Action {
     if (value !== 0 && this.type === ActionType.StaticTransform) {
       this.type = ActionType.RandomTransform
       // The X rotation field needs to swap sign because it rotates the
-      // opposite direction in RandomTransform for some reason.
+      // opposite direction in action 35 for some reason.
       this.fields1[3].value *= -1
       this.fields1.push(
         new FloatField(0),
