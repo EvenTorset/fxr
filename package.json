@@ -1,6 +1,6 @@
 {
   "name": "@cccode/fxr",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "JavaScript library for editing FXR files from Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
