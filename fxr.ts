@@ -6250,6 +6250,32 @@ class Curve2Property extends Property {
 
 }
 
+/**
+ * A preset rainbow color animation with a configurable duration.
+ */
+class RainbowProperty extends LinearProperty {
+
+  /**
+   * @param duration How long it takes to go around the entire hue circle in
+   * seconds. Defaults to 4 seconds.
+   * @param loop Controls whether the animation should loop or not. Defaults to
+   * true.
+   */
+  constructor(duration: number = 4, loop: boolean = true) {
+    const unit = duration / 6
+    super(loop, [
+      { position: 0,        value: [1, 0, 0, 1] },
+      { position: unit,     value: [1, 0, 1, 1] },
+      { position: unit * 2, value: [0, 0, 1, 1] },
+      { position: unit * 3, value: [0, 1, 1, 1] },
+      { position: unit * 4, value: [0, 1, 0, 1] },
+      { position: unit * 5, value: [1, 1, 0, 1] },
+      { position: unit * 6, value: [1, 0, 0, 1] },
+    ])
+  }
+
+}
+
 class Modifier {
 
   static #knownTypeEnumAs = new Set([
@@ -6677,6 +6703,7 @@ export {
   LinearProperty,
   BasicLinearProperty,
   Curve2Property,
+  RainbowProperty,
   RandomProperty,
 
   Modifier,
