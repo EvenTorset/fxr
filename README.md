@@ -47,7 +47,7 @@ import {
   FXR,
   BasicNode,
   BasicEffect,
-  Transform,
+  NodeTransform,
   PeriodicEmitter,
   CylinderEmitterShape,
   ParticleLifetime,
@@ -76,7 +76,7 @@ fxr.rootNode.nodes.push(
       // Some actions have special classes that make them easier to create.
       // You can use the generic action class as well, this is just better for
       // readability and makes the code a lot simpler.
-      new Transform({ // Action 35, used here for translation
+      new NodeTransform({ // Action 35, used here for translation
         translateY: 0.5
       }),
       new PeriodicEmitter(0.1, 10, -1), // Action 300, emitter
