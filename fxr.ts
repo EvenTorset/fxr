@@ -476,7 +476,12 @@ enum PropertyArgument {
    */
   ParticleAge,
   /**
-   * Time in seconds since the effect was created.
+   * Time in seconds since the {@link Effect} became active.
+   * 
+   * An effect becoming active is for example the delay from
+   * {@link ActionType.NodeLifetime NodeLifetime} being over, or the active
+   * {@link State} changing, making a node change which of its effects is
+   * active.
    */
   EffectAge,
   /**
