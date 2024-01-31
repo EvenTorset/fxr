@@ -392,7 +392,12 @@ enum ExternalValue {
    */
   Terminate = 0,
   Unk1 = 1, // Boolean? Only 0 or 1
+  Unk2 = 2,
+  /**
+   * Used in AC6.
+   */
   Unk3 = 3,
+  Unk1000 = 1000,
   /**
    * This value is set through the Special Attribute param field on weapons.
    */
@@ -409,6 +414,27 @@ enum ExternalValue {
    * {@link BloodVisibilityModifier}
    */
   DisplayBlood = 10000,
+  Unk20000 = 20000,
+  /**
+   * Used in AC6.
+   */
+  Unk40000 = 40000,
+  /**
+   * Used in AC6.
+   */
+  Unk70000 = 70000,
+  /**
+   * Used in AC6.
+   */
+  Unk70010 = 70010,
+  /**
+   * Used in AC6.
+   */
+  Unk70020 = 70020,
+  /**
+   * Used in AC6.
+   */
+  Unk70200 = 70200,
 }
 
 enum Operator {
