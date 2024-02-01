@@ -965,6 +965,8 @@ class BinaryWriter {
   }
 
   writeFloat32(f32: number) {
+    // Make sure that the value is not -0
+    f32 = f32 === 0 ? 0 : f32
     this.#transDV.setFloat32(0, f32, this.littleEndian)
     this.array.push(...this.#transArr32)
   }
