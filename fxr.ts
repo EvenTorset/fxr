@@ -6501,6 +6501,7 @@ class ExternalValueModifier extends Modifier {
 
   /**
    * @param extVal The ID of the external value to use.
+   * @param loop Controls if the modifier property should loop or not.
    * @param stops An array of objects with `position` and `value` properties
    * representing the external value and the modifier value it maps to. For
    * example, the value of {@link ExternalValue.DisplayBlood} is -1 when the
@@ -6509,13 +6510,14 @@ class ExternalValueModifier extends Modifier {
    */
   constructor(
     extVal: ExternalValue,
+    loop: boolean,
     stops: { position: number, value: PropertyValue }[],
   ) {
     const valueType = typeof stops[0].value === 'number' ? 0 : stops[0].value.length - 1
     super(57440 | valueType, 8 | valueType, [
       new IntField(extVal)
     ], [
-      new LinearProperty(false, stops)
+      new LinearProperty(loop, stops)
     ])
   }
 
@@ -6544,7 +6546,7 @@ class BloodVisibilityModifier extends ExternalValueModifier {
     mildValue: PropertyValue,
     offValue: PropertyValue,
   ) {
-    super(ExternalValue.DisplayBlood, [
+    super(ExternalValue.DisplayBlood, false, [
       { position: -1,
         value: offValue
       },
