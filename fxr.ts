@@ -392,7 +392,12 @@ enum ExternalValue {
    */
   Terminate = 0,
   Unk1 = 1, // Boolean? Only 0 or 1
-  Unk2 = 2,
+  /**
+   * In Elden Ring, this represents the the time of day. At midnight, the value
+   * is 0, at noon it is 12, and then it goes up to 24 before wrapping back to
+   * 0, just like the hours on the clock.
+   */
+  TimeOfDay = 2,
   /**
    * Used in AC6.
    */
