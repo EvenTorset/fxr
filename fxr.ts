@@ -225,9 +225,37 @@ enum ActionType {
   Unk700 = 700, // Root node action
   Unk701 = 701, // Root node action
   Unk702 = 702, // Root node action
-  Unk731 = 731,
-  Unk732 = 732,
-  Unk734 = 734,
+  /**
+   * Controls how effective the wind is at pushing the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeWindSpeed}
+  */
+  NodeWindSpeed = 731,
+  /**
+   * Controls how effective the wind is at pushing the particles emitted from
+   * the node.
+   * 
+   * This action type has a specialized subclass:
+   * {@link ParticleWindSpeed}
+  */
+  ParticleWindSpeed = 732,
+  /**
+   * Controls how effective the wind is at accelerating the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeWindAcceleration}
+   */
+  NodeWindAcceleration = 733,
+  /**
+   * Controls how effective the wind is at accelerating the particles emitted
+   * from the node.
+   * 
+   * Acceleration requires slot 10 to have an action that enables acceleration
+   * of the particles.
+   * 
+   * This action type has a specialized subclass:
+   * {@link ParticleWindAcceleration}
+   */
+  ParticleWindAcceleration = 734,
   Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
@@ -676,11 +704,12 @@ const EffectActionSlots = {
       ActionType.Unk130
     ],
     [
-      ActionType.Unk731
+      ActionType.NodeWindSpeed,
+      ActionType.NodeWindAcceleration
     ],
     [
-      ActionType.Unk732,
-      ActionType.Unk734
+      ActionType.ParticleWindSpeed,
+      ActionType.ParticleWindAcceleration
     ]
   ],
   [EffectType.Randomizer]: [
@@ -2512,6 +2541,32 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       null,
     ]
+  },
+  [ActionType.NodeWindSpeed]: {
+    Fields1: [
+      FieldType.Boolean,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleWindSpeed]: {
+    Fields1: [
+      FieldType.Boolean,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
+  [ActionType.NodeWindAcceleration]: {
+    Fields1: [
+      FieldType.Boolean,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleWindAcceleration]: {
+    Fields1: [
+      FieldType.Boolean,
+      FieldType.Integer,
+    ],
+    Fields2: []
   },
   [ActionType.SpotLight]: {
     Fields1: [
@@ -5070,6 +5125,291 @@ class PointLight extends Action {
 
 }
 
+/**
+ * Controls how effective the wind is at pushing the node.
+ */
+class NodeWindSpeed extends Action {
+
+  constructor(
+    /**
+     * The speed in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeed: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windSpeed the speed in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeedMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+  ) {
+    super(ActionType.NodeWindSpeed, false, true, 0, [
+      new BoolField(enabled),
+    ], [], [
+      scalarFromArg(windSpeed),
+      scalarFromArg(windSpeedMult),
+    ])
+  }
+
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeed(): Property { return this.properties1[0] }
+  set windSpeed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeedMult(): Property { return this.properties1[1] }
+  set windSpeedMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
+/**
+ * Controls how effective the wind is at pushing the particles emitted from
+ * the node.
+ */
+class ParticleWindSpeed extends Action {
+
+  constructor(
+    /**
+     * The speed in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeed: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windSpeed the speed in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeedMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+    /**
+     * Unknown. Fields1, index 1. 0 and 1 seems to be valid values, while all
+     * other values cause the wind to not affect the particles. Defaults to 0.
+     */
+    unkField1: number = 0
+  ) {
+    super(ActionType.ParticleWindSpeed, false, true, 0, [
+      new BoolField(enabled),
+      new IntField(unkField1),
+    ], [], [
+      scalarFromArg(windSpeed),
+      scalarFromArg(windSpeedMult),
+    ])
+  }
+
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeed(): Property { return this.properties1[0] }
+  set windSpeed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeedMult(): Property { return this.properties1[1] }
+  set windSpeedMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
+/**
+ * Controls how effective the wind is at accelerating the node.
+ */
+class NodeWindAcceleration extends Action {
+
+  constructor(
+    /**
+     * The acceleration in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAcceleration: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windAcceleration the acceleration in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAccelerationMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+  ) {
+    super(ActionType.NodeWindAcceleration, false, true, 0, [
+      new BoolField(enabled),
+    ], [], [
+      scalarFromArg(windAcceleration),
+      scalarFromArg(windAccelerationMult),
+    ])
+  }
+
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAcceleration(): Property { return this.properties1[0] }
+  set windAcceleration(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAccelerationMult(): Property { return this.properties1[1] }
+  set windAccelerationMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
+/**
+ * Controls how effective the wind is at accelerating the particles emitted
+ * from the node.
+ * 
+ * Acceleration requires slot 10 to have an action that enables acceleration
+ * of the particles.
+ */
+class ParticleWindAcceleration extends Action {
+
+  constructor(
+    /**
+     * The acceleration in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAcceleration: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windAcceleration the acceleration in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAccelerationMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+    /**
+     * Unknown. Fields1, index 1. 0 and 1 seems to be valid values, while all
+     * other values cause the wind to not affect the particles. Defaults to 0.
+     */
+    unkField1: number = 0
+  ) {
+    super(ActionType.ParticleWindAcceleration, false, true, 0, [
+      new BoolField(enabled),
+      new IntField(unkField1),
+    ], [], [
+      scalarFromArg(windAcceleration),
+      scalarFromArg(windAccelerationMult),
+    ])
+  }
+
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAcceleration(): Property { return this.properties1[0] }
+  set windAcceleration(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAccelerationMult(): Property { return this.properties1[1] }
+  set windAccelerationMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
 export interface SpotLightParams {
   /**
    * Controls the diffuse color of the light.
@@ -5498,6 +5838,10 @@ const Actions = {
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
+  [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
+  [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
+  [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.SpotLight]: SpotLight, SpotLight,
 }
 
@@ -6729,6 +7073,10 @@ export {
   QuadLine,
   BillboardEx,
   PointLight,
+  NodeWindSpeed,
+  ParticleWindSpeed,
+  NodeWindAcceleration,
+  ParticleWindAcceleration,
   SpotLight,
 
   Field,
