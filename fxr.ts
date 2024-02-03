@@ -75,16 +75,48 @@ enum ActionType {
    */
   RandomNodeTransform = 36,
   Unk46 = 46,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
   ParticleAcceleration = 55,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
   ParticleSpeed = 60,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
   ParticleSpeedRandomTurns = 64,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
   ParticleSpeedPartialFollow = 65,
   /**
-   * Plays a sound.
+   * Plays a sound effect.
+   * 
+   * This action type has a specialized subclass: {@link PlaySound}
    */
   PlaySound = 75,
   Unk83 = 83,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
   ParticleAccelerationRandomTurns = 84,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
   ParticleAccelerationPartialFollow = 105,
   Unk106 = 106,
   Unk113 = 113,
@@ -2411,6 +2443,35 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.ParticleAcceleration]: {
+    Fields1: [
+      null,
+      FieldType.Float,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleSpeed]: {
+    Fields1: [
+      null,
+      FieldType.Float,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleSpeedRandomTurns]: {
+    Fields1: [
+      FieldType.Float,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleSpeedPartialFollow]: {
+    Fields1: [
+      null,
+      FieldType.Integer,
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
   [ActionType.PlaySound]: {
     Fields1: [
       FieldType.Integer,
@@ -3282,71 +3343,227 @@ class PlaySound extends Action {
 }
 
 export interface ParticleMovementParams {
+  /**
+   * Downwards acceleration. This will always point towards global down, even
+   * if the node is rotated. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   gravity?: number | Property
-  followFactor?: number | Property
-  maxTurnAngle?: number | Property
-  turnInterval?: number
+  /**
+   * The acceleration for the particles. The direction depends on the emitter
+   * shape. Defaults to 0.
+   * 
+   * This can not be used together with any of the speed properties:
+   * - {@link speed}
+   * - {@link speedMult}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   acceleration?: number | Property
+  /**
+   * Multiplier for the {@link acceleration} property. Defaults to 1.
+   * 
+   * This can not be used together with any of the speed properties:
+   * - {@link speed}
+   * - {@link speedMult}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   accelerationMult?: number | Property
+  /**
+   * The speed that the particles will travel at. The direction depends on the
+   * emitter shape. Defaults to 0.
+   * 
+   * This can not be used together with any of the acceleration properties:
+   * - {@link acceleration}
+   * - {@link accelerationMult}
+   * 
+   * Setting this will produce one of the speed actions instead of one of the
+   * acceleration actions:
+   * - {@link ActionType.ParticleSpeed ParticleSpeed}
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed?: number | Property
+  /**
+   * Multiplier for the {@link speed} property. Defaults to 1.
+   * 
+   * This can not be used together with any of the acceleration properties:
+   * - {@link acceleration}
+   * - {@link accelerationMult}
+   * 
+   * Setting this will produce one of the speed actions instead of one of the
+   * acceleration actions:
+   * - {@link ActionType.ParticleSpeed ParticleSpeed}
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMult?: number | Property
+  /**
+   * The particles will turn a random amount based on this value at intervals
+   * defined by {@link turnInterval}.
+   * 
+   * Unless one of the partial follow parameters are set, setting this will
+   * produce one of the random turns actions:
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle?: number | Property
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at
+   * this interval. The units are seconds, but due to how the field that stores
+   * this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * Unless one of the partial follow parameters are set, setting this will
+   * produce one of the random turns actions:
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make the {@link followFactor} only affect translation
+   * and not rotation. Defaults to true.
+   * 
+   * Setting this will produce one of the partial follow actions:
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   followRotation?: boolean
+  /**
+   * Controls how well the particles should follow the node if they are not
+   * attached. At 0, particles will not follow at all. At 1, particles will
+   * follow perfectly, as if attached to the node. Negative values will make
+   * the particles move in the opposite direction compared to the node. Values
+   * greater than 1 will make the particles exaggerate the node's movement.
+   * Defaults to 0.
+   * 
+   * Setting this will produce one of the partial follow actions:
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: number | Property
+  /**
+   * Unknown. Fields1, index 0.
+   */
   unkField0?: number
+  /**
+   * Unknown. Fields1, index 1.
+   * 
+   * Only used when creating one of the basic particle movement actions:
+   * - {@link ActionType.ParticleAcceleration}
+   * - {@link ActionType.ParticleSpeed}
+   */
+  unkField1?: number
 }
+/**
+ * Controls how particles move.
+ * 
+ * This class covers all of the Particle Movement action types:
+ * - {@link ActionType.ParticleAcceleration ParticleAcceleration}
+ * - {@link ActionType.ParticleSpeed ParticleSpeed}
+ * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+ * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+ * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+ * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
+ * 
+ * Which one is produced by the constructor depends on what arguments are set.
+ * By default, the basic acceleration action is created.
+ */
 class ParticleMovement extends Action {
 
   constructor({
     gravity = 0,
-    maxTurnAngle = 0,
-    turnInterval = 0,
-    acceleration = 0,
-    accelerationMult = 0,
+    maxTurnAngle = null,
+    turnInterval = null,
+    acceleration = null,
+    accelerationMult = null,
+    speed = null,
+    speedMult = null,
+    followRotation = null,
+    followFactor = null,
     unkField0 = 0,
+    unkField1 = null,
   }: ParticleMovementParams = {}) {
-    super(ActionType.ParticleAccelerationRandomTurns, false, true, 0, [
-      new IntField(unkField0),
-      new IntField(turnInterval),
-    ], [], [
-      scalarFromArg(gravity),
-      scalarFromArg(acceleration),
-      scalarFromArg(accelerationMult),
-      scalarFromArg(maxTurnAngle),
-    ])
-  }
-
-}
-
-export interface ParticleMovementPartialFollowParams {
-  gravity?: number | Property
-  followFactor?: number | Property
-  maxTurnAngle?: number | Property
-  turnInterval?: number
-  acceleration?: number | Property
-  accelerationMult?: number | Property
-  followRotation?: boolean
-  unkField0?: number
-}
-class ParticleMovementPartialFollow extends Action {
-
-  constructor({
-    gravity = 0,
-    followFactor = 0,
-    maxTurnAngle = 0,
-    turnInterval = 0,
-    acceleration = 0,
-    accelerationMult = 0,
-    followRotation = true,
-    unkField0 = 0,
-  }: ParticleMovementPartialFollowParams = {}) {
-    super(ActionType.ParticleAccelerationPartialFollow, false, true, 0, [
-      new IntField(unkField0),
-      new IntField(turnInterval),
-      new BoolField(!followRotation),
-    ], [], [
-      scalarFromArg(gravity),
-      scalarFromArg(acceleration),
-      scalarFromArg(accelerationMult),
-      scalarFromArg(maxTurnAngle),
-      scalarFromArg(followFactor),
-    ])
+    let asProp: number | Property, asMultProp: number | Property
+    const isSpeedAct = speed !== null || speedMult !== null
+    if (isSpeedAct) {
+      if (acceleration !== null || accelerationMult !== null) {
+        throw new Error('The speed properties and the acceleration properties cannot be used together in a ParticleMovement action.')
+      }
+      asProp = speed ?? 0
+      asMultProp = speedMult ?? 1
+    } else {
+      asProp = acceleration ?? 0
+      asMultProp = accelerationMult ?? 1
+    }
+    if (followFactor !== null || followRotation !== null) {
+      turnInterval ??= 0
+      maxTurnAngle ??= 0
+      followRotation ??= true
+      followFactor ??= 0
+      super(
+        isSpeedAct ?
+          ActionType.ParticleSpeedPartialFollow
+        : ActionType.ParticleAccelerationPartialFollow,
+        false, true, 0, [
+          new FloatField(unkField0),
+          new IntField(Math.round(turnInterval * 50)),
+          new BoolField(!followRotation),
+        ], [], [
+          scalarFromArg(gravity),
+          scalarFromArg(asProp),
+          scalarFromArg(asMultProp),
+          scalarFromArg(maxTurnAngle),
+          scalarFromArg(followFactor),
+        ]
+      )
+    } else if (turnInterval !== null || maxTurnAngle !== null) {
+      turnInterval ??= 0
+      maxTurnAngle ??= 0
+      super(
+        isSpeedAct ?
+          ActionType.ParticleSpeedRandomTurns
+        : ActionType.ParticleAccelerationRandomTurns,
+        false, true, 0, [
+          new FloatField(unkField0),
+          new IntField(Math.round(turnInterval * 50)),
+        ], [], [
+          scalarFromArg(gravity),
+          scalarFromArg(asProp),
+          scalarFromArg(asMultProp),
+          scalarFromArg(maxTurnAngle),
+        ]
+      )
+    } else {
+      unkField1 ??= 0
+      super(
+        isSpeedAct ?
+          ActionType.ParticleSpeed
+        : ActionType.ParticleAcceleration,
+        false, true, 0, [
+          new FloatField(unkField0),
+          new FloatField(unkField1),
+        ], [], [
+          scalarFromArg(gravity),
+          scalarFromArg(asProp),
+          scalarFromArg(asMultProp),
+        ]
+      )
+    }
   }
 
 }
@@ -5931,9 +6148,14 @@ const Actions = {
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
+  ParticleMovement,
+  [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
+  [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
+  [ActionType.ParticleSpeedRandomTurns]: ParticleMovement, ParticleSpeedRandomTurns: ParticleMovement,
+  [ActionType.ParticleSpeedPartialFollow]: ParticleMovement, ParticleSpeedPartialFollow: ParticleMovement,
   [ActionType.PlaySound]: PlaySound, PlaySound,
-  [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleMovement,
-  [ActionType.ParticleAccelerationPartialFollow]: ParticleMovementPartialFollow, ParticleMovementPartialFollow,
+  [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
+  [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
   [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
@@ -7169,7 +7391,6 @@ export {
   NodeTransform,
   PlaySound,
   ParticleMovement,
-  ParticleMovementPartialFollow,
   NodeLifetime,
   ParticleLifetime,
   ParticleMultiplier,
