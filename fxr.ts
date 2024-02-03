@@ -49,7 +49,7 @@ enum EffectType {
 
 enum ActionType {
   None = 0,
-  Unk1 = 1,
+  NodeAcceleration = 1,
   /**
    * Translates the node with a property, meaning the offset can be animated.
    * 
@@ -75,17 +75,17 @@ enum ActionType {
    */
   RandomNodeTransform = 36,
   Unk46 = 46,
-  Unk55_Acceleration = 55,
-  Unk60_Speed = 60,
-  Unk64_SpeedSwing = 64,
-  Unk65_SpeedPartialFollow = 65,
+  ParticleAcceleration = 55,
+  ParticleSpeed = 60,
+  ParticleSpeedRandomTurns = 64,
+  ParticleSpeedPartialFollow = 65,
   /**
    * Plays a sound.
    */
   PlaySound = 75,
   Unk83 = 83,
-  Unk84_Swing = 84,
-  PartialFollow = 105,
+  ParticleAccelerationRandomTurns = 84,
+  ParticleAccelerationPartialFollow = 105,
   Unk106 = 106,
   Unk113 = 113,
   Unk120 = 120,
@@ -622,7 +622,7 @@ const EffectActionSlots = {
       ActionType.RandomNodeTransform
     ],
     [
-      ActionType.Unk1,
+      ActionType.NodeAcceleration,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
       ActionType.Unk46,
@@ -692,12 +692,12 @@ const EffectActionSlots = {
       ActionType.SpotLight
     ],
     [
-      ActionType.Unk55_Acceleration,
-      ActionType.Unk60_Speed,
-      ActionType.Unk64_SpeedSwing,
-      ActionType.Unk65_SpeedPartialFollow,
-      ActionType.Unk84_Swing,
-      ActionType.PartialFollow
+      ActionType.ParticleAcceleration,
+      ActionType.ParticleSpeed,
+      ActionType.ParticleSpeedRandomTurns,
+      ActionType.ParticleSpeedPartialFollow,
+      ActionType.ParticleAccelerationRandomTurns,
+      ActionType.ParticleAccelerationPartialFollow
     ],
     [],
     [
@@ -721,7 +721,7 @@ const EffectActionSlots = {
       ActionType.RandomNodeTransform
     ],
     [
-      ActionType.Unk1,
+      ActionType.NodeAcceleration,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
       ActionType.Unk46,
@@ -2411,6 +2411,29 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.PlaySound]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleAccelerationRandomTurns]: {
+    Fields1: [
+      FieldType.Float,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleAccelerationPartialFollow]: {
+    Fields1: [
+      null,
+      FieldType.Integer,
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
   [ActionType.ParticleLifetime]: {
     Fields1: [
       FieldType.Integer
@@ -3212,27 +3235,116 @@ class NodeTransform extends Action {
 
 }
 
-class PartialFollow extends Action {
+/**
+ * Plays a sound effect.
+ */
+class PlaySound extends Action {
 
-  constructor(
-    acceleration: number | Property = 0,
-    followFactor: number | Property = 0,
-    maxRandomTurnAngle: number | Property = 0,
-    unkProp1: number | Property = 0,
-    unkProp2: number | Property = 0,
-    unkField0: number = 0,
-    unkField1: number = 0,
-    unkField2: number = 0,
-  ) {
-    super(ActionType.PartialFollow, false, true, 0, [
+  /**
+   * @param soundID The ID of the sound to play.
+   * @param repeat Controls whether the sound will repeat or not.
+   * 
+   * Does not seem to work in Elden Ring.
+   * @param volume Volume multiplier.
+   * 
+   * Does not seem to work in Elden Ring.
+   */
+  constructor(soundID: number, repeat: boolean = false, volume: number = 1) {
+    super(ActionType.PlaySound, false, true, 0, [
+      new IntField(soundID),
+      new FloatField(volume),
+      new BoolField(repeat)
+    ])
+  }
+
+  /**
+   * The ID of the sound to play.
+   */
+  get soundID() { return this.fields1[0].value as number }
+  set soundID(value) { this.fields1[0].value = value }
+
+  /**
+   * Volume multiplier.
+   * 
+   * Does not seem to work in Elden Ring.
+   */
+  get volume() { return this.fields1[1].value as number }
+  set volume(value) { this.fields1[1].value = value }
+
+  /**
+   * Controls whether the sound will repeat or not.
+   * 
+   * Does not seem to work in Elden Ring.
+   */
+  get repeat() { return this.fields1[2].value as number }
+  set repeat(value) { this.fields1[2].value = value }
+
+}
+
+export interface ParticleMovementParams {
+  gravity?: number | Property
+  followFactor?: number | Property
+  maxTurnAngle?: number | Property
+  turnInterval?: number
+  acceleration?: number | Property
+  accelerationMult?: number | Property
+  followRotation?: boolean
+  unkField0?: number
+}
+class ParticleMovement extends Action {
+
+  constructor({
+    gravity = 0,
+    maxTurnAngle = 0,
+    turnInterval = 0,
+    acceleration = 0,
+    accelerationMult = 0,
+    unkField0 = 0,
+  }: ParticleMovementParams = {}) {
+    super(ActionType.ParticleAccelerationRandomTurns, false, true, 0, [
       new IntField(unkField0),
-      new IntField(unkField1),
-      new IntField(unkField2), // Boolean? "Follow translation only"
+      new IntField(turnInterval),
     ], [], [
+      scalarFromArg(gravity),
       scalarFromArg(acceleration),
-      scalarFromArg(unkProp1),
-      scalarFromArg(unkProp2),
-      scalarFromArg(maxRandomTurnAngle),
+      scalarFromArg(accelerationMult),
+      scalarFromArg(maxTurnAngle),
+    ])
+  }
+
+}
+
+export interface ParticleMovementPartialFollowParams {
+  gravity?: number | Property
+  followFactor?: number | Property
+  maxTurnAngle?: number | Property
+  turnInterval?: number
+  acceleration?: number | Property
+  accelerationMult?: number | Property
+  followRotation?: boolean
+  unkField0?: number
+}
+class ParticleMovementPartialFollow extends Action {
+
+  constructor({
+    gravity = 0,
+    followFactor = 0,
+    maxTurnAngle = 0,
+    turnInterval = 0,
+    acceleration = 0,
+    accelerationMult = 0,
+    followRotation = true,
+    unkField0 = 0,
+  }: ParticleMovementPartialFollowParams = {}) {
+    super(ActionType.ParticleAccelerationPartialFollow, false, true, 0, [
+      new IntField(unkField0),
+      new IntField(turnInterval),
+      new BoolField(!followRotation),
+    ], [], [
+      scalarFromArg(gravity),
+      scalarFromArg(acceleration),
+      scalarFromArg(accelerationMult),
+      scalarFromArg(maxTurnAngle),
       scalarFromArg(followFactor),
     ])
   }
@@ -3345,9 +3457,8 @@ class ParticleMultiplier extends Action {
    * @param uniformScale Scales the model uniformly based on {@link scaleX}.
    * The other scale properties in this action have no effect when this is
    * enabled.
-   * @param acceleration Controls the acceleration of the particles, but only
-   * if they have an action that allows them to accelerate. The direction of
-   * the acceleration depends on the emitter shape.
+   * @param speed Controls the speed of the particles, but only if they have an
+   * action in slot 10. The direction depends on the emitter shape.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    * @param scaleX Multiplier for the scale along the X-axis. If
@@ -3368,7 +3479,7 @@ class ParticleMultiplier extends Action {
    */
   constructor(
     uniformScale: boolean = true,
-    acceleration: number | Property = 0,
+    speed: number | Property = 0,
     scaleX: number | Property = 1,
     scaleY: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
     scaleZ: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
@@ -3377,7 +3488,7 @@ class ParticleMultiplier extends Action {
     super(ActionType.ParticleMultiplier, false, true, 0, [
       new BoolField(uniformScale),
     ], [], [
-      scalarFromArg(acceleration),
+      scalarFromArg(speed),
       scalarFromArg(scaleX),
       scalarFromArg(scaleY),
       scalarFromArg(scaleZ),
@@ -5820,7 +5931,9 @@ const Actions = {
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
-  [ActionType.PartialFollow]: PartialFollow, PartialFollow,
+  [ActionType.PlaySound]: PlaySound, PlaySound,
+  [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleMovement,
+  [ActionType.ParticleAccelerationPartialFollow]: ParticleMovementPartialFollow, ParticleMovementPartialFollow,
   [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
@@ -7054,7 +7167,9 @@ export {
   NodeTranslation,
   NodeSpin,
   NodeTransform,
-  PartialFollow,
+  PlaySound,
+  ParticleMovement,
+  ParticleMovementPartialFollow,
   NodeLifetime,
   ParticleLifetime,
   ParticleMultiplier,
