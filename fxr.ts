@@ -115,7 +115,7 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PlaySound}
    */
   PlaySound = 75,
-  Unk83 = 83,
+  NodeAccelerationRandomTurns = 83,
   /**
    * Controls the movement of particles.
    * 
@@ -128,12 +128,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleMovement}
    */
   ParticleAccelerationPartialFollow = 105,
-  Unk106 = 106,
-  Unk113 = 113,
-  Unk120 = 120,
-  Unk121 = 121,
-  Unk122 = 122,
-  Unk123_Rotation = 123,
+  NodeAccelerationPartialFollow = 106,
+  NodeAccelerationSpin = 113,
+  NodeSpeed = 120,
+  NodeSpeedRandomTurns = 121,
+  NodeSpeedPartialFollow = 122,
+  NodeSpeedSpin = 123,
   /**
    * Controls various things about the node, like its duration, and how
    * it is attached to the parent node.
@@ -670,13 +670,13 @@ const EffectActionSlots = {
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
       ActionType.NodeAttachToCamera,
-      ActionType.Unk83,
-      ActionType.Unk106,
-      ActionType.Unk113,
-      ActionType.Unk120,
-      ActionType.Unk121,
-      ActionType.Unk122,
-      ActionType.Unk123_Rotation
+      ActionType.NodeAccelerationRandomTurns,
+      ActionType.NodeAccelerationPartialFollow,
+      ActionType.NodeAccelerationSpin,
+      ActionType.NodeSpeed,
+      ActionType.NodeSpeedRandomTurns,
+      ActionType.NodeSpeedPartialFollow,
+      ActionType.NodeSpeedSpin
     ],
     [
       ActionType.PlaySound
@@ -769,12 +769,12 @@ const EffectActionSlots = {
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
       ActionType.NodeAttachToCamera,
-      ActionType.Unk83,
-      ActionType.Unk106,
-      ActionType.Unk113,
-      ActionType.Unk120,
-      ActionType.Unk121,
-      ActionType.Unk123_Rotation
+      ActionType.NodeAccelerationRandomTurns,
+      ActionType.NodeAccelerationPartialFollow,
+      ActionType.NodeAccelerationSpin,
+      ActionType.NodeSpeed,
+      ActionType.NodeSpeedRandomTurns,
+      ActionType.NodeSpeedSpin
     ],
     [
       ActionType.PlaySound
