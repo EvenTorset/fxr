@@ -79,7 +79,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NodeTransform}
    */
   RandomNodeTransform = 36,
-  Unk46 = 46,
+  /**
+   * Attaches the node to the camera.
+   * 
+   * This action type has a specialized subclass: {@link NodeAttachToCamera}
+   */
+  NodeAttachToCamera = 46,
   /**
    * Controls the movement of particles.
    * 
@@ -664,7 +669,7 @@ const EffectActionSlots = {
       ActionType.NodeAcceleration,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
-      ActionType.Unk46,
+      ActionType.NodeAttachToCamera,
       ActionType.Unk83,
       ActionType.Unk106,
       ActionType.Unk113,
@@ -763,7 +768,7 @@ const EffectActionSlots = {
       ActionType.NodeAcceleration,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
-      ActionType.Unk46,
+      ActionType.NodeAttachToCamera,
       ActionType.Unk83,
       ActionType.Unk106,
       ActionType.Unk113,
@@ -2474,6 +2479,13 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.NodeAttachToCamera]: {
+    Fields1: [
+      FieldType.Boolean,
+      null,
+    ],
+    Fields2: []
+  },
   [ActionType.ParticleAcceleration]: {
     Fields1: [
       null,
@@ -3336,6 +3348,34 @@ class NodeTransform extends Action {
       }
     }
   }
+
+}
+
+/**
+ * Attaches the node to the camera.
+ */
+class NodeAttachToCamera extends Action {
+
+  declare fields1: [BoolField, IntField]
+
+  /**
+   * @param followRotation Disable this to stop the node from following the
+   * rotation of the camera. Defaults to true.
+   * @param unkField1 Unknown. Fields1, index 1. Defaults to 1.
+   */
+  constructor(followRotation: boolean = true, unkField1: number = 1) {
+    super(ActionType.NodeAttachToCamera, false, true, 0, [
+      new BoolField(followRotation),
+      new IntField(unkField1)
+    ])
+  }
+
+  /**
+   * Controls if the node should also follow the rotation of the camera or only
+   * the translation.
+   */
+  get followRotation() { return this.fields1[0].value }
+  set followRotation(value) { this.fields1[0].value = value }
 
 }
 
@@ -6215,6 +6255,7 @@ const Actions = {
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
+  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   ParticleMovement,
   [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
   [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
@@ -7458,6 +7499,7 @@ export {
   NodeTranslation,
   NodeSpin,
   NodeTransform,
+  NodeAttachToCamera,
   PlaySound,
   ParticleMovement,
   NodeLifetime,
