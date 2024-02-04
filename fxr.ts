@@ -16,6 +16,11 @@ enum NodeType {
    * This node type has a specialized subclass: {@link RootNode}
    */
   Root = 2000,
+  /**
+   * Acts as a node containing another FXR.
+   * 
+   * This node type has a specialized subclass: {@link ProxyNode}
+   */
   Proxy = 2001,
   LevelOfDetail = 2002,
   /**
@@ -146,7 +151,9 @@ enum ActionType {
    */
   ParticleMultiplier = 131,
   /**
-   * References a different FXR file by its ID.
+   * References another FXR by its ID.
+   * 
+   * This action type has a specialized subclass: {@link FXRReference}
    */
   FXRReference = 132,
   /**
@@ -2128,6 +2135,30 @@ class RootNode extends Node {
 }
 
 /**
+ * Acts as a node containing another FXR.
+ */
+class ProxyNode extends Node {
+
+  declare actions: [FXRReference]
+
+  /**
+   * @param fxrID The ID of the FXR that this node should act as a proxy for.
+   */
+  constructor(fxrID: number) {
+    super(NodeType.Proxy, [
+      new FXRReference(fxrID)
+    ])
+  }
+
+  /**
+   * The ID of the FXR that this node should act as a proxy for.
+   */
+  get fxrID() { return this.actions[0].referenceID }
+  set fxrID(value) { this.actions[0].referenceID = value }
+
+}
+
+/**
  * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
  * them a default {@link ActionType.StateEffectMap state-effect map} and a
  * simpler way to modify the map.
@@ -2496,6 +2527,18 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     Fields2: []
   },
   [ActionType.ParticleLifetime]: {
+    Fields1: [
+      FieldType.Integer
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleMultiplier]: {
+    Fields1: [
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
+  [ActionType.FXRReference]: {
     Fields1: [
       FieldType.Integer
     ],
@@ -3712,6 +3755,30 @@ class ParticleMultiplier extends Action {
       vectorFromArg(color),
     ])
   }
+
+}
+
+/**
+ * References another FXR by its ID.
+ */
+class FXRReference extends Action {
+
+  declare fields1: [IntField]
+
+  /**
+   * @param referenceID The ID of the referenced FXR.
+   */
+  constructor(referenceID: number) {
+    super(ActionType.FXRReference, false, true, 0, [
+      new IntField(referenceID)
+    ])
+  }
+
+  /**
+   * The ID of the referenced FXR.
+   */
+  get referenceID() { return this.fields1[0].value }
+  set referenceID(value) { this.fields1[0].value = value }
 
 }
 
@@ -6159,6 +6226,7 @@ const Actions = {
   [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
+  [ActionType.FXRReference]: FXRReference, FXRReference,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.NodeWeights]: NodeWeights, NodeWeights,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -7379,6 +7447,7 @@ export {
 
   Node,
   RootNode,
+  ProxyNode,
   BasicNode,
 
   Effect,
@@ -7394,6 +7463,7 @@ export {
   NodeLifetime,
   ParticleLifetime,
   ParticleMultiplier,
+  FXRReference,
   StateEffectMap,
   NodeWeights,
   PeriodicEmitter,
