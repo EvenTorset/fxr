@@ -672,6 +672,89 @@ enum LightingMode {
   Lit = 0,
 }
 
+const ActionData = {
+  [ActionType.None]: [0, 1, 0],
+  [ActionType.NodeAcceleration]: [0, 1, 0],
+  [ActionType.NodeTranslation]: [0, 1, 2],
+  [ActionType.NodeSpin]: [0, 1, 3],
+  [ActionType.StaticNodeTransform]: [0, 1, 0],
+  [ActionType.RandomNodeTransform]: [0, 1, 1],
+  [ActionType.NodeAttachToCamera]: [0, 1, 4],
+  [ActionType.ParticleAcceleration]: [0, 1, 0],
+  [ActionType.ParticleSpeed]: [0, 1, 1],
+  [ActionType.ParticleSpeedRandomTurns]: [0, 1, 2],
+  [ActionType.ParticleSpeedPartialFollow]: [0, 1, 3],
+  [ActionType.PlaySound]: [0, 1, 0],
+  [ActionType.NodeAccelerationRandomTurns]: [0, 1, 5],
+  [ActionType.ParticleAccelerationRandomTurns]: [0, 1, 4],
+  [ActionType.ParticleAccelerationPartialFollow]: [0, 1, 5],
+  [ActionType.NodeAccelerationPartialFollow]: [0, 1, 6],
+  [ActionType.NodeAccelerationSpin]: [0, 1, 7],
+  [ActionType.NodeSpeed]: [0, 1, 8],
+  [ActionType.NodeSpeedRandomTurns]: [0, 1, 9],
+  [ActionType.NodeSpeedPartialFollow]: [0, 1, 10],
+  [ActionType.NodeSpeedSpin]: [0, 1, 11],
+  [ActionType.NodeLifetime]: [0, 1, 0],
+  [ActionType.ParticleLifetime]: [0, 1, 0],
+  [ActionType.Unk130]: [0, 1, 0],
+  [ActionType.ParticleMultiplier]: [0, 1, 0],
+  [ActionType.FXRReference]: [1, 0, 0],
+  [ActionType.LevelOfDetail]: [1, 0, 0],
+  [ActionType.StateEffectMap]: [1, 0, 0],
+  [ActionType.Unk200]: [0, 1, 0],
+  [ActionType.NodeWeights]: [0, 1, 1],
+  [ActionType.PeriodicEmitter]: [0, 1, 0],
+  [ActionType.EqualDistanceEmitter]: [0, 1, 1],
+  [ActionType.OneTimeEmitter]: [0, 1, 2],
+  [ActionType.PointEmitterShape]: [0, 1, 0],
+  [ActionType.DiskEmitterShape]: [0, 1, 1],
+  [ActionType.RectangleEmitterShape]: [0, 1, 2],
+  [ActionType.SphereEmitterShape]: [0, 1, 3],
+  [ActionType.BoxEmitterShape]: [0, 1, 4],
+  [ActionType.CylinderEmitterShape]: [0, 1, 5],
+  [ActionType.Unk500]: [0, 1, 0],
+  [ActionType.Unk501]: [0, 1, 1],
+  [ActionType.Unk502]: [0, 1, 2],
+  [ActionType.Unk503]: [0, 1, 3],
+  [ActionType.PointSprite]: [0, 1, 0],
+  [ActionType.Line]: [0, 1, 0],
+  [ActionType.QuadLine]: [0, 1, 0],
+  [ActionType.BillboardEx]: [0, 1, 0],
+  [ActionType.MultiTextureBillboardEx]: [0, 1, 0],
+  [ActionType.Model]: [0, 1, 0],
+  [ActionType.Tracer]: [0, 1, 0],
+  [ActionType.Distortion]: [0, 1, 0],
+  [ActionType.RadialBlur]: [0, 1, 0],
+  [ActionType.PointLight]: [0, 1, 0],
+  [ActionType.Unk700]: [0, 1, 0],
+  [ActionType.Unk701]: [0, 1, 0],
+  [ActionType.Unk702]: [0, 1, 0],
+  [ActionType.NodeWindSpeed]: [0, 1, 0],
+  [ActionType.ParticleWindSpeed]: [0, 1, 0],
+  [ActionType.NodeWindAcceleration]: [0, 1, 0],
+  [ActionType.ParticleWindAcceleration]: [0, 1, 0],
+  [ActionType.Unk10000_StandardParticle]: [0, 1, 0],
+  [ActionType.Unk10001_StandardCorrectParticle]: [0, 1, 0],
+  [ActionType.Unk10002_Fluid]: [0, 1, 0],
+  [ActionType.Unk10003_LightShaft]: [0, 1, 0],
+  [ActionType.Unk10008_SparkParticle]: [0, 1, 0],
+  [ActionType.Unk10009_SparkCorrectParticle]: [0, 1, 0],
+  [ActionType.Unk10010_Tracer]: [0, 1, 0],
+  [ActionType.Unk10012_Tracer]: [0, 1, 0],
+  [ActionType.Unk10013_WaterInteractionSimulation]: [0, 1, 0],
+  [ActionType.Unk10014_LensFlare]: [0, 1, 0],
+  [ActionType.Unk10015_RichModel]: [0, 1, 0],
+  [ActionType.Unk10100]: [0, 1, 0],
+  [ActionType.Unk10200_ForceFieldCancelArea]: [0, 1, 0],
+  [ActionType.Unk10300_ForceFieldWindArea]: [0, 1, 0],
+  [ActionType.Unk10301_ForceFieldGravityArea]: [0, 1, 0],
+  [ActionType.Unk10302_CollisionFieldArea]: [0, 1, 0],
+  [ActionType.Unk10303_ForceFieldTurbulenceArea]: [0, 1, 0],
+  [ActionType.Unk10400]: [0, 1, 0],
+  [ActionType.Unk10500]: [0, 1, 0],
+  [ActionType.SpotLight]: [0, 1, 0],
+}
+
 const EffectActionSlots = {
   [EffectType.Basic]: [
     [
@@ -2136,9 +2219,9 @@ class RootNode extends Node {
   ) {
     super(NodeType.Root, [
       new Action(ActionType.Unk700),
-      new Action(ActionType.Unk10100, false, true, 0, arrayOf(56, () => new IntField(0))),
-      new Action(ActionType.Unk10400, false, true, 0, arrayOf(65, () => new IntField(1))),
-      new Action(ActionType.Unk10500, false, true, 0, arrayOf(10, () => new IntField(0)), [], [
+      new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
+      new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
+      new Action(ActionType.Unk10500, arrayOf(10, () => new IntField(0)), [], [
         rateOfTime instanceof Property ? rateOfTime : new ConstantProperty(rateOfTime as number)
       ]),
     ], effects, nodes)
@@ -2375,7 +2458,7 @@ class BasicEffect extends Effect {
       new Action,
       new Action,
       new Action,
-      new Action(ActionType.Unk130, false, true, 0, [
+      new Action(ActionType.Unk130, [
         new IntField(1),
         new Field,
         new Field,
@@ -2813,9 +2896,6 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
 class Action {
 
   type: ActionType
-  unk02: boolean
-  unk03: boolean
-  unk04: number
   fields1: Field[]
   fields2: Field[]
   properties1: Property[]
@@ -2824,9 +2904,6 @@ class Action {
 
   constructor(
     type: number = ActionType.None,
-    unk02: boolean = false,
-    unk03: boolean = true,
-    unk04: number = 0,
     fields1: Field[] = [],
     fields2: Field[] = [],
     properties1: Property[] = [],
@@ -2834,9 +2911,6 @@ class Action {
     section10s: Section10[] = [],
   ) {
     this.type = type
-    this.unk02 = unk02
-    this.unk03 = unk03
-    this.unk04 = unk04
     this.fields1 = fields1
     this.fields2 = fields2
     this.properties1 = properties1
@@ -2846,9 +2920,17 @@ class Action {
 
   static read(br: BinaryReader): Action {
     const type = br.readInt16()
-    const unk02 = br.readBool()
-    const unk03 = br.readBool()
+    const unk02 = br.readUint8()
+    const unk03 = br.readUint8()
     const unk04 = br.readInt32()
+    if (type in ActionData) {
+      const ad = ActionData[type]
+      if (unk02 !== ad[0] || unk03 !== ad[1] || unk04 !== ad[2]) {
+        console.warn(`Warning: Action with unrecognized data found: ${type} {${unk02}, ${unk03}, ${unk04}}`)
+      }
+    } else {
+      console.warn(`Warning: Unrecognized action type found: ${type} {${unk02}, ${unk03}, ${unk04}}`)
+    }
     const fieldCount1 = br.readInt32()
     const section10Count = br.readInt32()
     const propertyCount1 = br.readInt32()
@@ -2905,16 +2987,17 @@ class Action {
       action.section10s = section10s
       return action
     } else {
-      return new Action(type, unk02, unk03, unk04, fields1, fields2, properties1, properties2, section10s)
+      return new Action(type, fields1, fields2, properties1, properties2, section10s)
     }
   }
 
   write(bw: BinaryWriter, actions: Action[]) {
     const count = actions.length
     bw.writeInt16(this.type)
-    bw.writeBool(this.unk02)
-    bw.writeBool(this.unk03)
-    bw.writeInt32(this.unk04)
+    const ad = ActionData[this.type] ?? [0, 1, 0]
+    bw.writeUint8(ad[0])
+    bw.writeUint8(ad[1])
+    bw.writeInt32(ad[2])
     bw.writeInt32(this.fields1.length)
     bw.writeInt32(this.section10s.length)
     bw.writeInt32(this.properties1.length)
@@ -2989,9 +3072,6 @@ class Action {
 
   static fromJSON({
     type,
-    unk02 = false,
-    unk03 = true,
-    unk04 = 0,
     fields1 = [],
     fields2 = [],
     properties1 = [],
@@ -2999,9 +3079,6 @@ class Action {
     section10s = [],
   }: {
     type: ActionType
-    unk02?: boolean
-    unk03?: boolean
-    unk04?: number
     fields1?: []
     fields2?: []
     properties1?: []
@@ -3010,9 +3087,6 @@ class Action {
   }) {
     return new Action(
       type,
-      unk02,
-      unk03,
-      unk04,
       fields1,
       fields2,
       properties1,
@@ -3024,18 +3098,12 @@ class Action {
   toJSON() {
     const o: {
       type: ActionType
-      unk02?: boolean
-      unk03?: boolean
-      unk04?: number
       fields1?: any[]
       fields2?: any[]
       properties1?: any[]
       properties2?: any[]
       section10s?: any[]
     } = { type: this.type }
-    if (this.unk02 !== false) o.unk02 = this.unk02
-    if (this.unk03 !== true) o.unk03 = this.unk03
-    if (this.unk04 !== 0) o.unk04 = this.unk04
     if (this.fields1.length > 0) o.fields1 = this.fields1.map(field => field.toJSON())
     if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
     if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
@@ -3055,9 +3123,6 @@ class Action {
   minify() {
     return new Action(
       this.type,
-      this.unk02,
-      this.unk03,
-      this.unk04,
       this.fields1,
       this.fields2,
       this.properties1.map(prop => prop.minify()),
@@ -3093,7 +3158,7 @@ class NodeTranslation extends Action {
    * three valid values: 0, 1, 2. Defaults to 0.
    */
   constructor(translation: Vector3 | Property = [0, 0, 0], unkField: number = 0) {
-    super(ActionType.NodeTranslation, false, true, 0, [
+    super(ActionType.NodeTranslation, [
       new IntField(0)
     ], [], [
       vectorFromArg(translation)
@@ -3140,7 +3205,7 @@ class NodeSpin extends Action {
     spinZMult: number | Property = 1,
     unkField: number = 1
   ) {
-    super(ActionType.NodeSpin, false, true, 0, [
+    super(ActionType.NodeSpin, [
       new IntField(unkField)
     ], [], [
       scalarFromArg(spinX),
@@ -3270,7 +3335,7 @@ class NodeTransform extends Action {
       randomRotationY === 0 &&
       randomRotationZ === 0
     ) {
-      super(ActionType.StaticNodeTransform, false, true, 0, [
+      super(ActionType.StaticNodeTransform, [
         // These two actions have their X-axis reversed for some reason
         new FloatField(-translateX),
         new FloatField(translateY),
@@ -3280,7 +3345,7 @@ class NodeTransform extends Action {
         new FloatField(rotateZ),
       ])
     } else {
-      super(ActionType.RandomNodeTransform, false, true, 0, [
+      super(ActionType.RandomNodeTransform, [
         new FloatField(-translateX),
         new FloatField(translateY),
         new FloatField(translateZ),
@@ -3386,7 +3451,7 @@ class NodeTransform extends Action {
         } else {
           // This doesn't use the randomization fields, return a static
           // transform action instead
-          return new Action(ActionType.StaticNodeTransform, false, true, 0, [
+          return new Action(ActionType.StaticNodeTransform, [
             this.fields1[0],
             this.fields1[1],
             this.fields1[2],
@@ -3434,7 +3499,7 @@ class NodeAttachToCamera extends Action {
    * @param unkField1 Unknown. Fields1, index 1. Defaults to 1.
    */
   constructor(followRotation: boolean = true, unkField1: number = 1) {
-    super(ActionType.NodeAttachToCamera, false, true, 0, [
+    super(ActionType.NodeAttachToCamera, [
       new BoolField(followRotation),
       new IntField(unkField1)
     ])
@@ -3464,7 +3529,7 @@ class PlaySound extends Action {
    * Does not seem to work in Elden Ring.
    */
   constructor(soundID: number, repeat: boolean = false, volume: number = 1) {
-    super(ActionType.PlaySound, false, true, 0, [
+    super(ActionType.PlaySound, [
       new IntField(soundID),
       new FloatField(volume),
       new BoolField(repeat)
@@ -3672,7 +3737,7 @@ class ParticleMovement extends Action {
         isSpeedAct ?
           ActionType.ParticleSpeedPartialFollow
         : ActionType.ParticleAccelerationPartialFollow,
-        false, true, 0, [
+        [
           new FloatField(unkField0),
           new IntField(Math.round(turnInterval * 50)),
           new BoolField(!followRotation),
@@ -3691,7 +3756,7 @@ class ParticleMovement extends Action {
         isSpeedAct ?
           ActionType.ParticleSpeedRandomTurns
         : ActionType.ParticleAccelerationRandomTurns,
-        false, true, 0, [
+        [
           new FloatField(unkField0),
           new IntField(Math.round(turnInterval * 50)),
         ], [], [
@@ -3707,7 +3772,7 @@ class ParticleMovement extends Action {
         isSpeedAct ?
           ActionType.ParticleSpeed
         : ActionType.ParticleAcceleration,
-        false, true, 0, [
+        [
           new FloatField(unkField0),
           new FloatField(unkField1),
         ], [], [
@@ -3757,7 +3822,7 @@ class NodeLifetime extends Action {
     unkField1: number = 1,
     unkField3: number = 0,
   ) {
-    super(ActionType.NodeLifetime, false, true, 0, [
+    super(ActionType.NodeLifetime, [
       new FloatField(delay),
       new IntField(unkField1),
       new IntField(attachment),
@@ -3795,7 +3860,7 @@ class ParticleLifetime extends Action {
     duration: number | Property = -1,
     attachment: AttachMode = AttachMode.Parent
   ) {
-    super(ActionType.ParticleLifetime, false, true, 0, [
+    super(ActionType.ParticleLifetime, [
       new IntField(attachment)
     ], [], [
       scalarFromArg(duration)
@@ -3855,7 +3920,7 @@ class ParticleMultiplier extends Action {
     scaleZ: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
     color: Vector4 | Property = [1, 1, 1, 1],
   ) {
-    super(ActionType.ParticleMultiplier, false, true, 0, [
+    super(ActionType.ParticleMultiplier, [
       new BoolField(uniformScale),
     ], [], [
       scalarFromArg(speed),
@@ -3879,7 +3944,7 @@ class FXRReference extends Action {
    * @param referenceID The ID of the referenced FXR.
    */
   constructor(referenceID: number) {
-    super(ActionType.FXRReference, false, true, 0, [
+    super(ActionType.FXRReference, [
       new IntField(referenceID)
     ])
   }
@@ -3911,7 +3976,7 @@ class LevelOfDetailThresholds extends Action {
   constructor(duration: number | Property = -1, thresholds: number[] = []) {
     thresholds = arrayOf(5, i => thresholds[i] ?? 1000)
     super(
-      ActionType.LevelOfDetail, false, true, 0,
+      ActionType.LevelOfDetail,
       thresholds.map(l => new IntField(l)), [], [
         scalarFromArg(duration)
       ]
@@ -3930,7 +3995,7 @@ class LevelOfDetailThresholds extends Action {
 class StateEffectMap extends Action {
 
   constructor(...effectIndices: number[]) {
-    super(ActionType.StateEffectMap, true, false, 0, [], [], [], [], [
+    super(ActionType.StateEffectMap, [], [], [], [], [
       new Section10(effectIndices.map(i => new IntField(i)))
     ])
   }
@@ -3943,7 +4008,7 @@ class StateEffectMap extends Action {
 class NodeWeights extends Action {
 
   constructor(...weights: number[]) {
-    super(ActionType.NodeWeights, false, true, 1, [], [], [], [], [
+    super(ActionType.NodeWeights, [], [], [], [], [
       new Section10(weights.map(w => new IntField(w)))
     ])
   }
@@ -3985,7 +4050,7 @@ class PeriodicEmitter extends Action {
     maxConcurrent: number | Property = -1,
     unkField: number = 1
   ) {
-    super(ActionType.PeriodicEmitter, false, true, 0, [
+    super(ActionType.PeriodicEmitter, [
       new IntField(unkField)
     ], [], [
       interval instanceof Property ? interval : new ConstantProperty(interval as number),
@@ -4047,7 +4112,7 @@ class EqualDistanceEmitter extends Action {
     unkField1: number = 0,
     unkProp: number | Property = -1
   ) {
-    super(ActionType.EqualDistanceEmitter, false, true, 0, [
+    super(ActionType.EqualDistanceEmitter, [
       new IntField(unkField0),
       new IntField(unkField1),
     ], [], [
@@ -4066,7 +4131,7 @@ class EqualDistanceEmitter extends Action {
 class OneTimeEmitter extends Action {
 
   constructor() {
-    super(ActionType.OneTimeEmitter, false, true, 2)
+    super(ActionType.OneTimeEmitter)
   }
 
 }
@@ -4085,7 +4150,7 @@ class PointEmitterShape extends Action {
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(unkField: number = 5) {
-    super(ActionType.PointEmitterShape, false, true, 0, [
+    super(ActionType.PointEmitterShape, [
       new IntField(unkField)
     ])
   }
@@ -4129,7 +4194,7 @@ class DiskEmitterShape extends Action {
     centerWeight: number | Property = 0,
     unkField: number = 5
   ) {
-    super(ActionType.DiskEmitterShape, false, true, 0, [
+    super(ActionType.DiskEmitterShape, [
       new IntField(unkField)
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
@@ -4179,7 +4244,7 @@ class RectangleEmitterShape extends Action {
     centerWeight: number | Property = 0,
     unkField: number = 5
   ) {
-    super(ActionType.RectangleEmitterShape, false, true, 0, [
+    super(ActionType.RectangleEmitterShape, [
       new IntField(unkField)
     ], [], [
       sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
@@ -4215,7 +4280,7 @@ class SphereEmitterShape extends Action {
     volume: boolean = true,
     radius: number | Property = 1,
   ) {
-    super(ActionType.SphereEmitterShape, false, true, 0, [
+    super(ActionType.SphereEmitterShape, [
       new BoolField(volume)
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
@@ -4258,7 +4323,7 @@ class BoxEmitterShape extends Action {
     sizeZ: number | Property = sizeX instanceof Property ? Property.copy(sizeX) : sizeX,
     unkField: number = 0,
   ) {
-    super(ActionType.BoxEmitterShape, false, true, 0, [
+    super(ActionType.BoxEmitterShape, [
       new IntField(unkField),
       new BoolField(volume),
     ], [], [
@@ -4305,7 +4370,7 @@ class CylinderEmitterShape extends Action {
     yAxis: boolean = true,
     unkField: number = 5,
   ) {
-    super(ActionType.CylinderEmitterShape, false, true, 0, [
+    super(ActionType.CylinderEmitterShape, [
       new IntField(unkField),
       new BoolField(volume),
       new BoolField(yAxis),
@@ -4507,7 +4572,7 @@ class QuadLine extends CommonAction6xxFields2Action {
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
   }: QuadLineParams = {}) {
-    super(ActionType.QuadLine, false, true, 0, [
+    super(ActionType.QuadLine, [
       /*  0 */ new IntField(-1),
       /*  1 */ new IntField(1),
       /*  2 */ new IntField(1),
@@ -5008,7 +5073,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
   }: BillboardExParams = {}) {
-    super(ActionType.BillboardEx, false, true, 0, [
+    super(ActionType.BillboardEx, [
       /*  0 */ new IntField(orientation),
       /*  1 */ new IntField(normalMap),
       /*  2 */ new FloatField(randomWidthMultiplier),
@@ -5458,7 +5523,7 @@ class PointLight extends Action {
     asymmetryParam = 0.5,
     falloffExponent = 1,
   }: PointLightParams = {}) {
-    super(ActionType.PointLight, false, true, 0, [
+    super(ActionType.PointLight, [
       /*  0 */ new IntField(0),
       /*  1 */ new FloatField(0),
     ], [ // Fields 2
@@ -5684,7 +5749,7 @@ class NodeWindSpeed extends Action {
      */
     enabled: boolean = true,
   ) {
-    super(ActionType.NodeWindSpeed, false, true, 0, [
+    super(ActionType.NodeWindSpeed, [
       new BoolField(enabled),
     ], [], [
       scalarFromArg(windSpeed),
@@ -5757,7 +5822,7 @@ class ParticleWindSpeed extends Action {
      */
     unkField1: number = 0
   ) {
-    super(ActionType.ParticleWindSpeed, false, true, 0, [
+    super(ActionType.ParticleWindSpeed, [
       new BoolField(enabled),
       new IntField(unkField1),
     ], [], [
@@ -5825,7 +5890,7 @@ class NodeWindAcceleration extends Action {
      */
     enabled: boolean = true,
   ) {
-    super(ActionType.NodeWindAcceleration, false, true, 0, [
+    super(ActionType.NodeWindAcceleration, [
       new BoolField(enabled),
     ], [], [
       scalarFromArg(windAcceleration),
@@ -5901,7 +5966,7 @@ class ParticleWindAcceleration extends Action {
      */
     unkField1: number = 0
   ) {
-    super(ActionType.ParticleWindAcceleration, false, true, 0, [
+    super(ActionType.ParticleWindAcceleration, [
       new BoolField(enabled),
       new IntField(unkField1),
     ], [], [
@@ -6137,7 +6202,7 @@ class SpotLight extends Action {
     unkScalarProp9 = 1,
     unkScalarProp10 = 1,
   }: SpotLightParams = {}) {
-    super(ActionType.SpotLight, false, true, 0, [
+    super(ActionType.SpotLight, [
       /*  0 */ new IntField(0),
       /*  1 */ new BoolField(false), // Animation toggle?
       /*  2 */ new FloatField(0),
