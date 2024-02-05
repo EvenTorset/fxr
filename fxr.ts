@@ -22,6 +22,12 @@ enum NodeType {
    * This node type has a specialized subclass: {@link ProxyNode}
    */
   Proxy = 2001,
+  /**
+   * A node that only displays one of its child nodes at a time based on
+   * distance thresholds for each.
+   * 
+   * This node type has a specialized subclass: {@link LevelOfDetailNode}
+   */
   LevelOfDetail = 2002,
   /**
    * A basic node.
@@ -33,6 +39,12 @@ enum NodeType {
 }
 
 enum EffectType {
+  /**
+   * Manages the duration and thresholds for the
+   * {@link NodeType.LevelOfDetail level of detail node}.
+   * 
+   * This effect type has a specialized subclass: {@link LevelOfDetailEffect}
+   */
   LevelOfDetail = 1002,
   /**
    * A basic effect that can emit particles of many different types.
@@ -162,8 +174,12 @@ enum ActionType {
    */
   FXRReference = 132,
   /**
-   * Controls the level of detail (LOD) distance thresholds for the
-   * subnodes.
+   * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
+   * manage the duration and thresholds for the
+   * {@link NodeType.LevelOfDetail level of detail node}.
+   * 
+   * This action type has a specialized subclass:
+   * {@link LevelOfDetailThresholds}
    */
   LevelOfDetail = 133,
   /**
