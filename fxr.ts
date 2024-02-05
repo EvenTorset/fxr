@@ -33,7 +33,7 @@ enum NodeType {
 }
 
 enum EffectType {
-  LODThresholds = 1002,
+  LevelOfDetail = 1002,
   /**
    * A basic effect that can emit particles of many different types.
    * 
@@ -165,7 +165,7 @@ enum ActionType {
    * Controls the level of detail (LOD) distance thresholds for the
    * subnodes.
    */
-  LODThresholds = 133,
+  LevelOfDetail = 133,
   /**
    * Maps states to effects in the parent node.
    * 
@@ -2164,6 +2164,39 @@ class ProxyNode extends Node {
 }
 
 /**
+ * A node that only displays one of its child nodes at a time based on
+ * distance thresholds for each.
+ * 
+ * This node can only manage up to five levels of detail. If you need more
+ * levels, you can put another LOD node as the fifth child of this node and set
+ * higher thresholds in that.
+ */
+class LevelOfDetailNode extends Node {
+
+  /**
+   * @param duration The duration for the node to stay active. Once its time is
+   * up, it will deactivate and none of the child nodes will be visible/audible
+   * anymore.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   * @param nodes An array of child nodes.
+   */
+  constructor(duration: number | Property, thresholds: number[], nodes: Node[]) {
+    super(NodeType.LevelOfDetail, [
+      new StateEffectMap(0)
+    ], [
+      new LevelOfDetailEffect(duration, thresholds)
+    ], nodes)
+  }
+
+  mapStates(...effectIndices: number[]) {
+    this.actions = [new StateEffectMap(...effectIndices)]
+    return this
+  }
+
+}
+
+/**
  * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
  * them a default {@link ActionType.StateEffectMap state-effect map} and a
  * simpler way to modify the map.
@@ -2257,6 +2290,27 @@ class Effect {
 
   minify() {
     return new Effect(this.type, this.actions.map(action => action.minify()))
+  }
+
+}
+
+/**
+ * Manages the duration and thresholds for the
+ * {@link NodeType.LevelOfDetail level of detail node}.
+ */
+class LevelOfDetailEffect extends Effect {
+
+  /**
+   * @param duration The duration for the node to stay active. Once its time is
+   * up, it will deactivate and none of the child nodes will be visible/audible
+   * anymore.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   */
+  constructor(duration: number | Property, thresholds: number[]) {
+    super(EffectType.LevelOfDetail, [
+      new LevelOfDetailThresholds(duration, thresholds)
+    ])
   }
 
 }
@@ -3819,6 +3873,34 @@ class FXRReference extends Action {
    */
   get referenceID() { return this.fields1[0].value }
   set referenceID(value) { this.fields1[0].value = value }
+
+}
+
+/**
+ * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
+ * manage the duration and thresholds for the
+ * {@link NodeType.LevelOfDetail level of detail node}.
+ */
+class LevelOfDetailThresholds extends Action {
+
+  declare fields1: IntField[]
+
+  /**
+   * @param duration The duration for the node to stay active. Once its time is
+   * up, it will deactivate and none of the child nodes will be visible/audible
+   * anymore.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   */
+  constructor(duration: number | Property = -1, thresholds: number[] = []) {
+    thresholds = arrayOf(5, i => thresholds[i] ?? 1000)
+    super(
+      ActionType.LevelOfDetail, false, true, 0,
+      thresholds.map(l => new IntField(l)), [], [
+        scalarFromArg(duration)
+      ]
+    )
+  }
 
 }
 
@@ -7489,9 +7571,11 @@ export {
   Node,
   RootNode,
   ProxyNode,
+  LevelOfDetailNode,
   BasicNode,
 
   Effect,
+  LevelOfDetailEffect,
   BasicEffect,
   RandomizerEffect,
 
@@ -7506,6 +7590,7 @@ export {
   ParticleLifetime,
   ParticleMultiplier,
   FXRReference,
+  LevelOfDetailThresholds,
   StateEffectMap,
   NodeWeights,
   PeriodicEmitter,
