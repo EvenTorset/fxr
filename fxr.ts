@@ -2977,9 +2977,6 @@ class Action {
     if (type in Actions) {
       const action = new Actions[type]()
       action.type = type
-      action.unk02 = unk02
-      action.unk03 = unk03
-      action.unk04 = unk04
       action.fields1 = fields1
       action.fields2 = fields2
       action.properties1 = properties1
