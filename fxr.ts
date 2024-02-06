@@ -672,89 +672,6 @@ enum LightingMode {
   Lit = 0,
 }
 
-const ActionData = {
-  [ActionType.None]: [0, 1, 0],
-  [ActionType.NodeAcceleration]: [0, 1, 0],
-  [ActionType.NodeTranslation]: [0, 1, 2],
-  [ActionType.NodeSpin]: [0, 1, 3],
-  [ActionType.StaticNodeTransform]: [0, 1, 0],
-  [ActionType.RandomNodeTransform]: [0, 1, 1],
-  [ActionType.NodeAttachToCamera]: [0, 1, 4],
-  [ActionType.ParticleAcceleration]: [0, 1, 0],
-  [ActionType.ParticleSpeed]: [0, 1, 1],
-  [ActionType.ParticleSpeedRandomTurns]: [0, 1, 2],
-  [ActionType.ParticleSpeedPartialFollow]: [0, 1, 3],
-  [ActionType.PlaySound]: [0, 1, 0],
-  [ActionType.NodeAccelerationRandomTurns]: [0, 1, 5],
-  [ActionType.ParticleAccelerationRandomTurns]: [0, 1, 4],
-  [ActionType.ParticleAccelerationPartialFollow]: [0, 1, 5],
-  [ActionType.NodeAccelerationPartialFollow]: [0, 1, 6],
-  [ActionType.NodeAccelerationSpin]: [0, 1, 7],
-  [ActionType.NodeSpeed]: [0, 1, 8],
-  [ActionType.NodeSpeedRandomTurns]: [0, 1, 9],
-  [ActionType.NodeSpeedPartialFollow]: [0, 1, 10],
-  [ActionType.NodeSpeedSpin]: [0, 1, 11],
-  [ActionType.NodeLifetime]: [0, 1, 0],
-  [ActionType.ParticleLifetime]: [0, 1, 0],
-  [ActionType.Unk130]: [0, 1, 0],
-  [ActionType.ParticleMultiplier]: [0, 1, 0],
-  [ActionType.FXRReference]: [1, 0, 0],
-  [ActionType.LevelOfDetail]: [1, 0, 0],
-  [ActionType.StateEffectMap]: [1, 0, 0],
-  [ActionType.Unk200]: [0, 1, 0],
-  [ActionType.NodeWeights]: [0, 1, 1],
-  [ActionType.PeriodicEmitter]: [0, 1, 0],
-  [ActionType.EqualDistanceEmitter]: [0, 1, 1],
-  [ActionType.OneTimeEmitter]: [0, 1, 2],
-  [ActionType.PointEmitterShape]: [0, 1, 0],
-  [ActionType.DiskEmitterShape]: [0, 1, 1],
-  [ActionType.RectangleEmitterShape]: [0, 1, 2],
-  [ActionType.SphereEmitterShape]: [0, 1, 3],
-  [ActionType.BoxEmitterShape]: [0, 1, 4],
-  [ActionType.CylinderEmitterShape]: [0, 1, 5],
-  [ActionType.Unk500]: [0, 1, 0],
-  [ActionType.Unk501]: [0, 1, 1],
-  [ActionType.Unk502]: [0, 1, 2],
-  [ActionType.Unk503]: [0, 1, 3],
-  [ActionType.PointSprite]: [0, 1, 0],
-  [ActionType.Line]: [0, 1, 0],
-  [ActionType.QuadLine]: [0, 1, 0],
-  [ActionType.BillboardEx]: [0, 1, 0],
-  [ActionType.MultiTextureBillboardEx]: [0, 1, 0],
-  [ActionType.Model]: [0, 1, 0],
-  [ActionType.Tracer]: [0, 1, 0],
-  [ActionType.Distortion]: [0, 1, 0],
-  [ActionType.RadialBlur]: [0, 1, 0],
-  [ActionType.PointLight]: [0, 1, 0],
-  [ActionType.Unk700]: [0, 1, 0],
-  [ActionType.Unk701]: [0, 1, 0],
-  [ActionType.Unk702]: [0, 1, 0],
-  [ActionType.NodeWindSpeed]: [0, 1, 0],
-  [ActionType.ParticleWindSpeed]: [0, 1, 0],
-  [ActionType.NodeWindAcceleration]: [0, 1, 0],
-  [ActionType.ParticleWindAcceleration]: [0, 1, 0],
-  [ActionType.Unk10000_StandardParticle]: [0, 1, 0],
-  [ActionType.Unk10001_StandardCorrectParticle]: [0, 1, 0],
-  [ActionType.Unk10002_Fluid]: [0, 1, 0],
-  [ActionType.Unk10003_LightShaft]: [0, 1, 0],
-  [ActionType.Unk10008_SparkParticle]: [0, 1, 0],
-  [ActionType.Unk10009_SparkCorrectParticle]: [0, 1, 0],
-  [ActionType.Unk10010_Tracer]: [0, 1, 0],
-  [ActionType.Unk10012_Tracer]: [0, 1, 0],
-  [ActionType.Unk10013_WaterInteractionSimulation]: [0, 1, 0],
-  [ActionType.Unk10014_LensFlare]: [0, 1, 0],
-  [ActionType.Unk10015_RichModel]: [0, 1, 0],
-  [ActionType.Unk10100]: [0, 1, 0],
-  [ActionType.Unk10200_ForceFieldCancelArea]: [0, 1, 0],
-  [ActionType.Unk10300_ForceFieldWindArea]: [0, 1, 0],
-  [ActionType.Unk10301_ForceFieldGravityArea]: [0, 1, 0],
-  [ActionType.Unk10302_CollisionFieldArea]: [0, 1, 0],
-  [ActionType.Unk10303_ForceFieldTurbulenceArea]: [0, 1, 0],
-  [ActionType.Unk10400]: [0, 1, 0],
-  [ActionType.Unk10500]: [0, 1, 0],
-  [ActionType.SpotLight]: [0, 1, 0],
-}
-
 const EffectActionSlots = {
   [EffectType.Basic]: [
     [
@@ -2920,17 +2837,10 @@ class Action {
 
   static read(br: BinaryReader): Action {
     const type = br.readInt16()
-    const unk02 = br.readUint8()
-    const unk03 = br.readUint8()
-    const unk04 = br.readInt32()
-    if (type in ActionData) {
-      const ad = ActionData[type]
-      if (unk02 !== ad[0] || unk03 !== ad[1] || unk04 !== ad[2]) {
-        console.warn(`Warning: Action with unrecognized data found: ${type} {${unk02}, ${unk03}, ${unk04}}`)
-      }
-    } else {
-      console.warn(`Warning: Unrecognized action type found: ${type} {${unk02}, ${unk03}, ${unk04}}`)
-    }
+    br.position += 6
+    // br.readUint8() // Unk02
+    // br.readUint8() // Unk03
+    // br.readInt32() // Unk04
     const fieldCount1 = br.readInt32()
     const section10Count = br.readInt32()
     const propertyCount1 = br.readInt32()
@@ -2991,10 +2901,9 @@ class Action {
   write(bw: BinaryWriter, actions: Action[]) {
     const count = actions.length
     bw.writeInt16(this.type)
-    const ad = ActionData[this.type] ?? [0, 1, 0]
-    bw.writeUint8(ad[0])
-    bw.writeUint8(ad[1])
-    bw.writeInt32(ad[2])
+    bw.writeUint8(0) // Unk02
+    bw.writeUint8(0) // Unk03
+    bw.writeInt32(0) // Unk04
     bw.writeInt32(this.fields1.length)
     bw.writeInt32(this.section10s.length)
     bw.writeInt32(this.properties1.length)
