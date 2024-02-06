@@ -7434,6 +7434,26 @@ class BloodVisibilityModifier extends ExternalValueModifier {
 }
 
 /**
+ * A property modifier that changes the property's value based on the weather.
+ * 
+ * Only functional in Elden Ring.
+ */
+class PrecipitationModifier extends ExternalValueModifier {
+
+  /**
+   * @param clear The value when it's not raining or snowing.
+   * @param precip The value when it's raining or snowing.
+   */
+  constructor(clear: PropertyValue, precip: PropertyValue) {
+    super(ExternalValue.Precipitation, false, [
+      { position: 0, value: clear },
+      { position: 1, value: precip },
+    ])
+  }
+
+}
+
+/**
  * A property modifer that changes the property value by a random amount in a
  * given range.
  */
@@ -7619,6 +7639,7 @@ export {
   Modifier,
   ExternalValueModifier,
   BloodVisibilityModifier,
+  PrecipitationModifier,
   RandomizerModifier,
 
   Section10
