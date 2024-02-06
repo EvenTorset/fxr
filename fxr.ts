@@ -1217,13 +1217,9 @@ class FXR {
     id: number,
     version = FXRVersion.Sekiro,
     rootNode: Node = new RootNode,
-    states: State[] = [
-      new State([
-        new StateCondition(Operator.GreaterThan, 2, -1, OperandType.Literal, 1, OperandType.External, 0)
-      ])
-    ],
+    states: State[] = [ new State ],
     references: number[] = [],
-    externalValues: number[] = [0],
+    externalValues: number[] = [],
     unkBloodEnabler: number[] = [],
     // unkEmpty: number[] = [],
   ) {
@@ -1560,7 +1556,7 @@ class FXR {
 
 class State {
 
-  conditions: StateCondition[] = []
+  conditions: StateCondition[]
 
   constructor(conditions: StateCondition[] = []) {
     this.conditions = conditions
