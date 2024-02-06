@@ -316,6 +316,7 @@ enum ActionType {
    * {@link ParticleWindAcceleration}
    */
   ParticleWindAcceleration = 734,
+  Unk800 = 800,
   Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
@@ -769,7 +770,8 @@ const EffectActionSlots = {
     ],
     [
       ActionType.ParticleWindSpeed,
-      ActionType.ParticleWindAcceleration
+      ActionType.ParticleWindAcceleration,
+      ActionType.Unk800
     ]
   ],
   [EffectType.Randomizer]: [
