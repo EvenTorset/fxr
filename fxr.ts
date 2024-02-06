@@ -480,7 +480,10 @@ enum ExternalValue {
    * disappears. The value is otherwise 0.
    */
   Terminate = 0,
-  Unk1 = 1, // Boolean? Only 0 or 1
+  /**
+   * In Elden Ring, this value is 1 if it's raining or snowing, and 0 otherwise.
+   */
+  Precipitation = 1,
   /**
    * In Elden Ring, this represents the the time of day. At midnight, the value
    * is 0, at noon it is 12, and then it goes up to 24 before wrapping back to
