@@ -494,7 +494,15 @@ enum ExternalValue {
    * Used in AC6.
    */
   Unk3 = 3,
-  Unk1000 = 1000,
+  /**
+   * This is based on the distance between the SFX and the camera.
+   * 
+   * The range is 0-1, the distance is converted in some unknown way.
+   * 
+   * It does not always work for all sources of effects. This is used by the
+   * beacon effect in Elden Ring, so it definitely works there.
+   */
+  SFXDistance = 1000,
   /**
    * This value is set through the Special Attribute param field on weapons.
    */
