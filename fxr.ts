@@ -1579,11 +1579,10 @@ class FXR {
     }
     for (const prop of this.rootNode.walkProperties()) {
       for (const mod of prop.modifiers) {
-        if (mod.type === ModifierType.ExternalValue1 || mod.type === ModifierType.ExternalValue2) {
+        if (mod.type === ModifierType.ExternalValue1) {
           externalValues.push(mod.fields[0].value as number)
-          if (mod.type === ModifierType.ExternalValue2 && mod.fields[0].value === ExternalValue.DisplayBlood) {
-            unkBloodEnabler = true
-          }
+        } else if (mod.type === ModifierType.ExternalValue2 && mod.fields[0].value === ExternalValue.DisplayBlood) {
+          unkBloodEnabler = true
         }
       }
     }
