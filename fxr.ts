@@ -1597,8 +1597,8 @@ class FXR {
         }
       }
     }
-    this.references = uniqueArray(references).sort()
-    this.externalValues = uniqueArray(externalValues).sort()
+    this.references = uniqueArray(references).sort((a, b) => a - b)
+    this.externalValues = uniqueArray(externalValues).sort((a, b) => a - b)
     this.unkBloodEnabler = unkBloodEnabler ? [ExternalValue.DisplayBlood] : []
     return this
   }
