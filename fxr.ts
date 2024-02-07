@@ -1574,7 +1574,7 @@ class FXR {
     let unkBloodEnabler = false
     for (const node of this.rootNode.walk()) {
       if (node.type === NodeType.Proxy) {
-        references.push(node.effects[0].actions[0].fields1[0].value as number)
+        references.push(node.actions[0].fields1[0].value as number)
       }
     }
     for (const prop of this.rootNode.walkProperties()) {
