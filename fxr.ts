@@ -1581,7 +1581,7 @@ class FXR {
       for (const mod of prop.modifiers) {
         if (mod.type === ModifierType.ExternalValue1 || mod.type === ModifierType.ExternalValue2) {
           externalValues.push(mod.fields[0].value as number)
-          if (mod.fields[0].value === ExternalValue.DisplayBlood) {
+          if (mod.type === ModifierType.ExternalValue2 && mod.fields[0].value === ExternalValue.DisplayBlood) {
             unkBloodEnabler = true
           }
         }
@@ -1597,8 +1597,8 @@ class FXR {
         }
       }
     }
-    this.references = uniqueArray(references)
-    this.externalValues = uniqueArray(externalValues)
+    this.references = uniqueArray(references).sort()
+    this.externalValues = uniqueArray(externalValues).sort()
     this.unkBloodEnabler = unkBloodEnabler ? [ExternalValue.DisplayBlood] : []
     return this
   }
