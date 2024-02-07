@@ -868,6 +868,10 @@ function vectorFromArg(vector: Vector | Property) {
   return vector instanceof Property ? vector : new ConstantProperty(...vector)
 }
 
+function uniqueArray<T>(a: T[]) {
+  return a.filter((e, i) => a.indexOf(e) === i)
+}
+
 class BinaryReader extends DataView {
 
   position: number = 0
@@ -1560,6 +1564,45 @@ class FXR {
     )
   }
 
+  /**
+   * Automatically updates {@link references}, {@link externalValues}, and
+   * {@link unkBloodEnabler} with the values used in the FXR.
+   */
+  updateReferences() {
+    const references: number[] = []
+    const externalValues: number[] = []
+    let unkBloodEnabler = false
+    for (const node of this.rootNode.walk()) {
+      if (node.type === NodeType.Proxy) {
+        references.push(node.effects[0].actions[0].fields1[0].value as number)
+      }
+    }
+    for (const prop of this.rootNode.walkProperties()) {
+      for (const mod of prop.modifiers) {
+        if (mod.type === ModifierType.ExternalValue1 || mod.type === ModifierType.ExternalValue2) {
+          externalValues.push(mod.fields[0].value as number)
+          if (mod.fields[0].value === ExternalValue.DisplayBlood) {
+            unkBloodEnabler = true
+          }
+        }
+      }
+    }
+    for (const state of this.states) {
+      for (const condition of state.conditions) {
+        if (condition.leftOperandType === OperandType.External) {
+          externalValues.push(condition.leftOperandValue)
+        }
+        if (condition.rightOperandType === OperandType.External) {
+          externalValues.push(condition.rightOperandValue)
+        }
+      }
+    }
+    this.references = uniqueArray(references)
+    this.externalValues = uniqueArray(externalValues)
+    this.unkBloodEnabler = unkBloodEnabler ? [ExternalValue.DisplayBlood] : []
+    return this
+  }
+
 }
 
 class State {
@@ -2128,6 +2171,48 @@ class Node {
       this.effects.map(effect => effect.minify()),
       this.nodes.map(node => node.minify())
     )
+  }
+
+  /**
+   * Yields all nodes in this branch, including this node.
+   */
+  *walk(): Generator<Node> {
+    yield this
+    for (const node of this.nodes) {
+      yield* node.walk()
+    }
+  }
+
+  /**
+   * Yields all effects in this branch.
+   */
+  *walkEffects() {
+    for (const node of this.walk()) {
+      yield* node.effects
+    }
+  }
+
+  /**
+   * Yields all actions in this branch.
+   */
+  *walkActions() {
+    for (const node of this.walk()) {
+      yield* node.actions
+      for (const effect of node.effects) {
+        yield* effect.actions
+      }
+    }
+  }
+
+  /**
+   * Yields all properties in this branch, excluding properties inside
+   * modifiers.
+   */
+  *walkProperties() {
+    for (const action of this.walkActions()) {
+      yield* action.properties1
+      yield* action.properties2
+    }
   }
 
 }
