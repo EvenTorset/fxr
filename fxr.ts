@@ -2351,6 +2351,128 @@ class Node {
     }
   }
 
+  /**
+   * Recolors the entire branch by modifying color properties and fields using
+   * a function.
+   * @param func The function used to recolor the branch. It is passed the
+   * original color and should return the color to replace it with.
+   */
+  recolor(func: (color: Vector4) => Vector4) {
+    const procProp = (prop: Property) => {
+      if (prop.function <= PropertyFunction.One) {
+        prop.convertToFunction(PropertyFunction.Constant)
+      }
+      for (const stop of prop.stops) {
+        stop.value = func(stop.value as Vector4)
+      }
+    }
+    const procFields = (list, i) => {
+      const [r, g, b] = func([
+        list[i  ].value,
+        list[i+1].value,
+        list[i+2].value,
+        1
+      ])
+      list[i  ] = new FloatField(r)
+      list[i+1] = new FloatField(g)
+      list[i+2] = new FloatField(b)
+    }
+    for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
+      procProp(effect.actions[7].properties1[4])
+      const slot9 = effect.actions[9] as ActionWithNumericalFields
+      switch (slot9.type) {
+        case ActionType.PointSprite:
+          procProp(slot9.properties1[3])
+          procProp(slot9.properties1[4])
+          procProp(slot9.properties1[5])
+          break
+        case ActionType.Line:
+          procProp(slot9.properties1[2])
+          procProp(slot9.properties1[3])
+          procProp(slot9.properties1[4])
+          procProp(slot9.properties1[5])
+          procProp(slot9.properties1[7])
+          break
+        case ActionType.QuadLine:
+          procProp(slot9.properties1[3])
+          procProp(slot9.properties1[4])
+          procProp(slot9.properties1[5])
+          procProp(slot9.properties1[6])
+          procProp(slot9.properties1[9])
+          break
+        case ActionType.BillboardEx:
+          procProp(slot9.properties1[7])
+          procProp(slot9.properties1[8])
+          procProp(slot9.properties1[9])
+          break
+        case ActionType.MultiTextureBillboardEx:
+          procProp(slot9.properties1[15])
+          procProp(slot9.properties1[16])
+          procProp(slot9.properties1[17])
+          procProp(slot9.properties1[18])
+          procProp(slot9.properties1[19])
+          procProp(slot9.properties1[20])
+          break
+        case ActionType.Model:
+          procProp(slot9.properties1[14])
+          procProp(slot9.properties1[15])
+          procProp(slot9.properties1[16])
+          break
+        case ActionType.Tracer:
+        case ActionType.Unk10012_Tracer:
+          procProp(slot9.properties1[6])
+          procProp(slot9.properties1[7])
+          procProp(slot9.properties1[8])
+          break
+        case ActionType.Distortion:
+        case ActionType.RadialBlur:
+          procProp(slot9.properties1[7])
+          procProp(slot9.properties1[8])
+          break
+        case ActionType.PointLight:
+        case ActionType.SpotLight:
+          procProp(slot9.properties1[0])
+          procProp(slot9.properties1[1])
+          break
+        case ActionType.Unk10000_StandardParticle:
+        case ActionType.Unk10001_StandardCorrectParticle:
+          procProp(slot9.properties1[13])
+          procProp(slot9.properties2[3])
+          procProp(slot9.properties2[4])
+          procProp(slot9.properties2[5])
+          break
+        case ActionType.Unk10014_LensFlare:
+          procProp(slot9.properties1[2])
+          procProp(slot9.properties1[5])
+          procProp(slot9.properties1[8])
+          procProp(slot9.properties1[11])
+          break
+        case ActionType.Unk10015_RichModel:
+          procProp(slot9.properties1[13])
+          procProp(slot9.properties1[14])
+          procProp(slot9.properties1[15])
+      }
+      switch (slot9.type) {
+        case ActionType.PointSprite:
+        case ActionType.Line:
+        case ActionType.QuadLine:
+        case ActionType.BillboardEx:
+        case ActionType.MultiTextureBillboardEx:
+        case ActionType.Model:
+        case ActionType.Tracer:
+        case ActionType.Distortion:
+        case ActionType.RadialBlur:
+        case ActionType.Unk10012_Tracer:
+        case ActionType.Unk10015_RichModel:
+          procProp(slot9.properties2[3])
+          procProp(slot9.properties2[4])
+          procProp(slot9.properties2[5])
+          procFields(slot9.fields2, 5)
+          break
+      }
+    }
+  }
+
 }
 
 /**
@@ -7285,6 +7407,9 @@ class Property {
    */
   scale(factor: number) {
     //TODO: Handle CompCurve props
+    if (this.function <= PropertyFunction.One) {
+      this.convertToFunction(PropertyFunction.Constant)
+    }
     for (const stop of this.stops) {
       for (let i = stop.length - 1; i >= 0; i--) {
         stop[i] *= factor
