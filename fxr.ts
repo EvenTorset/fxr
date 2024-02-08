@@ -2214,6 +2214,143 @@ class Node {
     }
   }
 
+  /**
+   * Scales the entire branch by a factor. This updates all sizes, offsets,
+   * lengths, and radii of the actions in the branch, except certain
+   * multiplicative fields and properties.
+   * 
+   * This will not work properly in Dark Souls 3 FXRs due to some actions
+   * having different indices for various properties and fields.
+   * @param factor The factor to scale the branch with.
+   */
+  scale(factor: number) {
+    for (const effect of this.walkEffects()) if (
+      effect.type === EffectType.Basic || effect.type === EffectType.Randomizer
+    ) {
+      const slot1 = effect.actions[1] as ActionWithNumericalFields
+      switch (slot1.type) {
+        case ActionType.RandomNodeTransform:
+          slot1.fields1[6] = new FloatField(slot1.fields1[6].value * factor)
+          slot1.fields1[7] = new FloatField(slot1.fields1[7].value * factor)
+          slot1.fields1[8] = new FloatField(slot1.fields1[8].value * factor)
+        case ActionType.StaticNodeTransform:
+          slot1.fields1[0] = new FloatField(slot1.fields1[0].value * factor)
+          slot1.fields1[1] = new FloatField(slot1.fields1[1].value * factor)
+          slot1.fields1[2] = new FloatField(slot1.fields1[2].value * factor)
+          break
+      }
+      const slot2 = effect.actions[2]
+      switch (slot2.type) {
+        case ActionType.NodeTranslation:
+          slot2.properties1[0].scale(factor)
+          break
+        case ActionType.NodeAcceleration:
+        case ActionType.NodeAccelerationRandomTurns:
+        case ActionType.NodeAccelerationPartialFollow:
+        case ActionType.NodeAccelerationSpin:
+          slot2.properties1[0].scale(factor)
+          slot2.properties1[1].scale(factor)
+          slot2.properties1[3].scale(factor)
+          break
+        case ActionType.NodeSpeed:
+        case ActionType.NodeSpeedRandomTurns:
+        case ActionType.NodeSpeedPartialFollow:
+        case ActionType.NodeSpeedSpin:
+          slot2.properties1[0].scale(factor)
+          slot2.properties1[2].scale(factor)
+          break
+      }
+      const slot4 = effect.actions[1]
+      if (slot4.type === ActionType.EqualDistanceEmitter) {
+        slot4.properties1[0].scale(factor)
+      }
+      const slot5 = effect.actions[5]
+      switch (slot5.type) {
+        case ActionType.BoxEmitterShape:
+          slot5.properties1[2].scale(factor)
+        case ActionType.RectangleEmitterShape:
+        case ActionType.CylinderEmitterShape:
+          slot5.properties1[1].scale(factor)
+        case ActionType.DiskEmitterShape:
+        case ActionType.SphereEmitterShape:
+          slot5.properties1[0].scale(factor)
+          break
+      }
+
+      if (effect.type === EffectType.Basic) {
+        const slot7 = effect.actions[7]
+        slot7.properties1[0].scale(factor)
+        slot7.properties1[1].scale(factor)
+        slot7.properties1[2].scale(factor)
+        slot7.properties1[3].scale(factor)
+
+        const slot9 = effect.actions[9] as ActionWithNumericalFields
+        switch (slot9.type) {
+          case ActionType.BillboardEx:
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[20].scale(factor)
+            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
+            break
+          case ActionType.MultiTextureBillboardEx:
+          case ActionType.Model:
+          case ActionType.Distortion:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            break
+          case ActionType.RadialBlur:
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            break
+          case ActionType.PointLight:
+            slot9.properties1[2].scale(factor)
+            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
+            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
+            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+            break
+          case ActionType.SpotLight:
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
+            slot9.properties1[7].scale(factor)
+            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
+            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
+            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+            break
+        }
+        const slot10 = effect.actions[10]
+        switch (slot10.type) {
+          case ActionType.ParticleAcceleration:
+          case ActionType.ParticleSpeed:
+          case ActionType.ParticleSpeedRandomTurns:
+          case ActionType.ParticleSpeedPartialFollow:
+          case ActionType.ParticleAccelerationRandomTurns:
+          case ActionType.ParticleAccelerationPartialFollow:
+            slot10.properties1[0].scale(factor)
+            slot10.properties1[1].scale(factor)
+            break
+        }
+        const slot13 = effect.actions[13]
+        switch (slot13.type) {
+          case ActionType.NodeWindAcceleration:
+          case ActionType.NodeWindSpeed:
+            slot13.properties1[0].scale(factor)
+            break
+        }
+        const slot14 = effect.actions[14]
+        switch (slot14.type) {
+          case ActionType.ParticleWindAcceleration:
+          case ActionType.ParticleWindSpeed:
+            slot14.properties1[0].scale(factor)
+            break
+        }
+      }
+    }
+  }
+
 }
 
 /**
@@ -3130,6 +3267,11 @@ class Action {
     )
   }
 
+}
+
+export interface ActionWithNumericalFields extends Action {
+  fields1: NumericalField[]
+  fields2: NumericalField[]
 }
 
 /**
@@ -6462,7 +6604,7 @@ class Field {
   }
 
   static read(br: BinaryReader, context: any, index: number) {
-    let ffxField: (Field | null) = null
+    let ffxField: NumericalField = null
     let isInt = false
 
     if (context instanceof Property) {
@@ -6508,7 +6650,7 @@ class Field {
   }
 
   static readMany(br: BinaryReader, count: number, context: any) {
-    const ffxFieldList: Field[] = []
+    const ffxFieldList: NumericalField[] = []
     for (let i = 0; i < count; ++i) {
       ffxFieldList.push(Field.read(br, context, i))
     }
@@ -6578,6 +6720,10 @@ class Field {
 
 }
 
+export interface NumericalField extends Field {
+  value: number
+}
+
 class BoolField extends Field {
 
   declare value: boolean
@@ -6588,7 +6734,7 @@ class BoolField extends Field {
 
 }
 
-class IntField extends Field {
+class IntField extends Field implements NumericalField {
 
   declare value: number
 
@@ -6598,7 +6744,7 @@ class IntField extends Field {
 
 }
 
-class FloatField extends Field {
+class FloatField extends Field implements NumericalField {
 
   declare value: number
 
@@ -6629,6 +6775,7 @@ export type StopList = {
   [index: number]: Stop,
   length: number,
   add: (position: number, value: PropertyValue) => void,
+  [Symbol.iterator]: () => Generator<Stop>
 }
 
 class Property {
@@ -6637,7 +6784,7 @@ class Property {
   function: PropertyFunction
   loop: boolean
   modifiers: Modifier[]
-  fields: Field[]
+  fields: NumericalField[]
 
   #stops: StopList
 
@@ -6645,7 +6792,7 @@ class Property {
     valueType: ValueType = ValueType.Scalar,
     func: PropertyFunction = PropertyFunction.Zero,
     loop: boolean = false,
-    fields: Field[] = [],
+    fields: NumericalField[] = [],
     modifiers: Modifier[] = []
   ) {
     this.valueType = valueType
@@ -6688,7 +6835,7 @@ class Property {
       prop.valueType,
       prop.function,
       prop.loop,
-      prop.fields.map(f => Field.copy(f)),
+      prop.fields.map(f => Field.copy(f) as NumericalField),
       prop.modifiers.map(m => Modifier.copy(m))
     )
   }
@@ -7093,7 +7240,7 @@ class Property {
       ValueType[type],
       PropertyFunction[func],
       loop,
-      fields.map(field => Field.fromJSON(field)),
+      fields.map(field => Field.fromJSON(field) as NumericalField),
       modifiers.map(mod => Modifier.fromJSON(mod))
     )
   }
@@ -7127,6 +7274,37 @@ class Property {
       }
     }
     return this
+  }
+
+  /**
+   * Scales all values in the property by a factor.
+   * 
+   * Scaling of {@link PropertyFunction.CompCurve CompCurve} properties is not
+   * yet implemented.
+   * @param factor 
+   */
+  scale(factor: number) {
+    //TODO: Handle CompCurve props
+    for (const stop of this.stops) {
+      for (let i = stop.length - 1; i >= 0; i--) {
+        stop[i] *= factor
+      }
+    }
+    for (const mod of this.modifiers) {
+      const comps = mod.valueType + 1
+      switch (mod.type) {
+        case ModifierType.Randomizer1:
+          for (let i = comps - 1; i >= 0; i--) {
+            mod.fields[comps + i].value *= factor
+          }
+          break
+        case ModifierType.Randomizer2:
+          for (let i = comps * 2 - 1; i >= 0; i--) {
+            mod.fields[comps + i].value *= factor
+          }
+          break
+      }
+    }
   }
 
 }
@@ -7285,13 +7463,13 @@ class Modifier {
 
   typeEnumA: number
   typeEnumB: number
-  fields: Field[]
+  fields: NumericalField[]
   properties: Property[]
 
   constructor(
     typeEnumA: number,
     typeEnumB: number,
-    fields: Field[] = [],
+    fields: NumericalField[] = [],
     properties: Property[] = []
   ) {
     this.typeEnumA = typeEnumA
@@ -7334,7 +7512,7 @@ class Modifier {
     return new Modifier(
       mod.typeEnumA,
       mod.typeEnumB,
-      mod.fields.map(f => Field.copy(f)),
+      mod.fields.map(f => Field.copy(f) as NumericalField),
       mod.properties.map(p => Property.copy(p))
     )
   }
@@ -7424,7 +7602,7 @@ class Modifier {
     return new Modifier(
       typeEnumA,
       typeEnumB,
-      fields.map(field => Field.fromJSON(field)),
+      fields.map(field => Field.fromJSON(field) as NumericalField),
       properties.map(prop => Property.fromJSON(prop))
     )
   }
