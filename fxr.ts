@@ -2321,6 +2321,25 @@ class Node {
             slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
             break
         }
+        switch (slot9.type) {
+          case ActionType.PointSprite:
+          case ActionType.Line:
+          case ActionType.QuadLine:
+          case ActionType.BillboardEx:
+          case ActionType.MultiTextureBillboardEx:
+          case ActionType.Model:
+          case ActionType.Tracer:
+          case ActionType.Distortion:
+          case ActionType.RadialBlur:
+          case ActionType.Unk10000_StandardParticle:
+          case ActionType.Unk10001_StandardCorrectParticle:
+          case ActionType.Unk10012_Tracer:
+          case ActionType.Unk10015_RichModel:
+            for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
+              slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
+            }
+            break
+        }
         const slot10 = effect.actions[10]
         switch (slot10.type) {
           case ActionType.ParticleAcceleration:
@@ -2358,6 +2377,20 @@ class Node {
    * original color and should return the color to replace it with.
    */
   recolor(func: (color: Vector4) => Vector4) {
+    const procFields = (list: NumericalField[], i: number, alpha = false) => {
+      const [r, g, b, a] = func([
+        list[i  ].value,
+        list[i+1].value,
+        list[i+2].value,
+        alpha ? list[i+3].value : 1
+      ])
+      list[i  ] = new FloatField(r)
+      list[i+1] = new FloatField(g)
+      list[i+2] = new FloatField(b)
+      if (alpha) {
+        list[i+3] = new FloatField(a)
+      }
+    }
     const procProp = (prop: Property) => {
       if (prop.function <= PropertyFunction.One) {
         prop.convertToFunction(PropertyFunction.Constant)
@@ -2365,17 +2398,20 @@ class Node {
       for (const stop of prop.stops) {
         stop.value = func(stop.value as Vector4)
       }
-    }
-    const procFields = (list, i) => {
-      const [r, g, b] = func([
-        list[i  ].value,
-        list[i+1].value,
-        list[i+2].value,
-        1
-      ])
-      list[i  ] = new FloatField(r)
-      list[i+1] = new FloatField(g)
-      list[i+2] = new FloatField(b)
+      for (const mod of prop.modifiers) {
+        switch (mod.type) {
+          case ModifierType.Randomizer2:
+            procFields(mod.fields, 8, true)
+          case ModifierType.Randomizer1:
+          case ModifierType.Randomizer3:
+            procFields(mod.fields, 4, true)
+            break
+          case ModifierType.ExternalValue1:
+          case ModifierType.ExternalValue2:
+            procProp(mod.properties[0])
+            break
+        }
+      }
     }
     for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
       procProp(effect.actions[7].properties1[4])
