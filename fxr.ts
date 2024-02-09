@@ -1218,7 +1218,7 @@ class FXR {
   version: FXRVersion
 
   states: State[]
-  rootNode: RootNode
+  root: RootNode
 
   references: number[]
   externalValues: number[]
@@ -1231,7 +1231,7 @@ class FXR {
   constructor(
     id: number,
     version = FXRVersion.Sekiro,
-    rootNode: RootNode = new RootNode,
+    root: RootNode = new RootNode,
     states: State[] = [ new State ],
     references: number[] = [],
     externalValues: number[] = [],
@@ -1240,7 +1240,7 @@ class FXR {
   ) {
     this.id = id
     this.version = version
-    this.rootNode = rootNode
+    this.root = root
     this.states = states
     this.references = references
     this.externalValues = externalValues
@@ -1411,8 +1411,8 @@ class FXR {
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    this.rootNode.write(bw, nodes)
-    this.rootNode.writeNodes(bw, nodes)
+    this.root.write(bw, nodes)
+    this.root.writeNodes(bw, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
@@ -1545,7 +1545,7 @@ class FXR {
       references: this.references,
       externalValues: this.externalValues,
       unkBloodEnabler: this.unkBloodEnabler,
-      root: this.rootNode.toJSON(),
+      root: this.root.toJSON(),
     }
   }
 
@@ -1559,7 +1559,7 @@ class FXR {
     return new FXR(
       this.id,
       this.version,
-      this.rootNode.minify(),
+      this.root.minify(),
       this.states,
       this.references,
       this.externalValues,
@@ -1575,12 +1575,12 @@ class FXR {
     const references: number[] = []
     const externalValues: number[] = []
     let unkBloodEnabler = false
-    for (const node of this.rootNode.walk()) {
+    for (const node of this.root.walk()) {
       if (node.type === NodeType.Proxy) {
         references.push(node.actions[0].fields1[0].value as number)
       }
     }
-    for (const prop of this.rootNode.walkProperties()) {
+    for (const prop of this.root.walkProperties()) {
       for (const mod of prop.modifiers) {
         if (mod.type === ModifierType.ExternalValue1) {
           externalValues.push(mod.fields[0].value as number)
