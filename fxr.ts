@@ -1215,7 +1215,7 @@ class FXR {
   version: FXRVersion
 
   states: State[]
-  rootNode: Node
+  rootNode: RootNode
 
   references: number[]
   externalValues: number[]
@@ -1228,7 +1228,7 @@ class FXR {
   constructor(
     id: number,
     version = FXRVersion.Sekiro,
-    rootNode: Node = new RootNode,
+    rootNode: RootNode = new RootNode,
     states: State[] = [ new State ],
     references: number[] = [],
     externalValues: number[] = [],
@@ -1316,14 +1316,14 @@ class FXR {
     const statesOffset = br.readInt32()
     br.assertInt32(0)
     br.stepIn(statesOffset)
-    const states = []
+    const states: State[] = []
     for (let i = 0; i < stateCount; ++i) {
       states.push(State.read(br))
     }
     br.stepOut()
 
     br.position = nodeOffset
-    const rootNode = Node.read(br)
+    const rootNode = Node.read(br) as RootNode
 
     return new FXR(
       id,
@@ -2046,7 +2046,8 @@ class Node {
   }
 
   static read(br: BinaryReader) {
-    const node = new Node(br.readInt16())
+    const type = br.readInt16()
+    const node = new (type in Nodes ? Nodes[type] : Node)
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
@@ -2061,16 +2062,19 @@ class Node {
     const nodeOffset = br.readInt32()
     br.assertInt32(0)
     br.stepIn(nodeOffset)
+    node.nodes = []
     for (let i = 0; i < nodeCount; ++i) {
       node.nodes.push(Node.read(br))
     }
     br.stepOut()
     br.stepIn(effectOffset)
+    node.effects = []
     for (let i = 0; i < effectCount; ++i) {
       node.effects.push(Effect.read(br))
     }
     br.stepOut()
     br.stepIn(actionOffset)
+    node.actions = []
     for (let i = 0; i < actionCount; ++i) {
       node.actions.push(Action.read(br))
     }
@@ -2626,6 +2630,13 @@ class BasicNode extends Node {
 
 }
 
+const Nodes = {
+  [NodeType.Root]: RootNode, RootNode,
+  [NodeType.Proxy]: ProxyNode, ProxyNode,
+  [NodeType.LevelOfDetail]: LevelOfDetailNode, LevelOfDetailNode,
+  [NodeType.Basic]: BasicNode, BasicNode,
+}
+
 class Effect {
 
   type: EffectType
@@ -2637,7 +2648,8 @@ class Effect {
   }
 
   static read(br: BinaryReader) {
-    const effect = new Effect(br.readInt16())
+    const type = br.readInt16()
+    const effect = new (type in Effects ? Effects[type] : Effect)
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
@@ -2648,6 +2660,7 @@ class Effect {
     const actionOffset = br.readInt32()
     br.assertInt32(0)
     br.stepIn(actionOffset)
+    effect.actions = []
     for (let i = 0; i < actionCount; ++i) {
       effect.actions.push(Action.read(br))
     }
@@ -2847,6 +2860,12 @@ class RandomizerEffect extends Effect {
     }
   }
 
+}
+
+const Effects = {
+  [EffectType.LevelOfDetail]: LevelOfDetailEffect, LevelOfDetailEffect,
+  [EffectType.Basic]: BasicEffect, BasicEffect,
+  [EffectType.Randomizer]: RandomizerEffect, RandomizerEffect,
 }
 
 const commonAction6xxFields2Types = [
@@ -7999,6 +8018,8 @@ export {
   OrientationMode,
   LightingMode,
 
+  Nodes,
+  Effects,
   EffectActionSlots,
   Actions,
 
