@@ -2615,35 +2615,33 @@ class LevelOfDetailNode extends Node {
  */
 class BasicNode extends Node {
 
-  constructor(effects: Effect[] = [], nodes: Node[] = []) {
-    if (!Array.isArray(effects) || effects.some(e => !(e instanceof Effect))) {
-      throw new Error('Non-effect passed as effect to BasicNode.')
-    }
+  /**
+   * @param effectsOrEffectActions This is either the list of effects to add
+   * to the node or a list of actions to create a {@link BasicEffect} with to
+   * add to the node.
+   * @param nodes A list of child nodes.
+   */
+  constructor(effectsOrEffectActions: Effect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    super(NodeType.Basic, [
-      new StateEffectMap(0)
-    ], effects, nodes)
+    if (effectsOrEffectActions.every(e => e instanceof Action)) {
+      super(NodeType.Basic, [ new StateEffectMap ], [
+        new BasicEffect(effectsOrEffectActions as Action[])
+      ], nodes)
+    } else {
+      super(
+        NodeType.Basic,
+        [ new StateEffectMap ],
+        effectsOrEffectActions as Effect[],
+        nodes
+      )
+    }
   }
 
   mapStates(...effectIndices: number[]) {
     this.actions = [new StateEffectMap(...effectIndices)]
     return this
-  }
-
-  /**
-   * Wraps a list of nodes in a new {@link NodeType.Basic basic node} with a
-   * {@link EffectType.Basic basic effect} with a list of actions. This can be
-   * useful for applying a transform to a branch, for example.
-   * @param nodes The list of nodes to wrap.
-   * @param actions The actions for the effect of the wrapper node. The order
-   * does not matter, the actions will automatically be put in the correct
-   * slot.
-   * @returns The wrapper node containing the wrapped nodes.
-   */
-  static wrap(nodes: Node[] = [], actions: Action[] = []) {
-    return new BasicNode([ new BasicEffect(actions) ], nodes)
   }
 
 }
@@ -4335,6 +4333,9 @@ class LevelOfDetailThresholds extends Action {
 class StateEffectMap extends Action {
 
   constructor(...effectIndices: number[]) {
+    if (effectIndices.length === 0) {
+      effectIndices.push(0)
+    }
     super(ActionType.StateEffectMap, [], [], [], [], [
       new Section10(effectIndices.map(i => new IntField(i)))
     ])
