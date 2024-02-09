@@ -2381,6 +2381,9 @@ class Node {
   /**
    * Recolors the entire branch by modifying color properties and fields using
    * a function.
+   * 
+   * This will not work properly in Dark Souls 3 FXRs due to some actions
+   * having different indices for various properties and fields.
    * @param func The function used to recolor the branch. It is passed the
    * original color and should return the color to replace it with.
    */
