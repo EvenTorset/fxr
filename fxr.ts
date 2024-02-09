@@ -2048,6 +2048,7 @@ class Node {
   static read(br: BinaryReader) {
     const type = br.readInt16()
     const node = new (type in Nodes ? Nodes[type] : Node)
+    node.type = type
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
@@ -2150,12 +2151,12 @@ class Node {
     effects: []
     nodes: []
   }) {
-    return new Node(
-      type,
-      actions.map(action => Action.fromJSON(action)),
-      effects.map(effect => Effect.fromJSON(effect)),
-      nodes.map(node => Node.fromJSON(node)),
-    )
+    const node = new (type in Nodes ? Nodes[type] : Node)
+    node.type = type
+    node.actions = actions.map(action => Action.fromJSON(action))
+    node.effects = effects.map(effect => Effect.fromJSON(effect))
+    node.nodes = nodes.map(node => Node.fromJSON(node))
+    return node
   }
 
   toJSON() {
@@ -2650,6 +2651,7 @@ class Effect {
   static read(br: BinaryReader) {
     const type = br.readInt16()
     const effect = new (type in Effects ? Effects[type] : Effect)
+    effect.type = type
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
@@ -2695,7 +2697,10 @@ class Effect {
     type: number
     actions: []
   }) {
-    return new Effect(type, actions.map(action => Action.fromJSON(action)))
+    const effect = new (type in Effects ? Effects[type] : Effect)
+    effect.type = type
+    effect.actions = actions.map(action => Action.fromJSON(action))
+    return effect
   }
 
   toJSON() {
