@@ -2629,6 +2629,20 @@ class BasicNode extends Node {
     return this
   }
 
+  /**
+   * Wraps a list of nodes in a new {@link NodeType.Basic basic node} with a
+   * {@link EffectType.Basic basic effect} with a list of actions. This can be
+   * useful for applying a transform to a branch, for example.
+   * @param nodes The list of nodes to wrap.
+   * @param actions The actions for the effect of the wrapper node. The order
+   * does not matter, the actions will automatically be put in the correct
+   * slot.
+   * @returns The wrapper node containing the wrapped nodes.
+   */
+  static wrap(nodes: Node[] = [], actions: Action[] = []) {
+    return new BasicNode([ new BasicEffect(actions) ], nodes)
+  }
+
 }
 
 const Nodes = {
