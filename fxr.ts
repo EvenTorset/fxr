@@ -414,7 +414,7 @@ enum ModifierType {
    * There is one RNG seed field for each component of the property value
    * followed by one "max change" value per component.
    */
-  Randomizer1 = 0,
+  Randomizer1 = 21,
   /**
    * Adds a random value between `x` and `y` to the property's value, where
    * `x` and `y` are the min/max change values set in the modifier's fields.
@@ -423,7 +423,7 @@ enum ModifierType {
    * followed by one "min change" value per component, and then one "max
    * change" value per component.
    */
-  Randomizer2 = 1,
+  Randomizer2 = 24,
   /**
    * Multiplies the property's value based on some external value. The only 
    * field in the modifier controls which external value to check. For example,
@@ -438,12 +438,15 @@ enum ModifierType {
    * - {@link ExternalValueModifier}
    * - {@link BloodVisibilityModifier}
    */
-  ExternalValue1 = 2,
+  ExternalValue1 = 38,
   /**
    * Same as {@link ExternalValue1}, except this only updates if the effect is
    * recreated instead of updating instantly when the external value changes.
+   * 
+   * Note: This type seems to only work with the
+   * {@link ExternalValue.DisplayBlood DisplayBlood external value}.
    */
-  ExternalValue2 = 3,
+  ExternalValue2 = 39,
   /**
    * Adds a random fraction of the property's value to itself. The range of the
    * fraction is controlled by the the latter half of the modifier's fields,
@@ -453,7 +456,7 @@ enum ModifierType {
    * There is one RNG seed field for each component of the property value
    * followed by one "max change" value per component.
    */
-  Randomizer3 = 4,
+  Randomizer3 = 53,
 }
 
 enum FieldType {
@@ -7656,20 +7659,12 @@ class Curve2Property extends Property {
 
 class Modifier {
 
-  static #knownTypeEnumAs = new Set([
-    53328,
-    53376,
-    57440,
-    57456,
-    61520
-  ])
-
-  static #typeEnumAValues = {
-    0: 53328,
-    1: 53376,
-    2: 57440,
-    3: 57456,
-    4: 61520,
+  static #typeEnumBValues = {
+    [ModifierType.Randomizer1]: 0,
+    [ModifierType.Randomizer2]: 4,
+    [ModifierType.ExternalValue1]: 8,
+    [ModifierType.ExternalValue2]: 12,
+    [ModifierType.Randomizer3]: 16,
   }
 
   typeEnumA: number
@@ -7678,31 +7673,37 @@ class Modifier {
   properties: Property[]
 
   constructor(
-    typeEnumA: number,
-    typeEnumB: number,
+    type: ModifierType,
+    valueType: ValueType,
     fields: NumericalField[] = [],
     properties: Property[] = []
   ) {
-    this.typeEnumA = typeEnumA
-    this.typeEnumB = typeEnumB
+    this.type = type
+    this.valueType = valueType
     this.fields = fields
     this.properties = properties
   }
 
+  static typeEnumAToModifierType(typeEnumA: number): ModifierType {
+    return (typeEnumA >>> 12 & 0b11) << 4 | typeEnumA >>> 4 & 0b1111
+  }
+
+  static modifierTypeToTypeEnumA(type: ModifierType, valueType: ValueType = ValueType.Scalar) {
+    return (type >>> 4 | 0b1100) << 12 | (type & 0b1111) << 4 | valueType
+  }
+
   static read(br: BinaryReader) {
     const typeEnumA = br.readUint16()
-    // if (!Modifier.#knownTypeEnumAs.has(typeEnumA & 0b11111111_11111100)) {
-    //   throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
-    // }
+    const teA1 = typeEnumA >>> 12 & 0b11
+    const teA2 = typeEnumA >>> 4 & 0b1111
+    const modifierType = teA1 << 4 | teA2
+    const valueType = typeEnumA & 0b11
+    if (!(modifierType in ModifierType)) {
+      throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
+    }
     br.assertUint8(0)
     br.assertUint8(1)
     const typeEnumB = br.readUint32()
-    // if ((typeEnumB & 0xffffffe0) !== 0) {
-    //   throw new Error('Unknown property modifier type enum B: ' + typeEnumB)
-    // }
-    // This is apparently wrong in some cases. Needs to be looked into more.
-    // const modifierType = (typeEnumB & 0b11100) >>> 2
-    // const valueType = typeEnumB & 0b11
     const fieldCount = br.readInt32()
     const propertyCount = br.readInt32()
     const fieldOffset = br.readInt32()
@@ -7716,16 +7717,20 @@ class Modifier {
     }
     br.stepOut()
     const fields = Field.readManyAt(br, fieldOffset, fieldCount, this)
-    return new Modifier(typeEnumA, typeEnumB, fields, properties)
+    const mod = new Modifier(modifierType, valueType, fields, properties)
+    mod.typeEnumB = typeEnumB
+    return mod
   }
 
   static copy(mod: Modifier) {
-    return new Modifier(
-      mod.typeEnumA,
-      mod.typeEnumB,
+    const copy = new Modifier(
+      mod.type,
+      mod.valueType,
       mod.fields.map(f => Field.copy(f) as NumericalField),
       mod.properties.map(p => Property.copy(p))
     )
+    copy.typeEnumB = mod.typeEnumB
+    return copy
   }
 
   write(bw: BinaryWriter, modifiers: Modifier[]) {
@@ -7759,17 +7764,13 @@ class Modifier {
   }
 
   get type(): ModifierType {
-    //TODO: This does not always work correctly. For example, in AC6, some
-    // vanilla FXRs have 53376 modifiers with typeEnumB set to 0 instead of 4.
-    return (this.typeEnumB & 0b11100) >>> 2
+    return Modifier.typeEnumAToModifierType(this.typeEnumA)
   }
 
   set type(value) {
     const valueType = this.valueType
-    this.typeEnumA = Modifier.#typeEnumAValues[value] | valueType
-    //TODO: This does not always work correctly. For example, in AC6, some
-    // vanilla FXRs have 53376 modifiers with typeEnumB set to 0 instead of 4.
-    this.typeEnumB = (value << 2) | valueType
+    this.typeEnumA = Modifier.modifierTypeToTypeEnumA(value, valueType)
+    this.typeEnumB = Modifier.#typeEnumBValues[value] | valueType
   }
 
   /**
@@ -7851,14 +7852,17 @@ class ExternalValueModifier extends Modifier {
    * example, the value of {@link ExternalValue.DisplayBlood} is -1 when the
    * "Display Blood" option is off, so the `position` for the modifier value
    * should be -1 to change the property based on that.
+   * @param type Controls what type of modifier to use. Defaults to
+   * {@link ModifierType.ExternalValue1}.
    */
   constructor(
     extVal: ExternalValue,
     loop: boolean,
     stops: { position: number, value: PropertyValue }[],
+    type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
     const valueType = typeof stops[0].value === 'number' ? 0 : stops[0].value.length - 1
-    super(57440 | valueType, 8 | valueType, [
+    super(type, valueType, [
       new IntField(extVal)
     ], [
       new LinearProperty(loop, stops)
@@ -7884,11 +7888,14 @@ class BloodVisibilityModifier extends ExternalValueModifier {
    * @param onValue The value when "Display Blood" is set to "On".
    * @param mildValue The value when "Display Blood" is set to "Mild".
    * @param offValue The value when "Display Blood" is set to "Off".
+   * @param type Controls what type of modifier to use. Defaults to
+   * {@link ModifierType.ExternalValue1}.
    */
   constructor(
     onValue: PropertyValue,
     mildValue: PropertyValue,
     offValue: PropertyValue,
+    type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
     super(ExternalValue.DisplayBlood, false, [
       { position: -1,
@@ -7900,7 +7907,7 @@ class BloodVisibilityModifier extends ExternalValueModifier {
       { position: 1,
         value: mildValue
       }
-    ])
+    ], type)
   }
 
   get offValue() { return this.properties[0].stops[0].value }
@@ -7950,7 +7957,7 @@ class RandomizerModifier extends Modifier {
       }
       const seedArray = Array.isArray(seed) ? seed : [seed]
       const valueType = minValue.length - 1
-      super(53376 | valueType, 4 | valueType, [
+      super(ModifierType.Randomizer2, valueType, [
         ...arrayOf(minValue.length, i => new IntField(seedArray[i % seedArray.length])),
         ...minValue.map(e => new FloatField(e)),
         ...maxValue.map(e => new FloatField(e)),
@@ -7962,7 +7969,7 @@ class RandomizerModifier extends Modifier {
       if (Array.isArray(seed)) {
         throw new Error('Random scalar modifiers cannot use vector seeds.')
       }
-      super(53376, 4, [
+      super(ModifierType.Randomizer2, ValueType.Scalar, [
         new IntField(seed),
         new FloatField(minValue),
         new FloatField(maxValue),
