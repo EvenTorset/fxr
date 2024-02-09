@@ -5229,7 +5229,7 @@ export interface BillboardExParams {
   /**
    * If enabled, the particle width-related properties and fields will control
    * both the width and height of the particles, and the height counterparts
-   * will be ignored. Defaults to true.
+   * will be ignored. Defaults to false.
    * 
    * See also:
    * - {@link BillboardExParams.width width}
@@ -5395,7 +5395,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     normalMap = 0,
     randomWidthMultiplier = 1,
     randomHeightMultiplier = 1,
-    uniformScale = true,
+    uniformScale = false,
     columns = 1,
     totalFrames = 1,
     interpolateFrames = true,
