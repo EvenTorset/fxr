@@ -7506,6 +7506,44 @@ class Property {
     }
   }
 
+  /**
+   * Creates a {@link ZeroProperty} with a {@link RandomizerModifier},
+   * effectively creating a property with a random value in a given range.
+   * @param minValue The lower bound of the range of possible values for the
+   * property.
+   * @param maxValue The upper bound of the range of possible values for the
+   * property.
+   * @param seed A seed or set of seeds for the random number generator to use
+   * to generate the random property values.
+   * @returns 
+   */
+  static random(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
+    return new ZeroProperty(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
+      new RandomizerModifier(minValue, maxValue, seed)
+    ])
+  }
+
+  /**
+   * Generates a rainbow color animation with a configurable duration.
+   * @param duration How long it takes to go around the entire hue circle in
+   * seconds. Defaults to 4 seconds.
+   * @param loop Controls whether the animation should loop or not. Defaults to
+   * true.
+   * @returns 
+   */
+  static rainbow(duration: number = 4, loop: boolean = true) {
+    const unit = duration / 6
+    return new LinearProperty(loop, [
+      { position: 0,        value: [1, 0, 0, 1] },
+      { position: unit,     value: [1, 0, 1, 1] },
+      { position: unit * 2, value: [0, 0, 1, 1] },
+      { position: unit * 3, value: [0, 1, 1, 1] },
+      { position: unit * 4, value: [0, 1, 0, 1] },
+      { position: unit * 5, value: [1, 1, 0, 1] },
+      { position: unit * 6, value: [1, 0, 0, 1] },
+    ])
+  }
+
 }
 
 class ZeroProperty extends Property {
@@ -7569,21 +7607,21 @@ class LinearProperty extends Property {
     ])
   }
 
-}
-
-/**
- * A {@link LinearProperty linear property} with only two stops. A bit
- * limited, but very easy to create.
- */
-class BasicLinearProperty extends LinearProperty {
-
-  constructor(
+  /**
+   * Creates a new linear property with only two steps.
+   * @param loop Controls whether the animation should loop or not.
+   * @param endPosition The position of the second stop.
+   * @param startValue The value of the first stop.
+   * @param endValue The value of the second stop.
+   * @returns The new linear property.
+   */
+  static basic(
     loop: boolean,
     endPosition: number,
     startValue: PropertyValue,
     endValue: PropertyValue
   ) {
-    super(loop, [
+    return new LinearProperty(loop, [
       { position: 0, value: startValue },
       { position: endPosition, value: endValue },
     ])
@@ -7611,32 +7649,6 @@ class Curve2Property extends Property {
       ...arrayOf(comps, i => new FloatField(Array.isArray(unk1) ? unk1[i] : unk1)),
       ...stops.slice(1).flatMap(s => arrayOf(comps, i => new FloatField(Array.isArray(s.inSlope) ? s.inSlope[i] : s.inSlope))),
       ...arrayOf(comps, i => new FloatField(Array.isArray(unk2) ? unk2[i] : unk2)),
-    ])
-  }
-
-}
-
-/**
- * A preset rainbow color animation with a configurable duration.
- */
-class RainbowProperty extends LinearProperty {
-
-  /**
-   * @param duration How long it takes to go around the entire hue circle in
-   * seconds. Defaults to 4 seconds.
-   * @param loop Controls whether the animation should loop or not. Defaults to
-   * true.
-   */
-  constructor(duration: number = 4, loop: boolean = true) {
-    const unit = duration / 6
-    super(loop, [
-      { position: 0,        value: [1, 0, 0, 1] },
-      { position: unit,     value: [1, 0, 1, 1] },
-      { position: unit * 2, value: [0, 0, 1, 1] },
-      { position: unit * 3, value: [0, 1, 1, 1] },
-      { position: unit * 4, value: [0, 1, 0, 1] },
-      { position: unit * 5, value: [1, 1, 0, 1] },
-      { position: unit * 6, value: [1, 0, 0, 1] },
     ])
   }
 
@@ -7960,22 +7972,6 @@ class RandomizerModifier extends Modifier {
 
 }
 
-/**
- * A property with random values in a given range.
- * 
- * This is technically just a {@link ZeroProperty} with a
- * {@link RandomizerModifier}.
- */
-class RandomProperty extends ZeroProperty {
-
-  constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
-    super(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
-      new RandomizerModifier(minValue, maxValue, seed)
-    ])
-  }
-
-}
-
 class Section10 {
 
   fields: Field[]
@@ -8102,10 +8098,7 @@ export {
   ConstantProperty,
   SteppedProperty,
   LinearProperty,
-  BasicLinearProperty,
   Curve2Property,
-  RainbowProperty,
-  RandomProperty,
 
   Modifier,
   ExternalValueModifier,
