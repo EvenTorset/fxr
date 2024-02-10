@@ -3146,6 +3146,29 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: commonAction6xxFields2Types
   },
+  [ActionType.MultiTextureBillboardEx]: {
+    Fields1: [
+      FieldType.Integer, // Orientation mode
+      FieldType.Integer, // Mask
+      FieldType.Integer, // Layer 1
+      FieldType.Integer, // Layer 2
+      FieldType.Boolean, // Uniform scale
+      null,
+      FieldType.Integer, // Columns
+      FieldType.Integer, // Total frames
+      FieldType.Boolean, // Interpolate frames
+      null,
+      null,
+      null,
+      FieldType.Boolean,
+      FieldType.Boolean,
+      null,
+      null,
+      null,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.PointLight]: {
     Fields1: [
       null,
