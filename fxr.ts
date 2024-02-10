@@ -6501,7 +6501,7 @@ export interface PointLightParams {
   /**
    * The maximum distance that the light may travel from the source, and the
    * radius of the sphere in which other effects caused by the light source
-   * (for example {@link fogDensity} and its related fields) may act. Defaults
+   * (for example {@link volumeDensity} and its related fields) may act. Defaults
    * to 10.
    */
   radius?: number | Property
@@ -6527,6 +6527,62 @@ export interface PointLightParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   specularMultiplier?: number | Property
+  /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker?: boolean
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  jitterAcceleration?: number
+  /**
+   * Controls how much the light should move around randomly. Defaults to
+   * [0, 0, 0].
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  jitter?: Vector3
+  /**
+   * Controls the minimum interval for flickering. Defaults to 0.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin?: number
+  /**
+   * Controls the maximum interval for flickering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax?: number
+  /**
+   * Brightness multiplier for the light when it flickers. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness?: number
   /**
    * Controls if the light should have shadows or not.
    * 
@@ -6574,14 +6630,14 @@ export interface PointLightParams {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  fogDensity?: number
+  volumeDensity?: number
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}. Defaults to true.
+   * {@link volumeDensity}. Defaults to true.
    */
   phaseFunction?: boolean
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -6619,11 +6675,17 @@ class PointLight extends Action {
     radius = 10,
     diffuseMultiplier = 1,
     specularMultiplier = 1,
+    jitterAndFlicker = false,
+    jitterAcceleration = 1,
+    jitter = [0, 0, 0],
+    flickerIntervalMin = 0,
+    flickerIntervalMax = 1,
+    flickerBrightness = 0.5,
     shadows = false,
     separateSpecular = false,
     fadeOutTime = 0,
     shadowDarkness = 1,
-    fogDensity = 0,
+    volumeDensity = 0,
     phaseFunction = true,
     asymmetryParam = 0.5,
     falloffExponent = 1,
@@ -6633,15 +6695,15 @@ class PointLight extends Action {
       /*  1 */ new FloatField(0),
     ], [ // Fields 2
       /*  0 */ new IntField(0),
-      /*  1 */ new BoolField(false),
-      /*  2 */ new FloatField(0),
+      /*  1 */ new BoolField(jitterAndFlicker),
+      /*  2 */ new FloatField(jitterAcceleration),
       /*  3 */ new FloatField(0),
-      /*  4 */ new FloatField(0),
-      /*  5 */ new FloatField(0),
-      /*  6 */ new FloatField(0),
-      /*  7 */ new FloatField(0),
-      /*  8 */ new FloatField(0),
-      /*  9 */ new FloatField(0),
+      /*  4 */ new FloatField(jitter[0]),
+      /*  5 */ new FloatField(jitter[1]),
+      /*  6 */ new FloatField(jitter[2]),
+      /*  7 */ new FloatField(flickerIntervalMin),
+      /*  8 */ new FloatField(flickerIntervalMax),
+      /*  9 */ new FloatField(flickerBrightness),
       /* 10 */ new BoolField(shadows),
       /* 11 */ new BoolField(separateSpecular),
       /* 12 */ new IntField(Math.round(fadeOutTime * 30)),
@@ -6656,7 +6718,7 @@ class PointLight extends Action {
       /* 21 */ new IntField(100),
       /* 22 */ new IntField(1),
       /* 23 */ new IntField(1),
-      /* 24 */ new FloatField(fogDensity),
+      /* 24 */ new FloatField(volumeDensity),
       /* 25 */ new FloatField(0),
       /* 26 */ new BoolField(phaseFunction),
       /* 27 */ new FloatField(asymmetryParam),
@@ -6711,7 +6773,7 @@ class PointLight extends Action {
   /**
    * The maximum distance that the light may travel from the source, and the
    * radius of the sphere in which other effects caused by the light source
-   * (for example {@link fogDensity} and its related fields) may act.
+   * (for example {@link volumeDensity} and its related fields) may act.
    */
   get radius() { return this.properties1[2] }
   set radius(value) { setPropertyInList(this.properties1, 2, value) }
@@ -6737,6 +6799,73 @@ class PointLight extends Action {
    */
   get specularMultiplier() { return this.properties1[4] }
   set specularMultiplier(value) { setPropertyInList(this.properties2, 4, value) }
+
+  /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get jitterAndFlicker() { return this.fields2[1].value as boolean }
+  set jitterAndFlicker(value) { this.fields2[1].value = value }
+
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  get jitterAcceleration() { return this.fields2[2].value as number }
+  set jitterAcceleration(value) { this.fields2[2].value = value }
+
+  /**
+   * Controls how much the light should move around randomly.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  get jitter() { return this.fields2.slice(4, 7).map(f => f.value) as Vector3 }
+  set jitter(value) { for (let i = 2; i >= 0; i--) this.fields2[4 + i].value = value[i] }
+
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMin() { return this.fields2[7].value as number }
+  set flickerIntervalMin(value) { this.fields2[7].value = value }
+
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMax() { return this.fields2[8].value as number }
+  set flickerIntervalMax(value) { this.fields2[8].value = value }
+
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  get flickerBrightness() { return this.fields2[9].value as number }
+  set flickerBrightness(value) { this.fields2[9].value = value }
 
   /**
    * Controls if the light should have shadows or not.
@@ -6789,18 +6918,18 @@ class PointLight extends Action {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  get fogDensity() { return this.fields2[24].value as number }
-  set fogDensity(value) { this.fields2[24].value = value }
+  get volumeDensity() { return this.fields2[24].value as number }
+  set volumeDensity(value) { this.fields2[24].value = value }
 
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}.
+   * {@link volumeDensity}.
    */
   get phaseFunction() { return this.fields2[26].value as boolean }
   set phaseFunction(value) { this.fields2[26].value = value }
 
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -7195,6 +7324,62 @@ export interface SpotLightParams {
    */
   yRadius?: number | Property
   /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker?: boolean
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  jitterAcceleration?: number
+  /**
+   * Controls how much the light should move around randomly. Defaults to
+   * [0, 0, 0].
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  jitter?: Vector3
+  /**
+   * Controls the minimum interval for flickering. Defaults to 0.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin?: number
+  /**
+   * Controls the maximum interval for flickering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax?: number
+  /**
+   * Brightness multiplier for the light when it flickers. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness?: number
+  /**
    * Controls if the light should have shadows or not.
    * 
    * Note: Objects also have a setting for casting shadows, and both must be
@@ -7241,14 +7426,14 @@ export interface SpotLightParams {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  fogDensity?: number
+  volumeDensity?: number
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}. Defaults to true.
+   * {@link volumeDensity}. Defaults to true.
    */
   phaseFunction?: boolean
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -7295,11 +7480,17 @@ class SpotLight extends Action {
     radius = 50,
     xRadius = radius instanceof Property ? Property.copy(radius) : radius,
     yRadius = radius instanceof Property ? Property.copy(radius) : radius,
+    jitterAndFlicker = false,
+    jitterAcceleration = 1,
+    jitter = [0, 0, 0],
+    flickerIntervalMin = 0,
+    flickerIntervalMax = 1,
+    flickerBrightness = 0.5,
     shadows = false,
     separateSpecular = false,
     shadowDarkness = 1,
     fadeOutTime = 0,
-    fogDensity = 0,
+    volumeDensity = 0,
     phaseFunction = true,
     asymmetryParam = 0.75,
     falloffExponent = 1,
@@ -7309,15 +7500,15 @@ class SpotLight extends Action {
   }: SpotLightParams = {}) {
     super(ActionType.SpotLight, [
       /*  0 */ new IntField(0),
-      /*  1 */ new BoolField(false), // Animation toggle?
-      /*  2 */ new FloatField(0),
+      /*  1 */ new BoolField(jitterAndFlicker),
+      /*  2 */ new FloatField(jitterAcceleration),
       /*  3 */ new FloatField(0),
-      /*  4 */ new FloatField(0), // X jitter
-      /*  5 */ new FloatField(0), // Y jitter
-      /*  6 */ new FloatField(0), // Z jitter
-      /*  7 */ new FloatField(0), // Pulse period 1?
-      /*  8 */ new FloatField(0), // Pulse period 2?
-      /*  9 */ new FloatField(1), // Pulse brightness
+      /*  4 */ new FloatField(jitter[0]),
+      /*  5 */ new FloatField(jitter[1]),
+      /*  6 */ new FloatField(jitter[2]),
+      /*  7 */ new FloatField(flickerIntervalMin),
+      /*  8 */ new FloatField(flickerIntervalMax),
+      /*  9 */ new FloatField(flickerBrightness),
       /* 10 */ new BoolField(shadows),
       /* 11 */ new BoolField(separateSpecular),
       /* 12 */ new FloatField(shadowDarkness),
@@ -7327,7 +7518,7 @@ class SpotLight extends Action {
       /* 16 */ new IntField(100),
       /* 17 */ new IntField(0),
       /* 18 */ new FloatField(0),
-      /* 19 */ new FloatField(fogDensity),
+      /* 19 */ new FloatField(volumeDensity),
       /* 20 */ new FloatField(0),
       /* 21 */ new BoolField(phaseFunction),
       /* 22 */ new FloatField(asymmetryParam),
@@ -7428,6 +7619,73 @@ class SpotLight extends Action {
   set yRadius(value) { setPropertyInList(this.properties1, 7, value) }
 
   /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get jitterAndFlicker() { return this.fields2[1].value as boolean }
+  set jitterAndFlicker(value) { this.fields2[1].value = value }
+
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  get jitterAcceleration() { return this.fields2[2].value as number }
+  set jitterAcceleration(value) { this.fields2[2].value = value }
+
+  /**
+   * Controls how much the light should move around randomly.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  get jitter() { return this.fields2.slice(4, 7).map(f => f.value) as Vector3 }
+  set jitter(value) { for (let i = 2; i >= 0; i--) this.fields2[4 + i].value = value[i] }
+
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMin() { return this.fields2[7].value as number }
+  set flickerIntervalMin(value) { this.fields2[7].value = value }
+
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMax() { return this.fields2[8].value as number }
+  set flickerIntervalMax(value) { this.fields2[8].value = value }
+
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  get flickerBrightness() { return this.fields2[9].value as number }
+  set flickerBrightness(value) { this.fields2[9].value = value }
+
+  /**
    * Controls if the light should have shadows or not.
    * 
    * Note: Objects also have a setting for casting shadows, and both must be
@@ -7478,18 +7736,18 @@ class SpotLight extends Action {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  get fogDensity() { return this.fields1[19].value as number }
-  set fogDensity(value) { this.fields1[19].value = value }
+  get volumeDensity() { return this.fields1[19].value as number }
+  set volumeDensity(value) { this.fields1[19].value = value }
 
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}.
+   * {@link volumeDensity}.
    */
   get phaseFunction() { return this.fields1[21].value as boolean }
   set phaseFunction(value) { this.fields1[21].value = value }
 
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
