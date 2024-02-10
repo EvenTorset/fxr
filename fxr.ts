@@ -467,7 +467,7 @@ enum FieldType {
 
 enum BlendMode {
   Unk0 = 0,
-  Unk1 = 1,
+  Source = 1,
   Normal = 2,
   Multiply = 3,
   Add = 4,
