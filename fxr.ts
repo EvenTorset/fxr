@@ -5622,6 +5622,9 @@ class BillboardEx extends CommonAction6xxFields2Action {
   get frameIndex() { return this.properties1[21] }
   set frameIndex(value) { setPropertyInList(this.properties1, 21, value) }
 
+  get frameIndexOffset() { return this.properties1[22] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 22, value) }
+
   get rgbMultiplier() { return this.properties2[0] }
   set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
 
