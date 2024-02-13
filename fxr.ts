@@ -8417,6 +8417,7 @@ const Actions = {
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
+  [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
