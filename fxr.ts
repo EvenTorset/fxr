@@ -16,7 +16,18 @@ enum NodeType {
    * This node type has a specialized subclass: {@link RootNode}
    */
   Root = 2000,
+  /**
+   * Acts as a node containing another FXR.
+   * 
+   * This node type has a specialized subclass: {@link ProxyNode}
+   */
   Proxy = 2001,
+  /**
+   * A node that only displays one of its child nodes at a time based on
+   * distance thresholds for each.
+   * 
+   * This node type has a specialized subclass: {@link LevelOfDetailNode}
+   */
   LevelOfDetail = 2002,
   /**
    * A basic node.
@@ -28,7 +39,13 @@ enum NodeType {
 }
 
 enum EffectType {
-  LODThresholds = 1002,
+  /**
+   * Manages the duration and thresholds for the
+   * {@link NodeType.LevelOfDetail level of detail node}.
+   * 
+   * This effect type has a specialized subclass: {@link LevelOfDetailEffect}
+   */
+  LevelOfDetail = 1002,
   /**
    * A basic effect that can emit particles of many different types.
    * 
@@ -49,7 +66,7 @@ enum EffectType {
 
 enum ActionType {
   None = 0,
-  Unk1 = 1,
+  NodeAcceleration = 1,
   /**
    * Translates the node with a property, meaning the offset can be animated.
    * 
@@ -74,24 +91,61 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NodeTransform}
    */
   RandomNodeTransform = 36,
-  Unk46 = 46,
-  Unk55_Acceleration = 55,
-  Unk60_Speed = 60,
-  Unk64_SpeedSwing = 64,
-  Unk65_SpeedPartialFollow = 65,
   /**
-   * Plays a sound.
+   * Attaches the node to the camera.
+   * 
+   * This action type has a specialized subclass: {@link NodeAttachToCamera}
+   */
+  NodeAttachToCamera = 46,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
+  ParticleAcceleration = 55,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
+  ParticleSpeed = 60,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
+  ParticleSpeedRandomTurns = 64,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
+  ParticleSpeedPartialFollow = 65,
+  /**
+   * Plays a sound effect.
+   * 
+   * This action type has a specialized subclass: {@link PlaySound}
    */
   PlaySound = 75,
-  Unk83 = 83,
-  Unk84_Swing = 84,
-  PartialFollow = 105,
-  Unk106 = 106,
-  Unk113 = 113,
-  Unk120 = 120,
-  Unk121 = 121,
-  Unk122 = 122,
-  Unk123_Rotation = 123,
+  NodeAccelerationRandomTurns = 83,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
+  ParticleAccelerationRandomTurns = 84,
+  /**
+   * Controls the movement of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleMovement}
+   */
+  ParticleAccelerationPartialFollow = 105,
+  NodeAccelerationPartialFollow = 106,
+  NodeAccelerationSpin = 113,
+  NodeSpeed = 120,
+  NodeSpeedRandomTurns = 121,
+  NodeSpeedPartialFollow = 122,
+  NodeSpeedSpin = 123,
   /**
    * Controls various things about the node, like its duration, and how
    * it is attached to the parent node.
@@ -114,14 +168,20 @@ enum ActionType {
    */
   ParticleMultiplier = 131,
   /**
-   * References a different FXR file by its ID.
+   * References another FXR by its ID.
+   * 
+   * This action type has a specialized subclass: {@link FXRReference}
    */
   FXRReference = 132,
   /**
-   * Controls the level of detail (LOD) distance thresholds for the
-   * subnodes.
+   * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
+   * manage the duration and thresholds for the
+   * {@link NodeType.LevelOfDetail level of detail node}.
+   * 
+   * This action type has a specialized subclass:
+   * {@link LevelOfDetailThresholds}
    */
-  LODThresholds = 133,
+  LevelOfDetail = 133,
   /**
    * Maps states to effects in the parent node.
    * 
@@ -211,8 +271,19 @@ enum ActionType {
    * This action type has a specialized subclass: {@link BillboardEx}
    */
   BillboardEx = 603,
+  /**
+   * Particle with multiple texture that can scroll.
+   * 
+   * This action type has a specialized subclass:
+   * {@link MultiTextureBillboardEx}
+   */
   MultiTextureBillboardEx = 604,
   Model = 605,
+  /**
+   * Creates a trail behind moving effects.
+   * 
+   * This action type has a specialized subclass: {@link Tracer}
+   */
   Tracer = 606,
   Distortion = 607,
   RadialBlur = 608,
@@ -225,9 +296,38 @@ enum ActionType {
   Unk700 = 700, // Root node action
   Unk701 = 701, // Root node action
   Unk702 = 702, // Root node action
-  Unk731 = 731,
-  Unk732 = 732,
-  Unk734 = 734,
+  /**
+   * Controls how effective the wind is at pushing the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeWindSpeed}
+  */
+  NodeWindSpeed = 731,
+  /**
+   * Controls how effective the wind is at pushing the particles emitted from
+   * the node.
+   * 
+   * This action type has a specialized subclass:
+   * {@link ParticleWindSpeed}
+  */
+  ParticleWindSpeed = 732,
+  /**
+   * Controls how effective the wind is at accelerating the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeWindAcceleration}
+   */
+  NodeWindAcceleration = 733,
+  /**
+   * Controls how effective the wind is at accelerating the particles emitted
+   * from the node.
+   * 
+   * Acceleration requires slot 10 to have an action that enables acceleration
+   * of the particles.
+   * 
+   * This action type has a specialized subclass:
+   * {@link ParticleWindAcceleration}
+   */
+  ParticleWindAcceleration = 734,
+  Unk800 = 800,
   Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
@@ -325,7 +425,7 @@ enum ModifierType {
    * There is one RNG seed field for each component of the property value
    * followed by one "max change" value per component.
    */
-  Randomizer1 = 0,
+  Randomizer1 = 21,
   /**
    * Adds a random value between `x` and `y` to the property's value, where
    * `x` and `y` are the min/max change values set in the modifier's fields.
@@ -334,7 +434,7 @@ enum ModifierType {
    * followed by one "min change" value per component, and then one "max
    * change" value per component.
    */
-  Randomizer2 = 1,
+  Randomizer2 = 24,
   /**
    * Multiplies the property's value based on some external value. The only 
    * field in the modifier controls which external value to check. For example,
@@ -349,12 +449,15 @@ enum ModifierType {
    * - {@link ExternalValueModifier}
    * - {@link BloodVisibilityModifier}
    */
-  ExternalValue1 = 2,
+  ExternalValue1 = 38,
   /**
    * Same as {@link ExternalValue1}, except this only updates if the effect is
    * recreated instead of updating instantly when the external value changes.
+   * 
+   * Note: This type seems to only work with the
+   * {@link ExternalValue.DisplayBlood DisplayBlood external value}.
    */
-  ExternalValue2 = 3,
+  ExternalValue2 = 39,
   /**
    * Adds a random fraction of the property's value to itself. The range of the
    * fraction is controlled by the the latter half of the modifier's fields,
@@ -364,7 +467,7 @@ enum ModifierType {
    * There is one RNG seed field for each component of the property value
    * followed by one "max change" value per component.
    */
-  Randomizer3 = 4,
+  Randomizer3 = 53,
 }
 
 enum FieldType {
@@ -375,7 +478,7 @@ enum FieldType {
 
 enum BlendMode {
   Unk0 = 0,
-  Unk1 = 1,
+  Source = 1,
   Normal = 2,
   Multiply = 3,
   Add = 4,
@@ -391,8 +494,29 @@ enum ExternalValue {
    * disappears. The value is otherwise 0.
    */
   Terminate = 0,
-  Unk1 = 1, // Boolean? Only 0 or 1
+  /**
+   * In Elden Ring, this value is 1 if it's raining or snowing, and 0 otherwise.
+   */
+  Precipitation = 1,
+  /**
+   * In Elden Ring, this represents the the time of day. At midnight, the value
+   * is 0, at noon it is 12, and then it goes up to 24 before wrapping back to
+   * 0, just like the hours on the clock.
+   */
+  TimeOfDay = 2,
+  /**
+   * Used in AC6.
+   */
   Unk3 = 3,
+  /**
+   * This is based on the distance between the SFX and the camera.
+   * 
+   * The range is 0-1, the distance is converted in some unknown way.
+   * 
+   * It does not always work for all sources of effects. This is used by the
+   * beacon effect in Elden Ring, so it definitely works there.
+   */
+  SFXDistance = 1000,
   /**
    * This value is set through the Special Attribute param field on weapons.
    */
@@ -409,6 +533,27 @@ enum ExternalValue {
    * {@link BloodVisibilityModifier}
    */
   DisplayBlood = 10000,
+  Unk20000 = 20000,
+  /**
+   * Used in AC6.
+   */
+  Unk40000 = 40000,
+  /**
+   * Used in AC6.
+   */
+  Unk70000 = 70000,
+  /**
+   * Used in AC6.
+   */
+  Unk70010 = 70010,
+  /**
+   * Used in AC6.
+   */
+  Unk70020 = 70020,
+  /**
+   * Used in AC6.
+   */
+  Unk70200 = 70200,
 }
 
 enum Operator {
@@ -476,7 +621,12 @@ enum PropertyArgument {
    */
   ParticleAge,
   /**
-   * Time in seconds since the effect was created.
+   * Time in seconds since the {@link Effect} became active.
+   * 
+   * An effect becoming active is for example the delay from
+   * {@link ActionType.NodeLifetime NodeLifetime} being over, or the active
+   * {@link State} changing, making a node change which of its effects is
+   * active.
    */
   EffectAge,
   /**
@@ -558,17 +708,17 @@ const EffectActionSlots = {
       ActionType.RandomNodeTransform
     ],
     [
-      ActionType.Unk1,
+      ActionType.NodeAcceleration,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
-      ActionType.Unk46,
-      ActionType.Unk83,
-      ActionType.Unk106,
-      ActionType.Unk113,
-      ActionType.Unk120,
-      ActionType.Unk121,
-      ActionType.Unk122,
-      ActionType.Unk123_Rotation
+      ActionType.NodeAttachToCamera,
+      ActionType.NodeAccelerationRandomTurns,
+      ActionType.NodeAccelerationPartialFollow,
+      ActionType.NodeAccelerationSpin,
+      ActionType.NodeSpeed,
+      ActionType.NodeSpeedRandomTurns,
+      ActionType.NodeSpeedPartialFollow,
+      ActionType.NodeSpeedSpin
     ],
     [
       ActionType.PlaySound
@@ -628,23 +778,25 @@ const EffectActionSlots = {
       ActionType.SpotLight
     ],
     [
-      ActionType.Unk55_Acceleration,
-      ActionType.Unk60_Speed,
-      ActionType.Unk64_SpeedSwing,
-      ActionType.Unk65_SpeedPartialFollow,
-      ActionType.Unk84_Swing,
-      ActionType.PartialFollow
+      ActionType.ParticleAcceleration,
+      ActionType.ParticleSpeed,
+      ActionType.ParticleSpeedRandomTurns,
+      ActionType.ParticleSpeedPartialFollow,
+      ActionType.ParticleAccelerationRandomTurns,
+      ActionType.ParticleAccelerationPartialFollow
     ],
     [],
     [
       ActionType.Unk130
     ],
     [
-      ActionType.Unk731
+      ActionType.NodeWindSpeed,
+      ActionType.NodeWindAcceleration
     ],
     [
-      ActionType.Unk732,
-      ActionType.Unk734
+      ActionType.ParticleWindSpeed,
+      ActionType.ParticleWindAcceleration,
+      ActionType.Unk800
     ]
   ],
   [EffectType.Randomizer]: [
@@ -656,16 +808,16 @@ const EffectActionSlots = {
       ActionType.RandomNodeTransform
     ],
     [
-      ActionType.Unk1,
+      ActionType.NodeAcceleration,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
-      ActionType.Unk46,
-      ActionType.Unk83,
-      ActionType.Unk106,
-      ActionType.Unk113,
-      ActionType.Unk120,
-      ActionType.Unk121,
-      ActionType.Unk123_Rotation
+      ActionType.NodeAttachToCamera,
+      ActionType.NodeAccelerationRandomTurns,
+      ActionType.NodeAccelerationPartialFollow,
+      ActionType.NodeAccelerationSpin,
+      ActionType.NodeSpeed,
+      ActionType.NodeSpeedRandomTurns,
+      ActionType.NodeSpeedSpin
     ],
     [
       ActionType.PlaySound
@@ -728,6 +880,10 @@ function scalarFromArg(scalar: number | Property) {
 
 function vectorFromArg(vector: Vector | Property) {
   return vector instanceof Property ? vector : new ConstantProperty(...vector)
+}
+
+function uniqueArray<T>(a: T[]) {
+  return a.filter((e, i) => a.indexOf(e) === i)
 }
 
 class BinaryReader extends DataView {
@@ -934,6 +1090,8 @@ class BinaryWriter {
   }
 
   writeFloat32(f32: number) {
+    // Make sure that the value is not -0
+    f32 = f32 === 0 ? 0 : f32
     this.#transDV.setFloat32(0, f32, this.littleEndian)
     this.array.push(...this.#transArr32)
   }
@@ -1071,7 +1229,7 @@ class FXR {
   version: FXRVersion
 
   states: State[]
-  rootNode: Node
+  root: RootNode
 
   references: number[]
   externalValues: number[]
@@ -1084,20 +1242,16 @@ class FXR {
   constructor(
     id: number,
     version = FXRVersion.Sekiro,
-    rootNode: Node = new RootNode,
-    states: State[] = [
-      new State([
-        new StateCondition(Operator.GreaterThan, 2, -1, OperandType.Literal, 1, OperandType.External, 0)
-      ])
-    ],
+    root: RootNode = new RootNode,
+    states: State[] = [ new State ],
     references: number[] = [],
-    externalValues: number[] = [0],
+    externalValues: number[] = [],
     unkBloodEnabler: number[] = [],
     // unkEmpty: number[] = [],
   ) {
     this.id = id
     this.version = version
-    this.rootNode = rootNode
+    this.root = root
     this.states = states
     this.references = references
     this.externalValues = externalValues
@@ -1176,14 +1330,14 @@ class FXR {
     const statesOffset = br.readInt32()
     br.assertInt32(0)
     br.stepIn(statesOffset)
-    const states = []
+    const states: State[] = []
     for (let i = 0; i < stateCount; ++i) {
       states.push(State.read(br))
     }
     br.stepOut()
 
     br.position = nodeOffset
-    const rootNode = Node.read(br)
+    const rootNode = Node.read(br) as RootNode
 
     return new FXR(
       id,
@@ -1268,8 +1422,8 @@ class FXR {
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    this.rootNode.write(bw, nodes)
-    this.rootNode.writeNodes(bw, nodes)
+    this.root.write(bw, nodes)
+    this.root.writeNodes(bw, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
@@ -1402,7 +1556,7 @@ class FXR {
       references: this.references,
       externalValues: this.externalValues,
       unkBloodEnabler: this.unkBloodEnabler,
-      root: this.rootNode.toJSON(),
+      root: this.root.toJSON(),
     }
   }
 
@@ -1416,7 +1570,7 @@ class FXR {
     return new FXR(
       this.id,
       this.version,
-      this.rootNode.minify(),
+      this.root.minify(),
       this.states,
       this.references,
       this.externalValues,
@@ -1424,11 +1578,49 @@ class FXR {
     )
   }
 
+  /**
+   * Automatically updates {@link references}, {@link externalValues}, and
+   * {@link unkBloodEnabler} with the values used in the FXR.
+   */
+  updateReferences() {
+    const references: number[] = []
+    const externalValues: number[] = []
+    let unkBloodEnabler = false
+    for (const node of this.root.walk()) {
+      if (node.type === NodeType.Proxy) {
+        references.push(node.actions[0].fields1[0].value as number)
+      }
+    }
+    for (const prop of this.root.walkProperties()) {
+      for (const mod of prop.modifiers) {
+        if (mod.type === ModifierType.ExternalValue1) {
+          externalValues.push(mod.fields[0].value as number)
+        } else if (mod.type === ModifierType.ExternalValue2 && mod.fields[0].value === ExternalValue.DisplayBlood) {
+          unkBloodEnabler = true
+        }
+      }
+    }
+    for (const state of this.states) {
+      for (const condition of state.conditions) {
+        if (condition.leftOperandType === OperandType.External) {
+          externalValues.push(condition.leftOperandValue)
+        }
+        if (condition.rightOperandType === OperandType.External) {
+          externalValues.push(condition.rightOperandValue)
+        }
+      }
+    }
+    this.references = uniqueArray(references).sort((a, b) => a - b)
+    this.externalValues = uniqueArray(externalValues).sort((a, b) => a - b)
+    this.unkBloodEnabler = unkBloodEnabler ? [ExternalValue.DisplayBlood] : []
+    return this
+  }
+
 }
 
 class State {
 
-  conditions: StateCondition[] = []
+  conditions: StateCondition[]
 
   constructor(conditions: StateCondition[] = []) {
     this.conditions = conditions
@@ -1868,7 +2060,9 @@ class Node {
   }
 
   static read(br: BinaryReader) {
-    const node = new Node(br.readInt16())
+    const type = br.readInt16()
+    const node = new (type in Nodes ? Nodes[type] : Node)
+    node.type = type
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
@@ -1883,16 +2077,19 @@ class Node {
     const nodeOffset = br.readInt32()
     br.assertInt32(0)
     br.stepIn(nodeOffset)
+    node.nodes = []
     for (let i = 0; i < nodeCount; ++i) {
       node.nodes.push(Node.read(br))
     }
     br.stepOut()
     br.stepIn(effectOffset)
+    node.effects = []
     for (let i = 0; i < effectCount; ++i) {
       node.effects.push(Effect.read(br))
     }
     br.stepOut()
     br.stepIn(actionOffset)
+    node.actions = []
     for (let i = 0; i < actionCount; ++i) {
       node.actions.push(Action.read(br))
     }
@@ -1968,12 +2165,12 @@ class Node {
     effects: []
     nodes: []
   }) {
-    return new Node(
-      type,
-      actions.map(action => Action.fromJSON(action)),
-      effects.map(effect => Effect.fromJSON(effect)),
-      nodes.map(node => Node.fromJSON(node)),
-    )
+    const node = new (type in Nodes ? Nodes[type] : Node)
+    node.type = type
+    node.actions = actions.map(action => Action.fromJSON(action))
+    node.effects = effects.map(effect => Effect.fromJSON(effect))
+    node.nodes = nodes.map(node => Node.fromJSON(node))
+    return node
   }
 
   toJSON() {
@@ -1994,6 +2191,346 @@ class Node {
     )
   }
 
+  /**
+   * Yields all nodes in this branch, including this node.
+   */
+  *walk(): Generator<Node> {
+    yield this
+    for (const node of this.nodes) {
+      yield* node.walk()
+    }
+  }
+
+  /**
+   * Yields all effects in this branch.
+   */
+  *walkEffects() {
+    for (const node of this.walk()) {
+      yield* node.effects
+    }
+  }
+
+  /**
+   * Yields all actions in this branch.
+   */
+  *walkActions() {
+    for (const node of this.walk()) {
+      yield* node.actions
+      for (const effect of node.effects) {
+        yield* effect.actions
+      }
+    }
+  }
+
+  /**
+   * Yields all properties in this branch, excluding properties inside
+   * modifiers.
+   */
+  *walkProperties() {
+    for (const action of this.walkActions()) {
+      yield* action.properties1
+      yield* action.properties2
+    }
+  }
+
+  /**
+   * Scales the entire branch by a factor. This updates all sizes, offsets,
+   * lengths, and radii of the actions in the branch, except certain
+   * multiplicative fields and properties.
+   * 
+   * This will not work properly in Dark Souls 3 FXRs due to some actions
+   * having different indices for various properties and fields.
+   * @param factor The factor to scale the branch with.
+   */
+  scale(factor: number) {
+    for (const effect of this.walkEffects()) if (
+      effect.type === EffectType.Basic || effect.type === EffectType.Randomizer
+    ) {
+      const slot1 = effect.actions[1] as ActionWithNumericalFields
+      switch (slot1.type) {
+        case ActionType.RandomNodeTransform:
+          slot1.fields1[6] = new FloatField(slot1.fields1[6].value * factor)
+          slot1.fields1[7] = new FloatField(slot1.fields1[7].value * factor)
+          slot1.fields1[8] = new FloatField(slot1.fields1[8].value * factor)
+        case ActionType.StaticNodeTransform:
+          slot1.fields1[0] = new FloatField(slot1.fields1[0].value * factor)
+          slot1.fields1[1] = new FloatField(slot1.fields1[1].value * factor)
+          slot1.fields1[2] = new FloatField(slot1.fields1[2].value * factor)
+          break
+      }
+      const slot2 = effect.actions[2]
+      switch (slot2.type) {
+        case ActionType.NodeTranslation:
+          slot2.properties1[0].scale(factor)
+          break
+        case ActionType.NodeAcceleration:
+        case ActionType.NodeAccelerationRandomTurns:
+        case ActionType.NodeAccelerationPartialFollow:
+        case ActionType.NodeAccelerationSpin:
+          slot2.properties1[0].scale(factor)
+          slot2.properties1[1].scale(factor)
+          slot2.properties1[3].scale(factor)
+          break
+        case ActionType.NodeSpeed:
+        case ActionType.NodeSpeedRandomTurns:
+        case ActionType.NodeSpeedPartialFollow:
+        case ActionType.NodeSpeedSpin:
+          slot2.properties1[0].scale(factor)
+          slot2.properties1[2].scale(factor)
+          break
+      }
+      const slot4 = effect.actions[1]
+      if (slot4.type === ActionType.EqualDistanceEmitter) {
+        slot4.properties1[0].scale(factor)
+      }
+      const slot5 = effect.actions[5]
+      switch (slot5.type) {
+        case ActionType.BoxEmitterShape:
+          slot5.properties1[2].scale(factor)
+        case ActionType.RectangleEmitterShape:
+        case ActionType.CylinderEmitterShape:
+          slot5.properties1[1].scale(factor)
+        case ActionType.DiskEmitterShape:
+        case ActionType.SphereEmitterShape:
+          slot5.properties1[0].scale(factor)
+          break
+      }
+
+      if (effect.type === EffectType.Basic) {
+        const slot7 = effect.actions[7]
+        slot7.properties1[0].scale(factor)
+        slot7.properties1[1].scale(factor)
+        slot7.properties1[2].scale(factor)
+        slot7.properties1[3].scale(factor)
+
+        const slot9 = effect.actions[9] as ActionWithNumericalFields
+        switch (slot9.type) {
+          case ActionType.BillboardEx:
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[20].scale(factor)
+            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
+            break
+          case ActionType.MultiTextureBillboardEx:
+          case ActionType.Model:
+          case ActionType.Distortion:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            break
+          case ActionType.RadialBlur:
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            break
+          case ActionType.PointLight:
+            slot9.properties1[2].scale(factor)
+            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
+            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
+            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+            break
+          case ActionType.SpotLight:
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
+            slot9.properties1[7].scale(factor)
+            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
+            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
+            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+            break
+        }
+        switch (slot9.type) {
+          case ActionType.PointSprite:
+          case ActionType.Line:
+          case ActionType.QuadLine:
+          case ActionType.BillboardEx:
+          case ActionType.MultiTextureBillboardEx:
+          case ActionType.Model:
+          case ActionType.Tracer:
+          case ActionType.Distortion:
+          case ActionType.RadialBlur:
+          case ActionType.Unk10000_StandardParticle:
+          case ActionType.Unk10001_StandardCorrectParticle:
+          case ActionType.Unk10012_Tracer:
+          case ActionType.Unk10015_RichModel:
+            for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
+              slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
+            }
+            break
+        }
+        const slot10 = effect.actions[10]
+        switch (slot10.type) {
+          case ActionType.ParticleAcceleration:
+          case ActionType.ParticleSpeed:
+          case ActionType.ParticleSpeedRandomTurns:
+          case ActionType.ParticleSpeedPartialFollow:
+          case ActionType.ParticleAccelerationRandomTurns:
+          case ActionType.ParticleAccelerationPartialFollow:
+            slot10.properties1[0].scale(factor)
+            slot10.properties1[1].scale(factor)
+            break
+        }
+        const slot13 = effect.actions[13]
+        switch (slot13.type) {
+          case ActionType.NodeWindAcceleration:
+          case ActionType.NodeWindSpeed:
+            slot13.properties1[0].scale(factor)
+            break
+        }
+        const slot14 = effect.actions[14]
+        switch (slot14.type) {
+          case ActionType.ParticleWindAcceleration:
+          case ActionType.ParticleWindSpeed:
+            slot14.properties1[0].scale(factor)
+            break
+        }
+      }
+    }
+  }
+
+  /**
+   * Recolors the entire branch by modifying color properties and fields using
+   * a function.
+   * 
+   * This will not work properly in Dark Souls 3 FXRs due to some actions
+   * having different indices for various properties and fields.
+   * @param func The function used to recolor the branch. It is passed the
+   * original color and should return the color to replace it with.
+   */
+  recolor(func: (color: Vector4) => Vector4) {
+    const procFields = (list: NumericalField[], i: number, alpha = false) => {
+      const [r, g, b, a] = func([
+        list[i  ].value,
+        list[i+1].value,
+        list[i+2].value,
+        alpha ? list[i+3].value : 1
+      ])
+      list[i  ] = new FloatField(r)
+      list[i+1] = new FloatField(g)
+      list[i+2] = new FloatField(b)
+      if (alpha) {
+        list[i+3] = new FloatField(a)
+      }
+    }
+    const procProp = (prop: Property) => {
+      if (prop.function <= PropertyFunction.One) {
+        prop.convertToFunction(PropertyFunction.Constant)
+      }
+      for (const stop of prop.stops) {
+        stop.value = func(stop.value as Vector4)
+      }
+      for (const mod of prop.modifiers) {
+        switch (mod.type) {
+          case ModifierType.Randomizer2:
+            procFields(mod.fields, 8, true)
+          case ModifierType.Randomizer1:
+          case ModifierType.Randomizer3:
+            procFields(mod.fields, 4, true)
+            break
+          case ModifierType.ExternalValue1:
+          case ModifierType.ExternalValue2:
+            procProp(mod.properties[0])
+            break
+        }
+      }
+    }
+    for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
+      procProp(effect.actions[7].properties1[4])
+      const slot9 = effect.actions[9] as ActionWithNumericalFields
+      switch (slot9.type) {
+        case ActionType.PointSprite:
+          procProp(slot9.properties1[3])
+          procProp(slot9.properties1[4])
+          procProp(slot9.properties1[5])
+          break
+        case ActionType.Line:
+          procProp(slot9.properties1[2])
+          procProp(slot9.properties1[3])
+          procProp(slot9.properties1[4])
+          procProp(slot9.properties1[5])
+          procProp(slot9.properties1[7])
+          break
+        case ActionType.QuadLine:
+          procProp(slot9.properties1[3])
+          procProp(slot9.properties1[4])
+          procProp(slot9.properties1[5])
+          procProp(slot9.properties1[6])
+          procProp(slot9.properties1[9])
+          break
+        case ActionType.BillboardEx:
+          procProp(slot9.properties1[7])
+          procProp(slot9.properties1[8])
+          procProp(slot9.properties1[9])
+          break
+        case ActionType.MultiTextureBillboardEx:
+          procProp(slot9.properties1[15])
+          procProp(slot9.properties1[16])
+          procProp(slot9.properties1[17])
+          procProp(slot9.properties1[18])
+          procProp(slot9.properties1[19])
+          procProp(slot9.properties1[20])
+          break
+        case ActionType.Model:
+          procProp(slot9.properties1[14])
+          procProp(slot9.properties1[15])
+          procProp(slot9.properties1[16])
+          break
+        case ActionType.Tracer:
+        case ActionType.Unk10012_Tracer:
+          procProp(slot9.properties1[6])
+          procProp(slot9.properties1[7])
+          procProp(slot9.properties1[8])
+          break
+        case ActionType.Distortion:
+        case ActionType.RadialBlur:
+          procProp(slot9.properties1[7])
+          procProp(slot9.properties1[8])
+          break
+        case ActionType.PointLight:
+        case ActionType.SpotLight:
+          procProp(slot9.properties1[0])
+          procProp(slot9.properties1[1])
+          break
+        case ActionType.Unk10000_StandardParticle:
+        case ActionType.Unk10001_StandardCorrectParticle:
+          procProp(slot9.properties1[13])
+          procProp(slot9.properties2[3])
+          procProp(slot9.properties2[4])
+          procProp(slot9.properties2[5])
+          break
+        case ActionType.Unk10014_LensFlare:
+          procProp(slot9.properties1[2])
+          procProp(slot9.properties1[5])
+          procProp(slot9.properties1[8])
+          procProp(slot9.properties1[11])
+          break
+        case ActionType.Unk10015_RichModel:
+          procProp(slot9.properties1[13])
+          procProp(slot9.properties1[14])
+          procProp(slot9.properties1[15])
+      }
+      switch (slot9.type) {
+        case ActionType.PointSprite:
+        case ActionType.Line:
+        case ActionType.QuadLine:
+        case ActionType.BillboardEx:
+        case ActionType.MultiTextureBillboardEx:
+        case ActionType.Model:
+        case ActionType.Tracer:
+        case ActionType.Distortion:
+        case ActionType.RadialBlur:
+        case ActionType.Unk10012_Tracer:
+        case ActionType.Unk10015_RichModel:
+          procProp(slot9.properties2[3])
+          procProp(slot9.properties2[4])
+          procProp(slot9.properties2[5])
+          procFields(slot9.fields2, 5)
+          break
+      }
+    }
+  }
+
 }
 
 /**
@@ -2009,9 +2546,9 @@ class RootNode extends Node {
   ) {
     super(NodeType.Root, [
       new Action(ActionType.Unk700),
-      new Action(ActionType.Unk10100, false, true, 0, arrayOf(56, () => new IntField(0))),
-      new Action(ActionType.Unk10400, false, true, 0, arrayOf(65, () => new IntField(1))),
-      new Action(ActionType.Unk10500, false, true, 0, arrayOf(10, () => new IntField(0)), [], [
+      new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
+      new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
+      new Action(ActionType.Unk10500, arrayOf(10, () => new IntField(0)), [], [
         rateOfTime instanceof Property ? rateOfTime : new ConstantProperty(rateOfTime as number)
       ]),
     ], effects, nodes)
@@ -2029,22 +2566,53 @@ class RootNode extends Node {
 }
 
 /**
- * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
- * them a default {@link ActionType.StateEffectMap state-effect map} and a
- * simpler way to modify the map.
+ * Acts as a node containing another FXR.
  */
-class BasicNode extends Node {
+class ProxyNode extends Node {
 
-  constructor(effects: Effect[] = [], nodes: Node[] = []) {
-    if (!Array.isArray(effects) || effects.some(e => !(e instanceof Effect))) {
-      throw new Error('Non-effect passed as effect to BasicNode.')
-    }
-    if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
-      throw new Error('Non-node passed as node to BasicNode.')
-    }
-    super(NodeType.Basic, [
+  declare actions: [FXRReference]
+
+  /**
+   * @param fxrID The ID of the FXR that this node should act as a proxy for.
+   */
+  constructor(fxrID: number) {
+    super(NodeType.Proxy, [
+      new FXRReference(fxrID)
+    ])
+  }
+
+  /**
+   * The ID of the FXR that this node should act as a proxy for.
+   */
+  get fxrID() { return this.actions[0].referenceID }
+  set fxrID(value) { this.actions[0].referenceID = value }
+
+}
+
+/**
+ * A node that only displays one of its child nodes at a time based on
+ * distance thresholds for each.
+ * 
+ * This node can only manage up to five levels of detail. If you need more
+ * levels, you can put another LOD node as the fifth child of this node and set
+ * higher thresholds in that.
+ */
+class LevelOfDetailNode extends Node {
+
+  /**
+   * @param duration The duration for the node to stay active. Once its time is
+   * up, it will deactivate and none of the child nodes will be visible/audible
+   * anymore.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   * @param nodes An array of child nodes.
+   */
+  constructor(duration: number | Property, thresholds: number[], nodes: Node[]) {
+    super(NodeType.LevelOfDetail, [
       new StateEffectMap(0)
-    ], effects, nodes)
+    ], [
+      new LevelOfDetailEffect(duration, thresholds)
+    ], nodes)
   }
 
   mapStates(...effectIndices: number[]) {
@@ -2052,6 +2620,51 @@ class BasicNode extends Node {
     return this
   }
 
+}
+
+/**
+ * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
+ * them a default {@link ActionType.StateEffectMap state-effect map} and a
+ * simpler way to modify the map.
+ */
+class BasicNode extends Node {
+
+  /**
+   * @param effectsOrEffectActions This is either the list of effects to add
+   * to the node or a list of actions to create a {@link BasicEffect} with to
+   * add to the node.
+   * @param nodes A list of child nodes.
+   */
+  constructor(effectsOrEffectActions: Effect[] | Action[] = [], nodes: Node[] = []) {
+    if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
+      throw new Error('Non-node passed as node to BasicNode.')
+    }
+    if (effectsOrEffectActions.every(e => e instanceof Action)) {
+      super(NodeType.Basic, [ new StateEffectMap ], [
+        new BasicEffect(effectsOrEffectActions as Action[])
+      ], nodes)
+    } else {
+      super(
+        NodeType.Basic,
+        [ new StateEffectMap ],
+        effectsOrEffectActions as Effect[],
+        nodes
+      )
+    }
+  }
+
+  mapStates(...effectIndices: number[]) {
+    this.actions = [new StateEffectMap(...effectIndices)]
+    return this
+  }
+
+}
+
+const Nodes = {
+  [NodeType.Root]: RootNode, RootNode,
+  [NodeType.Proxy]: ProxyNode, ProxyNode,
+  [NodeType.LevelOfDetail]: LevelOfDetailNode, LevelOfDetailNode,
+  [NodeType.Basic]: BasicNode, BasicNode,
 }
 
 class Effect {
@@ -2065,7 +2678,9 @@ class Effect {
   }
 
   static read(br: BinaryReader) {
-    const effect = new Effect(br.readInt16())
+    const type = br.readInt16()
+    const effect = new (type in Effects ? Effects[type] : Effect)
+    effect.type = type
     br.assertUint8(0)
     br.assertUint8(1)
     br.assertInt32(0)
@@ -2076,6 +2691,7 @@ class Effect {
     const actionOffset = br.readInt32()
     br.assertInt32(0)
     br.stepIn(actionOffset)
+    effect.actions = []
     for (let i = 0; i < actionCount; ++i) {
       effect.actions.push(Action.read(br))
     }
@@ -2110,7 +2726,10 @@ class Effect {
     type: number
     actions: []
   }) {
-    return new Effect(type, actions.map(action => Action.fromJSON(action)))
+    const effect = new (type in Effects ? Effects[type] : Effect)
+    effect.type = type
+    effect.actions = actions.map(action => Action.fromJSON(action))
+    return effect
   }
 
   toJSON() {
@@ -2122,6 +2741,27 @@ class Effect {
 
   minify() {
     return new Effect(this.type, this.actions.map(action => action.minify()))
+  }
+
+}
+
+/**
+ * Manages the duration and thresholds for the
+ * {@link NodeType.LevelOfDetail level of detail node}.
+ */
+class LevelOfDetailEffect extends Effect {
+
+  /**
+   * @param duration The duration for the node to stay active. Once its time is
+   * up, it will deactivate and none of the child nodes will be visible/audible
+   * anymore.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   */
+  constructor(duration: number | Property, thresholds: number[]) {
+    super(EffectType.LevelOfDetail, [
+      new LevelOfDetailThresholds(duration, thresholds)
+    ])
   }
 
 }
@@ -2170,7 +2810,7 @@ class BasicEffect extends Effect {
       new Action,
       new Action,
       new Action,
-      new Action(ActionType.Unk130, false, true, 0, [
+      new Action(ActionType.Unk130, [
         new IntField(1),
         new Field,
         new Field,
@@ -2254,6 +2894,12 @@ class RandomizerEffect extends Effect {
     }
   }
 
+}
+
+const Effects = {
+  [EffectType.LevelOfDetail]: LevelOfDetailEffect, LevelOfDetailEffect,
+  [EffectType.Basic]: BasicEffect, BasicEffect,
+  [EffectType.Randomizer]: RandomizerEffect, RandomizerEffect,
 }
 
 const commonAction6xxFields2Types = [
@@ -2344,7 +2990,78 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.NodeAttachToCamera]: {
+    Fields1: [
+      FieldType.Boolean,
+      null,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleAcceleration]: {
+    Fields1: [
+      null,
+      FieldType.Float,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleSpeed]: {
+    Fields1: [
+      null,
+      FieldType.Float,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleSpeedRandomTurns]: {
+    Fields1: [
+      FieldType.Float,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleSpeedPartialFollow]: {
+    Fields1: [
+      null,
+      FieldType.Integer,
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
+  [ActionType.PlaySound]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleAccelerationRandomTurns]: {
+    Fields1: [
+      FieldType.Float,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleAccelerationPartialFollow]: {
+    Fields1: [
+      null,
+      FieldType.Integer,
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
   [ActionType.ParticleLifetime]: {
+    Fields1: [
+      FieldType.Integer
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleMultiplier]: {
+    Fields1: [
+      FieldType.Boolean
+    ],
+    Fields2: []
+  },
+  [ActionType.FXRReference]: {
     Fields1: [
       FieldType.Integer
     ],
@@ -2434,6 +3151,51 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: commonAction6xxFields2Types
   },
+  [ActionType.MultiTextureBillboardEx]: {
+    Fields1: [
+      FieldType.Integer, // Orientation mode
+      FieldType.Integer, // Mask
+      FieldType.Integer, // Layer 1
+      FieldType.Integer, // Layer 2
+      FieldType.Boolean, // Uniform scale
+      null,
+      FieldType.Integer, // Columns
+      FieldType.Integer, // Total frames
+      FieldType.Boolean, // Interpolate frames
+      null,
+      null,
+      null,
+      FieldType.Boolean,
+      FieldType.Boolean,
+      null,
+      null,
+      null,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
+  [ActionType.Tracer]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Integer,
+      null,
+      null,
+      FieldType.Float,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.PointLight]: {
     Fields1: [
       null,
@@ -2475,6 +3237,32 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
     ]
   },
+  [ActionType.NodeWindSpeed]: {
+    Fields1: [
+      FieldType.Boolean,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleWindSpeed]: {
+    Fields1: [
+      FieldType.Boolean,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
+  [ActionType.NodeWindAcceleration]: {
+    Fields1: [
+      FieldType.Boolean,
+    ],
+    Fields2: []
+  },
+  [ActionType.ParticleWindAcceleration]: {
+    Fields1: [
+      FieldType.Boolean,
+      FieldType.Integer,
+    ],
+    Fields2: []
+  },
   [ActionType.SpotLight]: {
     Fields1: [
       null,
@@ -2511,9 +3299,6 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
 class Action {
 
   type: ActionType
-  unk02: boolean
-  unk03: boolean
-  unk04: number
   fields1: Field[]
   fields2: Field[]
   properties1: Property[]
@@ -2522,9 +3307,6 @@ class Action {
 
   constructor(
     type: number = ActionType.None,
-    unk02: boolean = false,
-    unk03: boolean = true,
-    unk04: number = 0,
     fields1: Field[] = [],
     fields2: Field[] = [],
     properties1: Property[] = [],
@@ -2532,9 +3314,6 @@ class Action {
     section10s: Section10[] = [],
   ) {
     this.type = type
-    this.unk02 = unk02
-    this.unk03 = unk03
-    this.unk04 = unk04
     this.fields1 = fields1
     this.fields2 = fields2
     this.properties1 = properties1
@@ -2544,9 +3323,10 @@ class Action {
 
   static read(br: BinaryReader): Action {
     const type = br.readInt16()
-    const unk02 = br.readBool()
-    const unk03 = br.readBool()
-    const unk04 = br.readInt32()
+    br.position += 6
+    // br.readUint8() // Unk02
+    // br.readUint8() // Unk03
+    // br.readInt32() // Unk04
     const fieldCount1 = br.readInt32()
     const section10Count = br.readInt32()
     const propertyCount1 = br.readInt32()
@@ -2593,9 +3373,6 @@ class Action {
     if (type in Actions) {
       const action = new Actions[type]()
       action.type = type
-      action.unk02 = unk02
-      action.unk03 = unk03
-      action.unk04 = unk04
       action.fields1 = fields1
       action.fields2 = fields2
       action.properties1 = properties1
@@ -2603,16 +3380,16 @@ class Action {
       action.section10s = section10s
       return action
     } else {
-      return new Action(type, unk02, unk03, unk04, fields1, fields2, properties1, properties2, section10s)
+      return new Action(type, fields1, fields2, properties1, properties2, section10s)
     }
   }
 
   write(bw: BinaryWriter, actions: Action[]) {
     const count = actions.length
     bw.writeInt16(this.type)
-    bw.writeBool(this.unk02)
-    bw.writeBool(this.unk03)
-    bw.writeInt32(this.unk04)
+    bw.writeUint8(0) // Unk02
+    bw.writeUint8(0) // Unk03
+    bw.writeInt32(0) // Unk04
     bw.writeInt32(this.fields1.length)
     bw.writeInt32(this.section10s.length)
     bw.writeInt32(this.properties1.length)
@@ -2687,9 +3464,6 @@ class Action {
 
   static fromJSON({
     type,
-    unk02 = false,
-    unk03 = true,
-    unk04 = 0,
     fields1 = [],
     fields2 = [],
     properties1 = [],
@@ -2697,9 +3471,6 @@ class Action {
     section10s = [],
   }: {
     type: ActionType
-    unk02?: boolean
-    unk03?: boolean
-    unk04?: number
     fields1?: []
     fields2?: []
     properties1?: []
@@ -2708,9 +3479,6 @@ class Action {
   }) {
     return new Action(
       type,
-      unk02,
-      unk03,
-      unk04,
       fields1,
       fields2,
       properties1,
@@ -2722,18 +3490,12 @@ class Action {
   toJSON() {
     const o: {
       type: ActionType
-      unk02?: boolean
-      unk03?: boolean
-      unk04?: number
       fields1?: any[]
       fields2?: any[]
       properties1?: any[]
       properties2?: any[]
       section10s?: any[]
     } = { type: this.type }
-    if (this.unk02 !== false) o.unk02 = this.unk02
-    if (this.unk03 !== true) o.unk03 = this.unk03
-    if (this.unk04 !== 0) o.unk04 = this.unk04
     if (this.fields1.length > 0) o.fields1 = this.fields1.map(field => field.toJSON())
     if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
     if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
@@ -2753,9 +3515,6 @@ class Action {
   minify() {
     return new Action(
       this.type,
-      this.unk02,
-      this.unk03,
-      this.unk04,
       this.fields1,
       this.fields2,
       this.properties1.map(prop => prop.minify()),
@@ -2764,6 +3523,11 @@ class Action {
     )
   }
 
+}
+
+export interface ActionWithNumericalFields extends Action {
+  fields1: NumericalField[]
+  fields2: NumericalField[]
 }
 
 /**
@@ -2791,7 +3555,7 @@ class NodeTranslation extends Action {
    * three valid values: 0, 1, 2. Defaults to 0.
    */
   constructor(translation: Vector3 | Property = [0, 0, 0], unkField: number = 0) {
-    super(ActionType.NodeTranslation, false, true, 0, [
+    super(ActionType.NodeTranslation, [
       new IntField(0)
     ], [], [
       vectorFromArg(translation)
@@ -2838,7 +3602,7 @@ class NodeSpin extends Action {
     spinZMult: number | Property = 1,
     unkField: number = 1
   ) {
-    super(ActionType.NodeSpin, false, true, 0, [
+    super(ActionType.NodeSpin, [
       new IntField(unkField)
     ], [], [
       scalarFromArg(spinX),
@@ -2968,7 +3732,7 @@ class NodeTransform extends Action {
       randomRotationY === 0 &&
       randomRotationZ === 0
     ) {
-      super(ActionType.StaticNodeTransform, false, true, 0, [
+      super(ActionType.StaticNodeTransform, [
         // These two actions have their X-axis reversed for some reason
         new FloatField(-translateX),
         new FloatField(translateY),
@@ -2978,7 +3742,7 @@ class NodeTransform extends Action {
         new FloatField(rotateZ),
       ])
     } else {
-      super(ActionType.RandomNodeTransform, false, true, 0, [
+      super(ActionType.RandomNodeTransform, [
         new FloatField(-translateX),
         new FloatField(translateY),
         new FloatField(translateZ),
@@ -3084,7 +3848,7 @@ class NodeTransform extends Action {
         } else {
           // This doesn't use the randomization fields, return a static
           // transform action instead
-          return new Action(ActionType.StaticNodeTransform, false, true, 0, [
+          return new Action(ActionType.StaticNodeTransform, [
             this.fields1[0],
             this.fields1[1],
             this.fields1[2],
@@ -3119,29 +3883,302 @@ class NodeTransform extends Action {
 
 }
 
-class PartialFollow extends Action {
+/**
+ * Attaches the node to the camera.
+ */
+class NodeAttachToCamera extends Action {
 
-  constructor(
-    acceleration: number | Property = 0,
-    followFactor: number | Property = 0,
-    maxRandomTurnAngle: number | Property = 0,
-    unkProp1: number | Property = 0,
-    unkProp2: number | Property = 0,
-    unkField0: number = 0,
-    unkField1: number = 0,
-    unkField2: number = 0,
-  ) {
-    super(ActionType.PartialFollow, false, true, 0, [
-      new IntField(unkField0),
-      new IntField(unkField1),
-      new IntField(unkField2), // Boolean? "Follow translation only"
-    ], [], [
-      scalarFromArg(acceleration),
-      scalarFromArg(unkProp1),
-      scalarFromArg(unkProp2),
-      scalarFromArg(maxRandomTurnAngle),
-      scalarFromArg(followFactor),
+  declare fields1: [BoolField, IntField]
+
+  /**
+   * @param followRotation Disable this to stop the node from following the
+   * rotation of the camera. Defaults to true.
+   * @param unkField1 Unknown. Fields1, index 1. Defaults to 1.
+   */
+  constructor(followRotation: boolean = true, unkField1: number = 1) {
+    super(ActionType.NodeAttachToCamera, [
+      new BoolField(followRotation),
+      new IntField(unkField1)
     ])
+  }
+
+  /**
+   * Controls if the node should also follow the rotation of the camera or only
+   * the translation.
+   */
+  get followRotation() { return this.fields1[0].value }
+  set followRotation(value) { this.fields1[0].value = value }
+
+}
+
+/**
+ * Plays a sound effect.
+ */
+class PlaySound extends Action {
+
+  /**
+   * @param soundID The ID of the sound to play.
+   * @param repeat Controls whether the sound will repeat or not.
+   * 
+   * Does not seem to work in Elden Ring.
+   * @param volume Volume multiplier.
+   * 
+   * Does not seem to work in Elden Ring.
+   */
+  constructor(soundID: number, repeat: boolean = false, volume: number = 1) {
+    super(ActionType.PlaySound, [
+      new IntField(soundID),
+      new FloatField(volume),
+      new BoolField(repeat)
+    ])
+  }
+
+  /**
+   * The ID of the sound to play.
+   */
+  get soundID() { return this.fields1[0].value as number }
+  set soundID(value) { this.fields1[0].value = value }
+
+  /**
+   * Volume multiplier.
+   * 
+   * Does not seem to work in Elden Ring.
+   */
+  get volume() { return this.fields1[1].value as number }
+  set volume(value) { this.fields1[1].value = value }
+
+  /**
+   * Controls whether the sound will repeat or not.
+   * 
+   * Does not seem to work in Elden Ring.
+   */
+  get repeat() { return this.fields1[2].value as number }
+  set repeat(value) { this.fields1[2].value = value }
+
+}
+
+export interface ParticleMovementParams {
+  /**
+   * Downwards acceleration. This will always point towards global down, even
+   * if the node is rotated. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: number | Property
+  /**
+   * The acceleration for the particles. The direction depends on the emitter
+   * shape. Defaults to 0.
+   * 
+   * This can not be used together with any of the speed properties:
+   * - {@link speed}
+   * - {@link speedMult}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration?: number | Property
+  /**
+   * Multiplier for the {@link acceleration} property. Defaults to 1.
+   * 
+   * This can not be used together with any of the speed properties:
+   * - {@link speed}
+   * - {@link speedMult}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMult?: number | Property
+  /**
+   * The speed that the particles will travel at. The direction depends on the
+   * emitter shape. Defaults to 0.
+   * 
+   * This can not be used together with any of the acceleration properties:
+   * - {@link acceleration}
+   * - {@link accelerationMult}
+   * 
+   * Setting this will produce one of the speed actions instead of one of the
+   * acceleration actions:
+   * - {@link ActionType.ParticleSpeed ParticleSpeed}
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed?: number | Property
+  /**
+   * Multiplier for the {@link speed} property. Defaults to 1.
+   * 
+   * This can not be used together with any of the acceleration properties:
+   * - {@link acceleration}
+   * - {@link accelerationMult}
+   * 
+   * Setting this will produce one of the speed actions instead of one of the
+   * acceleration actions:
+   * - {@link ActionType.ParticleSpeed ParticleSpeed}
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMult?: number | Property
+  /**
+   * The particles will turn a random amount based on this value at intervals
+   * defined by {@link turnInterval}.
+   * 
+   * Unless one of the partial follow parameters are set, setting this will
+   * produce one of the random turns actions:
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle?: number | Property
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at
+   * this interval. The units are seconds, but due to how the field that stores
+   * this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * Unless one of the partial follow parameters are set, setting this will
+   * produce one of the random turns actions:
+   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+   * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make the {@link followFactor} only affect translation
+   * and not rotation. Defaults to true.
+   * 
+   * Setting this will produce one of the partial follow actions:
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  followRotation?: boolean
+  /**
+   * Controls how well the particles should follow the node if they are not
+   * attached. At 0, particles will not follow at all. At 1, particles will
+   * follow perfectly, as if attached to the node. Negative values will make
+   * the particles move in the opposite direction compared to the node. Values
+   * greater than 1 will make the particles exaggerate the node's movement.
+   * Defaults to 0.
+   * 
+   * Setting this will produce one of the partial follow actions:
+   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+   * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: number | Property
+  /**
+   * Unknown. Fields1, index 0.
+   */
+  unkField0?: number
+  /**
+   * Unknown. Fields1, index 1.
+   * 
+   * Only used when creating one of the basic particle movement actions:
+   * - {@link ActionType.ParticleAcceleration}
+   * - {@link ActionType.ParticleSpeed}
+   */
+  unkField1?: number
+}
+/**
+ * Controls how particles move.
+ * 
+ * This class covers all of the Particle Movement action types:
+ * - {@link ActionType.ParticleAcceleration ParticleAcceleration}
+ * - {@link ActionType.ParticleSpeed ParticleSpeed}
+ * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
+ * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
+ * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+ * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
+ * 
+ * Which one is produced by the constructor depends on what arguments are set.
+ * By default, the basic acceleration action is created.
+ */
+class ParticleMovement extends Action {
+
+  constructor({
+    gravity = 0,
+    maxTurnAngle = null,
+    turnInterval = null,
+    acceleration = null,
+    accelerationMult = null,
+    speed = null,
+    speedMult = null,
+    followRotation = null,
+    followFactor = null,
+    unkField0 = 0,
+    unkField1 = null,
+  }: ParticleMovementParams = {}) {
+    let asProp: number | Property, asMultProp: number | Property
+    const isSpeedAct = speed !== null || speedMult !== null
+    if (isSpeedAct) {
+      if (acceleration !== null || accelerationMult !== null) {
+        throw new Error('The speed properties and the acceleration properties cannot be used together in a ParticleMovement action.')
+      }
+      asProp = speed ?? 0
+      asMultProp = speedMult ?? 1
+    } else {
+      asProp = acceleration ?? 0
+      asMultProp = accelerationMult ?? 1
+    }
+    if (followFactor !== null || followRotation !== null) {
+      turnInterval ??= 0
+      maxTurnAngle ??= 0
+      followRotation ??= true
+      followFactor ??= 0
+      super(
+        isSpeedAct ?
+          ActionType.ParticleSpeedPartialFollow
+        : ActionType.ParticleAccelerationPartialFollow,
+        [
+          new FloatField(unkField0),
+          new IntField(Math.round(turnInterval * 50)),
+          new BoolField(!followRotation),
+        ], [], [
+          scalarFromArg(gravity),
+          scalarFromArg(asProp),
+          scalarFromArg(asMultProp),
+          scalarFromArg(maxTurnAngle),
+          scalarFromArg(followFactor),
+        ]
+      )
+    } else if (turnInterval !== null || maxTurnAngle !== null) {
+      turnInterval ??= 0
+      maxTurnAngle ??= 0
+      super(
+        isSpeedAct ?
+          ActionType.ParticleSpeedRandomTurns
+        : ActionType.ParticleAccelerationRandomTurns,
+        [
+          new FloatField(unkField0),
+          new IntField(Math.round(turnInterval * 50)),
+        ], [], [
+          scalarFromArg(gravity),
+          scalarFromArg(asProp),
+          scalarFromArg(asMultProp),
+          scalarFromArg(maxTurnAngle),
+        ]
+      )
+    } else {
+      unkField1 ??= 0
+      super(
+        isSpeedAct ?
+          ActionType.ParticleSpeed
+        : ActionType.ParticleAcceleration,
+        [
+          new FloatField(unkField0),
+          new FloatField(unkField1),
+        ], [], [
+          scalarFromArg(gravity),
+          scalarFromArg(asProp),
+          scalarFromArg(asMultProp),
+        ]
+      )
+    }
   }
 
 }
@@ -3182,7 +4219,7 @@ class NodeLifetime extends Action {
     unkField1: number = 1,
     unkField3: number = 0,
   ) {
-    super(ActionType.NodeLifetime, false, true, 0, [
+    super(ActionType.NodeLifetime, [
       new FloatField(delay),
       new IntField(unkField1),
       new IntField(attachment),
@@ -3220,7 +4257,7 @@ class ParticleLifetime extends Action {
     duration: number | Property = -1,
     attachment: AttachMode = AttachMode.Parent
   ) {
-    super(ActionType.ParticleLifetime, false, true, 0, [
+    super(ActionType.ParticleLifetime, [
       new IntField(attachment)
     ], [], [
       scalarFromArg(duration)
@@ -3252,9 +4289,8 @@ class ParticleMultiplier extends Action {
    * @param uniformScale Scales the model uniformly based on {@link scaleX}.
    * The other scale properties in this action have no effect when this is
    * enabled.
-   * @param acceleration Controls the acceleration of the particles, but only
-   * if they have an action that allows them to accelerate. The direction of
-   * the acceleration depends on the emitter shape.
+   * @param speed Controls the speed of the particles, but only if they have an
+   * action in slot 10. The direction depends on the emitter shape.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    * @param scaleX Multiplier for the scale along the X-axis. If
@@ -3275,21 +4311,73 @@ class ParticleMultiplier extends Action {
    */
   constructor(
     uniformScale: boolean = true,
-    acceleration: number | Property = 0,
+    speed: number | Property = 0,
     scaleX: number | Property = 1,
     scaleY: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
     scaleZ: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
     color: Vector4 | Property = [1, 1, 1, 1],
   ) {
-    super(ActionType.ParticleMultiplier, false, true, 0, [
+    super(ActionType.ParticleMultiplier, [
       new BoolField(uniformScale),
     ], [], [
-      scalarFromArg(acceleration),
+      scalarFromArg(speed),
       scalarFromArg(scaleX),
       scalarFromArg(scaleY),
       scalarFromArg(scaleZ),
       vectorFromArg(color),
     ])
+  }
+
+}
+
+/**
+ * References another FXR by its ID.
+ */
+class FXRReference extends Action {
+
+  declare fields1: [IntField]
+
+  /**
+   * @param referenceID The ID of the referenced FXR.
+   */
+  constructor(referenceID: number) {
+    super(ActionType.FXRReference, [
+      new IntField(referenceID)
+    ])
+  }
+
+  /**
+   * The ID of the referenced FXR.
+   */
+  get referenceID() { return this.fields1[0].value }
+  set referenceID(value) { this.fields1[0].value = value }
+
+}
+
+/**
+ * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
+ * manage the duration and thresholds for the
+ * {@link NodeType.LevelOfDetail level of detail node}.
+ */
+class LevelOfDetailThresholds extends Action {
+
+  declare fields1: IntField[]
+
+  /**
+   * @param duration The duration for the node to stay active. Once its time is
+   * up, it will deactivate and none of the child nodes will be visible/audible
+   * anymore.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   */
+  constructor(duration: number | Property = -1, thresholds: number[] = []) {
+    thresholds = arrayOf(5, i => thresholds[i] ?? 1000)
+    super(
+      ActionType.LevelOfDetail,
+      thresholds.map(l => new IntField(l)), [], [
+        scalarFromArg(duration)
+      ]
+    )
   }
 
 }
@@ -3304,7 +4392,10 @@ class ParticleMultiplier extends Action {
 class StateEffectMap extends Action {
 
   constructor(...effectIndices: number[]) {
-    super(ActionType.StateEffectMap, true, false, 0, [], [], [], [], [
+    if (effectIndices.length === 0) {
+      effectIndices.push(0)
+    }
+    super(ActionType.StateEffectMap, [], [], [], [], [
       new Section10(effectIndices.map(i => new IntField(i)))
     ])
   }
@@ -3317,7 +4408,7 @@ class StateEffectMap extends Action {
 class NodeWeights extends Action {
 
   constructor(...weights: number[]) {
-    super(ActionType.NodeWeights, false, true, 1, [], [], [], [], [
+    super(ActionType.NodeWeights, [], [], [], [], [
       new Section10(weights.map(w => new IntField(w)))
     ])
   }
@@ -3359,7 +4450,7 @@ class PeriodicEmitter extends Action {
     maxConcurrent: number | Property = -1,
     unkField: number = 1
   ) {
-    super(ActionType.PeriodicEmitter, false, true, 0, [
+    super(ActionType.PeriodicEmitter, [
       new IntField(unkField)
     ], [], [
       interval instanceof Property ? interval : new ConstantProperty(interval as number),
@@ -3421,7 +4512,7 @@ class EqualDistanceEmitter extends Action {
     unkField1: number = 0,
     unkProp: number | Property = -1
   ) {
-    super(ActionType.EqualDistanceEmitter, false, true, 0, [
+    super(ActionType.EqualDistanceEmitter, [
       new IntField(unkField0),
       new IntField(unkField1),
     ], [], [
@@ -3440,7 +4531,7 @@ class EqualDistanceEmitter extends Action {
 class OneTimeEmitter extends Action {
 
   constructor() {
-    super(ActionType.OneTimeEmitter, false, true, 2)
+    super(ActionType.OneTimeEmitter)
   }
 
 }
@@ -3459,7 +4550,7 @@ class PointEmitterShape extends Action {
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(unkField: number = 5) {
-    super(ActionType.PointEmitterShape, false, true, 0, [
+    super(ActionType.PointEmitterShape, [
       new IntField(unkField)
     ])
   }
@@ -3503,7 +4594,7 @@ class DiskEmitterShape extends Action {
     centerWeight: number | Property = 0,
     unkField: number = 5
   ) {
-    super(ActionType.DiskEmitterShape, false, true, 0, [
+    super(ActionType.DiskEmitterShape, [
       new IntField(unkField)
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
@@ -3553,7 +4644,7 @@ class RectangleEmitterShape extends Action {
     centerWeight: number | Property = 0,
     unkField: number = 5
   ) {
-    super(ActionType.RectangleEmitterShape, false, true, 0, [
+    super(ActionType.RectangleEmitterShape, [
       new IntField(unkField)
     ], [], [
       sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
@@ -3589,7 +4680,7 @@ class SphereEmitterShape extends Action {
     volume: boolean = true,
     radius: number | Property = 1,
   ) {
-    super(ActionType.SphereEmitterShape, false, true, 0, [
+    super(ActionType.SphereEmitterShape, [
       new BoolField(volume)
     ], [], [
       radius instanceof Property ? radius : new ConstantProperty(radius as number),
@@ -3632,7 +4723,7 @@ class BoxEmitterShape extends Action {
     sizeZ: number | Property = sizeX instanceof Property ? Property.copy(sizeX) : sizeX,
     unkField: number = 0,
   ) {
-    super(ActionType.BoxEmitterShape, false, true, 0, [
+    super(ActionType.BoxEmitterShape, [
       new IntField(unkField),
       new BoolField(volume),
     ], [], [
@@ -3679,7 +4770,7 @@ class CylinderEmitterShape extends Action {
     yAxis: boolean = true,
     unkField: number = 5,
   ) {
-    super(ActionType.CylinderEmitterShape, false, true, 0, [
+    super(ActionType.CylinderEmitterShape, [
       new IntField(unkField),
       new BoolField(volume),
       new BoolField(yAxis),
@@ -3881,7 +4972,7 @@ class QuadLine extends CommonAction6xxFields2Action {
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
   }: QuadLineParams = {}) {
-    super(ActionType.QuadLine, false, true, 0, [
+    super(ActionType.QuadLine, [
       /*  0 */ new IntField(-1),
       /*  1 */ new IntField(1),
       /*  2 */ new IntField(1),
@@ -4125,18 +5216,15 @@ export interface BillboardExParams {
    * using a {@link PropertyFunction.Linear linear property} or similar.
    * Defaults to 0.
    * 
-   * Seemingly identical to
-   * {@link BillboardExParams.frameIndexOffset unkProp1_22}? The sum of
-   * these two properties is the actual frame index that gets used.
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex?: number | Property
   /**
-   * Seemingly identical to
-   * {@link BillboardExParams.frameIndex frameIndex}? The sum of
-   * these two properties is the actual frame index that gets used. Defaults to
-   * 0.
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -4194,7 +5282,7 @@ export interface BillboardExParams {
   /**
    * If enabled, the particle width-related properties and fields will control
    * both the width and height of the particles, and the height counterparts
-   * will be ignored. Defaults to true.
+   * will be ignored. Defaults to false.
    * 
    * See also:
    * - {@link BillboardExParams.width width}
@@ -4360,7 +5448,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     normalMap = 0,
     randomWidthMultiplier = 1,
     randomHeightMultiplier = 1,
-    uniformScale = true,
+    uniformScale = false,
     columns = 1,
     totalFrames = 1,
     interpolateFrames = true,
@@ -4382,7 +5470,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     unkVec4Prop2_5 = [1, 1, 1, 1],
     unkScalarProp2_6 = 0,
   }: BillboardExParams = {}) {
-    super(ActionType.BillboardEx, false, true, 0, [
+    super(ActionType.BillboardEx, [
       /*  0 */ new IntField(orientation),
       /*  1 */ new IntField(normalMap),
       /*  2 */ new FloatField(randomWidthMultiplier),
@@ -4587,6 +5675,9 @@ class BillboardEx extends CommonAction6xxFields2Action {
   get frameIndex() { return this.properties1[21] }
   set frameIndex(value) { setPropertyInList(this.properties1, 21, value) }
 
+  get frameIndexOffset() { return this.properties1[22] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 22, value) }
+
   get rgbMultiplier() { return this.properties2[0] }
   set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
 
@@ -4678,6 +5769,1320 @@ class BillboardEx extends CommonAction6xxFields2Action {
 
 }
 
+export interface MultiTextureBillboardExParams {
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | Property
+  /**
+   * Offset for the position of the particle. Each axis has its own property.
+   * Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offset?: Vector3 | Property[]
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: number | Property
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: number | Property
+  /**
+   * Color multiplier for the particle. Seemingly identical to {@link color3}?
+   * Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4 | Property
+  /**
+   * Color multiplier for the particle. Seemingly identical to {@link color1}?
+   * Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}.
+   */
+  color3?: Vector4 | Property
+  /**
+   * Color multiplier for both of the texture layers. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  colorLayers?: Vector4 | Property
+  /**
+   * Color multiplier for Layer 1. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1Color?: Vector4 | Property
+  /**
+   * Color multiplier for Layer 2. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2Color?: Vector4 | Property
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold?: number | Property
+  /**
+   * Rotation in degrees. Each axis has its own property. Defaults to
+   * [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  rotation?: Vector3 | Property[]
+  /**
+   * Rotation speed in degrees per second. Each axis has its own property.
+   * Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  rotationSpeed?: Vector3 | Property[]
+  /**
+   * Rotation speed multiplier. Each axis has its own property. Defaults to
+   * [1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  rotationSpeedMultiplier?: Vector3 | Property[]
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * Defaults to 0.
+   * 
+   * Seemingly identical to
+   * {@link BillboardExParams.frameIndexOffset unkProp1_22}? The sum of
+   * these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: number | Property
+  /**
+   * Seemingly identical to
+   * {@link BillboardExParams.frameIndex frameIndex}? The sum of
+   * these two properties is the actual frame index that gets used. Defaults to
+   * 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: number | Property
+  /**
+   * Horiztonal scroll speed for Layer 1. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1SpeedU?: number | Property
+  /**
+   * Vertical scroll speed for Layer 1. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1SpeedV?: number | Property
+  /**
+   * Horizontal offset for the UV coordinates of Layer 1. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  layer1OffsetU?: number | Property
+  /**
+   * Vertical offset for the UV coordinates of Layer 1. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  layer1OffsetV?: number | Property
+  /**
+   * Horizontal scale for the UV coordinates of Layer 1. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1ScaleU?: number | Property
+  /**
+   * Vertical scale for the UV coordinates of Layer 1. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1ScaleV?: number | Property
+  /**
+   * Horiztonal scroll speed for Layer 2. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2SpeedU?: number | Property
+  /**
+   * Vertical scroll speed for Layer 2. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2SpeedV?: number | Property
+  /**
+   * Horizontal offset for the UV coordinates of Layer 2. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  layer2OffsetU?: number | Property
+  /**
+   * Vertical offset for the UV coordinates of Layer 2. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  layer2OffsetV?: number | Property
+  /**
+   * Horizontal scale for the UV coordinates of Layer 2. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2ScaleU?: number | Property
+  /**
+   * Vertical scale for the UV coordinates of Layer 2. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2ScaleV?: number | Property
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: number | Property
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: number | Property
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information. Defaults to
+   * {@link OrientationMode.Camera}.
+   */
+  orientation?: OrientationMode
+  /**
+   * Mask texture ID. Defaults to 1.
+   */
+  mask?: number
+  /**
+   * Layer 1 texture ID. Defaults to 1.
+   */
+  layer1?: number
+  /**
+   * Layer 2 texture ID. Defaults to 1.
+   */
+  layer2?: number
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  uniformScale?: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`. Defaults to 1.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture. Defaults to 1.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix
+   * frames when the frame index is not a whole number. For example, if the
+   * frame index is 0.5, enabling this will cause the average of the first two
+   * frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will just be truncated to get a whole number.
+   * 
+   * Defaults to true.
+   * 
+   * See also:
+   * - {@link frameIndex}
+   */
+  interpolateFrames?: boolean
+  /**
+   * Controls how the particles should intersect with objects they touch. If
+   * disabled, the particles will simply be cut off where they intersect
+   * objects. If enabled, they will instead display in front of the object if
+   * they are close enough, and will fade out with distance from the object's
+   * surface that is blocking the view of the particle. Defaults to true.
+   */
+  depthBlend?: boolean
+  /**
+   * Controls the shape of the particles. If disabled, the particles will be
+   * rectangular. If enabled, they will be octagonal. Defaults to false.
+   */
+  octagonal?: boolean
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera. Defaults to 0.
+   * 
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  negativeDepthOffset?: number
+  /**
+   * Controls how dark shaded parts of the particle are. Defaults to 0.
+   */
+  shadowDarkness?: number
+  /**
+   * Controls whether or not specular highlights should be visible. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: boolean
+  /**
+   * Controls how sharp the specular highlights are. Defaults to 0.25.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Unlit}.
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+}
+
+/**
+ * Particle with multiple texture that can scroll.
+ */
+class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
+
+  constructor({
+    orientation = OrientationMode.Camera,
+    mask = 1,
+    layer1 = 1,
+    layer2 = 1,
+    uniformScale = false,
+    columns = 1,
+    totalFrames = 1,
+    interpolateFrames = true,
+    depthBlend = true,
+    octagonal = false,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    negativeDepthOffset = 0,
+    shadowDarkness = 0,
+    specular = false,
+    glossiness = 0.25,
+    lighting = LightingMode.Unlit,
+    specularity = 0.5,
+    blendMode = BlendMode.Normal,
+    offset = [0, 0, 0],
+    width = 1,
+    height = 1,
+    rotation = [0, 0, 0],
+    rotationSpeed = [0, 0, 0],
+    rotationSpeedMultiplier = [1, 1, 1],
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    colorLayers = [1, 1, 1, 1],
+    layer1Color = [1, 1, 1, 1],
+    layer2Color = [1, 1, 1, 1],
+    alphaThreshold = 0,
+    frameIndex = 0,
+    frameIndexOffset = 0,
+    layer1SpeedU = 0,
+    layer1SpeedV = 0,
+    layer1OffsetU = 0,
+    layer1OffsetV = 0,
+    layer1ScaleU = 1,
+    layer1ScaleV = 1,
+    layer2SpeedU = 0,
+    layer2SpeedV = 0,
+    layer2OffsetU = 0,
+    layer2OffsetV = 0,
+    layer2ScaleU = 1,
+    layer2ScaleV = 1,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: MultiTextureBillboardExParams = {}) {
+    super(ActionType.MultiTextureBillboardEx, [
+      /*  0 */ new IntField(orientation),
+      /*  1 */ new IntField(mask),
+      /*  2 */ new IntField(layer1),
+      /*  3 */ new IntField(layer2),
+      /*  4 */ new BoolField(uniformScale),
+      /*  5 */ new IntField(0),
+      /*  6 */ new IntField(columns),
+      /*  7 */ new IntField(totalFrames),
+      /*  8 */ new BoolField(interpolateFrames),
+      /*  9 */ new IntField(-2),
+      /* 10 */ new IntField(-2),
+      /* 11 */ new BoolField(depthBlend),
+      /* 12 */ new BoolField(octagonal),
+      /* 13 */ new IntField(0),
+      /* 14 */ new IntField(1),
+      /* 15 */ new IntField(1),
+      /* 16 */ new IntField(0),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(negativeDepthOffset),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(5),
+      /* 30 */ new FloatField(shadowDarkness),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(specular),
+      /* 34 */ new FloatField(glossiness),
+      /* 35 */ new IntField(lighting),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new FloatField(specularity),
+      /* 39 */ new IntField(1),
+      /* 40 */ new IntField(0),
+      /* 41 */ new IntField(0),
+      /* 42 */ new IntField(0),
+      /* 43 */ new IntField(0),
+      /* 44 */ new IntField(0),
+      /* 45 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(blendMode),
+      /*  1 */ scalarFromArg(offset[0]),
+      /*  2 */ scalarFromArg(offset[1]),
+      /*  3 */ scalarFromArg(offset[2]),
+      /*  4 */ scalarFromArg(width),
+      /*  5 */ scalarFromArg(height),
+      /*  6 */ scalarFromArg(rotation[0]),
+      /*  7 */ scalarFromArg(rotation[1]),
+      /*  8 */ scalarFromArg(rotation[2]),
+      /*  9 */ scalarFromArg(rotationSpeed[0]),
+      /* 10 */ scalarFromArg(rotationSpeedMultiplier[0]),
+      /* 11 */ scalarFromArg(rotationSpeed[1]),
+      /* 12 */ scalarFromArg(rotationSpeedMultiplier[1]),
+      /* 13 */ scalarFromArg(rotationSpeed[2]),
+      /* 14 */ scalarFromArg(rotationSpeedMultiplier[2]),
+      /* 15 */ vectorFromArg(color1),
+      /* 16 */ vectorFromArg(color2),
+      /* 17 */ vectorFromArg(color3),
+      /* 18 */ vectorFromArg(colorLayers),
+      /* 19 */ vectorFromArg(layer1Color),
+      /* 20 */ vectorFromArg(layer2Color),
+      /* 21 */ scalarFromArg(alphaThreshold),
+      /* 22 */ scalarFromArg(frameIndex),
+      /* 23 */ scalarFromArg(frameIndexOffset),
+      /* 24 */ new ConstantProperty(0),
+      /* 25 */ new ConstantProperty(0),
+      /* 26 */ new ConstantProperty(0),
+      /* 27 */ new ConstantProperty(0),
+      /* 28 */ new ConstantProperty(1),
+      /* 29 */ new ConstantProperty(1),
+      /* 30 */ scalarFromArg(layer1SpeedU),
+      /* 31 */ scalarFromArg(layer1SpeedV),
+      /* 32 */ scalarFromArg(layer1OffsetU),
+      /* 33 */ scalarFromArg(layer1OffsetV),
+      /* 34 */ scalarFromArg(layer1ScaleU),
+      /* 35 */ scalarFromArg(layer1ScaleV),
+      /* 30 */ scalarFromArg(layer2SpeedU),
+      /* 31 */ scalarFromArg(layer2SpeedV),
+      /* 38 */ scalarFromArg(layer2OffsetU),
+      /* 39 */ scalarFromArg(layer2OffsetV),
+      /* 34 */ scalarFromArg(layer2ScaleU),
+      /* 35 */ scalarFromArg(layer2ScaleV),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  get blendMode() { return this.properties1[0].stops[1].value as BlendMode }
+  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
+  get blendModeProperty() { return this.properties1[0] }
+
+  get offsetX() { return this.properties1[1] }
+  set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
+
+  get offsetY() { return this.properties1[2] }
+  set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
+
+  get offsetZ() { return this.properties1[3] }
+  set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
+
+  get offset() { return this.properties1.slice(1, 4) }
+  set offset(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 1 + i, value[i])
+    }
+  }
+
+  get width() { return this.properties1[4] }
+  set width(value) { setPropertyInList(this.properties1, 4, value) }
+
+  get height() { return this.properties1[5] }
+  set height(value) { setPropertyInList(this.properties1, 5, value) }
+
+  get rotationX() { return this.properties1[6] }
+  set rotationX(value) { setPropertyInList(this.properties1, 6, value) }
+
+  get rotationY() { return this.properties1[7] }
+  set rotationY(value) { setPropertyInList(this.properties1, 7, value) }
+
+  get rotationZ() { return this.properties1[8] }
+  set rotationZ(value) { setPropertyInList(this.properties1, 8, value) }
+
+  get rotation() { return this.properties1.slice(6, 9) }
+  set rotation(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 6 + i, value[i])
+    }
+  }
+
+  get rotationSpeedX() { return this.properties1[9] }
+  set rotationSpeedX(value) { setPropertyInList(this.properties1, 9, value) }
+
+  get rotationSpeedY() { return this.properties1[11] }
+  set rotationSpeedY(value) { setPropertyInList(this.properties1, 11, value) }
+
+  get rotationSpeedZ() { return this.properties1[13] }
+  set rotationSpeedZ(value) { setPropertyInList(this.properties1, 13, value) }
+
+  get rotationSpeed() { return [
+    this.properties1[9],
+    this.properties1[11],
+    this.properties1[13],
+  ] }
+  set rotationSpeed(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 9 + i * 2, value[i])
+    }
+  }
+
+  get rotationSpeedMultiplierX() { return this.properties1[10] }
+  set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 10, value) }
+
+  get rotationSpeedMultiplierY() { return this.properties1[12] }
+  set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 12, value) }
+
+  get rotationSpeedMultiplierZ() { return this.properties1[14] }
+  set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 14, value) }
+
+  get rotationSpeedMultiplier() { return [
+    this.properties1[10],
+    this.properties1[12],
+    this.properties1[14],
+  ] }
+  set rotationSpeedMultiplier(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 10 + i * 2, value[i])
+    }
+  }
+
+  get color1() { return this.properties1[15] }
+  set color1(value) { setPropertyInList(this.properties1, 15, value) }
+
+  get color2() { return this.properties1[16] }
+  set color2(value) { setPropertyInList(this.properties1, 16, value) }
+
+  get color3() { return this.properties1[17] }
+  set color3(value) { setPropertyInList(this.properties1, 17, value) }
+
+  get layersColor() { return this.properties1[18] }
+  set layersColor(value) { setPropertyInList(this.properties1, 18, value) }
+
+  get layer1Color() { return this.properties1[19] }
+  set layer1Color(value) { setPropertyInList(this.properties1, 19, value) }
+
+  get layer2Color() { return this.properties1[20] }
+  set layer2Color(value) { setPropertyInList(this.properties1, 20, value) }
+
+  get alphaThreshold() { return this.properties1[21] }
+  set alphaThreshold(value) { setPropertyInList(this.properties1, 21, value) }
+
+  get frameIndex() { return this.properties1[22] }
+  set frameIndex(value) { setPropertyInList(this.properties1, 22, value) }
+
+  get frameIndexOffset() { return this.properties1[23] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 23, value) }
+
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+  get orientation() { return this.fields1[0].value as OrientationMode }
+  set orientation(value) { this.fields1[0].value = value }
+
+  get mask() { return this.fields1[1].value as number }
+  set mask(value) { this.fields1[1].value = value }
+
+  get layer1() { return this.fields1[2].value as number }
+  set layer1(value) { this.fields1[2].value = value }
+
+  get layer2() { return this.fields1[3].value as number }
+  set layer2(value) { this.fields1[3].value = value }
+
+  get uniformScale() { return this.fields1[4].value as boolean }
+  set uniformScale(value) { this.fields1[4].value = value }
+
+  get columns() { return this.fields1[6].value as number }
+  set columns(value) { this.fields1[6].value = value }
+
+  get totalFrames() { return this.fields1[7].value as number }
+  set totalFrames(value) { this.fields1[7].value = value }
+
+  get interpolateFrames() { return this.fields1[8].value as number }
+  set interpolateFrames(value) { this.fields1[8].value = value }
+
+  get depthBlend() { return this.fields1[11].value as boolean }
+  set depthBlend(value) { this.fields1[11].value = value }
+
+  get octagonal() { return this.fields1[12].value as boolean }
+  set octagonal(value) { this.fields1[12].value = value }
+
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera.
+   * 
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  get negativeDepthOffset() { return this.fields2[26].value as number }
+  set negativeDepthOffset(value) { this.fields2[26].value = value }
+
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  get shadowDarkness() { return this.fields2[30].value as number }
+  set shadowDarkness(value) { this.fields2[30].value = value }
+
+  /**
+   * Controls whether or not specular highlights should be visible.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  get specular() { return this.fields2[33].value as number }
+  set specular(value) { this.fields2[33].value = value }
+
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  get glossiness() { return this.fields2[34].value as number }
+  set glossiness(value) { this.fields2[34].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  get specularity() { return this.fields2[38].value as number }
+  set specularity(value) { this.fields2[38].value = value }
+
+}
+
+export interface TracerParams {
+  /**
+   * Controls the orientation mode for the trail. Note that this is **not**
+   * {@link OrientationMode} - It works differently for this action, and not
+   * all of the values have been documented yet. Defaults to 1.
+   */
+  orientation?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many seconds to wait between new segments being created. Lower values
+   * produce a smoother trail. Defaults to 0.
+   */
+  segmentInterval?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * long each segment should last in seconds. Defaults to 1.
+   */
+  segmentDuration?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many segments may exist at the same time. Defaults to 50.
+   */
+  concurrentSegments?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`. Defaults to 1.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture. Defaults to 1.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node
+   * or not. If it is attached, the texture will slide along the segments to
+   * follow the source wherever it moves, as if it was a flag attached to a
+   * pole. If it is not attached, the texture will stay where it was when the
+   * segment was created, like a skid mark on a road where the road is the
+   * segments and the mark is the texture, it wouldn't follow the car/node.
+   * Defaults to false.
+   */
+  attachedUV?: boolean
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera. Defaults to 0.
+   * 
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  negativeDepthOffset?: number
+  /**
+   * Controls how dark shaded parts of the particle are. Defaults to 0.
+   */
+  shadowDarkness?: number
+  /**
+   * Controls whether or not specular highlights should be visible. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: boolean
+  /**
+   * Controls how sharp the specular highlights are. Defaults to 0.25.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Unlit}.
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  /**
+   * The ID of the texture for the trail. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  texture?: number | Property
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: number | Property
+  /**
+   * The length of the trail source. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  length?: number | Property
+  /**
+   * Multiplier for {@link length}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  lengthMultiplier?: number | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  color3?: Vector4 | Property
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold?: number | Property
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * Defaults to 0.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: number | Property
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: number | Property
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: number | Property
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: number | Property
+}
+
+/**
+ * Creates a trail behind moving effects.
+ */
+class Tracer extends CommonAction6xxFields2Action {
+
+  constructor({
+    orientation = 1,
+    segmentInterval = 0,
+    segmentDuration = 1,
+    concurrentSegments = 50,
+    columns = 1,
+    totalFrames = 1,
+    attachedUV = false,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    negativeDepthOffset = 0,
+    shadowDarkness = 0,
+    specular = false,
+    glossiness = 0.25,
+    lighting = LightingMode.Unlit,
+    specularity = 0.5,
+    texture = 1,
+    blendMode = BlendMode.Normal,
+    length = 1,
+    lengthMultiplier = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    alphaThreshold = 0,
+    frameIndex = 0,
+    frameIndexOffset = 0,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: TracerParams = {}) {
+    super(ActionType.Tracer, [
+      /*  0 */ new IntField(orientation),
+      /*  1 */ new IntField(0),
+      /*  2 */ new FloatField(segmentInterval),
+      /*  3 */ new FloatField(segmentDuration),
+      /*  4 */ new IntField(concurrentSegments),
+      /*  5 */ new IntField(0),
+      /*  6 */ new IntField(0),
+      /*  7 */ new FloatField(0),
+      /*  8 */ new IntField(columns),
+      /*  9 */ new IntField(totalFrames),
+      /* 10 */ new BoolField(attachedUV),
+      /* 11 */ new IntField(-1),
+      /* 12 */ new IntField(-1),
+      /* 13 */ new IntField(0),
+      /* 14 */ new IntField(1),
+      /* 15 */ new IntField(1),
+      /* 16 */ new IntField(0),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(negativeDepthOffset),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(5),
+      /* 30 */ new FloatField(shadowDarkness),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(specular),
+      /* 34 */ new FloatField(glossiness),
+      /* 35 */ new IntField(lighting),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new FloatField(specularity),
+      /* 39 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(texture),
+      /*  1 */ scalarFromArg(blendMode),
+      /*  2 */ scalarFromArg(length),
+      /*  3 */ scalarFromArg(lengthMultiplier),
+      /*  4 */ new ConstantProperty(0),
+      /*  5 */ new ConstantProperty(0),
+      /*  6 */ vectorFromArg(color1),
+      /*  7 */ vectorFromArg(color2),
+      /*  8 */ vectorFromArg(color3),
+      /*  9 */ scalarFromArg(alphaThreshold),
+      /* 10 */ scalarFromArg(frameIndex),
+      /* 11 */ scalarFromArg(frameIndexOffset),
+      /* 12 */ new ConstantProperty(0),
+      /* 13 */ new ConstantProperty(0),
+      /* 14 */ new ConstantProperty(0),
+      /* 15 */ new ConstantProperty(-1),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Controls the orientation mode for the trail. Note that this is **not**
+   * {@link OrientationMode} - It works differently for this action, and not
+   * all of the values have been documented yet.
+   */
+  get orientation() { return this.fields1[0].value as number }
+  set orientation(value) { this.fields1[0].value = value }
+
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many seconds to wait between new segments being created. Lower values
+   * produce a smoother trail.
+   */
+  get segmentInterval() { return this.fields1[2].value as number }
+  set segmentInterval(value) { this.fields1[2].value = value }
+
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * long each segment should last in seconds.
+   */
+  get segmentDuration() { return this.fields1[3].value as number }
+  set segmentDuration(value) { this.fields1[3].value = value }
+
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many segments may exist at the same time.
+   */
+  get concurrentSegments() { return this.fields1[4].value as number }
+  set concurrentSegments(value) { this.fields1[4].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  get columns() { return this.fields1[8].value as number }
+  set columns(value) { this.fields1[8].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  get totalFrames() { return this.fields1[9].value as number }
+  set totalFrames(value) { this.fields1[9].value = value }
+
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node
+   * or not. If it is attached, the texture will slide along the segments to
+   * follow the source wherever it moves, as if it was a flag attached to a
+   * pole. If it is not attached, the texture will stay where it was when the
+   * segment was created, like a skid mark on a road where the road is the
+   * segments and the mark is the texture, it wouldn't follow the car/node.
+   */
+  get attachedUV() { return this.fields1[10].value as boolean }
+  set attachedUV(value) { this.fields1[10].value = value }
+
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera.
+   * 
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  get negativeDepthOffset() { return this.fields2[26].value as number }
+  set negativeDepthOffset(value) { this.fields2[26].value = value }
+
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  get shadowDarkness() { return this.fields2[30].value as number }
+  set shadowDarkness(value) { this.fields2[30].value = value }
+
+  /**
+   * Controls whether or not specular highlights should be visible.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  get specular() { return this.fields2[33].value as number }
+  set specular(value) { this.fields2[33].value = value }
+
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  get glossiness() { return this.fields2[34].value as number }
+  set glossiness(value) { this.fields2[34].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  get specularity() { return this.fields2[38].value as number }
+  set specularity(value) { this.fields2[38].value = value }
+
+  /**
+   * The ID of the texture for the trail.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get texture() { return this.properties1[0] }
+  set texture(value) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
+  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[1] }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[6] }
+  set color1(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  get color2() { return this.properties1[7] }
+  set color2(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  get color3() { return this.properties1[8] }
+  set color3(value) { setPropertyInList(this.properties1, 8, value) }
+
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaThreshold() { return this.properties1[10] }
+  set alphaThreshold(value) { setPropertyInList(this.properties1, 10, value) }
+
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndex() { return this.properties1[10] }
+  set frameIndex(value) { setPropertyInList(this.properties1, 10, value) }
+
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndexOffset() { return this.properties1[11] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
 export interface PointLightParams {
   /**
    * Controls the diffuse color of the light.
@@ -4705,7 +7110,7 @@ export interface PointLightParams {
   /**
    * The maximum distance that the light may travel from the source, and the
    * radius of the sphere in which other effects caused by the light source
-   * (for example {@link fogDensity} and its related fields) may act. Defaults
+   * (for example {@link volumeDensity} and its related fields) may act. Defaults
    * to 10.
    */
   radius?: number | Property
@@ -4731,6 +7136,62 @@ export interface PointLightParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   specularMultiplier?: number | Property
+  /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker?: boolean
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  jitterAcceleration?: number
+  /**
+   * Controls how much the light should move around randomly. Defaults to
+   * [0, 0, 0].
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  jitter?: Vector3
+  /**
+   * Controls the minimum interval for flickering. Defaults to 0.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin?: number
+  /**
+   * Controls the maximum interval for flickering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax?: number
+  /**
+   * Brightness multiplier for the light when it flickers. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness?: number
   /**
    * Controls if the light should have shadows or not.
    * 
@@ -4778,14 +7239,14 @@ export interface PointLightParams {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  fogDensity?: number
+  volumeDensity?: number
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}. Defaults to true.
+   * {@link volumeDensity}. Defaults to true.
    */
   phaseFunction?: boolean
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -4823,29 +7284,35 @@ class PointLight extends Action {
     radius = 10,
     diffuseMultiplier = 1,
     specularMultiplier = 1,
+    jitterAndFlicker = false,
+    jitterAcceleration = 1,
+    jitter = [0, 0, 0],
+    flickerIntervalMin = 0,
+    flickerIntervalMax = 1,
+    flickerBrightness = 0.5,
     shadows = false,
     separateSpecular = false,
     fadeOutTime = 0,
     shadowDarkness = 1,
-    fogDensity = 0,
+    volumeDensity = 0,
     phaseFunction = true,
     asymmetryParam = 0.5,
     falloffExponent = 1,
   }: PointLightParams = {}) {
-    super(ActionType.PointLight, false, true, 0, [
+    super(ActionType.PointLight, [
       /*  0 */ new IntField(0),
       /*  1 */ new FloatField(0),
     ], [ // Fields 2
       /*  0 */ new IntField(0),
-      /*  1 */ new BoolField(false),
-      /*  2 */ new FloatField(0),
+      /*  1 */ new BoolField(jitterAndFlicker),
+      /*  2 */ new FloatField(jitterAcceleration),
       /*  3 */ new FloatField(0),
-      /*  4 */ new FloatField(0),
-      /*  5 */ new FloatField(0),
-      /*  6 */ new FloatField(0),
-      /*  7 */ new FloatField(0),
-      /*  8 */ new FloatField(0),
-      /*  9 */ new FloatField(0),
+      /*  4 */ new FloatField(jitter[0]),
+      /*  5 */ new FloatField(jitter[1]),
+      /*  6 */ new FloatField(jitter[2]),
+      /*  7 */ new FloatField(flickerIntervalMin),
+      /*  8 */ new FloatField(flickerIntervalMax),
+      /*  9 */ new FloatField(flickerBrightness),
       /* 10 */ new BoolField(shadows),
       /* 11 */ new BoolField(separateSpecular),
       /* 12 */ new IntField(Math.round(fadeOutTime * 30)),
@@ -4860,7 +7327,7 @@ class PointLight extends Action {
       /* 21 */ new IntField(100),
       /* 22 */ new IntField(1),
       /* 23 */ new IntField(1),
-      /* 24 */ new FloatField(fogDensity),
+      /* 24 */ new FloatField(volumeDensity),
       /* 25 */ new FloatField(0),
       /* 26 */ new BoolField(phaseFunction),
       /* 27 */ new FloatField(asymmetryParam),
@@ -4915,7 +7382,7 @@ class PointLight extends Action {
   /**
    * The maximum distance that the light may travel from the source, and the
    * radius of the sphere in which other effects caused by the light source
-   * (for example {@link fogDensity} and its related fields) may act.
+   * (for example {@link volumeDensity} and its related fields) may act.
    */
   get radius() { return this.properties1[2] }
   set radius(value) { setPropertyInList(this.properties1, 2, value) }
@@ -4941,6 +7408,73 @@ class PointLight extends Action {
    */
   get specularMultiplier() { return this.properties1[4] }
   set specularMultiplier(value) { setPropertyInList(this.properties2, 4, value) }
+
+  /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get jitterAndFlicker() { return this.fields2[1].value as boolean }
+  set jitterAndFlicker(value) { this.fields2[1].value = value }
+
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  get jitterAcceleration() { return this.fields2[2].value as number }
+  set jitterAcceleration(value) { this.fields2[2].value = value }
+
+  /**
+   * Controls how much the light should move around randomly.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  get jitter() { return this.fields2.slice(4, 7).map(f => f.value) as Vector3 }
+  set jitter(value) { for (let i = 2; i >= 0; i--) this.fields2[4 + i].value = value[i] }
+
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMin() { return this.fields2[7].value as number }
+  set flickerIntervalMin(value) { this.fields2[7].value = value }
+
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMax() { return this.fields2[8].value as number }
+  set flickerIntervalMax(value) { this.fields2[8].value = value }
+
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  get flickerBrightness() { return this.fields2[9].value as number }
+  set flickerBrightness(value) { this.fields2[9].value = value }
 
   /**
    * Controls if the light should have shadows or not.
@@ -4993,18 +7527,18 @@ class PointLight extends Action {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  get fogDensity() { return this.fields2[24].value as number }
-  set fogDensity(value) { this.fields2[24].value = value }
+  get volumeDensity() { return this.fields2[24].value as number }
+  set volumeDensity(value) { this.fields2[24].value = value }
 
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}.
+   * {@link volumeDensity}.
    */
   get phaseFunction() { return this.fields2[26].value as boolean }
   set phaseFunction(value) { this.fields2[26].value = value }
 
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -5029,6 +7563,291 @@ class PointLight extends Action {
    */
   get falloffExponent() { return this.fields2[28].value as number }
   set falloffExponent(value) { this.fields2[28].value = value }
+
+}
+
+/**
+ * Controls how effective the wind is at pushing the node.
+ */
+class NodeWindSpeed extends Action {
+
+  constructor(
+    /**
+     * The speed in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeed: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windSpeed the speed in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeedMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+  ) {
+    super(ActionType.NodeWindSpeed, [
+      new BoolField(enabled),
+    ], [], [
+      scalarFromArg(windSpeed),
+      scalarFromArg(windSpeedMult),
+    ])
+  }
+
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeed(): Property { return this.properties1[0] }
+  set windSpeed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeedMult(): Property { return this.properties1[1] }
+  set windSpeedMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
+/**
+ * Controls how effective the wind is at pushing the particles emitted from
+ * the node.
+ */
+class ParticleWindSpeed extends Action {
+
+  constructor(
+    /**
+     * The speed in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeed: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windSpeed the speed in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windSpeedMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+    /**
+     * Unknown. Fields1, index 1. 0 and 1 seems to be valid values, while all
+     * other values cause the wind to not affect the particles. Defaults to 0.
+     */
+    unkField1: number = 0
+  ) {
+    super(ActionType.ParticleWindSpeed, [
+      new BoolField(enabled),
+      new IntField(unkField1),
+    ], [], [
+      scalarFromArg(windSpeed),
+      scalarFromArg(windSpeedMult),
+    ])
+  }
+
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeed(): Property { return this.properties1[0] }
+  set windSpeed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windSpeedMult(): Property { return this.properties1[1] }
+  set windSpeedMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
+/**
+ * Controls how effective the wind is at accelerating the node.
+ */
+class NodeWindAcceleration extends Action {
+
+  constructor(
+    /**
+     * The acceleration in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAcceleration: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windAcceleration the acceleration in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAccelerationMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+  ) {
+    super(ActionType.NodeWindAcceleration, [
+      new BoolField(enabled),
+    ], [], [
+      scalarFromArg(windAcceleration),
+      scalarFromArg(windAccelerationMult),
+    ])
+  }
+
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAcceleration(): Property { return this.properties1[0] }
+  set windAcceleration(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAccelerationMult(): Property { return this.properties1[1] }
+  set windAccelerationMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
+
+}
+
+/**
+ * Controls how effective the wind is at accelerating the particles emitted
+ * from the node.
+ * 
+ * Acceleration requires slot 10 to have an action that enables acceleration
+ * of the particles.
+ */
+class ParticleWindAcceleration extends Action {
+
+  constructor(
+    /**
+     * The acceleration in the direction of the wind. Defaults to 0.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAcceleration: number | Property = 0,
+    /**
+     * A multiplier for
+     * {@link windAcceleration the acceleration in the direction of the wind}.
+     * Defalts to 1.
+     * 
+     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+     */
+    windAccelerationMult: number | Property = 1,
+    /**
+     * Controls whether the wind should have any effect at all or not. Defaults
+     * to true.
+     */
+    enabled: boolean = true,
+    /**
+     * Unknown. Fields1, index 1. 0 and 1 seems to be valid values, while all
+     * other values cause the wind to not affect the particles. Defaults to 0.
+     */
+    unkField1: number = 0
+  ) {
+    super(ActionType.ParticleWindAcceleration, [
+      new BoolField(enabled),
+      new IntField(unkField1),
+    ], [], [
+      scalarFromArg(windAcceleration),
+      scalarFromArg(windAccelerationMult),
+    ])
+  }
+
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAcceleration(): Property { return this.properties1[0] }
+  set windAcceleration(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * A multiplier for
+   * {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get windAccelerationMult(): Property { return this.properties1[1] }
+  set windAccelerationMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  get enabled() { return this.fields1[0].value as boolean }
+  set enabled(value) { this.fields1[0].value = value }
+
+  minify(): Action {
+    if (this.enabled) {
+      return this
+    } else {
+      return new Action
+    }
+  }
 
 }
 
@@ -5114,6 +7933,62 @@ export interface SpotLightParams {
    */
   yRadius?: number | Property
   /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker?: boolean
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  jitterAcceleration?: number
+  /**
+   * Controls how much the light should move around randomly. Defaults to
+   * [0, 0, 0].
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  jitter?: Vector3
+  /**
+   * Controls the minimum interval for flickering. Defaults to 0.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin?: number
+  /**
+   * Controls the maximum interval for flickering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax?: number
+  /**
+   * Brightness multiplier for the light when it flickers. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness?: number
+  /**
    * Controls if the light should have shadows or not.
    * 
    * Note: Objects also have a setting for casting shadows, and both must be
@@ -5160,14 +8035,14 @@ export interface SpotLightParams {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  fogDensity?: number
+  volumeDensity?: number
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}. Defaults to true.
+   * {@link volumeDensity}. Defaults to true.
    */
   phaseFunction?: boolean
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -5214,11 +8089,17 @@ class SpotLight extends Action {
     radius = 50,
     xRadius = radius instanceof Property ? Property.copy(radius) : radius,
     yRadius = radius instanceof Property ? Property.copy(radius) : radius,
+    jitterAndFlicker = false,
+    jitterAcceleration = 1,
+    jitter = [0, 0, 0],
+    flickerIntervalMin = 0,
+    flickerIntervalMax = 1,
+    flickerBrightness = 0.5,
     shadows = false,
     separateSpecular = false,
     shadowDarkness = 1,
     fadeOutTime = 0,
-    fogDensity = 0,
+    volumeDensity = 0,
     phaseFunction = true,
     asymmetryParam = 0.75,
     falloffExponent = 1,
@@ -5226,17 +8107,17 @@ class SpotLight extends Action {
     unkScalarProp9 = 1,
     unkScalarProp10 = 1,
   }: SpotLightParams = {}) {
-    super(ActionType.SpotLight, false, true, 0, [
+    super(ActionType.SpotLight, [
       /*  0 */ new IntField(0),
-      /*  1 */ new BoolField(false), // Animation toggle?
-      /*  2 */ new FloatField(0),
+      /*  1 */ new BoolField(jitterAndFlicker),
+      /*  2 */ new FloatField(jitterAcceleration),
       /*  3 */ new FloatField(0),
-      /*  4 */ new FloatField(0), // X jitter
-      /*  5 */ new FloatField(0), // Y jitter
-      /*  6 */ new FloatField(0), // Z jitter
-      /*  7 */ new FloatField(0), // Pulse period 1?
-      /*  8 */ new FloatField(0), // Pulse period 2?
-      /*  9 */ new FloatField(1), // Pulse brightness
+      /*  4 */ new FloatField(jitter[0]),
+      /*  5 */ new FloatField(jitter[1]),
+      /*  6 */ new FloatField(jitter[2]),
+      /*  7 */ new FloatField(flickerIntervalMin),
+      /*  8 */ new FloatField(flickerIntervalMax),
+      /*  9 */ new FloatField(flickerBrightness),
       /* 10 */ new BoolField(shadows),
       /* 11 */ new BoolField(separateSpecular),
       /* 12 */ new FloatField(shadowDarkness),
@@ -5246,7 +8127,7 @@ class SpotLight extends Action {
       /* 16 */ new IntField(100),
       /* 17 */ new IntField(0),
       /* 18 */ new FloatField(0),
-      /* 19 */ new FloatField(fogDensity),
+      /* 19 */ new FloatField(volumeDensity),
       /* 20 */ new FloatField(0),
       /* 21 */ new BoolField(phaseFunction),
       /* 22 */ new FloatField(asymmetryParam),
@@ -5347,6 +8228,73 @@ class SpotLight extends Action {
   set yRadius(value) { setPropertyInList(this.properties1, 7, value) }
 
   /**
+   * Toggles the jitter and flicker animations for the light. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitter}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get jitterAndFlicker() { return this.fields2[1].value as boolean }
+  set jitterAndFlicker(value) { this.fields2[1].value = value }
+
+  /**
+   * Controls the acceleration of the jittering. Defaults to 1.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitter}
+   */
+  get jitterAcceleration() { return this.fields2[2].value as number }
+  set jitterAcceleration(value) { this.fields2[2].value = value }
+
+  /**
+   * Controls how much the light should move around randomly.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   */
+  get jitter() { return this.fields2.slice(4, 7).map(f => f.value) as Vector3 }
+  set jitter(value) { for (let i = 2; i >= 0; i--) this.fields2[4 + i].value = value[i] }
+
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMin() { return this.fields2[7].value as number }
+  set flickerIntervalMin(value) { this.fields2[7].value = value }
+
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  get flickerIntervalMax() { return this.fields2[8].value as number }
+  set flickerIntervalMax(value) { this.fields2[8].value = value }
+
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  get flickerBrightness() { return this.fields2[9].value as number }
+  set flickerBrightness(value) { this.fields2[9].value = value }
+
+  /**
    * Controls if the light should have shadows or not.
    * 
    * Note: Objects also have a setting for casting shadows, and both must be
@@ -5397,18 +8345,18 @@ class SpotLight extends Action {
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
-  get fogDensity() { return this.fields1[19].value as number }
-  set fogDensity(value) { this.fields1[19].value = value }
+  get volumeDensity() { return this.fields1[19].value as number }
+  set volumeDensity(value) { this.fields1[19].value = value }
 
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link fogDensity}.
+   * {@link volumeDensity}.
    */
   get phaseFunction() { return this.fields1[21].value as boolean }
   set phaseFunction(value) { this.fields1[21].value = value }
 
   /**
-   * Controls how the fake fog from {@link fogDensity} scatters the light. This
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
    * value is ignored if {@link phaseFunction} is disabled, and the fog will
    * scatter the light equally in all directions.
    * 
@@ -5442,10 +8390,19 @@ const Actions = {
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
-  [ActionType.PartialFollow]: PartialFollow, PartialFollow,
+  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
+  ParticleMovement,
+  [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
+  [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
+  [ActionType.ParticleSpeedRandomTurns]: ParticleMovement, ParticleSpeedRandomTurns: ParticleMovement,
+  [ActionType.ParticleSpeedPartialFollow]: ParticleMovement, ParticleSpeedPartialFollow: ParticleMovement,
+  [ActionType.PlaySound]: PlaySound, PlaySound,
+  [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
+  [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
   [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
+  [ActionType.FXRReference]: FXRReference, FXRReference,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.NodeWeights]: NodeWeights, NodeWeights,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -5459,7 +8416,13 @@ const Actions = {
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
+  [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
+  [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
+  [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
+  [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
+  [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.SpotLight]: SpotLight, SpotLight,
 }
 
@@ -5474,7 +8437,7 @@ class Field {
   }
 
   static read(br: BinaryReader, context: any, index: number) {
-    let ffxField: (Field | null) = null
+    let ffxField: NumericalField = null
     let isInt = false
 
     if (context instanceof Property) {
@@ -5520,7 +8483,7 @@ class Field {
   }
 
   static readMany(br: BinaryReader, count: number, context: any) {
-    const ffxFieldList: Field[] = []
+    const ffxFieldList: NumericalField[] = []
     for (let i = 0; i < count; ++i) {
       ffxFieldList.push(Field.read(br, context, i))
     }
@@ -5590,6 +8553,10 @@ class Field {
 
 }
 
+export interface NumericalField extends Field {
+  value: number
+}
+
 class BoolField extends Field {
 
   declare value: boolean
@@ -5600,7 +8567,7 @@ class BoolField extends Field {
 
 }
 
-class IntField extends Field {
+class IntField extends Field implements NumericalField {
 
   declare value: number
 
@@ -5610,7 +8577,7 @@ class IntField extends Field {
 
 }
 
-class FloatField extends Field {
+class FloatField extends Field implements NumericalField {
 
   declare value: number
 
@@ -5641,6 +8608,7 @@ export type StopList = {
   [index: number]: Stop,
   length: number,
   add: (position: number, value: PropertyValue) => void,
+  [Symbol.iterator]: () => Generator<Stop>
 }
 
 class Property {
@@ -5649,7 +8617,7 @@ class Property {
   function: PropertyFunction
   loop: boolean
   modifiers: Modifier[]
-  fields: Field[]
+  fields: NumericalField[]
 
   #stops: StopList
 
@@ -5657,7 +8625,7 @@ class Property {
     valueType: ValueType = ValueType.Scalar,
     func: PropertyFunction = PropertyFunction.Zero,
     loop: boolean = false,
-    fields: Field[] = [],
+    fields: NumericalField[] = [],
     modifiers: Modifier[] = []
   ) {
     this.valueType = valueType
@@ -5700,7 +8668,7 @@ class Property {
       prop.valueType,
       prop.function,
       prop.loop,
-      prop.fields.map(f => Field.copy(f)),
+      prop.fields.map(f => Field.copy(f) as NumericalField),
       prop.modifiers.map(m => Modifier.copy(m))
     )
   }
@@ -6105,7 +9073,7 @@ class Property {
       ValueType[type],
       PropertyFunction[func],
       loop,
-      fields.map(field => Field.fromJSON(field)),
+      fields.map(field => Field.fromJSON(field) as NumericalField),
       modifiers.map(mod => Modifier.fromJSON(mod))
     )
   }
@@ -6139,6 +9107,78 @@ class Property {
       }
     }
     return this
+  }
+
+  /**
+   * Scales all values in the property by a factor.
+   * 
+   * Scaling of {@link PropertyFunction.CompCurve CompCurve} properties is not
+   * yet implemented.
+   * @param factor 
+   */
+  scale(factor: number) {
+    //TODO: Handle CompCurve props
+    if (this.function <= PropertyFunction.One) {
+      this.convertToFunction(PropertyFunction.Constant)
+    }
+    for (const stop of this.stops) {
+      for (let i = stop.length - 1; i >= 0; i--) {
+        stop[i] *= factor
+      }
+    }
+    for (const mod of this.modifiers) {
+      const comps = mod.valueType + 1
+      switch (mod.type) {
+        case ModifierType.Randomizer1:
+          for (let i = comps - 1; i >= 0; i--) {
+            mod.fields[comps + i].value *= factor
+          }
+          break
+        case ModifierType.Randomizer2:
+          for (let i = comps * 2 - 1; i >= 0; i--) {
+            mod.fields[comps + i].value *= factor
+          }
+          break
+      }
+    }
+  }
+
+  /**
+   * Creates a {@link ZeroProperty} with a {@link RandomizerModifier},
+   * effectively creating a property with a random value in a given range.
+   * @param minValue The lower bound of the range of possible values for the
+   * property.
+   * @param maxValue The upper bound of the range of possible values for the
+   * property.
+   * @param seed A seed or set of seeds for the random number generator to use
+   * to generate the random property values.
+   * @returns 
+   */
+  static random(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
+    return new ZeroProperty(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
+      new RandomizerModifier(minValue, maxValue, seed)
+    ])
+  }
+
+  /**
+   * Generates a rainbow color animation with a configurable duration.
+   * @param duration How long it takes to go around the entire hue circle in
+   * seconds. Defaults to 4 seconds.
+   * @param loop Controls whether the animation should loop or not. Defaults to
+   * true.
+   * @returns 
+   */
+  static rainbow(duration: number = 4, loop: boolean = true) {
+    const unit = duration / 6
+    return new LinearProperty(loop, [
+      { position: 0,        value: [1, 0, 0, 1] },
+      { position: unit,     value: [1, 0, 1, 1] },
+      { position: unit * 2, value: [0, 0, 1, 1] },
+      { position: unit * 3, value: [0, 1, 1, 1] },
+      { position: unit * 4, value: [0, 1, 0, 1] },
+      { position: unit * 5, value: [1, 1, 0, 1] },
+      { position: unit * 6, value: [1, 0, 0, 1] },
+    ])
   }
 
 }
@@ -6204,21 +9244,21 @@ class LinearProperty extends Property {
     ])
   }
 
-}
-
-/**
- * A {@link LinearProperty linear property} with only two stops. A bit
- * limited, but very easy to create.
- */
-class BasicLinearProperty extends LinearProperty {
-
-  constructor(
+  /**
+   * Creates a new linear property with only two steps.
+   * @param loop Controls whether the animation should loop or not.
+   * @param endPosition The position of the second stop.
+   * @param startValue The value of the first stop.
+   * @param endValue The value of the second stop.
+   * @returns The new linear property.
+   */
+  static basic(
     loop: boolean,
     endPosition: number,
     startValue: PropertyValue,
     endValue: PropertyValue
   ) {
-    super(loop, [
+    return new LinearProperty(loop, [
       { position: 0, value: startValue },
       { position: endPosition, value: endValue },
     ])
@@ -6251,81 +9291,53 @@ class Curve2Property extends Property {
 
 }
 
-/**
- * A preset rainbow color animation with a configurable duration.
- */
-class RainbowProperty extends LinearProperty {
-
-  /**
-   * @param duration How long it takes to go around the entire hue circle in
-   * seconds. Defaults to 4 seconds.
-   * @param loop Controls whether the animation should loop or not. Defaults to
-   * true.
-   */
-  constructor(duration: number = 4, loop: boolean = true) {
-    const unit = duration / 6
-    super(loop, [
-      { position: 0,        value: [1, 0, 0, 1] },
-      { position: unit,     value: [1, 0, 1, 1] },
-      { position: unit * 2, value: [0, 0, 1, 1] },
-      { position: unit * 3, value: [0, 1, 1, 1] },
-      { position: unit * 4, value: [0, 1, 0, 1] },
-      { position: unit * 5, value: [1, 1, 0, 1] },
-      { position: unit * 6, value: [1, 0, 0, 1] },
-    ])
-  }
-
-}
-
 class Modifier {
 
-  static #knownTypeEnumAs = new Set([
-    53328,
-    53376,
-    57440,
-    57456,
-    61520
-  ])
-
-  static #typeEnumAValues = {
-    0: 53328,
-    1: 53376,
-    2: 57440,
-    3: 57456,
-    4: 61520,
+  static #typeEnumBValues = {
+    [ModifierType.Randomizer1]: 0,
+    [ModifierType.Randomizer2]: 4,
+    [ModifierType.ExternalValue1]: 8,
+    [ModifierType.ExternalValue2]: 12,
+    [ModifierType.Randomizer3]: 16,
   }
 
   typeEnumA: number
   typeEnumB: number
-  fields: Field[]
+  fields: NumericalField[]
   properties: Property[]
 
   constructor(
-    typeEnumA: number,
-    typeEnumB: number,
-    fields: Field[] = [],
+    type: ModifierType,
+    valueType: ValueType,
+    fields: NumericalField[] = [],
     properties: Property[] = []
   ) {
-    this.typeEnumA = typeEnumA
-    this.typeEnumB = typeEnumB
+    this.type = type
+    this.valueType = valueType
     this.fields = fields
     this.properties = properties
   }
 
+  static typeEnumAToModifierType(typeEnumA: number): ModifierType {
+    return (typeEnumA >>> 12 & 0b11) << 4 | typeEnumA >>> 4 & 0b1111
+  }
+
+  static modifierTypeToTypeEnumA(type: ModifierType, valueType: ValueType = ValueType.Scalar) {
+    return (type >>> 4 | 0b1100) << 12 | (type & 0b1111) << 4 | valueType
+  }
+
   static read(br: BinaryReader) {
     const typeEnumA = br.readUint16()
-    // if (!Modifier.#knownTypeEnumAs.has(typeEnumA & 0b11111111_11111100)) {
-    //   throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
-    // }
+    const teA1 = typeEnumA >>> 12 & 0b11
+    const teA2 = typeEnumA >>> 4 & 0b1111
+    const modifierType = teA1 << 4 | teA2
+    const valueType = typeEnumA & 0b11
+    if (!(modifierType in ModifierType)) {
+      throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
+    }
     br.assertUint8(0)
     br.assertUint8(1)
     const typeEnumB = br.readUint32()
-    // if ((typeEnumB & 0xffffffe0) !== 0) {
-    //   throw new Error('Unknown property modifier type enum B: ' + typeEnumB)
-    // }
-    // This is apparently wrong in some cases. Needs to be looked into more.
-    // const modifierType = (typeEnumB & 0b11100) >>> 2
-    // const valueType = typeEnumB & 0b11
     const fieldCount = br.readInt32()
     const propertyCount = br.readInt32()
     const fieldOffset = br.readInt32()
@@ -6339,16 +9351,20 @@ class Modifier {
     }
     br.stepOut()
     const fields = Field.readManyAt(br, fieldOffset, fieldCount, this)
-    return new Modifier(typeEnumA, typeEnumB, fields, properties)
+    const mod = new Modifier(modifierType, valueType, fields, properties)
+    mod.typeEnumB = typeEnumB
+    return mod
   }
 
   static copy(mod: Modifier) {
-    return new Modifier(
-      mod.typeEnumA,
-      mod.typeEnumB,
-      mod.fields.map(f => Field.copy(f)),
+    const copy = new Modifier(
+      mod.type,
+      mod.valueType,
+      mod.fields.map(f => Field.copy(f) as NumericalField),
       mod.properties.map(p => Property.copy(p))
     )
+    copy.typeEnumB = mod.typeEnumB
+    return copy
   }
 
   write(bw: BinaryWriter, modifiers: Modifier[]) {
@@ -6382,17 +9398,13 @@ class Modifier {
   }
 
   get type(): ModifierType {
-    //TODO: This does not always work correctly. For example, in AC6, some
-    // vanilla FXRs have 53376 modifiers with typeEnumB set to 0 instead of 4.
-    return (this.typeEnumB & 0b11100) >>> 2
+    return Modifier.typeEnumAToModifierType(this.typeEnumA)
   }
 
   set type(value) {
     const valueType = this.valueType
-    this.typeEnumA = Modifier.#typeEnumAValues[value] | valueType
-    //TODO: This does not always work correctly. For example, in AC6, some
-    // vanilla FXRs have 53376 modifiers with typeEnumB set to 0 instead of 4.
-    this.typeEnumB = (value << 2) | valueType
+    this.typeEnumA = Modifier.modifierTypeToTypeEnumA(value, valueType)
+    this.typeEnumB = Modifier.#typeEnumBValues[value] | valueType
   }
 
   /**
@@ -6436,7 +9448,7 @@ class Modifier {
     return new Modifier(
       typeEnumA,
       typeEnumB,
-      fields.map(field => Field.fromJSON(field)),
+      fields.map(field => Field.fromJSON(field) as NumericalField),
       properties.map(prop => Property.fromJSON(prop))
     )
   }
@@ -6468,21 +9480,26 @@ class ExternalValueModifier extends Modifier {
 
   /**
    * @param extVal The ID of the external value to use.
+   * @param loop Controls if the modifier property should loop or not.
    * @param stops An array of objects with `position` and `value` properties
    * representing the external value and the modifier value it maps to. For
    * example, the value of {@link ExternalValue.DisplayBlood} is -1 when the
    * "Display Blood" option is off, so the `position` for the modifier value
    * should be -1 to change the property based on that.
+   * @param type Controls what type of modifier to use. Defaults to
+   * {@link ModifierType.ExternalValue1}.
    */
   constructor(
     extVal: ExternalValue,
+    loop: boolean,
     stops: { position: number, value: PropertyValue }[],
+    type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
     const valueType = typeof stops[0].value === 'number' ? 0 : stops[0].value.length - 1
-    super(57440 | valueType, 8 | valueType, [
+    super(type, valueType, [
       new IntField(extVal)
     ], [
-      new LinearProperty(false, stops)
+      new LinearProperty(loop, stops)
     ])
   }
 
@@ -6505,13 +9522,16 @@ class BloodVisibilityModifier extends ExternalValueModifier {
    * @param onValue The value when "Display Blood" is set to "On".
    * @param mildValue The value when "Display Blood" is set to "Mild".
    * @param offValue The value when "Display Blood" is set to "Off".
+   * @param type Controls what type of modifier to use. Defaults to
+   * {@link ModifierType.ExternalValue1}.
    */
   constructor(
     onValue: PropertyValue,
     mildValue: PropertyValue,
     offValue: PropertyValue,
+    type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
-    super(ExternalValue.DisplayBlood, [
+    super(ExternalValue.DisplayBlood, false, [
       { position: -1,
         value: offValue
       },
@@ -6521,7 +9541,7 @@ class BloodVisibilityModifier extends ExternalValueModifier {
       { position: 1,
         value: mildValue
       }
-    ])
+    ], type)
   }
 
   get offValue() { return this.properties[0].stops[0].value }
@@ -6532,6 +9552,26 @@ class BloodVisibilityModifier extends ExternalValueModifier {
 
   get mildValue() { return this.properties[0].stops[2].value }
   set mildValue(value) { this.properties[0].stops[2].value = value }
+
+}
+
+/**
+ * A property modifier that changes the property's value based on the weather.
+ * 
+ * Only functional in Elden Ring.
+ */
+class PrecipitationModifier extends ExternalValueModifier {
+
+  /**
+   * @param clear The value when it's not raining or snowing.
+   * @param precip The value when it's raining or snowing.
+   */
+  constructor(clear: PropertyValue, precip: PropertyValue) {
+    super(ExternalValue.Precipitation, false, [
+      { position: 0, value: clear },
+      { position: 1, value: precip },
+    ])
+  }
 
 }
 
@@ -6551,7 +9591,7 @@ class RandomizerModifier extends Modifier {
       }
       const seedArray = Array.isArray(seed) ? seed : [seed]
       const valueType = minValue.length - 1
-      super(53376 | valueType, 4 | valueType, [
+      super(ModifierType.Randomizer2, valueType, [
         ...arrayOf(minValue.length, i => new IntField(seedArray[i % seedArray.length])),
         ...minValue.map(e => new FloatField(e)),
         ...maxValue.map(e => new FloatField(e)),
@@ -6563,28 +9603,12 @@ class RandomizerModifier extends Modifier {
       if (Array.isArray(seed)) {
         throw new Error('Random scalar modifiers cannot use vector seeds.')
       }
-      super(53376, 4, [
+      super(ModifierType.Randomizer2, ValueType.Scalar, [
         new IntField(seed),
         new FloatField(minValue),
         new FloatField(maxValue),
       ])
     }
-  }
-
-}
-
-/**
- * A property with random values in a given range.
- * 
- * This is technically just a {@link ZeroProperty} with a
- * {@link RandomizerModifier}.
- */
-class RandomProperty extends ZeroProperty {
-
-  constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
-    super(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
-      new RandomizerModifier(minValue, maxValue, seed)
-    ])
   }
 
 }
@@ -6650,6 +9674,8 @@ export {
   OrientationMode,
   LightingMode,
 
+  Nodes,
+  Effects,
   EffectActionSlots,
   Actions,
 
@@ -6660,9 +9686,12 @@ export {
 
   Node,
   RootNode,
+  ProxyNode,
+  LevelOfDetailNode,
   BasicNode,
 
   Effect,
+  LevelOfDetailEffect,
   BasicEffect,
   RandomizerEffect,
 
@@ -6670,10 +9699,14 @@ export {
   NodeTranslation,
   NodeSpin,
   NodeTransform,
-  PartialFollow,
+  NodeAttachToCamera,
+  PlaySound,
+  ParticleMovement,
   NodeLifetime,
   ParticleLifetime,
   ParticleMultiplier,
+  FXRReference,
+  LevelOfDetailThresholds,
   StateEffectMap,
   NodeWeights,
   PeriodicEmitter,
@@ -6688,7 +9721,13 @@ export {
   CommonAction6xxFields2Action,
   QuadLine,
   BillboardEx,
+  MultiTextureBillboardEx,
+  Tracer,
   PointLight,
+  NodeWindSpeed,
+  ParticleWindSpeed,
+  NodeWindAcceleration,
+  ParticleWindAcceleration,
   SpotLight,
 
   Field,
@@ -6702,14 +9741,12 @@ export {
   ConstantProperty,
   SteppedProperty,
   LinearProperty,
-  BasicLinearProperty,
   Curve2Property,
-  RainbowProperty,
-  RandomProperty,
 
   Modifier,
   ExternalValueModifier,
   BloodVisibilityModifier,
+  PrecipitationModifier,
   RandomizerModifier,
 
   Section10
