@@ -279,6 +279,11 @@ enum ActionType {
    */
   MultiTextureBillboardEx = 604,
   Model = 605,
+  /**
+   * Creates a trail behind moving effects.
+   * 
+   * This action type has a specialized subclass: {@link Tracer}
+   */
   Tracer = 606,
   Distortion = 607,
   RadialBlur = 608,
@@ -3169,6 +3174,28 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: commonAction6xxFields2Types
   },
+  [ActionType.Tracer]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Integer,
+      null,
+      null,
+      FieldType.Float,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.PointLight]: {
     Fields1: [
       null,
@@ -5189,18 +5216,15 @@ export interface BillboardExParams {
    * using a {@link PropertyFunction.Linear linear property} or similar.
    * Defaults to 0.
    * 
-   * Seemingly identical to
-   * {@link BillboardExParams.frameIndexOffset unkProp1_22}? The sum of
-   * these two properties is the actual frame index that gets used.
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex?: number | Property
   /**
-   * Seemingly identical to
-   * {@link BillboardExParams.frameIndex frameIndex}? The sum of
-   * these two properties is the actual frame index that gets used. Defaults to
-   * 0.
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -5986,7 +6010,7 @@ export interface MultiTextureBillboardExParams {
    * `textureWidth / frameWidth`. Defaults to 1.
    * 
    * See also:
-   * - {@link BillboardExParams.totalFrames totalFrames}
+   * - {@link totalFrames}
    */
   columns?: number
   /**
@@ -5994,7 +6018,7 @@ export interface MultiTextureBillboardExParams {
    * set to the total number of frames in the texture. Defaults to 1.
    * 
    * See also:
-   * - {@link BillboardExParams.columns columns}
+   * - {@link columns}
    */
   totalFrames?: number
   /**
@@ -6008,7 +6032,7 @@ export interface MultiTextureBillboardExParams {
    * Defaults to true.
    * 
    * See also:
-   * - {@link BillboardExParams.frameIndex frameIndex}
+   * - {@link frameIndex}
    */
   interpolateFrames?: boolean
   /**
@@ -6122,6 +6146,7 @@ export interface MultiTextureBillboardExParams {
 class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
 
   constructor({
+    orientation = OrientationMode.Camera,
     mask = 1,
     layer1 = 1,
     layer2 = 1,
@@ -6173,7 +6198,7 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
     alphaMultiplier = 1,
   }: MultiTextureBillboardExParams = {}) {
     super(ActionType.MultiTextureBillboardEx, [
-      /*  0 */ new IntField(OrientationMode.Camera),
+      /*  0 */ new IntField(orientation),
       /*  1 */ new IntField(mask),
       /*  2 */ new IntField(layer1),
       /*  3 */ new IntField(layer2),
@@ -6494,6 +6519,567 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
    */
   get specularity() { return this.fields2[38].value as number }
   set specularity(value) { this.fields2[38].value = value }
+
+}
+
+export interface TracerParams {
+  /**
+   * Controls the orientation mode for the trail. Note that this is **not**
+   * {@link OrientationMode} - It works differently for this action, and not
+   * all of the values have been documented yet. Defaults to 1.
+   */
+  orientation?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many seconds to wait between new segments being created. Lower values
+   * produce a smoother trail. Defaults to 0.
+   */
+  segmentInterval?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * long each segment should last in seconds. Defaults to 1.
+   */
+  segmentDuration?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many segments may exist at the same time. Defaults to 50.
+   */
+  concurrentSegments?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`. Defaults to 1.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture. Defaults to 1.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node
+   * or not. If it is attached, the texture will slide along the segments to
+   * follow the source wherever it moves, as if it was a flag attached to a
+   * pole. If it is not attached, the texture will stay where it was when the
+   * segment was created, like a skid mark on a road where the road is the
+   * segments and the mark is the texture, it wouldn't follow the car/node.
+   * Defaults to false.
+   */
+  attachedUV?: boolean
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera. Defaults to 0.
+   * 
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  negativeDepthOffset?: number
+  /**
+   * Controls how dark shaded parts of the particle are. Defaults to 0.
+   */
+  shadowDarkness?: number
+  /**
+   * Controls whether or not specular highlights should be visible. Defaults to
+   * false.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: boolean
+  /**
+   * Controls how sharp the specular highlights are. Defaults to 0.25.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Unlit}.
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are. Defaults to 0.5.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  /**
+   * The ID of the texture for the trail. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  texture?: number | Property
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: number | Property
+  /**
+   * The length of the trail source. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  length?: number | Property
+  /**
+   * Multiplier for {@link length}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  lengthMultiplier?: number | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  color3?: Vector4 | Property
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold?: number | Property
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * Defaults to 0.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: number | Property
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: number | Property
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: number | Property
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: number | Property
+}
+
+/**
+ * Creates a trail behind moving effects.
+ */
+class Tracer extends CommonAction6xxFields2Action {
+
+  constructor({
+    orientation = 1,
+    segmentInterval = 0,
+    segmentDuration = 1,
+    concurrentSegments = 50,
+    columns = 1,
+    totalFrames = 1,
+    attachedUV = false,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    negativeDepthOffset = 0,
+    shadowDarkness = 0,
+    specular = false,
+    glossiness = 0.25,
+    lighting = LightingMode.Unlit,
+    specularity = 0.5,
+    texture = 1,
+    blendMode = BlendMode.Normal,
+    length = 1,
+    lengthMultiplier = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    alphaThreshold = 0,
+    frameIndex = 0,
+    frameIndexOffset = 0,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: TracerParams = {}) {
+    super(ActionType.Tracer, [
+      /*  0 */ new IntField(orientation),
+      /*  1 */ new IntField(0),
+      /*  2 */ new FloatField(segmentInterval),
+      /*  3 */ new FloatField(segmentDuration),
+      /*  4 */ new IntField(concurrentSegments),
+      /*  5 */ new IntField(0),
+      /*  6 */ new IntField(0),
+      /*  7 */ new FloatField(0),
+      /*  8 */ new IntField(columns),
+      /*  9 */ new IntField(totalFrames),
+      /* 10 */ new BoolField(attachedUV),
+      /* 11 */ new IntField(-1),
+      /* 12 */ new IntField(-1),
+      /* 13 */ new IntField(0),
+      /* 14 */ new IntField(1),
+      /* 15 */ new IntField(1),
+      /* 16 */ new IntField(0),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(negativeDepthOffset),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(5),
+      /* 30 */ new FloatField(shadowDarkness),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(specular),
+      /* 34 */ new FloatField(glossiness),
+      /* 35 */ new IntField(lighting),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new FloatField(specularity),
+      /* 39 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(texture),
+      /*  1 */ scalarFromArg(blendMode),
+      /*  2 */ scalarFromArg(length),
+      /*  3 */ scalarFromArg(lengthMultiplier),
+      /*  4 */ new ConstantProperty(0),
+      /*  5 */ new ConstantProperty(0),
+      /*  6 */ vectorFromArg(color1),
+      /*  7 */ vectorFromArg(color2),
+      /*  8 */ vectorFromArg(color3),
+      /*  9 */ scalarFromArg(alphaThreshold),
+      /* 10 */ scalarFromArg(frameIndex),
+      /* 11 */ scalarFromArg(frameIndexOffset),
+      /* 12 */ new ConstantProperty(0),
+      /* 13 */ new ConstantProperty(0),
+      /* 14 */ new ConstantProperty(0),
+      /* 15 */ new ConstantProperty(-1),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Controls the orientation mode for the trail. Note that this is **not**
+   * {@link OrientationMode} - It works differently for this action, and not
+   * all of the values have been documented yet.
+   */
+  get orientation() { return this.fields1[0].value as number }
+  set orientation(value) { this.fields1[0].value = value }
+
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many seconds to wait between new segments being created. Lower values
+   * produce a smoother trail.
+   */
+  get segmentInterval() { return this.fields1[2].value as number }
+  set segmentInterval(value) { this.fields1[2].value = value }
+
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * long each segment should last in seconds.
+   */
+  get segmentDuration() { return this.fields1[3].value as number }
+  set segmentDuration(value) { this.fields1[3].value = value }
+
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how
+   * many segments may exist at the same time.
+   */
+  get concurrentSegments() { return this.fields1[4].value as number }
+  set concurrentSegments(value) { this.fields1[4].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  get columns() { return this.fields1[8].value as number }
+  set columns(value) { this.fields1[8].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  get totalFrames() { return this.fields1[9].value as number }
+  set totalFrames(value) { this.fields1[9].value = value }
+
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node
+   * or not. If it is attached, the texture will slide along the segments to
+   * follow the source wherever it moves, as if it was a flag attached to a
+   * pole. If it is not attached, the texture will stay where it was when the
+   * segment was created, like a skid mark on a road where the road is the
+   * segments and the mark is the texture, it wouldn't follow the car/node.
+   */
+  get attachedUV() { return this.fields1[10].value as boolean }
+  set attachedUV(value) { this.fields1[10].value = value }
+
+  /**
+   * Negative values will make the particle draw in front of objects closer to
+   * the camera, while positive values will make it draw behind objects farther
+   * away from the camera.
+   * 
+   * {@link ActionType.BillboardEx BillboardEx} has a
+   * {@link BillboardExParams.depthOffset property} that works the
+   * same way, but reversed. Since that property was discovered before this
+   * field, this field was given the "negative" name.
+   */
+  get negativeDepthOffset() { return this.fields2[26].value as number }
+  set negativeDepthOffset(value) { this.fields2[26].value = value }
+
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  get shadowDarkness() { return this.fields2[30].value as number }
+  set shadowDarkness(value) { this.fields2[30].value = value }
+
+  /**
+   * Controls whether or not specular highlights should be visible.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  get specular() { return this.fields2[33].value as number }
+  set specular(value) { this.fields2[33].value = value }
+
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  get glossiness() { return this.fields2[34].value as number }
+  set glossiness(value) { this.fields2[34].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  get specularity() { return this.fields2[38].value as number }
+  set specularity(value) { this.fields2[38].value = value }
+
+  /**
+   * The ID of the texture for the trail.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get texture() { return this.properties1[0] }
+  set texture(value) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
+  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[1] }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[6] }
+  set color1(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  get color2() { return this.properties1[7] }
+  set color2(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  get color3() { return this.properties1[8] }
+  set color3(value) { setPropertyInList(this.properties1, 8, value) }
+
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaThreshold() { return this.properties1[10] }
+  set alphaThreshold(value) { setPropertyInList(this.properties1, 10, value) }
+
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndex() { return this.properties1[10] }
+  set frameIndex(value) { setPropertyInList(this.properties1, 10, value) }
+
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndexOffset() { return this.properties1[11] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -9135,6 +9721,7 @@ export {
   QuadLine,
   BillboardEx,
   MultiTextureBillboardEx,
+  Tracer,
   PointLight,
   NodeWindSpeed,
   ParticleWindSpeed,
