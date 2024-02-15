@@ -4665,6 +4665,7 @@ class EqualDistanceEmitter extends Action {
   }
 
 }
+
 /**
  * Emits one particle once.
  * 
