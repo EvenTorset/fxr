@@ -30,12 +30,18 @@ enum NodeType {
    */
   LevelOfDetail = 2002,
   /**
-   * A basic node.
+   * A basic node that can have transforms and child nodes, and emit particles.
    * 
    * This node type has a specialized subclass: {@link BasicNode}
    */
   Basic = 2200,
-  Randomizer = 2202,
+  /**
+   * A node that overrides the emitter of its child nodes with its own,
+   * allowing a single emitter to emit multiple types of particles.
+   * 
+   * This node type has a specialized subclass: {@link SharedEmitterNode}
+   */
+  SharedEmitter = 2202,
 }
 
 enum EffectType {
@@ -47,21 +53,20 @@ enum EffectType {
    */
   LevelOfDetail = 1002,
   /**
-   * A basic effect that can emit particles of many different types.
+   * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
+   * emit particles of many different types.
    * 
    * This effect type has a specialized subclass: {@link BasicEffect}
    */
   Basic = 1004,
   /**
-   * An effect used to modify how the subnodes of a
-   * {@link NodeType.Randomizer randomizer node} are picked.
+   * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
+   * override emitters of child nodes and control which of the child nodes to use
+   * the particles of.
    * 
-   * May also be used for applying transforms to those subnodes, and
-   * possibly other, still unknown things.
-   * 
-   * This effect type has a specialized subclass: {@link RandomizerEffect}
+   * This effect type has a specialized subclass: {@link SharedEmitterEffect}
    */
-  Randomizer = 1005,
+  SharedEmitter = 1005,
 }
 
 enum ActionType {
@@ -188,14 +193,20 @@ enum ActionType {
    * This action type has a specialized subclass: {@link StateEffectMap}
    */
   StateEffectMap = 199,
-  Unk200 = 200,
   /**
-   * Controls the weights for picking random subnodes. Used in
-   * {@link EffectType.Randomizer}.
+   * Used in {@link EffectType.SharedEmitter} to emit all particles from child
+   * nodes every time the shared emitter emits something.
    * 
-   * This action type has a specialized subclass: {@link NodeWeights}
+   * This action type has a specialized subclass: {@link EmitAllParticles}
    */
-  NodeWeights = 201,
+  EmitAllParticles = 200,
+  /**
+   * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
+   * child node every time the shared emitter emits something.
+   * 
+   * This action type has a specialized subclass: {@link EmitRandomParticles}
+   */
+  EmitRandomParticles = 201,
   /**
    * Emits particles periodically.
    * 
@@ -799,7 +810,7 @@ const EffectActionSlots = {
       ActionType.Unk800
     ]
   ],
-  [EffectType.Randomizer]: [
+  [EffectType.SharedEmitter]: [
     [
       ActionType.NodeLifetime
     ],
@@ -842,11 +853,14 @@ const EffectActionSlots = {
       ActionType.Unk503
     ],
     [
-      ActionType.Unk200,
-      ActionType.NodeWeights
+      ActionType.EmitAllParticles,
+      ActionType.EmitRandomParticles
     ],
     [],
-    [],
+    [
+      ActionType.NodeWindSpeed,
+      ActionType.NodeWindAcceleration
+    ]
   ]
 }
 
@@ -2244,7 +2258,7 @@ class Node {
    */
   scale(factor: number) {
     for (const effect of this.walkEffects()) if (
-      effect.type === EffectType.Basic || effect.type === EffectType.Randomizer
+      effect.type === EffectType.Basic || effect.type === EffectType.SharedEmitter
     ) {
       const slot1 = effect.actions[1] as ActionWithNumericalFields
       switch (slot1.type) {
@@ -2383,6 +2397,14 @@ class Node {
           case ActionType.ParticleWindAcceleration:
           case ActionType.ParticleWindSpeed:
             slot14.properties1[0].scale(factor)
+            break
+        }
+      } else { // Shared emitter effect
+        const slot9 = effect.actions[9]
+        switch (slot9.type) {
+          case ActionType.NodeWindAcceleration:
+          case ActionType.NodeWindSpeed:
+            slot9.properties1[0].scale(factor)
             break
         }
       }
@@ -2590,29 +2612,12 @@ class ProxyNode extends Node {
 }
 
 /**
- * A node that only displays one of its child nodes at a time based on
- * distance thresholds for each.
- * 
- * This node can only manage up to five levels of detail. If you need more
- * levels, you can put another LOD node as the fifth child of this node and set
- * higher thresholds in that.
+ * Super class for any type of node that contains {@link EffectType effects}.
  */
-class LevelOfDetailNode extends Node {
+class NodeWithEffects extends Node {
 
-  /**
-   * @param duration The duration for the node to stay active. Once its time is
-   * up, it will deactivate and none of the child nodes will be visible/audible
-   * anymore.
-   * @param thresholds An array of distance thresholds. Each threshold is used
-   * for the child node of the same index.
-   * @param nodes An array of child nodes.
-   */
-  constructor(duration: number | Property, thresholds: number[], nodes: Node[]) {
-    super(NodeType.LevelOfDetail, [
-      new StateEffectMap(0)
-    ], [
-      new LevelOfDetailEffect(duration, thresholds)
-    ], nodes)
+  constructor(type: NodeType, effects: Effect[] = [], nodes: Node[] = []) {
+    super(type, [ new StateEffectMap ], effects, nodes)
   }
 
   mapStates(...effectIndices: number[]) {
@@ -2623,11 +2628,43 @@ class LevelOfDetailNode extends Node {
 }
 
 /**
- * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
- * them a default {@link ActionType.StateEffectMap state-effect map} and a
- * simpler way to modify the map.
+ * A node that only displays one of its child nodes at a time based on
+ * distance thresholds for each.
+ * 
+ * This node can only manage up to five levels of detail. If you need more
+ * levels, you can put another LOD node as the fifth child of this node and set
+ * higher thresholds in that.
  */
-class BasicNode extends Node {
+class LevelOfDetailNode extends NodeWithEffects {
+
+  /**
+   * @param effects An array of {@link EffectType.LevelOfDetail LOD effects}.
+   * Other effect types do not work in this node type.
+   * @param nodes An array of child nodes.
+   */
+  constructor(effects: Effect[] = [], nodes: Node[] = []) {
+    super(NodeType.LevelOfDetail, effects, nodes)
+  }
+
+  /**
+   * Alternative method to construct the node. Use this if you don't need
+   * multiple effects or a non-infinite duration.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   * @param nodes An array of child nodes.
+   */
+  static withThresholds(thresholds: number[], nodes: Node[]) {
+    return new LevelOfDetailNode([
+      new LevelOfDetailEffect(-1, thresholds)
+    ], nodes)
+  }
+
+}
+
+/**
+ * A basic node that can have transforms and child nodes, and emit particles.
+ */
+class BasicNode extends NodeWithEffects {
 
   /**
    * @param effectsOrEffectActions This is either the list of effects to add
@@ -2640,22 +2677,41 @@ class BasicNode extends Node {
       throw new Error('Non-node passed as node to BasicNode.')
     }
     if (effectsOrEffectActions.every(e => e instanceof Action)) {
-      super(NodeType.Basic, [ new StateEffectMap ], [
+      super(NodeType.Basic, [
         new BasicEffect(effectsOrEffectActions as Action[])
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        [ new StateEffectMap ],
         effectsOrEffectActions as Effect[],
         nodes
       )
     }
   }
 
-  mapStates(...effectIndices: number[]) {
-    this.actions = [new StateEffectMap(...effectIndices)]
-    return this
+}
+
+/**
+ * A node that overrides the emitter of its child nodes with its own, allowing
+ * a single emitter to emit multiple types of particles.
+ */
+class SharedEmitterNode extends NodeWithEffects {
+
+  constructor(effectsOrEffectActions: Effect[] | Action[] = [], nodes: Node[] = []) {
+    if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
+      throw new Error('Non-node passed as node to SharedEmitterNode.')
+    }
+    if (effectsOrEffectActions.every(e => e instanceof Action)) {
+      super(NodeType.SharedEmitter, [
+        new SharedEmitterEffect(effectsOrEffectActions as Action[])
+      ], nodes)
+    } else {
+      super(
+        NodeType.SharedEmitter,
+        effectsOrEffectActions as Effect[],
+        nodes
+      )
+    }
   }
 
 }
@@ -2767,27 +2823,27 @@ class LevelOfDetailEffect extends Effect {
 }
 
 /**
- * Utility class for creating basic effects without needing to know the order
-   * of actions, and without needing to create actions that have defaults.
-   * 
-   * Default actions:
-   * Index | Action
-   * ------|----------
-   * 0     | {@link ActionType.NodeLifetime NodeLifetime}
-   * 1     | {@link ActionType.None None}
-   * 2     | {@link ActionType.None None}
-   * 3     | {@link ActionType.None None}
-   * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
-   * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
-   * 6     | {@link ActionType.Unk500 Unk500}
-   * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
-   * 8     | {@link ActionType.ParticleLifetime ParticleLifetime}
-   * 9     | {@link ActionType.None None}
-   * 10    | {@link ActionType.None None}
-   * 11    | {@link ActionType.None None}
-   * 12    | {@link ActionType.Unk130 Unk130}
-   * 13    | {@link ActionType.None None}
-   * 14    | {@link ActionType.None None}
+ * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
+ * emit particles of many different types.
+ * 
+ * Default actions:
+ * Index | Action
+ * ------|----------
+ * 0     | {@link ActionType.NodeLifetime NodeLifetime}
+ * 1     | {@link ActionType.None None}
+ * 2     | {@link ActionType.None None}
+ * 3     | {@link ActionType.None None}
+ * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+ * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
+ * 6     | {@link ActionType.Unk500 Unk500}
+ * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
+ * 8     | {@link ActionType.ParticleLifetime ParticleLifetime}
+ * 9     | {@link ActionType.None None}
+ * 10    | {@link ActionType.None None}
+ * 11    | {@link ActionType.None None}
+ * 12    | {@link ActionType.Unk130 Unk130}
+ * 13    | {@link ActionType.None None}
+ * 14    | {@link ActionType.None None}
  */
 class BasicEffect extends Effect {
 
@@ -2846,25 +2902,25 @@ class BasicEffect extends Effect {
 }
 
 /**
- * Utility class for creating randomizer effects without needing to know the
-   * order of actions, and without needing to create actions that have
-   * defaults.
-   * 
-   * Default actions:
-   * Index | Action
-   * ------|----------
-   * 0     | {@link ActionType.NodeLifetime NodeLifetime}
-   * 1     | {@link ActionType.None None}
-   * 2     | {@link ActionType.None None}
-   * 3     | {@link ActionType.None None}
-   * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
-   * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
-   * 6     | {@link ActionType.Unk500 Unk500}
-   * 7     | {@link ActionType.Unk200 Unk200}
-   * 13    | {@link ActionType.None None}
-   * 14    | {@link ActionType.None None}
+ * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
+ * override emitters of child nodes and control which of the child nodes to use
+ * the particles of.
+ * 
+ * Default actions:
+ * Index | Action
+ * ------|----------
+ * 0     | {@link ActionType.NodeLifetime NodeLifetime}
+ * 1     | {@link ActionType.None None}
+ * 2     | {@link ActionType.None None}
+ * 3     | {@link ActionType.None None}
+ * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+ * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
+ * 6     | {@link ActionType.Unk500 Unk500}
+ * 7     | {@link ActionType.EmitAllParticles AllChildNodes}
+ * 13    | {@link ActionType.None None}
+ * 14    | {@link ActionType.None None}
  */
-class RandomizerEffect extends Effect {
+class SharedEmitterEffect extends Effect {
   
   /**
    * @param actions Actions to use in the effect. The order does not matter,
@@ -2872,7 +2928,7 @@ class RandomizerEffect extends Effect {
    * slots they fit in.
    */
   constructor(actions: Action[] = []) {
-    super(EffectType.Randomizer, [
+    super(EffectType.SharedEmitter, [
       new NodeLifetime,
       new Action,
       new Action,
@@ -2880,12 +2936,12 @@ class RandomizerEffect extends Effect {
       new OneTimeEmitter,
       new PointEmitterShape,
       new Action(ActionType.Unk500),
-      new Action(ActionType.Unk200),
+      new EmitAllParticles,
       new Action,
       new Action,
     ])
     for (const action of actions) {
-      const index = EffectActionSlots[EffectType.Randomizer].findIndex(a => a.includes(action.type))
+      const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
       if (index >= 0) {
         this.actions[index] = action
       } else {
@@ -2899,7 +2955,7 @@ class RandomizerEffect extends Effect {
 const Effects = {
   [EffectType.LevelOfDetail]: LevelOfDetailEffect, LevelOfDetailEffect,
   [EffectType.Basic]: BasicEffect, BasicEffect,
-  [EffectType.Randomizer]: RandomizerEffect, RandomizerEffect,
+  [EffectType.SharedEmitter]: SharedEmitterEffect, SharedEmitterEffect,
 }
 
 const commonAction6xxFields2Types = [
@@ -4403,12 +4459,25 @@ class StateEffectMap extends Action {
 }
 
 /**
- * Controls the weights for picking random subnodes. Used in {@link EffectType.Randomizer}.
+ * Used in {@link EffectType.SharedEmitter} to emit all particles from child
+ * nodes every time the shared emitter emits something.
  */
-class NodeWeights extends Action {
+class EmitAllParticles extends Action {
+
+  constructor() {
+    super(ActionType.EmitAllParticles)
+  }
+
+}
+
+/**
+ * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
+ * child node every time the shared emitter emits something.
+ */
+class EmitRandomParticles extends Action {
 
   constructor(...weights: number[]) {
-    super(ActionType.NodeWeights, [], [], [], [], [
+    super(ActionType.EmitRandomParticles, [], [], [], [], [
       new Section10(weights.map(w => new IntField(w)))
     ])
   }
@@ -8404,7 +8473,8 @@ const Actions = {
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.FXRReference]: FXRReference, FXRReference,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.NodeWeights]: NodeWeights, NodeWeights,
+  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
+  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
@@ -9689,11 +9759,12 @@ export {
   ProxyNode,
   LevelOfDetailNode,
   BasicNode,
+  SharedEmitterNode,
 
   Effect,
   LevelOfDetailEffect,
   BasicEffect,
-  RandomizerEffect,
+  SharedEmitterEffect,
 
   Action,
   NodeTranslation,
@@ -9708,7 +9779,8 @@ export {
   FXRReference,
   LevelOfDetailThresholds,
   StateEffectMap,
-  NodeWeights,
+  EmitAllParticles,
+  EmitRandomParticles,
   PeriodicEmitter,
   EqualDistanceEmitter,
   OneTimeEmitter,
