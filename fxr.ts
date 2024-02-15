@@ -289,6 +289,11 @@ enum ActionType {
    * {@link MultiTextureBillboardEx}
    */
   MultiTextureBillboardEx = 604,
+  /**
+   * Particle with a 3D model.
+   * 
+   * This action type has a specialized subclass: {@link Model}
+   */
   Model = 605,
   /**
    * Creates a trail behind moving effects.
@@ -3230,6 +3235,31 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: commonAction6xxFields2Types
   },
+  [ActionType.Model]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Boolean,
+      FieldType.Boolean,
+      null,
+      null,
+      null,
+      null,
+      FieldType.Float,
+      null,
+      null,
+      null,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.Tracer]: {
     Fields1: [
       FieldType.Integer,
@@ -5273,7 +5303,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  offset?: Vector3 | Property[]
+  offset?: Vector3 | [Property, Property, Property]
   /**
    * The width of the particle.
    * 
@@ -5328,21 +5358,21 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  rotation?: Vector3 | Property[]
+  rotation?: Vector3 | [Property, Property, Property]
   /**
    * Rotation speed in degrees per second. Each axis has its own property.
    * Defaults to [0, 0, 0].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  rotationSpeed?: Vector3 | Property[]
+  rotationSpeed?: Vector3 | [Property, Property, Property]
   /**
    * Rotation speed multiplier. Each axis has its own property. Defaults to
    * [1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  rotationSpeedMultiplier?: Vector3 | Property[]
+  rotationSpeedMultiplier?: Vector3 | [Property, Property, Property]
   /**
    * Positive values will make the particle draw in front of objects closer to
    * the camera, while negative values will make it draw behind objects farther
@@ -5718,7 +5748,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
   get texture() { return this.properties1[0] }
   set texture(value) { setPropertyInList(this.properties1, 0, value) }
 
-  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
+  get blendMode() { return this.properties1[1].stops[0].value as BlendMode }
   set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
   get blendModeProperty() { return this.properties1[1] }
 
@@ -5925,7 +5955,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  offset?: Vector3 | Property[]
+  offset?: Vector3 | [Property, Property, Property]
   /**
    * The width of the particle.
    * 
@@ -5998,21 +6028,21 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  rotation?: Vector3 | Property[]
+  rotation?: Vector3 | [Property, Property, Property]
   /**
    * Rotation speed in degrees per second. Each axis has its own property.
    * Defaults to [0, 0, 0].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  rotationSpeed?: Vector3 | Property[]
+  rotationSpeed?: Vector3 | [Property, Property, Property]
   /**
    * Rotation speed multiplier. Each axis has its own property. Defaults to
    * [1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  rotationSpeedMultiplier?: Vector3 | Property[]
+  rotationSpeedMultiplier?: Vector3 | [Property, Property, Property]
   /**
    * The index of the frame to show from the texture atlas. Can be animated
    * using a {@link PropertyFunction.Linear linear property} or similar.
@@ -6459,7 +6489,7 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
     ])
   }
 
-  get blendMode() { return this.properties1[0].stops[1].value as BlendMode }
+  get blendMode() { return this.properties1[0].stops[0].value as BlendMode }
   set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
   get blendModeProperty() { return this.properties1[0] }
 
@@ -6662,6 +6692,744 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
    */
   get specularity() { return this.fields2[38].value as number }
   set specularity(value) { this.fields2[38].value = value }
+
+}
+
+export interface ModelParams {
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information. Defaults to
+   * {@link OrientationMode.ParentNegativeZ}.
+   */
+  orientation?: OrientationMode
+  /**
+   * Each particle will pick numbers between these three and 1, and use those
+   * numbers as scale multipliers. For example, setting this to [0.5, 0.5, 0.5]
+   * will make the particles have a random size between half-sized and
+   * the original scale. Defaults to [1, 1, 1].
+   * 
+   * See also:
+   * - {@link uniformScale}
+   * - {@link scale}
+   */
+  scaleVariation?: Vector3
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link scale}
+   * - {@link scaleVariation}
+   */
+  uniformScale?: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`. Defaults to 1.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture. Defaults to 1.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Lit Lit}.
+   */
+  lighting?: LightingMode
+  /**
+   * The ID of the model to use. Defaults to 80201.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  model?: number | Property
+  /**
+   * Model scale. Each axis has its own property. Defaults to [1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  scale?: Vector3 | [Property, Property, Property]
+  /**
+   * Rotation in degrees. Each axis has its own property. Defaults to
+   * [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  rotation?: Vector3 | [Property, Property, Property]
+  /**
+   * Rotation speed in degrees per second. Each axis has its own property.
+   * Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  rotationSpeed?: Vector3 | [Property, Property, Property]
+  /**
+   * Rotation speed multiplier. Each axis has its own property. Defaults to
+   * [1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  rotationSpeedMultiplier?: Vector3 | [Property, Property, Property]
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4 | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  color3?: Vector4 | Property
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * Defaults to 0.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: number | Property
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: number | Property
+  /**
+   * Horizontal offset for the UV coordinates of the model. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  offsetU?: number | Property
+  /**
+   * Vertical offset for the UV coordinates of the model. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  offsetV?: number | Property
+  /**
+   * Horiztonal scroll speed for the model's texture. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedU?: number | Property
+  /**
+   * Multiplier for {@link speedU}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedUMultiplier?: number | Property
+  /**
+   * Vertical scroll speed for the model's texture. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedV?: number | Property
+  /**
+   * Multiplier for {@link speedV}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedVMultiplier?: number | Property
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: number | Property
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: number | Property
+}
+/**
+ * Particle with a 3D model.
+ */
+class Model extends CommonAction6xxFields2Action {
+
+  constructor({
+    orientation = OrientationMode.ParentNegativeZ,
+    scaleVariation = [1, 1, 1],
+    uniformScale = false,
+    columns = 1,
+    totalFrames = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    lighting = LightingMode.Lit,
+    model = 80201,
+    scale = [1, 1, 1],
+    rotation = [0, 0, 0],
+    rotationSpeed = [0, 0, 0],
+    rotationSpeedMultiplier = [1, 1, 1],
+    blendMode = BlendMode.Normal,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    frameIndex = 0,
+    frameIndexOffset = 0,
+    offsetU = 0,
+    offsetV = 0,
+    speedU = 0,
+    speedUMultiplier = 1,
+    speedV = 0,
+    speedVMultiplier = 1,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: ModelParams = {}) {
+    super(ActionType.Model, [
+      /*  0 */ new IntField(orientation),
+      /*  1 */ new FloatField(scaleVariation[0]),
+      /*  2 */ new FloatField(scaleVariation[1]),
+      /*  3 */ new FloatField(scaleVariation[2]),
+      /*  4 */ new BoolField(uniformScale),
+      /*  5 */ new IntField(columns),
+      /*  6 */ new IntField(totalFrames),
+      /*  7 */ new IntField(-2),
+      /*  8 */ new IntField(-2),
+      /*  9 */ new BoolField(true),
+      /* 10 */ new BoolField(true),
+      /* 11 */ new IntField(1),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new IntField(1),
+      /* 15 */ new FloatField(1),
+      /* 16 */ new IntField(0),
+      /* 17 */ new IntField(1),
+      /* 18 */ new IntField(1),
+      /* 19 */ new IntField(0),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new FloatField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(0),
+      /* 30 */ new FloatField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(false),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(lighting),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(model),
+      /*  1 */ scalarFromArg(scale[0]),
+      /*  2 */ scalarFromArg(scale[1]),
+      /*  3 */ scalarFromArg(scale[2]),
+      /*  4 */ scalarFromArg(rotation[0]),
+      /*  5 */ scalarFromArg(rotation[1]),
+      /*  6 */ scalarFromArg(rotation[2]),
+      /*  7 */ scalarFromArg(rotationSpeed[0]),
+      /*  8 */ scalarFromArg(rotationSpeedMultiplier[0]),
+      /*  9 */ scalarFromArg(rotationSpeed[1]),
+      /* 10 */ scalarFromArg(rotationSpeedMultiplier[1]),
+      /* 11 */ scalarFromArg(rotationSpeed[2]),
+      /* 12 */ scalarFromArg(rotationSpeedMultiplier[2]),
+      /* 13 */ scalarFromArg(blendMode),
+      /* 14 */ vectorFromArg(color1),
+      /* 15 */ vectorFromArg(color2),
+      /* 16 */ vectorFromArg(color3),
+      /* 17 */ new ConstantProperty(0),
+      /* 18 */ scalarFromArg(frameIndex),
+      /* 19 */ scalarFromArg(frameIndexOffset),
+      /* 20 */ scalarFromArg(offsetU),
+      /* 21 */ scalarFromArg(offsetV),
+      /* 22 */ scalarFromArg(speedU),
+      /* 23 */ scalarFromArg(speedUMultiplier),
+      /* 24 */ scalarFromArg(speedV),
+      /* 25 */ scalarFromArg(speedVMultiplier),
+      /* 26 */ new ConstantProperty(0),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information.
+   */
+  get orientation() { return this.fields1[0].value as OrientationMode }
+  set orientation(value) { this.fields1[0].value = value }
+
+  /**
+   * Each particle will pick numbers between these three and 1, and use those
+   * numbers as scale multipliers. For example, setting this to [0.5, 0.5, 0.5]
+   * will make the particles have a random size between half-sized and
+   * the original scale.
+   * 
+   * See also:
+   * - {@link uniformScale}
+   * - {@link scale}
+   */
+  get scaleVariation() {
+    return [
+      this.fields1[1].value as number,
+      this.fields1[2].value as number,
+      this.fields1[3].value as number,
+    ] as Vector3
+  }
+  set scaleVariation([x, y, z]) {
+    this.fields2[1].value = x
+    this.fields2[2].value = y
+    this.fields2[3].value = z
+  }
+
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored.
+   * 
+   * See also:
+   * - {@link scale}
+   * - {@link scaleVariation}
+   */
+  get uniformScale() { return this.fields1[4].value as boolean }
+  set uniformScale(value) { this.fields1[4].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  get columns() { return this.fields1[5].value as number }
+  set columns(value) { this.fields1[5].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  get totalFrames() { return this.fields1[6].value as number }
+  set totalFrames(value) { this.fields1[6].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * The ID of the model to use.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get model() { return this.properties1[0].stops[0].value as number }
+  set model(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * The ID of the model to use.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get modelProperty() { return this.properties1[0] }
+
+  /**
+   * Model X scale.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get scaleX() { return this.properties1[1] }
+  set scaleX(value) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Model Y scale.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get scaleY() { return this.properties1[2] }
+  set scaleY(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Model Z scale.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get scaleZ() { return this.properties1[3] }
+  set scaleZ(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Model scale. Each axis has its own property.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get scale() { return this.properties1.slice(1, 4) }
+  set scale(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 1 + i, value[i])
+    }
+  }
+
+  /**
+   * X rotation in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get rotationX() { return this.properties1[4] }
+  set rotationX(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * Y rotation in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get rotationY() { return this.properties1[5] }
+  set rotationY(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Z rotation in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get rotationZ() { return this.properties1[6] }
+  set rotationZ(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Rotation in degrees. Each axis has its own property.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get rotation() { return this.properties1.slice(4, 7) }
+  set rotation(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 4 + i, value[i])
+    }
+  }
+
+  /**
+   * X rotation speed in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedX() { return this.properties1[7] }
+  set rotationSpeedX(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Y rotation speed in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedY() { return this.properties1[9] }
+  set rotationSpeedY(value) { setPropertyInList(this.properties1, 9, value) }
+
+  /**
+   * Z rotation speed in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedZ() { return this.properties1[11] }
+  set rotationSpeedZ(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * Rotation speed in degrees per second. Each axis has its own property.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeed() { return [
+    this.properties1[7],
+    this.properties1[9],
+    this.properties1[11],
+  ] }
+  set rotationSpeed(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 7 + i * 2, value[i])
+    }
+  }
+
+  /**
+   * X rotation speed multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedMultiplierX() { return this.properties1[8] }
+  set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 8, value) }
+
+  /**
+   * Y rotation speed multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedMultiplierY() { return this.properties1[10] }
+  set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 10, value) }
+
+  /**
+   * Z rotation speed multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedMultiplierZ() { return this.properties1[12] }
+  set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 12, value) }
+
+  /**
+   * Rotation speed multiplier. Each axis has its own property.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get rotationSpeedMultiplier() { return [
+    this.properties1[8],
+    this.properties1[10],
+    this.properties1[12],
+  ] }
+  set rotationSpeedMultiplier(value) {
+    for (let i = 2; i >= 0; i--) {
+      setPropertyInList(this.properties1, 8 + i * 2, value[i])
+    }
+  }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[13].stops[0].value as BlendMode }
+  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 13, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[13] }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[14] }
+  set color1(value) { setPropertyInList(this.properties1, 14, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  get color2() { return this.properties1[15] }
+  set color2(value) { setPropertyInList(this.properties1, 15, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  get color3() { return this.properties1[16] }
+  set color3(value) { setPropertyInList(this.properties1, 16, value) }
+
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndex() { return this.properties1[18] }
+  set frameIndex(value) { setPropertyInList(this.properties1, 18, value) }
+
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndexOffset() { return this.properties1[19] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 19, value) }
+
+  /**
+   * Horizontal offset for the UV coordinates of the model.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get offsetU() { return this.properties1[20] }
+  set offsetU(value) { setPropertyInList(this.properties1, 20, value) }
+
+  /**
+   * Vertical offset for the UV coordinates of the model.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get offsetV() { return this.properties1[21] }
+  set offsetV(value) { setPropertyInList(this.properties1, 21, value) }
+
+  /**
+   * Horizontal scroll speed for the model's texture.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedU() { return this.properties1[22] }
+  set speedU(value) { setPropertyInList(this.properties1, 22, value) }
+
+  /**
+   * Multiplier for {@link speedU}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedUMultiplier() { return this.properties1[23] }
+  set speedUMultiplier(value) { setPropertyInList(this.properties1, 23, value) }
+
+  /**
+   * Vertical scroll speed for the model's texture.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedV() { return this.properties1[24] }
+  set speedV(value) { setPropertyInList(this.properties1, 24, value) }
+
+  /**
+   * Multiplier for {@link speedV}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedVMultiplier() { return this.properties1[25] }
+  set speedVMultiplier(value) { setPropertyInList(this.properties1, 25, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -7144,7 +7912,7 @@ class Tracer extends CommonAction6xxFields2Action {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
+  get blendMode() { return this.properties1[1].stops[0].value as BlendMode }
   set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
   /**
    * Blend mode.
@@ -7200,7 +7968,7 @@ class Tracer extends CommonAction6xxFields2Action {
 
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used. Defaults to 0.
+   * is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -8561,6 +9329,7 @@ const Actions = {
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
+  [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
@@ -9868,6 +10637,7 @@ export {
   QuadLine,
   BillboardEx,
   MultiTextureBillboardEx,
+  Model,
   Tracer,
   PointLight,
   NodeWindSpeed,
