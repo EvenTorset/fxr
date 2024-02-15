@@ -4322,8 +4322,51 @@ class ParticleLifetime extends Action {
 
 }
 
+export interface ParticleMultiplierParams {
+  /**
+   * Scales the model uniformly based on {@link scaleX}. The other scale
+   * properties in this action have no effect when this is enabled. Defaults to
+   * false.
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the speed of the particles, but only if the effect has an action
+   * in slot 10 that enables acceleration of particles. The direction depends
+   * on the emitter shape. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speed?: number | Property
+  /**
+   * Multiplier for the scale along the X-axis. If {@link uniformScale} is
+   * enabled, this scales the particles uniformly. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleX?: number | Property
+  /**
+   * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
+   * enabled, this property is ignored. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleY?: number | Property
+  /**
+   * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
+   * enabled, this property is ignored. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleZ?: number | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color?: Vector4 | Property
+}
 /**
- * Controls various multipliers as well as the acceleration of particles.
+ * Controls various multipliers as well as the speed of particles.
  * 
  * Fields1:
  * Index | Value
@@ -4341,38 +4384,16 @@ class ParticleLifetime extends Action {
  */
 class ParticleMultiplier extends Action {
 
-  /**
-   * @param uniformScale Scales the model uniformly based on {@link scaleX}.
-   * The other scale properties in this action have no effect when this is
-   * enabled.
-   * @param speed Controls the speed of the particles, but only if they have an
-   * action in slot 10. The direction depends on the emitter shape.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param scaleX Multiplier for the scale along the X-axis. If
-   * {@link uniformScale} is enabled, this scales the particles uniformly.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param scaleY Multiplier for the scale along the Y-axis. If
-   * {@link uniformScale} is enabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param scaleZ Multiplier for the scale along the Z-axis. If
-   * {@link uniformScale} is enabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param color Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  constructor(
-    uniformScale: boolean = true,
-    speed: number | Property = 0,
-    scaleX: number | Property = 1,
-    scaleY: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
-    scaleZ: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
-    color: Vector4 | Property = [1, 1, 1, 1],
-  ) {
+  declare fields1: [BoolField]
+
+  constructor({
+    uniformScale = false,
+    speed = 0,
+    scaleX = 1,
+    scaleY = 1,
+    scaleZ = 1,
+    color = [1, 1, 1, 1],
+  }: ParticleMultiplierParams = {}) {
     super(ActionType.ParticleMultiplier, [
       new BoolField(uniformScale),
     ], [], [
@@ -4383,6 +4404,58 @@ class ParticleMultiplier extends Action {
       vectorFromArg(color),
     ])
   }
+
+  /**
+   * Scales the model uniformly based on {@link scaleX}. The other scale
+   * properties in this action have no effect when this is enabled.
+   */
+  get uniformScale() { return this.fields1[0].value }
+  set uniformScale(value) { this.fields1[0].value = value }
+
+  /**
+   * Controls the speed of the particles, but only if the effect has an action
+   * in slot 10 that enables acceleration of particles. The direction depends
+   * on the emitter shape.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get speed(): Property { return this.properties1[0] }
+  set speed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * Multiplier for the scale along the X-axis. If {@link uniformScale} is
+   * enabled, this scales the particles uniformly.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get scaleX(): Property { return this.properties1[1] }
+  set scaleX(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
+   * enabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get scaleY(): Property { return this.properties1[2] }
+  set scaleY(value: number | Property) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
+   * enabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get scaleZ(): Property { return this.properties1[3] }
+  set scaleZ(value: number | Property) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get color(): Property { return this.properties1[4] }
+  set color(value: number | Property) { setPropertyInList(this.properties1, 4, value) }
 
 }
 
