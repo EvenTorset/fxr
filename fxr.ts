@@ -6877,17 +6877,29 @@ export interface ModelParams {
   /**
    * Horizontal offset for the UV coordinates of the model. Defaults to 0.
    * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
   offsetU?: number | Property
   /**
    * Vertical offset for the UV coordinates of the model. Defaults to 0.
    * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
   offsetV?: number | Property
   /**
    * Horiztonal scroll speed for the model's texture. Defaults to 0.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -6900,6 +6912,10 @@ export interface ModelParams {
   speedUMultiplier?: number | Property
   /**
    * Vertical scroll speed for the model's texture. Defaults to 0.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -7369,6 +7385,10 @@ class Model extends CommonAction6xxFields2Action {
   /**
    * Horizontal offset for the UV coordinates of the model.
    * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
   get offsetU() { return this.properties1[20] }
@@ -7377,6 +7397,10 @@ class Model extends CommonAction6xxFields2Action {
   /**
    * Vertical offset for the UV coordinates of the model.
    * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
   get offsetV() { return this.properties1[21] }
@@ -7384,6 +7408,10 @@ class Model extends CommonAction6xxFields2Action {
 
   /**
    * Horizontal scroll speed for the model's texture.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -7400,6 +7428,10 @@ class Model extends CommonAction6xxFields2Action {
 
   /**
    * Vertical scroll speed for the model's texture.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
