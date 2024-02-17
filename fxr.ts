@@ -70,7 +70,16 @@ enum EffectType {
 }
 
 enum ActionType {
+  /**
+   * This action does nothing. It fits into most action slots and acts as a way
+   * to disable the effects of the other actions that go in those slots.
+   */
   None = 0,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAcceleration = 1,
   /**
    * Translates the node with a property, meaning the offset can be animated.
@@ -79,9 +88,9 @@ enum ActionType {
    */
   NodeTranslation = 15,
   /**
-   * Makes the node spin.
+   * Controls the rotation speed of the node.
    * 
-   * This action type has a specialized subclass: {@link NodeSpin}
+   * This action type has a specialized subclass: {@link NodeMovement}
    */
   NodeSpin = 34,
   /**
@@ -132,6 +141,11 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PlaySound}
    */
   PlaySound = 75,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAccelerationRandomTurns = 83,
   /**
    * Controls the movement of particles.
@@ -145,11 +159,41 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleMovement}
    */
   ParticleAccelerationPartialFollow = 105,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAccelerationPartialFollow = 106,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAccelerationSpin = 113,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeed = 120,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeedRandomTurns = 121,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeedPartialFollow = 122,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeedSpin = 123,
   /**
    * Controls various things about the node, like its duration, and how
@@ -3611,6 +3655,390 @@ class Action {
 
 }
 
+export interface NodeMovementParams {
+  /**
+   * Controls how fast the node should spin around its X-axis in degrees per
+   * second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   * 
+   * See also:
+   * - {@link spinXMultiplier}
+   */
+  spinX?: number | Property
+  /**
+   * Multiplier for {@link spinX}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   */
+  spinXMultiplier?: number | Property
+  /**
+   * Controls how fast the node should spin around its Y-axis in degrees per
+   * second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   * 
+   * See also:
+   * - {@link spinYMultiplier}
+   */
+  spinY?: number | Property
+  /**
+   * Multiplier for {@link spinY}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   */
+  spinYMultiplier?: number | Property
+  /**
+   * Controls how fast the node should spin around its Z-axis in degrees per
+   * second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   * 
+   * See also:
+   * - {@link spinZMultiplier}
+   */
+  spinZ?: number | Property
+  /**
+   * Multiplier for {@link spinZ}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   */
+  spinZMultiplier?: number | Property
+  /**
+   * Controls the speed of the node along its Z-axis. Defaults to 0.
+   * 
+   * **Argument**:
+   * - If {@link speedZMultiplier} is set:
+   * {@link PropertyArgument.EffectAge Effect age}
+   * - If {@link speedZMultiplier} is **not** set:
+   * {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link speedZMultiplier}
+   */
+  speedZ?: number | Property
+  /**
+   * Multiplier for {@link speedZ}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link accelerationZ}
+   * - {@link accelerationZMultiplier}
+   */
+  speedZMultiplier?: number | Property
+  /**
+   * Controls the acceleration of the node in the +Z direction. This value
+   * cannot be negative. Defaults to 0.
+   * 
+   * Incompatible with the following parameters:
+   * - {@link speedZMultiplier}
+   * 
+   * See also:
+   * - {@link accelerationZMultiplier}
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: number | Property
+  /**
+   * Multiplier for {@link accelerationZ}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link speedZMultiplier}
+   */
+  accelerationZMultiplier?: number | Property
+  /**
+   * Controls the acceleration of the node along its Y-axis. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: number | Property
+  /**
+   * The node will turn a random amount based on this value at intervals
+   * defined by {@link turnInterval}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   */
+  maxTurnAngle?: number | Property
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at
+   * this interval. The units are seconds, but due to how the field that stores
+   * this value works, the value will be rounded to the nearest 0.02 seconds.
+   * Defaults to 0.
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   */
+  turnInterval?: number
+  /**
+   * Controls how well the node should follow the parent node if it is not
+   * attached. At 0, the node will not follow at all. At 1, the node will
+   * follow perfectly, as if attached to the parent node. Negative values will
+   * make the node move in the opposite direction compared to the parent node.
+   * Values greater than 1 will make the node exaggerate the parent node's
+   * movement. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: number | Property
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and
+   * not rotation. Defaults to true.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   */
+  followRotation?: boolean
+}
+/**
+ * Controls the movement of the node.
+ * 
+ * This class covers most of the Node Movement action types:
+ * - {@link ActionType.NodeSpin NodeSpin}
+ * - {@link ActionType.NodeAcceleration NodeAcceleration}
+ * - {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns}
+ * - {@link ActionType.NodeAccelerationPartialFollow NodeAccelerationPartialFollow}
+ * - {@link ActionType.NodeAccelerationSpin NodeAccelerationSpin}
+ * - {@link ActionType.NodeSpeed NodeSpeed}
+ * - {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns}
+ * - {@link ActionType.NodeSpeedPartialFollow NodeSpeedPartialFollow}
+ * - {@link ActionType.NodeSpeedSpin NodeSpeedSpin}
+ * 
+ * Which one is produced by the constructor depends on what arguments are set.
+ * By default, the basic acceleration action is created.
+ */
+class NodeMovement extends Action {
+
+  constructor({
+    spinX = null,
+    spinXMultiplier = null,
+    spinY = null,
+    spinYMultiplier = null,
+    spinZ = null,
+    spinZMultiplier = null,
+    speedZ = null,
+    speedZMultiplier = null,
+    accelerationZ = null,
+    accelerationZMultiplier = null,
+    accelerationY = null,
+    maxTurnAngle = null,
+    turnInterval = null,
+    followFactor = null,
+    followRotation = null,
+  }: NodeMovementParams = {}) {
+    const speed = +(speedZMultiplier !== null)
+    const acceleration = +(accelerationZ !== null || accelerationZMultiplier !== null) << 1
+    const spin = +[spinX, spinXMultiplier, spinY, spinYMultiplier, spinZ, spinZMultiplier].some(e => e !== null) << 2
+    const randomTurns = +(maxTurnAngle !== null || turnInterval !== null) << 3
+    const partialFollow = +(followFactor !== null || followRotation !== null) << 4
+    const aos = +(speed || acceleration || speedZ !== null || accelerationY !== null) << 5
+    spinX ??= 0
+    spinXMultiplier ??= 1
+    spinY ??= 0
+    spinYMultiplier ??= 1
+    spinZ ??= 0
+    spinZMultiplier ??= 1
+    speedZ ??= 0
+    speedZMultiplier ??= 1
+    accelerationZ ??= 0
+    accelerationZMultiplier ??= 1
+    accelerationY ??= 0
+    maxTurnAngle ??= 0
+    turnInterval ??= 0
+    followFactor ??= 0
+    followRotation ??= true
+    switch (speed | acceleration | spin | randomTurns | partialFollow | aos) {
+      case acceleration | aos: super(ActionType.NodeAcceleration, [
+        new IntField,
+        new IntField,
+        new FloatField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+      ]); break;
+      case spin: super(ActionType.NodeSpin, [
+        new IntField(1),
+      ], [], [
+        scalarFromArg(spinX),
+        scalarFromArg(spinXMultiplier),
+        scalarFromArg(spinY),
+        scalarFromArg(spinYMultiplier),
+        scalarFromArg(spinZ),
+        scalarFromArg(spinZMultiplier),
+      ]); break;
+      case acceleration | randomTurns | aos: super(ActionType.NodeAccelerationRandomTurns, [
+        new IntField,
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+      ]); break;
+      case acceleration | partialFollow | aos:
+      case acceleration | partialFollow | randomTurns | aos: super(ActionType.NodeAccelerationPartialFollow, [
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+        new BoolField(followRotation),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+        scalarFromArg(followFactor),
+      ]); break;
+      case acceleration | spin | aos: super(ActionType.NodeAccelerationSpin, [
+        new IntField,
+        new IntField,
+        new IntField,
+        new IntField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(spinX),
+        scalarFromArg(spinXMultiplier),
+        scalarFromArg(spinY),
+        scalarFromArg(spinYMultiplier),
+        scalarFromArg(spinZ),
+        scalarFromArg(spinZMultiplier),
+      ]); break;
+      case speed | aos: super(ActionType.NodeSpeed, [
+        new IntField,
+        new IntField,
+        new IntField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+      ]); break;
+      case speed | randomTurns | aos: super(ActionType.NodeSpeedRandomTurns, [
+        new IntField,
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+      ]); break;
+      case speed | partialFollow | aos:
+      case speed | partialFollow | randomTurns | aos: super(ActionType.NodeSpeedPartialFollow, [
+        new IntField,
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+        new BoolField(followRotation),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+        scalarFromArg(followFactor),
+      ]); break;
+      case speed | spin | aos: super(ActionType.NodeSpeedSpin, [
+        new IntField,
+        new IntField,
+        new IntField,
+        new IntField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(spinX),
+        scalarFromArg(spinXMultiplier),
+        scalarFromArg(spinY),
+        scalarFromArg(spinYMultiplier),
+        scalarFromArg(spinZ),
+        scalarFromArg(spinZMultiplier),
+      ]); break;
+      default:
+        if (speed && acceleration) {
+          throw new Error('Speed Z multiplier is not compatible with acceleration node movement actions.')
+        }
+        if (spin && (randomTurns || partialFollow)) {
+          throw new Error('Spin cannot be used together with random turns or partial follow in node movement actions.')
+        }
+        throw new Error('Incompatible arguments given to NodeMovement constructor.')
+    }
+  }
+
+}
+
 export interface ActionWithNumericalFields extends Action {
   fields1: NumericalField[]
   fields2: NumericalField[]
@@ -3645,58 +4073,6 @@ class NodeTranslation extends Action {
       new IntField(0)
     ], [], [
       vectorFromArg(translation)
-    ])
-  }
-
-}
-
-/**
- * Makes the node spin.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | spinX
- * 1     | spinXMult
- * 2     | spinY
- * 3     | spinYMult
- * 4     | spinZ
- * 5     | spinZMult
- */
-class NodeSpin extends Action {
-
-  /**
-   * @param spinX X spin in degrees per second. Defaults to 0.
-   * @param spinY Y spin in degrees per second. Defaults to 0.
-   * @param spinZ Z spin in degrees per second. Defaults to 0.
-   * @param spinXMult X spin multiplier. Defaults to 1.
-   * @param spinYMult Y spin multiplier. Defaults to 1.
-   * @param spinZMult Z spin multiplier. Defaults to 1.
-   * @param unkField Unknown. Fields1, index 0. Defaults to 1.
-   */
-  constructor(
-    spinX: number | Property = 0,
-    spinY: number | Property = 0,
-    spinZ: number | Property = 0,
-    spinXMult: number | Property = 1,
-    spinYMult: number | Property = 1,
-    spinZMult: number | Property = 1,
-    unkField: number = 1
-  ) {
-    super(ActionType.NodeSpin, [
-      new IntField(unkField)
-    ], [], [
-      scalarFromArg(spinX),
-      scalarFromArg(spinXMult),
-      scalarFromArg(spinY),
-      scalarFromArg(spinYMult),
-      scalarFromArg(spinZ),
-      scalarFromArg(spinZMult),
     ])
   }
 
@@ -4107,7 +4483,7 @@ export interface ParticleMovementParams {
   speedMult?: number | Property
   /**
    * The particles will turn a random amount based on this value at intervals
-   * defined by {@link turnInterval}.
+   * defined by {@link turnInterval}. Defaults to 0.
    * 
    * Unless one of the partial follow parameters are set, setting this will
    * produce one of the random turns actions:
@@ -4121,6 +4497,7 @@ export interface ParticleMovementParams {
    * The particles will turn a random amount based on {@link maxTurnAngle} at
    * this interval. The units are seconds, but due to how the field that stores
    * this value works, the value will be rounded to the nearest 0.02 seconds.
+   * Defaults to 0.
    * 
    * Unless one of the partial follow parameters are set, setting this will
    * produce one of the random turns actions:
@@ -4129,8 +4506,8 @@ export interface ParticleMovementParams {
    */
   turnInterval?: number
   /**
-   * Disabling this will make the {@link followFactor} only affect translation
-   * and not rotation. Defaults to true.
+   * Disabling this will make {@link followFactor} only affect translation and
+   * not rotation. Defaults to true.
    * 
    * Setting this will produce one of the partial follow actions:
    * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
@@ -9328,20 +9705,32 @@ class SpotLight extends Action {
 }
 
 const Actions = {
-  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
-  [ActionType.NodeSpin]: NodeSpin, NodeSpin,
+  NodeMovement,
+  [ActionType.NodeAcceleration]: NodeMovement, NodeAcceleration: NodeMovement,
+  [ActionType.NodeSpin]: NodeMovement, NodeSpin: NodeMovement,
+  [ActionType.NodeAccelerationRandomTurns]: NodeMovement, NodeAccelerationRandomTurns: NodeMovement,
+  [ActionType.NodeAccelerationPartialFollow]: NodeMovement, NodeAccelerationPartialFollow: NodeMovement,
+  [ActionType.NodeAccelerationSpin]: NodeMovement, NodeAccelerationSpin: NodeMovement,
+  [ActionType.NodeSpeed]: NodeMovement, NodeSpeed: NodeMovement,
+  [ActionType.NodeSpeedRandomTurns]: NodeMovement, NodeSpeedRandomTurns: NodeMovement,
+  [ActionType.NodeSpeedPartialFollow]: NodeMovement, NodeSpeedPartialFollow: NodeMovement,
+  [ActionType.NodeSpeedSpin]: NodeMovement, NodeSpeedSpin: NodeMovement,
+
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
-  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
+
   ParticleMovement,
   [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
   [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
   [ActionType.ParticleSpeedRandomTurns]: ParticleMovement, ParticleSpeedRandomTurns: ParticleMovement,
   [ActionType.ParticleSpeedPartialFollow]: ParticleMovement, ParticleSpeedPartialFollow: ParticleMovement,
-  [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
   [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
+
+  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
+  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
+  [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
   [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
@@ -10642,8 +11031,8 @@ export {
   SharedEmitterEffect,
 
   Action,
+  NodeMovement,
   NodeTranslation,
-  NodeSpin,
   NodeTransform,
   NodeAttachToCamera,
   PlaySound,
