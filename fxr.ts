@@ -9506,7 +9506,7 @@ class BoolField extends Field {
 
   declare value: boolean
 
-  constructor(value: boolean) {
+  constructor(value: boolean = false) {
     super(FieldType.Boolean, value)
   }
 
@@ -9516,7 +9516,7 @@ class IntField extends Field implements NumericalField {
 
   declare value: number
 
-  constructor(value: number) {
+  constructor(value: number = 0) {
     super(FieldType.Integer, value)
   }
 
@@ -9526,7 +9526,7 @@ class FloatField extends Field implements NumericalField {
 
   declare value: number
 
-  constructor(value: number) {
+  constructor(value: number = 0) {
     super(FieldType.Float, value)
   }
 
