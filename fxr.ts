@@ -949,6 +949,10 @@ function uniqueArray<T>(a: T[]) {
   return a.filter((e, i) => a.indexOf(e) === i)
 }
 
+function lerp(a: number, b: number, c: number) {
+  return a * (1 - c) + b * c
+}
+
 class BinaryReader extends DataView {
 
   position: number = 0
@@ -10561,26 +10565,25 @@ class SteppedProperty extends Property {
 
 class LinearProperty extends Property {
 
-  constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
+  constructor(loop: boolean, stops: { position: number, value: [number] | PropertyValue}[]) {
     if (stops.length === 0) {
       throw new Error ('Properties with a linear function must have at least 2 stops.')
+    }
+    for (const stop of stops) {
+      stop.value = Array.isArray(stop.value) ? stop.value : [stop.value]
     }
     const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
     super(comps - 1, PropertyFunction.Linear, loop, [
       new IntField(stops.length),
       ...arrayOf(comps * 2, () => new FloatField(0)),
       ...stops.map(s => new FloatField(s.position)),
-      ...stops.flatMap(s => comps === 1 ?
-        new FloatField(s.value as number)
-      :
-        (s.value as number[]).map(v => new FloatField(v))
-      ),
+      ...stops.flatMap(s => (s.value as number[]).map(v => new FloatField(v))),
     ])
   }
 
   /**
    * Creates a new linear property with only two steps.
-   * @param loop Controls whether the animation should loop or not.
+   * @param loop Controls whether the property should loop or not.
    * @param endPosition The position of the second stop.
    * @param startValue The value of the first stop.
    * @param endValue The value of the second stop.
@@ -10596,6 +10599,47 @@ class LinearProperty extends Property {
       { position: 0, value: startValue },
       { position: endPosition, value: endValue },
     ])
+  }
+
+  /**
+   * Creates a new linear property that emulates a power function.
+   * @param loop Controls whether the property should loop or not.
+   * @param exponent The exponent used in the power function. For example,
+   * setting this to values greater than 1 will make the property value change
+   * slowly at the start, but get faster and faster until it reaches the end.
+   * @param stops How many stops to use. Must be greater than or equal to 2.
+   * Using higher values will produce a smoother curve. Setting it to 2 will
+   * make it linear, which means you might as well use the {@link basic} 
+   * method instead of this.
+   * @param endPosition The position of the last stop.
+   * @param startValue The value of the first stop.
+   * @param endValue The value of the last stop.
+   * @returns 
+   */
+  static power(
+    loop: boolean,
+    exponent: number,
+    stops: number,
+    endPosition: number,
+    startValue: [number] | PropertyValue,
+    endValue: [number] | PropertyValue
+  ) {
+    if (stops < 2) {
+      throw new Error('Property stop count must be greater than or equal to 2.')
+    }
+    if (Array.isArray(startValue)) {
+      return new LinearProperty(loop, arrayOf(stops, i => ({
+        position: i / (stops - 1) * endPosition,
+        value: startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as [number] | Vector
+      })))
+    } else if (!Array.isArray(endValue)) {
+      return new LinearProperty(loop, arrayOf(stops, i => ({
+        position: i / (stops - 1) * endPosition,
+        value: lerp(startValue, endValue, (i / (stops - 1)) ** exponent)
+      })))
+    } else {
+      throw new Error('startValue and endValue must be of the same type.')
+    }
   }
 
 }
