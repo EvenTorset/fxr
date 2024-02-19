@@ -792,6 +792,24 @@ enum DistortionMode {
   Unk4 = 4,
 }
 
+/**
+ * Possible shapes for {@link ActionType.Distortion distortion} particles.
+ */
+enum DistortionShape {
+  /**
+   * A flat rectangle.
+   */
+  Rectangle = 0,
+  /**
+   * Half of an ellipsoid. (Like a hemisphere, but with three different radii.)
+   */
+  Hemiellipsoid = 1,
+  /**
+   * An ellipsoid. (Like a sphere, but with three different radii.)
+   */
+  Ellipsoid = 2,
+}
+
 const EffectActionSlots = {
   [EffectType.Basic]: [
     [
@@ -3367,7 +3385,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
   [ActionType.Distortion]: {
     Fields1: [
       FieldType.Integer,
-      FieldType.Boolean,
+      FieldType.Integer,
       FieldType.Integer,
       FieldType.Integer,
       FieldType.Integer,
@@ -8503,9 +8521,10 @@ export interface DistortionParams {
    */
   mode?: DistortionMode
   /**
-   * When enabled, this makes the particle elliptical instead of rectangular.
+   * Controls the shape of the particle. See {@link DistortionShape} for more
+   * information. Defaults to {@link DistortionShape.Rectangle}.
    */
-  elliptical?: boolean
+  shape?: DistortionShape
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
@@ -8556,15 +8575,28 @@ export interface DistortionParams {
    */
   scaleVariationY?: number
   /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored. Defaults to false.
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  scaleVariationZ?: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored. Defaults to false.
    * 
    * See also:
-   * - {@link width}
-   * - {@link height}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
    */
   uniformScale?: boolean
   /**
@@ -8631,18 +8663,29 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  width?: number | Property
+  sizeX?: number | Property
   /**
    * The height of the particle.
    * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
    * height, and this property is ignored.
    * 
    * Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  height?: number | Property
+  sizeY?: number | Property
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * depth, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  sizeZ?: number | Property
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
@@ -8719,13 +8762,14 @@ class Distortion extends CommonAction6xxFields2Action {
 
   constructor({
     mode = DistortionMode.NormalMap,
-    elliptical = false,
+    shape = DistortionShape.Rectangle,
     orientation = OrientationMode.Camera,
     texture = 0,
     normalMap = 0,
     mask = 0,
     scaleVariationX = 1,
     scaleVariationY = 1,
+    scaleVariationZ = 1,
     uniformScale = false,
     bloomColor = [1, 1, 1],
     bloomStrength = 0,
@@ -8733,8 +8777,9 @@ class Distortion extends CommonAction6xxFields2Action {
     maxDistance = -1,
     blendMode = BlendMode.Normal,
     offset = [0, 0, 0],
-    width = 1,
-    height = 1,
+    sizeX = 1,
+    sizeY = 1,
+    sizeZ = 1,
     color = [1, 1, 1, 1],
     intensity = 1,
     stirSpeed = 1,
@@ -8748,14 +8793,14 @@ class Distortion extends CommonAction6xxFields2Action {
   }: DistortionParams = {}) {
     super(ActionType.Distortion, [
       new IntField(mode),
-      new BoolField(elliptical),
+      new IntField(shape),
       new IntField(orientation),
       new IntField(texture),
       new IntField(normalMap),
       new IntField(mask),
       new FloatField(scaleVariationX),
       new FloatField(scaleVariationY),
-      new FloatField(1),
+      new FloatField(scaleVariationZ),
       new BoolField(uniformScale),
       new IntField(-2),
       new IntField(0),
@@ -8806,9 +8851,9 @@ class Distortion extends CommonAction6xxFields2Action {
       scalarFromArg(offset[0]),
       scalarFromArg(offset[1]),
       scalarFromArg(offset[2]),
-      scalarFromArg(width),
-      scalarFromArg(height),
-      new ConstantProperty(0),
+      scalarFromArg(sizeX),
+      scalarFromArg(sizeY),
+      scalarFromArg(sizeZ),
       vectorFromArg(color),
       new ConstantProperty(1, 1, 1, 1),
       scalarFromArg(intensity),
@@ -8840,10 +8885,11 @@ class Distortion extends CommonAction6xxFields2Action {
   set mode(value) { this.fields1[0].value = value }
 
   /**
-   * When enabled, this makes the particle elliptical instead of rectangular.
+   * Controls the shape of the particle. See {@link DistortionShape} for more
+   * information.
    */
-  get elliptical() { return this.fields1[1].value as boolean }
-  set elliptical(value) { this.fields1[1].value = value }
+  get shape() { return this.fields1[1].value as DistortionShape }
+  set shape(value) { this.fields1[1].value = value }
 
   /**
    * Controls the orientation mode for the particles. See
@@ -8905,15 +8951,30 @@ class Distortion extends CommonAction6xxFields2Action {
   set scaleVariationY(value) { this.fields1[7].value = value }
 
   /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored.
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  get scaleVariationZ() { return this.fields1[8].value as number }
+  set scaleVariationZ(value) { this.fields1[8].value = value }
+
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored.
    * 
    * See also:
-   * - {@link width}
-   * - {@link height}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
    */
   get uniformScale() { return this.fields1[9].value as boolean }
   set uniformScale(value) { this.fields1[9].value = value }
@@ -8989,19 +9050,30 @@ class Distortion extends CommonAction6xxFields2Action {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  get width() { return this.properties1[4] }
-  set width(value) { setPropertyInList(this.properties1, 4, value) }
+  get sizeX() { return this.properties1[4] }
+  set sizeX(value) { setPropertyInList(this.properties1, 4, value) }
 
   /**
    * The height of the particle.
    * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
    * height, and this property is ignored.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  get height() { return this.properties1[5] }
-  set height(value) { setPropertyInList(this.properties1, 5, value) }
+  get sizeY() { return this.properties1[5] }
+  set sizeY(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * depth, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get sizeZ() { return this.properties1[6] }
+  set sizeZ(value) { setPropertyInList(this.properties1, 6, value) }
 
   /**
    * Color multiplier.
@@ -11737,6 +11809,7 @@ export {
   OrientationMode,
   LightingMode,
   DistortionMode,
+  DistortionShape,
 
   Nodes,
   Effects,
