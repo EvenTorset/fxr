@@ -345,6 +345,11 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Tracer}
    */
   Tracer = 606,
+  /**
+   * A particle that distorts anything seen through it.
+   * 
+   * This action type has a specialized subclass: {@link Distortion}
+   */
   Distortion = 607,
   RadialBlur = 608,
   /**
@@ -756,6 +761,35 @@ enum LightingMode {
    * Lighting affects the particles just like most regular objects.
    */
   Lit = 0,
+}
+
+/**
+ * Used by {@link ActionType.Distortion distortion} particles to control what
+ * type of distortion to apply.
+ */
+enum DistortionMode {
+  /**
+   * Distorts the background as if you stuck something into it and stirred it.
+   * It is animated, and the stir speed is controlled by a property.
+   */
+  Stir = 0,
+  /**
+   * Distorts the background based on the normal map.
+   */
+  NormalMap = 1,
+  /**
+   * Distorts the background as if the edges were held in place and you grabbed
+   * the center and twisted it.
+   */
+  Twist = 2,
+  /**
+   * Seemingly identical to {@link NormalMap}?
+   */
+  Unk3 = 3,
+  /**
+   * This seems to just squeeze everything to the bottom left corner?
+   */
+  Unk4 = 4,
 }
 
 const EffectActionSlots = {
@@ -3330,6 +3364,25 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: commonAction6xxFields2Types
   },
+  [ActionType.Distortion]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Boolean,
+      FieldType.Integer,
+      null,
+      FieldType.Integer,
+      FieldType.Integer,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.PointLight]: {
     Fields1: [
       null,
@@ -5688,8 +5741,7 @@ export interface BillboardExParams {
   /**
    * The width of the particle.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled, this also controls the height.
+   * If {@link uniformScale} is enabled, this also controls the height.
    * 
    * Defaults to 1.
    * 
@@ -5699,9 +5751,8 @@ export interface BillboardExParams {
   /**
    * The height of the particle.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled, {@link BillboardExParams.width width} also controls
-   * the height, and this property is ignored.
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
    * 
    * Defaults to 1.
    * 
@@ -5813,13 +5864,12 @@ export interface BillboardExParams {
    * width. Setting it to 2 will make them randomly wider, up to double width.
    * Defaults to 1.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled, this also affects the height.
+   * If {@link uniformScale} is enabled, this also affects the height.
    * 
    * See also:
-   * - {@link BillboardExParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link scaleVariationY}
    */
-  randomWidthMultiplier?: number
+  scaleVariationX?: number
   /**
    * Each particle will pick a random number between this value and 1, and the
    * height of the particle will be multiplied by this number. For example,
@@ -5827,22 +5877,20 @@ export interface BillboardExParams {
    * height. Setting it to 2 will make them randomly taller, up to double
    * height. Defaults to 1.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled,
-   * {@link BillboardExParams.randomWidthMultiplier randomWidthMultiplier}
-   * also affects the height, and this field is ignored.
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
    */
-  randomHeightMultiplier?: number
+  scaleVariationY?: number
   /**
    * If enabled, the particle width-related properties and fields will control
    * both the width and height of the particles, and the height counterparts
    * will be ignored. Defaults to false.
    * 
    * See also:
-   * - {@link BillboardExParams.width width}
-   * - {@link BillboardExParams.height height}
-   * - {@link BillboardExParams.randomWidthMultiplier randomWidthMultiplier}
-   * - {@link BillboardExParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
    */
   uniformScale?: boolean
   /**
@@ -6000,8 +6048,8 @@ class BillboardEx extends CommonAction6xxFields2Action {
     alphaMultiplier = 1,
     orientation = OrientationMode.Camera,
     normalMap = 0,
-    randomWidthMultiplier = 1,
-    randomHeightMultiplier = 1,
+    scaleVariationX = 1,
+    scaleVariationY = 1,
     uniformScale = false,
     columns = 1,
     totalFrames = 1,
@@ -6027,8 +6075,8 @@ class BillboardEx extends CommonAction6xxFields2Action {
     super(ActionType.BillboardEx, [
       /*  0 */ new IntField(orientation),
       /*  1 */ new IntField(normalMap),
-      /*  2 */ new FloatField(randomWidthMultiplier),
-      /*  3 */ new FloatField(randomHeightMultiplier),
+      /*  2 */ new FloatField(scaleVariationX),
+      /*  3 */ new FloatField(scaleVariationY),
       /*  4 */ new BoolField(uniformScale),
       /*  5 */ new IntField(0),
       /*  6 */ new IntField(columns),
@@ -6244,11 +6292,11 @@ class BillboardEx extends CommonAction6xxFields2Action {
   get normalMap() { return this.fields1[1].value as number }
   set normalMap(value) { this.fields1[1].value = value }
 
-  get randomWidthMultiplier() { return this.fields1[2].value as number }
-  set randomWidthMultiplier(value) { this.fields1[2].value = value }
+  get scaleVariationX() { return this.fields1[2].value as number }
+  set scaleVariationX(value) { this.fields1[2].value = value }
 
-  get randomHeightMultiplier() { return this.fields1[3].value as number }
-  set randomHeightMultiplier(value) { this.fields1[3].value = value }
+  get scaleVariationY() { return this.fields1[3].value as number }
+  set scaleVariationY(value) { this.fields1[3].value = value }
 
   get uniformScale() { return this.fields1[4].value as boolean }
   set uniformScale(value) { this.fields1[4].value = value }
@@ -6693,7 +6741,6 @@ export interface MultiTextureBillboardExParams {
    */
   specularity?: number
 }
-
 /**
  * Particle with multiple texture that can scroll.
  */
@@ -7084,16 +7131,38 @@ export interface ModelParams {
    */
   orientation?: OrientationMode
   /**
-   * Each particle will pick numbers between these three and 1, and use those
-   * numbers as scale multipliers. For example, setting this to [0.5, 0.5, 0.5]
-   * will make the particles have a random size between half-sized and
-   * the original scale. Defaults to [1, 1, 1].
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * Defaults to 1.
    * 
-   * See also:
-   * - {@link uniformScale}
-   * - {@link scale}
+   * If {@link uniformScale} is enabled, this also affects the height and
+   * depth.
    */
-  scaleVariation?: Vector3
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  scaleVariationY?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  scaleVariationZ?: number
   /**
    * If enabled, the particle X scale-related properties and fields will
    * control the scale in all axes, and the Y and Z counterparts will be
@@ -7101,7 +7170,9 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link scale}
-   * - {@link scaleVariation}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
    */
   uniformScale?: boolean
   /**
@@ -7328,7 +7399,9 @@ class Model extends CommonAction6xxFields2Action {
 
   constructor({
     orientation = OrientationMode.ParentNegativeZ,
-    scaleVariation = [1, 1, 1],
+    scaleVariationX = 1,
+    scaleVariationY = 1,
+    scaleVariationZ = 1,
     uniformScale = false,
     columns = 1,
     totalFrames = 1,
@@ -7359,9 +7432,9 @@ class Model extends CommonAction6xxFields2Action {
   }: ModelParams = {}) {
     super(ActionType.Model, [
       /*  0 */ new IntField(orientation),
-      /*  1 */ new FloatField(scaleVariation[0]),
-      /*  2 */ new FloatField(scaleVariation[1]),
-      /*  3 */ new FloatField(scaleVariation[2]),
+      /*  1 */ new FloatField(scaleVariationX),
+      /*  2 */ new FloatField(scaleVariationY),
+      /*  3 */ new FloatField(scaleVariationZ),
       /*  4 */ new BoolField(uniformScale),
       /*  5 */ new IntField(columns),
       /*  6 */ new IntField(totalFrames),
@@ -7464,27 +7537,42 @@ class Model extends CommonAction6xxFields2Action {
   set orientation(value) { this.fields1[0].value = value }
 
   /**
-   * Each particle will pick numbers between these three and 1, and use those
-   * numbers as scale multipliers. For example, setting this to [0.5, 0.5, 0.5]
-   * will make the particles have a random size between half-sized and
-   * the original scale.
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
    * 
-   * See also:
-   * - {@link uniformScale}
-   * - {@link scale}
+   * If {@link uniformScale} is enabled, this also affects the height and
+   * depth.
    */
-  get scaleVariation() {
-    return [
-      this.fields1[1].value as number,
-      this.fields1[2].value as number,
-      this.fields1[3].value as number,
-    ] as Vector3
-  }
-  set scaleVariation([x, y, z]) {
-    this.fields2[1].value = x
-    this.fields2[2].value = y
-    this.fields2[3].value = z
-  }
+  get scaleVariationX() { return this.fields1[1].value as number }
+  set scaleVariationX(value) { this.fields1[1].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  get scaleVariationY() { return this.fields1[2].value as number }
+  set scaleVariationY(value) { this.fields1[2].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  get scaleVariationZ() { return this.fields1[3].value as number }
+  set scaleVariationZ(value) { this.fields1[3].value = value }
 
   /**
    * If enabled, the particle X scale-related properties and fields will
@@ -7493,7 +7581,9 @@ class Model extends CommonAction6xxFields2Action {
    * 
    * See also:
    * - {@link scale}
-   * - {@link scaleVariation}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
    */
   get uniformScale() { return this.fields1[4].value as boolean }
   set uniformScale(value) { this.fields1[4].value = value }
@@ -8067,7 +8157,6 @@ export interface TracerParams {
    */
   alphaMultiplier?: number | Property
 }
-
 /**
  * Creates a trail behind moving effects.
  */
@@ -8387,6 +8476,601 @@ class Tracer extends CommonAction6xxFields2Action {
    */
   get frameIndexOffset() { return this.properties1[11] }
   set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
+export interface DistortionParams {
+  /**
+   * Controls what type of distortion to apply. See {@link DistortionMode} for
+   * more details. Defaults to {@link DistortionMode.NormalMap}.
+   */
+  mode?: DistortionMode
+  /**
+   * When enabled, this makes the particle elliptical instead of rectangular.
+   */
+  elliptical?: boolean
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information. Defaults to
+   * {@link OrientationMode.Camera}.
+   */
+  orientation?: OrientationMode
+  /**
+   * Texture ID. Defaults to 0 (no texture).
+   * 
+   * This texture seems to completely hide the distortion effect. It's probably
+   * best to just leave it at 0 unless you are trying to figure out how to use
+   * it properly.
+   */
+  texture?: number
+  /**
+   * Normal map ID. Defaults to 0 (no texture).
+   * 
+   * Only used if the distortion {@link mode} is set to something that uses it.
+   */
+  normalMap?: number
+  /**
+   * Mask texture ID. This texture is used to control the color and opacity of
+   * the particle. Defaults to 0 (no texture).
+   */
+  mask?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  scaleVariationY?: number
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | Property
+  /**
+   * Offset for the position of the particle. Each axis has its own property.
+   * Defaults to [0, 0, 0].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offset?: Vector3 | [Property, Property, Property]
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: number | Property
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: number | Property
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color?: Vector4 | Property
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no
+   * distortion at all. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  intensity?: number | Property
+  /**
+   * Controls the speed of the stirring effect in radians per second. Requires
+   * {@link mode} to be set to {@link DistortionMode.Stir}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  stirSpeed?: number | Property
+  /**
+   * The distortion effect is only applied to an ellipse inside the particle.
+   * This property controls how large this ellipse is. At 1, it inscribes the
+   * particle's rectangle. At values greater than 1, it is the same size as 1,
+   * but there might be strange artifacts around the edges of the distortion.
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  radius?: number | Property
+  /**
+   * Horizontal offset for the {@link normalMap normal map}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  normalMapOffsetU?: number | Property
+  /**
+   * Vertical offset for the {@link normalMap normal map}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  normalMapOffsetV?: number | Property
+  /**
+   * Horizontal offset speed for the {@link normalMap normal map}. Defaults to
+   * 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  normalMapSpeedU?: number | Property
+  /**
+   * Vertical offset speed for the {@link normalMap normal map}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  normalMapSpeedV?: number | Property
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: number | Property
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: number | Property
+}
+/**
+ * A particle that distorts anything seen through it.
+ */
+class Distortion extends CommonAction6xxFields2Action {
+
+  constructor({
+    mode = DistortionMode.NormalMap,
+    elliptical = false,
+    orientation = OrientationMode.Camera,
+    texture = 0,
+    normalMap = 0,
+    mask = 0,
+    scaleVariationX = 1,
+    scaleVariationY = 1,
+    uniformScale = false,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    blendMode = BlendMode.Normal,
+    offset = [0, 0, 0],
+    width = 1,
+    height = 1,
+    color = [1, 1, 1, 1],
+    intensity = 1,
+    stirSpeed = 1,
+    radius = 1,
+    normalMapOffsetU = 0,
+    normalMapOffsetV = 0,
+    normalMapSpeedU = 0,
+    normalMapSpeedV = 0,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: DistortionParams = {}) {
+    super(ActionType.Distortion, [
+      new IntField(mode),
+      new BoolField(elliptical),
+      new IntField(orientation),
+      new IntField(texture),
+      new IntField(normalMap),
+      new IntField(mask),
+      new FloatField(scaleVariationX),
+      new FloatField(scaleVariationY),
+      new FloatField(1),
+      new BoolField(uniformScale),
+      new IntField(-2),
+      new IntField(0),
+      new IntField(1),
+      new IntField(1),
+    ], [
+      new IntField(0),
+      new IntField(0),
+      new IntField(8),
+      new FloatField(1),
+      new IntField(0),
+      new FloatField(bloomColor[0]),
+      new FloatField(bloomColor[1]),
+      new FloatField(bloomColor[2]),
+      new FloatField(bloomStrength),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new FloatField(-1),
+      new FloatField(-1),
+      new FloatField(-1),
+      new FloatField(-1),
+      new FloatField(minDistance),
+      new FloatField(maxDistance),
+      new IntField(1),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new FloatField(0),
+      new IntField(0),
+      new IntField(1),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(-1),
+      new IntField(-2),
+      new IntField(0),
+      new IntField(0),
+    ], [
+      scalarFromArg(blendMode),
+      scalarFromArg(offset[0]),
+      scalarFromArg(offset[1]),
+      scalarFromArg(offset[2]),
+      scalarFromArg(width),
+      scalarFromArg(height),
+      new ConstantProperty(0),
+      vectorFromArg(color),
+      new ConstantProperty(1, 1, 1, 1),
+      scalarFromArg(intensity),
+      new ConstantProperty(0),
+      scalarFromArg(stirSpeed),
+      scalarFromArg(radius),
+      scalarFromArg(normalMapOffsetU),
+      scalarFromArg(normalMapOffsetV),
+      scalarFromArg(normalMapSpeedU),
+      scalarFromArg(normalMapSpeedV),
+    ], [
+      scalarFromArg(rgbMultiplier),
+      scalarFromArg(alphaMultiplier),
+      new ConstantProperty(0),
+      new ConstantProperty(1, 1, 1, 1),
+      new ConstantProperty(1, 1, 1, 1),
+      new ConstantProperty(1, 1, 1, 1),
+      new ConstantProperty(0),
+      new ConstantProperty(1),
+      new ConstantProperty(1),
+    ])
+  }
+
+  /**
+   * Controls what type of distortion to apply. See {@link DistortionMode} for
+   * more details.
+   */
+  get mode() { return this.fields1[0].value as DistortionMode }
+  set mode(value) { this.fields1[0].value = value }
+
+  /**
+   * When enabled, this makes the particle elliptical instead of rectangular.
+   */
+  get elliptical() { return this.fields1[1].value as boolean }
+  set elliptical(value) { this.fields1[1].value = value }
+
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information.
+   */
+  get orientation() { return this.fields1[2].value as OrientationMode }
+  set orientation(value) { this.fields1[2].value = value }
+
+  /**
+   * Texture ID.
+   * 
+   * This texture seems to completely hide the distortion effect. It's probably
+   * best to just leave it at 0 unless you are trying to figure out how to use
+   * it properly.
+   */
+  get texture() { return this.fields1[3].value as number }
+  set texture(value) { this.fields1[3].value = value }
+
+  /**
+   * Normal map ID.
+   * 
+   * Only used if the distortion {@link mode} is set to something that uses it.
+   */
+  get normalMap() { return this.fields1[4].value as number }
+  set normalMap(value) { this.fields1[4].value = value }
+
+  /**
+   * Mask texture ID. This texture is used to control the color and opacity of
+   * the particle.
+   */
+  get mask() { return this.fields1[5].value as number }
+  set mask(value) { this.fields1[5].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  get scaleVariationX() { return this.fields1[6].value as number }
+  set scaleVariationX(value) { this.fields1[6].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  get scaleVariationY() { return this.fields1[7].value as number }
+  set scaleVariationY(value) { this.fields1[7].value = value }
+
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  get uniformScale() { return this.fields1[9].value as boolean }
+  set uniformScale(value) { this.fields1[9].value = value }
+
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].stops[0].value as BlendMode }
+  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[0] }
+
+  /**
+   * Offset for the X position of the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link offset}
+   */
+  get offsetX() { return this.properties1[1] }
+  set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Offset for the Y position of the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link offset}
+   */
+  get offsetY() { return this.properties1[2] }
+  set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Offset for the Z position of the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link offset}
+   */
+  get offsetZ() { return this.properties1[3] }
+  set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Offset for the position of the particle. Each axis has its own property.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link offsetX}
+   * - {@link offsetY}
+   * - {@link offsetZ}
+   */
+  get offset() { return this.properties1.slice(1, 4) }
+  set offset(value) {
+    for (let i = 1; i >= 0; i--) {
+      setPropertyInList(this.properties1, 1 + i, value[i])
+    }
+  }
+
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get width() { return this.properties1[4] }
+  set width(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get height() { return this.properties1[5] }
+  set height(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color() { return this.properties1[7] }
+  set color(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no
+   * distortion at all.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get intensity() { return this.properties1[9] }
+  set intensity(value) { setPropertyInList(this.properties1, 9, value) }
+
+  /**
+   * Controls the speed of the stirring effect in radians per second. Requires
+   * {@link mode} to be set to {@link DistortionMode.Stir}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get stirSpeed() { return this.properties1[11] }
+  set stirSpeed(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * The distortion effect is only applied to an ellipse inside the particle.
+   * This property controls how large this ellipse is. At 1, it inscribes the
+   * particle's rectangle. At values greater than 1, it is the same size as 1,
+   * but there might be strange artifacts around the edges of the distortion.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get radius() { return this.properties1[12] }
+  set radius(value) { setPropertyInList(this.properties1, 12, value) }
+
+  /**
+   * Horizontal offset for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get normalMapOffsetU() { return this.properties1[13] }
+  set normalMapOffsetU(value) { setPropertyInList(this.properties1, 13, value) }
+
+  /**
+   * Vertical offset for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get normalMapOffsetV() { return this.properties1[14] }
+  set normalMapOffsetV(value) { setPropertyInList(this.properties1, 14, value) }
+
+  /**
+   * Horizontal offset speed for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get normalMapSpeedU() { return this.properties1[15] }
+  set normalMapSpeedU(value) { setPropertyInList(this.properties1, 15, value) }
+
+  /**
+   * Vertical offset speed for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get normalMapSpeedV() { return this.properties1[16] }
+  set normalMapSpeedV(value) { setPropertyInList(this.properties1, 16, value) }
 
   /**
    * Scalar multiplier for the color that does not affect the alpha.
@@ -9756,6 +10440,7 @@ const Actions = {
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
+  [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
@@ -11051,6 +11736,7 @@ export {
   PropertyArgument,
   OrientationMode,
   LightingMode,
+  DistortionMode,
 
   Nodes,
   Effects,
@@ -11104,6 +11790,7 @@ export {
   MultiTextureBillboardEx,
   Model,
   Tracer,
+  Distortion,
   PointLight,
   NodeWindSpeed,
   ParticleWindSpeed,
