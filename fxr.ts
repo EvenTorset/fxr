@@ -11359,7 +11359,7 @@ class LinearProperty extends Property {
   }
 
   /**
-   * Creates a new linear property that emulates a power function.
+   * Creates a new linear property that approximates a power function.
    * @param loop Controls whether the property should loop or not.
    * @param exponent The exponent used in the power function. For example,
    * setting this to values greater than 1 will make the property value change
@@ -11371,7 +11371,7 @@ class LinearProperty extends Property {
    * @param endPosition The position of the last stop.
    * @param startValue The value of the first stop.
    * @param endValue The value of the last stop.
-   * @returns 
+   * @returns The new linear property.
    */
   static power(
     loop: boolean,
@@ -11384,18 +11384,48 @@ class LinearProperty extends Property {
     if (stops < 2) {
       throw new Error('Property stop count must be greater than or equal to 2.')
     }
-    if (Array.isArray(startValue)) {
+    if (Array.isArray(startValue) && Array.isArray(endValue)) {
       return new LinearProperty(loop, arrayOf(stops, i => ({
         position: i / (stops - 1) * endPosition,
         value: startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as [number] | Vector
       })))
-    } else if (!Array.isArray(endValue)) {
+    } else if (typeof startValue === 'number' && typeof endValue === 'number') {
       return new LinearProperty(loop, arrayOf(stops, i => ({
         position: i / (stops - 1) * endPosition,
         value: lerp(startValue, endValue, (i / (stops - 1)) ** exponent)
       })))
     } else {
       throw new Error('startValue and endValue must be of the same type.')
+    }
+  }
+
+  /**
+   * Creates a new linear property that approximates a sine wave.
+   * @param min The value used when the sine wave is at its minimum.
+   * @param max The value used when the sine wave is at its maximum.
+   * @param period The period of the sine wave.
+   * @param stops The number of stops to use to approximate the sine wave.
+   * Higher values result in a smoother curve. Defaults to 21.
+   * @returns The new linear property.
+   */
+  static sine(
+    min: [number] | PropertyValue,
+    max: [number] | PropertyValue,
+    period: number,
+    stops: number = 21
+  ) {
+    if (Array.isArray(min) && Array.isArray(max)) {
+      return new LinearProperty(true, arrayOf(stops, i => ({
+        position: i / (stops - 1) * period,
+        value: min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as [number] | Vector
+      })))
+    } else if (typeof min === 'number' && typeof max === 'number') {
+      return new LinearProperty(true, arrayOf(stops, i => ({
+        position: i / (stops - 1) * period,
+        value: (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)
+      })))
+    } else {
+      throw new Error('min and max must be of the same type.')
     }
   }
 
