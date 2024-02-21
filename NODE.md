@@ -99,6 +99,20 @@ To run your code directly from your text editor, you can set up a task, launch c
 ```
 You can then run the code by just pressing a hotkey when you have the file open.
 
+# Updating
+If a new version of the library has been released and you want to update, you can just run the install command again, but with `@latest` to tell npm to grab the latest release specifically:
+```text
+npm i @cccode/fxr@latest --omit=dev
+```
+Note that this will even update to new major releases, so there might be breaking changes. It might be a good idea to write down what your current version is before trying to update if you have some scripts that you want to keep using without updating them to work with the new version. To find out what version of the library you currently have installed, you can use this command:
+```text
+npm ls @cccode/fxr
+```
+If an update has broken your scripts or if you just want to go back to an older version of the library, you can install any specific version by putting the version number after `@` at the end of the package name in the install command. For example, this is how you would install version 3.0.0:
+```text
+npm i @cccode/fxr@3.0.0 --omit=dev
+```
+
 <br>
 
 ___
