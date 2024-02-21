@@ -11416,8 +11416,7 @@ class ComponentKeyframeProperty<T extends ValueType>
     let offset = 1 + 3 * (valueType + 1)
     return new ComponentKeyframeProperty(valueType, loop, arrayOf(valueType + 1, i => {
       return KeyframeProperty.fromFields(ValueType.Scalar, PropertyFunction.Curve2, false, [], [
-        fieldValues[1 + i],
-        ...Array(2 * (valueType + 1)).fill(0),
+        fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
       ])
     }), modifiers)
