@@ -97,6 +97,7 @@ import {
   BillboardEx,
   BlendMode,
   LinearProperty,
+  Keyframe,
 } from '@cccode/fxr'
 
 // Let's make a replacement for the ghostflame torch effect in Elden Ring.
@@ -139,10 +140,10 @@ fxr.root.nodes = [
       width: 0.01,
       height: 0.1,
       color1: new LinearProperty(true, [ // Animated property
-        { position: 0,    value: [1, 0, 0, 1] },
-        { position: 0.33, value: [0, 1, 0, 1] },
-        { position: 0.67, value: [0, 0, 1, 1] },
-        { position: 1,    value: [1, 0, 0, 1] },
+        new Keyframe(0,    [1, 0, 0, 1]),
+        new Keyframe(0.33, [0, 1, 0, 1]),
+        new Keyframe(0.67, [0, 0, 1, 1]),
+        new Keyframe(1,    [1, 0, 0, 1]),
       ]),
       color2: [1, 1, 1, 0.9],
     }),

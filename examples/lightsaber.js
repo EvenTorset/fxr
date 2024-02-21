@@ -6,6 +6,7 @@ import {
   CylinderEmitterShape,
   ExternalValue,
   FXR,
+  Keyframe,
   LinearProperty,
   MultiTextureBillboardEx,
   NodeTransform,
@@ -113,9 +114,9 @@ fxr.root.nodes = [
         width: 0.4,
         uniformScale: true,
         color1: new LinearProperty(false, [
-          { position: 0, value: [1, 1, 1, 0] },
-          { position: 0.5, value: [1, 1, 1, 0.35] },
-          { position: 4, value: [1, 1, 1, 0] },
+          new Keyframe(0, [1, 1, 1, 0]),
+          new Keyframe(0.5, [1, 1, 1, 0.35]),
+          new Keyframe(4, [1, 1, 1, 0]),
         ]),
         frameIndex: LinearProperty.basic(true, 4, 0, 32),
         frameIndexOffset: Property.random(0, 32),
@@ -123,8 +124,8 @@ fxr.root.nodes = [
         layer1: 34020,
         layer1SpeedV: 0.5,
         layer1Color: new LinearProperty(false, [
-          { position: 0.5, value: [...color, 1] },
-          { position: 4, value: [1, 1, 1, 1] },
+          new Keyframe(0.5, [...color, 1]),
+          new Keyframe(4, [1, 1, 1, 1]),
         ]),
       })
     ]).mapStates(-1, 0), // Disable when there's no rain/snow
@@ -174,9 +175,9 @@ fxr.root.nodes = [
         bloomColor: color,
         bloomStrength: bloomMultiplier * 0.5,
         alphaThreshold: new LinearProperty(false, [
-          { position: 0, value: 255 },
-          { position: 0.25, value: 0 },
-          { position: 0, value: 255 },
+          new Keyframe(0, 255),
+          new Keyframe(0.25, 0),
+          new Keyframe(0.5, 255),
         ])
       })
     ]).mapStates(0, 0),
