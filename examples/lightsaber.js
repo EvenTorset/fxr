@@ -11,7 +11,7 @@ import {
   MultiTextureBillboardEx,
   NodeTransform,
   OrientationMode,
-  ParticleLifetime,
+  ParticleAttributes,
   ParticleMovement,
   ParticleWindAcceleration,
   PeriodicEmitter,
@@ -102,7 +102,10 @@ fxr.root.nodes = [
     new BasicNode([
       new PeriodicEmitter(0.2, 1),
       new CylinderEmitterShape(true, 0.1),
-      new ParticleLifetime(4, AttachMode.None),
+      new ParticleAttributes({
+        duration: 4,
+        attachment: AttachMode.None
+      }),
       new ParticleMovement({
         gravity: -0.1,
       }),
@@ -160,7 +163,7 @@ fxr.root.nodes = [
     // Electric arcs
     new BasicNode([
       new PeriodicEmitter(0.1, 2),
-      new ParticleLifetime(0.5),
+      new ParticleAttributes({ duration: 0.5 }),
       new CylinderEmitterShape(true, 0.01, 0.5),
       new BillboardEx({
         orientation: OrientationMode.ParentYaw,
@@ -201,7 +204,10 @@ fxr.root.nodes = [
     new BasicNode([
       new PeriodicEmitter(0.1, 1),
       new CylinderEmitterShape(true, 0.01),
-      new ParticleLifetime(2, AttachMode.None),
+      new ParticleAttributes({
+        duration: 2,
+        attachment: AttachMode.None
+      }),
       new ParticleMovement({
         gravity: 2,
         speed: 0.3,

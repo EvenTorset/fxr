@@ -7,7 +7,7 @@ import {
   LinearProperty,
   MultiTextureBillboardEx,
   NodeTransform,
-  ParticleLifetime,
+  ParticleAttributes,
   ParticleMovement,
   ParticleWindAcceleration,
   PeriodicEmitter,
@@ -23,7 +23,10 @@ fxr.root.nodes = [
   new BasicNode([
     new PeriodicEmitter(0.1, 1),
     new SphereEmitterShape(true, 0.05),
-    new ParticleLifetime(1, AttachMode.None),
+    new ParticleAttributes({
+      duration: 1,
+      attachment: AttachMode.None
+    }),
     new ParticleMovement({
       gravity: -0.1,
       followFactor: LinearProperty.basic(false, 1, 1, 0),
@@ -60,7 +63,10 @@ fxr.root.nodes = [
     }),
     new PeriodicEmitter(0.1, 2),
     new SphereEmitterShape(true, 0.075),
-    new ParticleLifetime(2, AttachMode.None),
+    new ParticleAttributes({
+      duration: 2,
+      attachment: AttachMode.None
+    }),
     new ParticleMovement({
       gravity: -1,
       maxTurnAngle: LinearProperty.basic(false, 0.7, 0, 15),

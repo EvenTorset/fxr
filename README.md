@@ -93,7 +93,7 @@ import {
   NodeTransform,
   PeriodicEmitter,
   CylinderEmitterShape,
-  ParticleLifetime,
+  ParticleAttributes,
   BillboardEx,
   BlendMode,
   LinearProperty,
@@ -134,7 +134,7 @@ fxr.root.nodes = [
 
     new PeriodicEmitter(0.1, 10, -1), // Action 300, emitter
     new CylinderEmitterShape(true, 0.2, 1, true), // Action 405, emitter shape
-    new ParticleLifetime(1), // Action 129, particle duration
+    new ParticleAttributes({ duration: 1 }), // Action 129
     new BillboardEx({ // Action 603
       blendMode: BlendMode.Normal,
       width: 0.01,

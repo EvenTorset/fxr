@@ -4,7 +4,7 @@ import {
   BoxEmitterShape,
   EmitRandomParticles,
   FXR,
-  ParticleLifetime,
+  ParticleAttributes,
   PeriodicEmitter,
   SharedEmitterNode,
 } from '@cccode/fxr'
@@ -39,7 +39,7 @@ fxr.root.nodes = [
     new BoxEmitterShape(false)
   ], [
     new BasicNode([ // Child node 0 - red particles
-      new ParticleLifetime(1),
+      new ParticleAttributes({ duration: 1 }),
       new BillboardEx({
         width: particleSize,
         height: particleSize,
@@ -47,7 +47,7 @@ fxr.root.nodes = [
       })
     ]),
     new BasicNode([ // Child node 1 - green particles
-      new ParticleLifetime(1),
+      new ParticleAttributes({ duration: 1 }),
       new BillboardEx({
         width: particleSize,
         height: particleSize,
@@ -55,7 +55,7 @@ fxr.root.nodes = [
       })
     ]),
     new BasicNode([ // Child node 2 - blue particles
-      new ParticleLifetime(1),
+      new ParticleAttributes({ duration: 1 }),
       new BillboardEx({
         width: particleSize,
         height: particleSize,
