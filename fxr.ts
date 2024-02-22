@@ -30,12 +30,18 @@ enum NodeType {
    */
   LevelOfDetail = 2002,
   /**
-   * A basic node.
+   * A basic node that can have transforms and child nodes, and emit particles.
    * 
    * This node type has a specialized subclass: {@link BasicNode}
    */
   Basic = 2200,
-  Randomizer = 2202,
+  /**
+   * A node that overrides the emitter of its child nodes with its own,
+   * allowing a single emitter to emit multiple types of particles.
+   * 
+   * This node type has a specialized subclass: {@link SharedEmitterNode}
+   */
+  SharedEmitter = 2202,
 }
 
 enum EffectType {
@@ -47,25 +53,33 @@ enum EffectType {
    */
   LevelOfDetail = 1002,
   /**
-   * A basic effect that can emit particles of many different types.
+   * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
+   * emit particles of many different types.
    * 
    * This effect type has a specialized subclass: {@link BasicEffect}
    */
   Basic = 1004,
   /**
-   * An effect used to modify how the subnodes of a
-   * {@link NodeType.Randomizer randomizer node} are picked.
+   * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
+   * override emitters of child nodes and control which of the child nodes to use
+   * the particles of.
    * 
-   * May also be used for applying transforms to those subnodes, and
-   * possibly other, still unknown things.
-   * 
-   * This effect type has a specialized subclass: {@link RandomizerEffect}
+   * This effect type has a specialized subclass: {@link SharedEmitterEffect}
    */
-  Randomizer = 1005,
+  SharedEmitter = 1005,
 }
 
 enum ActionType {
+  /**
+   * This action does nothing. It fits into most action slots and acts as a way
+   * to disable the effects of the other actions that go in those slots.
+   */
   None = 0,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAcceleration = 1,
   /**
    * Translates the node with a property, meaning the offset can be animated.
@@ -74,9 +88,9 @@ enum ActionType {
    */
   NodeTranslation = 15,
   /**
-   * Makes the node spin.
+   * Controls the rotation speed of the node.
    * 
-   * This action type has a specialized subclass: {@link NodeSpin}
+   * This action type has a specialized subclass: {@link NodeMovement}
    */
   NodeSpin = 34,
   /**
@@ -127,6 +141,11 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PlaySound}
    */
   PlaySound = 75,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAccelerationRandomTurns = 83,
   /**
    * Controls the movement of particles.
@@ -140,26 +159,56 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleMovement}
    */
   ParticleAccelerationPartialFollow = 105,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAccelerationPartialFollow = 106,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeAccelerationSpin = 113,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeed = 120,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeedRandomTurns = 121,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeedPartialFollow = 122,
+  /**
+   * Controls the movement of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeMovement}
+   */
   NodeSpeedSpin = 123,
   /**
    * Controls various things about the node, like its duration, and how
    * it is attached to the parent node.
    * 
-   * This action type has a specialized subclass: {@link NodeLifetime}
+   * This action type has a specialized subclass: {@link NodeAttributes}
    */
-  NodeLifetime = 128,
+  NodeAttributes = 128,
   /**
    * Controls various things about the particles emitted by the effect, like
    * their duration, and how they are attached to the parent node.
    * 
-   * This action type has a specialized subclass: {@link ParticleLifetime}
+   * This action type has a specialized subclass: {@link ParticleAttributes}
    */
-  ParticleLifetime = 129,
+  ParticleAttributes = 129,
   Unk130 = 130,
   /**
    * Controls various multipliers as well as the acceleration of particles.
@@ -188,14 +237,20 @@ enum ActionType {
    * This action type has a specialized subclass: {@link StateEffectMap}
    */
   StateEffectMap = 199,
-  Unk200 = 200,
   /**
-   * Controls the weights for picking random subnodes. Used in
-   * {@link EffectType.Randomizer}.
+   * Used in {@link EffectType.SharedEmitter} to emit all particles from child
+   * nodes every time the shared emitter emits something.
    * 
-   * This action type has a specialized subclass: {@link NodeWeights}
+   * This action type has a specialized subclass: {@link EmitAllParticles}
    */
-  NodeWeights = 201,
+  EmitAllParticles = 200,
+  /**
+   * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
+   * child node every time the shared emitter emits something.
+   * 
+   * This action type has a specialized subclass: {@link EmitRandomParticles}
+   */
+  EmitRandomParticles = 201,
   /**
    * Emits particles periodically.
    * 
@@ -278,6 +333,11 @@ enum ActionType {
    * {@link MultiTextureBillboardEx}
    */
   MultiTextureBillboardEx = 604,
+  /**
+   * Particle with a 3D model.
+   * 
+   * This action type has a specialized subclass: {@link Model}
+   */
   Model = 605,
   /**
    * Creates a trail behind moving effects.
@@ -285,7 +345,21 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Tracer}
    */
   Tracer = 606,
+  /**
+   * A particle that distorts anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * This action type has a specialized subclass: {@link Distortion}
+   */
   Distortion = 607,
+  /**
+   * A particle that applies a radial blur to anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * This action type has a specialized subclass: {@link RadialBlur}
+   */
   RadialBlur = 608,
   /**
    * Point light source.
@@ -416,6 +490,79 @@ enum PropertyFunction {
    */
   CompCurve = 7
 }
+
+export type ValuePropertyFunction = 
+  PropertyFunction.Zero |
+  PropertyFunction.One |
+  PropertyFunction.Constant
+
+export type KeyframePropertyFunction =
+  PropertyFunction.Stepped |
+  PropertyFunction.Linear |
+  PropertyFunction.Curve1 |
+  PropertyFunction.Curve2
+
+export type ComponentKeyframePropertyFunction = PropertyFunction.CompCurve
+
+export type ValueTypeMap = {
+  [ValueType.Scalar]: number
+  [ValueType.Vector2]: Vector2
+  [ValueType.Vector3]: Vector3
+  [ValueType.Vector4]: Vector4
+}
+
+export interface IKeyframe<T extends ValueType> {
+  position: number
+  value: ValueTypeMap[T]
+  unkTangent1?: ValueTypeMap[T]
+  unkTangent2?: ValueTypeMap[T]
+}
+
+export interface IProperty<T extends ValueType, F extends PropertyFunction> {
+  valueType: T
+  function: F
+  componentCount: number
+  fieldCount: number
+  fields: NumericalField[]
+  toJSON(): any
+  scale(factor: number): void
+  minify(): IProperty<T, any>
+  valueAt(arg: number): ValueTypeMap[T]
+  clone(): IProperty<T, F>
+}
+
+export interface IValueProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+  value: ValueTypeMap[T]
+  clone(): IValueProperty<T, F>
+}
+
+export interface IKeyframeProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+  loop: boolean
+  keyframes: IKeyframe<T>[]
+  sortKeyframes(): void
+  clone(): IKeyframeProperty<T, F>
+}
+
+export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+  modifiers: Modifier[]
+}
+
+export type Vector2 = [x: number, y: number]
+export type Vector3 = [x: number, y: number, z: number]
+export type Vector4 = [red: number, green: number, blue: number, alpha: number]
+export type Vector = Vector2 | Vector3 | Vector4
+export type PropertyValue = number | Vector
+export type AnyProperty = Property<any, any>
+export type ScalarProperty = Property<ValueType.Scalar, any>
+export type Vector2Property = Property<ValueType.Vector2, any>
+export type Vector3Property = Property<ValueType.Vector3, any>
+export type Vector4Property = Property<ValueType.Vector4, any>
+export type VectorProperty = Vector2Property | Vector3Property | Vector4Property
+export type ScalarPropertyArg = number | ScalarProperty
+export type Vector2PropertyArg = Vector2 | Vector2Property
+export type Vector3PropertyArg = Vector3 | Vector3Property
+export type Vector4PropertyArg = Vector4 | Vector4Property
+export type VectorPropertyArg = Vector | VectorProperty
 
 enum ModifierType {
   /**
@@ -624,7 +771,7 @@ enum PropertyArgument {
    * Time in seconds since the {@link Effect} became active.
    * 
    * An effect becoming active is for example the delay from
-   * {@link ActionType.NodeLifetime NodeLifetime} being over, or the active
+   * {@link ActionType.NodeAttributes NodeAttributes} being over, or the active
    * {@link State} changing, making a node change which of its effects is
    * active.
    */
@@ -698,10 +845,57 @@ enum LightingMode {
   Lit = 0,
 }
 
+/**
+ * Used by {@link ActionType.Distortion distortion} particles to control what
+ * type of distortion to apply.
+ */
+enum DistortionMode {
+  /**
+   * Distorts the background as if you stuck something into it and stirred it.
+   * It is animated, and the stir speed is controlled by a property.
+   */
+  Stir = 0,
+  /**
+   * Distorts the background based on the normal map.
+   */
+  NormalMap = 1,
+  /**
+   * Distorts the background as if the edges were held in place and you grabbed
+   * the center and twisted it.
+   */
+  Twist = 2,
+  /**
+   * Seemingly identical to {@link NormalMap}?
+   */
+  Unk3 = 3,
+  /**
+   * This seems to just squeeze everything to the bottom left corner?
+   */
+  Unk4 = 4,
+}
+
+/**
+ * Possible shapes for {@link ActionType.Distortion distortion} particles.
+ */
+enum DistortionShape {
+  /**
+   * A flat rectangle.
+   */
+  Rectangle = 0,
+  /**
+   * Half of an ellipsoid. (Like a hemisphere, but with three different radii.)
+   */
+  Hemiellipsoid = 1,
+  /**
+   * An ellipsoid. (Like a sphere, but with three different radii.)
+   */
+  Ellipsoid = 2,
+}
+
 const EffectActionSlots = {
   [EffectType.Basic]: [
     [
-      ActionType.NodeLifetime
+      ActionType.NodeAttributes
     ],
     [
       ActionType.StaticNodeTransform,
@@ -746,7 +940,7 @@ const EffectActionSlots = {
       ActionType.ParticleMultiplier
     ],
     [
-      ActionType.ParticleLifetime
+      ActionType.ParticleAttributes
     ],
     [
       ActionType.PointSprite,
@@ -799,9 +993,9 @@ const EffectActionSlots = {
       ActionType.Unk800
     ]
   ],
-  [EffectType.Randomizer]: [
+  [EffectType.SharedEmitter]: [
     [
-      ActionType.NodeLifetime
+      ActionType.NodeAttributes
     ],
     [
       ActionType.StaticNodeTransform,
@@ -842,11 +1036,14 @@ const EffectActionSlots = {
       ActionType.Unk503
     ],
     [
-      ActionType.Unk200,
-      ActionType.NodeWeights
+      ActionType.EmitAllParticles,
+      ActionType.EmitRandomParticles
     ],
     [],
-    [],
+    [
+      ActionType.NodeWindSpeed,
+      ActionType.NodeWindAcceleration
+    ]
   ]
 }
 
@@ -858,13 +1055,7 @@ function randomInt32() {
   return Math.random() * 2**32 | 0
 }
 
-export type Vector2 = [x: number, y: number]
-export type Vector3 = [x: number, y: number, z: number]
-export type Vector4 = [red: number, green: number, blue: number, alpha: number]
-export type Vector = Vector2 | Vector3 | Vector4
-export type PropertyValue = number | Vector
-
-function setPropertyInList(list: Property[], index: number, value: Property | PropertyValue) {
+function setPropertyInList(list: Property<any, any>[], index: number, value: Property<any, any> | PropertyValue) {
   if (value instanceof Property) {
     list[index] = value
   } else if (typeof value === 'number') {
@@ -874,16 +1065,107 @@ function setPropertyInList(list: Property[], index: number, value: Property | Pr
   }
 }
 
-function scalarFromArg(scalar: number | Property) {
+function scalarFromArg(scalar: ScalarPropertyArg) {
   return scalar instanceof Property ? scalar : new ConstantProperty(scalar)
 }
 
-function vectorFromArg(vector: Vector | Property) {
+function vectorFromArg(vector: VectorPropertyArg) {
   return vector instanceof Property ? vector : new ConstantProperty(...vector)
 }
 
 function uniqueArray<T>(a: T[]) {
   return a.filter((e, i) => a.indexOf(e) === i)
+}
+
+function lerp(a: number, b: number, c: number) {
+  return a * (1 - c) + b * c
+}
+
+function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, any>>(
+  br: BinaryReader,
+  modifierProp: T extends IModifiableProperty<any, any> ? false : true
+): T {
+  const typeEnumA = br.readInt16()
+  br.assertUint8(0)
+  br.assertUint8(1)
+  const type: ValueType =         typeEnumA & 0b00000000_00000011
+  const func: PropertyFunction = (typeEnumA & 0b00000000_11110000) >>> 4
+  const loop: boolean =       !!((typeEnumA & 0b00010000_00000000) >>> 12)
+  br.readInt32() // TypeEnumB
+  const count = br.readInt32()
+  br.assertInt32(0)
+  const offset = br.readInt32()
+  br.assertInt32(0)
+  const modifiers = []
+  if (!modifierProp) {
+    const modOffset = br.readInt32()
+    br.assertInt32(0)
+    const modCount = br.readInt32()
+    br.assertInt32(0)
+    br.stepIn(modOffset)
+    for (let i = 0; i < modCount; ++i) {
+      modifiers.push(Modifier.read(br))
+    }
+    br.stepOut()
+  }
+  const fields = Field.readManyAt(br, offset, count, this).map(f => f.value)
+  switch (func) {
+    case PropertyFunction.Zero:
+    case PropertyFunction.One:
+    case PropertyFunction.Constant:
+      return ValueProperty.fromFields(type, func, modifiers, fields) as unknown as T
+    case PropertyFunction.Stepped:
+    case PropertyFunction.Linear:
+    case PropertyFunction.Curve1:
+    case PropertyFunction.Curve2:
+      return KeyframeProperty.fromFields(type, func, loop, modifiers, fields) as unknown as T
+    case PropertyFunction.CompCurve:
+      return ComponentKeyframeProperty.fromFields(type, loop, modifiers, fields) as unknown as T
+    default:
+      throw new Error('Unknown property function: ' + func)
+  }
+}
+
+function writeProperty(prop: IProperty<any, any>, bw: BinaryWriter, properties: IProperty<any, any>[], modifierProp: boolean) {
+  const count = properties.length
+  const typeEnumA = prop.valueType | prop.function << 4 | +('loop' in prop ? prop.loop : false) << 12
+  const typeEnumB = prop.valueType | prop.function << 2 | +('loop' in prop ? prop.loop : false) << 4
+  bw.writeInt16(typeEnumA)
+  bw.writeUint8(0)
+  bw.writeUint8(1)
+  bw.writeInt32(typeEnumB)
+  bw.writeInt32(prop.fieldCount)
+  bw.writeInt32(0)
+  bw.reserveInt32(`${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
+  bw.writeInt32(0)
+  if (!modifierProp) {
+    bw.reserveInt32(`PropertyModifiersOffset${count}`)
+    bw.writeInt32(0)
+    bw.writeInt32((prop as IModifiableProperty<any, any>).modifiers.length)
+    bw.writeInt32(0)
+  }
+  properties.push(prop)
+}
+
+function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: Modifier[]) {
+  bw.fill(`PropertyModifiersOffset${index}`, bw.position)
+  for (const modifier of prop.modifiers) {
+    modifier.write(bw, modifiers)
+  }
+}
+
+function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index: number, modifierProp: boolean): number {
+  const offsetName = `${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${index}`
+  const fieldCount = prop.fieldCount
+  if (fieldCount === 0) {
+    bw.fill(offsetName, 0)
+  } else {
+    bw.fill(offsetName, bw.position)
+    for (const field of prop.fields) {
+      field.write(bw)
+    }
+  }
+  return fieldCount
 }
 
 class BinaryReader extends DataView {
@@ -1442,7 +1724,7 @@ class FXR {
     bw.fill('ActionCount', actions.length)
     bw.pad(16)
     bw.fill('PropertyOffset', bw.position)
-    const properties: Property[] = []
+    const properties: IModifiableProperty<any, any>[] = []
     for (let i = 0; i < actions.length; ++i) {
       actions[i].writeProperties(bw, i, properties)
     }
@@ -1451,16 +1733,16 @@ class FXR {
     bw.fill('Section8Offset', bw.position)
     const modifiers: Modifier[] = []
     for (let i = 0; i < properties.length; ++i) {
-      properties[i].writeModifiers(bw, i, modifiers)
+      writePropertyModifiers(properties[i], bw, i, modifiers)
     }
     bw.fill('Section8Count', modifiers.length)
     bw.pad(16)
     bw.fill('Section9Offset', bw.position)
-    const conditionalProperties: Property[] = []
+    const modProps: Property<any, any>[] = []
     for (let i = 0; i < modifiers.length; ++i) {
-      modifiers[i].writeProperties(bw, i, conditionalProperties)
+      modifiers[i].writeProperties(bw, i, modProps)
     }
-    bw.fill('Section9Count', conditionalProperties.length)
+    bw.fill('Section9Count', modProps.length)
     bw.pad(16)
     bw.fill('Section10Offset', bw.position)
     const section10s: Section10[] = []
@@ -1478,13 +1760,13 @@ class FXR {
       fieldCount += actions[i].writeFields(bw, i)
     }
     for (let i = 0; i < properties.length; ++i) {
-      fieldCount += properties[i].writeFields(bw, i, false)
+      fieldCount += writePropertyFields(properties[i], bw, i, false)
     }
     for (let i = 0; i < modifiers.length; ++i) {
       fieldCount += modifiers[i].writeFields(bw, i)
     }
-    for (let i = 0; i < conditionalProperties.length; ++i) {
-      fieldCount += conditionalProperties[i].writeFields(bw, i, true)
+    for (let i = 0; i < modProps.length; ++i) {
+      fieldCount += writePropertyFields(modProps[i], bw, i, true)
     }
     for (let i = 0; i < section10s.length; ++i) {
       fieldCount += section10s[i].writeFields(bw, i)
@@ -2244,7 +2526,7 @@ class Node {
    */
   scale(factor: number) {
     for (const effect of this.walkEffects()) if (
-      effect.type === EffectType.Basic || effect.type === EffectType.Randomizer
+      effect.type === EffectType.Basic || effect.type === EffectType.SharedEmitter
     ) {
       const slot1 = effect.actions[1] as ActionWithNumericalFields
       switch (slot1.type) {
@@ -2385,6 +2667,14 @@ class Node {
             slot14.properties1[0].scale(factor)
             break
         }
+      } else { // Shared emitter effect
+        const slot9 = effect.actions[9]
+        switch (slot9.type) {
+          case ActionType.NodeWindAcceleration:
+          case ActionType.NodeWindSpeed:
+            slot9.properties1[0].scale(factor)
+            break
+        }
       }
     }
   }
@@ -2413,102 +2703,122 @@ class Node {
         list[i+3] = new FloatField(a)
       }
     }
-    const procProp = (prop: Property) => {
-      if (prop.function <= PropertyFunction.One) {
-        prop.convertToFunction(PropertyFunction.Constant)
+    const procProp = (list: IProperty<ValueType.Vector4, any>[], index: number) => {
+      let prop = list[index]
+      if (prop instanceof ValueProperty) {
+        if (prop.function <= PropertyFunction.One) {
+          prop.function = PropertyFunction.Constant
+        }
+        prop.value = func(prop.value)
+      } else if (prop instanceof KeyframeProperty) {
+        for (const keyframe of prop.keyframes) {
+          keyframe.value = func(keyframe.value as Vector4)
+        }
+      } else if (prop instanceof ComponentKeyframeProperty) {
+        const positions = new Set<number>
+        for (const comp of prop.components) {
+          for (const keyframe of comp.keyframes) {
+            positions.add(keyframe.position)
+          }
+        }
+        const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe<ValueType.Vector4>(e, prop.valueAt(e)))
+        list[index] = new LinearProperty(prop.loop, keyframes)
+        if ('modifiers' in prop) {
+          (list[index] as IModifiableProperty<ValueType.Vector4, any>).modifiers = prop.modifiers
+        }
+        prop = list[index]
       }
-      for (const stop of prop.stops) {
-        stop.value = func(stop.value as Vector4)
-      }
-      for (const mod of prop.modifiers) {
-        switch (mod.type) {
-          case ModifierType.Randomizer2:
-            procFields(mod.fields, 8, true)
-          case ModifierType.Randomizer1:
-          case ModifierType.Randomizer3:
-            procFields(mod.fields, 4, true)
-            break
-          case ModifierType.ExternalValue1:
-          case ModifierType.ExternalValue2:
-            procProp(mod.properties[0])
-            break
+      if ('modifiers' in prop) {
+        for (const mod of (prop as IModifiableProperty<ValueType.Vector4, any>).modifiers) {
+          switch (mod.type) {
+            case ModifierType.Randomizer2:
+              procFields(mod.fields, 8, true)
+            case ModifierType.Randomizer1:
+            case ModifierType.Randomizer3:
+              procFields(mod.fields, 4, true)
+              break
+            case ModifierType.ExternalValue1:
+            case ModifierType.ExternalValue2:
+              procProp(mod.properties, 0)
+              break
+          }
         }
       }
     }
     for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
-      procProp(effect.actions[7].properties1[4])
+      procProp(effect.actions[7].properties1, 4)
       const slot9 = effect.actions[9] as ActionWithNumericalFields
       switch (slot9.type) {
         case ActionType.PointSprite:
-          procProp(slot9.properties1[3])
-          procProp(slot9.properties1[4])
-          procProp(slot9.properties1[5])
+          procProp(slot9.properties1, 3)
+          procProp(slot9.properties1, 4)
+          procProp(slot9.properties1, 5)
           break
         case ActionType.Line:
-          procProp(slot9.properties1[2])
-          procProp(slot9.properties1[3])
-          procProp(slot9.properties1[4])
-          procProp(slot9.properties1[5])
-          procProp(slot9.properties1[7])
+          procProp(slot9.properties1, 2)
+          procProp(slot9.properties1, 3)
+          procProp(slot9.properties1, 4)
+          procProp(slot9.properties1, 5)
+          procProp(slot9.properties1, 7)
           break
         case ActionType.QuadLine:
-          procProp(slot9.properties1[3])
-          procProp(slot9.properties1[4])
-          procProp(slot9.properties1[5])
-          procProp(slot9.properties1[6])
-          procProp(slot9.properties1[9])
+          procProp(slot9.properties1, 3)
+          procProp(slot9.properties1, 4)
+          procProp(slot9.properties1, 5)
+          procProp(slot9.properties1, 6)
+          procProp(slot9.properties1, 9)
           break
         case ActionType.BillboardEx:
-          procProp(slot9.properties1[7])
-          procProp(slot9.properties1[8])
-          procProp(slot9.properties1[9])
+          procProp(slot9.properties1, 7)
+          procProp(slot9.properties1, 8)
+          procProp(slot9.properties1, 9)
           break
         case ActionType.MultiTextureBillboardEx:
-          procProp(slot9.properties1[15])
-          procProp(slot9.properties1[16])
-          procProp(slot9.properties1[17])
-          procProp(slot9.properties1[18])
-          procProp(slot9.properties1[19])
-          procProp(slot9.properties1[20])
+          procProp(slot9.properties1, 15)
+          procProp(slot9.properties1, 16)
+          procProp(slot9.properties1, 17)
+          procProp(slot9.properties1, 18)
+          procProp(slot9.properties1, 19)
+          procProp(slot9.properties1, 20)
           break
         case ActionType.Model:
-          procProp(slot9.properties1[14])
-          procProp(slot9.properties1[15])
-          procProp(slot9.properties1[16])
+          procProp(slot9.properties1, 14)
+          procProp(slot9.properties1, 15)
+          procProp(slot9.properties1, 16)
           break
         case ActionType.Tracer:
         case ActionType.Unk10012_Tracer:
-          procProp(slot9.properties1[6])
-          procProp(slot9.properties1[7])
-          procProp(slot9.properties1[8])
+          procProp(slot9.properties1, 6)
+          procProp(slot9.properties1, 7)
+          procProp(slot9.properties1, 8)
           break
         case ActionType.Distortion:
         case ActionType.RadialBlur:
-          procProp(slot9.properties1[7])
-          procProp(slot9.properties1[8])
+          procProp(slot9.properties1, 7)
+          procProp(slot9.properties1, 8)
           break
         case ActionType.PointLight:
         case ActionType.SpotLight:
-          procProp(slot9.properties1[0])
-          procProp(slot9.properties1[1])
+          procProp(slot9.properties1, 0)
+          procProp(slot9.properties1, 1)
           break
         case ActionType.Unk10000_StandardParticle:
         case ActionType.Unk10001_StandardCorrectParticle:
-          procProp(slot9.properties1[13])
-          procProp(slot9.properties2[3])
-          procProp(slot9.properties2[4])
-          procProp(slot9.properties2[5])
+          procProp(slot9.properties1, 13)
+          procProp(slot9.properties2, 3)
+          procProp(slot9.properties2, 4)
+          procProp(slot9.properties2, 5)
           break
         case ActionType.Unk10014_LensFlare:
-          procProp(slot9.properties1[2])
-          procProp(slot9.properties1[5])
-          procProp(slot9.properties1[8])
-          procProp(slot9.properties1[11])
+          procProp(slot9.properties1, 2)
+          procProp(slot9.properties1, 5)
+          procProp(slot9.properties1, 8)
+          procProp(slot9.properties1, 11)
           break
         case ActionType.Unk10015_RichModel:
-          procProp(slot9.properties1[13])
-          procProp(slot9.properties1[14])
-          procProp(slot9.properties1[15])
+          procProp(slot9.properties1, 13)
+          procProp(slot9.properties1, 14)
+          procProp(slot9.properties1, 15)
       }
       switch (slot9.type) {
         case ActionType.PointSprite:
@@ -2522,9 +2832,9 @@ class Node {
         case ActionType.RadialBlur:
         case ActionType.Unk10012_Tracer:
         case ActionType.Unk10015_RichModel:
-          procProp(slot9.properties2[3])
-          procProp(slot9.properties2[4])
-          procProp(slot9.properties2[5])
+          procProp(slot9.properties2, 3)
+          procProp(slot9.properties2, 4)
+          procProp(slot9.properties2, 5)
           procFields(slot9.fields2, 5)
           break
       }
@@ -2540,7 +2850,7 @@ class Node {
 class RootNode extends Node {
 
   constructor(
-    rateOfTime: number | Property = 1,
+    rateOfTime: ScalarPropertyArg = 1,
     effects: Effect[] = [],
     nodes: Node[] = [],
   ) {
@@ -2554,8 +2864,8 @@ class RootNode extends Node {
     ], effects, nodes)
   }
 
-  get rateOfTime(): number { return this.actions.find(a => a.type === ActionType.Unk10500)?.properties1[0].stops[0].value as number }
-  set rateOfTime(value: number | Property) {
+  get rateOfTime(): ScalarProperty { return this.actions.find(a => a.type === ActionType.Unk10500)?.properties1[0] }
+  set rateOfTime(value: ScalarPropertyArg) {
     if (value instanceof Property) {
       this.actions.find(a => a.type === ActionType.Unk10500).properties1[0] = value
     } else {
@@ -2590,29 +2900,12 @@ class ProxyNode extends Node {
 }
 
 /**
- * A node that only displays one of its child nodes at a time based on
- * distance thresholds for each.
- * 
- * This node can only manage up to five levels of detail. If you need more
- * levels, you can put another LOD node as the fifth child of this node and set
- * higher thresholds in that.
+ * Super class for any type of node that contains {@link EffectType effects}.
  */
-class LevelOfDetailNode extends Node {
+class NodeWithEffects extends Node {
 
-  /**
-   * @param duration The duration for the node to stay active. Once its time is
-   * up, it will deactivate and none of the child nodes will be visible/audible
-   * anymore.
-   * @param thresholds An array of distance thresholds. Each threshold is used
-   * for the child node of the same index.
-   * @param nodes An array of child nodes.
-   */
-  constructor(duration: number | Property, thresholds: number[], nodes: Node[]) {
-    super(NodeType.LevelOfDetail, [
-      new StateEffectMap(0)
-    ], [
-      new LevelOfDetailEffect(duration, thresholds)
-    ], nodes)
+  constructor(type: NodeType, effects: Effect[] = [], nodes: Node[] = []) {
+    super(type, [ new StateEffectMap ], effects, nodes)
   }
 
   mapStates(...effectIndices: number[]) {
@@ -2623,11 +2916,43 @@ class LevelOfDetailNode extends Node {
 }
 
 /**
- * Simplifies the creation of new {@link NodeType.Basic basic nodes} by giving
- * them a default {@link ActionType.StateEffectMap state-effect map} and a
- * simpler way to modify the map.
+ * A node that only displays one of its child nodes at a time based on
+ * distance thresholds for each.
+ * 
+ * This node can only manage up to five levels of detail. If you need more
+ * levels, you can put another LOD node as the fifth child of this node and set
+ * higher thresholds in that.
  */
-class BasicNode extends Node {
+class LevelOfDetailNode extends NodeWithEffects {
+
+  /**
+   * @param effects An array of {@link EffectType.LevelOfDetail LOD effects}.
+   * Other effect types do not work in this node type.
+   * @param nodes An array of child nodes.
+   */
+  constructor(effects: Effect[] = [], nodes: Node[] = []) {
+    super(NodeType.LevelOfDetail, effects, nodes)
+  }
+
+  /**
+   * Alternative method to construct the node. Use this if you don't need
+   * multiple effects or a non-infinite duration.
+   * @param thresholds An array of distance thresholds. Each threshold is used
+   * for the child node of the same index.
+   * @param nodes An array of child nodes.
+   */
+  static withThresholds(thresholds: number[], nodes: Node[]) {
+    return new LevelOfDetailNode([
+      new LevelOfDetailEffect(-1, thresholds)
+    ], nodes)
+  }
+
+}
+
+/**
+ * A basic node that can have transforms and child nodes, and emit particles.
+ */
+class BasicNode extends NodeWithEffects {
 
   /**
    * @param effectsOrEffectActions This is either the list of effects to add
@@ -2640,22 +2965,41 @@ class BasicNode extends Node {
       throw new Error('Non-node passed as node to BasicNode.')
     }
     if (effectsOrEffectActions.every(e => e instanceof Action)) {
-      super(NodeType.Basic, [ new StateEffectMap ], [
+      super(NodeType.Basic, [
         new BasicEffect(effectsOrEffectActions as Action[])
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        [ new StateEffectMap ],
         effectsOrEffectActions as Effect[],
         nodes
       )
     }
   }
 
-  mapStates(...effectIndices: number[]) {
-    this.actions = [new StateEffectMap(...effectIndices)]
-    return this
+}
+
+/**
+ * A node that overrides the emitter of its child nodes with its own, allowing
+ * a single emitter to emit multiple types of particles.
+ */
+class SharedEmitterNode extends NodeWithEffects {
+
+  constructor(effectsOrEffectActions: Effect[] | Action[] = [], nodes: Node[] = []) {
+    if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
+      throw new Error('Non-node passed as node to SharedEmitterNode.')
+    }
+    if (effectsOrEffectActions.every(e => e instanceof Action)) {
+      super(NodeType.SharedEmitter, [
+        new SharedEmitterEffect(effectsOrEffectActions as Action[])
+      ], nodes)
+    } else {
+      super(
+        NodeType.SharedEmitter,
+        effectsOrEffectActions as Effect[],
+        nodes
+      )
+    }
   }
 
 }
@@ -2758,7 +3102,7 @@ class LevelOfDetailEffect extends Effect {
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
    */
-  constructor(duration: number | Property, thresholds: number[]) {
+  constructor(duration: ScalarPropertyArg, thresholds: number[]) {
     super(EffectType.LevelOfDetail, [
       new LevelOfDetailThresholds(duration, thresholds)
     ])
@@ -2767,27 +3111,27 @@ class LevelOfDetailEffect extends Effect {
 }
 
 /**
- * Utility class for creating basic effects without needing to know the order
-   * of actions, and without needing to create actions that have defaults.
-   * 
-   * Default actions:
-   * Index | Action
-   * ------|----------
-   * 0     | {@link ActionType.NodeLifetime NodeLifetime}
-   * 1     | {@link ActionType.None None}
-   * 2     | {@link ActionType.None None}
-   * 3     | {@link ActionType.None None}
-   * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
-   * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
-   * 6     | {@link ActionType.Unk500 Unk500}
-   * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
-   * 8     | {@link ActionType.ParticleLifetime ParticleLifetime}
-   * 9     | {@link ActionType.None None}
-   * 10    | {@link ActionType.None None}
-   * 11    | {@link ActionType.None None}
-   * 12    | {@link ActionType.Unk130 Unk130}
-   * 13    | {@link ActionType.None None}
-   * 14    | {@link ActionType.None None}
+ * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
+ * emit particles of many different types.
+ * 
+ * Default actions:
+ * Index | Action
+ * ------|----------
+ * 0     | {@link ActionType.NodeAttributes NodeAttributes}
+ * 1     | {@link ActionType.None None}
+ * 2     | {@link ActionType.None None}
+ * 3     | {@link ActionType.None None}
+ * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+ * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
+ * 6     | {@link ActionType.Unk500 Unk500}
+ * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
+ * 8     | {@link ActionType.ParticleAttributes ParticleAttributes}
+ * 9     | {@link ActionType.None None}
+ * 10    | {@link ActionType.None None}
+ * 11    | {@link ActionType.None None}
+ * 12    | {@link ActionType.Unk130 Unk130}
+ * 13    | {@link ActionType.None None}
+ * 14    | {@link ActionType.None None}
  */
 class BasicEffect extends Effect {
 
@@ -2798,7 +3142,7 @@ class BasicEffect extends Effect {
    */
   constructor(actions: Action[] = []) {
     super(EffectType.Basic, [
-      new NodeLifetime,
+      new NodeAttributes,
       new Action,
       new Action,
       new Action,
@@ -2806,7 +3150,7 @@ class BasicEffect extends Effect {
       new PointEmitterShape,
       new Action(ActionType.Unk500),
       new ParticleMultiplier,
-      new ParticleLifetime,
+      new ParticleAttributes,
       new Action,
       new Action,
       new Action,
@@ -2846,25 +3190,25 @@ class BasicEffect extends Effect {
 }
 
 /**
- * Utility class for creating randomizer effects without needing to know the
-   * order of actions, and without needing to create actions that have
-   * defaults.
-   * 
-   * Default actions:
-   * Index | Action
-   * ------|----------
-   * 0     | {@link ActionType.NodeLifetime NodeLifetime}
-   * 1     | {@link ActionType.None None}
-   * 2     | {@link ActionType.None None}
-   * 3     | {@link ActionType.None None}
-   * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
-   * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
-   * 6     | {@link ActionType.Unk500 Unk500}
-   * 7     | {@link ActionType.Unk200 Unk200}
-   * 13    | {@link ActionType.None None}
-   * 14    | {@link ActionType.None None}
+ * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
+ * override emitters of child nodes and control which of the child nodes to use
+ * the particles of.
+ * 
+ * Default actions:
+ * Index | Action
+ * ------|----------
+ * 0     | {@link ActionType.NodeAttributes NodeAttributes}
+ * 1     | {@link ActionType.None None}
+ * 2     | {@link ActionType.None None}
+ * 3     | {@link ActionType.None None}
+ * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+ * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
+ * 6     | {@link ActionType.Unk500 Unk500}
+ * 7     | {@link ActionType.EmitAllParticles AllChildNodes}
+ * 13    | {@link ActionType.None None}
+ * 14    | {@link ActionType.None None}
  */
-class RandomizerEffect extends Effect {
+class SharedEmitterEffect extends Effect {
   
   /**
    * @param actions Actions to use in the effect. The order does not matter,
@@ -2872,20 +3216,20 @@ class RandomizerEffect extends Effect {
    * slots they fit in.
    */
   constructor(actions: Action[] = []) {
-    super(EffectType.Randomizer, [
-      new NodeLifetime,
+    super(EffectType.SharedEmitter, [
+      new NodeAttributes,
       new Action,
       new Action,
       new Action,
       new OneTimeEmitter,
       new PointEmitterShape,
       new Action(ActionType.Unk500),
-      new Action(ActionType.Unk200),
+      new EmitAllParticles,
       new Action,
       new Action,
     ])
     for (const action of actions) {
-      const index = EffectActionSlots[EffectType.Randomizer].findIndex(a => a.includes(action.type))
+      const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
       if (index >= 0) {
         this.actions[index] = action
       } else {
@@ -2899,14 +3243,14 @@ class RandomizerEffect extends Effect {
 const Effects = {
   [EffectType.LevelOfDetail]: LevelOfDetailEffect, LevelOfDetailEffect,
   [EffectType.Basic]: BasicEffect, BasicEffect,
-  [EffectType.Randomizer]: RandomizerEffect, RandomizerEffect,
+  [EffectType.SharedEmitter]: SharedEmitterEffect, SharedEmitterEffect,
 }
 
 const commonAction6xxFields2Types = [
   null,
-  null,
+  FieldType.Boolean,
   FieldType.Integer,
-  null,
+  FieldType.Float,
   FieldType.Integer,
   FieldType.Float, // Bloom - Red multiplier
   FieldType.Float, // Bloom - Green multiplier
@@ -2928,14 +3272,14 @@ const commonAction6xxFields2Types = [
   null,
   null,
   null,
-  FieldType.Float,
-  null,
-  FieldType.Integer,
+  FieldType.Float, // Depth blend 1
+  FieldType.Float, // Depth blend 2
+  FieldType.Boolean,
   null,
   FieldType.Float,
   FieldType.Float, // Shadow darkness
   null,
-  FieldType.Integer,
+  FieldType.Boolean,
   FieldType.Boolean, // Specular
   FieldType.Float, // Glossiness
   FieldType.Integer, // Lighting mode
@@ -3049,7 +3393,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
-  [ActionType.ParticleLifetime]: {
+  [ActionType.ParticleAttributes]: {
     Fields1: [
       FieldType.Integer
     ],
@@ -3174,6 +3518,31 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: commonAction6xxFields2Types
   },
+  [ActionType.Model]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Boolean,
+      FieldType.Boolean,
+      null,
+      null,
+      null,
+      null,
+      FieldType.Float,
+      null,
+      null,
+      null,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.Tracer]: {
     Fields1: [
       FieldType.Integer,
@@ -3193,6 +3562,35 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       FieldType.Integer,
       null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
+  [ActionType.Distortion]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Boolean,
+      FieldType.Integer,
+      null,
+      FieldType.Integer,
+      FieldType.Integer,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
+  [ActionType.RadialBlur]: {
+    Fields1: [
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
+      FieldType.Integer,
     ],
     Fields2: commonAction6xxFields2Types
   },
@@ -3301,16 +3699,16 @@ class Action {
   type: ActionType
   fields1: Field[]
   fields2: Field[]
-  properties1: Property[]
-  properties2: Property[]
+  properties1: AnyProperty[]
+  properties2: AnyProperty[]
   section10s: Section10[]
 
   constructor(
     type: number = ActionType.None,
     fields1: Field[] = [],
     fields2: Field[] = [],
-    properties1: Property[] = [],
-    properties2: Property[] = [],
+    properties1: AnyProperty[] = [],
+    properties2: AnyProperty[] = [],
     section10s: Section10[] = [],
   ) {
     this.type = type
@@ -3343,13 +3741,13 @@ class Action {
     br.assertInt32(0)
 
     br.stepIn(propertyOffset)
-    const properties1: Property[] = []
-    const properties2: Property[] = []
+    const properties1: AnyProperty[] = []
+    const properties2: AnyProperty[] = []
     for (let i = 0; i < propertyCount1; ++i) {
-      properties1.push(Property.read(br, false))
+      properties1.push(readProperty(br, false))
     }
     for (let i = 0; i < propertyCount2; ++i) {
-      properties2.push(Property.read(br, false))
+      properties2.push(readProperty(br, false))
     }
     br.stepOut()
 
@@ -3407,13 +3805,13 @@ class Action {
     actions.push(this)
   }
 
-  writeProperties(bw: BinaryWriter, index: number, properties: Property[]) {
+  writeProperties(bw: BinaryWriter, index: number, properties: IModifiableProperty<any, any>[]) {
     bw.fill(`ActionPropertiesOffset${index}`, bw.position)
     for (const property of this.properties1) {
-      property.write(bw, properties, false)
+      writeProperty(property, bw, properties, false)
     }
     for (const property of this.properties2) {
-      property.write(bw, properties, false)
+      writeProperty(property, bw, properties, false)
     }
   }
 
@@ -3525,6 +3923,390 @@ class Action {
 
 }
 
+export interface NodeMovementParams {
+  /**
+   * Controls how fast the node should spin around its X-axis in degrees per
+   * second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   * 
+   * See also:
+   * - {@link spinXMultiplier}
+   */
+  spinX?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link spinX}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   */
+  spinXMultiplier?: ScalarPropertyArg
+  /**
+   * Controls how fast the node should spin around its Y-axis in degrees per
+   * second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   * 
+   * See also:
+   * - {@link spinYMultiplier}
+   */
+  spinY?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link spinY}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   */
+  spinYMultiplier?: ScalarPropertyArg
+  /**
+   * Controls how fast the node should spin around its Z-axis in degrees per
+   * second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   * 
+   * See also:
+   * - {@link spinZMultiplier}
+   */
+  spinZ?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link spinZ}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link maxTurnAngle}
+   * - {@link turnInterval}
+   * - {@link followFactor}
+   * - {@link followRotation}
+   */
+  spinZMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the speed of the node along its Z-axis. Defaults to 0.
+   * 
+   * **Argument**:
+   * - If {@link speedZMultiplier} is set:
+   * {@link PropertyArgument.EffectAge Effect age}
+   * - If {@link speedZMultiplier} is **not** set:
+   * {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link speedZMultiplier}
+   */
+  speedZ?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link speedZ}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link accelerationZ}
+   * - {@link accelerationZMultiplier}
+   */
+  speedZMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the acceleration of the node in the +Z direction. This value
+   * cannot be negative. Defaults to 0.
+   * 
+   * Incompatible with the following parameters:
+   * - {@link speedZMultiplier}
+   * 
+   * See also:
+   * - {@link accelerationZMultiplier}
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link accelerationZ}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link speedZMultiplier}
+   */
+  accelerationZMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the acceleration of the node along its Y-axis. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarPropertyArg
+  /**
+   * The node will turn a random amount based on this value at intervals
+   * defined by {@link turnInterval}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   */
+  maxTurnAngle?: ScalarPropertyArg
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at
+   * this interval. The units are seconds, but due to how the field that stores
+   * this value works, the value will be rounded to the nearest 0.02 seconds.
+   * Defaults to 0.
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   */
+  turnInterval?: number
+  /**
+   * Controls how well the node should follow the parent node if it is not
+   * attached. At 0, the node will not follow at all. At 1, the node will
+   * follow perfectly, as if attached to the parent node. Negative values will
+   * make the node move in the opposite direction compared to the parent node.
+   * Values greater than 1 will make the node exaggerate the parent node's
+   * movement. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: ScalarPropertyArg
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and
+   * not rotation. Defaults to true.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * Incompatible with the following parameters:
+   * - {@link spinX}
+   * - {@link spinXMultiplier}
+   * - {@link spinY}
+   * - {@link spinYMultiplier}
+   * - {@link spinZ}
+   * - {@link spinZMultiplier}
+   */
+  followRotation?: boolean
+}
+/**
+ * Controls the movement of the node.
+ * 
+ * This class covers most of the Node Movement action types:
+ * - {@link ActionType.NodeSpin NodeSpin}
+ * - {@link ActionType.NodeAcceleration NodeAcceleration}
+ * - {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns}
+ * - {@link ActionType.NodeAccelerationPartialFollow NodeAccelerationPartialFollow}
+ * - {@link ActionType.NodeAccelerationSpin NodeAccelerationSpin}
+ * - {@link ActionType.NodeSpeed NodeSpeed}
+ * - {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns}
+ * - {@link ActionType.NodeSpeedPartialFollow NodeSpeedPartialFollow}
+ * - {@link ActionType.NodeSpeedSpin NodeSpeedSpin}
+ * 
+ * Which one is produced by the constructor depends on what arguments are set.
+ * By default, the basic acceleration action is created.
+ */
+class NodeMovement extends Action {
+
+  constructor({
+    spinX = null,
+    spinXMultiplier = null,
+    spinY = null,
+    spinYMultiplier = null,
+    spinZ = null,
+    spinZMultiplier = null,
+    speedZ = null,
+    speedZMultiplier = null,
+    accelerationZ = null,
+    accelerationZMultiplier = null,
+    accelerationY = null,
+    maxTurnAngle = null,
+    turnInterval = null,
+    followFactor = null,
+    followRotation = null,
+  }: NodeMovementParams = {}) {
+    const speed = +(speedZMultiplier !== null)
+    const acceleration = +(accelerationZ !== null || accelerationZMultiplier !== null) << 1
+    const spin = +[spinX, spinXMultiplier, spinY, spinYMultiplier, spinZ, spinZMultiplier].some(e => e !== null) << 2
+    const randomTurns = +(maxTurnAngle !== null || turnInterval !== null) << 3
+    const partialFollow = +(followFactor !== null || followRotation !== null) << 4
+    const aos = +(speed || acceleration || speedZ !== null || accelerationY !== null) << 5
+    spinX ??= 0
+    spinXMultiplier ??= 1
+    spinY ??= 0
+    spinYMultiplier ??= 1
+    spinZ ??= 0
+    spinZMultiplier ??= 1
+    speedZ ??= 0
+    speedZMultiplier ??= 1
+    accelerationZ ??= 0
+    accelerationZMultiplier ??= 1
+    accelerationY ??= 0
+    maxTurnAngle ??= 0
+    turnInterval ??= 0
+    followFactor ??= 0
+    followRotation ??= true
+    switch (speed | acceleration | spin | randomTurns | partialFollow | aos) {
+      case acceleration | aos: super(ActionType.NodeAcceleration, [
+        new IntField,
+        new IntField,
+        new FloatField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+      ]); break;
+      case spin: super(ActionType.NodeSpin, [
+        new IntField(1),
+      ], [], [
+        scalarFromArg(spinX),
+        scalarFromArg(spinXMultiplier),
+        scalarFromArg(spinY),
+        scalarFromArg(spinYMultiplier),
+        scalarFromArg(spinZ),
+        scalarFromArg(spinZMultiplier),
+      ]); break;
+      case acceleration | randomTurns | aos: super(ActionType.NodeAccelerationRandomTurns, [
+        new IntField,
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+      ]); break;
+      case acceleration | partialFollow | aos:
+      case acceleration | partialFollow | randomTurns | aos: super(ActionType.NodeAccelerationPartialFollow, [
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+        new BoolField(followRotation),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+        scalarFromArg(followFactor),
+      ]); break;
+      case acceleration | spin | aos: super(ActionType.NodeAccelerationSpin, [
+        new IntField,
+        new IntField,
+        new IntField,
+        new IntField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(accelerationZ),
+        scalarFromArg(accelerationZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(spinX),
+        scalarFromArg(spinXMultiplier),
+        scalarFromArg(spinY),
+        scalarFromArg(spinYMultiplier),
+        scalarFromArg(spinZ),
+        scalarFromArg(spinZMultiplier),
+      ]); break;
+      case speed | aos: super(ActionType.NodeSpeed, [
+        new IntField,
+        new IntField,
+        new IntField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+      ]); break;
+      case speed | randomTurns | aos: super(ActionType.NodeSpeedRandomTurns, [
+        new IntField,
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+      ]); break;
+      case speed | partialFollow | aos:
+      case speed | partialFollow | randomTurns | aos: super(ActionType.NodeSpeedPartialFollow, [
+        new IntField,
+        new IntField,
+        new IntField(Math.round(turnInterval * 50)),
+        new BoolField(followRotation),
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(maxTurnAngle),
+        scalarFromArg(followFactor),
+      ]); break;
+      case speed | spin | aos: super(ActionType.NodeSpeedSpin, [
+        new IntField,
+        new IntField,
+        new IntField,
+        new IntField,
+      ], [], [
+        scalarFromArg(speedZ),
+        scalarFromArg(speedZMultiplier),
+        scalarFromArg(accelerationY),
+        scalarFromArg(spinX),
+        scalarFromArg(spinXMultiplier),
+        scalarFromArg(spinY),
+        scalarFromArg(spinYMultiplier),
+        scalarFromArg(spinZ),
+        scalarFromArg(spinZMultiplier),
+      ]); break;
+      default:
+        if (speed && acceleration) {
+          throw new Error('Speed Z multiplier is not compatible with acceleration node movement actions.')
+        }
+        if (spin && (randomTurns || partialFollow)) {
+          throw new Error('Spin cannot be used together with random turns or partial follow in node movement actions.')
+        }
+        throw new Error('Incompatible arguments given to NodeMovement constructor.')
+    }
+  }
+
+}
+
 export interface ActionWithNumericalFields extends Action {
   fields1: NumericalField[]
   fields2: NumericalField[]
@@ -3554,63 +4336,11 @@ class NodeTranslation extends Action {
    * @param unkField Unknown. Fields1, index 0. An integer that has at least
    * three valid values: 0, 1, 2. Defaults to 0.
    */
-  constructor(translation: Vector3 | Property = [0, 0, 0], unkField: number = 0) {
+  constructor(translation: Vector3PropertyArg = [0, 0, 0], unkField: number = 0) {
     super(ActionType.NodeTranslation, [
-      new IntField(0)
-    ], [], [
-      vectorFromArg(translation)
-    ])
-  }
-
-}
-
-/**
- * Makes the node spin.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | spinX
- * 1     | spinXMult
- * 2     | spinY
- * 3     | spinYMult
- * 4     | spinZ
- * 5     | spinZMult
- */
-class NodeSpin extends Action {
-
-  /**
-   * @param spinX X spin in degrees per second. Defaults to 0.
-   * @param spinY Y spin in degrees per second. Defaults to 0.
-   * @param spinZ Z spin in degrees per second. Defaults to 0.
-   * @param spinXMult X spin multiplier. Defaults to 1.
-   * @param spinYMult Y spin multiplier. Defaults to 1.
-   * @param spinZMult Z spin multiplier. Defaults to 1.
-   * @param unkField Unknown. Fields1, index 0. Defaults to 1.
-   */
-  constructor(
-    spinX: number | Property = 0,
-    spinY: number | Property = 0,
-    spinZ: number | Property = 0,
-    spinXMult: number | Property = 1,
-    spinYMult: number | Property = 1,
-    spinZMult: number | Property = 1,
-    unkField: number = 1
-  ) {
-    super(ActionType.NodeSpin, [
       new IntField(unkField)
     ], [], [
-      scalarFromArg(spinX),
-      scalarFromArg(spinXMult),
-      scalarFromArg(spinY),
-      scalarFromArg(spinYMult),
-      scalarFromArg(spinZ),
-      scalarFromArg(spinZMult),
+      vectorFromArg(translation)
     ])
   }
 
@@ -3964,7 +4694,7 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  gravity?: number | Property
+  gravity?: ScalarPropertyArg
   /**
    * The acceleration for the particles. The direction depends on the emitter
    * shape. Defaults to 0.
@@ -3975,7 +4705,7 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  acceleration?: number | Property
+  acceleration?: ScalarPropertyArg
   /**
    * Multiplier for the {@link acceleration} property. Defaults to 1.
    * 
@@ -3985,7 +4715,7 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  accelerationMult?: number | Property
+  accelerationMult?: ScalarPropertyArg
   /**
    * The speed that the particles will travel at. The direction depends on the
    * emitter shape. Defaults to 0.
@@ -4002,7 +4732,7 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  speed?: number | Property
+  speed?: ScalarPropertyArg
   /**
    * Multiplier for the {@link speed} property. Defaults to 1.
    * 
@@ -4018,10 +4748,10 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  speedMult?: number | Property
+  speedMult?: ScalarPropertyArg
   /**
    * The particles will turn a random amount based on this value at intervals
-   * defined by {@link turnInterval}.
+   * defined by {@link turnInterval}. Defaults to 0.
    * 
    * Unless one of the partial follow parameters are set, setting this will
    * produce one of the random turns actions:
@@ -4030,11 +4760,12 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  maxTurnAngle?: number | Property
+  maxTurnAngle?: ScalarPropertyArg
   /**
    * The particles will turn a random amount based on {@link maxTurnAngle} at
    * this interval. The units are seconds, but due to how the field that stores
    * this value works, the value will be rounded to the nearest 0.02 seconds.
+   * Defaults to 0.
    * 
    * Unless one of the partial follow parameters are set, setting this will
    * produce one of the random turns actions:
@@ -4043,8 +4774,8 @@ export interface ParticleMovementParams {
    */
   turnInterval?: number
   /**
-   * Disabling this will make the {@link followFactor} only affect translation
-   * and not rotation. Defaults to true.
+   * Disabling this will make {@link followFactor} only affect translation and
+   * not rotation. Defaults to true.
    * 
    * Setting this will produce one of the partial follow actions:
    * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
@@ -4070,7 +4801,7 @@ export interface ParticleMovementParams {
    * See also:
    * - {@link followRotation}
    */
-  followFactor?: number | Property
+  followFactor?: ScalarPropertyArg
   /**
    * Unknown. Fields1, index 0.
    */
@@ -4113,7 +4844,7 @@ class ParticleMovement extends Action {
     unkField0 = 0,
     unkField1 = null,
   }: ParticleMovementParams = {}) {
-    let asProp: number | Property, asMultProp: number | Property
+    let asProp: ScalarPropertyArg, asMultProp: ScalarPropertyArg
     const isSpeedAct = speed !== null || speedMult !== null
     if (isSpeedAct) {
       if (acceleration !== null || accelerationMult !== null) {
@@ -4200,26 +4931,40 @@ class ParticleMovement extends Action {
  * ------|------
  * 0     | duration
  */
-class NodeLifetime extends Action {
+class NodeAttributes extends Action {
 
-  /**
-   * @param duration The node duration in seconds. Defaults to -1
-   * (infinite).
-   * @param delay The delay before the emitter begins emitting. Defaults to 0.
-   * @param attachment Controls how the node is attached to its parent.
-   * Defaults to {@link AttachMode.Parent}.
-   * @param unkField1 Unknown int. Fields1, index 1. Possibly a boolean field.
-   * Defaults to 1.
-   * @param unkField3 Unknown float. Fields1, index 3. Defaults to 0.
-   */
-  constructor(
-    duration: number | Property = -1,
-    delay: number = 0,
-    attachment: AttachMode = AttachMode.Parent,
-    unkField1: number = 1,
-    unkField3: number = 0,
-  ) {
-    super(ActionType.NodeLifetime, [
+  constructor({
+    duration = -1,
+    delay = 0,
+    attachment = AttachMode.Parent,
+    unkField1 = 1,
+    unkField3 = 0,
+  }: {
+    /**
+     * The node duration in seconds. Defaults to -1 (infinite).
+     * 
+     * **Argument**: {@link PropertyArgument.Constant Constant 0}
+     */
+    duration?: ScalarPropertyArg
+    /**
+     * The delay before the node becomes active. Defaults to 0.
+     */
+    delay?: number
+    /**
+     * Controls how the node is attached to its parent. Defaults to
+     * {@link AttachMode.Parent}.
+     */
+    attachment?: AttachMode
+    /**
+     * Unknown int. Fields1, index 1. Possibly a boolean field. Defaults to 1.
+     */
+    unkField1?: number
+    /**
+     * Unknown float. Fields1, index 3. Possibly a bit field. Defaults to 0.
+     */
+    unkField3?: number
+  } = {}) {
+    super(ActionType.NodeAttributes, [
       new FloatField(delay),
       new IntField(unkField1),
       new IntField(attachment),
@@ -4245,19 +4990,25 @@ class NodeLifetime extends Action {
  * ------|------
  * 0     | duration
  */
-class ParticleLifetime extends Action {
+class ParticleAttributes extends Action {
 
-  /**
-   * @param duration The particle duration in seconds. Defaults to -1
-   * (infinite).
-   * @param attachment Controls how the particle is attached to its parent.
-   * Defaults to {@link AttachMode.Parent}.
-   */
-  constructor(
-    duration: number | Property = -1,
-    attachment: AttachMode = AttachMode.Parent
-  ) {
-    super(ActionType.ParticleLifetime, [
+  constructor({
+    attachment = AttachMode.Parent,
+    duration = -1,
+  }: {
+    /**
+     * Controls how the particle is attached to its parent. Defaults to
+     * {@link AttachMode.Parent}.
+     */
+    attachment?: AttachMode
+    /**
+     * The particle duration in seconds. Defaults to -1 (infinite).
+     * 
+     * **Argument**: {@link PropertyArgument.Constant Constant 0}
+     */
+    duration?: ScalarPropertyArg
+  } = {}) {
+    super(ActionType.ParticleAttributes, [
       new IntField(attachment)
     ], [], [
       scalarFromArg(duration)
@@ -4266,8 +5017,51 @@ class ParticleLifetime extends Action {
 
 }
 
+export interface ParticleMultiplierParams {
+  /**
+   * Scales the model uniformly based on {@link scaleX}. The other scale
+   * properties in this action have no effect when this is enabled. Defaults to
+   * false.
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the speed of the particles, but only if the effect has an action
+   * in slot 10 that enables acceleration of particles. The direction depends
+   * on the emitter shape. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speed?: ScalarPropertyArg
+  /**
+   * Multiplier for the scale along the X-axis. If {@link uniformScale} is
+   * enabled, this scales the particles uniformly. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleX?: ScalarPropertyArg
+  /**
+   * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
+   * enabled, this property is ignored. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleY?: ScalarPropertyArg
+  /**
+   * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
+   * enabled, this property is ignored. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleZ?: ScalarPropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color?: Vector4PropertyArg
+}
 /**
- * Controls various multipliers as well as the acceleration of particles.
+ * Controls various multipliers as well as the speed of particles.
  * 
  * Fields1:
  * Index | Value
@@ -4285,38 +5079,16 @@ class ParticleLifetime extends Action {
  */
 class ParticleMultiplier extends Action {
 
-  /**
-   * @param uniformScale Scales the model uniformly based on {@link scaleX}.
-   * The other scale properties in this action have no effect when this is
-   * enabled.
-   * @param speed Controls the speed of the particles, but only if they have an
-   * action in slot 10. The direction depends on the emitter shape.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param scaleX Multiplier for the scale along the X-axis. If
-   * {@link uniformScale} is enabled, this scales the particles uniformly.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param scaleY Multiplier for the scale along the Y-axis. If
-   * {@link uniformScale} is enabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param scaleZ Multiplier for the scale along the Z-axis. If
-   * {@link uniformScale} is enabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param color Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  constructor(
-    uniformScale: boolean = true,
-    speed: number | Property = 0,
-    scaleX: number | Property = 1,
-    scaleY: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
-    scaleZ: number | Property = scaleX instanceof Property ? Property.copy(scaleX) : scaleX,
-    color: Vector4 | Property = [1, 1, 1, 1],
-  ) {
+  declare fields1: [BoolField]
+
+  constructor({
+    uniformScale = false,
+    speed = 0,
+    scaleX = 1,
+    scaleY = 1,
+    scaleZ = 1,
+    color = [1, 1, 1, 1],
+  }: ParticleMultiplierParams = {}) {
     super(ActionType.ParticleMultiplier, [
       new BoolField(uniformScale),
     ], [], [
@@ -4327,6 +5099,58 @@ class ParticleMultiplier extends Action {
       vectorFromArg(color),
     ])
   }
+
+  /**
+   * Scales the model uniformly based on {@link scaleX}. The other scale
+   * properties in this action have no effect when this is enabled.
+   */
+  get uniformScale() { return this.fields1[0].value }
+  set uniformScale(value) { this.fields1[0].value = value }
+
+  /**
+   * Controls the speed of the particles, but only if the effect has an action
+   * in slot 10 that enables acceleration of particles. The direction depends
+   * on the emitter shape.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get speed(): ScalarProperty { return this.properties1[0] }
+  set speed(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * Multiplier for the scale along the X-axis. If {@link uniformScale} is
+   * enabled, this scales the particles uniformly.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get scaleX(): ScalarProperty { return this.properties1[1] }
+  set scaleX(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
+   * enabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get scaleY(): ScalarProperty { return this.properties1[2] }
+  set scaleY(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
+   * enabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get scaleZ(): ScalarProperty { return this.properties1[3] }
+  set scaleZ(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get color(): Vector4Property { return this.properties1[4] }
+  set color(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
 
 }
 
@@ -4370,7 +5194,7 @@ class LevelOfDetailThresholds extends Action {
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
    */
-  constructor(duration: number | Property = -1, thresholds: number[] = []) {
+  constructor(duration: ScalarPropertyArg = -1, thresholds: number[] = []) {
     thresholds = arrayOf(5, i => thresholds[i] ?? 1000)
     super(
       ActionType.LevelOfDetail,
@@ -4403,12 +5227,25 @@ class StateEffectMap extends Action {
 }
 
 /**
- * Controls the weights for picking random subnodes. Used in {@link EffectType.Randomizer}.
+ * Used in {@link EffectType.SharedEmitter} to emit all particles from child
+ * nodes every time the shared emitter emits something.
  */
-class NodeWeights extends Action {
+class EmitAllParticles extends Action {
+
+  constructor() {
+    super(ActionType.EmitAllParticles)
+  }
+
+}
+
+/**
+ * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
+ * child node every time the shared emitter emits something.
+ */
+class EmitRandomParticles extends Action {
 
   constructor(...weights: number[]) {
-    super(ActionType.NodeWeights, [], [], [], [], [
+    super(ActionType.EmitRandomParticles, [], [], [], [], [
       new Section10(weights.map(w => new IntField(w)))
     ])
   }
@@ -4444,10 +5281,10 @@ class PeriodicEmitter extends Action {
    * @param unkField Unknown. Fields1, index 0.
    */
   constructor(
-    interval: number | Property = 1,
-    perInterval: number | Property = 1,
-    totalIntervals: number | Property = -1,
-    maxConcurrent: number | Property = -1,
+    interval: ScalarPropertyArg = 1,
+    perInterval: ScalarPropertyArg = 1,
+    totalIntervals: ScalarPropertyArg = -1,
+    maxConcurrent: ScalarPropertyArg = -1,
     unkField: number = 1
   ) {
     super(ActionType.PeriodicEmitter, [
@@ -4506,11 +5343,11 @@ class EqualDistanceEmitter extends Action {
    * @param unkProp Unknown. Properties1, index 1. Defaults to -1.
    */
   constructor(
-    threshold: number | Property = 0.1,
-    maxConcurrent: number | Property = 100,
+    threshold: ScalarPropertyArg = 0.1,
+    maxConcurrent: ScalarPropertyArg = 100,
     unkField0: number = 1,
     unkField1: number = 0,
-    unkProp: number | Property = -1
+    unkProp: ScalarPropertyArg = -1
   ) {
     super(ActionType.EqualDistanceEmitter, [
       new IntField(unkField0),
@@ -4523,6 +5360,7 @@ class EqualDistanceEmitter extends Action {
   }
 
 }
+
 /**
  * Emits one particle once.
  * 
@@ -4590,8 +5428,8 @@ class DiskEmitterShape extends Action {
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(
-    radius: number | Property = 1,
-    centerWeight: number | Property = 0,
+    radius: ScalarPropertyArg = 1,
+    centerWeight: ScalarPropertyArg = 0,
     unkField: number = 5
   ) {
     super(ActionType.DiskEmitterShape, [
@@ -4639,9 +5477,9 @@ class RectangleEmitterShape extends Action {
    * @param unkField Unknown. Fields1, index 0. Defaults to 5.
    */
   constructor(
-    sizeX: number | Property = 1,
-    sizeY: number | Property = sizeX instanceof Property ? Property.copy(sizeX) : sizeX,
-    centerWeight: number | Property = 0,
+    sizeX: ScalarPropertyArg = 1,
+    sizeY: ScalarPropertyArg = sizeX instanceof Property ? sizeX.clone() : sizeX,
+    centerWeight: ScalarPropertyArg = 0,
     unkField: number = 5
   ) {
     super(ActionType.RectangleEmitterShape, [
@@ -4678,7 +5516,7 @@ class SphereEmitterShape extends Action {
    */
   constructor(
     volume: boolean = true,
-    radius: number | Property = 1,
+    radius: ScalarPropertyArg = 1,
   ) {
     super(ActionType.SphereEmitterShape, [
       new BoolField(volume)
@@ -4718,9 +5556,9 @@ class BoxEmitterShape extends Action {
    */
   constructor(
     volume: boolean = true,
-    sizeX: number | Property = 1,
-    sizeY: number | Property = sizeX instanceof Property ? Property.copy(sizeX) : sizeX,
-    sizeZ: number | Property = sizeX instanceof Property ? Property.copy(sizeX) : sizeX,
+    sizeX: ScalarPropertyArg = 1,
+    sizeY: ScalarPropertyArg = sizeX instanceof Property ? sizeX.clone() : sizeX,
+    sizeZ: ScalarPropertyArg = sizeX instanceof Property ? sizeX.clone() : sizeX,
     unkField: number = 0,
   ) {
     super(ActionType.BoxEmitterShape, [
@@ -4765,8 +5603,8 @@ class CylinderEmitterShape extends Action {
    */
   constructor(
     volume: boolean = true,
-    radius: number | Property = 1,
-    height: number | Property = 1,
+    radius: ScalarPropertyArg = 1,
+    height: ScalarPropertyArg = 1,
     yAxis: boolean = true,
     unkField: number = 5,
   ) {
@@ -4849,9 +5687,9 @@ class CommonAction6xxFields2Action extends Action {
 }
 
 export interface QuadLineParams {
-  blendMode?: BlendMode | Property
-  width?: number | Property
-  height?: number | Property
+  blendMode?: BlendMode | ScalarProperty
+  width?: ScalarPropertyArg
+  height?: ScalarPropertyArg
   /**
    * Color multiplier for the entire rectangle.
    * 
@@ -4859,7 +5697,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  color1?: Vector4 | Property
+  color1?: Vector4PropertyArg
   /**
    * Color multiplier for the entire rectangle.
    * 
@@ -4867,7 +5705,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  color2?: Vector4 | Property
+  color2?: Vector4PropertyArg
   /**
    * The color for the "start" edge of the rectangle.
    * 
@@ -4875,7 +5713,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  startColor?: Vector4 | Property
+  startColor?: Vector4PropertyArg
   /**
    * The color for the "end" edge of the rectangle.
    * 
@@ -4883,17 +5721,17 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  endColor?: Vector4 | Property
-  widthMultiplier?: number | Property
-  heightMultiplier?: number | Property
+  endColor?: Vector4PropertyArg
+  widthMultiplier?: ScalarPropertyArg
+  heightMultiplier?: ScalarPropertyArg
   /**
    * Color multiplier for the entire rectangle.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3?: Vector4 | Property
-  rgbMultiplier?: number | Property
-  alphaMultiplier?: number | Property
+  color3?: Vector4PropertyArg
+  rgbMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarPropertyArg
   /**
    * Controls the color of the additional bloom effect. The colors of the
    * particles will be multiplied with this color to get the final color
@@ -4936,11 +5774,11 @@ export interface QuadLineParams {
    * - {@link minDistance}
    */
   maxDistance?: number
-  unkScalarProp2_2?: number | Property
-  unkVec4Prop2_3?: Vector4 | Property
-  unkVec4Prop2_4?: Vector4 | Property
-  unkVec4Prop2_5?: Vector4 | Property
-  unkScalarProp2_6?: number | Property
+  unkScalarProp2_2?: ScalarPropertyArg
+  unkVec4Prop2_3?: Vector4PropertyArg
+  unkVec4Prop2_4?: Vector4PropertyArg
+  unkVec4Prop2_5?: Vector4PropertyArg
+  unkScalarProp2_6?: ScalarPropertyArg
 }
 /**
  * Simple rectangular particle with a gradient. Most commonly used to create
@@ -5039,15 +5877,15 @@ class QuadLine extends CommonAction6xxFields2Action {
     ])
   }
 
-  get blendMode() { return this.properties1[0].stops[0].value as BlendMode }
-  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
   get blendModeProperty() { return this.properties1[0] }
 
   get width() { return this.properties1[1] }
-  set width(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
+  set width(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
 
   get height() { return this.properties1[2] }
-  set height(value: Property | PropertyValue) { setPropertyInList(this.properties1, 2, value) }
+  set height(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
 
   /**
    * Color multiplier for the entire rectangle.
@@ -5057,7 +5895,7 @@ class QuadLine extends CommonAction6xxFields2Action {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   get colorMultiplier1() { return this.properties1[3] }
-  set colorMultiplier1(value: Property | PropertyValue) { setPropertyInList(this.properties1, 3, value) }
+  set colorMultiplier1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
 
   /**
    * Color multiplier for the entire rectangle.
@@ -5067,7 +5905,7 @@ class QuadLine extends CommonAction6xxFields2Action {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   get colorMultiplier2() { return this.properties1[4] }
-  set colorMultiplier2(value: Property | PropertyValue) { setPropertyInList(this.properties1, 4, value) }
+  set colorMultiplier2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
 
   /**
    * The color for the "start" edge of the rectangle.
@@ -5077,7 +5915,7 @@ class QuadLine extends CommonAction6xxFields2Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get startColor() { return this.properties1[5] }
-  set startColor(value: Property | PropertyValue) { setPropertyInList(this.properties1, 5, value) }
+  set startColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
 
   /**
    * The color for the "end" edge of the rectangle.
@@ -5087,13 +5925,13 @@ class QuadLine extends CommonAction6xxFields2Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get endColor() { return this.properties1[6] }
-  set endColor(value: Property | PropertyValue) { setPropertyInList(this.properties1, 6, value) }
+  set endColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 6, value) }
 
   get widthMultiplier() { return this.properties1[7] }
-  set widthMultiplier(value: Property | PropertyValue) { setPropertyInList(this.properties1, 7, value) }
+  set widthMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 7, value) }
 
   get heightMultiplier() { return this.properties1[8] }
-  set heightMultiplier(value: Property | PropertyValue) { setPropertyInList(this.properties1, 8, value) }
+  set heightMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 8, value) }
 
   /**
    * Color multiplier for the entire rectangle.
@@ -5101,13 +5939,13 @@ class QuadLine extends CommonAction6xxFields2Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get colorMultiplier3() { return this.properties1[9] }
-  set colorMultiplier3(value: Property | PropertyValue) { setPropertyInList(this.properties1, 9, value) }
+  set colorMultiplier3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 9, value) }
 
   get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value: Property | PropertyValue) { setPropertyInList(this.properties2, 0, value) }
+  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
 
   get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value: Property | PropertyValue) { setPropertyInList(this.properties2, 1, value) }
+  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -5117,89 +5955,167 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  texture?: number | Property
+  texture?: ScalarPropertyArg
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  blendMode?: BlendMode | Property
+  blendMode?: BlendMode | ScalarProperty
   /**
-   * Offset for the position of the particle. Each axis has its own property.
-   * Defaults to [0, 0, 0].
+   * X position offset. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  offset?: Vector3 | Property[]
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
   /**
    * The width of the particle.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled, this also controls the height.
+   * If {@link uniformScale} is enabled, this also controls the height.
    * 
    * Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  width?: number | Property
+  width?: ScalarPropertyArg
   /**
    * The height of the particle.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled, {@link BillboardExParams.width width} also controls
-   * the height, and this property is ignored.
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
    * 
    * Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  height?: number | Property
+  height?: ScalarPropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  color1?: Vector4 | Property
+  color1?: Vector4PropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4 | Property
+  color2?: Vector4PropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
    */
-  color3?: Vector4 | Property
+  color3?: Vector4PropertyArg
   /**
    * Parts of the particle with less opacity than this threshold will be
    * invisible. The range is 0-255. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaThreshold?: number | Property
+  alphaThreshold?: ScalarPropertyArg
   /**
-   * Rotation in degrees. Each axis has its own property. Defaults to
-   * [0, 0, 0].
+   * Rotation around the X-axis in degrees. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
    */
-  rotation?: Vector3 | Property[]
+  rotationX?: ScalarPropertyArg
   /**
-   * Rotation speed in degrees per second. Each axis has its own property.
-   * Defaults to [0, 0, 0].
+   * Rotation around the Y-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY?: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ?: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeed?: Vector3 | Property[]
+  rotationSpeedX?: ScalarPropertyArg
   /**
-   * Rotation speed multiplier. Each axis has its own property. Defaults to
-   * [1, 1, 1].
+   * Rotation speed around the Y-axis in degrees per second. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedMultiplier?: Vector3 | Property[]
+  rotationSpeedY?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the X-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedX}
+   */
+  rotationSpeedMultiplierX?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the Y-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedY}
+   */
+  rotationSpeedMultiplierY?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the Z-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedZ}
+   */
+  rotationSpeedMultiplierZ?: ScalarPropertyArg
   /**
    * Positive values will make the particle draw in front of objects closer to
    * the camera, while negative values will make it draw behind objects farther
@@ -5210,7 +6126,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link negativeDepthOffset}
    */
-  depthOffset?: number | Property
+  depthOffset?: ScalarPropertyArg
   /**
    * The index of the frame to show from the texture atlas. Can be animated
    * using a {@link PropertyFunction.Linear linear property} or similar.
@@ -5221,27 +6137,27 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  frameIndex?: number | Property
+  frameIndex?: ScalarPropertyArg
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties
    * is the actual frame index that gets used. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  frameIndexOffset?: number | Property
+  frameIndexOffset?: ScalarPropertyArg
   /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: number | Property
+  rgbMultiplier?: ScalarPropertyArg
   /**
    * Alpha multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: number | Property
+  alphaMultiplier?: ScalarPropertyArg
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
@@ -5259,13 +6175,12 @@ export interface BillboardExParams {
    * width. Setting it to 2 will make them randomly wider, up to double width.
    * Defaults to 1.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled, this also affects the height.
+   * If {@link uniformScale} is enabled, this also affects the height.
    * 
    * See also:
-   * - {@link BillboardExParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link scaleVariationY}
    */
-  randomWidthMultiplier?: number
+  scaleVariationX?: number
   /**
    * Each particle will pick a random number between this value and 1, and the
    * height of the particle will be multiplied by this number. For example,
@@ -5273,22 +6188,20 @@ export interface BillboardExParams {
    * height. Setting it to 2 will make them randomly taller, up to double
    * height. Defaults to 1.
    * 
-   * If {@link BillboardExParams.uniformScale uniformScale} is
-   * enabled,
-   * {@link BillboardExParams.randomWidthMultiplier randomWidthMultiplier}
-   * also affects the height, and this field is ignored.
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
    */
-  randomHeightMultiplier?: number
+  scaleVariationY?: number
   /**
    * If enabled, the particle width-related properties and fields will control
    * both the width and height of the particles, and the height counterparts
    * will be ignored. Defaults to false.
    * 
    * See also:
-   * - {@link BillboardExParams.width width}
-   * - {@link BillboardExParams.height height}
-   * - {@link BillboardExParams.randomWidthMultiplier randomWidthMultiplier}
-   * - {@link BillboardExParams.randomHeightMultiplier randomHeightMultiplier}
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
    */
   uniformScale?: boolean
   /**
@@ -5412,13 +6325,13 @@ export interface BillboardExParams {
    * - {@link glossiness}
    */
   specularity?: number
-  unkScalarProp1_23?: number | Property
-  unkScalarProp1_24?: number | Property
-  unkScalarProp2_2?: number | Property
-  unkVec4Prop2_3?: Vector4 | Property
-  unkVec4Prop2_4?: Vector4 | Property
-  unkVec4Prop2_5?: Vector4 | Property
-  unkScalarProp2_6?: number | Property
+  unkScalarProp1_23?: ScalarPropertyArg
+  unkScalarProp1_24?: ScalarPropertyArg
+  unkScalarProp2_2?: ScalarPropertyArg
+  unkVec4Prop2_3?: Vector4PropertyArg
+  unkVec4Prop2_4?: Vector4PropertyArg
+  unkVec4Prop2_5?: Vector4PropertyArg
+  unkScalarProp2_6?: ScalarPropertyArg
 }
 /**
  * Particle with a texture that may be animated. This is the most common
@@ -5429,16 +6342,24 @@ class BillboardEx extends CommonAction6xxFields2Action {
   constructor({
     texture = 1,
     blendMode = BlendMode.Normal,
-    offset = [0, 0, 0],
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
     width = 1,
     height = 1,
     color1 = [1, 1, 1, 1],
     color2 = [1, 1, 1, 1],
     color3 = [1, 1, 1, 1],
     alphaThreshold = 0,
-    rotation = [0, 0, 0],
-    rotationSpeed = [0, 0, 0],
-    rotationSpeedMultiplier = [1, 1, 1],
+    rotationX = 0,
+    rotationY = 0,
+    rotationZ = 0,
+    rotationSpeedX = 0,
+    rotationSpeedY = 0,
+    rotationSpeedZ = 0,
+    rotationSpeedMultiplierX = 1,
+    rotationSpeedMultiplierY = 1,
+    rotationSpeedMultiplierZ = 1,
     depthOffset = 0,
     frameIndex = 0,
     frameIndexOffset = 0,
@@ -5446,8 +6367,8 @@ class BillboardEx extends CommonAction6xxFields2Action {
     alphaMultiplier = 1,
     orientation = OrientationMode.Camera,
     normalMap = 0,
-    randomWidthMultiplier = 1,
-    randomHeightMultiplier = 1,
+    scaleVariationX = 1,
+    scaleVariationY = 1,
     uniformScale = false,
     columns = 1,
     totalFrames = 1,
@@ -5473,8 +6394,8 @@ class BillboardEx extends CommonAction6xxFields2Action {
     super(ActionType.BillboardEx, [
       /*  0 */ new IntField(orientation),
       /*  1 */ new IntField(normalMap),
-      /*  2 */ new FloatField(randomWidthMultiplier),
-      /*  3 */ new FloatField(randomHeightMultiplier),
+      /*  2 */ new FloatField(scaleVariationX),
+      /*  3 */ new FloatField(scaleVariationY),
       /*  4 */ new BoolField(uniformScale),
       /*  5 */ new IntField(0),
       /*  6 */ new IntField(columns),
@@ -5538,24 +6459,24 @@ class BillboardEx extends CommonAction6xxFields2Action {
     ], [
       /*  0 */ scalarFromArg(texture),
       /*  1 */ scalarFromArg(blendMode),
-      /*  2 */ scalarFromArg(offset[0]),
-      /*  3 */ scalarFromArg(offset[1]),
-      /*  4 */ scalarFromArg(offset[2]),
+      /*  2 */ scalarFromArg(offsetX),
+      /*  3 */ scalarFromArg(offsetY),
+      /*  4 */ scalarFromArg(offsetZ),
       /*  5 */ scalarFromArg(width),
       /*  6 */ scalarFromArg(height),
       /*  7 */ vectorFromArg(color1),
       /*  8 */ vectorFromArg(color2),
       /*  9 */ vectorFromArg(color3),
       /* 10 */ scalarFromArg(alphaThreshold),
-      /* 11 */ scalarFromArg(rotation[0]),
-      /* 12 */ scalarFromArg(rotation[1]),
-      /* 13 */ scalarFromArg(rotation[2]),
-      /* 14 */ scalarFromArg(rotationSpeed[0]),
-      /* 15 */ scalarFromArg(rotationSpeedMultiplier[0]),
-      /* 16 */ scalarFromArg(rotationSpeed[1]),
-      /* 17 */ scalarFromArg(rotationSpeedMultiplier[1]),
-      /* 18 */ scalarFromArg(rotationSpeed[2]),
-      /* 19 */ scalarFromArg(rotationSpeedMultiplier[2]),
+      /* 11 */ scalarFromArg(rotationX),
+      /* 12 */ scalarFromArg(rotationY),
+      /* 13 */ scalarFromArg(rotationZ),
+      /* 14 */ scalarFromArg(rotationSpeedX),
+      /* 15 */ scalarFromArg(rotationSpeedMultiplierX),
+      /* 16 */ scalarFromArg(rotationSpeedY),
+      /* 17 */ scalarFromArg(rotationSpeedMultiplierY),
+      /* 18 */ scalarFromArg(rotationSpeedZ),
+      /* 19 */ scalarFromArg(rotationSpeedMultiplierZ),
       /* 20 */ scalarFromArg(depthOffset),
       /* 21 */ scalarFromArg(frameIndex),
       /* 22 */ scalarFromArg(frameIndexOffset),
@@ -5572,139 +6493,351 @@ class BillboardEx extends CommonAction6xxFields2Action {
     ])
   }
 
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
   get texture() { return this.properties1[0] }
   set texture(value) { setPropertyInList(this.properties1, 0, value) }
 
-  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
-  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
   get blendModeProperty() { return this.properties1[1] }
 
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get offsetX() { return this.properties1[2] }
   set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
 
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get offsetY() { return this.properties1[3] }
   set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
 
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get offsetZ() { return this.properties1[4] }
   set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
 
-  get offset() { return this.properties1.slice(2, 5) }
-  set offset(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 2 + i, value[i])
-    }
-  }
-
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get width() { return this.properties1[5] }
   set width(value) { setPropertyInList(this.properties1, 5, value) }
 
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get height() { return this.properties1[6] }
   set height(value) { setPropertyInList(this.properties1, 6, value) }
 
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get color1() { return this.properties1[7] }
   set color1(value) { setPropertyInList(this.properties1, 7, value) }
 
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
   get color2() { return this.properties1[8] }
   set color2(value) { setPropertyInList(this.properties1, 8, value) }
 
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
   get color3() { return this.properties1[9] }
   set color3(value) { setPropertyInList(this.properties1, 9, value) }
 
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get alphaThreshold() { return this.properties1[10] }
   set alphaThreshold(value) { setPropertyInList(this.properties1, 10, value) }
 
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
   get rotationX() { return this.properties1[11] }
   set rotationX(value) { setPropertyInList(this.properties1, 11, value) }
 
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
   get rotationY() { return this.properties1[12] }
   set rotationY(value) { setPropertyInList(this.properties1, 12, value) }
 
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
   get rotationZ() { return this.properties1[13] }
   set rotationZ(value) { setPropertyInList(this.properties1, 13, value) }
 
-  get rotation() { return this.properties1.slice(11, 14) }
-  set rotation(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 11 + i, value[i])
-    }
-  }
-
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
   get rotationSpeedX() { return this.properties1[14] }
   set rotationSpeedX(value) { setPropertyInList(this.properties1, 14, value) }
 
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
   get rotationSpeedY() { return this.properties1[16] }
   set rotationSpeedY(value) { setPropertyInList(this.properties1, 16, value) }
 
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
   get rotationSpeedZ() { return this.properties1[18] }
   set rotationSpeedZ(value) { setPropertyInList(this.properties1, 18, value) }
 
-  get rotationSpeed() { return [
-    this.properties1[14],
-    this.properties1[16],
-    this.properties1[18],
-  ] }
-  set rotationSpeed(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 14 + i * 2, value[i])
-    }
-  }
-
+  /**
+   * Multiplier for the rotation speed around the X-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedX}
+   */
   get rotationSpeedMultiplierX() { return this.properties1[15] }
   set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 15, value) }
 
+  /**
+   * Multiplier for the rotation speed around the Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedY}
+   */
   get rotationSpeedMultiplierY() { return this.properties1[17] }
   set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 17, value) }
 
+  /**
+   * Multiplier for the rotation speed around the Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedZ}
+   */
   get rotationSpeedMultiplierZ() { return this.properties1[19] }
   set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 19, value) }
 
-  get rotationSpeedMultiplier() { return [
-    this.properties1[15],
-    this.properties1[17],
-    this.properties1[19],
-  ] }
-  set rotationSpeedMultiplier(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 15 + i * 2, value[i])
-    }
-  }
-
+  /**
+   * Positive values will make the particle draw in front of objects closer to
+   * the camera, while negative values will make it draw behind objects farther
+   * away from the camera.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link negativeDepthOffset}
+   */
   get depthOffset() { return this.properties1[20] }
   set depthOffset(value) { setPropertyInList(this.properties1, 20, value) }
 
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get frameIndex() { return this.properties1[21] }
   set frameIndex(value) { setPropertyInList(this.properties1, 21, value) }
 
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get frameIndexOffset() { return this.properties1[22] }
   set frameIndexOffset(value) { setPropertyInList(this.properties1, 22, value) }
 
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get rgbMultiplier() { return this.properties2[0] }
   set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
 
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get alphaMultiplier() { return this.properties2[1] }
   set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information.
+   */
   get orientation() { return this.fields1[0].value as OrientationMode }
   set orientation(value) { this.fields1[0].value = value }
 
+  /**
+   * Normal map ID.
+   */
   get normalMap() { return this.fields1[1].value as number }
   set normalMap(value) { this.fields1[1].value = value }
 
-  get randomWidthMultiplier() { return this.fields1[2].value as number }
-  set randomWidthMultiplier(value) { this.fields1[2].value = value }
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  get scaleVariationX() { return this.fields1[2].value as number }
+  set scaleVariationX(value) { this.fields1[2].value = value }
 
-  get randomHeightMultiplier() { return this.fields1[3].value as number }
-  set randomHeightMultiplier(value) { this.fields1[3].value = value }
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  get scaleVariationY() { return this.fields1[3].value as number }
+  set scaleVariationY(value) { this.fields1[3].value = value }
 
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
   get uniformScale() { return this.fields1[4].value as boolean }
   set uniformScale(value) { this.fields1[4].value = value }
 
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link BillboardExParams.totalFrames totalFrames}
+   */
   get columns() { return this.fields1[6].value as number }
   set columns(value) { this.fields1[6].value = value }
 
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link BillboardExParams.columns columns}
+   */
   get totalFrames() { return this.fields1[7].value as number }
   set totalFrames(value) { this.fields1[7].value = value }
 
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix
+   * frames when the frame index is not a whole number. For example, if the
+   * frame index is 0.5, enabling this will cause the average of the first two
+   * frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will just be truncated to get a whole number.
+   * 
+   * See also:
+   * - {@link BillboardExParams.frameIndex frameIndex}
+   */
   get interpolateFrames() { return this.fields1[8].value as number }
   set interpolateFrames(value) { this.fields1[8].value = value }
 
@@ -5775,14 +6908,25 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  blendMode?: BlendMode | Property
+  blendMode?: BlendMode | ScalarProperty
   /**
-   * Offset for the position of the particle. Each axis has its own property.
-   * Defaults to [0, 0, 0].
+   * X position offset. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  offset?: Vector3 | Property[]
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
   /**
    * The width of the particle.
    * 
@@ -5792,7 +6936,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  width?: number | Property
+  width?: ScalarPropertyArg
   /**
    * The height of the particle.
    * 
@@ -5803,179 +6947,251 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  height?: number | Property
+  height?: ScalarPropertyArg
+  /**
+   * Rotation around the X-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX?: ScalarPropertyArg
+  /**
+   * Rotation around the Y-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY?: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ?: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Y-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the X-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedX}
+   */
+  rotationSpeedMultiplierX?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the Y-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedY}
+   */
+  rotationSpeedMultiplierY?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the Z-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedZ}
+   */
+  rotationSpeedMultiplierZ?: ScalarPropertyArg
   /**
    * Color multiplier for the particle. Seemingly identical to {@link color3}?
    * Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  color1?: Vector4 | Property
+  color1?: Vector4PropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4 | Property
+  color2?: Vector4PropertyArg
   /**
    * Color multiplier for the particle. Seemingly identical to {@link color1}?
    * Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}.
    */
-  color3?: Vector4 | Property
+  color3?: Vector4PropertyArg
   /**
    * Color multiplier for both of the texture layers. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  colorLayers?: Vector4 | Property
+  layersColor?: Vector4PropertyArg
   /**
    * Color multiplier for Layer 1. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer1Color?: Vector4 | Property
+  layer1Color?: Vector4PropertyArg
   /**
    * Color multiplier for Layer 2. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer2Color?: Vector4 | Property
+  layer2Color?: Vector4PropertyArg
   /**
    * Parts of the particle with less opacity than this threshold will be
    * invisible. The range is 0-255. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaThreshold?: number | Property
-  /**
-   * Rotation in degrees. Each axis has its own property. Defaults to
-   * [0, 0, 0].
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   */
-  rotation?: Vector3 | Property[]
-  /**
-   * Rotation speed in degrees per second. Each axis has its own property.
-   * Defaults to [0, 0, 0].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  rotationSpeed?: Vector3 | Property[]
-  /**
-   * Rotation speed multiplier. Each axis has its own property. Defaults to
-   * [1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  rotationSpeedMultiplier?: Vector3 | Property[]
+  alphaThreshold?: ScalarPropertyArg
   /**
    * The index of the frame to show from the texture atlas. Can be animated
    * using a {@link PropertyFunction.Linear linear property} or similar.
    * Defaults to 0.
    * 
-   * Seemingly identical to
-   * {@link BillboardExParams.frameIndexOffset unkProp1_22}? The sum of
-   * these two properties is the actual frame index that gets used.
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link interpolateFrames}
    */
-  frameIndex?: number | Property
+  frameIndex?: ScalarPropertyArg
   /**
-   * Seemingly identical to
-   * {@link BillboardExParams.frameIndex frameIndex}? The sum of
-   * these two properties is the actual frame index that gets used. Defaults to
-   * 0.
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link interpolateFrames}
    */
-  frameIndexOffset?: number | Property
+  frameIndexOffset?: ScalarPropertyArg
   /**
    * Horiztonal scroll speed for Layer 1. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer1SpeedU?: number | Property
+  layer1SpeedU?: ScalarPropertyArg
   /**
    * Vertical scroll speed for Layer 1. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer1SpeedV?: number | Property
+  layer1SpeedV?: ScalarPropertyArg
   /**
    * Horizontal offset for the UV coordinates of Layer 1. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  layer1OffsetU?: number | Property
+  layer1OffsetU?: ScalarPropertyArg
   /**
    * Vertical offset for the UV coordinates of Layer 1. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  layer1OffsetV?: number | Property
+  layer1OffsetV?: ScalarPropertyArg
   /**
    * Horizontal scale for the UV coordinates of Layer 1. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer1ScaleU?: number | Property
+  layer1ScaleU?: ScalarPropertyArg
   /**
    * Vertical scale for the UV coordinates of Layer 1. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer1ScaleV?: number | Property
+  layer1ScaleV?: ScalarPropertyArg
   /**
    * Horiztonal scroll speed for Layer 2. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer2SpeedU?: number | Property
+  layer2SpeedU?: ScalarPropertyArg
   /**
    * Vertical scroll speed for Layer 2. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer2SpeedV?: number | Property
+  layer2SpeedV?: ScalarPropertyArg
   /**
    * Horizontal offset for the UV coordinates of Layer 2. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  layer2OffsetU?: number | Property
+  layer2OffsetU?: ScalarPropertyArg
   /**
    * Vertical offset for the UV coordinates of Layer 2. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  layer2OffsetV?: number | Property
+  layer2OffsetV?: ScalarPropertyArg
   /**
    * Horizontal scale for the UV coordinates of Layer 2. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer2ScaleU?: number | Property
+  layer2ScaleU?: ScalarPropertyArg
   /**
    * Vertical scale for the UV coordinates of Layer 2. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  layer2ScaleV?: number | Property
+  layer2ScaleV?: ScalarPropertyArg
   /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: number | Property
+  rgbMultiplier?: ScalarPropertyArg
   /**
    * Alpha multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: number | Property
+  alphaMultiplier?: ScalarPropertyArg
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
@@ -6033,6 +7249,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   interpolateFrames?: boolean
   /**
@@ -6139,7 +7356,6 @@ export interface MultiTextureBillboardExParams {
    */
   specularity?: number
 }
-
 /**
  * Particle with multiple texture that can scroll.
  */
@@ -6167,16 +7383,24 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
     lighting = LightingMode.Unlit,
     specularity = 0.5,
     blendMode = BlendMode.Normal,
-    offset = [0, 0, 0],
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
     width = 1,
     height = 1,
-    rotation = [0, 0, 0],
-    rotationSpeed = [0, 0, 0],
-    rotationSpeedMultiplier = [1, 1, 1],
+    rotationX = 0,
+    rotationY = 0,
+    rotationZ = 0,
+    rotationSpeedX = 0,
+    rotationSpeedY = 0,
+    rotationSpeedZ = 0,
+    rotationSpeedMultiplierX = 1,
+    rotationSpeedMultiplierY = 1,
+    rotationSpeedMultiplierZ = 1,
     color1 = [1, 1, 1, 1],
     color2 = [1, 1, 1, 1],
     color3 = [1, 1, 1, 1],
-    colorLayers = [1, 1, 1, 1],
+    layersColor = [1, 1, 1, 1],
     layer1Color = [1, 1, 1, 1],
     layer2Color = [1, 1, 1, 1],
     alphaThreshold = 0,
@@ -6264,24 +7488,24 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
       /* 45 */ new IntField(0),
     ], [
       /*  0 */ scalarFromArg(blendMode),
-      /*  1 */ scalarFromArg(offset[0]),
-      /*  2 */ scalarFromArg(offset[1]),
-      /*  3 */ scalarFromArg(offset[2]),
+      /*  1 */ scalarFromArg(offsetX),
+      /*  2 */ scalarFromArg(offsetY),
+      /*  3 */ scalarFromArg(offsetZ),
       /*  4 */ scalarFromArg(width),
       /*  5 */ scalarFromArg(height),
-      /*  6 */ scalarFromArg(rotation[0]),
-      /*  7 */ scalarFromArg(rotation[1]),
-      /*  8 */ scalarFromArg(rotation[2]),
-      /*  9 */ scalarFromArg(rotationSpeed[0]),
-      /* 10 */ scalarFromArg(rotationSpeedMultiplier[0]),
-      /* 11 */ scalarFromArg(rotationSpeed[1]),
-      /* 12 */ scalarFromArg(rotationSpeedMultiplier[1]),
-      /* 13 */ scalarFromArg(rotationSpeed[2]),
-      /* 14 */ scalarFromArg(rotationSpeedMultiplier[2]),
+      /*  6 */ scalarFromArg(rotationX),
+      /*  7 */ scalarFromArg(rotationY),
+      /*  8 */ scalarFromArg(rotationZ),
+      /*  9 */ scalarFromArg(rotationSpeedX),
+      /* 10 */ scalarFromArg(rotationSpeedMultiplierX),
+      /* 11 */ scalarFromArg(rotationSpeedY),
+      /* 12 */ scalarFromArg(rotationSpeedMultiplierY),
+      /* 13 */ scalarFromArg(rotationSpeedZ),
+      /* 14 */ scalarFromArg(rotationSpeedMultiplierZ),
       /* 15 */ vectorFromArg(color1),
       /* 16 */ vectorFromArg(color2),
       /* 17 */ vectorFromArg(color3),
-      /* 18 */ vectorFromArg(colorLayers),
+      /* 18 */ vectorFromArg(layersColor),
       /* 19 */ vectorFromArg(layer1Color),
       /* 20 */ vectorFromArg(layer2Color),
       /* 21 */ scalarFromArg(alphaThreshold),
@@ -6316,148 +7540,457 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
     ])
   }
 
-  get blendMode() { return this.properties1[0].stops[1].value as BlendMode }
-  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
   get blendModeProperty() { return this.properties1[0] }
 
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get offsetX() { return this.properties1[1] }
   set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
 
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get offsetY() { return this.properties1[2] }
   set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
 
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get offsetZ() { return this.properties1[3] }
   set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
 
-  get offset() { return this.properties1.slice(1, 4) }
-  set offset(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 1 + i, value[i])
-    }
-  }
-
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get width() { return this.properties1[4] }
   set width(value) { setPropertyInList(this.properties1, 4, value) }
 
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get height() { return this.properties1[5] }
   set height(value) { setPropertyInList(this.properties1, 5, value) }
 
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
   get rotationX() { return this.properties1[6] }
   set rotationX(value) { setPropertyInList(this.properties1, 6, value) }
 
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
   get rotationY() { return this.properties1[7] }
   set rotationY(value) { setPropertyInList(this.properties1, 7, value) }
 
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
   get rotationZ() { return this.properties1[8] }
   set rotationZ(value) { setPropertyInList(this.properties1, 8, value) }
 
-  get rotation() { return this.properties1.slice(6, 9) }
-  set rotation(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 6 + i, value[i])
-    }
-  }
-
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
   get rotationSpeedX() { return this.properties1[9] }
   set rotationSpeedX(value) { setPropertyInList(this.properties1, 9, value) }
 
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
   get rotationSpeedY() { return this.properties1[11] }
   set rotationSpeedY(value) { setPropertyInList(this.properties1, 11, value) }
 
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
   get rotationSpeedZ() { return this.properties1[13] }
   set rotationSpeedZ(value) { setPropertyInList(this.properties1, 13, value) }
 
-  get rotationSpeed() { return [
-    this.properties1[9],
-    this.properties1[11],
-    this.properties1[13],
-  ] }
-  set rotationSpeed(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 9 + i * 2, value[i])
-    }
-  }
-
+  /**
+   * Multiplier for the rotation speed around the X-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedX}
+   */
   get rotationSpeedMultiplierX() { return this.properties1[10] }
   set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 10, value) }
 
+  /**
+   * Multiplier for the rotation speed around the Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedY}
+   */
   get rotationSpeedMultiplierY() { return this.properties1[12] }
   set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 12, value) }
 
+  /**
+   * Multiplier for the rotation speed around the Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedZ}
+   */
   get rotationSpeedMultiplierZ() { return this.properties1[14] }
   set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 14, value) }
 
-  get rotationSpeedMultiplier() { return [
-    this.properties1[10],
-    this.properties1[12],
-    this.properties1[14],
-  ] }
-  set rotationSpeedMultiplier(value) {
-    for (let i = 2; i >= 0; i--) {
-      setPropertyInList(this.properties1, 10 + i * 2, value[i])
-    }
-  }
-
+  /**
+   * Color multiplier for the particle. Seemingly identical to {@link color3}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get color1() { return this.properties1[15] }
   set color1(value) { setPropertyInList(this.properties1, 15, value) }
 
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
   get color2() { return this.properties1[16] }
   set color2(value) { setPropertyInList(this.properties1, 16, value) }
 
+  /**
+   * Color multiplier for the particle. Seemingly identical to {@link color1}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}.
+   */
   get color3() { return this.properties1[17] }
   set color3(value) { setPropertyInList(this.properties1, 17, value) }
 
+  /**
+   * Color multiplier for both of the texture layers.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get layersColor() { return this.properties1[18] }
   set layersColor(value) { setPropertyInList(this.properties1, 18, value) }
 
+  /**
+   * Color multiplier for Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get layer1Color() { return this.properties1[19] }
   set layer1Color(value) { setPropertyInList(this.properties1, 19, value) }
 
+  /**
+   * Color multiplier for Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
   get layer2Color() { return this.properties1[20] }
   set layer2Color(value) { setPropertyInList(this.properties1, 20, value) }
 
+  /**
+   * Parts of the particle with less opacity than this threshold will be
+   * invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get alphaThreshold() { return this.properties1[21] }
   set alphaThreshold(value) { setPropertyInList(this.properties1, 21, value) }
 
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link interpolateFrames}
+   */
   get frameIndex() { return this.properties1[22] }
   set frameIndex(value) { setPropertyInList(this.properties1, 22, value) }
 
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link interpolateFrames}
+   */
   get frameIndexOffset() { return this.properties1[23] }
   set frameIndexOffset(value) { setPropertyInList(this.properties1, 23, value) }
 
+  /**
+   * Horiztonal scroll speed for Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer1SpeedU() { return this.properties1[30] }
+  set layer1SpeedU(value) { setPropertyInList(this.properties1, 30, value) }
+
+  /**
+   * Vertical scroll speed for Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer1SpeedV() { return this.properties1[31] }
+  set layer1SpeedV(value) { setPropertyInList(this.properties1, 31, value) }
+
+  /**
+   * Horizontal offset for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get layer1OffsetU() { return this.properties1[32] }
+  set layer1OffsetU(value) { setPropertyInList(this.properties1, 32, value) }
+
+  /**
+   * Vertical offset for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get layer1OffsetV() { return this.properties1[33] }
+  set layer1OffsetV(value) { setPropertyInList(this.properties1, 33, value) }
+
+  /**
+   * Horizontal scale for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer1ScaleU() { return this.properties1[34] }
+  set layer1ScaleU(value) { setPropertyInList(this.properties1, 34, value) }
+
+  /**
+   * Vertical scale for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer1ScaleV() { return this.properties1[35] }
+  set layer1ScaleV(value) { setPropertyInList(this.properties1, 35, value) }
+
+  /**
+   * Horiztonal scroll speed for Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer2SpeedU() { return this.properties1[36] }
+  set layer2SpeedU(value) { setPropertyInList(this.properties1, 36, value) }
+
+  /**
+   * Vertical scroll speed for Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer2SpeedV() { return this.properties1[37] }
+  set layer2SpeedV(value) { setPropertyInList(this.properties1, 37, value) }
+
+  /**
+   * Horizontal offset for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get layer2OffsetU() { return this.properties1[38] }
+  set layer2OffsetU(value) { setPropertyInList(this.properties1, 38, value) }
+
+  /**
+   * Vertical offset for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get layer2OffsetV() { return this.properties1[39] }
+  set layer2OffsetV(value) { setPropertyInList(this.properties1, 39, value) }
+
+  /**
+   * Horizontal scale for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer2ScaleU() { return this.properties1[40] }
+  set layer2ScaleU(value) { setPropertyInList(this.properties1, 40, value) }
+
+  /**
+   * Vertical scale for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get layer2ScaleV() { return this.properties1[41] }
+  set layer2ScaleV(value) { setPropertyInList(this.properties1, 41, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get rgbMultiplier() { return this.properties2[0] }
   set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
 
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get alphaMultiplier() { return this.properties2[1] }
   set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information.
+   */
   get orientation() { return this.fields1[0].value as OrientationMode }
   set orientation(value) { this.fields1[0].value = value }
 
+  /**
+   * Mask texture ID.
+   */
   get mask() { return this.fields1[1].value as number }
   set mask(value) { this.fields1[1].value = value }
 
+  /**
+   * Layer 1 texture ID.
+   */
   get layer1() { return this.fields1[2].value as number }
   set layer1(value) { this.fields1[2].value = value }
 
+  /**
+   * Layer 2 texture ID.
+   */
   get layer2() { return this.fields1[3].value as number }
   set layer2(value) { this.fields1[3].value = value }
 
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
   get uniformScale() { return this.fields1[4].value as boolean }
   set uniformScale(value) { this.fields1[4].value = value }
 
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
   get columns() { return this.fields1[6].value as number }
   set columns(value) { this.fields1[6].value = value }
 
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
   get totalFrames() { return this.fields1[7].value as number }
   set totalFrames(value) { this.fields1[7].value = value }
 
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix
+   * frames when the frame index is not a whole number. For example, if the
+   * frame index is 0.5, enabling this will cause the average of the first two
+   * frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will just be truncated to get a whole number.
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
+   */
   get interpolateFrames() { return this.fields1[8].value as number }
   set interpolateFrames(value) { this.fields1[8].value = value }
 
+  /**
+   * Controls how the particles should intersect with objects they touch. If
+   * disabled, the particles will simply be cut off where they intersect
+   * objects. If enabled, they will instead display in front of the object if
+   * they are close enough, and will fade out with distance from the object's
+   * surface that is blocking the view of the particle.
+   */
   get depthBlend() { return this.fields1[11].value as boolean }
   set depthBlend(value) { this.fields1[11].value = value }
 
+  /**
+   * Controls the shape of the particles. If disabled, the particles will be
+   * rectangular. If enabled, they will be octagonal.
+   */
   get octagonal() { return this.fields1[12].value as boolean }
   set octagonal(value) { this.fields1[12].value = value }
 
@@ -6519,6 +8052,932 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
    */
   get specularity() { return this.fields2[38].value as number }
   set specularity(value) { this.fields2[38].value = value }
+
+}
+
+export interface ModelParams {
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information. Defaults to
+   * {@link OrientationMode.ParentNegativeZ}.
+   */
+  orientation?: OrientationMode
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height and
+   * depth.
+   */
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  scaleVariationY?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  scaleVariationZ?: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  uniformScale?: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`. Defaults to 1.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture. Defaults to 1.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information. Defaults to {@link LightingMode.Lit Lit}.
+   */
+  lighting?: LightingMode
+  /**
+   * The ID of the model to use. Defaults to 80201.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  model?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   */
+  sizeX?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  sizeY?: ScalarPropertyArg
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * depth, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  sizeZ?: ScalarPropertyArg
+  /**
+   * Rotation around the X-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX?: ScalarPropertyArg
+  /**
+   * Rotation around the Y-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY?: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ?: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Y-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the X-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedX}
+   */
+  rotationSpeedMultiplierX?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the Y-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedY}
+   */
+  rotationSpeedMultiplierY?: ScalarPropertyArg
+  /**
+   * Multiplier for the rotation speed around the Z-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedZ}
+   */
+  rotationSpeedMultiplierZ?: ScalarPropertyArg
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * Defaults to 0.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: ScalarPropertyArg
+  /**
+   * Horizontal offset for the UV coordinates of the model. Defaults to 0.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  offsetU?: ScalarPropertyArg
+  /**
+   * Vertical offset for the UV coordinates of the model. Defaults to 0.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  offsetV?: ScalarPropertyArg
+  /**
+   * Horiztonal scroll speed for the model's texture. Defaults to 0.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedU?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link speedU}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedUMultiplier?: ScalarPropertyArg
+  /**
+   * Vertical scroll speed for the model's texture. Defaults to 0.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedV?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link speedV}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedVMultiplier?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+}
+/**
+ * Particle with a 3D model.
+ */
+class Model extends CommonAction6xxFields2Action {
+
+  constructor({
+    orientation = OrientationMode.ParentNegativeZ,
+    scaleVariationX = 1,
+    scaleVariationY = 1,
+    scaleVariationZ = 1,
+    uniformScale = false,
+    columns = 1,
+    totalFrames = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    lighting = LightingMode.Lit,
+    model = 80201,
+    sizeX = 1,
+    sizeY = 1,
+    sizeZ = 1,
+    rotationX = 0,
+    rotationY = 0,
+    rotationZ = 0,
+    rotationSpeedX = 0,
+    rotationSpeedY = 0,
+    rotationSpeedZ = 0,
+    rotationSpeedMultiplierX = 1,
+    rotationSpeedMultiplierY = 1,
+    rotationSpeedMultiplierZ = 1,
+    blendMode = BlendMode.Normal,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    frameIndex = 0,
+    frameIndexOffset = 0,
+    offsetU = 0,
+    offsetV = 0,
+    speedU = 0,
+    speedUMultiplier = 1,
+    speedV = 0,
+    speedVMultiplier = 1,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: ModelParams = {}) {
+    super(ActionType.Model, [
+      /*  0 */ new IntField(orientation),
+      /*  1 */ new FloatField(scaleVariationX),
+      /*  2 */ new FloatField(scaleVariationY),
+      /*  3 */ new FloatField(scaleVariationZ),
+      /*  4 */ new BoolField(uniformScale),
+      /*  5 */ new IntField(columns),
+      /*  6 */ new IntField(totalFrames),
+      /*  7 */ new IntField(-2),
+      /*  8 */ new IntField(-2),
+      /*  9 */ new BoolField(true),
+      /* 10 */ new BoolField(true),
+      /* 11 */ new IntField(1),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new IntField(1),
+      /* 15 */ new FloatField(1),
+      /* 16 */ new IntField(0),
+      /* 17 */ new IntField(1),
+      /* 18 */ new IntField(1),
+      /* 19 */ new IntField(0),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new FloatField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(0),
+      /* 30 */ new FloatField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(1),
+      /* 33 */ new BoolField(false),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(lighting),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(model),
+      /*  1 */ scalarFromArg(sizeX),
+      /*  2 */ scalarFromArg(sizeY),
+      /*  3 */ scalarFromArg(sizeZ),
+      /*  4 */ scalarFromArg(rotationX),
+      /*  5 */ scalarFromArg(rotationY),
+      /*  6 */ scalarFromArg(rotationZ),
+      /*  7 */ scalarFromArg(rotationSpeedX),
+      /*  8 */ scalarFromArg(rotationSpeedMultiplierX),
+      /*  9 */ scalarFromArg(rotationSpeedY),
+      /* 10 */ scalarFromArg(rotationSpeedMultiplierY),
+      /* 11 */ scalarFromArg(rotationSpeedZ),
+      /* 12 */ scalarFromArg(rotationSpeedMultiplierZ),
+      /* 13 */ scalarFromArg(blendMode),
+      /* 14 */ vectorFromArg(color1),
+      /* 15 */ vectorFromArg(color2),
+      /* 16 */ vectorFromArg(color3),
+      /* 17 */ new ConstantProperty(0),
+      /* 18 */ scalarFromArg(frameIndex),
+      /* 19 */ scalarFromArg(frameIndexOffset),
+      /* 20 */ scalarFromArg(offsetU),
+      /* 21 */ scalarFromArg(offsetV),
+      /* 22 */ scalarFromArg(speedU),
+      /* 23 */ scalarFromArg(speedUMultiplier),
+      /* 24 */ scalarFromArg(speedV),
+      /* 25 */ scalarFromArg(speedVMultiplier),
+      /* 26 */ new ConstantProperty(0),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information.
+   */
+  get orientation() { return this.fields1[0].value as OrientationMode }
+  set orientation(value) { this.fields1[0].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height and
+   * depth.
+   */
+  get scaleVariationX() { return this.fields1[1].value as number }
+  set scaleVariationX(value) { this.fields1[1].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  get scaleVariationY() { return this.fields1[2].value as number }
+  set scaleVariationY(value) { this.fields1[2].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  get scaleVariationZ() { return this.fields1[3].value as number }
+  set scaleVariationZ(value) { this.fields1[3].value = value }
+
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored.
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  get uniformScale() { return this.fields1[4].value as boolean }
+  set uniformScale(value) { this.fields1[4].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the number of columns in the texture. It should equal
+   * `textureWidth / frameWidth`.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  get columns() { return this.fields1[5].value as number }
+  set columns(value) { this.fields1[5].value = value }
+
+  /**
+   * To split the texture into multiple animation frames, this value must be
+   * set to the total number of frames in the texture.
+   * 
+   * Setting this to any value other thn 1 will disable UV offset properties:
+   * - {@link offsetU}
+   * - {@link offsetV}
+   * - {@link speedU}
+   * - {@link speedV}
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  get totalFrames() { return this.fields1[6].value as number }
+  set totalFrames(value) { this.fields1[6].value = value }
+
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more
+   * information.
+   */
+  get lighting() { return this.fields2[35].value as LightingMode }
+  set lighting(value) { this.fields2[35].value = value }
+
+  /**
+   * The ID of the model to use.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get model() { return this.properties1[0].valueAt(0) as number }
+  set model(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * The ID of the model to use.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get modelProperty() { return this.properties1[0] }
+
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   */
+  get sizeX() { return this.properties1[1] }
+  set sizeX(value) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  get sizeY() { return this.properties1[2] }
+  set sizeY(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * depth, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  get sizeZ() { return this.properties1[3] }
+  set sizeZ(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  get rotationX() { return this.properties1[4] }
+  set rotationX(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  get rotationY() { return this.properties1[5] }
+  set rotationY(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  get rotationZ() { return this.properties1[6] }
+  set rotationZ(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  get rotationSpeedX() { return this.properties1[7] }
+  set rotationSpeedX(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  get rotationSpeedY() { return this.properties1[9] }
+  set rotationSpeedY(value) { setPropertyInList(this.properties1, 9, value) }
+
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  get rotationSpeedZ() { return this.properties1[11] }
+  set rotationSpeedZ(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * Multiplier for the rotation speed around the X-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedX}
+   */
+  get rotationSpeedMultiplierX() { return this.properties1[8] }
+  set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 8, value) }
+
+  /**
+   * Multiplier for the rotation speed around the Y-axis. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedY}
+   */
+  get rotationSpeedMultiplierY() { return this.properties1[10] }
+  set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 10, value) }
+
+  /**
+   * Multiplier for the rotation speed around the Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedZ}
+   */
+  get rotationSpeedMultiplierZ() { return this.properties1[12] }
+  set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 12, value) }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[13].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 13, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[13] }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[14] }
+  set color1(value) { setPropertyInList(this.properties1, 14, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  get color2() { return this.properties1[15] }
+  set color2(value) { setPropertyInList(this.properties1, 15, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
+   */
+  get color3() { return this.properties1[16] }
+  set color3(value) { setPropertyInList(this.properties1, 16, value) }
+
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated
+   * using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
+   * properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndex() { return this.properties1[18] }
+  set frameIndex(value) { setPropertyInList(this.properties1, 18, value) }
+
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties
+   * is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get frameIndexOffset() { return this.properties1[19] }
+  set frameIndexOffset(value) { setPropertyInList(this.properties1, 19, value) }
+
+  /**
+   * Horizontal offset for the UV coordinates of the model.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get offsetU() { return this.properties1[20] }
+  set offsetU(value) { setPropertyInList(this.properties1, 20, value) }
+
+  /**
+   * Vertical offset for the UV coordinates of the model.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get offsetV() { return this.properties1[21] }
+  set offsetV(value) { setPropertyInList(this.properties1, 21, value) }
+
+  /**
+   * Horizontal scroll speed for the model's texture.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedU() { return this.properties1[22] }
+  set speedU(value) { setPropertyInList(this.properties1, 22, value) }
+
+  /**
+   * Multiplier for {@link speedU}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedUMultiplier() { return this.properties1[23] }
+  set speedUMultiplier(value) { setPropertyInList(this.properties1, 23, value) }
+
+  /**
+   * Vertical scroll speed for the model's texture.
+   * 
+   * If the texture is an animation sheet that is split up into multiple frames
+   * using {@link columns} and/or {@link totalFrames}, this property has no
+   * effect.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedV() { return this.properties1[24] }
+  set speedV(value) { setPropertyInList(this.properties1, 24, value) }
+
+  /**
+   * Multiplier for {@link speedV}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedVMultiplier() { return this.properties1[25] }
+  set speedVMultiplier(value) { setPropertyInList(this.properties1, 25, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -6667,50 +9126,50 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  texture?: number | Property
+  texture?: ScalarPropertyArg
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  blendMode?: number | Property
+  blendMode?: ScalarPropertyArg
   /**
    * The length of the trail source. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  length?: number | Property
+  length?: ScalarPropertyArg
   /**
    * Multiplier for {@link length}. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  lengthMultiplier?: number | Property
+  lengthMultiplier?: ScalarPropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  color1?: Vector4 | Property
+  color1?: Vector4PropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4 | Property
+  color2?: Vector4PropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
    */
-  color3?: Vector4 | Property
+  color3?: Vector4PropertyArg
   /**
    * Parts of the particle with less opacity than this threshold will be
    * invisible. The range is 0-255. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaThreshold?: number | Property
+  alphaThreshold?: ScalarPropertyArg
   /**
    * The index of the frame to show from the texture atlas. Can be animated
    * using a {@link PropertyFunction.Linear linear property} or similar.
@@ -6721,29 +9180,28 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  frameIndex?: number | Property
+  frameIndex?: ScalarPropertyArg
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties
    * is the actual frame index that gets used. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  frameIndexOffset?: number | Property
+  frameIndexOffset?: ScalarPropertyArg
   /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: number | Property
+  rgbMultiplier?: ScalarPropertyArg
   /**
    * Alpha multiplier. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: number | Property
+  alphaMultiplier?: ScalarPropertyArg
 }
-
 /**
  * Creates a trail behind moving effects.
  */
@@ -7001,8 +9459,8 @@ class Tracer extends CommonAction6xxFields2Action {
    * 
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
-  get blendMode() { return this.properties1[1].stops[1].value as BlendMode }
-  set blendMode(value: Property | PropertyValue) { setPropertyInList(this.properties1, 1, value) }
+  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 1, value) }
   /**
    * Blend mode.
    * 
@@ -7057,12 +9515,1003 @@ class Tracer extends CommonAction6xxFields2Action {
 
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used. Defaults to 0.
+   * is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   get frameIndexOffset() { return this.properties1[11] }
   set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
+export interface DistortionParams {
+  /**
+   * Controls what type of distortion to apply. See {@link DistortionMode} for
+   * more details. Defaults to {@link DistortionMode.NormalMap}.
+   */
+  mode?: DistortionMode
+  /**
+   * Controls the shape of the particle. See {@link DistortionShape} for more
+   * information. Defaults to {@link DistortionShape.Rectangle}.
+   */
+  shape?: DistortionShape
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information. Defaults to
+   * {@link OrientationMode.Camera}.
+   */
+  orientation?: OrientationMode
+  /**
+   * Texture ID. Defaults to 0 (no texture).
+   * 
+   * This texture seems to completely hide the distortion effect. It's probably
+   * best to just leave it at 0 unless you are trying to figure out how to use
+   * it properly.
+   */
+  texture?: number
+  /**
+   * Normal map ID. Defaults to 0 (no texture).
+   * 
+   * Only used if the distortion {@link mode} is set to something that uses it.
+   */
+  normalMap?: number
+  /**
+   * Mask texture ID. This texture is used to control the color and opacity of
+   * the particle. Defaults to 0 (no texture).
+   */
+  mask?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  scaleVariationY?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth. Defaults to 1.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  scaleVariationZ?: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * X position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  sizeX?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  sizeY?: ScalarPropertyArg
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * depth, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  sizeZ?: ScalarPropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color?: Vector4PropertyArg
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no
+   * distortion at all. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  intensity?: ScalarPropertyArg
+  /**
+   * Controls the speed of the stirring effect in radians per second. Requires
+   * {@link mode} to be set to {@link DistortionMode.Stir}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  stirSpeed?: ScalarPropertyArg
+  /**
+   * The distortion effect is only applied to an ellipse inside the particle.
+   * This property controls how large this ellipse is. At 1, it inscribes the
+   * particle's rectangle. At values greater than 1, it is the same size as 1,
+   * but there might be strange artifacts around the edges of the distortion.
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  radius?: ScalarPropertyArg
+  /**
+   * Horizontal offset for the {@link normalMap normal map}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  normalMapOffsetU?: ScalarPropertyArg
+  /**
+   * Vertical offset for the {@link normalMap normal map}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  normalMapOffsetV?: ScalarPropertyArg
+  /**
+   * Horizontal offset speed for the {@link normalMap normal map}. Defaults to
+   * 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  normalMapSpeedU?: ScalarPropertyArg
+  /**
+   * Vertical offset speed for the {@link normalMap normal map}. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  normalMapSpeedV?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+}
+/**
+ * A particle that distorts anything seen through it.
+ * 
+ * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ */
+class Distortion extends CommonAction6xxFields2Action {
+
+  constructor({
+    mode = DistortionMode.NormalMap,
+    shape = DistortionShape.Rectangle,
+    orientation = OrientationMode.Camera,
+    texture = 0,
+    normalMap = 0,
+    mask = 0,
+    scaleVariationX = 1,
+    scaleVariationY = 1,
+    scaleVariationZ = 1,
+    uniformScale = false,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    blendMode = BlendMode.Normal,
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
+    sizeX = 1,
+    sizeY = 1,
+    sizeZ = 1,
+    color = [1, 1, 1, 1],
+    intensity = 1,
+    stirSpeed = 1,
+    radius = 1,
+    normalMapOffsetU = 0,
+    normalMapOffsetV = 0,
+    normalMapSpeedU = 0,
+    normalMapSpeedV = 0,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: DistortionParams = {}) {
+    super(ActionType.Distortion, [
+      new IntField(mode),
+      new IntField(shape),
+      new IntField(orientation),
+      new IntField(texture),
+      new IntField(normalMap),
+      new IntField(mask),
+      new FloatField(scaleVariationX),
+      new FloatField(scaleVariationY),
+      new FloatField(scaleVariationZ),
+      new BoolField(uniformScale),
+      new IntField(-2),
+      new IntField(0),
+      new IntField(1),
+      new IntField(1),
+    ], [
+      new IntField(0),
+      new IntField(0),
+      new IntField(8),
+      new FloatField(1),
+      new IntField(0),
+      new FloatField(bloomColor[0]),
+      new FloatField(bloomColor[1]),
+      new FloatField(bloomColor[2]),
+      new FloatField(bloomStrength),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new FloatField(-1),
+      new FloatField(-1),
+      new FloatField(-1),
+      new FloatField(-1),
+      new FloatField(minDistance),
+      new FloatField(maxDistance),
+      new IntField(1),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new FloatField(0),
+      new IntField(0),
+      new IntField(1),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(0),
+      new IntField(-1),
+      new IntField(-2),
+      new IntField(0),
+      new IntField(0),
+    ], [
+      scalarFromArg(blendMode),
+      scalarFromArg(offsetX),
+      scalarFromArg(offsetY),
+      scalarFromArg(offsetZ),
+      scalarFromArg(sizeX),
+      scalarFromArg(sizeY),
+      scalarFromArg(sizeZ),
+      vectorFromArg(color),
+      new ConstantProperty(1, 1, 1, 1),
+      scalarFromArg(intensity),
+      new ConstantProperty(0),
+      scalarFromArg(stirSpeed),
+      scalarFromArg(radius),
+      scalarFromArg(normalMapOffsetU),
+      scalarFromArg(normalMapOffsetV),
+      scalarFromArg(normalMapSpeedU),
+      scalarFromArg(normalMapSpeedV),
+    ], [
+      scalarFromArg(rgbMultiplier),
+      scalarFromArg(alphaMultiplier),
+      new ConstantProperty(0),
+      new ConstantProperty(1, 1, 1, 1),
+      new ConstantProperty(1, 1, 1, 1),
+      new ConstantProperty(1, 1, 1, 1),
+      new ConstantProperty(0),
+      new ConstantProperty(1),
+      new ConstantProperty(1),
+    ])
+  }
+
+  /**
+   * Controls what type of distortion to apply. See {@link DistortionMode} for
+   * more details.
+   */
+  get mode() { return this.fields1[0].value as DistortionMode }
+  set mode(value) { this.fields1[0].value = value }
+
+  /**
+   * Controls the shape of the particle. See {@link DistortionShape} for more
+   * information.
+   */
+  get shape() { return this.fields1[1].value as DistortionShape }
+  set shape(value) { this.fields1[1].value = value }
+
+  /**
+   * Controls the orientation mode for the particles. See
+   * {@link OrientationMode} for more information.
+   */
+  get orientation() { return this.fields1[2].value as OrientationMode }
+  set orientation(value) { this.fields1[2].value = value }
+
+  /**
+   * Texture ID.
+   * 
+   * This texture seems to completely hide the distortion effect. It's probably
+   * best to just leave it at 0 unless you are trying to figure out how to use
+   * it properly.
+   */
+  get texture() { return this.fields1[3].value as number }
+  set texture(value) { this.fields1[3].value = value }
+
+  /**
+   * Normal map ID.
+   * 
+   * Only used if the distortion {@link mode} is set to something that uses it.
+   */
+  get normalMap() { return this.fields1[4].value as number }
+  set normalMap(value) { this.fields1[4].value = value }
+
+  /**
+   * Mask texture ID. This texture is used to control the color and opacity of
+   * the particle.
+   */
+  get mask() { return this.fields1[5].value as number }
+  set mask(value) { this.fields1[5].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * width of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly thinner, down to half
+   * width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  get scaleVariationX() { return this.fields1[6].value as number }
+  set scaleVariationX(value) { this.fields1[6].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * height of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shorter, down to half
+   * height. Setting it to 2 will make them randomly taller, up to double
+   * height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the height, and this field is ignored.
+   */
+  get scaleVariationY() { return this.fields1[7].value as number }
+  set scaleVariationY(value) { this.fields1[7].value = value }
+
+  /**
+   * Each particle will pick a random number between this value and 1, and the
+   * depth of the particle will be multiplied by this number. For example,
+   * setting this to 0.5 will make the particles randomly shallower, down to
+   * half depth. Setting it to 2 will make them randomly deeper, up to double
+   * depth.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
+   * the depth, and this field is ignored.
+   */
+  get scaleVariationZ() { return this.fields1[8].value as number }
+  set scaleVariationZ(value) { this.fields1[8].value = value }
+
+  /**
+   * If enabled, the particle X scale-related properties and fields will
+   * control the scale in all axes, and the Y and Z counterparts will be
+   * ignored.
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  get uniformScale() { return this.fields1[9].value as boolean }
+  set uniformScale(value) { this.fields1[9].value = value }
+
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[0] }
+
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetX() { return this.properties1[1] }
+  set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetY() { return this.properties1[2] }
+  set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetZ() { return this.properties1[3] }
+  set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get sizeX() { return this.properties1[4] }
+  set sizeX(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get sizeY() { return this.properties1[5] }
+  set sizeY(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
+   * depth, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get sizeZ() { return this.properties1[6] }
+  set sizeZ(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color() { return this.properties1[7] }
+  set color(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no
+   * distortion at all.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get intensity() { return this.properties1[9] }
+  set intensity(value) { setPropertyInList(this.properties1, 9, value) }
+
+  /**
+   * Controls the speed of the stirring effect in radians per second. Requires
+   * {@link mode} to be set to {@link DistortionMode.Stir}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get stirSpeed() { return this.properties1[11] }
+  set stirSpeed(value) { setPropertyInList(this.properties1, 11, value) }
+
+  /**
+   * The distortion effect is only applied to an ellipse inside the particle.
+   * This property controls how large this ellipse is. At 1, it inscribes the
+   * particle's rectangle. At values greater than 1, it is the same size as 1,
+   * but there might be strange artifacts around the edges of the distortion.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get radius() { return this.properties1[12] }
+  set radius(value) { setPropertyInList(this.properties1, 12, value) }
+
+  /**
+   * Horizontal offset for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get normalMapOffsetU() { return this.properties1[13] }
+  set normalMapOffsetU(value) { setPropertyInList(this.properties1, 13, value) }
+
+  /**
+   * Vertical offset for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get normalMapOffsetV() { return this.properties1[14] }
+  set normalMapOffsetV(value) { setPropertyInList(this.properties1, 14, value) }
+
+  /**
+   * Horizontal offset speed for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get normalMapSpeedU() { return this.properties1[15] }
+  set normalMapSpeedU(value) { setPropertyInList(this.properties1, 15, value) }
+
+  /**
+   * Vertical offset speed for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get normalMapSpeedV() { return this.properties1[16] }
+  set normalMapSpeedV(value) { setPropertyInList(this.properties1, 16, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
+export interface RadialBlurParams {
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls how many times to apply the effect. Higher values can have a
+   * significant impact on performance. Defaults to 1.
+   */
+  iterations?: number
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the
+   * particle. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  mask?: ScalarPropertyArg
+  /**
+   * X position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: ScalarPropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color?: Vector4PropertyArg
+  /**
+   * Controls the amount of blur to apply. Values greater than 1 may appear
+   * glitchy. Defaults to 0.5.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  blurRadius?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+}
+/**
+ * A particle that applies a radial blur to anything seen through it.
+ * 
+ * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ */
+class RadialBlur extends CommonAction6xxFields2Action {
+
+  constructor({
+    uniformScale = false,
+    iterations = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    blendMode = BlendMode.Normal,
+    mask = 1,
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
+    width = 1,
+    height = 1,
+    color = [1, 1, 1, 1],
+    blurRadius = 0.5,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: RadialBlurParams = {}) {
+    super(ActionType.RadialBlur, [
+      /*  0 */ new BoolField(uniformScale),
+      /*  1 */ new IntField(iterations),
+      /*  2 */ new IntField(0),
+      /*  3 */ new IntField(1),
+      /*  4 */ new IntField(1),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new FloatField(1),
+      /*  4 */ new IntField(0),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new FloatField(0.5),
+      /* 21 */ new IntField(1),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1), // depth blend 1
+      /* 26 */ new FloatField(0), // depth blend 2
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(0),
+      /* 30 */ new FloatField(0),
+    ], [
+      /*  0 */ scalarFromArg(blendMode),
+      /*  1 */ scalarFromArg(mask),
+      /*  2 */ scalarFromArg(offsetX),
+      /*  3 */ scalarFromArg(offsetY),
+      /*  4 */ scalarFromArg(offsetZ),
+      /*  5 */ scalarFromArg(width),
+      /*  6 */ scalarFromArg(height),
+      /*  7 */ vectorFromArg(color),
+      /*  8 */ new ConstantProperty(1, 1, 1, 1),
+      /*  9 */ scalarFromArg(blurRadius),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  get uniformScale() { return this.fields1[0].value as number }
+  set uniformScale(value) { this.fields1[0].value = value }
+
+  /**
+   * Controls how many times to apply the effect. Higher values can have a
+   * significant impact on performance. Defaults to 1.
+   */
+  get iterations() { return this.fields1[1].value as number }
+  set iterations(value) { this.fields1[1].value = value }
+
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[0] }
+
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the
+   * particle.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get mask() { return this.properties1[1].valueAt(0) }
+  set mask(value) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the
+   * particle.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get maskProperty() { return this.properties1[1] }
+
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetX() { return this.properties1[2] }
+  set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetY() { return this.properties1[3] }
+  set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetZ() { return this.properties1[4] }
+  set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get width() { return this.properties1[5] }
+  set width(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get height() { return this.properties1[6] }
+  set height(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color() { return this.properties1[7] }
+  set color(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Controls the amount of blur to apply. Values greater than 1 may appear
+   * glitchy.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get blurRadius() { return this.properties1[9] }
+  set blurRadius(value) { setPropertyInList(this.properties1, 9, value) }
 
   /**
    * Scalar multiplier for the color that does not affect the alpha.
@@ -7094,7 +10543,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  diffuseColor?: Vector4 | Property
+  diffuseColor?: Vector4PropertyArg
   /**
    * Controls the specular color of the light.
    * 
@@ -7106,14 +10555,14 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularColor?: Vector4 | Property
+  specularColor?: Vector4PropertyArg
   /**
    * The maximum distance that the light may travel from the source, and the
    * radius of the sphere in which other effects caused by the light source
    * (for example {@link volumeDensity} and its related fields) may act. Defaults
    * to 10.
    */
-  radius?: number | Property
+  radius?: ScalarPropertyArg
   /**
    * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
    * easily adjusting the brightness of the light without changing the color.
@@ -7125,7 +10574,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  diffuseMultiplier?: number | Property
+  diffuseMultiplier?: ScalarPropertyArg
   /**
    * A scalar multiplier for the {@link specularColor specular color}.
    * 
@@ -7135,7 +10584,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularMultiplier?: number | Property
+  specularMultiplier?: ScalarPropertyArg
   /**
    * Toggles the jitter and flicker animations for the light. Defaults to
    * false.
@@ -7280,7 +10729,7 @@ class PointLight extends Action {
 
   constructor({
     diffuseColor = [1, 1, 1, 1],
-    specularColor = diffuseColor instanceof Property ? Property.copy(diffuseColor) : diffuseColor.slice(),
+    specularColor = diffuseColor instanceof Property ? diffuseColor.clone() : diffuseColor.slice() as Vector4,
     radius = 10,
     diffuseMultiplier = 1,
     specularMultiplier = 1,
@@ -7577,7 +11026,7 @@ class NodeWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeed: number | Property = 0,
+    windSpeed: ScalarPropertyArg = 0,
     /**
      * A multiplier for
      * {@link windSpeed the speed in the direction of the wind}.
@@ -7585,7 +11034,7 @@ class NodeWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeedMult: number | Property = 1,
+    windSpeedMult: ScalarPropertyArg = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7605,8 +11054,8 @@ class NodeWindSpeed extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windSpeed(): Property { return this.properties1[0] }
-  set windSpeed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+  get windSpeed(): ScalarProperty { return this.properties1[0] }
+  set windSpeed(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7614,8 +11063,8 @@ class NodeWindSpeed extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windSpeedMult(): Property { return this.properties1[1] }
-  set windSpeedMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+  get windSpeedMult(): ScalarProperty { return this.properties1[1] }
+  set windSpeedMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7645,7 +11094,7 @@ class ParticleWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeed: number | Property = 0,
+    windSpeed: ScalarPropertyArg = 0,
     /**
      * A multiplier for
      * {@link windSpeed the speed in the direction of the wind}.
@@ -7653,7 +11102,7 @@ class ParticleWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeedMult: number | Property = 1,
+    windSpeedMult: ScalarPropertyArg = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7679,8 +11128,8 @@ class ParticleWindSpeed extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windSpeed(): Property { return this.properties1[0] }
-  set windSpeed(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+  get windSpeed(): ScalarProperty { return this.properties1[0] }
+  set windSpeed(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7688,8 +11137,8 @@ class ParticleWindSpeed extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windSpeedMult(): Property { return this.properties1[1] }
-  set windSpeedMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+  get windSpeedMult(): ScalarProperty { return this.properties1[1] }
+  set windSpeedMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7718,7 +11167,7 @@ class NodeWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAcceleration: number | Property = 0,
+    windAcceleration: ScalarPropertyArg = 0,
     /**
      * A multiplier for
      * {@link windAcceleration the acceleration in the direction of the wind}.
@@ -7726,7 +11175,7 @@ class NodeWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAccelerationMult: number | Property = 1,
+    windAccelerationMult: ScalarPropertyArg = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7746,8 +11195,8 @@ class NodeWindAcceleration extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windAcceleration(): Property { return this.properties1[0] }
-  set windAcceleration(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+  get windAcceleration(): ScalarProperty { return this.properties1[0] }
+  set windAcceleration(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7755,8 +11204,8 @@ class NodeWindAcceleration extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windAccelerationMult(): Property { return this.properties1[1] }
-  set windAccelerationMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+  get windAccelerationMult(): ScalarProperty { return this.properties1[1] }
+  set windAccelerationMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7789,7 +11238,7 @@ class ParticleWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAcceleration: number | Property = 0,
+    windAcceleration: ScalarPropertyArg = 0,
     /**
      * A multiplier for
      * {@link windAcceleration the acceleration in the direction of the wind}.
@@ -7797,7 +11246,7 @@ class ParticleWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAccelerationMult: number | Property = 1,
+    windAccelerationMult: ScalarPropertyArg = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7823,8 +11272,8 @@ class ParticleWindAcceleration extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windAcceleration(): Property { return this.properties1[0] }
-  set windAcceleration(value: number | Property) { setPropertyInList(this.properties1, 0, value) }
+  get windAcceleration(): ScalarProperty { return this.properties1[0] }
+  set windAcceleration(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7832,8 +11281,8 @@ class ParticleWindAcceleration extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windAccelerationMult(): Property { return this.properties1[1] }
-  set windAccelerationMult(value: number | Property) { setPropertyInList(this.properties1, 1, value) }
+  get windAccelerationMult(): ScalarProperty { return this.properties1[1] }
+  set windAccelerationMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7862,7 +11311,7 @@ export interface SpotLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  diffuseColor?: Vector4 | Property
+  diffuseColor?: Vector4PropertyArg
   /**
    * Controls the specular color of the light.
    * 
@@ -7874,7 +11323,7 @@ export interface SpotLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularColor?: Vector4 | Property
+  specularColor?: Vector4PropertyArg
   /**
    * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
    * easily adjusting the brightness of the light without changing the color.
@@ -7886,7 +11335,7 @@ export interface SpotLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  diffuseMultiplier?: number | Property
+  diffuseMultiplier?: ScalarPropertyArg
   /**
    * A scalar multiplier for the {@link specularColor specular color}.
    * 
@@ -7896,7 +11345,7 @@ export interface SpotLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularMultiplier?: number | Property
+  specularMultiplier?: ScalarPropertyArg
   /**
    * Controls where the light starts in the cone. It bascially "slices off" the
    * tip of the cone. If set to 0, it acts as if it is set to 0.5. Defaults to
@@ -7904,34 +11353,34 @@ export interface SpotLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  near?: number | Property
+  near?: ScalarPropertyArg
   /**
    * Controls how far away the base of the cone is from the light source.
    * Defaults to 50.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  far?: number | Property
+  far?: ScalarPropertyArg
   /**
    * The default value for {@link xRadius} and {@link yRadius}. Just a
    * convenient way to control both at the same time. This value is not used if
    * {@link xRadius} and {@link yRadius} are given values. Defaults to 50.
    */
-  radius?: number | Property
+  radius?: ScalarPropertyArg
   /**
    * The X radius for the elliptic base of the cone. Defaults to
    * {@link radius}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  xRadius?: number | Property
+  xRadius?: ScalarPropertyArg
   /**
    * The Y radius for the elliptic base of the cone. Defaults to
    * {@link radius}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  yRadius?: number | Property
+  yRadius?: ScalarPropertyArg
   /**
    * Toggles the jitter and flicker animations for the light. Defaults to
    * false.
@@ -8068,9 +11517,9 @@ export interface SpotLightParams {
    * Defaults to 1.
    */
   falloffExponent?: number
-  unkScalarProp8?: number | Property
-  unkScalarProp9?: number | Property
-  unkScalarProp10?: number | Property
+  unkScalarProp8?: ScalarPropertyArg
+  unkScalarProp9?: ScalarPropertyArg
+  unkScalarProp10?: ScalarPropertyArg
 }
 /**
  * Light source with an elliptic cone shape, a spot light.
@@ -8087,8 +11536,8 @@ class SpotLight extends Action {
     near = 0.01,
     far = 50,
     radius = 50,
-    xRadius = radius instanceof Property ? Property.copy(radius) : radius,
-    yRadius = radius instanceof Property ? Property.copy(radius) : radius,
+    xRadius = radius instanceof Property ? radius.clone() : radius,
+    yRadius = radius instanceof Property ? radius.clone() : radius,
     jitterAndFlicker = false,
     jitterAcceleration = 1,
     jitter = [0, 0, 0],
@@ -8385,26 +11834,39 @@ class SpotLight extends Action {
 }
 
 const Actions = {
-  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
-  [ActionType.NodeSpin]: NodeSpin, NodeSpin,
+  NodeMovement,
+  [ActionType.NodeAcceleration]: NodeMovement, NodeAcceleration: NodeMovement,
+  [ActionType.NodeSpin]: NodeMovement, NodeSpin: NodeMovement,
+  [ActionType.NodeAccelerationRandomTurns]: NodeMovement, NodeAccelerationRandomTurns: NodeMovement,
+  [ActionType.NodeAccelerationPartialFollow]: NodeMovement, NodeAccelerationPartialFollow: NodeMovement,
+  [ActionType.NodeAccelerationSpin]: NodeMovement, NodeAccelerationSpin: NodeMovement,
+  [ActionType.NodeSpeed]: NodeMovement, NodeSpeed: NodeMovement,
+  [ActionType.NodeSpeedRandomTurns]: NodeMovement, NodeSpeedRandomTurns: NodeMovement,
+  [ActionType.NodeSpeedPartialFollow]: NodeMovement, NodeSpeedPartialFollow: NodeMovement,
+  [ActionType.NodeSpeedSpin]: NodeMovement, NodeSpeedSpin: NodeMovement,
+
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
-  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
+
   ParticleMovement,
   [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
   [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
   [ActionType.ParticleSpeedRandomTurns]: ParticleMovement, ParticleSpeedRandomTurns: ParticleMovement,
   [ActionType.ParticleSpeedPartialFollow]: ParticleMovement, ParticleSpeedPartialFollow: ParticleMovement,
-  [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
   [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
-  [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
-  [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
+
+  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
+  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
+  [ActionType.PlaySound]: PlaySound, PlaySound,
+  [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
+  [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.FXRReference]: FXRReference, FXRReference,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.NodeWeights]: NodeWeights, NodeWeights,
+  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
+  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
@@ -8417,7 +11879,10 @@ const Actions = {
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
+  [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
+  [ActionType.Distortion]: Distortion, Distortion,
+  [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
@@ -8561,7 +12026,7 @@ class BoolField extends Field {
 
   declare value: boolean
 
-  constructor(value: boolean) {
+  constructor(value: boolean = false) {
     super(FieldType.Boolean, value)
   }
 
@@ -8571,7 +12036,7 @@ class IntField extends Field implements NumericalField {
 
   declare value: number
 
-  constructor(value: number) {
+  constructor(value: number = 0) {
     super(FieldType.Integer, value)
   }
 
@@ -8581,565 +12046,73 @@ class FloatField extends Field implements NumericalField {
 
   declare value: number
 
-  constructor(value: number) {
+  constructor(value: number = 0) {
     super(FieldType.Float, value)
   }
 
 }
 
-export type Stop = {
-  value: PropertyValue,
-  x: number,
-  y: number,
-  z: number,
-  w: number,
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-  [0]: number,
-  [1]: number,
-  [2]: number,
-  [3]: number,
-  position: number,
-  length: number
-}
-export type StopList = {
-  [index: number]: Stop,
-  length: number,
-  add: (position: number, value: PropertyValue) => void,
-  [Symbol.iterator]: () => Generator<Stop>
-}
+class Keyframe<T extends ValueType> implements IKeyframe<T> {
 
-class Property {
-
-  valueType: ValueType
-  function: PropertyFunction
-  loop: boolean
-  modifiers: Modifier[]
-  fields: NumericalField[]
-
-  #stops: StopList
+  position: number
+  value: ValueTypeMap[T]
+  unkTangent1?: ValueTypeMap[T]
+  unkTangent2?: ValueTypeMap[T]
 
   constructor(
-    valueType: ValueType = ValueType.Scalar,
-    func: PropertyFunction = PropertyFunction.Zero,
-    loop: boolean = false,
-    fields: NumericalField[] = [],
+    position: number,
+    value: ValueTypeMap[T],
+    unkTangent1?: ValueTypeMap[T],
+    unkTangent2?: ValueTypeMap[T]
+  ) {
+    this.position = position
+    this.value = value
+    this.unkTangent1 = unkTangent1
+    this.unkTangent2 = unkTangent2
+  }
+
+  static copy<T extends ValueType>(orig: IKeyframe<T>) {
+    return new Keyframe(orig.position, orig.value, orig.unkTangent1, orig.unkTangent2)
+  }
+
+}
+
+abstract class Property<T extends ValueType, F extends PropertyFunction> implements IModifiableProperty<T, F> {
+
+  valueType: T
+  function: F
+  modifiers: Modifier[]
+
+  constructor(
+    valueType: T,
+    func: F,
     modifiers: Modifier[] = []
   ) {
     this.valueType = valueType
     this.function = func
-    this.loop = loop
-    this.fields = fields
     this.modifiers = modifiers
   }
 
-  static read(br: BinaryReader, conditional: boolean) {
-    const typeEnumA = br.readInt16()
-    br.assertUint8(0)
-    br.assertUint8(1)
-    const type =     typeEnumA & 0b00000000_00000011
-    const func =    (typeEnumA & 0b00000000_11110000) >>> 4
-    const loop = !!((typeEnumA & 0b00010000_00000000) >>> 12)
-    br.readInt32() // TypeEnumB
-    const count = br.readInt32()
-    br.assertInt32(0)
-    const offset = br.readInt32()
-    br.assertInt32(0)
-    const modifiers = []
-    if (!conditional) {
-      const num3 = br.readInt32()
-      br.assertInt32(0)
-      const capacity = br.readInt32()
-      br.assertInt32(0)
-      br.stepIn(num3)
-      for (let i = 0; i < capacity; ++i) {
-        modifiers.push(Modifier.read(br))
-      }
-      br.stepOut()
-    }
-    const fields = Field.readManyAt(br, offset, count, this)
-    return new Property(type, func, loop, fields, modifiers)
-  }
+  get componentCount() { return this.valueType + 1 as 1 | 2 | 3 | 4 }
 
-  static copy(prop: Property) {
-    return new Property(
-      prop.valueType,
-      prop.function,
-      prop.loop,
-      prop.fields.map(f => Field.copy(f) as NumericalField),
-      prop.modifiers.map(m => Modifier.copy(m))
-    )
-  }
-
-  write(bw: BinaryWriter, properties: Property[], conditional: boolean) {
-    const count = properties.length
-    const typeEnumA = this.valueType | this.function << 4 | +this.loop << 12
-    const typeEnumB = this.valueType | this.function << 2 | +this.loop << 4
-    bw.writeInt16(typeEnumA)
-    bw.writeUint8(0)
-    bw.writeUint8(1)
-    bw.writeInt32(typeEnumB)
-    bw.writeInt32(this.fields.length)
-    bw.writeInt32(0)
-    bw.reserveInt32(`${conditional ? 'Section9' : 'Property'}FieldsOffset${count}`)
-    bw.writeInt32(0)
-    if (!conditional) {
-      bw.reserveInt32(`PropertySection8sOffset${count}`)
-      bw.writeInt32(0)
-      bw.writeInt32(this.modifiers.length)
-      bw.writeInt32(0)
-    }
-    properties.push(this)
-  }
-
-  writeModifiers(bw: BinaryWriter, index: number, modifiers: Modifier[]) {
-    bw.fill(`PropertySection8sOffset${index}`, bw.position)
-    for (const modifier of this.modifiers) {
-      modifier.write(bw, modifiers)
-    }
-  }
-
-  writeFields(bw: BinaryWriter, index: number, conditional: boolean): number {
-    const offsetName = `${conditional ? 'Section9' : 'Property'}FieldsOffset${index}`
-    if (this.fields.length === 0) {
-      bw.fill(offsetName, 0)
-    } else {
-      bw.fill(offsetName, bw.position)
-      for (const field of this.fields) {
-        field.write(bw)
-      }
-    }
-    return this.fields.length
-  }
-
-  get componentCount() {
-    return this.valueType + 1
-  }
-
-  get #positionIndex() {
-    switch (this.function) {
-      case PropertyFunction.Constant:
-      case PropertyFunction.Zero:
-      case PropertyFunction.One:
-      case PropertyFunction.CompCurve:
-        return -1
-      default:
-        return 1 + 2 * this.componentCount
-    }
-  }
-
-  get #valueIndex() {
-    switch (this.function) {
-      case PropertyFunction.Stepped:
-      case PropertyFunction.Linear:
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
-        return this.#positionIndex + (+this.fields[0].value)
-      case PropertyFunction.Constant:
-        return 0
-      case PropertyFunction.Zero:
-      case PropertyFunction.One:
-      case PropertyFunction.CompCurve:
-        return -1
-    }
-  }
-
-  #valueIndexUnkAc6(comp: number) {
-    const cc = this.componentCount
-    const a = this.fields.slice(1, 1 + comp).reduce((a, e) => a + (+e.value), 0)
-    return 1 + cc * 3 + a * 4
-  }
-
-  /**
-   * Utility for dealing with stops without directly messing with property fields.
-   */
-  get stops(): StopList {
-    //TODO: Deal with CompCurve function props
-    const prop = this
-    return this.#stops ??= new Proxy({} as StopList, {
-      get(target, sk, receiver) {
-        if (typeof sk !== 'symbol' && !isNaN(+sk)) {
-          const n = +sk
-          const comps = prop.componentCount
-          return new Proxy({} as Stop, {
-            get(target, ck, receiver) {
-              switch (ck) {
-                case 'value': {
-                  const i = prop.#valueIndex
-                  if (comps === 1) {
-                    if (i === -1) {
-                      return prop.function // Zero = 0, One = 1
-                    } else {
-                      return prop.fields[prop.#valueIndex + comps * n].value
-                    }
-                  } else {
-                    if (i === -1) {
-                      return arrayOf(comps, () => prop.function) // Zero = 0, One = 1
-                    } else {
-                      const start = prop.#valueIndex + comps * n
-                      return prop.fields.slice(start, start + comps).map(f => f.value)
-                    }
-                  }
-                }
-                case 'x':
-                case 'r':
-                case '0': {
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    return prop.function // Zero = 0, One = 1
-                  } else {
-                    return prop.fields[prop.#valueIndex + comps * n].value
-                  }
-                }
-                case 'y':
-                case 'g':
-                case '1': {
-                  if (prop.valueType < 1) return 0
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    return prop.function // Zero = 0, One = 1
-                  } else {
-                    return prop.fields[prop.#valueIndex + comps * n + 1].value
-                  }
-                }
-                case 'z':
-                case 'b':
-                case '2': {
-                  if (prop.valueType < 2) return 0
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    return prop.function // Zero = 0, One = 1
-                  } else {
-                    return prop.fields[prop.#valueIndex + comps * n + 2].value
-                  }
-                }
-                case 'w':
-                case 'a':
-                case '3': {
-                  if (prop.valueType < 3) return 0
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    return prop.function // Zero = 0, One = 1
-                  } else {
-                    return prop.fields[prop.#valueIndex + comps * n + 3].value
-                  }
-                }
-                case 'position':
-                  const pos = prop.#positionIndex
-                  if (pos === -1) return 0
-                  return prop.fields[pos + n].value
-                case 'length':
-                  return comps
-                case Symbol.iterator:
-                  return function* () {
-                    const comps = prop.componentCount
-                    for (let i = 0; i < comps; i++) {
-                      yield this[i]
-                    }
-                  }
-                default:
-                  return target[ck]
-              }
-            },
-            set(target, ck, v, receiver) {
-              switch (ck) {
-                case 'value': {
-                  const i = prop.#valueIndex
-                  for (let j = 0; j < comps; j++) {
-                    const field = prop.fields[i + comps * n + j]
-                    field.type = FieldType.Float
-                    field.value = typeof v === 'number' ? v : v[j]
-                  }
-                  return true
-                }
-                case 'x':
-                case 'r':
-                case '0': {
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    throw new Error('Unable to set field values in property without fields.')
-                  } else {
-                    const field = prop.fields[i + comps * n]
-                    field.type = FieldType.Float
-                    field.value = v
-                  }
-                  return true
-                }
-                case 'y':
-                case 'g':
-                case '1': {
-                  if (prop.valueType < 1) throw new Error('Index out of bounds: 1')
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    throw new Error('Unable to set field values in property without fields.')
-                  } else {
-                    const field = prop.fields[i + comps * n + 1]
-                    field.type = FieldType.Float
-                    field.value = v
-                  }
-                  return true
-                }
-                case 'z':
-                case 'b':
-                case '2': {
-                  if (prop.valueType < 2) throw new Error('Index out of bounds: 2')
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    throw new Error('Unable to set field values in property without fields.')
-                  } else {
-                    const field = prop.fields[i + comps * n + 2]
-                    field.type = FieldType.Float
-                    field.value = v
-                  }
-                  return true
-                }
-                case 'w':
-                case 'a':
-                case '3': {
-                  if (prop.valueType < 3) throw new Error('Index out of bounds: 3')
-                  const i = prop.#valueIndex
-                  if (i === -1) {
-                    throw new Error('Unable to set field values in property without fields.')
-                  } else {
-                    const field = prop.fields[i + comps * n + 3]
-                    field.type = FieldType.Float
-                    field.value = v
-                  }
-                  return true
-                }
-                case 'position':
-                  const pos = prop.#positionIndex
-                  if (pos === -1) throw new Error(`Unable to set the stop position in property with function: ${PropertyFunction[prop.function]}`)
-                  prop.fields[pos + n].value = v
-                  return true
-                default:
-                  return false
-              }
-            }
-          })
-        } else if (sk === 'length') {
-          switch (prop.function) {
-            case PropertyFunction.Zero:
-            case PropertyFunction.One:
-            case PropertyFunction.Constant:
-              return 1
-            default:
-              return prop.fields[0].value
-          }
-        } else if (sk === 'add') {
-          return function(position: number, value: PropertyValue) {
-            const valuesArray = typeof value === 'number' ? [value] : value
-            if (prop.function <= PropertyFunction.Constant) {
-              prop.convertToFunction(PropertyFunction.Linear)
-              const newStop = prop.#stops[2]
-              newStop.position = position
-              for (const [i, v] of valuesArray.entries()) {
-                newStop[i] = v
-              }
-              return
-            }
-            const sc = +prop.fields[0].value
-            const cc = prop.componentCount
-            prop.fields.splice(1 + cc * (2 + sc) + sc, 0, ...valuesArray.map(v => new FloatField(v)))
-            prop.fields.splice(1 + cc * 2 + sc, 0, new FloatField(position))
-            prop.fields[0].value = sc + 1
-          }
-        } else if (sk === Symbol.iterator) {
-          return function* () {
-            const stops = prop.#stops.length
-            for (let i = 0; i < stops; i++) {
-              yield prop.#stops[i]
-            }
-          }
-        }
-      }
-    })
-  }
-
-  convertToFunction(func: PropertyFunction) {
-    if (this.function === func) return;
-    switch (func) {
-      case PropertyFunction.Zero:
-      case PropertyFunction.One:
-        this.fields.splice(0, this.fields.length)
-        break
-      case PropertyFunction.Constant:
-        switch (this.function) {
-          case PropertyFunction.Zero:
-            this.fields.push(...arrayOf(this.componentCount, () => new FloatField(0)))
-            break
-          case PropertyFunction.One:
-            this.fields.push(...arrayOf(this.componentCount, () => new FloatField(1)))
-            break
-          case PropertyFunction.Constant:
-            break
-          case PropertyFunction.Linear:
-          case PropertyFunction.Stepped:
-          case PropertyFunction.Curve1:
-          case PropertyFunction.Curve2: {
-            const i = this.#valueIndex
-            const cc = this.componentCount
-            this.fields.splice(0, this.fields.length, ...this.fields.slice(FieldType.Integer, i + cc))
-            break
-          }
-          case PropertyFunction.CompCurve: {
-            const cc = this.componentCount
-            const comps = arrayOf(cc, i => this.fields[this.#valueIndexUnkAc6(i)])
-            this.fields.splice(0, this.fields.length, ...comps)
-            break
-          }
-        }
-        break
-      case PropertyFunction.Linear:
-      case PropertyFunction.Stepped:
-        switch (this.function) {
-          case PropertyFunction.Zero: {
-            const cc = this.componentCount
-            this.fields.push(...arrayOf(3 + 4 * cc, () => new FloatField(0)))
-            this.fields[0].type = FieldType.Integer
-            this.fields[0].value = 2
-            this.fields[2 + cc * 2].value = 1 // Stop 2 position
-            break
-          }
-          case PropertyFunction.One: {
-            const cc = this.componentCount
-            this.fields.push(...arrayOf(3 + 4 * cc, () => new FloatField(1)))
-            this.fields[0].type = FieldType.Integer
-            this.fields[0].value = 2
-            this.fields[1 + cc * 2].value = 0 // Stop 1 position
-            break
-          }
-          case PropertyFunction.Constant: {
-            const cc = this.componentCount
-            this.fields.push(...this.fields.map(f => new FloatField(f.value as number)))
-            this.fields.splice(0, 0,
-              new IntField(2),
-              ...arrayOf(cc * 2 + 2, () => new FloatField(0))
-            )
-            this.fields[2 + cc * 2].value = 1 // Stop 2 position
-            break
-          }
-          case PropertyFunction.Linear:
-          case PropertyFunction.Stepped:
-            break
-          case PropertyFunction.Curve1:
-          case PropertyFunction.Curve2: {
-            const i = this.#valueIndex
-            const cc = this.componentCount
-            this.fields.splice(i + cc * (+this.fields[0].value))
-            break
-          }
-          case PropertyFunction.CompCurve: {
-            //TODO:
-            throw new Error(`Not implemented: UnkAc6 -> ${PropertyFunction[func]} property function conversion.`)
-          }
-        }
-        break
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
-      case PropertyFunction.CompCurve:
-        //TODO:
-        throw new Error(`Not implemented: ${PropertyFunction[this.function]} -> ${PropertyFunction[func]} property function conversion.`)
-    }
-    this.function = func
-  }
-
-  /**
-   * Adds modifiers to the property.
-   * @param mods The modifiers to add.
-   * @returns this
-   */
-  withModifiers(...mods: Modifier[]) {
-    this.modifiers.push(...mods)
+  withModifiers(...modifiers: Modifier[]) {
+    this.modifiers.push(...modifiers)
     return this
   }
 
-  static fromJSON({
-    type,
-    function: func,
-    loop = false,
-    fields = [],
-    modifiers = []
-  }: {
-    type: string
+  static fromJSON(obj: {
     function: string
-    loop?: boolean
-    fields?: []
-    modifiers?: []
   }) {
-    return new Property(
-      ValueType[type],
-      PropertyFunction[func],
-      loop,
-      fields.map(field => Field.fromJSON(field) as NumericalField),
-      modifiers.map(mod => Modifier.fromJSON(mod))
-    )
-  }
-
-  toJSON() {
-    const o: {
-      type: string
-      function: string
-      loop?: boolean
-      fields?: any[]
-      modifiers?: any[]
-    } = {
-      type: ValueType[this.valueType],
-      function: PropertyFunction[this.function],
-    }
-    if (this.function > PropertyFunction.Constant) o.loop = this.loop
-    if (this.fields.length > 0) o.fields = this.fields.map(field => field.toJSON())
-    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
-    return o
-  }
-
-  minify() {
-    if (this.function === PropertyFunction.Constant) {
-      if (this.fields.every(f => f.value === 0)) {
-        // Constant with only 0 fields, might as well be a ZeroProperty
-        return new ZeroProperty(this.valueType, this.modifiers)
-      }
-      if (this.fields.every(f => f.value === 1)) {
-        // Constant with only 1 fields, might as well be a OneProperty
-        return new OneProperty(this.valueType, this.modifiers)
-      }
-    }
-    return this
-  }
-
-  /**
-   * Scales all values in the property by a factor.
-   * 
-   * Scaling of {@link PropertyFunction.CompCurve CompCurve} properties is not
-   * yet implemented.
-   * @param factor 
-   */
-  scale(factor: number) {
-    //TODO: Handle CompCurve props
-    if (this.function <= PropertyFunction.One) {
-      this.convertToFunction(PropertyFunction.Constant)
-    }
-    for (const stop of this.stops) {
-      for (let i = stop.length - 1; i >= 0; i--) {
-        stop[i] *= factor
-      }
-    }
-    for (const mod of this.modifiers) {
-      const comps = mod.valueType + 1
-      switch (mod.type) {
-        case ModifierType.Randomizer1:
-          for (let i = comps - 1; i >= 0; i--) {
-            mod.fields[comps + i].value *= factor
-          }
-          break
-        case ModifierType.Randomizer2:
-          for (let i = comps * 2 - 1; i >= 0; i--) {
-            mod.fields[comps + i].value *= factor
-          }
-          break
-      }
+    switch (PropertyFunction[obj.function]) {
+      case PropertyFunction.Constant:
+        return ValueProperty.fromJSON(obj)
+      case PropertyFunction.Stepped:
+      case PropertyFunction.Linear:
+      case PropertyFunction.Curve1:
+      case PropertyFunction.Curve2:
+        return KeyframeProperty.fromJSON(obj)
+      case PropertyFunction.CompCurve:
+        return ComponentKeyframeProperty.fromJSON(obj)
     }
   }
 
@@ -9171,82 +12144,591 @@ class Property {
   static rainbow(duration: number = 4, loop: boolean = true) {
     const unit = duration / 6
     return new LinearProperty(loop, [
-      { position: 0,        value: [1, 0, 0, 1] },
-      { position: unit,     value: [1, 0, 1, 1] },
-      { position: unit * 2, value: [0, 0, 1, 1] },
-      { position: unit * 3, value: [0, 1, 1, 1] },
-      { position: unit * 4, value: [0, 1, 0, 1] },
-      { position: unit * 5, value: [1, 1, 0, 1] },
-      { position: unit * 6, value: [1, 0, 0, 1] },
+      new Keyframe(0,        [1, 0, 0, 1]),
+      new Keyframe(unit,     [1, 0, 1, 1]),
+      new Keyframe(unit * 2, [0, 0, 1, 1]),
+      new Keyframe(unit * 3, [0, 1, 1, 1]),
+      new Keyframe(unit * 4, [0, 1, 0, 1]),
+      new Keyframe(unit * 5, [1, 1, 0, 1]),
+      new Keyframe(unit * 6, [1, 0, 0, 1]),
     ])
   }
 
+  abstract fieldCount: number
+  abstract fields: NumericalField[]
+  abstract toJSON(): any
+  abstract scale(factor: number): void
+  abstract minify(): Property<T, any>
+  abstract valueAt(arg: number): ValueTypeMap[T]
+  abstract clone(): Property<T, F>
+
 }
 
-class ZeroProperty extends Property {
-  constructor(type: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
-    super(type, PropertyFunction.Zero, false, [], modifiers)
+class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
+  extends Property<T, F>
+  implements IModifiableProperty<T, F>, IValueProperty<T, F> {
+
+  value: ValueTypeMap[T]
+
+  constructor(
+    valueType: T,
+    func: F,
+    value: ValueTypeMap[T],
+    modifiers: Modifier[] = []
+  ) {
+    super(valueType, func, modifiers)
+    this.value = value
   }
-}
 
-class OneProperty extends Property {
-  constructor(type: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
-    super(type, PropertyFunction.One, false, [], modifiers)
-  }
-}
-
-class ConstantProperty extends Property {
-  constructor(...args: [value: number] | Vector) {
-    if (args.length < 1 || args.length > 4) {
-      throw new Error(`Invalid number of arguments for ConstantProperty: ${args.length}`)
+  get fieldCount(): number {
+    switch (this.function) {
+      case PropertyFunction.Zero:
+      case PropertyFunction.One:
+        return 0
+      case PropertyFunction.Constant:
+        return this.componentCount
     }
-    super(args.length - 1, PropertyFunction.Constant, false, args.map(v => new FloatField(v)))
+  }
+
+  get fields(): NumericalField[] {
+    switch (this.function) {
+      case PropertyFunction.Zero:
+      case PropertyFunction.One:
+        return []
+      case PropertyFunction.Constant:
+        if (this.valueType === ValueType.Scalar) {
+          return [ new FloatField(this.value as number) ]
+        }
+        return (this.value as Vector).map(e => new FloatField(e))
+      default:
+        throw new Error('Incompatible or unknown function in value property: ' + this.function)
+    }
+  }
+
+  static fromFields<T extends ValueType, F extends ValuePropertyFunction>(
+    valueType: T,
+    func: F,
+    modifiers: Modifier[],
+    fieldValues: number[]
+  ): ValueProperty<T, F> {
+    switch (func) {
+      case PropertyFunction.Zero:
+        return new ZeroProperty(valueType).withModifiers(
+          ...modifiers
+        ) as unknown as ValueProperty<T, F>
+      case PropertyFunction.One:
+        return new OneProperty(valueType).withModifiers(
+          ...modifiers
+        ) as unknown as ValueProperty<T, F>
+      case PropertyFunction.Constant:
+        return new ConstantProperty(...(fieldValues as [number] | Vector)).withModifiers(
+          ...modifiers
+        ) as unknown as ValueProperty<T, F>
+      default:
+        throw new Error('Incompatible or unknown function in property: ' + func)
+    }
+  }
+
+  static fromJSON(obj: {
+    function: string
+    value?: PropertyValue
+    loop?: boolean
+    modifiers?: any[]
+  }) {
+    return new ConstantProperty(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
+      ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e))
+    )
+  }
+
+  toJSON() {
+    switch (this.function) {
+      case PropertyFunction.Zero:
+      case PropertyFunction.One: {
+        const o: {
+          function: string
+          value: PropertyValue
+          modifiers?: any[]
+        } = {
+          function: 'Constant',
+          value: this.valueType === ValueType.Scalar ? this.function : Array(this.componentCount).fill(this.function) as Vector,
+        }
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        return o
+      }
+      case PropertyFunction.Constant: {
+        const o: {
+          function: string
+          value: PropertyValue
+          modifiers?: any[]
+        } = {
+          function: PropertyFunction[this.function],
+          value: this.value,
+        }
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        return o
+      }
+    }
+  }
+
+  scale(factor: number) {
+    if (this.valueType === ValueType.Scalar) {
+      (this.value as number) *= factor
+    } else {
+      this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+    }
+  }
+
+  minify(): ValueProperty<T, any> {
+    switch (this.function) {
+      case PropertyFunction.Zero:
+      case PropertyFunction.One:
+        return this
+      case PropertyFunction.Constant:
+        if (
+          Array.isArray(this.value) &&
+            this.value.every(e => e === 0) ||
+            this.value === 0
+        ) {
+          return new ZeroProperty(this.valueType)
+        }
+        if (
+          Array.isArray(this.value) &&
+            this.value.every(e => e === 1) ||
+            this.value === 1
+        ) {
+          return new OneProperty(this.valueType)
+        }
+        return this
+    }
+  }
+
+  valueAt(arg: number): ValueTypeMap[T] {
+    return this.value
+  }
+
+  clone(): ValueProperty<T, F> {
+    return new ValueProperty(this.valueType, this.function, this.value, this.modifiers.map(e => Modifier.copy(e)))
+  }
+
+}
+
+class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
+  extends Property<T, F>
+  implements IModifiableProperty<T, F>, IKeyframeProperty<T, F> {
+
+  loop: boolean
+  keyframes: IKeyframe<T>[]
+
+  constructor(
+    valueType: T,
+    func: F,
+    loop: boolean = false,
+    keyframes: IKeyframe<T>[] = [],
+    modifiers: Modifier[] = []
+  ) {
+    super(valueType, func, modifiers)
+    this.loop = loop
+    this.keyframes = keyframes
+  }
+
+  sortKeyframes() {
+    this.keyframes.sort((a, b) => a.position - b.position)
+  }
+
+  get fieldCount(): number {
+    switch (this.function) {
+      case PropertyFunction.Stepped:
+      case PropertyFunction.Linear:
+        return 1 + 2 * this.componentCount + (1 + this.componentCount) * this.keyframes.length
+      case PropertyFunction.Curve1:
+      case PropertyFunction.Curve2:
+        return 1 + 2 * this.componentCount + (1 + 3 * this.componentCount) * this.keyframes.length
+    }
+  }
+
+  get fields(): NumericalField[] {
+    switch (this.function) {
+      case PropertyFunction.Stepped:
+      case PropertyFunction.Linear:
+        this.sortKeyframes()
+        return [
+          new IntField(this.keyframes.length),
+          ...arrayOf(2 * this.componentCount, () => new FloatField),
+          ...this.keyframes.map(e => new FloatField(e.position)),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField(e.value as number) ] :
+              e => (e.value as Vector).map(e => new FloatField(e))
+          )
+        ]
+      case PropertyFunction.Curve1:
+      case PropertyFunction.Curve2:
+        this.sortKeyframes()
+        return [
+          new IntField(this.keyframes.length),
+          ...arrayOf(2 * this.componentCount, () => new FloatField),
+          ...this.keyframes.map(e => new FloatField(e.position)),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField(e.value as number) ] :
+              e => (e.value as Vector).map(e => new FloatField(e))
+          ),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField(e.unkTangent2 as number) ] :
+              e => (e.unkTangent2 as Vector).map(e => new FloatField(e))
+          ),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField(e.unkTangent1 as number) ] :
+              e => (e.unkTangent1 as Vector).map(e => new FloatField(e))
+          ),
+        ]
+      default:
+        throw new Error('Incompatible or unknown function in property: ' + this.function)
+    }
+  }
+
+  static fromFields<T extends ValueType, F extends KeyframePropertyFunction>(
+    valueType: T,
+    func: F,
+    loop: boolean,
+    modifiers: Modifier[],
+    fieldValues: number[]
+  ): KeyframeProperty<T, F> {
+    switch (func) {
+      case PropertyFunction.Stepped:
+      case PropertyFunction.Linear:
+        return new KeyframeProperty(valueType, func, loop, arrayOf(
+          fieldValues[0],
+          i => new Keyframe(
+            fieldValues[1 + 2 * (valueType + 1) + i],
+            (valueType === ValueType.Scalar ?
+              fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
+              fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
+            ) as ValueTypeMap[T]
+          )
+        ), modifiers)
+      case PropertyFunction.Curve1:
+      case PropertyFunction.Curve2:
+        return new KeyframeProperty(valueType, func, loop, arrayOf(
+          fieldValues[0],
+          i => new Keyframe(
+            fieldValues[1 + 2 * (valueType + 1) + i],
+            (valueType === ValueType.Scalar ?
+              fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
+              fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
+            ) as ValueTypeMap[T],
+            (valueType === ValueType.Scalar ?
+              fieldValues[1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
+              fieldValues.slice(1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
+            ) as ValueTypeMap[T],
+            (valueType === ValueType.Scalar ?
+              fieldValues[1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
+              fieldValues.slice(1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
+            ) as ValueTypeMap[T],
+          )
+        ), modifiers)
+      default:
+        throw new Error('Incompatible or unknown function in property: ' + func)
+    }
+  }
+
+  static fromJSON(obj: {
+    function: string
+    modifiers?: any[]
+    keyframes?: IKeyframe<any>[]
+    loop?: boolean
+  }) {
+    return new KeyframeProperty(
+      Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar,
+      PropertyFunction[obj.function],
+      obj.loop ?? false,
+      obj.keyframes
+    )
+  }
+
+  toJSON() {
+    switch (this.function) {
+      case PropertyFunction.Stepped:
+      case PropertyFunction.Linear: {
+        const o: {
+          function: string
+          loop?: boolean
+          keyframes?: any[]
+          modifiers?: any[]
+        } = {
+          function: PropertyFunction[this.function],
+        }
+        if (this.function > PropertyFunction.Constant) o.loop = this.loop
+        o.keyframes = this.keyframes.map(e => ({
+          position: e.position,
+          value: e.value
+        }))
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        return o
+      }
+      case PropertyFunction.Curve1:
+      case PropertyFunction.Curve2: {
+        const o: {
+          function: string
+          loop?: boolean
+          keyframes?: any[]
+          modifiers?: any[]
+        } = {
+          function: PropertyFunction[this.function],
+        }
+        if (this.function > PropertyFunction.Constant) o.loop = this.loop
+        o.keyframes = this.keyframes.map(e => ({
+          position: e.position,
+          value: e.value,
+          unkTangent1: e.unkTangent1,
+          unkTangent2: e.unkTangent2,
+        }))
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        return o
+      }
+    }
+  }
+
+  scale(factor: number) {
+    for (const kf of this.keyframes) {
+      if (this.valueType === ValueType.Scalar) {
+        (kf.value as number) *= factor
+      } else {
+        kf.value = (kf.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+      }
+    }
+  }
+
+  minify(): this {
+    return this
+  }
+
+  valueAt(arg: number): ValueTypeMap[T] {
+    switch (this.function) {
+      case PropertyFunction.Stepped: {
+        let i = 0
+        while (
+          i < this.keyframes.length - 1 && this.keyframes[i].position > arg
+        ) i++
+        return this.keyframes[i].value
+      }
+      case PropertyFunction.Linear:
+      case PropertyFunction.Curve1:
+      case PropertyFunction.Curve2: {
+        //TODO: Implement better approximations for Curve1 and Curve2 prop values
+        let i = 0
+        while (
+          i < this.keyframes.length - 1 && this.keyframes[i].position > arg
+        ) i++
+        if (i < this.keyframes.length - 1) {
+          const d = this.keyframes[i+1].position - this.keyframes[i].position
+          if (d === 0) return this.keyframes[i].value
+          const p = (arg - this.keyframes[i].position) / d
+          return (this.valueType === ValueType.Scalar ?
+            lerp(
+              this.keyframes[i].value as number,
+              this.keyframes[i+1].value as number,
+              p
+            )
+          : arrayOf(this.componentCount, j => lerp(
+              this.keyframes[i].value[j],
+              this.keyframes[i+1].value[j],
+              p
+            ))
+          ) as ValueTypeMap[T]
+        }
+        return this.keyframes[i].value
+      }
+    }
+  }
+
+  clone(): KeyframeProperty<T, F> {
+    return new KeyframeProperty(
+      this.valueType,
+      this.function,
+      this.loop,
+      this.keyframes.map(e => Keyframe.copy<T>(e)),
+      this.modifiers.map(e => Modifier.copy(e))
+    )
+  }
+
+}
+
+class ComponentKeyframeProperty<T extends ValueType>
+  extends Property<T, PropertyFunction.CompCurve>
+  implements IModifiableProperty<T, PropertyFunction.CompCurve> {
+
+  declare function: PropertyFunction.CompCurve
+  loop: boolean
+  components: IKeyframeProperty<ValueType.Scalar, PropertyFunction.Curve2>[]
+
+  constructor(
+    valueType: T,
+    loop: boolean = false,
+    components: IKeyframeProperty<ValueType.Scalar, PropertyFunction.Curve2>[],
+    modifiers: Modifier[] = []
+  ) {
+    super(valueType, PropertyFunction.CompCurve, modifiers)
+    this.loop = loop
+    this.components = components
+  }
+
+  sortComponentKeyframes() {
+    for (const comp of this.components) {
+      comp.sortKeyframes()
+    }
+  }
+
+  get fieldCount(): number {
+    return 1 + 3 * this.componentCount + this.components.reduce((a, e) => a + 4 * e.keyframes.length, 0)
+  }
+
+  get fields(): NumericalField[] {
+    this.sortComponentKeyframes()
+    return [
+      new FloatField(this.components.reduce(
+        (a, e) => Math.max(a, e.keyframes[e.keyframes.length - 1].position),
+        0
+      )),
+      ...this.components.map(e => new IntField(e.keyframes.length)),
+      ...arrayOf(2 * this.componentCount, () => new FloatField),
+      ...this.components.flatMap(comp => [
+        ...comp.keyframes.map(e => new FloatField(e.position)),
+        ...comp.keyframes.map(e => new FloatField(e.value)),
+        ...comp.keyframes.map(e => new FloatField(e.unkTangent1)),
+        ...comp.keyframes.map(e => new FloatField(e.unkTangent2)),
+      ])
+    ]
+  }
+
+  static fromFields<T extends ValueType>(
+    valueType: T,
+    loop: boolean,
+    modifiers: Modifier[],
+    fieldValues: number[]
+  ): ComponentKeyframeProperty<T> {
+    let offset = 1 + 3 * (valueType + 1)
+    return new ComponentKeyframeProperty(valueType, loop, arrayOf(valueType + 1, i => {
+      return KeyframeProperty.fromFields(ValueType.Scalar, PropertyFunction.Curve2, false, [], [
+        fieldValues[1 + i], 0, 0,
+        ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
+      ])
+    }), modifiers)
+  }
+
+  toJSON() {
+    const o: {
+      function: 'CompCurve'
+      components: IKeyframe<ValueType.Scalar>[][]
+      loop?: boolean
+      modifiers?: any[]
+    } = {
+      function: 'CompCurve',
+      components: []
+    }
+    if (this.loop) o.loop = true
+    o.components = this.components.map(e => e.keyframes.map(f => ({
+      position: f.position,
+      value: f.value,
+      unkTangent1: f.unkTangent1,
+      unkTangent2: f.unkTangent2,
+    })))
+    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.toJSON())
+    return o
+  }
+
+  scale(factor: number) {
+    for (const comp of this.components) {
+      comp.scale(factor)
+    }
+  }
+
+  minify(): this {
+    return this
+  }
+
+  valueAt(arg: number): ValueTypeMap[T] {
+    return (
+      this.valueType === ValueType.Scalar ?
+        this.components[0].valueAt(arg)
+      : this.components.map(e => e.valueAt(arg))
+    ) as ValueTypeMap[T]
+  }
+
+  clone(): ComponentKeyframeProperty<T> {
+    return new ComponentKeyframeProperty(
+      this.valueType,
+      this.loop,
+      this.components.map(e => e.clone()),
+      this.modifiers.map(e => Modifier.copy(e))
+    )
+  }
+
+}
+
+class ZeroProperty extends ValueProperty<any, PropertyFunction.Zero> {
+  constructor(valueType: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
+    super(
+      valueType,
+      PropertyFunction.Zero,
+      valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0),
+      modifiers
+    )
   }
 }
 
-class SteppedProperty extends Property {
+class OneProperty extends ValueProperty<any, PropertyFunction.One> {
+  constructor(valueType: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
+    super(
+      valueType,
+      PropertyFunction.One,
+      valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1),
+      modifiers
+    )
+  }
+}
 
-  constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
-    if (stops.length === 0) {
+class ConstantProperty<T extends ValueType> extends ValueProperty<T, PropertyFunction.Constant> {
+
+  constructor(
+    ...args:
+      T extends ValueType.Scalar ? [number] :
+      T extends ValueType.Vector2 ? Vector2 :
+      T extends ValueType.Vector3 ? Vector3 :
+      Vector4
+  ) {
+    super(args.length - 1 as T, PropertyFunction.Constant, (args.length === 1 ? args[0] : args) as ValueTypeMap[T])
+  }
+
+}
+
+class SteppedProperty<T extends ValueType> extends KeyframeProperty<T, PropertyFunction.Stepped> {
+
+  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
+    if (keyframes.length < 2) {
       throw new Error ('Properties with a stepped function must have at least 2 stops.')
     }
-    const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
-    super(comps - 1, PropertyFunction.Stepped, loop, [
-      new IntField(stops.length),
-      ...arrayOf(comps * 2, () => new FloatField(0)),
-      ...stops.map(s => new FloatField(s.position)),
-      ...stops.flatMap(s => comps === 1 ?
-        new FloatField(s.value as number)
-      :
-        (s.value as number[]).map(v => new FloatField(v))
-      ),
-    ])
+    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
+    super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
   }
 
 }
 
-class LinearProperty extends Property {
+class LinearProperty<T extends ValueType> extends KeyframeProperty<T, PropertyFunction.Linear> {
 
-  constructor(loop: boolean, stops: { position: number, value: PropertyValue}[]) {
-    if (stops.length === 0) {
+  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
+    if (keyframes.length < 2) {
       throw new Error ('Properties with a linear function must have at least 2 stops.')
     }
-    const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
-    super(comps - 1, PropertyFunction.Linear, loop, [
-      new IntField(stops.length),
-      ...arrayOf(comps * 2, () => new FloatField(0)),
-      ...stops.map(s => new FloatField(s.position)),
-      ...stops.flatMap(s => comps === 1 ?
-        new FloatField(s.value as number)
-      :
-        (s.value as number[]).map(v => new FloatField(v))
-      ),
-    ])
+    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
+    super(comps - 1 as T, PropertyFunction.Linear, loop, keyframes)
   }
 
   /**
    * Creates a new linear property with only two steps.
-   * @param loop Controls whether the animation should loop or not.
+   * @param loop Controls whether the property should loop or not.
    * @param endPosition The position of the second stop.
    * @param startValue The value of the first stop.
    * @param endValue The value of the second stop.
@@ -9259,34 +12741,92 @@ class LinearProperty extends Property {
     endValue: PropertyValue
   ) {
     return new LinearProperty(loop, [
-      { position: 0, value: startValue },
-      { position: endPosition, value: endValue },
+      new Keyframe(0, startValue),
+      new Keyframe(endPosition, endValue),
     ])
+  }
+
+  /**
+   * Creates a new linear property that approximates a power function.
+   * @param loop Controls whether the property should loop or not.
+   * @param exponent The exponent used in the power function. For example,
+   * setting this to values greater than 1 will make the property value change
+   * slowly at the start, but get faster and faster until it reaches the end.
+   * @param stops How many stops to use. Must be greater than or equal to 2.
+   * Using higher values will produce a smoother curve. Setting it to 2 will
+   * make it linear, which means you might as well use the {@link basic} 
+   * method instead of this.
+   * @param endPosition The position of the last stop.
+   * @param startValue The value of the first stop.
+   * @param endValue The value of the last stop.
+   * @returns The new linear property.
+   */
+  static power(
+    loop: boolean,
+    exponent: number,
+    stops: number,
+    endPosition: number,
+    startValue: PropertyValue,
+    endValue: PropertyValue
+  ) {
+    if (stops < 2) {
+      throw new Error('Property stop count must be greater than or equal to 2.')
+    }
+    if (Array.isArray(startValue) && Array.isArray(endValue)) {
+      return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
+        i / (stops - 1) * endPosition,
+        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as Vector
+      )))
+    } else if (typeof startValue === 'number' && typeof endValue === 'number') {
+      return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
+        i / (stops - 1) * endPosition,
+        lerp(startValue, endValue, (i / (stops - 1)) ** exponent)
+      )))
+    } else {
+      throw new Error('startValue and endValue must be of the same type.')
+    }
+  }
+
+  /**
+   * Creates a new linear property that approximates a sine wave.
+   * @param min The value used when the sine wave is at its minimum.
+   * @param max The value used when the sine wave is at its maximum.
+   * @param period The period of the sine wave.
+   * @param stops The number of stops to use to approximate the sine wave.
+   * Higher values result in a smoother curve. Defaults to 21.
+   * @returns The new linear property.
+   */
+  static sine(
+    min: PropertyValue,
+    max: PropertyValue,
+    period: number,
+    stops: number = 21
+  ) {
+    if (Array.isArray(min) && Array.isArray(max)) {
+      return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
+        i / (stops - 1) * period,
+        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as Vector
+      )))
+    } else if (typeof min === 'number' && typeof max === 'number') {
+      return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
+        i / (stops - 1) * period,
+        (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)
+      )))
+    } else {
+      throw new Error('min and max must be of the same type.')
+    }
   }
 
 }
 
-class Curve2Property extends Property {
+class Curve2Property<T extends ValueType> extends KeyframeProperty<T, PropertyFunction.Curve2> {
 
-  constructor(loop: boolean, stops: { position: number, value: PropertyValue, inSlope: number, outSlope: number}[], unk1: number, unk2: number) {
-    if (stops.length === 0) {
+  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
+    if (keyframes.length < 2) {
       throw new Error ('Properties with a curve function must have at least 2 stops.')
     }
-    const comps = Array.isArray(stops[0].value) ? stops[0].value.length : 1
-    super(comps - 1, PropertyFunction.Curve2, loop, [
-      new IntField(stops.length),
-      ...arrayOf(comps * 2, () => new FloatField(0)),
-      ...stops.map(s => new FloatField(s.position)),
-      ...stops.flatMap(s => comps === 1 ?
-        new FloatField(s.value as number)
-      :
-        (s.value as number[]).map(v => new FloatField(v))
-      ),
-      ...stops.slice(0, -1).flatMap(s => arrayOf(comps, i => new FloatField(Array.isArray(s.outSlope) ? s.outSlope[i] : s.outSlope))),
-      ...arrayOf(comps, i => new FloatField(Array.isArray(unk1) ? unk1[i] : unk1)),
-      ...stops.slice(1).flatMap(s => arrayOf(comps, i => new FloatField(Array.isArray(s.inSlope) ? s.inSlope[i] : s.inSlope))),
-      ...arrayOf(comps, i => new FloatField(Array.isArray(unk2) ? unk2[i] : unk2)),
-    ])
+    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
+    super(comps - 1 as T, PropertyFunction.Curve2, loop, keyframes)
   }
 
 }
@@ -9304,13 +12844,13 @@ class Modifier {
   typeEnumA: number
   typeEnumB: number
   fields: NumericalField[]
-  properties: Property[]
+  properties: IProperty<any, any>[]
 
   constructor(
     type: ModifierType,
     valueType: ValueType,
     fields: NumericalField[] = [],
-    properties: Property[] = []
+    properties: IProperty<any, any>[] = []
   ) {
     this.type = type
     this.valueType = valueType
@@ -9347,7 +12887,7 @@ class Modifier {
     br.stepIn(propertyOffset)
     const properties = []
     for (let i = 0; i < propertyCount; ++i) {
-      properties.push(Property.read(br, true))
+      properties.push(readProperty(br, true))
     }
     br.stepOut()
     const fields = Field.readManyAt(br, fieldOffset, fieldCount, this)
@@ -9361,7 +12901,7 @@ class Modifier {
       mod.type,
       mod.valueType,
       mod.fields.map(f => Field.copy(f) as NumericalField),
-      mod.properties.map(p => Property.copy(p))
+      mod.properties.map(p => p.clone())
     )
     copy.typeEnumB = mod.typeEnumB
     return copy
@@ -9382,10 +12922,10 @@ class Modifier {
     modifiers.push(this)
   }
 
-  writeProperties(bw: BinaryWriter, index: number, properties: Property[]) {
+  writeProperties(bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
     bw.fill(`Section8Section9sOffset${index}`, bw.position)
     for (const property of this.properties) {
-      property.write(bw, properties, true)
+      writeProperty(property, bw, properties, true)
     }
   }
 
@@ -9444,7 +12984,7 @@ class Modifier {
     typeEnumB: number
     fields: []
     properties?: []
-  }) {
+  }): Modifier {
     return new Modifier(
       typeEnumA,
       typeEnumB,
@@ -9506,7 +13046,7 @@ class ExternalValueModifier extends Modifier {
   get externalValue() { return this.fields[0].value as number }
   set externalValue(value) { this.fields[0].value = value }
 
-  get stops() { return this.properties[0].stops }
+  valueAt(arg: number) { return this.properties[0].valueAt(arg) }
 
 }
 
@@ -9517,6 +13057,8 @@ class ExternalValueModifier extends Modifier {
  * The property value wil be multiplied by the values in this modifier.
  */
 class BloodVisibilityModifier extends ExternalValueModifier {
+
+  declare properties: [KeyframeProperty<any, any>]
 
   /**
    * @param onValue The value when "Display Blood" is set to "On".
@@ -9532,26 +13074,20 @@ class BloodVisibilityModifier extends ExternalValueModifier {
     type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
     super(ExternalValue.DisplayBlood, false, [
-      { position: -1,
-        value: offValue
-      },
-      { position: 0,
-        value: onValue
-      },
-      { position: 1,
-        value: mildValue
-      }
+      new Keyframe(-1, offValue),
+      new Keyframe(0, onValue),
+      new Keyframe(1, mildValue),
     ], type)
   }
 
-  get offValue() { return this.properties[0].stops[0].value }
-  set offValue(value) { this.properties[0].stops[0].value = value }
+  get offValue() { return this.properties[0].keyframes[0].value }
+  set offValue(value) { this.properties[0].keyframes[0].value = value }
 
-  get onValue() { return this.properties[0].stops[1].value }
-  set onValue(value) { this.properties[0].stops[1].value = value }
+  get onValue() { return this.properties[0].keyframes[1].value }
+  set onValue(value) { this.properties[0].keyframes[1].value = value }
 
-  get mildValue() { return this.properties[0].stops[2].value }
-  set mildValue(value) { this.properties[0].stops[2].value = value }
+  get mildValue() { return this.properties[0].keyframes[2].value }
+  set mildValue(value) { this.properties[0].keyframes[2].value = value }
 
 }
 
@@ -9673,6 +13209,8 @@ export {
   PropertyArgument,
   OrientationMode,
   LightingMode,
+  DistortionMode,
+  DistortionShape,
 
   Nodes,
   Effects,
@@ -9689,26 +13227,28 @@ export {
   ProxyNode,
   LevelOfDetailNode,
   BasicNode,
+  SharedEmitterNode,
 
   Effect,
   LevelOfDetailEffect,
   BasicEffect,
-  RandomizerEffect,
+  SharedEmitterEffect,
 
   Action,
+  NodeMovement,
   NodeTranslation,
-  NodeSpin,
   NodeTransform,
   NodeAttachToCamera,
   PlaySound,
   ParticleMovement,
-  NodeLifetime,
-  ParticleLifetime,
+  NodeAttributes,
+  ParticleAttributes,
   ParticleMultiplier,
   FXRReference,
   LevelOfDetailThresholds,
   StateEffectMap,
-  NodeWeights,
+  EmitAllParticles,
+  EmitRandomParticles,
   PeriodicEmitter,
   EqualDistanceEmitter,
   OneTimeEmitter,
@@ -9722,7 +13262,10 @@ export {
   QuadLine,
   BillboardEx,
   MultiTextureBillboardEx,
+  Model,
   Tracer,
+  Distortion,
+  RadialBlur,
   PointLight,
   NodeWindSpeed,
   ParticleWindSpeed,
@@ -9735,7 +13278,11 @@ export {
   IntField,
   FloatField,
 
+  Keyframe,
   Property,
+  ValueProperty,
+  KeyframeProperty,
+  ComponentKeyframeProperty,
   ZeroProperty,
   OneProperty,
   ConstantProperty,

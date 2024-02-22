@@ -6,11 +6,12 @@ import {
   CylinderEmitterShape,
   ExternalValue,
   FXR,
+  Keyframe,
   LinearProperty,
   MultiTextureBillboardEx,
   NodeTransform,
   OrientationMode,
-  ParticleLifetime,
+  ParticleAttributes,
   ParticleMovement,
   ParticleWindAcceleration,
   PeriodicEmitter,
@@ -101,7 +102,10 @@ fxr.root.nodes = [
     new BasicNode([
       new PeriodicEmitter(0.2, 1),
       new CylinderEmitterShape(true, 0.1),
-      new ParticleLifetime(4, AttachMode.None),
+      new ParticleAttributes({
+        duration: 4,
+        attachment: AttachMode.None
+      }),
       new ParticleMovement({
         gravity: -0.1,
       }),
@@ -113,9 +117,9 @@ fxr.root.nodes = [
         width: 0.4,
         uniformScale: true,
         color1: new LinearProperty(false, [
-          { position: 0, value: [1, 1, 1, 0] },
-          { position: 0.5, value: [1, 1, 1, 0.35] },
-          { position: 4, value: [1, 1, 1, 0] },
+          new Keyframe(0, [1, 1, 1, 0]),
+          new Keyframe(0.5, [1, 1, 1, 0.35]),
+          new Keyframe(4, [1, 1, 1, 0]),
         ]),
         frameIndex: LinearProperty.basic(true, 4, 0, 32),
         frameIndexOffset: Property.random(0, 32),
@@ -123,8 +127,8 @@ fxr.root.nodes = [
         layer1: 34020,
         layer1SpeedV: 0.5,
         layer1Color: new LinearProperty(false, [
-          { position: 0.5, value: [...color, 1] },
-          { position: 4, value: [1, 1, 1, 1] },
+          new Keyframe(0.5, [...color, 1]),
+          new Keyframe(4, [1, 1, 1, 1]),
         ]),
       })
     ]).mapStates(-1, 0), // Disable when there's no rain/snow
@@ -159,7 +163,7 @@ fxr.root.nodes = [
     // Electric arcs
     new BasicNode([
       new PeriodicEmitter(0.1, 2),
-      new ParticleLifetime(0.5),
+      new ParticleAttributes({ duration: 0.5 }),
       new CylinderEmitterShape(true, 0.01, 0.5),
       new BillboardEx({
         orientation: OrientationMode.ParentYaw,
@@ -174,9 +178,9 @@ fxr.root.nodes = [
         bloomColor: color,
         bloomStrength: bloomMultiplier * 0.5,
         alphaThreshold: new LinearProperty(false, [
-          { position: 0, value: 255 },
-          { position: 0.25, value: 0 },
-          { position: 0, value: 255 },
+          new Keyframe(0, 255),
+          new Keyframe(0.25, 0),
+          new Keyframe(0.5, 255),
         ])
       })
     ]).mapStates(0, 0),
@@ -200,7 +204,10 @@ fxr.root.nodes = [
     new BasicNode([
       new PeriodicEmitter(0.1, 1),
       new CylinderEmitterShape(true, 0.01),
-      new ParticleLifetime(2, AttachMode.None),
+      new ParticleAttributes({
+        duration: 2,
+        attachment: AttachMode.None
+      }),
       new ParticleMovement({
         gravity: 2,
         speed: 0.3,

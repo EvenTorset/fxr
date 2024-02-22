@@ -3,10 +3,11 @@ import {
   BasicNode,
   BlendMode,
   FXR,
+  Keyframe,
   LinearProperty,
   MultiTextureBillboardEx,
   NodeTransform,
-  ParticleLifetime,
+  ParticleAttributes,
   ParticleMovement,
   ParticleWindAcceleration,
   PeriodicEmitter,
@@ -22,7 +23,10 @@ fxr.root.nodes = [
   new BasicNode([
     new PeriodicEmitter(0.1, 1),
     new SphereEmitterShape(true, 0.05),
-    new ParticleLifetime(1, AttachMode.None),
+    new ParticleAttributes({
+      duration: 1,
+      attachment: AttachMode.None
+    }),
     new ParticleMovement({
       gravity: -0.1,
       followFactor: LinearProperty.basic(false, 1, 1, 0),
@@ -39,9 +43,9 @@ fxr.root.nodes = [
       color1: [1, 0.36, 0.16, 1],
       layer1Color: [1, 1, 1, 0.75],
       alphaThreshold: new LinearProperty(false, [
-        { position: 0, value: 255 },
-        { position: 0.25, value: 0 },
-        { position: 1, value: 255 },
+        new Keyframe(0, 255),
+        new Keyframe(0.25, 0),
+        new Keyframe(1, 255),
       ]),
       frameIndex: LinearProperty.basic(true, 1.5, 0, 64),
       frameIndexOffset: Property.random(0, 64),
@@ -59,7 +63,10 @@ fxr.root.nodes = [
     }),
     new PeriodicEmitter(0.1, 2),
     new SphereEmitterShape(true, 0.075),
-    new ParticleLifetime(2, AttachMode.None),
+    new ParticleAttributes({
+      duration: 2,
+      attachment: AttachMode.None
+    }),
     new ParticleMovement({
       gravity: -1,
       maxTurnAngle: LinearProperty.basic(false, 0.7, 0, 15),
@@ -74,9 +81,9 @@ fxr.root.nodes = [
       width: Property.random(0.002, 0.004, 91846942),
       height: Property.random(0.02, 0.04, 91846942),
       color1: new LinearProperty(false, [
-        { position: 0, value: [0, 0, 0, 0] },
-        { position: 0.5, value: [1, 1, 1, 1] },
-        { position: 2, value: [0, 0, 0, 1] },
+        new Keyframe(0, [0, 0, 0, 0]),
+        new Keyframe(0.5, [1, 1, 1, 1]),
+        new Keyframe(2, [0, 0, 0, 1]),
       ]),
       rgbMultiplier: 20,
       bloomStrength: 0.8,

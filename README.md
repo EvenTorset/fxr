@@ -9,6 +9,8 @@ While the library does not have any dependencies, it *does* have some dev depend
 npm i @cccode/fxr --omit=dev
 ```
 
+If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](/NODE.md).
+
 ## WitchyBND
 While it has evolved quite a bit, this library started out as a JS port of [WitchyBND's C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/RSFXR.cs). Most of the code for reading and writing the format is based on that.
 
@@ -91,10 +93,11 @@ import {
   NodeTransform,
   PeriodicEmitter,
   CylinderEmitterShape,
-  ParticleLifetime,
+  ParticleAttributes,
   BillboardEx,
   BlendMode,
   LinearProperty,
+  Keyframe,
 } from '@cccode/fxr'
 
 // Let's make a replacement for the ghostflame torch effect in Elden Ring.
@@ -131,16 +134,16 @@ fxr.root.nodes = [
 
     new PeriodicEmitter(0.1, 10, -1), // Action 300, emitter
     new CylinderEmitterShape(true, 0.2, 1, true), // Action 405, emitter shape
-    new ParticleLifetime(1), // Action 129, particle duration
+    new ParticleAttributes({ duration: 1 }), // Action 129
     new BillboardEx({ // Action 603
       blendMode: BlendMode.Normal,
       width: 0.01,
       height: 0.1,
       color1: new LinearProperty(true, [ // Animated property
-        { position: 0,    value: [1, 0, 0, 1] },
-        { position: 0.33, value: [0, 1, 0, 1] },
-        { position: 0.67, value: [0, 0, 1, 1] },
-        { position: 1,    value: [1, 0, 0, 1] },
+        new Keyframe(0,    [1, 0, 0, 1]),
+        new Keyframe(0.33, [0, 1, 0, 1]),
+        new Keyframe(0.67, [0, 0, 1, 1]),
+        new Keyframe(1,    [1, 0, 0, 1]),
       ]),
       color2: [1, 1, 1, 0.9],
     }),
