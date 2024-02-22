@@ -348,9 +348,18 @@ enum ActionType {
   /**
    * A particle that distorts anything seen through it.
    * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
    * This action type has a specialized subclass: {@link Distortion}
    */
   Distortion = 607,
+  /**
+   * A particle that applies a radial blur to anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * This action type has a specialized subclass: {@link RadialBlur}
+   */
   RadialBlur = 608,
   /**
    * Point light source.
@@ -3570,6 +3579,16 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Boolean,
       FieldType.Integer,
       null,
+      FieldType.Integer,
+      FieldType.Integer,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
+  [ActionType.RadialBlur]: {
+    Fields1: [
+      FieldType.Boolean,
+      FieldType.Integer,
+      FieldType.Integer,
       FieldType.Integer,
       FieldType.Integer,
     ],
@@ -8931,6 +8950,8 @@ export interface DistortionParams {
 }
 /**
  * A particle that distorts anything seen through it.
+ * 
+ * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class Distortion extends CommonAction6xxFields2Action {
 
@@ -9317,6 +9338,359 @@ class Distortion extends CommonAction6xxFields2Action {
    */
   get normalMapSpeedV() { return this.properties1[16] }
   set normalMapSpeedV(value) { setPropertyInList(this.properties1, 16, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
+export interface RadialBlurParams {
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored. Defaults to false.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls how many times to apply the effect. Higher values can have a
+   * significant impact on performance. Defaults to 1.
+   */
+  iterations?: number
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the
+   * particle. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  mask?: ScalarPropertyArg
+  /**
+   * X position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: ScalarPropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color?: Vector4PropertyArg
+  /**
+   * Controls the amount of blur to apply. Values greater than 1 may appear
+   * glitchy. Defaults to 0.5.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  blurRadius?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+}
+/**
+ * A particle that applies a radial blur to anything seen through it.
+ * 
+ * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ */
+class RadialBlur extends CommonAction6xxFields2Action {
+
+  constructor({
+    uniformScale = false,
+    iterations = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+    blendMode = BlendMode.Normal,
+    mask = 1,
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
+    width = 1,
+    height = 1,
+    color = [1, 1, 1, 1],
+    blurRadius = 0.5,
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+  }: RadialBlurParams = {}) {
+    super(ActionType.RadialBlur, [
+      /*  0 */ new BoolField(uniformScale),
+      /*  1 */ new IntField(iterations),
+      /*  2 */ new IntField(0),
+      /*  3 */ new IntField(1),
+      /*  4 */ new IntField(1),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new FloatField(1),
+      /*  4 */ new IntField(0),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new FloatField(0.5),
+      /* 21 */ new IntField(1),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1), // depth blend 1
+      /* 26 */ new FloatField(0), // depth blend 2
+      /* 27 */ new IntField(1),
+      /* 28 */ new IntField(0),
+      /* 29 */ new FloatField(0),
+      /* 30 */ new FloatField(0),
+    ], [
+      /*  0 */ scalarFromArg(blendMode),
+      /*  1 */ scalarFromArg(mask),
+      /*  2 */ scalarFromArg(offsetX),
+      /*  3 */ scalarFromArg(offsetY),
+      /*  4 */ scalarFromArg(offsetZ),
+      /*  5 */ scalarFromArg(width),
+      /*  6 */ scalarFromArg(height),
+      /*  7 */ vectorFromArg(color),
+      /*  8 */ new ConstantProperty(1, 1, 1, 1),
+      /*  9 */ scalarFromArg(blurRadius),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * If enabled, the particle width-related properties and fields will control
+   * both the width and height of the particles, and the height counterparts
+   * will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  get uniformScale() { return this.fields1[0].value as number }
+  set uniformScale(value) { this.fields1[0].value = value }
+
+  /**
+   * Controls how many times to apply the effect. Higher values can have a
+   * significant impact on performance. Defaults to 1.
+   */
+  get iterations() { return this.fields1[1].value as number }
+  set iterations(value) { this.fields1[1].value = value }
+
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode. See {@link BlendMode} for more information.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[0] }
+
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the
+   * particle.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get mask() { return this.properties1[1].valueAt(0) }
+  set mask(value) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the
+   * particle.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get maskProperty() { return this.properties1[1] }
+
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetX() { return this.properties1[2] }
+  set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetY() { return this.properties1[3] }
+  set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get offsetZ() { return this.properties1[4] }
+  set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get width() { return this.properties1[5] }
+  set width(value) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the
+   * height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get height() { return this.properties1[6] }
+  set height(value) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color() { return this.properties1[7] }
+  set color(value) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Controls the amount of blur to apply. Values greater than 1 may appear
+   * glitchy.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get blurRadius() { return this.properties1[9] }
+  set blurRadius(value) { setPropertyInList(this.properties1, 9, value) }
 
   /**
    * Scalar multiplier for the color that does not affect the alpha.
@@ -10687,6 +11061,7 @@ const Actions = {
   [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.Distortion]: Distortion, Distortion,
+  [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
@@ -12069,6 +12444,7 @@ export {
   Model,
   Tracer,
   Distortion,
+  RadialBlur,
   PointLight,
   NodeWindSpeed,
   ParticleWindSpeed,
