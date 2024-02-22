@@ -8101,7 +8101,9 @@ export interface ModelParams {
    * ignored. Defaults to false.
    * 
    * See also:
-   * - {@link scale}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
    * - {@link scaleVariationZ}
@@ -8624,7 +8626,9 @@ class Model extends CommonAction6xxFields2Action {
    * ignored.
    * 
    * See also:
-   * - {@link scale}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
    * - {@link scaleVariationZ}
