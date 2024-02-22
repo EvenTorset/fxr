@@ -11966,7 +11966,7 @@ class Field {
     return arrayOf(count, i => {
       switch (types[i]) {
         case FieldType.Boolean:
-          return new BoolField(!!br.readInt32())
+          return new BoolField(!!br.assertInt32(0, 1))
         case FieldType.Integer:
           return new IntField(br.readInt32())
         case FieldType.Float:
