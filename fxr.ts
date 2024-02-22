@@ -3248,9 +3248,9 @@ const Effects = {
 
 const commonAction6xxFields2Types = [
   null,
-  null,
+  FieldType.Boolean,
   FieldType.Integer,
-  null,
+  FieldType.Float,
   FieldType.Integer,
   FieldType.Float, // Bloom - Red multiplier
   FieldType.Float, // Bloom - Green multiplier
@@ -3272,14 +3272,14 @@ const commonAction6xxFields2Types = [
   null,
   null,
   null,
-  FieldType.Float,
-  null,
-  FieldType.Integer,
+  FieldType.Float, // Depth blend 1
+  FieldType.Float, // Depth blend 2
+  FieldType.Boolean,
   null,
   FieldType.Float,
   FieldType.Float, // Shadow darkness
   null,
-  FieldType.Integer,
+  FieldType.Boolean,
   FieldType.Boolean, // Specular
   FieldType.Float, // Glossiness
   FieldType.Integer, // Lighting mode
