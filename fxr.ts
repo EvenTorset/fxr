@@ -199,16 +199,16 @@ enum ActionType {
    * Controls various things about the node, like its duration, and how
    * it is attached to the parent node.
    * 
-   * This action type has a specialized subclass: {@link NodeLifetime}
+   * This action type has a specialized subclass: {@link NodeAttributes}
    */
-  NodeLifetime = 128,
+  NodeAttributes = 128,
   /**
    * Controls various things about the particles emitted by the effect, like
    * their duration, and how they are attached to the parent node.
    * 
-   * This action type has a specialized subclass: {@link ParticleLifetime}
+   * This action type has a specialized subclass: {@link ParticleAttributes}
    */
-  ParticleLifetime = 129,
+  ParticleAttributes = 129,
   Unk130 = 130,
   /**
    * Controls various multipliers as well as the acceleration of particles.
@@ -771,7 +771,7 @@ enum PropertyArgument {
    * Time in seconds since the {@link Effect} became active.
    * 
    * An effect becoming active is for example the delay from
-   * {@link ActionType.NodeLifetime NodeLifetime} being over, or the active
+   * {@link ActionType.NodeAttributes NodeAttributes} being over, or the active
    * {@link State} changing, making a node change which of its effects is
    * active.
    */
@@ -895,7 +895,7 @@ enum DistortionShape {
 const EffectActionSlots = {
   [EffectType.Basic]: [
     [
-      ActionType.NodeLifetime
+      ActionType.NodeAttributes
     ],
     [
       ActionType.StaticNodeTransform,
@@ -940,7 +940,7 @@ const EffectActionSlots = {
       ActionType.ParticleMultiplier
     ],
     [
-      ActionType.ParticleLifetime
+      ActionType.ParticleAttributes
     ],
     [
       ActionType.PointSprite,
@@ -995,7 +995,7 @@ const EffectActionSlots = {
   ],
   [EffectType.SharedEmitter]: [
     [
-      ActionType.NodeLifetime
+      ActionType.NodeAttributes
     ],
     [
       ActionType.StaticNodeTransform,
@@ -3117,7 +3117,7 @@ class LevelOfDetailEffect extends Effect {
  * Default actions:
  * Index | Action
  * ------|----------
- * 0     | {@link ActionType.NodeLifetime NodeLifetime}
+ * 0     | {@link ActionType.NodeAttributes NodeAttributes}
  * 1     | {@link ActionType.None None}
  * 2     | {@link ActionType.None None}
  * 3     | {@link ActionType.None None}
@@ -3125,7 +3125,7 @@ class LevelOfDetailEffect extends Effect {
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
  * 6     | {@link ActionType.Unk500 Unk500}
  * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
- * 8     | {@link ActionType.ParticleLifetime ParticleLifetime}
+ * 8     | {@link ActionType.ParticleAttributes ParticleAttributes}
  * 9     | {@link ActionType.None None}
  * 10    | {@link ActionType.None None}
  * 11    | {@link ActionType.None None}
@@ -3142,7 +3142,7 @@ class BasicEffect extends Effect {
    */
   constructor(actions: Action[] = []) {
     super(EffectType.Basic, [
-      new NodeLifetime,
+      new NodeAttributes,
       new Action,
       new Action,
       new Action,
@@ -3150,7 +3150,7 @@ class BasicEffect extends Effect {
       new PointEmitterShape,
       new Action(ActionType.Unk500),
       new ParticleMultiplier,
-      new ParticleLifetime,
+      new ParticleAttributes,
       new Action,
       new Action,
       new Action,
@@ -3197,7 +3197,7 @@ class BasicEffect extends Effect {
  * Default actions:
  * Index | Action
  * ------|----------
- * 0     | {@link ActionType.NodeLifetime NodeLifetime}
+ * 0     | {@link ActionType.NodeAttributes NodeAttributes}
  * 1     | {@link ActionType.None None}
  * 2     | {@link ActionType.None None}
  * 3     | {@link ActionType.None None}
@@ -3217,7 +3217,7 @@ class SharedEmitterEffect extends Effect {
    */
   constructor(actions: Action[] = []) {
     super(EffectType.SharedEmitter, [
-      new NodeLifetime,
+      new NodeAttributes,
       new Action,
       new Action,
       new Action,
@@ -3393,7 +3393,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
-  [ActionType.ParticleLifetime]: {
+  [ActionType.ParticleAttributes]: {
     Fields1: [
       FieldType.Integer
     ],
@@ -4931,26 +4931,40 @@ class ParticleMovement extends Action {
  * ------|------
  * 0     | duration
  */
-class NodeLifetime extends Action {
+class NodeAttributes extends Action {
 
-  /**
-   * @param duration The node duration in seconds. Defaults to -1
-   * (infinite).
-   * @param delay The delay before the emitter begins emitting. Defaults to 0.
-   * @param attachment Controls how the node is attached to its parent.
-   * Defaults to {@link AttachMode.Parent}.
-   * @param unkField1 Unknown int. Fields1, index 1. Possibly a boolean field.
-   * Defaults to 1.
-   * @param unkField3 Unknown float. Fields1, index 3. Defaults to 0.
-   */
-  constructor(
-    duration: ScalarPropertyArg = -1,
-    delay: number = 0,
-    attachment: AttachMode = AttachMode.Parent,
-    unkField1: number = 1,
-    unkField3: number = 0,
-  ) {
-    super(ActionType.NodeLifetime, [
+  constructor({
+    duration = -1,
+    delay = 0,
+    attachment = AttachMode.Parent,
+    unkField1 = 1,
+    unkField3 = 0,
+  }: {
+    /**
+     * The node duration in seconds. Defaults to -1 (infinite).
+     * 
+     * **Argument**: {@link PropertyArgument.Constant Constant 0}
+     */
+    duration?: ScalarPropertyArg
+    /**
+     * The delay before the node becomes active. Defaults to 0.
+     */
+    delay?: number
+    /**
+     * Controls how the node is attached to its parent. Defaults to
+     * {@link AttachMode.Parent}.
+     */
+    attachment?: AttachMode
+    /**
+     * Unknown int. Fields1, index 1. Possibly a boolean field. Defaults to 1.
+     */
+    unkField1?: number
+    /**
+     * Unknown float. Fields1, index 3. Possibly a bit field. Defaults to 0.
+     */
+    unkField3?: number
+  } = {}) {
+    super(ActionType.NodeAttributes, [
       new FloatField(delay),
       new IntField(unkField1),
       new IntField(attachment),
@@ -4976,19 +4990,25 @@ class NodeLifetime extends Action {
  * ------|------
  * 0     | duration
  */
-class ParticleLifetime extends Action {
+class ParticleAttributes extends Action {
 
-  /**
-   * @param duration The particle duration in seconds. Defaults to -1
-   * (infinite).
-   * @param attachment Controls how the particle is attached to its parent.
-   * Defaults to {@link AttachMode.Parent}.
-   */
-  constructor(
-    duration: ScalarPropertyArg = -1,
-    attachment: AttachMode = AttachMode.Parent
-  ) {
-    super(ActionType.ParticleLifetime, [
+  constructor({
+    attachment = AttachMode.Parent,
+    duration = -1,
+  }: {
+    /**
+     * Controls how the particle is attached to its parent. Defaults to
+     * {@link AttachMode.Parent}.
+     */
+    attachment?: AttachMode
+    /**
+     * The particle duration in seconds. Defaults to -1 (infinite).
+     * 
+     * **Argument**: {@link PropertyArgument.Constant Constant 0}
+     */
+    duration?: ScalarPropertyArg
+  } = {}) {
+    super(ActionType.ParticleAttributes, [
       new IntField(attachment)
     ], [], [
       scalarFromArg(duration)
@@ -11836,8 +11856,8 @@ const Actions = {
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.PlaySound]: PlaySound, PlaySound,
-  [ActionType.NodeLifetime]: NodeLifetime, NodeLifetime,
-  [ActionType.ParticleLifetime]: ParticleLifetime, ParticleLifetime,
+  [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
+  [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.FXRReference]: FXRReference, FXRReference,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
@@ -13217,8 +13237,8 @@ export {
   NodeAttachToCamera,
   PlaySound,
   ParticleMovement,
-  NodeLifetime,
-  ParticleLifetime,
+  NodeAttributes,
+  ParticleAttributes,
   ParticleMultiplier,
   FXRReference,
   LevelOfDetailThresholds,
