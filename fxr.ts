@@ -1545,15 +1545,22 @@ class FXR {
    * Parses an FXR file.
    * @param buffer ArrayBuffer containing the contents of the FXR file.
    */
-  static read(buffer: ArrayBuffer) {
+  static read(buffer: ArrayBuffer, version: FXRVersion = null) {
     const br = new BinaryReader(buffer)
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    const version = br.assertInt16(
-      FXRVersion.DarkSouls3,
-      FXRVersion.Sekiro
-    )
+    if (version !== null) {
+      br.assertInt16(
+        FXRVersion.DarkSouls3,
+        FXRVersion.Sekiro
+      )
+    } else {
+      version = br.assertInt16(
+        FXRVersion.DarkSouls3,
+        FXRVersion.Sekiro
+      )
+    }
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
@@ -1619,7 +1626,7 @@ class FXR {
     br.stepOut()
 
     br.position = nodeOffset
-    const rootNode = Node.read(br) as RootNode
+    const rootNode = Node.read(br, version) as RootNode
 
     return new FXR(
       id,
@@ -2341,7 +2348,7 @@ class Node {
     this.nodes = nodes
   }
 
-  static read(br: BinaryReader) {
+  static read(br: BinaryReader, version: FXRVersion) {
     const type = br.readInt16()
     const node = new (type in Nodes ? Nodes[type] : Node)
     node.type = type
@@ -2361,19 +2368,19 @@ class Node {
     br.stepIn(nodeOffset)
     node.nodes = []
     for (let i = 0; i < nodeCount; ++i) {
-      node.nodes.push(Node.read(br))
+      node.nodes.push(Node.read(br, version))
     }
     br.stepOut()
     br.stepIn(effectOffset)
     node.effects = []
     for (let i = 0; i < effectCount; ++i) {
-      node.effects.push(Effect.read(br))
+      node.effects.push(Effect.read(br, version))
     }
     br.stepOut()
     br.stepIn(actionOffset)
     node.actions = []
     for (let i = 0; i < actionCount; ++i) {
-      node.actions.push(Action.read(br))
+      node.actions.push(Action.read(br, version))
     }
     br.stepOut()
     return node
@@ -3021,7 +3028,7 @@ class Effect {
     this.actions = actions
   }
 
-  static read(br: BinaryReader) {
+  static read(br: BinaryReader, version: FXRVersion) {
     const type = br.readInt16()
     const effect = new (type in Effects ? Effects[type] : Effect)
     effect.type = type
@@ -3037,7 +3044,7 @@ class Effect {
     br.stepIn(actionOffset)
     effect.actions = []
     for (let i = 0; i < actionCount; ++i) {
-      effect.actions.push(Action.read(br))
+      effect.actions.push(Action.read(br, version))
     }
     br.stepOut()
     return effect
@@ -3719,7 +3726,7 @@ class Action {
     this.section10s = section10s
   }
 
-  static read(br: BinaryReader): Action {
+  static read(br: BinaryReader, version: FXRVersion): Action {
     const type = br.readInt16()
     br.position += 6
     // br.readUint8() // Unk02
@@ -3760,7 +3767,7 @@ class Action {
 
     br.stepIn(fieldOffset)
     let fields1: Field[], fields2: Field[]
-    if (type in ActionFieldTypes) {
+    if (version !== FXRVersion.DarkSouls3 && type in ActionFieldTypes) {
       fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
       fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
     } else {
