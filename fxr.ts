@@ -3247,51 +3247,51 @@ const Effects = {
 }
 
 const commonAction6xxFields2Types = [
-  null,
-  FieldType.Boolean,
-  FieldType.Integer,
-  FieldType.Float,
-  FieldType.Integer,
-  FieldType.Float, // Bloom - Red multiplier
-  FieldType.Float, // Bloom - Green multiplier
-  FieldType.Float, // Bloom - Blue multiplier
-  FieldType.Float, // Bloom strength
-  null,
-  null,
-  null,
-  null,
-  null,
-  FieldType.Float, // Distance Fade: Close 0
-  FieldType.Float, // Distance Fade: Close 1
-  FieldType.Float, // Distance Fade: Far 0
-  FieldType.Float, // Distance Fade: Far 1
-  FieldType.Float, // Minimum view distance
-  FieldType.Float, // Maximum view distance
-  null,
-  null,
-  null,
-  null,
-  null,
-  FieldType.Float, // Depth blend 1
-  FieldType.Float, // Depth blend 2
-  FieldType.Boolean,
-  null,
-  FieldType.Float,
-  FieldType.Float, // Shadow darkness
-  null,
-  FieldType.Boolean,
-  FieldType.Boolean, // Specular
-  FieldType.Float, // Glossiness
-  FieldType.Integer, // Lighting mode
-  FieldType.Integer,
-  null,
-  FieldType.Float, // Specularity
-  FieldType.Integer,
-  null,
-  null,
-  null,
-  null,
-  null,
+  /*  0 */ null,
+  /*  1 */ FieldType.Boolean,
+  /*  2 */ FieldType.Integer,
+  /*  3 */ FieldType.Float,
+  /*  4 */ FieldType.Integer,
+  /*  5 */ FieldType.Float, // Bloom - Red multiplier
+  /*  6 */ FieldType.Float, // Bloom - Green multiplier
+  /*  7 */ FieldType.Float, // Bloom - Blue multiplier
+  /*  8 */ FieldType.Float, // Bloom strength
+  /*  9 */ null,
+  /* 10 */ null,
+  /* 11 */ null,
+  /* 12 */ null,
+  /* 13 */ null,
+  /* 14 */ FieldType.Float, // Distance Fade: Close 0
+  /* 15 */ FieldType.Float, // Distance Fade: Close 1
+  /* 16 */ FieldType.Float, // Distance Fade: Far 0
+  /* 17 */ FieldType.Float, // Distance Fade: Far 1
+  /* 18 */ FieldType.Float, // Minimum view distance
+  /* 19 */ FieldType.Float, // Maximum view distance
+  /* 20 */ null,
+  /* 21 */ null,
+  /* 22 */ null,
+  /* 23 */ null,
+  /* 24 */ null,
+  /* 25 */ FieldType.Float, // Depth blend 1
+  /* 26 */ FieldType.Float, // Depth blend 2
+  /* 27 */ FieldType.Boolean,
+  /* 28 */ null,
+  /* 29 */ FieldType.Float,
+  /* 30 */ FieldType.Float, // Shadow darkness
+  /* 31 */ null,
+  /* 32 */ FieldType.Boolean,
+  /* 33 */ FieldType.Integer, // Specular texture
+  /* 34 */ FieldType.Float, // Glossiness
+  /* 35 */ FieldType.Integer, // Lighting mode
+  /* 36 */ FieldType.Integer,
+  /* 37 */ null,
+  /* 38 */ FieldType.Float, // Specularity
+  /* 39 */ FieldType.Integer,
+  /* 40 */ null,
+  /* 41 */ null,
+  /* 42 */ null,
+  /* 43 */ null,
+  /* 44 */ null,
 ]
 const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: FieldType[] } } = {
   [ActionType.NodeTranslation]: {
@@ -6293,15 +6293,14 @@ export interface BillboardExParams {
    */
   shadowDarkness?: number
   /**
-   * Controls whether or not specular highlights should be visible. Defaults to
-   * false.
+   * Specular texture ID. Defaults to 0.
    * 
    * See also:
    * - {@link lighting}
    * - {@link glossiness}
    * - {@link specularity}
    */
-  specular?: boolean
+  specular?: number
   /**
    * Controls how sharp the specular highlights are. Defaults to 0.25.
    * 
@@ -6379,7 +6378,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     maxDistance = -1,
     negativeDepthOffset = 0,
     shadowDarkness = 0,
-    specular = false,
+    specular = 0,
     glossiness = 0.25,
     lighting = LightingMode.Unlit,
     specularity = 0.5,
@@ -6444,7 +6443,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
       /* 30 */ new FloatField(shadowDarkness),
       /* 31 */ new IntField(0),
       /* 32 */ new IntField(1),
-      /* 33 */ new BoolField(specular),
+      /* 33 */ new IntField(specular),
       /* 34 */ new FloatField(glossiness),
       /* 35 */ new IntField(lighting),
       /* 36 */ new IntField(-2),
@@ -6861,7 +6860,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
   set shadowDarkness(value) { this.fields2[30].value = value }
 
   /**
-   * Controls whether or not specular highlights should be visible.
+   * Specular texture ID. Defaults to 0.
    * 
    * See also:
    * - {@link lighting}
@@ -7323,15 +7322,14 @@ export interface MultiTextureBillboardExParams {
    */
   shadowDarkness?: number
   /**
-   * Controls whether or not specular highlights should be visible. Defaults to
-   * false.
+   * Specular texture ID. Defaults to 0.
    * 
    * See also:
    * - {@link lighting}
    * - {@link glossiness}
    * - {@link specularity}
    */
-  specular?: boolean
+  specular?: number
   /**
    * Controls how sharp the specular highlights are. Defaults to 0.25.
    * 
@@ -7378,7 +7376,7 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
     maxDistance = -1,
     negativeDepthOffset = 0,
     shadowDarkness = 0,
-    specular = false,
+    specular = 0,
     glossiness = 0.25,
     lighting = LightingMode.Unlit,
     specularity = 0.5,
@@ -7473,7 +7471,7 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
       /* 30 */ new FloatField(shadowDarkness),
       /* 31 */ new IntField(0),
       /* 32 */ new IntField(1),
-      /* 33 */ new BoolField(specular),
+      /* 33 */ new IntField(specular),
       /* 34 */ new FloatField(glossiness),
       /* 35 */ new IntField(lighting),
       /* 36 */ new IntField(-2),
@@ -8014,7 +8012,7 @@ class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
   set shadowDarkness(value) { this.fields2[30].value = value }
 
   /**
-   * Controls whether or not specular highlights should be visible.
+   * Specular texture ID. Defaults to 0.
    * 
    * See also:
    * - {@link lighting}
@@ -8531,7 +8529,7 @@ class Model extends CommonAction6xxFields2Action {
       /* 30 */ new FloatField(0),
       /* 31 */ new IntField(0),
       /* 32 */ new IntField(1),
-      /* 33 */ new BoolField(false),
+      /* 33 */ new IntField(0),
       /* 34 */ new FloatField(0),
       /* 35 */ new IntField(lighting),
       /* 36 */ new IntField(-2),
@@ -9089,15 +9087,14 @@ export interface TracerParams {
    */
   shadowDarkness?: number
   /**
-   * Controls whether or not specular highlights should be visible. Defaults to
-   * false.
+   * Specular texture ID. Defaults to 0.
    * 
    * See also:
    * - {@link lighting}
    * - {@link glossiness}
    * - {@link specularity}
    */
-  specular?: boolean
+  specular?: number
   /**
    * Controls how sharp the specular highlights are. Defaults to 0.25.
    * 
@@ -9221,7 +9218,7 @@ class Tracer extends CommonAction6xxFields2Action {
     maxDistance = -1,
     negativeDepthOffset = 0,
     shadowDarkness = 0,
-    specular = false,
+    specular = 0,
     glossiness = 0.25,
     lighting = LightingMode.Unlit,
     specularity = 0.5,
@@ -9290,7 +9287,7 @@ class Tracer extends CommonAction6xxFields2Action {
       /* 30 */ new FloatField(shadowDarkness),
       /* 31 */ new IntField(0),
       /* 32 */ new IntField(1),
-      /* 33 */ new BoolField(specular),
+      /* 33 */ new IntField(specular),
       /* 34 */ new FloatField(glossiness),
       /* 35 */ new IntField(lighting),
       /* 36 */ new IntField(-2),
@@ -9407,7 +9404,7 @@ class Tracer extends CommonAction6xxFields2Action {
   set shadowDarkness(value) { this.fields2[30].value = value }
 
   /**
-   * Controls whether or not specular highlights should be visible.
+   * Specular texture ID. Defaults to 0.
    * 
    * See also:
    * - {@link lighting}
@@ -11966,7 +11963,7 @@ class Field {
     return arrayOf(count, i => {
       switch (types[i]) {
         case FieldType.Boolean:
-          return new BoolField(!!br.readInt32())
+          return new BoolField(!!br.assertInt32(0, 1))
         case FieldType.Integer:
           return new IntField(br.readInt32())
         case FieldType.Float:
