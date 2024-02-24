@@ -2456,9 +2456,9 @@ class Node {
   }) {
     const node = new (type in Nodes ? Nodes[type] : Node)
     node.type = type
-    node.actions = actions.map(action => Action.fromJSON(action))
-    node.effects = effects.map(effect => Effect.fromJSON(effect))
-    node.nodes = nodes.map(node => Node.fromJSON(node))
+    node.actions = actions?.map(action => Action.fromJSON(action)) ?? []
+    node.effects = effects?.map(effect => Effect.fromJSON(effect)) ?? []
+    node.nodes = nodes?.map(node => Node.fromJSON(node)) ?? []
     return node
   }
 
@@ -3079,7 +3079,7 @@ class Effect {
   }) {
     const effect = new (type in Effects ? Effects[type] : Effect)
     effect.type = type
-    effect.actions = actions.map(action => Action.fromJSON(action))
+    effect.actions = actions?.map(action => Action.fromJSON(action)) ?? []
     return effect
   }
 
