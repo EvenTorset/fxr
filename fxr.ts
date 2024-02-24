@@ -1937,7 +1937,7 @@ class State {
    * @returns The new state.
    */
   static from(stateString: string) {
-    return new State(stateString.split('&&').map(e => StateCondition.from(e)))
+    return new State(stateString.split('&&').filter(e => e.trim().length > 0).map(e => StateCondition.from(e)))
   }
 
   static read(br: BinaryReader) {
