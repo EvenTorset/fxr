@@ -2191,7 +2191,7 @@ class StateCondition {
    */
   sortOperands() {
     if (this.leftOperandType !== OperandType.Literal || this.rightOperandType === OperandType.Literal) {
-      return
+      return this
     }
     ;[
       this.leftOperandType,
