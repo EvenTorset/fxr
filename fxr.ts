@@ -708,6 +708,14 @@ enum Operator {
   Equal = 1,
   GreaterThanOrEqual = 2,
   GreaterThan = 3,
+
+  /*
+    These two are not part of the format. The StateCondition class will just
+    switch the operands around and use the greater than operators automatically
+    when these are used.
+  */
+  LessThanOrEqual = 4,
+  LessThan = 5,
 }
 
 enum OperandType {
@@ -2015,7 +2023,7 @@ class StateCondition {
     public rightOperandValue: number | null,
   ) {}
 
-  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|stop|disable))?\s*$/i
+  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|none))?\s*$/i
   static #reLiteralOperand = /^-?\d+(?:\.\d+)?|-?\.\d+$/
   static #reExternalOperand = /^[Ee]xt(?:ernal)?\((\d+)\)$/
 
@@ -2058,7 +2066,7 @@ class StateCondition {
    * expression = <operand> <operator> <operand>[ else[ goto] <stateIndex>]
    * operand = <number> | External(<integer>) | StateTime | UnkMinus2
    * operator = != | == | > | >= | < | <=
-   * stateIndex = <integer> | stop | disable
+   * stateIndex = <integer> | none
    * ```
    * 
    * `External`, `StateTime`, and `UnkMinus2` are all case-insensitive and have
@@ -2085,29 +2093,18 @@ class StateCondition {
       throw new Error('Syntax error in condition expression: ' + expression)
     }
     let op: Operator
-    let flipOperands = false
     switch (m.groups.op) {
-      case '!=':
-        op = Operator.NotEqual
-        break
+      case '!=': op = Operator.NotEqual; break;
       case '=':
-      case '==':
-        op = Operator.Equal
-        break
-      case '<':
-        flipOperands = true
-      case '>':
-        op = Operator.GreaterThan
-        break
-      case '<=':
-        flipOperands = true
-      case '>=':
-        op = Operator.GreaterThanOrEqual
-        break
+      case '==': op = Operator.Equal; break;
+      case '<': op = Operator.LessThan; break;
+      case '>': op = Operator.GreaterThan; break;
+      case '<=': op = Operator.LessThanOrEqual; break;
+      case '>=': op = Operator.GreaterThanOrEqual; break;
     }
-    const left = this.#parseOperand(flipOperands ? m.groups.right : m.groups.left)
-    const right = this.#parseOperand(flipOperands ? m.groups.left : m.groups.right)
-    let elseIndex = -1
+    const left = this.#parseOperand(m.groups.left)
+    const right = this.#parseOperand(m.groups.right)
+    let nextState = -1
     if ('else' in m.groups) {
       switch (m.groups.else) {
         case '-1':
@@ -2115,11 +2112,11 @@ class StateCondition {
         case undefined:
           break
         default:
-          elseIndex = parseInt(m.groups.else)
+          nextState = parseInt(m.groups.else)
           break
       }
     }
-    return new StateCondition(op, 2, elseIndex, left.type, left.value, right.type, right.value)
+    return new StateCondition(op, 2, nextState, left.type, left.value, right.type, right.value)
   }
 
   static read(br: BinaryReader) {
@@ -2163,7 +2160,7 @@ class StateCondition {
       hasLeftValue ? StateCondition.readOperandValue(br, leftOperand, leftOffset) : null,
       rightOperand,
       hasRightValue ? StateCondition.readOperandValue(br, rightOperand, rightOffset) : null,
-    )
+    ).sortOperands()
   }
 
   static readOperandValue(br: BinaryReader, type: number, offset: number) {
@@ -2186,7 +2183,54 @@ class StateCondition {
     }
   }
 
-  write(bw: BinaryWriter, conditions: StateCondition[]) {
+  /**
+   * Swaps the operands and changes the operator to match if the left operand
+   * is a literal value and the right operand is a non-literal value. This
+   * makes it a bit easier to read the expression, but doesn't affect
+   * functionality.
+   */
+  sortOperands() {
+    if (this.leftOperandType !== OperandType.Literal || this.rightOperandType === OperandType.Literal) {
+      return
+    }
+    ;[
+      this.leftOperandType,
+      this.leftOperandValue,
+      this.rightOperandType,
+      this.rightOperandValue,
+    ] = [
+      this.rightOperandType,
+      this.rightOperandValue,
+      this.leftOperandType,
+      this.leftOperandValue,
+    ]
+    switch (this.operator) {
+      case Operator.GreaterThan: this.operator = Operator.LessThan; break;
+      case Operator.GreaterThanOrEqual: this.operator = Operator.LessThanOrEqual; break;
+      case Operator.LessThan: this.operator = Operator.GreaterThan; break;
+      case Operator.LessThanOrEqual: this.operator = Operator.GreaterThanOrEqual; break;
+    }
+    return this
+  }
+
+  /**
+   * The {@link Operator.LessThanOrEqual LessThanOrEqual} and
+   * {@link Operator.LessThan LessThan} operators are not valid operators in
+   * the FXR format. This method returns an equivalent condition that *is*
+   * valid.
+   */
+  formatCondition() {
+    if (this.operator !== Operator.LessThan && this.operator !== Operator.LessThanOrEqual) {
+      return this
+    }
+    return new StateCondition(
+      this.operator - 2, this.unk1, this.nextState,
+      this.rightOperandType, this.rightOperandValue,
+      this.leftOperandType, this.leftOperandValue
+    )
+  }
+
+  #write(bw: BinaryWriter, conditions: StateCondition[]) {
     const count = conditions.length
     bw.writeInt16(this.operator | this.unk1 << 2)
     bw.writeUint8(0)
@@ -2221,6 +2265,10 @@ class StateCondition {
     conditions.push(this)
   }
 
+  write(bw: BinaryWriter, conditions: StateCondition[]) {
+    this.formatCondition().#write(bw, conditions)
+  }
+
   writeFields(bw: BinaryWriter, index: number): number {
     let count = 0
     if (this.leftOperandValue === null) {
@@ -2250,58 +2298,45 @@ class StateCondition {
     return count
   }
 
-  toString() {
-    let left: string, op: string, right: string
-    if (this.leftOperandType === OperandType.Literal && this.rightOperandType !== OperandType.Literal) {
-      right = this.leftOperandValue.toString()
-      switch (this.rightOperandType) {
-        case OperandType.External:
-          left = `External(${this.rightOperandValue})`
-          break
-        case OperandType.UnkMinus2:
-        case OperandType.StateTime:
-          left = OperandType[this.rightOperandType]
-          break
-      }
-      switch (this.operator) {
-        case Operator.NotEqual: op = '!='; break
-        case Operator.Equal: op = '=='; break
-        case Operator.GreaterThan: op = '<'; break
-        case Operator.GreaterThanOrEqual: op = '<='; break
-      }
-    } else {
-      switch (this.leftOperandType) {
-        case OperandType.External:
-          left = `External(${this.leftOperandValue})`
-          break
-        case OperandType.UnkMinus2:
-        case OperandType.StateTime:
-          left = OperandType[this.leftOperandType]
-          break
-        case OperandType.Literal:
-          left = this.leftOperandValue.toString()
-          break
-      }
-      switch (this.rightOperandType) {
-        case OperandType.External:
-          right = `External(${this.rightOperandValue})`
-          break
-        case OperandType.UnkMinus2:
-        case OperandType.StateTime:
-          right = OperandType[this.rightOperandType]
-          break
-        case OperandType.Literal:
-          right = this.rightOperandValue.toString()
-          break
-      }
-      switch (this.operator) {
-        case Operator.NotEqual: op = '!='; break
-        case Operator.Equal: op = '=='; break
-        case Operator.GreaterThan: op = '>'; break
-        case Operator.GreaterThanOrEqual: op = '>='; break
-      }
+  clone() {
+    return new StateCondition(
+      this.operator, this.unk1, this.nextState,
+      this.leftOperandType, this.leftOperandValue,
+      this.rightOperandType, this.rightOperandValue
+    )
+  }
+
+  #toString() {
+    let left: string | number, right: string | number
+    switch (this.leftOperandType) {
+      case OperandType.External:
+        left = `External(${this.leftOperandValue})`
+        break
+      case OperandType.UnkMinus2:
+      case OperandType.StateTime:
+        left = OperandType[this.leftOperandType]
+        break
+      case OperandType.Literal:
+        left = this.leftOperandValue
+        break
     }
-    return `${left} ${op} ${right} else ${this.nextState}`
+    switch (this.rightOperandType) {
+      case OperandType.External:
+        right = `External(${this.rightOperandValue})`
+        break
+      case OperandType.UnkMinus2:
+      case OperandType.StateTime:
+        right = OperandType[this.rightOperandType]
+        break
+      case OperandType.Literal:
+        right = this.rightOperandValue
+        break
+    }
+    return `${left} ${['!=','==','>=','>','<=','<'][this.operator]} ${right} else ${this.nextState}`
+  }
+
+  toString() {
+    return this.clone().sortOperands().#toString()
   }
 
 }
