@@ -1976,22 +1976,14 @@ class State {
 
 class StateCondition {
 
-  operator: Operator
-  unk1: number
-  elseIndex: number
-  leftOperandType: OperandType
-  leftOperandValue: number | null
-  rightOperandType: OperandType
-  rightOperandValue: number | null
-
   /**
-   * A condition for a state. The state is active if all of its conditions are
-   * true. If the condition is false, the state at the {@link elseIndex} is
-   * checked next.
+   * A condition for a state. The state remains active if all of its conditions
+   * are true or if it has no conditions. If the condition is false, the state
+   * is deactivated and the {@link nextState next state} is activated.
    * @param operator Controls what operation should be used for the condition.
    * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
    * to make the condition always true.
-   * @param elseIndex If the condition is false, the state at this index will
+   * @param nextState If the condition is false, the state at this index will
    * be checked instead. Set it to -1 to disable the node if the condition
    * is false.
    * @param leftOperandType Controls what type of value the operand to the left
@@ -2014,22 +2006,14 @@ class StateCondition {
    * - {@link OperandType.StateTime}: This value is ignored and should be null.
    */
   constructor(
-    operator: Operator,
-    unk1: number,
-    elseIndex: number,
-    leftOperandType: OperandType,
-    leftOperandValue: number | null,
-    rightOperandType: OperandType,
-    rightOperandValue: number | null,
-  ) {
-    this.operator = operator
-    this.unk1 = unk1
-    this.elseIndex = elseIndex
-    this.leftOperandType = leftOperandType
-    this.leftOperandValue = leftOperandValue
-    this.rightOperandType = rightOperandType
-    this.rightOperandValue = rightOperandValue
-  }
+    public operator: Operator,
+    public unk1: number,
+    public nextState: number,
+    public leftOperandType: OperandType,
+    public leftOperandValue: number | null,
+    public rightOperandType: OperandType,
+    public rightOperandValue: number | null,
+  ) {}
 
   static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|stop|disable))?\s*$/i
   static #reLiteralOperand = /^-?\d+(?:\.\d+)?|-?\.\d+$/
@@ -2127,8 +2111,7 @@ class StateCondition {
     if ('else' in m.groups) {
       switch (m.groups.else) {
         case '-1':
-        case 'stop':
-        case 'disable':
+        case 'none':
         case undefined:
           break
         default:
@@ -2209,7 +2192,7 @@ class StateCondition {
     bw.writeUint8(0)
     bw.writeUint8(1)
     bw.writeInt32(0)
-    bw.writeInt32(this.elseIndex)
+    bw.writeInt32(this.nextState)
     bw.writeInt32(0)
     bw.writeInt16(this.leftOperandType)
     bw.writeInt8(0)
@@ -2268,9 +2251,9 @@ class StateCondition {
   }
 
   toString() {
-    let left, op, right
+    let left: string, op: string, right: string
     if (this.leftOperandType === OperandType.Literal && this.rightOperandType !== OperandType.Literal) {
-      right = this.leftOperandValue
+      right = this.leftOperandValue.toString()
       switch (this.rightOperandType) {
         case OperandType.External:
           left = `External(${this.rightOperandValue})`
@@ -2296,7 +2279,7 @@ class StateCondition {
           left = OperandType[this.leftOperandType]
           break
         case OperandType.Literal:
-          left = this.leftOperandValue
+          left = this.leftOperandValue.toString()
           break
       }
       switch (this.rightOperandType) {
@@ -2308,7 +2291,7 @@ class StateCondition {
           right = OperandType[this.rightOperandType]
           break
         case OperandType.Literal:
-          right = this.rightOperandValue
+          right = this.rightOperandValue.toString()
           break
       }
       switch (this.operator) {
@@ -2318,7 +2301,7 @@ class StateCondition {
         case Operator.GreaterThanOrEqual: op = '>='; break
       }
     }
-    return `${left} ${op} ${right} else ${this.elseIndex}`
+    return `${left} ${op} ${right} else ${this.nextState}`
   }
 
 }
