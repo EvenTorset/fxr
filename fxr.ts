@@ -312,15 +312,17 @@ enum ActionType {
   Unk503 = 503,
   PointSprite = 600,
   /**
-   * Simple line particle.
+   * Simple line particle. It automatically rotates to match the direction it's
+   * moving.
    * 
    * This action type has a specialized subclass: {@link Line}
    */
   Line = 601,
   /**
-   * Simple rectangular particle with a gradient. Most commonly used to create
-   * lines, like the {@link ActionType.Line Line action}, but this has a
-   * configurable width, so the lines can be made wider than the regular lines.
+   * Simple rectangular particle, very similar to
+   * {@link ActionType.Line Line particles}, but has properties that control
+   * the width as well as the length. It automatically rotates to match the
+   * direction it's moving.
    * 
    * This action type has a specialized subclass: {@link QuadLine}
    */
@@ -5840,7 +5842,8 @@ export interface LineParams {
   maxDistance?: number
 }
 /**
- * Simple line particle.
+ * Simple line particle. It automatically rotates to match the direction it's
+ * moving.
  */
 class Line extends CommonAction6xxFields2Action {
 
@@ -6120,9 +6123,10 @@ export interface QuadLineParams {
   unkScalarProp2_6?: ScalarPropertyArg
 }
 /**
- * Simple rectangular particle with a gradient. Most commonly used to create
- * lines, like the {@link ActionType.Line Line action}, but this has a
- * configurable width, so the lines can be made wider than the regular lines.
+ * Simple rectangular particle, very similar to
+ * {@link ActionType.Line Line particles}, but has properties that control
+ * the width as well as the length. It automatically rotates to match the
+ * direction it's moving.
  */
 class QuadLine extends CommonAction6xxFields2Action {
 
