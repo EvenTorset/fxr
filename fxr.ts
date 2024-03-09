@@ -311,6 +311,11 @@ enum ActionType {
   Unk502 = 502,
   Unk503 = 503,
   PointSprite = 600,
+  /**
+   * Simple line particle.
+   * 
+   * This action type has a specialized subclass: {@link Line}
+   */
   Line = 601,
   /**
    * Simple rectangular particle with a gradient. Most commonly used to create
@@ -5718,6 +5723,308 @@ class CommonAction6xxFields2Action extends Action {
 
 }
 
+export interface LineParams {
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * The length of the line. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  length?: ScalarPropertyArg
+  /**
+   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
+   * 
+   * Seemingly identical to {@link color2}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
+   * 
+   * Seemingly identical to {@link color1}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * The color for the start of the line. Defaults to [1, 1, 1, 1].
+   * 
+   * This color transitions linearly into the {@link endColor end color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  startColor?: Vector4PropertyArg
+  /**
+   * The color for the end of the line. Defaults to [1, 1, 1, 1].
+   * 
+   * This color transitions linearly into the {@link startColor start color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  endColor?: Vector4PropertyArg
+  /**
+   * Multiplier for the line {@link length}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  lengthMultiplier?: ScalarPropertyArg
+  /**
+   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+}
+/**
+ * Simple line particle.
+ */
+class Line extends CommonAction6xxFields2Action {
+
+  constructor({
+    blendMode = BlendMode.Normal,
+    length = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    startColor = [1, 1, 1, 1],
+    endColor = [1, 1, 1, 1],
+    lengthMultiplier = 1,
+    color3 = [1, 1, 1, 1],
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+  }: LineParams = {}) {
+    super(ActionType.Line, [
+      /*  0 */ new IntField(-1),
+      /*  1 */ new IntField(1),
+      /*  2 */ new IntField(1),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(0),
+      /* 28 */ new IntField(0),
+      /* 29 */ new IntField(0),
+      /* 30 */ new IntField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(0),
+      /* 33 */ new IntField(0),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(-2),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new IntField(0),
+      /* 39 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(blendMode),
+      /*  1 */ scalarFromArg(length),
+      /*  2 */ vectorFromArg(color1),
+      /*  3 */ vectorFromArg(color2),
+      /*  4 */ vectorFromArg(startColor),
+      /*  5 */ vectorFromArg(endColor),
+      /*  6 */ scalarFromArg(lengthMultiplier),
+      /*  7 */ vectorFromArg(color3),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[0] }
+
+  /**
+   * The length of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  get length() { return this.properties1[1] }
+  set length(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Color multiplier for the entire line.
+   * 
+   * Seemingly identical to {@link color2}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[2] }
+  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Color multiplier for the entire line.
+   * 
+   * Seemingly identical to {@link color1}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color2() { return this.properties1[3] }
+  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * The color for the start of the line.
+   * 
+   * This color transitions linearly into the {@link endColor end color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get startColor() { return this.properties1[4] }
+  set startColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * The color for the end of the line.
+   * 
+   * This color transitions linearly into the {@link startColor start color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get endColor() { return this.properties1[5] }
+  set endColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Multiplier for the line {@link length}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get lengthMultiplier() { return this.properties1[6] }
+  set lengthMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier for the entire line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get color3() { return this.properties1[7] }
+  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
 export interface QuadLineParams {
   blendMode?: BlendMode | ScalarProperty
   width?: ScalarPropertyArg
@@ -5922,22 +6229,22 @@ class QuadLine extends CommonAction6xxFields2Action {
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * Seemingly identical to {@link colorMultiplier2}?
+   * Seemingly identical to {@link color2}?
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  get colorMultiplier1() { return this.properties1[3] }
-  set colorMultiplier1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
+  get color1() { return this.properties1[3] }
+  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
 
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * Seemingly identical to {@link colorMultiplier1}?
+   * Seemingly identical to {@link color1}?
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  get colorMultiplier2() { return this.properties1[4] }
-  set colorMultiplier2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+  get color2() { return this.properties1[4] }
+  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
 
   /**
    * The color for the "start" edge of the rectangle.
@@ -5970,8 +6277,8 @@ class QuadLine extends CommonAction6xxFields2Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get colorMultiplier3() { return this.properties1[9] }
-  set colorMultiplier3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 9, value) }
+  get color3() { return this.properties1[9] }
+  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 9, value) }
 
   get rgbMultiplier() { return this.properties2[0] }
   set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
@@ -11905,6 +12212,7 @@ const Actions = {
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
@@ -13288,6 +13596,7 @@ export {
   BoxEmitterShape,
   CylinderEmitterShape,
   CommonAction6xxFields2Action,
+  Line,
   QuadLine,
   BillboardEx,
   MultiTextureBillboardEx,
