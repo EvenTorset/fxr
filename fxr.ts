@@ -3786,8 +3786,15 @@ class Action {
     br.stepIn(fieldOffset)
     let fields1: Field[], fields2: Field[]
     if (version !== FXRVersion.DarkSouls3 && type in ActionFieldTypes) {
-      fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
-      fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
+      const pos = br.position
+      try {
+        fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
+        fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
+      } catch {
+        br.position = pos
+        fields1 = Field.readMany(br, fieldCount1, this)
+        fields2 = Field.readMany(br, fieldCount2, this)
+      }
     } else {
       fields1 = Field.readMany(br, fieldCount1, this)
       fields2 = Field.readMany(br, fieldCount2, this)
