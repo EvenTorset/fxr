@@ -310,6 +310,12 @@ enum ActionType {
   Unk501 = 501,
   Unk502 = 502,
   Unk503 = 503,
+  /**
+   * Very basic point sprite particle. Similar to
+   * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+   * 
+   * This action type has a specialized subclass: {@link PointSprite}
+   */
   PointSprite = 600,
   /**
    * Simple line particle. It automatically rotates to match the direction it's
@@ -3496,6 +3502,24 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.PointSprite]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+      null,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
+  [ActionType.Line]: {
+    Fields1: [
+      FieldType.Integer,
+      null,
+      null,
+    ],
+    Fields2: commonAction6xxFields2Types
+  },
   [ActionType.QuadLine]: {
     Fields1: [
       FieldType.Integer,
@@ -5722,6 +5746,263 @@ class CommonAction6xxFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
+
+}
+
+export interface PointSpriteParams {
+  /**
+   * Texture ID. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  texture?: BlendMode | ScalarProperty
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Particle size. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  size?: ScalarPropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+}
+/**
+ * Very basic point sprite particle. Similar to
+ * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+ */
+class PointSprite extends CommonAction6xxFields2Action {
+
+  constructor({
+    texture = 1,
+    blendMode = BlendMode.Normal,
+    size = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+  }: PointSpriteParams = {}) {
+    super(ActionType.PointSprite, [
+      /*  0 */ new IntField(-2),
+      /*  1 */ new IntField(-2),
+      /*  2 */ new IntField(0),
+      /*  3 */ new IntField(1),
+      /*  4 */ new IntField(1),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(0),
+      /* 28 */ new IntField(0),
+      /* 29 */ new IntField(0),
+      /* 30 */ new IntField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(0),
+      /* 33 */ new IntField(0),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(-1),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new IntField(0),
+      /* 39 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(texture),
+      /*  1 */ scalarFromArg(blendMode),
+      /*  2 */ scalarFromArg(size),
+      /*  3 */ vectorFromArg(color1),
+      /*  4 */ vectorFromArg(color2),
+      /*  5 */ vectorFromArg(color3),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get texture() { return this.properties1[0].valueAt(0) as BlendMode }
+  set texture(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get textureProperty() { return this.properties1[0] }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
+  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[1] }
+
+  /**
+   * Particle size.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get size() { return this.properties1[2] }
+  set size(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[3] }
+  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  get color2() { return this.properties1[4] }
+  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get color3() { return this.properties1[5] }
+  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -12216,6 +12497,7 @@ const Actions = {
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
@@ -13600,6 +13882,7 @@ export {
   BoxEmitterShape,
   CylinderEmitterShape,
   CommonAction6xxFields2Action,
+  PointSprite,
   Line,
   QuadLine,
   BillboardEx,
