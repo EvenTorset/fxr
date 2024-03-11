@@ -306,10 +306,10 @@ enum ActionType {
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
-  Unk500 = 500,
-  Unk501 = 501,
-  Unk502 = 502,
-  Unk503 = 503,
+  NoParticleSpread = 500,
+  CircularParticleSpread = 501,
+  EllipticalParticleSpread = 502,
+  RectangularParticleSpread = 503,
   /**
    * Very basic point sprite particle. Similar to
    * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
@@ -423,7 +423,7 @@ enum ActionType {
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
   Unk10012_Tracer = 10012,
-  Unk10013_WaterInteractionSimulation = 10013,
+  WaterInteractionSimulation = 10013,
   Unk10014_LensFlare = 10014,
   Unk10015_RichModel = 10015,
   Unk10100 = 10100, // Root node action
@@ -956,10 +956,10 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.Unk500,
-      ActionType.Unk501,
-      ActionType.Unk502,
-      ActionType.Unk503
+      ActionType.NoParticleSpread,
+      ActionType.CircularParticleSpread,
+      ActionType.EllipticalParticleSpread,
+      ActionType.RectangularParticleSpread
     ],
     [
       ActionType.ParticleMultiplier
@@ -986,7 +986,7 @@ const EffectActionSlots = {
       ActionType.Unk10009_SparkCorrectParticle,
       ActionType.Unk10010_Tracer,
       ActionType.Unk10012_Tracer,
-      ActionType.Unk10013_WaterInteractionSimulation,
+      ActionType.WaterInteractionSimulation,
       ActionType.Unk10014_LensFlare,
       ActionType.Unk10015_RichModel,
       ActionType.Unk10200_ForceFieldCancelArea,
@@ -1055,10 +1055,10 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.Unk500,
-      ActionType.Unk501,
-      ActionType.Unk502,
-      ActionType.Unk503
+      ActionType.NoParticleSpread,
+      ActionType.CircularParticleSpread,
+      ActionType.EllipticalParticleSpread,
+      ActionType.RectangularParticleSpread
     ],
     [
       ActionType.EmitAllParticles,
@@ -3165,7 +3165,7 @@ class LevelOfDetailEffect extends Effect {
  * 3     | {@link ActionType.None None}
  * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionType.Unk500 Unk500}
+ * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
  * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
  * 8     | {@link ActionType.ParticleAttributes ParticleAttributes}
  * 9     | {@link ActionType.None None}
@@ -3190,7 +3190,7 @@ class BasicEffect extends Effect {
       new Action,
       new OneTimeEmitter,
       new PointEmitterShape,
-      new Action(ActionType.Unk500),
+      new Action(ActionType.NoParticleSpread),
       new ParticleMultiplier,
       new ParticleAttributes,
       new Action,
@@ -3245,7 +3245,7 @@ class BasicEffect extends Effect {
  * 3     | {@link ActionType.None None}
  * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionType.Unk500 Unk500}
+ * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
  * 7     | {@link ActionType.EmitAllParticles AllChildNodes}
  * 13    | {@link ActionType.None None}
  * 14    | {@link ActionType.None None}
@@ -3265,7 +3265,7 @@ class SharedEmitterEffect extends Effect {
       new Action,
       new OneTimeEmitter,
       new PointEmitterShape,
-      new Action(ActionType.Unk500),
+      new Action(ActionType.NoParticleSpread),
       new EmitAllParticles,
       new Action,
       new Action,
