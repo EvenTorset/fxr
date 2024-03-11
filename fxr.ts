@@ -808,15 +808,17 @@ enum OrientationMode {
   /**
    * Faces south.
    * 
-   * Seemingly identical to {@link UnkSouth}?
+   * See also:
+   * - {@link UnkSouth}
    */
   South = 0,
   /**
-   * Faces the camera.
+   * Faces the camera plane.
    * 
-   * Seemingly identical to {@link UnkCamera}?
+   * See also:
+   * - {@link Camera}
    */
-  Camera = 1,
+  CameraPlane = 1,
   /**
    * Faces the -Z direction of the parent node.
    */
@@ -824,7 +826,8 @@ enum OrientationMode {
   /**
    * Faces south.
    * 
-   * Seemingly identical to {@link South}?
+   * Similar to {@link South}, but this seems to change the projection of the
+   * particle in some way.
    */
   UnkSouth = 3,
   /**
@@ -839,9 +842,10 @@ enum OrientationMode {
   /**
    * Faces the camera.
    * 
-   * Seemingly identical to {@link Camera}?
+   * This is different from {@link CameraPlane}, as this makes it face the
+   * camera's position instead of the camera plane.
    */
-  UnkCamera = 6,
+  Camera = 6,
   /**
    * Tries to face the camera, but is limited to rotation around the Y axis of
    * the parent node.
@@ -6785,7 +6789,7 @@ export interface BillboardExParams {
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.Camera}.
+   * {@link OrientationMode.CameraPlane}.
    */
   orientation?: OrientationMode
   /**
@@ -6988,7 +6992,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     frameIndexOffset = 0,
     rgbMultiplier = 1,
     alphaMultiplier = 1,
-    orientation = OrientationMode.Camera,
+    orientation = OrientationMode.CameraPlane,
     normalMap = 0,
     scaleVariationX = 1,
     scaleVariationY = 1,
@@ -7818,7 +7822,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.Camera}.
+   * {@link OrientationMode.CameraPlane}.
    */
   orientation?: OrientationMode
   /**
@@ -7984,7 +7988,7 @@ export interface MultiTextureBillboardExParams {
 class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
 
   constructor({
-    orientation = OrientationMode.Camera,
+    orientation = OrientationMode.CameraPlane,
     mask = 1,
     layer1 = 1,
     layer2 = 1,
@@ -10176,7 +10180,7 @@ export interface DistortionParams {
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.Camera}.
+   * {@link OrientationMode.CameraPlane}.
    */
   orientation?: OrientationMode
   /**
@@ -10424,7 +10428,7 @@ class Distortion extends CommonAction6xxFields2Action {
   constructor({
     mode = DistortionMode.NormalMap,
     shape = DistortionShape.Rectangle,
-    orientation = OrientationMode.Camera,
+    orientation = OrientationMode.CameraPlane,
     texture = 0,
     normalMap = 0,
     mask = 0,
