@@ -601,6 +601,8 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fields: NumericalField[]
   toJSON(): any
   scale(factor: number): void
+  power(exponent: number): void
+  add(summand: number): void
   minify(): IProperty<T, any>
   valueAt(arg: number): ValueTypeMap[T]
   clone(): IProperty<T, F>
@@ -13274,6 +13276,8 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract fields: NumericalField[]
   abstract toJSON(): any
   abstract scale(factor: number): void
+  abstract power(exponent: number): void
+  abstract add(summand: number): void
   abstract minify(): Property<T, any>
   abstract valueAt(arg: number): ValueTypeMap[T]
   abstract clone(): Property<T, F>
@@ -13391,6 +13395,22 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
       (this.value as number) *= factor
     } else {
       this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+    }
+  }
+
+  power(exponent: number) {
+    if (this.valueType === ValueType.Scalar) {
+      (this.value as number) **= exponent
+    } else {
+      this.value = (this.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+    }
+  }
+
+  add(summand: number) {
+    if (this.valueType === ValueType.Scalar) {
+      (this.value as number) += summand
+    } else {
+      this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
     }
   }
 
@@ -13617,6 +13637,26 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
     }
   }
 
+  power(exponent: number) {
+    for (const kf of this.keyframes) {
+      if (this.valueType === ValueType.Scalar) {
+        (kf.value as number) **= exponent
+      } else {
+        kf.value = (kf.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+      }
+    }
+  }
+
+  add(summand: number) {
+    for (const kf of this.keyframes) {
+      if (this.valueType === ValueType.Scalar) {
+        (kf.value as number) += summand
+      } else {
+        kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+      }
+    }
+  }
+
   minify(): this {
     return this
   }
@@ -13758,6 +13798,18 @@ class ComponentKeyframeProperty<T extends ValueType>
   scale(factor: number) {
     for (const comp of this.components) {
       comp.scale(factor)
+    }
+  }
+
+  power(exponent: number) {
+    for (const comp of this.components) {
+      comp.power(exponent)
+    }
+  }
+
+  add(summand: number) {
+    for (const comp of this.components) {
+      comp.add(summand)
     }
   }
 
