@@ -2749,9 +2749,9 @@ class Node {
             slot9.properties1[5].scale(factor)
             slot9.properties1[6].scale(factor)
             slot9.properties1[7].scale(factor)
-            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
-            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
-            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+            slot9.fields1[4] = new FloatField(slot9.fields1[4].value * factor)
+            slot9.fields1[5] = new FloatField(slot9.fields1[5].value * factor)
+            slot9.fields1[6] = new FloatField(slot9.fields1[6].value * factor)
             break
         }
         switch (slot9.type) {
