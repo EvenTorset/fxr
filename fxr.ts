@@ -2687,30 +2687,56 @@ class Node {
       if (effect.type === EffectType.Basic) {
         const slot7 = effect.actions[7]
         slot7.properties1[0].scale(factor)
-        slot7.properties1[1].scale(factor)
-        slot7.properties1[2].scale(factor)
-        slot7.properties1[3].scale(factor)
 
         const slot9 = effect.actions[9] as ActionWithNumericalFields
         switch (slot9.type) {
+          case ActionType.PointSprite:
+          case ActionType.Tracer:
+          case ActionType.Unk10012_Tracer:
+            slot9.properties1[2].scale(factor)
+            break
+          case ActionType.Line:
+            slot9.properties1[1].scale(factor)
+            break
+          case ActionType.QuadLine:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            break
           case ActionType.BillboardEx:
             slot9.properties1[2].scale(factor)
             slot9.properties1[3].scale(factor)
             slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
             slot9.properties1[20].scale(factor)
-            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
             break
           case ActionType.MultiTextureBillboardEx:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            break
           case ActionType.Model:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            break
           case ActionType.Distortion:
             slot9.properties1[1].scale(factor)
             slot9.properties1[2].scale(factor)
             slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
             break
           case ActionType.RadialBlur:
             slot9.properties1[2].scale(factor)
             slot9.properties1[3].scale(factor)
             slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
+            slot9.properties1[9].scale(factor)
             break
           case ActionType.PointLight:
             slot9.properties1[2].scale(factor)
@@ -2745,6 +2771,7 @@ class Node {
             for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
               slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
             }
+            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
             break
         }
         const slot10 = effect.actions[10]
