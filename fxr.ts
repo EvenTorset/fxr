@@ -6117,7 +6117,7 @@ class RectangularParticleSpread extends Action {
  * Super class for some of the 6xx actions that share part of their fields2
  * structure with other 6xx actions.
  */
-class CommonAction6xxFields2Action extends Action {
+class CommonFields2Action extends Action {
 
   /**
    * Controls the color of the additional bloom effect. The colors of the
@@ -6276,7 +6276,7 @@ export interface PointSpriteParams {
  * Very basic point sprite particle. Similar to
  * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
  */
-class PointSprite extends CommonAction6xxFields2Action {
+class PointSprite extends CommonFields2Action {
 
   constructor({
     texture = 1,
@@ -6556,7 +6556,7 @@ export interface LineParams {
  * Simple line particle. It automatically rotates to match the direction it's
  * moving.
  */
-class Line extends CommonAction6xxFields2Action {
+class Line extends CommonFields2Action {
 
   constructor({
     blendMode = BlendMode.Normal,
@@ -6839,7 +6839,7 @@ export interface QuadLineParams {
  * the width as well as the length. It automatically rotates to match the
  * direction it's moving.
  */
-class QuadLine extends CommonAction6xxFields2Action {
+class QuadLine extends CommonFields2Action {
 
   constructor({
     blendMode = BlendMode.Normal,
@@ -7390,7 +7390,7 @@ export interface BillboardExParams {
  * Particle with a texture that may be animated. This is the most common
  * particle type and it has a lot of useful fields and properties.
  */
-class BillboardEx extends CommonAction6xxFields2Action {
+class BillboardEx extends CommonFields2Action {
 
   constructor({
     texture = 1,
@@ -8411,7 +8411,7 @@ export interface MultiTextureBillboardExParams {
 /**
  * Particle with multiple texture that can scroll.
  */
-class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
+class MultiTextureBillboardEx extends CommonFields2Action {
 
   constructor({
     orientation = OrientationMode.CameraPlane,
@@ -9485,7 +9485,7 @@ export interface ModelParams {
 /**
  * Particle with a 3D model.
  */
-class Model extends CommonAction6xxFields2Action {
+class Model extends CommonFields2Action {
 
   constructor({
     orientation = OrientationMode.ParentNegativeZ,
@@ -10256,7 +10256,7 @@ export interface TracerParams {
 /**
  * Creates a trail behind moving effects.
  */
-class Tracer extends CommonAction6xxFields2Action {
+class Tracer extends CommonFields2Action {
 
   constructor({
     orientation = 1,
@@ -10849,7 +10849,7 @@ export interface DistortionParams {
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
-class Distortion extends CommonAction6xxFields2Action {
+class Distortion extends CommonFields2Action {
 
   constructor({
     mode = DistortionMode.NormalMap,
@@ -11372,7 +11372,7 @@ export interface RadialBlurParams {
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
-class RadialBlur extends CommonAction6xxFields2Action {
+class RadialBlur extends CommonFields2Action {
 
   constructor({
     uniformScale = false,
@@ -14457,7 +14457,7 @@ export {
   CircularParticleSpread,
   EllipticalParticleSpread,
   RectangularParticleSpread,
-  CommonAction6xxFields2Action,
+  CommonFields2Action,
   PointSprite,
   Line,
   QuadLine,
