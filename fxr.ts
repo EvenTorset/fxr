@@ -10185,17 +10185,17 @@ export interface TracerParams {
    */
   blendMode?: ScalarPropertyArg
   /**
-   * The length of the trail source. Defaults to 1.
+   * The width of the trail. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  length?: ScalarPropertyArg
+  width?: ScalarPropertyArg
   /**
-   * Multiplier for {@link length}. Defaults to 1.
+   * Multiplier for {@link width}. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  lengthMultiplier?: ScalarPropertyArg
+  widthMultiplier?: ScalarPropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
@@ -10278,8 +10278,8 @@ class Tracer extends CommonFields2Action {
     specularity = 0.5,
     texture = 1,
     blendMode = BlendMode.Normal,
-    length = 1,
-    lengthMultiplier = 1,
+    width = 1,
+    widthMultiplier = 1,
     color1 = [1, 1, 1, 1],
     color2 = [1, 1, 1, 1],
     color3 = [1, 1, 1, 1],
@@ -10351,8 +10351,8 @@ class Tracer extends CommonFields2Action {
     ], [
       /*  0 */ scalarFromArg(texture),
       /*  1 */ scalarFromArg(blendMode),
-      /*  2 */ scalarFromArg(length),
-      /*  3 */ scalarFromArg(lengthMultiplier),
+      /*  2 */ scalarFromArg(width),
+      /*  3 */ scalarFromArg(widthMultiplier),
       /*  4 */ new ConstantProperty(0),
       /*  5 */ new ConstantProperty(0),
       /*  6 */ vectorFromArg(color1),
@@ -10518,6 +10518,22 @@ class Tracer extends CommonFields2Action {
    * **Argument**: {@link PropertyArgument.Constant Constant 0}
    */
   get blendModeProperty() { return this.properties1[1] }
+
+  /**
+   * The width of the trail.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get width() { return this.properties1[2] }
+  set width(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Multiplier for {@link width}.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  get widthMultiplier() { return this.properties1[3] }
+  set widthMultiplier(value) { setPropertyInList(this.properties1, 3, value) }
 
   /**
    * Color multiplier.
