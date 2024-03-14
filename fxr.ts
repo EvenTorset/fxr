@@ -3379,7 +3379,7 @@ const Effects = {
   [EffectType.SharedEmitter]: SharedEmitterEffect, SharedEmitterEffect,
 }
 
-const commonAction6xxFields2Types = [
+const commonFields2Types = [
   /*  0 */ null,
   /*  1 */ FieldType.Boolean,
   /*  2 */ FieldType.Integer,
@@ -3617,7 +3617,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Line]: {
     Fields1: [
@@ -3625,7 +3625,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.QuadLine]: {
     Fields1: [
@@ -3633,7 +3633,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.BillboardEx]: {
     Fields1: [
@@ -3656,7 +3656,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.MultiTextureBillboardEx]: {
     Fields1: [
@@ -3679,7 +3679,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Model]: {
     Fields1: [
@@ -3704,7 +3704,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Tracer]: {
     Fields1: [
@@ -3726,7 +3726,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Distortion]: {
     Fields1: [
@@ -3745,7 +3745,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       FieldType.Integer,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.RadialBlur]: {
     Fields1: [
@@ -3755,7 +3755,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       FieldType.Integer,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.PointLight]: {
     Fields1: [
