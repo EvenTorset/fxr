@@ -917,6 +917,36 @@ enum OrientationMode {
   ParentYaw = 7,
 }
 
+enum TracerOrientationMode {
+  /**
+   * The tracer source is perpendicular to the direction it's travelling and
+   * the direction of the camera.
+   */
+  Travel = 0,
+  /**
+   * The tracer source is aligned with the local Z-axis, which is detenmined
+   * by the rotation of the node that emits the tracer.
+   */
+  LocalZ = 1,
+  /**
+   * The tracer source is aligned with the global vertical axis.
+   */
+  Vertical = 2,
+  /**
+   * The tracer source is aligned with the global X-axis.
+   */
+  GlobalX = 3,
+  /**
+   * Creates two sources for the tracer with different orientation modes. One
+   * has {@link Vertical} and the other has {@link GlobalX}, forming a cross.
+   */
+  Cross = 4,
+  /**
+   * The tracer source is parallel to the global diagonal (1, 1, 1).
+   */
+  Diagonal = 5,
+}
+
 enum LightingMode {
   /**
    * Same as {@link Lit}, but this seems to sometimes have an extra light
@@ -10065,11 +10095,10 @@ class Model extends CommonFields2Action {
 
 export interface TracerParams {
   /**
-   * Controls the orientation mode for the trail. Note that this is **not**
-   * {@link OrientationMode} - It works differently for this action, and not
-   * all of the values have been documented yet. Defaults to 1.
+   * Tracer orientation mode. See {@link TracerOrientationMode} for more
+   * information. Defaults to {@link TracerOrientationMode.LocalZ}.
    */
-  orientation?: number
+  orientation?: TracerOrientationMode
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how
    * many seconds to wait between new segments being created. Lower values
@@ -10289,7 +10318,7 @@ export interface TracerParams {
 class Tracer extends CommonFields2Action {
 
   constructor({
-    orientation = 1,
+    orientation = TracerOrientationMode.LocalZ,
     segmentInterval = 0,
     segmentDuration = 1,
     concurrentSegments = 50,
