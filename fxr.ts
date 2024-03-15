@@ -14478,6 +14478,7 @@ export {
   AttachMode,
   PropertyArgument,
   OrientationMode,
+  TracerOrientationMode,
   LightingMode,
   DistortionMode,
   DistortionShape,
