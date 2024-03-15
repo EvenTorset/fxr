@@ -4040,6 +4040,36 @@ class Action {
     return this
   }
 
+  withProperties1(...props: { index: number, property: PropertyValue | AnyProperty }[]) {
+    for (const { index, property } of props) {
+      if (property instanceof Property) {
+        this.properties1[index] = property
+      } else {
+        if (Array.isArray(property)) {
+          this.properties1[index] = new ConstantProperty(...property)
+        } else {
+          this.properties1[index] = new ConstantProperty(property)
+        }
+      }
+    }
+    return this
+  }
+
+  withProperties2(...props: { index: number, property: PropertyValue | AnyProperty }[]) {
+    for (const { index, property } of props) {
+      if (property instanceof Property) {
+        this.properties2[index] = property
+      } else {
+        if (Array.isArray(property)) {
+          this.properties2[index] = new ConstantProperty(...property)
+        } else {
+          this.properties2[index] = new ConstantProperty(property)
+        }
+      }
+    }
+    return this
+  }
+
   static fromJSON({
     type,
     fields1 = [],
