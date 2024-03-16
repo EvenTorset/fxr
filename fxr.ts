@@ -6005,7 +6005,7 @@ class EllipticalParticleSpread extends Action {
    * - At 1, the default direction is guaranteed to be chosen.
    * - At -1, the maximum change in direction is guaranteed, meaning the chosen
    * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angle}.
+   * direction based on {@link angleX} and {@link angleY}.
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some
    * unexpected things.
@@ -6058,7 +6058,7 @@ class EllipticalParticleSpread extends Action {
    * - At 1, the default direction is guaranteed to be chosen.
    * - At -1, the maximum change in direction is guaranteed, meaning the chosen
    * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angle}.
+   * direction based on {@link angleX} and {@link angleY}.
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some
    * unexpected things.
@@ -6114,7 +6114,7 @@ class RectangularParticleSpread extends Action {
    * - At 1, the default direction is guaranteed to be chosen.
    * - At -1, the maximum change in direction is guaranteed, meaning the chosen
    * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angle}.
+   * direction based on {@link angleX} and {@link angleY}.
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some
    * unexpected things.
@@ -6161,7 +6161,7 @@ class RectangularParticleSpread extends Action {
    * - At 1, the default direction is guaranteed to be chosen.
    * - At -1, the maximum change in direction is guaranteed, meaning the chosen
    * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angle}.
+   * direction based on {@link angleX} and {@link angleY}.
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some
    * unexpected things.
