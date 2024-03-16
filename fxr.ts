@@ -10100,6 +10100,10 @@ export interface TracerParams {
    */
   orientation?: TracerOrientationMode
   /**
+   * Normal map texture ID. Defaults to 0.
+   */
+  normalMap?: number
+  /**
    * The trail is made up of multiple quads, or *segments*. This controls how
    * many seconds to wait between new segments being created. Lower values
    * produce a smoother trail. Defaults to 0.
@@ -10299,6 +10303,28 @@ export interface TracerParams {
    */
   frameIndexOffset?: ScalarPropertyArg
   /**
+   * Controls how much of the texture's width is used per segment. If
+   * {@link attachedUV} is enabled, this instead controls how much of the
+   * texture's width to use for the entire trail. Defaults to 0.1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  textureFraction?: ScalarPropertyArg
+  /**
+   * Controls how fast the UV coordinates should move horizontally. Defaults
+   * to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedU?: ScalarPropertyArg
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per
+   * segment. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  varianceV?: ScalarPropertyArg
+  /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier. Defaults to 1.
    * 
@@ -10319,6 +10345,7 @@ class Tracer extends CommonFields2Action {
 
   constructor({
     orientation = TracerOrientationMode.LocalZ,
+    normalMap = 0,
     segmentInterval = 0,
     segmentDuration = 1,
     concurrentSegments = 50,
@@ -10345,12 +10372,15 @@ class Tracer extends CommonFields2Action {
     alphaThreshold = 0,
     frameIndex = 0,
     frameIndexOffset = 0,
+    textureFraction = 0.1,
+    speedU = 0,
+    varianceV = 0,
     rgbMultiplier = 1,
     alphaMultiplier = 1,
   }: TracerParams = {}) {
     super(ActionType.Tracer, [
       /*  0 */ new IntField(orientation),
-      /*  1 */ new IntField(0),
+      /*  1 */ new IntField(normalMap),
       /*  2 */ new FloatField(segmentInterval),
       /*  3 */ new FloatField(segmentDuration),
       /*  4 */ new IntField(concurrentSegments),
@@ -10420,9 +10450,9 @@ class Tracer extends CommonFields2Action {
       /*  9 */ scalarFromArg(alphaThreshold),
       /* 10 */ scalarFromArg(frameIndex),
       /* 11 */ scalarFromArg(frameIndexOffset),
-      /* 12 */ new ConstantProperty(0),
-      /* 13 */ new ConstantProperty(0),
-      /* 14 */ new ConstantProperty(0),
+      /* 12 */ scalarFromArg(textureFraction),
+      /* 13 */ scalarFromArg(speedU),
+      /* 14 */ scalarFromArg(varianceV),
       /* 15 */ new ConstantProperty(-1),
     ], [
       /*  0 */ scalarFromArg(rgbMultiplier),
@@ -10442,6 +10472,12 @@ class Tracer extends CommonFields2Action {
    */
   get orientation() { return this.fields1[0].value as number }
   set orientation(value) { this.fields1[0].value = value }
+
+  /**
+   * Normal map texture ID.
+   */
+  get normalMap() { return this.fields1[1].value as number }
+  set normalMap(value) { this.fields1[1].value = value }
 
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how
@@ -10648,6 +10684,33 @@ class Tracer extends CommonFields2Action {
   get frameIndexOffset() { return this.properties1[11] }
   set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
 
+  /**
+   * Controls how much of the texture's width is used per segment. If
+   * {@link attachedUV} is enabled, this instead controls how much of the
+   * texture's width to use for the entire trail.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get textureFraction() { return this.properties1[12] }
+  set textureFraction(value) { setPropertyInList(this.properties1, 12, value) }
+
+  /**
+   * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedU() { return this.properties1[13] }
+  set speedU(value) { setPropertyInList(this.properties1, 13, value) }
+
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per
+   * segment.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get varianceV() { return this.properties1[14] }
+  set varianceV(value) { setPropertyInList(this.properties1, 14, value) }
+  
   /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier.
