@@ -1,14 +1,19 @@
 {
   "name": "@cccode/fxr",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "JavaScript library for editing FXR files from Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
-  "types": "js/fxr.d.ts",
-  "main": "js/fxr.js",
+  "main": "./js/fxr.js",
+  "module": "./js/fxr.js",
+  "exports": {
+    "import": "./js/fxr.js",
+    "require": "./js/cjs/fxr.js"
+  },
+  "types": "./js/fxr.d.ts",
   "scripts": {
     "docs": "npx typedoc",
-    "build": "npx tsc && npx terser js/fxr.js -o js/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='js/fxr.js.map',filename='js/fxr.min.js.map'\" && npx cpy js/fxr.d.ts --rename=fxr.min.d.ts --flat js",
+    "build": "npx tsc && npx terser js/fxr.js -o js/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='js/fxr.js.map',filename='js/fxr.min.js.map'\" && npx cpy js/fxr.d.ts --rename=fxr.min.d.ts --flat js && npx tsc --p tsconfig-cjs.json && npx terser js/cjs/fxr.js -o js/cjs/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='js/cjs/fxr.js.map',filename='js/cjs/fxr.min.js.map'\" && npx cpy js/cjs/fxr.d.ts --rename=fxr.min.d.ts --flat js/cjs && echo {\"type\":\"commonjs\"} > js/cjs/package.json",
     "watch": "npx tsc --watch"
   },
   "files": [

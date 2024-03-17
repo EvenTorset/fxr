@@ -306,16 +306,83 @@ enum ActionType {
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
-  Unk500 = 500,
-  Unk501 = 501,
-  Unk502 = 502,
-  Unk503 = 503,
+  /**
+   * Makes all particles use the default initial direction from the emitter.
+   * 
+   * A particle's initial direction is used for various things that need a
+   * direction but lack an inherent direction, for example the speed from the
+   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
+   * also used to set the rotation of {@link ActionType.Line Line} and
+   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+   * default initial direction is controlled by the emitter shape.
+   * 
+   * This action type has a specialized subclass: {@link NoParticleSpread}
+   */
+  NoParticleSpread = 500,
+  /**
+   * Gives each particle a random initial direction offset within a circular
+   * cone.
+   * 
+   * A particle's initial direction is used for various things that need a
+   * direction but lack an inherent direction, for example the speed from the
+   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
+   * also used to set the rotation of {@link ActionType.Line Line} and
+   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+   * default initial direction is controlled by the emitter shape.
+   * 
+   * This action type has a specialized subclass:
+   * {@link CircularParticleSpread}
+   */
+  CircularParticleSpread = 501,
+  /**
+   * Gives each particle a random initial direction offset within an elliptical
+   * cone.
+   * 
+   * A particle's initial direction is used for various things that need a
+   * direction but lack an inherent direction, for example the speed from the
+   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
+   * also used to set the rotation of {@link ActionType.Line Line} and
+   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+   * default initial direction is controlled by the emitter shape.
+   * 
+   * This action type has a specialized subclass:
+   * {@link EllipticalParticleSpread}
+   */
+  EllipticalParticleSpread = 502,
+  /**
+   * Gives each particle a random initial direction offset within a rectangular
+   * cone.
+   * 
+   * A particle's initial direction is used for various things that need a
+   * direction but lack an inherent direction, for example the speed from the
+   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
+   * also used to set the rotation of {@link ActionType.Line Line} and
+   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+   * default initial direction is controlled by the emitter shape.
+   * 
+   * This action type has a specialized subclass:
+   * {@link RectangularParticleSpread}
+   */
+  RectangularParticleSpread = 503,
+  /**
+   * Very basic point sprite particle. Similar to
+   * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+   * 
+   * This action type has a specialized subclass: {@link PointSprite}
+   */
   PointSprite = 600,
+  /**
+   * Simple line particle. It automatically rotates to match the direction it's
+   * moving.
+   * 
+   * This action type has a specialized subclass: {@link Line}
+   */
   Line = 601,
   /**
-   * Simple rectangular particle with a gradient. Most commonly used to create
-   * lines, like the {@link ActionType.Line Line action}, but this has a
-   * configurable width, so the lines can be made wider than the regular lines.
+   * Simple rectangular particle, very similar to
+   * {@link ActionType.Line Line particles}, but has properties that control
+   * the width as well as the length. It automatically rotates to match the
+   * direction it's moving.
    * 
    * This action type has a specialized subclass: {@link QuadLine}
    */
@@ -410,7 +477,15 @@ enum ActionType {
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
   Unk10012_Tracer = 10012,
-  Unk10013_WaterInteractionSimulation = 10013,
+  /**
+   * Simulates an interaction with water, allowing effects to create ripples in
+   * nearby water. The interaction basically pushes water in a shape controlled
+   * by a texture down to a given depth and holds it there for a duration before
+   * releasing it.
+   * 
+   * This action type has a specialized subclass: {@link WaterInteraction}
+   */
+  WaterInteraction = 10013,
   Unk10014_LensFlare = 10014,
   Unk10015_RichModel = 10015,
   Unk10100 = 10100, // Root node action
@@ -526,6 +601,8 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fields: NumericalField[]
   toJSON(): any
   scale(factor: number): void
+  power(exponent: number): void
+  add(summand: number): void
   minify(): IProperty<T, any>
   valueAt(arg: number): ValueTypeMap[T]
   clone(): IProperty<T, F>
@@ -708,6 +785,14 @@ enum Operator {
   Equal = 1,
   GreaterThanOrEqual = 2,
   GreaterThan = 3,
+
+  /*
+    These two are not part of the format. The StateCondition class will just
+    switch the operands around and use the greater than operators automatically
+    when these are used.
+  */
+  LessThanOrEqual = 4,
+  LessThan = 5,
 }
 
 enum OperandType {
@@ -787,15 +872,17 @@ enum OrientationMode {
   /**
    * Faces south.
    * 
-   * Seemingly identical to {@link UnkSouth}?
+   * See also:
+   * - {@link UnkSouth}
    */
   South = 0,
   /**
-   * Faces the camera.
+   * Faces the camera plane.
    * 
-   * Seemingly identical to {@link UnkCamera}?
+   * See also:
+   * - {@link Camera}
    */
-  Camera = 1,
+  CameraPlane = 1,
   /**
    * Faces the -Z direction of the parent node.
    */
@@ -803,7 +890,8 @@ enum OrientationMode {
   /**
    * Faces south.
    * 
-   * Seemingly identical to {@link South}?
+   * Similar to {@link South}, but this seems to change the projection of the
+   * particle in some way.
    */
   UnkSouth = 3,
   /**
@@ -818,14 +906,45 @@ enum OrientationMode {
   /**
    * Faces the camera.
    * 
-   * Seemingly identical to {@link Camera}?
+   * This is different from {@link CameraPlane}, as this makes it face the
+   * camera's position instead of the camera plane.
    */
-  UnkCamera = 6,
+  Camera = 6,
   /**
    * Tries to face the camera, but is limited to rotation around the Y axis of
    * the parent node.
    */
   ParentYaw = 7,
+}
+
+enum TracerOrientationMode {
+  /**
+   * The tracer source is perpendicular to the direction it's travelling and
+   * the direction of the camera.
+   */
+  Travel = 0,
+  /**
+   * The tracer source is aligned with the local Z-axis, which is detenmined
+   * by the rotation of the node that emits the tracer.
+   */
+  LocalZ = 1,
+  /**
+   * The tracer source is aligned with the global vertical axis.
+   */
+  Vertical = 2,
+  /**
+   * The tracer source is aligned with the global X-axis.
+   */
+  GlobalX = 3,
+  /**
+   * Creates two sources for the tracer with different orientation modes. One
+   * has {@link Vertical} and the other has {@link GlobalX}, forming a cross.
+   */
+  Cross = 4,
+  /**
+   * The tracer source is parallel to the global diagonal (1, 1, 1).
+   */
+  Diagonal = 5,
 }
 
 enum LightingMode {
@@ -931,10 +1050,10 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.Unk500,
-      ActionType.Unk501,
-      ActionType.Unk502,
-      ActionType.Unk503
+      ActionType.NoParticleSpread,
+      ActionType.CircularParticleSpread,
+      ActionType.EllipticalParticleSpread,
+      ActionType.RectangularParticleSpread
     ],
     [
       ActionType.ParticleMultiplier
@@ -961,7 +1080,7 @@ const EffectActionSlots = {
       ActionType.Unk10009_SparkCorrectParticle,
       ActionType.Unk10010_Tracer,
       ActionType.Unk10012_Tracer,
-      ActionType.Unk10013_WaterInteractionSimulation,
+      ActionType.WaterInteraction,
       ActionType.Unk10014_LensFlare,
       ActionType.Unk10015_RichModel,
       ActionType.Unk10200_ForceFieldCancelArea,
@@ -1030,10 +1149,10 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.Unk500,
-      ActionType.Unk501,
-      ActionType.Unk502,
-      ActionType.Unk503
+      ActionType.NoParticleSpread,
+      ActionType.CircularParticleSpread,
+      ActionType.EllipticalParticleSpread,
+      ActionType.RectangularParticleSpread
     ],
     [
       ActionType.EmitAllParticles,
@@ -1545,15 +1664,22 @@ class FXR {
    * Parses an FXR file.
    * @param buffer ArrayBuffer containing the contents of the FXR file.
    */
-  static read(buffer: ArrayBuffer) {
+  static read(buffer: ArrayBuffer, version: FXRVersion = null) {
     const br = new BinaryReader(buffer)
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    const version = br.assertInt16(
-      FXRVersion.DarkSouls3,
-      FXRVersion.Sekiro
-    )
+    if (version !== null) {
+      br.assertInt16(
+        FXRVersion.DarkSouls3,
+        FXRVersion.Sekiro
+      )
+    } else {
+      version = br.assertInt16(
+        FXRVersion.DarkSouls3,
+        FXRVersion.Sekiro
+      )
+    }
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
@@ -1619,7 +1745,7 @@ class FXR {
     br.stepOut()
 
     br.position = nodeOffset
-    const rootNode = Node.read(br) as RootNode
+    const rootNode = Node.read(br, version) as RootNode
 
     return new FXR(
       id,
@@ -1930,7 +2056,7 @@ class State {
    * @returns The new state.
    */
   static from(stateString: string) {
-    return new State(stateString.split('&&').map(e => StateCondition.from(e)))
+    return new State(stateString.split('&&').filter(e => e.trim().length > 0).map(e => StateCondition.from(e)))
   }
 
   static read(br: BinaryReader) {
@@ -1969,22 +2095,14 @@ class State {
 
 class StateCondition {
 
-  operator: Operator
-  unk1: number
-  elseIndex: number
-  leftOperandType: OperandType
-  leftOperandValue: number | null
-  rightOperandType: OperandType
-  rightOperandValue: number | null
-
   /**
-   * A condition for a state. The state is active if all of its conditions are
-   * true. If the condition is false, the state at the {@link elseIndex} is
-   * checked next.
+   * A condition for a state. The state remains active if all of its conditions
+   * are true or if it has no conditions. If the condition is false, the state
+   * is deactivated and the {@link nextState next state} is activated.
    * @param operator Controls what operation should be used for the condition.
    * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
    * to make the condition always true.
-   * @param elseIndex If the condition is false, the state at this index will
+   * @param nextState If the condition is false, the state at this index will
    * be checked instead. Set it to -1 to disable the node if the condition
    * is false.
    * @param leftOperandType Controls what type of value the operand to the left
@@ -2007,24 +2125,16 @@ class StateCondition {
    * - {@link OperandType.StateTime}: This value is ignored and should be null.
    */
   constructor(
-    operator: Operator,
-    unk1: number,
-    elseIndex: number,
-    leftOperandType: OperandType,
-    leftOperandValue: number | null,
-    rightOperandType: OperandType,
-    rightOperandValue: number | null,
-  ) {
-    this.operator = operator
-    this.unk1 = unk1
-    this.elseIndex = elseIndex
-    this.leftOperandType = leftOperandType
-    this.leftOperandValue = leftOperandValue
-    this.rightOperandType = rightOperandType
-    this.rightOperandValue = rightOperandValue
-  }
+    public operator: Operator,
+    public unk1: number,
+    public nextState: number,
+    public leftOperandType: OperandType,
+    public leftOperandValue: number | null,
+    public rightOperandType: OperandType,
+    public rightOperandValue: number | null,
+  ) {}
 
-  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|stop|disable))?\s*$/i
+  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|none))?\s*$/i
   static #reLiteralOperand = /^-?\d+(?:\.\d+)?|-?\.\d+$/
   static #reExternalOperand = /^[Ee]xt(?:ernal)?\((\d+)\)$/
 
@@ -2067,7 +2177,7 @@ class StateCondition {
    * expression = <operand> <operator> <operand>[ else[ goto] <stateIndex>]
    * operand = <number> | External(<integer>) | StateTime | UnkMinus2
    * operator = != | == | > | >= | < | <=
-   * stateIndex = <integer> | stop | disable
+   * stateIndex = <integer> | none
    * ```
    * 
    * `External`, `StateTime`, and `UnkMinus2` are all case-insensitive and have
@@ -2094,42 +2204,30 @@ class StateCondition {
       throw new Error('Syntax error in condition expression: ' + expression)
     }
     let op: Operator
-    let flipOperands = false
     switch (m.groups.op) {
-      case '!=':
-        op = Operator.NotEqual
-        break
+      case '!=': op = Operator.NotEqual; break;
       case '=':
-      case '==':
-        op = Operator.Equal
-        break
-      case '<':
-        flipOperands = true
-      case '>':
-        op = Operator.GreaterThan
-        break
-      case '<=':
-        flipOperands = true
-      case '>=':
-        op = Operator.GreaterThanOrEqual
-        break
+      case '==': op = Operator.Equal; break;
+      case '<': op = Operator.LessThan; break;
+      case '>': op = Operator.GreaterThan; break;
+      case '<=': op = Operator.LessThanOrEqual; break;
+      case '>=': op = Operator.GreaterThanOrEqual; break;
     }
-    const left = this.#parseOperand(flipOperands ? m.groups.right : m.groups.left)
-    const right = this.#parseOperand(flipOperands ? m.groups.left : m.groups.right)
-    let elseIndex = -1
+    const left = this.#parseOperand(m.groups.left)
+    const right = this.#parseOperand(m.groups.right)
+    let nextState = -1
     if ('else' in m.groups) {
       switch (m.groups.else) {
         case '-1':
-        case 'stop':
-        case 'disable':
+        case 'none':
         case undefined:
           break
         default:
-          elseIndex = parseInt(m.groups.else)
+          nextState = parseInt(m.groups.else)
           break
       }
     }
-    return new StateCondition(op, 2, elseIndex, left.type, left.value, right.type, right.value)
+    return new StateCondition(op, 2, nextState, left.type, left.value, right.type, right.value)
   }
 
   static read(br: BinaryReader) {
@@ -2173,7 +2271,7 @@ class StateCondition {
       hasLeftValue ? StateCondition.readOperandValue(br, leftOperand, leftOffset) : null,
       rightOperand,
       hasRightValue ? StateCondition.readOperandValue(br, rightOperand, rightOffset) : null,
-    )
+    ).sortOperands()
   }
 
   static readOperandValue(br: BinaryReader, type: number, offset: number) {
@@ -2196,13 +2294,60 @@ class StateCondition {
     }
   }
 
-  write(bw: BinaryWriter, conditions: StateCondition[]) {
+  /**
+   * Swaps the operands and changes the operator to match if the left operand
+   * is a literal value and the right operand is a non-literal value. This
+   * makes it a bit easier to read the expression, but doesn't affect
+   * functionality.
+   */
+  sortOperands() {
+    if (this.leftOperandType !== OperandType.Literal || this.rightOperandType === OperandType.Literal) {
+      return this
+    }
+    ;[
+      this.leftOperandType,
+      this.leftOperandValue,
+      this.rightOperandType,
+      this.rightOperandValue,
+    ] = [
+      this.rightOperandType,
+      this.rightOperandValue,
+      this.leftOperandType,
+      this.leftOperandValue,
+    ]
+    switch (this.operator) {
+      case Operator.GreaterThan: this.operator = Operator.LessThan; break;
+      case Operator.GreaterThanOrEqual: this.operator = Operator.LessThanOrEqual; break;
+      case Operator.LessThan: this.operator = Operator.GreaterThan; break;
+      case Operator.LessThanOrEqual: this.operator = Operator.GreaterThanOrEqual; break;
+    }
+    return this
+  }
+
+  /**
+   * The {@link Operator.LessThanOrEqual LessThanOrEqual} and
+   * {@link Operator.LessThan LessThan} operators are not valid operators in
+   * the FXR format. This method returns an equivalent condition that *is*
+   * valid.
+   */
+  formatCondition() {
+    if (this.operator !== Operator.LessThan && this.operator !== Operator.LessThanOrEqual) {
+      return this
+    }
+    return new StateCondition(
+      this.operator - 2, this.unk1, this.nextState,
+      this.rightOperandType, this.rightOperandValue,
+      this.leftOperandType, this.leftOperandValue
+    )
+  }
+
+  #write(bw: BinaryWriter, conditions: StateCondition[]) {
     const count = conditions.length
     bw.writeInt16(this.operator | this.unk1 << 2)
     bw.writeUint8(0)
     bw.writeUint8(1)
     bw.writeInt32(0)
-    bw.writeInt32(this.elseIndex)
+    bw.writeInt32(this.nextState)
     bw.writeInt32(0)
     bw.writeInt16(this.leftOperandType)
     bw.writeInt8(0)
@@ -2229,6 +2374,10 @@ class StateCondition {
     bw.writeInt32(0)
     bw.writeInt32(0)
     conditions.push(this)
+  }
+
+  write(bw: BinaryWriter, conditions: StateCondition[]) {
+    this.formatCondition().#write(bw, conditions)
   }
 
   writeFields(bw: BinaryWriter, index: number): number {
@@ -2260,58 +2409,45 @@ class StateCondition {
     return count
   }
 
-  toString() {
-    let left, op, right
-    if (this.leftOperandType === OperandType.Literal && this.rightOperandType !== OperandType.Literal) {
-      right = this.leftOperandValue
-      switch (this.rightOperandType) {
-        case OperandType.External:
-          left = `External(${this.rightOperandValue})`
-          break
-        case OperandType.UnkMinus2:
-        case OperandType.StateTime:
-          left = OperandType[this.rightOperandType]
-          break
-      }
-      switch (this.operator) {
-        case Operator.NotEqual: op = '!='; break
-        case Operator.Equal: op = '=='; break
-        case Operator.GreaterThan: op = '<'; break
-        case Operator.GreaterThanOrEqual: op = '<='; break
-      }
-    } else {
-      switch (this.leftOperandType) {
-        case OperandType.External:
-          left = `External(${this.leftOperandValue})`
-          break
-        case OperandType.UnkMinus2:
-        case OperandType.StateTime:
-          left = OperandType[this.leftOperandType]
-          break
-        case OperandType.Literal:
-          left = this.leftOperandValue
-          break
-      }
-      switch (this.rightOperandType) {
-        case OperandType.External:
-          right = `External(${this.rightOperandValue})`
-          break
-        case OperandType.UnkMinus2:
-        case OperandType.StateTime:
-          right = OperandType[this.rightOperandType]
-          break
-        case OperandType.Literal:
-          right = this.rightOperandValue
-          break
-      }
-      switch (this.operator) {
-        case Operator.NotEqual: op = '!='; break
-        case Operator.Equal: op = '=='; break
-        case Operator.GreaterThan: op = '>'; break
-        case Operator.GreaterThanOrEqual: op = '>='; break
-      }
+  clone() {
+    return new StateCondition(
+      this.operator, this.unk1, this.nextState,
+      this.leftOperandType, this.leftOperandValue,
+      this.rightOperandType, this.rightOperandValue
+    )
+  }
+
+  #toString() {
+    let left: string | number, right: string | number
+    switch (this.leftOperandType) {
+      case OperandType.External:
+        left = `External(${this.leftOperandValue})`
+        break
+      case OperandType.UnkMinus2:
+      case OperandType.StateTime:
+        left = OperandType[this.leftOperandType]
+        break
+      case OperandType.Literal:
+        left = this.leftOperandValue
+        break
     }
-    return `${left} ${op} ${right} else ${this.elseIndex}`
+    switch (this.rightOperandType) {
+      case OperandType.External:
+        right = `External(${this.rightOperandValue})`
+        break
+      case OperandType.UnkMinus2:
+      case OperandType.StateTime:
+        right = OperandType[this.rightOperandType]
+        break
+      case OperandType.Literal:
+        right = this.rightOperandValue
+        break
+    }
+    return `${left} ${['!=','==','>=','>','<=','<'][this.operator]} ${right} else ${this.nextState}`
+  }
+
+  toString() {
+    return this.clone().sortOperands().#toString()
   }
 
 }
@@ -2341,7 +2477,7 @@ class Node {
     this.nodes = nodes
   }
 
-  static read(br: BinaryReader) {
+  static read(br: BinaryReader, version: FXRVersion) {
     const type = br.readInt16()
     const node = new (type in Nodes ? Nodes[type] : Node)
     node.type = type
@@ -2361,19 +2497,19 @@ class Node {
     br.stepIn(nodeOffset)
     node.nodes = []
     for (let i = 0; i < nodeCount; ++i) {
-      node.nodes.push(Node.read(br))
+      node.nodes.push(Node.read(br, version))
     }
     br.stepOut()
     br.stepIn(effectOffset)
     node.effects = []
     for (let i = 0; i < effectCount; ++i) {
-      node.effects.push(Effect.read(br))
+      node.effects.push(Effect.read(br, version))
     }
     br.stepOut()
     br.stepIn(actionOffset)
     node.actions = []
     for (let i = 0; i < actionCount; ++i) {
-      node.actions.push(Action.read(br))
+      node.actions.push(Action.read(br, version))
     }
     br.stepOut()
     return node
@@ -2449,9 +2585,9 @@ class Node {
   }) {
     const node = new (type in Nodes ? Nodes[type] : Node)
     node.type = type
-    node.actions = actions.map(action => Action.fromJSON(action))
-    node.effects = effects.map(effect => Effect.fromJSON(effect))
-    node.nodes = nodes.map(node => Node.fromJSON(node))
+    node.actions = actions?.map(action => Action.fromJSON(action)) ?? []
+    node.effects = effects?.map(effect => Effect.fromJSON(effect)) ?? []
+    node.nodes = nodes?.map(node => Node.fromJSON(node)) ?? []
     return node
   }
 
@@ -2581,30 +2717,56 @@ class Node {
       if (effect.type === EffectType.Basic) {
         const slot7 = effect.actions[7]
         slot7.properties1[0].scale(factor)
-        slot7.properties1[1].scale(factor)
-        slot7.properties1[2].scale(factor)
-        slot7.properties1[3].scale(factor)
 
         const slot9 = effect.actions[9] as ActionWithNumericalFields
         switch (slot9.type) {
+          case ActionType.PointSprite:
+          case ActionType.Tracer:
+          case ActionType.Unk10012_Tracer:
+            slot9.properties1[2].scale(factor)
+            break
+          case ActionType.Line:
+            slot9.properties1[1].scale(factor)
+            break
+          case ActionType.QuadLine:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            break
           case ActionType.BillboardEx:
             slot9.properties1[2].scale(factor)
             slot9.properties1[3].scale(factor)
             slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
             slot9.properties1[20].scale(factor)
-            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
             break
           case ActionType.MultiTextureBillboardEx:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            break
           case ActionType.Model:
+            slot9.properties1[1].scale(factor)
+            slot9.properties1[2].scale(factor)
+            slot9.properties1[3].scale(factor)
+            break
           case ActionType.Distortion:
             slot9.properties1[1].scale(factor)
             slot9.properties1[2].scale(factor)
             slot9.properties1[3].scale(factor)
+            slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
             break
           case ActionType.RadialBlur:
             slot9.properties1[2].scale(factor)
             slot9.properties1[3].scale(factor)
             slot9.properties1[4].scale(factor)
+            slot9.properties1[5].scale(factor)
+            slot9.properties1[6].scale(factor)
+            slot9.properties1[9].scale(factor)
             break
           case ActionType.PointLight:
             slot9.properties1[2].scale(factor)
@@ -2617,9 +2779,9 @@ class Node {
             slot9.properties1[5].scale(factor)
             slot9.properties1[6].scale(factor)
             slot9.properties1[7].scale(factor)
-            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
-            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
-            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+            slot9.fields1[4] = new FloatField(slot9.fields1[4].value * factor)
+            slot9.fields1[5] = new FloatField(slot9.fields1[5].value * factor)
+            slot9.fields1[6] = new FloatField(slot9.fields1[6].value * factor)
             break
         }
         switch (slot9.type) {
@@ -2639,6 +2801,7 @@ class Node {
             for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
               slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
             }
+            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
             break
         }
         const slot10 = effect.actions[10]
@@ -3021,7 +3184,7 @@ class Effect {
     this.actions = actions
   }
 
-  static read(br: BinaryReader) {
+  static read(br: BinaryReader, version: FXRVersion) {
     const type = br.readInt16()
     const effect = new (type in Effects ? Effects[type] : Effect)
     effect.type = type
@@ -3037,7 +3200,7 @@ class Effect {
     br.stepIn(actionOffset)
     effect.actions = []
     for (let i = 0; i < actionCount; ++i) {
-      effect.actions.push(Action.read(br))
+      effect.actions.push(Action.read(br, version))
     }
     br.stepOut()
     return effect
@@ -3072,7 +3235,7 @@ class Effect {
   }) {
     const effect = new (type in Effects ? Effects[type] : Effect)
     effect.type = type
-    effect.actions = actions.map(action => Action.fromJSON(action))
+    effect.actions = actions?.map(action => Action.fromJSON(action)) ?? []
     return effect
   }
 
@@ -3123,7 +3286,7 @@ class LevelOfDetailEffect extends Effect {
  * 3     | {@link ActionType.None None}
  * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionType.Unk500 Unk500}
+ * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
  * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
  * 8     | {@link ActionType.ParticleAttributes ParticleAttributes}
  * 9     | {@link ActionType.None None}
@@ -3148,7 +3311,7 @@ class BasicEffect extends Effect {
       new Action,
       new OneTimeEmitter,
       new PointEmitterShape,
-      new Action(ActionType.Unk500),
+      new NoParticleSpread,
       new ParticleMultiplier,
       new ParticleAttributes,
       new Action,
@@ -3203,7 +3366,7 @@ class BasicEffect extends Effect {
  * 3     | {@link ActionType.None None}
  * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionType.Unk500 Unk500}
+ * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
  * 7     | {@link ActionType.EmitAllParticles AllChildNodes}
  * 13    | {@link ActionType.None None}
  * 14    | {@link ActionType.None None}
@@ -3223,7 +3386,7 @@ class SharedEmitterEffect extends Effect {
       new Action,
       new OneTimeEmitter,
       new PointEmitterShape,
-      new Action(ActionType.Unk500),
+      new NoParticleSpread,
       new EmitAllParticles,
       new Action,
       new Action,
@@ -3246,7 +3409,7 @@ const Effects = {
   [EffectType.SharedEmitter]: SharedEmitterEffect, SharedEmitterEffect,
 }
 
-const commonAction6xxFields2Types = [
+const commonFields2Types = [
   /*  0 */ null,
   /*  1 */ FieldType.Boolean,
   /*  2 */ FieldType.Integer,
@@ -3464,13 +3627,43 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.CircularParticleSpread]: {
+    Fields1: [
+      FieldType.Boolean,
+    ],
+    Fields2: []
+  },
+  [ActionType.EllipticalParticleSpread]: {
+    Fields1: [
+      FieldType.Boolean,
+    ],
+    Fields2: []
+  },
+  [ActionType.PointSprite]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Integer,
+      null,
+      null,
+      null,
+    ],
+    Fields2: commonFields2Types
+  },
+  [ActionType.Line]: {
+    Fields1: [
+      FieldType.Integer,
+      null,
+      null,
+    ],
+    Fields2: commonFields2Types
+  },
   [ActionType.QuadLine]: {
     Fields1: [
       FieldType.Integer,
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.BillboardEx]: {
     Fields1: [
@@ -3493,7 +3686,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.MultiTextureBillboardEx]: {
     Fields1: [
@@ -3516,7 +3709,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Model]: {
     Fields1: [
@@ -3541,7 +3734,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       null,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Tracer]: {
     Fields1: [
@@ -3563,7 +3756,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       null,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.Distortion]: {
     Fields1: [
@@ -3582,7 +3775,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       FieldType.Integer,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.RadialBlur]: {
     Fields1: [
@@ -3592,7 +3785,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
       FieldType.Integer,
       FieldType.Integer,
     ],
-    Fields2: commonAction6xxFields2Types
+    Fields2: commonFields2Types
   },
   [ActionType.PointLight]: {
     Fields1: [
@@ -3661,6 +3854,16 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
+  [ActionType.WaterInteraction]: {
+    Fields1: [
+      FieldType.Integer,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+      FieldType.Float,
+    ],
+    Fields2: []
+  },
   [ActionType.SpotLight]: {
     Fields1: [
       null,
@@ -3719,7 +3922,7 @@ class Action {
     this.section10s = section10s
   }
 
-  static read(br: BinaryReader): Action {
+  static read(br: BinaryReader, version: FXRVersion): Action {
     const type = br.readInt16()
     br.position += 6
     // br.readUint8() // Unk02
@@ -3760,9 +3963,16 @@ class Action {
 
     br.stepIn(fieldOffset)
     let fields1: Field[], fields2: Field[]
-    if (type in ActionFieldTypes) {
-      fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
-      fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
+    if (version !== FXRVersion.DarkSouls3 && type in ActionFieldTypes) {
+      const pos = br.position
+      try {
+        fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
+        fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
+      } catch {
+        br.position = pos
+        fields1 = Field.readMany(br, fieldCount1, this)
+        fields2 = Field.readMany(br, fieldCount2, this)
+      }
     } else {
       fields1 = Field.readMany(br, fieldCount1, this)
       fields2 = Field.readMany(br, fieldCount2, this)
@@ -3855,6 +4065,36 @@ class Action {
         this.fields2[index] = field
       } else {
         this.fields2[index].value = field
+      }
+    }
+    return this
+  }
+
+  withProperties1(...props: { index: number, property: PropertyValue | AnyProperty }[]) {
+    for (const { index, property } of props) {
+      if (property instanceof Property) {
+        this.properties1[index] = property
+      } else {
+        if (Array.isArray(property)) {
+          this.properties1[index] = new ConstantProperty(...property)
+        } else {
+          this.properties1[index] = new ConstantProperty(property)
+        }
+      }
+    }
+    return this
+  }
+
+  withProperties2(...props: { index: number, property: PropertyValue | AnyProperty }[]) {
+    for (const { index, property } of props) {
+      if (property instanceof Property) {
+        this.properties2[index] = property
+      } else {
+        if (Array.isArray(property)) {
+          this.properties2[index] = new ConstantProperty(...property)
+        } else {
+          this.properties2[index] = new ConstantProperty(property)
+        }
       }
     }
     return this
@@ -5621,10 +5861,323 @@ class CylinderEmitterShape extends Action {
 }
 
 /**
+ * Makes all particles use the default initial direction from the emitter.
+ * 
+ * A particle's initial direction is used for various things that need a
+ * direction but lack an inherent direction, for example the speed from the
+ * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
+ * used to set the rotation of {@link ActionType.Line Line} and
+ * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+ * default initial direction is controlled by the emitter shape.
+ */
+class NoParticleSpread extends Action {
+
+  constructor() {
+    super(ActionType.NoParticleSpread)
+  }
+
+}
+
+/**
+ * Gives each particle a random initial direction offset within a circular
+ * cone.
+ * 
+ * A particle's initial direction is used for various things that need a
+ * direction but lack an inherent direction, for example the speed from the
+ * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
+ * used to set the rotation of {@link ActionType.Line Line} and
+ * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+ * default initial direction is controlled by the emitter shape.
+ */
+class CircularParticleSpread extends Action {
+
+  declare fields1: [BoolField]
+
+  /**
+   * @param angle The maximum change in direction in degrees, the angle of the
+   * cone. Defaults to 30.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * @param distribution Controls the distribution of the random directions
+   * that can be chosen.
+   * 
+   * - At 0, all directions within the cone have an equal chance of being
+   * chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
+   * direction will always be a fixed number of degrees away from the default
+   * direction based on {@link angle}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some
+   * unexpected things.
+   * 
+   * Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * @param unkField No so much unknown, just unnamed. If enabled, this limits
+   * the possible directions to only positive values on one axis, effectively
+   * cutting the cone of possible directions in half. Defaults to false.
+   */
+  constructor(
+    angle: ScalarPropertyArg = 30,
+    distribution: ScalarPropertyArg = 0,
+    unkField: boolean = false
+  ) {
+    super(ActionType.CircularParticleSpread, [
+      new BoolField(unkField)
+    ], [], [
+      scalarFromArg(angle),
+      scalarFromArg(distribution),
+    ])
+  }
+
+  /**
+   * The maximum change in direction in degrees, the angle of the cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get angle(): ScalarProperty { return this.properties1[0] }
+  set angle(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * 
+   * - At 0, all directions within the cone have an equal chance of being
+   * chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
+   * direction will always be a fixed number of degrees away from the default
+   * direction based on {@link angle}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some
+   * unexpected things.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get distribution(): ScalarProperty { return this.properties1[1] }
+  set distribution(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * No so much unknown, just unnamed. If enabled, this limits the possible
+   * directions to only positive values on one axis, effectively cutting the
+   * cone of possible directions in half.
+   */
+  get unkField() { return this.fields1[0].value }
+  set unkField(value) { this.fields1[0].value = value }
+
+}
+
+/**
+ * Gives each particle a random initial direction offset within an elliptical
+ * cone.
+ * 
+ * A particle's initial direction is used for various things that need a
+ * direction but lack an inherent direction, for example the speed from the
+ * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
+ * used to set the rotation of {@link ActionType.Line Line} and
+ * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+ * default initial direction is controlled by the emitter shape.
+ */
+class EllipticalParticleSpread extends Action {
+
+  declare fields1: [BoolField]
+
+  /**
+   * @param angleX The maximum change in direction in degrees, one of the
+   * angles of the elliptical cone. Defaults to 30.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   * @param angleX The maximum change in direction in degrees, one of the
+   * angles of the elliptical cone. Defaults to 30.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleX}
+   * @param distribution Controls the distribution of the random directions
+   * that can be chosen.
+   * 
+   * - At 0, all directions within the cone have an equal chance of being
+   * chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
+   * direction will always be a fixed number of degrees away from the default
+   * direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some
+   * unexpected things.
+   * 
+   * Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * @param unkField No so much unknown, just unnamed. If enabled, this limits
+   * the possible directions to only positive values on one axis, effectively
+   * cutting the cone of possible directions in half. Defaults to false.
+   */
+  constructor(
+    angleX: ScalarPropertyArg = 30,
+    angleY: ScalarPropertyArg = 30,
+    distribution: ScalarPropertyArg = 0,
+    unkField: boolean = false
+  ) {
+    super(ActionType.CircularParticleSpread, [
+      new BoolField(unkField)
+    ], [], [
+      scalarFromArg(angleX),
+      scalarFromArg(angleY),
+      scalarFromArg(distribution),
+    ])
+  }
+
+  /**
+   * The maximum change in direction in degrees, one of the angles of the
+   * elliptical cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get angleX(): ScalarProperty { return this.properties1[0] }
+  set angleX(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * The maximum change in direction in degrees, one of the angles of the
+   * elliptical cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get angleY(): ScalarProperty { return this.properties1[1] }
+  set angleY(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * 
+   * - At 0, all directions within the cone have an equal chance of being
+   * chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
+   * direction will always be a fixed number of degrees away from the default
+   * direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some
+   * unexpected things.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get distribution(): ScalarProperty { return this.properties1[2] }
+  set distribution(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * No so much unknown, just unnamed. If enabled, this limits the possible
+   * directions to only positive values on one axis, effectively cutting the
+   * cone of possible directions in half.
+   */
+  get unkField() { return this.fields1[0].value }
+  set unkField(value) { this.fields1[0].value = value }
+
+}
+
+/**
+ * Gives each particle a random initial direction offset within a rectangular
+ * cone.
+ * 
+ * A particle's initial direction is used for various things that need a
+ * direction but lack an inherent direction, for example the speed from the
+ * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
+ * used to set the rotation of {@link ActionType.Line Line} and
+ * {@link ActionType.QuadLine QuadLine} particles without any movement. The
+ * default initial direction is controlled by the emitter shape.
+ */
+class RectangularParticleSpread extends Action {
+
+  /**
+   * @param angleX The maximum change in direction in degrees, one of the
+   * angles of the rectangular cone. Defaults to 30.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   * @param angleX The maximum change in direction in degrees, one of the
+   * angles of the rectangular cone. Defaults to 30.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleX}
+   * @param distribution Controls the distribution of the random directions
+   * that can be chosen.
+   * 
+   * - At 0, all directions within the cone have an equal chance of being
+   * chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
+   * direction will always be a fixed number of degrees away from the default
+   * direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some
+   * unexpected things.
+   * 
+   * Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  constructor(
+    angleX: ScalarPropertyArg = 30,
+    angleY: ScalarPropertyArg = 30,
+    distribution: ScalarPropertyArg = 0
+  ) {
+    super(ActionType.CircularParticleSpread, [], [], [
+      scalarFromArg(angleX),
+      scalarFromArg(angleY),
+      scalarFromArg(distribution),
+    ])
+  }
+
+  /**
+   * The maximum change in direction in degrees, one of the angles of the
+   * rectangular cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get angleX(): ScalarProperty { return this.properties1[0] }
+  set angleX(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+
+  /**
+   * The maximum change in direction in degrees, one of the angles of the
+   * rectangular cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get angleY(): ScalarProperty { return this.properties1[1] }
+  set angleY(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * 
+   * - At 0, all directions within the cone have an equal chance of being
+   * chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
+   * direction will always be a fixed number of degrees away from the default
+   * direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some
+   * unexpected things.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get distribution(): ScalarProperty { return this.properties1[2] }
+  set distribution(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+}
+
+/**
  * Super class for some of the 6xx actions that share part of their fields2
  * structure with other 6xx actions.
  */
-class CommonAction6xxFields2Action extends Action {
+class CommonFields2Action extends Action {
 
   /**
    * Controls the color of the additional bloom effect. The colors of the
@@ -5683,6 +6236,566 @@ class CommonAction6xxFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
+
+}
+
+export interface PointSpriteParams {
+  /**
+   * Texture ID. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  texture?: BlendMode | ScalarProperty
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Particle size. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  size?: ScalarPropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+}
+/**
+ * Very basic point sprite particle. Similar to
+ * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+ */
+class PointSprite extends CommonFields2Action {
+
+  constructor({
+    texture = 1,
+    blendMode = BlendMode.Normal,
+    size = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    color3 = [1, 1, 1, 1],
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+  }: PointSpriteParams = {}) {
+    super(ActionType.PointSprite, [
+      /*  0 */ new IntField(-2),
+      /*  1 */ new IntField(-2),
+      /*  2 */ new IntField(0),
+      /*  3 */ new IntField(1),
+      /*  4 */ new IntField(1),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(0),
+      /* 28 */ new IntField(0),
+      /* 29 */ new IntField(0),
+      /* 30 */ new IntField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(0),
+      /* 33 */ new IntField(0),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(-1),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new IntField(0),
+      /* 39 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(texture),
+      /*  1 */ scalarFromArg(blendMode),
+      /*  2 */ scalarFromArg(size),
+      /*  3 */ vectorFromArg(color1),
+      /*  4 */ vectorFromArg(color2),
+      /*  5 */ vectorFromArg(color3),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get texture() { return this.properties1[0].valueAt(0) as BlendMode }
+  set texture(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get textureProperty() { return this.properties1[0] }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
+  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[1] }
+
+  /**
+   * Particle size.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get size() { return this.properties1[2] }
+  set size(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[3] }
+  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  get color2() { return this.properties1[4] }
+  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get color3() { return this.properties1[5] }
+  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
+
+}
+
+export interface LineParams {
+  /**
+   * Blend mode. Defaults to {@link BlendMode.Normal}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * The length of the line. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  length?: ScalarPropertyArg
+  /**
+   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
+   * 
+   * Seemingly identical to {@link color2}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
+   * 
+   * Seemingly identical to {@link color1}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * The color for the start of the line. Defaults to [1, 1, 1, 1].
+   * 
+   * This color transitions linearly into the {@link endColor end color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  startColor?: Vector4PropertyArg
+  /**
+   * The color for the end of the line. Defaults to [1, 1, 1, 1].
+   * 
+   * This color transitions linearly into the {@link startColor start color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  endColor?: Vector4PropertyArg
+  /**
+   * Multiplier for the line {@link length}. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  lengthMultiplier?: ScalarPropertyArg
+  /**
+   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier. Defaults to 1.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the color of the additional bloom effect. The colors of the
+   * particles will be multiplied with this color to get the final color
+   * of the bloom effect. Defaults to [1, 1, 1].
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomStrength}
+   */
+  bloomColor?: Vector3
+  /**
+   * Controls the strength of the additional bloom effect. Defaults to 0.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomColor}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from
+   * the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance
+   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * Defaults to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+}
+/**
+ * Simple line particle. It automatically rotates to match the direction it's
+ * moving.
+ */
+class Line extends CommonFields2Action {
+
+  constructor({
+    blendMode = BlendMode.Normal,
+    length = 1,
+    color1 = [1, 1, 1, 1],
+    color2 = [1, 1, 1, 1],
+    startColor = [1, 1, 1, 1],
+    endColor = [1, 1, 1, 1],
+    lengthMultiplier = 1,
+    color3 = [1, 1, 1, 1],
+    rgbMultiplier = 1,
+    alphaMultiplier = 1,
+    bloomColor = [1, 1, 1],
+    bloomStrength = 0,
+    minDistance = -1,
+    maxDistance = -1,
+  }: LineParams = {}) {
+    super(ActionType.Line, [
+      /*  0 */ new IntField(-1),
+      /*  1 */ new IntField(1),
+      /*  2 */ new IntField(1),
+    ], [
+      /*  0 */ new IntField(0),
+      /*  1 */ new IntField(0),
+      /*  2 */ new IntField(8),
+      /*  3 */ new IntField(0),
+      /*  4 */ new IntField(1),
+      /*  5 */ new FloatField(bloomColor[0]),
+      /*  6 */ new FloatField(bloomColor[1]),
+      /*  7 */ new FloatField(bloomColor[2]),
+      /*  8 */ new FloatField(bloomStrength),
+      /*  9 */ new IntField(0),
+      /* 10 */ new IntField(0),
+      /* 11 */ new IntField(0),
+      /* 12 */ new IntField(0),
+      /* 13 */ new IntField(0),
+      /* 14 */ new FloatField(-1),
+      /* 15 */ new FloatField(-1),
+      /* 16 */ new FloatField(-1),
+      /* 17 */ new FloatField(-1),
+      /* 18 */ new FloatField(minDistance),
+      /* 19 */ new FloatField(maxDistance),
+      /* 20 */ new IntField(0),
+      /* 21 */ new IntField(0),
+      /* 22 */ new IntField(0),
+      /* 23 */ new IntField(0),
+      /* 24 */ new IntField(0),
+      /* 25 */ new FloatField(1),
+      /* 26 */ new FloatField(0),
+      /* 27 */ new IntField(0),
+      /* 28 */ new IntField(0),
+      /* 29 */ new IntField(0),
+      /* 30 */ new IntField(0),
+      /* 31 */ new IntField(0),
+      /* 32 */ new IntField(0),
+      /* 33 */ new IntField(0),
+      /* 34 */ new FloatField(0),
+      /* 35 */ new IntField(-2),
+      /* 36 */ new IntField(-2),
+      /* 37 */ new IntField(0),
+      /* 38 */ new IntField(0),
+      /* 39 */ new IntField(0),
+    ], [
+      /*  0 */ scalarFromArg(blendMode),
+      /*  1 */ scalarFromArg(length),
+      /*  2 */ vectorFromArg(color1),
+      /*  3 */ vectorFromArg(color2),
+      /*  4 */ vectorFromArg(startColor),
+      /*  5 */ vectorFromArg(endColor),
+      /*  6 */ scalarFromArg(lengthMultiplier),
+      /*  7 */ vectorFromArg(color3),
+    ], [
+      /*  0 */ scalarFromArg(rgbMultiplier),
+      /*  1 */ scalarFromArg(alphaMultiplier),
+      /*  2 */ new ConstantProperty(0),
+      /*  3 */ new ConstantProperty(1, 1, 1, 1),
+      /*  4 */ new ConstantProperty(1, 1, 1, 1),
+      /*  5 */ new ConstantProperty(1, 1, 1, 1),
+      /*  6 */ new ConstantProperty(0),
+    ])
+  }
+
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
+  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   */
+  get blendModeProperty() { return this.properties1[0] }
+
+  /**
+   * The length of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  get length() { return this.properties1[1] }
+  set length(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+
+  /**
+   * Color multiplier for the entire line.
+   * 
+   * Seemingly identical to {@link color2}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color1() { return this.properties1[2] }
+  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Color multiplier for the entire line.
+   * 
+   * Seemingly identical to {@link color1}?
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get color2() { return this.properties1[3] }
+  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
+   * The color for the start of the line.
+   * 
+   * This color transitions linearly into the {@link endColor end color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get startColor() { return this.properties1[4] }
+  set startColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+
+  /**
+   * The color for the end of the line.
+   * 
+   * This color transitions linearly into the {@link startColor start color} across the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get endColor() { return this.properties1[5] }
+  set endColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
+
+  /**
+   * Multiplier for the line {@link length}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get lengthMultiplier() { return this.properties1[6] }
+  set lengthMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 6, value) }
+
+  /**
+   * Color multiplier for the entire line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get color3() { return this.properties1[7] }
+  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 7, value) }
+
+  /**
+   * Scalar multiplier for the color that does not affect the alpha.
+   * Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get rgbMultiplier() { return this.properties2[0] }
+  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
+
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  get alphaMultiplier() { return this.properties2[1] }
+  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -5781,11 +6894,12 @@ export interface QuadLineParams {
   unkScalarProp2_6?: ScalarPropertyArg
 }
 /**
- * Simple rectangular particle with a gradient. Most commonly used to create
- * lines, like the {@link ActionType.Line Line action}, but this has a
- * configurable width, so the lines can be made wider than the regular lines.
+ * Simple rectangular particle, very similar to
+ * {@link ActionType.Line Line particles}, but has properties that control
+ * the width as well as the length. It automatically rotates to match the
+ * direction it's moving.
  */
-class QuadLine extends CommonAction6xxFields2Action {
+class QuadLine extends CommonFields2Action {
 
   constructor({
     blendMode = BlendMode.Normal,
@@ -5890,22 +7004,22 @@ class QuadLine extends CommonAction6xxFields2Action {
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * Seemingly identical to {@link colorMultiplier2}?
+   * Seemingly identical to {@link color2}?
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  get colorMultiplier1() { return this.properties1[3] }
-  set colorMultiplier1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
+  get color1() { return this.properties1[3] }
+  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
 
   /**
    * Color multiplier for the entire rectangle.
    * 
-   * Seemingly identical to {@link colorMultiplier1}?
+   * Seemingly identical to {@link color1}?
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  get colorMultiplier2() { return this.properties1[4] }
-  set colorMultiplier2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+  get color2() { return this.properties1[4] }
+  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
 
   /**
    * The color for the "start" edge of the rectangle.
@@ -5938,8 +7052,8 @@ class QuadLine extends CommonAction6xxFields2Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get colorMultiplier3() { return this.properties1[9] }
-  set colorMultiplier3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 9, value) }
+  get color3() { return this.properties1[9] }
+  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 9, value) }
 
   get rgbMultiplier() { return this.properties2[0] }
   set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
@@ -6161,7 +7275,7 @@ export interface BillboardExParams {
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.Camera}.
+   * {@link OrientationMode.CameraPlane}.
    */
   orientation?: OrientationMode
   /**
@@ -6336,7 +7450,7 @@ export interface BillboardExParams {
  * Particle with a texture that may be animated. This is the most common
  * particle type and it has a lot of useful fields and properties.
  */
-class BillboardEx extends CommonAction6xxFields2Action {
+class BillboardEx extends CommonFields2Action {
 
   constructor({
     texture = 1,
@@ -6364,7 +7478,7 @@ class BillboardEx extends CommonAction6xxFields2Action {
     frameIndexOffset = 0,
     rgbMultiplier = 1,
     alphaMultiplier = 1,
-    orientation = OrientationMode.Camera,
+    orientation = OrientationMode.CameraPlane,
     normalMap = 0,
     scaleVariationX = 1,
     scaleVariationY = 1,
@@ -7194,7 +8308,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.Camera}.
+   * {@link OrientationMode.CameraPlane}.
    */
   orientation?: OrientationMode
   /**
@@ -7357,10 +8471,10 @@ export interface MultiTextureBillboardExParams {
 /**
  * Particle with multiple texture that can scroll.
  */
-class MultiTextureBillboardEx extends CommonAction6xxFields2Action {
+class MultiTextureBillboardEx extends CommonFields2Action {
 
   constructor({
-    orientation = OrientationMode.Camera,
+    orientation = OrientationMode.CameraPlane,
     mask = 1,
     layer1 = 1,
     layer2 = 1,
@@ -8431,7 +9545,7 @@ export interface ModelParams {
 /**
  * Particle with a 3D model.
  */
-class Model extends CommonAction6xxFields2Action {
+class Model extends CommonFields2Action {
 
   constructor({
     orientation = OrientationMode.ParentNegativeZ,
@@ -8981,11 +10095,14 @@ class Model extends CommonAction6xxFields2Action {
 
 export interface TracerParams {
   /**
-   * Controls the orientation mode for the trail. Note that this is **not**
-   * {@link OrientationMode} - It works differently for this action, and not
-   * all of the values have been documented yet. Defaults to 1.
+   * Tracer orientation mode. See {@link TracerOrientationMode} for more
+   * information. Defaults to {@link TracerOrientationMode.LocalZ}.
    */
-  orientation?: number
+  orientation?: TracerOrientationMode
+  /**
+   * Normal map texture ID. Defaults to 0.
+   */
+  normalMap?: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how
    * many seconds to wait between new segments being created. Lower values
@@ -9131,17 +10248,17 @@ export interface TracerParams {
    */
   blendMode?: ScalarPropertyArg
   /**
-   * The length of the trail source. Defaults to 1.
+   * The width of the trail. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  length?: ScalarPropertyArg
+  width?: ScalarPropertyArg
   /**
-   * Multiplier for {@link length}. Defaults to 1.
+   * Multiplier for {@link width}. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  lengthMultiplier?: ScalarPropertyArg
+  widthMultiplier?: ScalarPropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
@@ -9186,6 +10303,28 @@ export interface TracerParams {
    */
   frameIndexOffset?: ScalarPropertyArg
   /**
+   * Controls how much of the texture's width is used per segment. If
+   * {@link attachedUV} is enabled, this instead controls how much of the
+   * texture's width to use for the entire trail. Defaults to 0.1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  textureFraction?: ScalarPropertyArg
+  /**
+   * Controls how fast the UV coordinates should move horizontally. Defaults
+   * to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedU?: ScalarPropertyArg
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per
+   * segment. Defaults to 0.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  varianceV?: ScalarPropertyArg
+  /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier. Defaults to 1.
    * 
@@ -9202,10 +10341,11 @@ export interface TracerParams {
 /**
  * Creates a trail behind moving effects.
  */
-class Tracer extends CommonAction6xxFields2Action {
+class Tracer extends CommonFields2Action {
 
   constructor({
-    orientation = 1,
+    orientation = TracerOrientationMode.LocalZ,
+    normalMap = 0,
     segmentInterval = 0,
     segmentDuration = 1,
     concurrentSegments = 50,
@@ -9224,20 +10364,23 @@ class Tracer extends CommonAction6xxFields2Action {
     specularity = 0.5,
     texture = 1,
     blendMode = BlendMode.Normal,
-    length = 1,
-    lengthMultiplier = 1,
+    width = 1,
+    widthMultiplier = 1,
     color1 = [1, 1, 1, 1],
     color2 = [1, 1, 1, 1],
     color3 = [1, 1, 1, 1],
     alphaThreshold = 0,
     frameIndex = 0,
     frameIndexOffset = 0,
+    textureFraction = 0.1,
+    speedU = 0,
+    varianceV = 0,
     rgbMultiplier = 1,
     alphaMultiplier = 1,
   }: TracerParams = {}) {
     super(ActionType.Tracer, [
       /*  0 */ new IntField(orientation),
-      /*  1 */ new IntField(0),
+      /*  1 */ new IntField(normalMap),
       /*  2 */ new FloatField(segmentInterval),
       /*  3 */ new FloatField(segmentDuration),
       /*  4 */ new IntField(concurrentSegments),
@@ -9297,8 +10440,8 @@ class Tracer extends CommonAction6xxFields2Action {
     ], [
       /*  0 */ scalarFromArg(texture),
       /*  1 */ scalarFromArg(blendMode),
-      /*  2 */ scalarFromArg(length),
-      /*  3 */ scalarFromArg(lengthMultiplier),
+      /*  2 */ scalarFromArg(width),
+      /*  3 */ scalarFromArg(widthMultiplier),
       /*  4 */ new ConstantProperty(0),
       /*  5 */ new ConstantProperty(0),
       /*  6 */ vectorFromArg(color1),
@@ -9307,9 +10450,9 @@ class Tracer extends CommonAction6xxFields2Action {
       /*  9 */ scalarFromArg(alphaThreshold),
       /* 10 */ scalarFromArg(frameIndex),
       /* 11 */ scalarFromArg(frameIndexOffset),
-      /* 12 */ new ConstantProperty(0),
-      /* 13 */ new ConstantProperty(0),
-      /* 14 */ new ConstantProperty(0),
+      /* 12 */ scalarFromArg(textureFraction),
+      /* 13 */ scalarFromArg(speedU),
+      /* 14 */ scalarFromArg(varianceV),
       /* 15 */ new ConstantProperty(-1),
     ], [
       /*  0 */ scalarFromArg(rgbMultiplier),
@@ -9329,6 +10472,12 @@ class Tracer extends CommonAction6xxFields2Action {
    */
   get orientation() { return this.fields1[0].value as number }
   set orientation(value) { this.fields1[0].value = value }
+
+  /**
+   * Normal map texture ID.
+   */
+  get normalMap() { return this.fields1[1].value as number }
+  set normalMap(value) { this.fields1[1].value = value }
 
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how
@@ -9466,6 +10615,22 @@ class Tracer extends CommonAction6xxFields2Action {
   get blendModeProperty() { return this.properties1[1] }
 
   /**
+   * The width of the trail.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get width() { return this.properties1[2] }
+  set width(value) { setPropertyInList(this.properties1, 2, value) }
+
+  /**
+   * Multiplier for {@link width}.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  get widthMultiplier() { return this.properties1[3] }
+  set widthMultiplier(value) { setPropertyInList(this.properties1, 3, value) }
+
+  /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
@@ -9520,6 +10685,33 @@ class Tracer extends CommonAction6xxFields2Action {
   set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
 
   /**
+   * Controls how much of the texture's width is used per segment. If
+   * {@link attachedUV} is enabled, this instead controls how much of the
+   * texture's width to use for the entire trail.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get textureFraction() { return this.properties1[12] }
+  set textureFraction(value) { setPropertyInList(this.properties1, 12, value) }
+
+  /**
+   * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get speedU() { return this.properties1[13] }
+  set speedU(value) { setPropertyInList(this.properties1, 13, value) }
+
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per
+   * segment.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  get varianceV() { return this.properties1[14] }
+  set varianceV(value) { setPropertyInList(this.properties1, 14, value) }
+  
+  /**
    * Scalar multiplier for the color that does not affect the alpha.
    * Effectively a brightness multiplier.
    * 
@@ -9552,7 +10744,7 @@ export interface DistortionParams {
   /**
    * Controls the orientation mode for the particles. See
    * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.Camera}.
+   * {@link OrientationMode.CameraPlane}.
    */
   orientation?: OrientationMode
   /**
@@ -9795,12 +10987,12 @@ export interface DistortionParams {
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
-class Distortion extends CommonAction6xxFields2Action {
+class Distortion extends CommonFields2Action {
 
   constructor({
     mode = DistortionMode.NormalMap,
     shape = DistortionShape.Rectangle,
-    orientation = OrientationMode.Camera,
+    orientation = OrientationMode.CameraPlane,
     texture = 0,
     normalMap = 0,
     mask = 0,
@@ -10318,7 +11510,7 @@ export interface RadialBlurParams {
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
-class RadialBlur extends CommonAction6xxFields2Action {
+class RadialBlur extends CommonFields2Action {
 
   constructor({
     uniformScale = false,
@@ -11297,6 +12489,93 @@ class ParticleWindAcceleration extends Action {
 
 }
 
+export interface WaterInteractionParams {
+  /**
+   * The ID for a texture that controls the shape of the interaction. Defaults
+   * to 50004.
+   */
+  texture?: number
+  /**
+   * Controls how deep to push the water, or how intense the ripples caused by
+   * the interaction are. Defaults to 1.
+   */
+  depth?: number
+  /**
+   * Controls the size of the interaction area. Ripples caused by the
+   * interaction may go outside of the area. Defaults to 1.
+   */
+  scale?: number
+  /**
+   * The time it takes for the water to be pushed down to the {@link depth} in
+   * seconds. Defaults to 0.15.
+   */
+  descent?: number
+  /**
+   * The duration of the interaction in seconds. Basically how long to hold the
+   * water pressed down. Defaults to 0.15.
+   */
+  duration?: number
+}
+/**
+ * Simulates an interaction with water, allowing effects to create ripples in
+ * nearby water. The interaction basically pushes water in a shape controlled
+ * by a texture down to a given depth and holds it there for a duration before
+ * releasing it.
+ */
+class WaterInteraction extends Action {
+
+  constructor({
+    texture = 50004,
+    depth = 1,
+    scale = 1,
+    descent = 0.15,
+    duration = 0.15,
+  }: WaterInteractionParams = {}) {
+    super(ActionType.WaterInteraction, [
+      new IntField(texture),
+      new FloatField(depth),
+      new FloatField(scale),
+      new FloatField(descent),
+      new FloatField(duration),
+    ])
+  }
+
+  /**
+   * The ID for a texture that controls the shape of the interaction.
+   */
+  get texture() { return this.fields1[0].value as number }
+  set texture(value) { this.fields1[0].value = value }
+
+  /**
+   * Controls how deep to push the water, or how intense the ripples caused by
+   * the interaction are.
+   */
+  get depth() { return this.fields1[1].value as number }
+  set depth(value) { this.fields1[1].value = value }
+
+  /**
+   * Controls the size of the interaction area. Ripples caused by the
+   * interaction may go outside of the area.
+   */
+  get scale() { return this.fields1[2].value as number }
+  set scale(value) { this.fields1[2].value = value }
+
+  /**
+   * The time it takes for the water to be pushed down to the {@link depth} in
+   * seconds.
+   */
+  get descent() { return this.fields1[3].value as number }
+  set descent(value) { this.fields1[3].value = value }
+
+  /**
+   * The duration of the interaction in seconds. Basically how long to hold the
+   * water pressed down.
+   */
+  get duration() { return this.fields1[4].value as number }
+  set duration(value) { this.fields1[4].value = value }
+
+}
+
 export interface SpotLightParams {
   /**
    * Controls the diffuse color of the light.
@@ -11873,6 +13152,12 @@ const Actions = {
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
+  [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
+  [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
+  [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
+  [ActionType.PointSprite]: PointSprite, PointSprite,
+  [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
@@ -11885,6 +13170,7 @@ const Actions = {
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
+  [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.SpotLight]: SpotLight, SpotLight,
 }
 
@@ -12155,6 +13441,8 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract fields: NumericalField[]
   abstract toJSON(): any
   abstract scale(factor: number): void
+  abstract power(exponent: number): void
+  abstract add(summand: number): void
   abstract minify(): Property<T, any>
   abstract valueAt(arg: number): ValueTypeMap[T]
   abstract clone(): Property<T, F>
@@ -12272,6 +13560,22 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
       (this.value as number) *= factor
     } else {
       this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+    }
+  }
+
+  power(exponent: number) {
+    if (this.valueType === ValueType.Scalar) {
+      (this.value as number) **= exponent
+    } else {
+      this.value = (this.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+    }
+  }
+
+  add(summand: number) {
+    if (this.valueType === ValueType.Scalar) {
+      (this.value as number) += summand
+    } else {
+      this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
     }
   }
 
@@ -12498,6 +13802,26 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
     }
   }
 
+  power(exponent: number) {
+    for (const kf of this.keyframes) {
+      if (this.valueType === ValueType.Scalar) {
+        (kf.value as number) **= exponent
+      } else {
+        kf.value = (kf.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+      }
+    }
+  }
+
+  add(summand: number) {
+    for (const kf of this.keyframes) {
+      if (this.valueType === ValueType.Scalar) {
+        (kf.value as number) += summand
+      } else {
+        kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+      }
+    }
+  }
+
   minify(): this {
     return this
   }
@@ -12639,6 +13963,18 @@ class ComponentKeyframeProperty<T extends ValueType>
   scale(factor: number) {
     for (const comp of this.components) {
       comp.scale(factor)
+    }
+  }
+
+  power(exponent: number) {
+    for (const comp of this.components) {
+      comp.power(exponent)
+    }
+  }
+
+  add(summand: number) {
+    for (const comp of this.components) {
+      comp.add(summand)
     }
   }
 
@@ -13205,6 +14541,7 @@ export {
   AttachMode,
   PropertyArgument,
   OrientationMode,
+  TracerOrientationMode,
   LightingMode,
   DistortionMode,
   DistortionShape,
@@ -13255,7 +14592,13 @@ export {
   SphereEmitterShape,
   BoxEmitterShape,
   CylinderEmitterShape,
-  CommonAction6xxFields2Action,
+  NoParticleSpread,
+  CircularParticleSpread,
+  EllipticalParticleSpread,
+  RectangularParticleSpread,
+  CommonFields2Action,
+  PointSprite,
+  Line,
   QuadLine,
   BillboardEx,
   MultiTextureBillboardEx,
@@ -13268,6 +14611,7 @@ export {
   ParticleWindSpeed,
   NodeWindAcceleration,
   ParticleWindAcceleration,
+  WaterInteraction,
   SpotLight,
 
   Field,

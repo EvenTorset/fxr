@@ -9,7 +9,7 @@ While the library does not have any dependencies, it *does* have some dev depend
 npm i @cccode/fxr --omit=dev
 ```
 
-If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](/NODE.md).
+If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](https://github.com/EvenTorset/fxr/blob/main/NODE.md).
 
 ## WitchyBND
 While it has evolved quite a bit, this library started out as a JS port of [WitchyBND's C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/RSFXR.cs). Most of the code for reading and writing the format is based on that.
