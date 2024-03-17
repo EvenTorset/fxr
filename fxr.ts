@@ -14557,6 +14557,7 @@ export {
   StateCondition,
 
   Node,
+  NodeWithEffects,
   RootNode,
   ProxyNode,
   LevelOfDetailNode,
