@@ -13449,15 +13449,15 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
 
 }
 
-class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
-  extends Property<T, F>
-  implements IModifiableProperty<T, F>, IValueProperty<T, F> {
+class ValueProperty<T extends ValueType>
+  extends Property<T, ValuePropertyFunction>
+  implements IModifiableProperty<T, ValuePropertyFunction>, IValueProperty<T, ValuePropertyFunction> {
 
   value: ValueTypeMap[T]
 
   constructor(
     valueType: T,
-    func: F,
+    func: ValuePropertyFunction,
     value: ValueTypeMap[T],
     modifiers: Modifier[] = []
   ) {
@@ -13490,25 +13490,25 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
     }
   }
 
-  static fromFields<T extends ValueType, F extends ValuePropertyFunction>(
+  static fromFields<T extends ValueType>(
     valueType: T,
-    func: F,
+    func: ValuePropertyFunction,
     modifiers: Modifier[],
     fieldValues: number[]
-  ): ValueProperty<T, F> {
+  ): ValueProperty<T> {
     switch (func) {
       case PropertyFunction.Zero:
         return new ZeroProperty(valueType).withModifiers(
           ...modifiers
-        ) as unknown as ValueProperty<T, F>
+        ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
         return new OneProperty(valueType).withModifiers(
           ...modifiers
-        ) as unknown as ValueProperty<T, F>
+        ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
         return new ConstantProperty(...(fieldValues as [number] | Vector)).withModifiers(
           ...modifiers
-        ) as unknown as ValueProperty<T, F>
+        ) as unknown as ValueProperty<T>
       default:
         throw new Error('Incompatible or unknown function in property: ' + func)
     }
@@ -13556,6 +13556,7 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
   }
 
   scale(factor: number) {
+    this.function = PropertyFunction.Constant
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) *= factor
     } else {
@@ -13564,6 +13565,7 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
   }
 
   power(exponent: number) {
+    this.function = PropertyFunction.Constant
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) **= exponent
     } else {
@@ -13572,6 +13574,7 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
   }
 
   add(summand: number) {
+    this.function = PropertyFunction.Constant
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) += summand
     } else {
@@ -13579,7 +13582,7 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
     }
   }
 
-  minify(): ValueProperty<T, any> {
+  minify(): ValueProperty<T> {
     switch (this.function) {
       case PropertyFunction.Zero:
       case PropertyFunction.One:
@@ -13607,7 +13610,7 @@ class ValueProperty<T extends ValueType, F extends ValuePropertyFunction>
     return this.value
   }
 
-  clone(): ValueProperty<T, F> {
+  clone(): ValueProperty<T> {
     return new ValueProperty(this.valueType, this.function, this.value, this.modifiers.map(e => Modifier.copy(e)))
   }
 
@@ -14001,7 +14004,7 @@ class ComponentKeyframeProperty<T extends ValueType>
 
 }
 
-class ZeroProperty extends ValueProperty<any, PropertyFunction.Zero> {
+class ZeroProperty extends ValueProperty<any> {
   constructor(valueType: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
     super(
       valueType,
@@ -14012,7 +14015,7 @@ class ZeroProperty extends ValueProperty<any, PropertyFunction.Zero> {
   }
 }
 
-class OneProperty extends ValueProperty<any, PropertyFunction.One> {
+class OneProperty extends ValueProperty<any> {
   constructor(valueType: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
     super(
       valueType,
@@ -14023,7 +14026,7 @@ class OneProperty extends ValueProperty<any, PropertyFunction.One> {
   }
 }
 
-class ConstantProperty<T extends ValueType> extends ValueProperty<T, PropertyFunction.Constant> {
+class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
   constructor(
     ...args:
