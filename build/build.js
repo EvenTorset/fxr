@@ -91,8 +91,12 @@ export default async function() {
       [ActionType.${data.name}]: {
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
-            return `${k}: { default: ${v.default ?? 0}, paths: {}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''} },`
-          }).join('\n        ')}
+            let defValue = v.default ?? 0
+            if (Array.isArray(defValue)) {
+              defValue = `[${defValue.join(', ')}]`
+            }
+            return `${k}: { default: ${defValue}, paths: {}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''} },`
+          }).join('\n          ')}
         },
         games: {
           ${Object.entries(data.games).map(([k, v]) => {
@@ -116,8 +120,10 @@ export default async function() {
         export interface ${data.name}Params {
           ${Object.entries(data.properties).map(([k, v]) => {
             let defValue = v.default ?? 0
-            if (typeof defValue === 'string' && !defValue.startsWith('[')) {
+            if (typeof defValue === 'string') {
               defValue = `{@link ${defValue}}`
+            } else if (Array.isArray(defValue)) {
+              defValue = `\`[${defValue.join(', ')}]\``
             } else {
               defValue = `\`${defValue}\``
             }

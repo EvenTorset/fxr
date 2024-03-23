@@ -392,13 +392,6 @@ enum ActionType {
    */
   RectangularParticleSpread = 503,
   /**
-   * Very basic point sprite particle. Similar to
-   * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
-   * 
-   * This action type has a specialized subclass: {@link PointSprite}
-   */
-  PointSprite = 600,
-  /**
    * Simple line particle. It automatically rotates to match the direction it's
    * moving.
    * 
@@ -543,6 +536,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
+  /**
+   * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+   * 
+   * This action type has a specialized subclass: {@link PointSprite}
+   */
+  PointSprite = 600,
   /**
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
    * 
@@ -1104,10 +1103,10 @@ const ActionData: {
   [ActionType.PeriodicEmitter]: {
     props: {
       interval: { default: 1, paths: {} },
-    perInterval: { default: 1, paths: {} },
-    totalIntervals: { default: -1, paths: {} },
-    maxConcurrent: { default: -1, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      perInterval: { default: 1, paths: {} },
+      totalIntervals: { default: -1, paths: {} },
+      maxConcurrent: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1125,10 +1124,10 @@ const ActionData: {
   [ActionType.CylinderEmitterShape]: {
     props: {
       unk_ds3_f1_0: { default: 5, paths: {}, field: FieldType.Integer },
-    volume: { default: true, paths: {}, field: FieldType.Boolean },
-    yAxis: { default: true, paths: {}, field: FieldType.Boolean },
-    radius: { default: 1, paths: {} },
-    height: { default: 1, paths: {} },
+      volume: { default: true, paths: {}, field: FieldType.Boolean },
+      yAxis: { default: true, paths: {}, field: FieldType.Boolean },
+      radius: { default: 1, paths: {} },
+      height: { default: 1, paths: {} },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1140,114 +1139,197 @@ const ActionData: {
     [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
+  [ActionType.PointSprite]: {
+    props: {
+      texture: { default: 1, paths: {}, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      size: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_2: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_3: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+      fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+      properties1: ['size','color1','color2','color3'],
+      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+    },
+    [Game.Sekiro]: {
+      fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+      properties1: ['texture','blendMode','size','color1','color2','color3'],
+      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+    },
+    [Game.EldenRing]: {
+      fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+      properties1: ['texture','blendMode','size','color1','color2','color3'],
+      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+    },
+    [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
   [ActionType.BillboardEx]: {
     props: {
       texture: { default: 1, paths: {}, field: FieldType.Integer },
-    blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-    offsetX: { default: 0, paths: {} },
-    offsetY: { default: 0, paths: {} },
-    offsetZ: { default: 0, paths: {} },
-    width: { default: 1, paths: {} },
-    height: { default: 1, paths: {} },
-    color1: { default: [1, 1, 1, 1], paths: {} },
-    color2: { default: [1, 1, 1, 1], paths: {} },
-    color3: { default: [1, 1, 1, 1], paths: {} },
-    alphaThreshold: { default: 0, paths: {} },
-    rotationX: { default: 0, paths: {} },
-    rotationY: { default: 0, paths: {} },
-    rotationZ: { default: 0, paths: {} },
-    rotationSpeedX: { default: 0, paths: {} },
-    rotationSpeedY: { default: 0, paths: {} },
-    rotationSpeedZ: { default: 0, paths: {} },
-    rotationSpeedMultiplierX: { default: 1, paths: {} },
-    rotationSpeedMultiplierY: { default: 1, paths: {} },
-    rotationSpeedMultiplierZ: { default: 1, paths: {} },
-    depthOffset: { default: 0, paths: {} },
-    frameIndex: { default: 0, paths: {} },
-    frameIndexOffset: { default: 0, paths: {} },
-    rgbMultiplier: { default: 1, paths: {} },
-    alphaMultiplier: { default: 1, paths: {} },
-    orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
-    normalMap: { default: 0, paths: {}, field: FieldType.Integer },
-    scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-    scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-    uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-    columns: { default: 1, paths: {}, field: FieldType.Integer },
-    totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
-    interpolateFrames: { default: true, paths: {}, field: FieldType.Boolean },
-    bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-    bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-    bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-    bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-    minDistance: { default: -1, paths: {}, field: FieldType.Float },
-    maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-    negativeDepthOffset: { default: 0, paths: {}, field: FieldType.Float },
-    shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
-    specular: { default: 0, paths: {}, field: FieldType.Integer },
-    glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
-    lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
-    specularity: { default: 0.5, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_11: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_12: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
-    unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-    unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-    unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-    unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-    unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-    unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_25: { default: 1, paths: {}, field: FieldType.Float },
-    unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
-    unk_ds3_p1_21: { default: 0, paths: {} },
-    unk_ds3_p1_22: { default: 0, paths: {} },
-    unk_ds3_p2_2: { default: 0, paths: {} },
-    unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-    unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-    unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-    unk_ds3_p2_6: { default: 0, paths: {} },
-    unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_sdt_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_39: { default: 1, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_40: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f2_44: { default: 0, paths: {}, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      offsetX: { default: 0, paths: {} },
+      offsetY: { default: 0, paths: {} },
+      offsetZ: { default: 0, paths: {} },
+      width: { default: 1, paths: {} },
+      height: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      alphaThreshold: { default: 0, paths: {} },
+      rotationX: { default: 0, paths: {} },
+      rotationY: { default: 0, paths: {} },
+      rotationZ: { default: 0, paths: {} },
+      rotationSpeedX: { default: 0, paths: {} },
+      rotationSpeedY: { default: 0, paths: {} },
+      rotationSpeedZ: { default: 0, paths: {} },
+      rotationSpeedMultiplierX: { default: 1, paths: {} },
+      rotationSpeedMultiplierY: { default: 1, paths: {} },
+      rotationSpeedMultiplierZ: { default: 1, paths: {} },
+      depthOffset: { default: 0, paths: {} },
+      frameIndex: { default: 0, paths: {} },
+      frameIndexOffset: { default: 0, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
+      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
+      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      columns: { default: 1, paths: {}, field: FieldType.Integer },
+      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
+      interpolateFrames: { default: true, paths: {}, field: FieldType.Boolean },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
+      specular: { default: 0, paths: {}, field: FieldType.Integer },
+      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
+      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
+      unk_ds3_p1_21: { default: 0, paths: {} },
+      unk_ds3_p1_22: { default: 0, paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_40: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_44: { default: 0, paths: {}, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
       fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unk_ds3_f2_25','negativeDepthOffset','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
       properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
       properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
     },
     [Game.Sekiro]: {
       fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unk_ds3_f2_25','negativeDepthOffset','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
       properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
       properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
     },
@@ -1258,16 +1340,16 @@ const ActionData: {
   [ActionType.Unk10500]: {
     props: {
       rateOfTime: { default: 1, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_2: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_5: { default: 0, paths: {}, field: FieldType.Float },
-    unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-    unk_sdt_f1_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_2: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_5: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_9: { default: 0, paths: {}, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -7026,263 +7108,6 @@ class CommonFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface PointSpriteParams {
-  /**
-   * Texture ID. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  texture?: BlendMode | ScalarProperty
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * Particle size. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  size?: ScalarPropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color1?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  color2?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  color3?: Vector4PropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-}
-/**
- * Very basic point sprite particle. Similar to
- * {@link ActionType.BillboardEx BillboardEx}, but far simpler.
- */
-class PointSprite extends CommonFields2Action {
-
-  constructor({
-    texture = 1,
-    blendMode = BlendMode.Normal,
-    size = 1,
-    color1 = [1, 1, 1, 1],
-    color2 = [1, 1, 1, 1],
-    color3 = [1, 1, 1, 1],
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-  }: PointSpriteParams = {}) {
-    super(ActionType.PointSprite, [
-      /*  0 */ new IntField(-2),
-      /*  1 */ new IntField(-2),
-      /*  2 */ new IntField(0),
-      /*  3 */ new IntField(1),
-      /*  4 */ new IntField(1),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new IntField(0),
-      /*  4 */ new IntField(1),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new IntField(0),
-      /* 21 */ new IntField(0),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1),
-      /* 26 */ new FloatField(0),
-      /* 27 */ new IntField(0),
-      /* 28 */ new IntField(0),
-      /* 29 */ new IntField(0),
-      /* 30 */ new IntField(0),
-      /* 31 */ new IntField(0),
-      /* 32 */ new IntField(0),
-      /* 33 */ new IntField(0),
-      /* 34 */ new FloatField(0),
-      /* 35 */ new IntField(-1),
-      /* 36 */ new IntField(-2),
-      /* 37 */ new IntField(0),
-      /* 38 */ new IntField(0),
-      /* 39 */ new IntField(0),
-    ], [
-      /*  0 */ scalarFromArg(texture),
-      /*  1 */ scalarFromArg(blendMode),
-      /*  2 */ scalarFromArg(size),
-      /*  3 */ vectorFromArg(color1),
-      /*  4 */ vectorFromArg(color2),
-      /*  5 */ vectorFromArg(color3),
-    ], [
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ new ConstantProperty(0),
-      /*  3 */ new ConstantProperty(1, 1, 1, 1),
-      /*  4 */ new ConstantProperty(1, 1, 1, 1),
-      /*  5 */ new ConstantProperty(1, 1, 1, 1),
-      /*  6 */ new ConstantProperty(0),
-    ])
-  }
-
-  /**
-   * Texture ID.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get texture() { return this.properties1[0].valueAt(0) as BlendMode }
-  set texture(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
-  /**
-   * Texture ID.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get textureProperty() { return this.properties1[0] }
-
-  /**
-   * Blend mode.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
-  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
-  /**
-   * Blend mode.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[1] }
-
-  /**
-   * Particle size.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get size() { return this.properties1[2] }
-  set size(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color1() { return this.properties1[3] }
-  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  get color2() { return this.properties1[4] }
-  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get color3() { return this.properties1[5] }
-  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -13084,6 +12909,364 @@ class CylinderEmitterShape extends DataAction {
   }
 }
 
+export interface PointSpriteParams {
+  /**
+   * Texture ID.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture?: ScalarPropertyArg
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Particle size.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  size?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  unk_ds3_f1_2?: number
+  unk_ds3_f1_3?: number
+  unk_ds3_f1_4?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: number
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_30?: number
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_33?: number
+  unk_sdt_f2_34?: number
+  unk_sdt_f2_35?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_sdt_f2_38?: number
+  unk_er_f1_3?: number
+  unk_er_f1_4?: number
+  unk_er_f2_39?: number
+}
+
+/**
+ * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+ */
+class PointSprite extends DataAction {
+  declare type: ActionType.PointSprite
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture: ScalarPropertyArg
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * Particle size.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  size: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  unk_ds3_f1_2: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_30: number
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_33: number
+  unk_sdt_f2_34: number
+  unk_sdt_f2_35: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_sdt_f2_38: number
+  unk_er_f1_3: number
+  unk_er_f1_4: number
+  unk_er_f2_39: number
+  constructor(props: PointSpriteParams = {}) {
+    super(ActionType.PointSprite)
+    this.assign(props)
+  }
+}
+
 export interface BillboardExParams {
   /**
    * Texture ID.
@@ -13479,12 +13662,6 @@ export interface BillboardExParams {
    */
   maxDistance?: number
   /**
-   * Negative values will make the particle draw in front of objects closer to the camera, while positive values will make it draw behind objects farther away from the camera.
-   * 
-   * **Default**: `0`
-   */
-  negativeDepthOffset?: number
-  /**
    * Controls how dark shaded parts of the particle are.
    * 
    * **Default**: `0`
@@ -13555,7 +13732,8 @@ export interface BillboardExParams {
   unk_ds3_f2_22?: number
   unk_ds3_f2_23?: number
   unk_ds3_f2_24?: number
-  unk_ds3_f2_25?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
   unk_ds3_f2_27?: number
   unk_ds3_f2_28?: number
   unk_ds3_f2_29?: number
@@ -13902,10 +14080,6 @@ class BillboardEx extends DataAction {
    */
   maxDistance: number
   /**
-   * Negative values will make the particle draw in front of objects closer to the camera, while positive values will make it draw behind objects farther away from the camera.
-   */
-  negativeDepthOffset: number
-  /**
    * Controls how dark shaded parts of the particle are.
    */
   shadowDarkness: number
@@ -13966,7 +14140,8 @@ class BillboardEx extends DataAction {
   unk_ds3_f2_22: number
   unk_ds3_f2_23: number
   unk_ds3_f2_24: number
-  unk_ds3_f2_25: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
@@ -14089,7 +14264,6 @@ const Actions = {
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
   [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
   [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
-  [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
@@ -14109,6 +14283,7 @@ const Actions = {
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   /*#ActionsList end*/
@@ -15280,7 +15455,6 @@ export {
   EllipticalParticleSpread,
   RectangularParticleSpread,
   CommonFields2Action,
-  PointSprite,
   Line,
   QuadLine,
   MultiTextureBillboardEx,
@@ -15299,6 +15473,7 @@ export {
   SFXReference,
   PeriodicEmitter,
   CylinderEmitterShape,
+  PointSprite,
   BillboardEx,
   Unk10500,
   /*#ActionsExport end*/
