@@ -1,3 +1,41 @@
+enum Game {
+  /**
+   * Does not represent any specific game.
+   * 
+   * Using this with the {@link FXR.read} method will cause it to parse
+   * everything as generic classes. This means that none of the methods in the
+   * library that manipulate things that depend on the game version will work,
+   * like the {@link Node.scale} and {@link Node.recolor} methods. It also
+   * means that the library will not be able to convert it to work with other
+   * games.
+   * 
+   * This is intended to be used only for research or for parsing modded files
+   * that may not be structured correctly.
+   * 
+   * Note that this does not work with the {@link FXR.toArrayBuffer} method
+   * unless the FXR only contains generic classes. If it contains any node
+   * classes other than {@link GenericNode}, or any {@link DataAction}s, it
+   * must be given a specific game to write to.
+   */
+  Generic,
+  /**
+   * Dark Souls III
+   */
+  DarkSouls3,
+  /**
+   * Sekiro: Shadows Die Twice
+   */
+  Sekiro,
+  /**
+   * Elden Ring
+   */
+  EldenRing,
+  /**
+   * Armored Core VI Fires of Rubicon
+   */
+  ArmoredCore6
+}
+
 enum FXRVersion {
   /**
    * Used in Dark Souls 3.
@@ -9,15 +47,22 @@ enum FXRVersion {
   Sekiro = 5,
 }
 
+const GameVersionMap = {
+  [Game.DarkSouls3]: FXRVersion.DarkSouls3,
+  [Game.Sekiro]: FXRVersion.Sekiro,
+  [Game.EldenRing]: FXRVersion.Sekiro,
+  [Game.ArmoredCore6]: FXRVersion.Sekiro,
+}
+
 enum NodeType {
   /**
-   * A root node.
+   * The root of the FXR tree structure.
    * 
    * This node type has a specialized subclass: {@link RootNode}
    */
   Root = 2000,
   /**
-   * Acts as a node containing another FXR.
+   * Acts as a node containing another SFX.
    * 
    * This node type has a specialized subclass: {@link ProxyNode}
    */
@@ -217,12 +262,6 @@ enum ActionType {
    */
   ParticleMultiplier = 131,
   /**
-   * References another FXR by its ID.
-   * 
-   * This action type has a specialized subclass: {@link FXRReference}
-   */
-  FXRReference = 132,
-  /**
    * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
    * manage the duration and thresholds for the
    * {@link NodeType.LevelOfDetail level of detail node}.
@@ -251,12 +290,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link EmitRandomParticles}
    */
   EmitRandomParticles = 201,
-  /**
-   * Emits particles periodically.
-   * 
-   * This action type has a specialized subclass: {@link PeriodicEmitter}
-   */
-  PeriodicEmitter = 300,
   /**
    * Emits particles once it has moved a certain distance from where it last
    * emitted particles.
@@ -300,12 +333,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link BoxEmitterShape}
    */
   BoxEmitterShape = 404,
-  /**
-   * Makes the emitter cylindrical.
-   * 
-   * This action type has a specialized subclass: {@link CylinderEmitterShape}
-   */
-  CylinderEmitterShape = 405,
   /**
    * Makes all particles use the default initial direction from the emitter.
    * 
@@ -387,12 +414,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link QuadLine}
    */
   QuadLine = 602,
-  /**
-   * Particle with a texture that may animate.
-   * 
-   * This action type has a specialized subclass: {@link BillboardEx}
-   */
-  BillboardEx = 603,
   /**
    * Particle with multiple texture that can scroll.
    * 
@@ -495,13 +516,46 @@ enum ActionType {
   Unk10302_CollisionFieldArea = 10302,
   Unk10303_ForceFieldTurbulenceArea = 10303,
   Unk10400 = 10400, // Root node action
-  Unk10500 = 10500, // Root node action
   /**
    * Spot light source.
    * 
    * This action type has a specialized subclass: {@link SpotLight}
    */
   SpotLight = 11000,
+
+  // Data Actions
+  /*#ActionType start*/
+  /**
+   * References another SFX by its ID.
+   * 
+   * This action type has a specialized subclass: {@link SFXReference}
+   */
+  SFXReference = 132,
+  /**
+   * Emits particles periodically.
+   * 
+   * This action type has a specialized subclass: {@link PeriodicEmitter}
+   */
+  PeriodicEmitter = 300,
+  /**
+   * Makes the emitter cylindrical.
+   * 
+   * This action type has a specialized subclass: {@link CylinderEmitterShape}
+   */
+  CylinderEmitterShape = 405,
+  /**
+   * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+   * 
+   * This action type has a specialized subclass: {@link BillboardEx}
+   */
+  BillboardEx = 603,
+  /**
+   * Unknown root node action.
+   * 
+   * This action type has a specialized subclass: {@link Unk10500}
+   */
+  Unk10500 = 10500,
+  /*#ActionType end*/
 }
 
 enum ValueType {
@@ -514,14 +568,10 @@ enum ValueType {
 enum PropertyFunction {
   /**
    * Always returns 0 for each component.
-   * 
-   * This property function has a specialized subclass: {@link ZeroProperty}
    */
   Zero = 0,
   /**
    * Always returns 1 for each component.
-   * 
-   * This property function has a specialized subclass: {@link OneProperty}
    */
   One = 1,
   /**
@@ -603,14 +653,13 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   scale(factor: number): void
   power(exponent: number): void
   add(summand: number): void
-  minify(): IProperty<T, any>
   valueAt(arg: number): ValueTypeMap[T]
   clone(): IProperty<T, F>
 }
 
-export interface IValueProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
   value: ValueTypeMap[T]
-  clone(): IValueProperty<T, F>
+  clone(): IValueProperty<T>
 }
 
 export interface IKeyframeProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -622,6 +671,12 @@ export interface IKeyframeProperty<T extends ValueType, F extends PropertyFuncti
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
   modifiers: Modifier[]
+}
+
+export interface IAction {
+  readonly type: ActionType
+  toJSON(): any
+  minify(): typeof this
 }
 
 export type Vector2 = [x: number, y: number]
@@ -845,9 +900,9 @@ enum AttachMode {
 
 enum PropertyArgument {
   /**
-   * A constant value, usually just 0.
+   * A constant value of 0.
    */
-  Constant,
+  Constant0,
   /**
    * Time in seconds since the particle was emitted.
    */
@@ -1009,6 +1064,239 @@ enum DistortionShape {
    * An ellipsoid. (Like a sphere, but with three different radii.)
    */
   Ellipsoid = 2,
+}
+
+const ActionData: {
+  [x: string]: {
+    props: {
+      [name: string]: {
+        default: any
+        field?: FieldType
+        paths: {
+          [game: string]: [string, number]
+        }
+      }
+    }
+    games: {
+      [game: string]: {
+        fields1?: string[]
+        fields2?: string[]
+        properties1?: string[]
+        properties2?: string[]
+      } | Game
+    }
+  }
+} = {
+  /*#ActionData start*/
+  [ActionType.SFXReference]: {
+    props: {
+      referenceID: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+      fields1: ['referenceID']
+    },
+    [Game.Sekiro]: Game.DarkSouls3,
+    [Game.EldenRing]: Game.DarkSouls3,
+    [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.PeriodicEmitter]: {
+    props: {
+      interval: { default: 1, paths: {} },
+    perInterval: { default: 1, paths: {} },
+    totalIntervals: { default: -1, paths: {} },
+    maxConcurrent: { default: -1, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+      fields1: ['maxConcurrent','unk_ds3_f1_1'],
+      properties1: ['interval','perInterval','totalIntervals']
+    },
+    [Game.Sekiro]: {
+      fields1: ['unk_ds3_f1_1'],
+      properties1: ['interval','perInterval','totalIntervals','maxConcurrent']
+    },
+    [Game.EldenRing]: Game.Sekiro,
+    [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.CylinderEmitterShape]: {
+    props: {
+      unk_ds3_f1_0: { default: 5, paths: {}, field: FieldType.Integer },
+    volume: { default: true, paths: {}, field: FieldType.Boolean },
+    yAxis: { default: true, paths: {}, field: FieldType.Boolean },
+    radius: { default: 1, paths: {} },
+    height: { default: 1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+      fields1: ['unk_ds3_f1_0','volume','yAxis'],
+      properties1: ['radius','height']
+    },
+    [Game.Sekiro]: Game.DarkSouls3,
+    [Game.EldenRing]: Game.DarkSouls3,
+    [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.BillboardEx]: {
+    props: {
+      texture: { default: 1, paths: {}, field: FieldType.Integer },
+    blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+    offsetX: { default: 0, paths: {} },
+    offsetY: { default: 0, paths: {} },
+    offsetZ: { default: 0, paths: {} },
+    width: { default: 1, paths: {} },
+    height: { default: 1, paths: {} },
+    color1: { default: [1, 1, 1, 1], paths: {} },
+    color2: { default: [1, 1, 1, 1], paths: {} },
+    color3: { default: [1, 1, 1, 1], paths: {} },
+    alphaThreshold: { default: 0, paths: {} },
+    rotationX: { default: 0, paths: {} },
+    rotationY: { default: 0, paths: {} },
+    rotationZ: { default: 0, paths: {} },
+    rotationSpeedX: { default: 0, paths: {} },
+    rotationSpeedY: { default: 0, paths: {} },
+    rotationSpeedZ: { default: 0, paths: {} },
+    rotationSpeedMultiplierX: { default: 1, paths: {} },
+    rotationSpeedMultiplierY: { default: 1, paths: {} },
+    rotationSpeedMultiplierZ: { default: 1, paths: {} },
+    depthOffset: { default: 0, paths: {} },
+    frameIndex: { default: 0, paths: {} },
+    frameIndexOffset: { default: 0, paths: {} },
+    rgbMultiplier: { default: 1, paths: {} },
+    alphaMultiplier: { default: 1, paths: {} },
+    orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
+    normalMap: { default: 0, paths: {}, field: FieldType.Integer },
+    scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+    scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+    uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+    columns: { default: 1, paths: {}, field: FieldType.Integer },
+    totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
+    interpolateFrames: { default: true, paths: {}, field: FieldType.Boolean },
+    bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+    bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+    bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+    bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+    minDistance: { default: -1, paths: {}, field: FieldType.Float },
+    maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+    negativeDepthOffset: { default: 0, paths: {}, field: FieldType.Float },
+    shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
+    specular: { default: 0, paths: {}, field: FieldType.Integer },
+    glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
+    lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
+    specularity: { default: 0.5, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_11: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_12: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
+    unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+    unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+    unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+    unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+    unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+    unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_25: { default: 1, paths: {}, field: FieldType.Float },
+    unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
+    unk_ds3_p1_21: { default: 0, paths: {} },
+    unk_ds3_p1_22: { default: 0, paths: {} },
+    unk_ds3_p2_2: { default: 0, paths: {} },
+    unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+    unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+    unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+    unk_ds3_p2_6: { default: 0, paths: {} },
+    unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_sdt_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_39: { default: 1, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_40: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f2_44: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+      fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unk_ds3_f2_25','negativeDepthOffset','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+      properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+    },
+    [Game.Sekiro]: {
+      fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unk_ds3_f2_25','negativeDepthOffset','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
+      properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+    },
+    [Game.EldenRing]: Game.Sekiro,
+    [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.Unk10500]: {
+    props: {
+      rateOfTime: { default: 1, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_2: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_5: { default: 0, paths: {}, field: FieldType.Float },
+    unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+    unk_sdt_f1_9: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+      fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8']
+    },
+    [Game.Sekiro]: {
+      fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
+    },
+    [Game.EldenRing]: {
+      fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+      properties1: ['rateOfTime']
+    },
+    [Game.ArmoredCore6]: Game.EldenRing
+    }
+  }
+  /*#ActionData end*/
+}
+for (const action of Object.values(ActionData)) {
+  for (const [name, prop] of Object.entries(action.props)) {
+    for (const [game, data] of Object.entries(action.games)) {
+      for (const [k, list] of Object.entries(data)) {
+        const i = list.indexOf(name)
+        if (i >= 0) {
+          prop.paths[game] = [k, i]
+          break
+        }
+      }
+    }
+  }
 }
 
 const EffectActionSlots = {
@@ -1210,12 +1498,12 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   const type: ValueType =         typeEnumA & 0b00000000_00000011
   const func: PropertyFunction = (typeEnumA & 0b00000000_11110000) >>> 4
   const loop: boolean =       !!((typeEnumA & 0b00010000_00000000) >>> 12)
-  br.readInt32() // TypeEnumB
+  br.position += 4 // TypeEnumB
   const count = br.readInt32()
   br.assertInt32(0)
   const offset = br.readInt32()
   br.assertInt32(0)
-  const modifiers = []
+  const modifiers: Modifier[] = []
   if (!modifierProp) {
     const modOffset = br.readInt32()
     br.assertInt32(0)
@@ -1223,11 +1511,11 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     br.assertInt32(0)
     br.stepIn(modOffset)
     for (let i = 0; i < modCount; ++i) {
-      modifiers.push(Modifier.read(br))
+      modifiers.push(readModifier(br))
     }
     br.stepOut()
   }
-  const fields = Field.readManyAt(br, offset, count, this).map(f => f.value)
+  const fields = readFieldsAt(br, offset, count, [func, type]).map(f => f.value)
   switch (func) {
     case PropertyFunction.Zero:
     case PropertyFunction.One:
@@ -1247,8 +1535,14 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
 
 function writeProperty(prop: IProperty<any, any>, bw: BinaryWriter, properties: IProperty<any, any>[], modifierProp: boolean) {
   const count = properties.length
-  const typeEnumA = prop.valueType | prop.function << 4 | +('loop' in prop ? prop.loop : false) << 12
-  const typeEnumB = prop.valueType | prop.function << 2 | +('loop' in prop ? prop.loop : false) << 4
+  let func: PropertyFunction = prop instanceof ValueProperty ?
+    prop.isZero ? PropertyFunction.Zero :
+    prop.isOne ? PropertyFunction.One :
+    PropertyFunction.Constant :
+    prop.function
+  const loop = 'loop' in prop ? prop.loop as boolean : false
+  const typeEnumA = prop.valueType | func << 4 | +loop << 12
+  const typeEnumB = prop.valueType | func << 2 | +loop << 4
   bw.writeInt16(typeEnumA)
   bw.writeUint8(0)
   bw.writeUint8(1)
@@ -1269,7 +1563,7 @@ function writeProperty(prop: IProperty<any, any>, bw: BinaryWriter, properties: 
 function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: Modifier[]) {
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
   for (const modifier of prop.modifiers) {
-    modifier.write(bw, modifiers)
+    writeModifier.call(modifier, bw, modifiers)
   }
 }
 
@@ -1281,10 +1575,824 @@ function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index:
   } else {
     bw.fill(offsetName, bw.position)
     for (const field of prop.fields) {
-      field.write(bw)
+      writeField.call(field, bw)
     }
   }
   return fieldCount
+}
+
+function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
+  const fieldOffset = br.readInt32()
+  br.assertInt32(0)
+  const section10Offset = br.readInt32()
+  br.assertInt32(0)
+  const propertyOffset = br.readInt32()
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+
+  br.stepIn(propertyOffset)
+  const properties1: AnyProperty[] = []
+  const properties2: AnyProperty[] = []
+  for (let i = 0; i < propertyCount1; ++i) {
+    properties1.push(readProperty(br, false))
+  }
+  for (let i = 0; i < propertyCount2; ++i) {
+    properties2.push(readProperty(br, false))
+  }
+  br.stepOut()
+
+  br.stepIn(section10Offset)
+  const section10s: Section10[] = []
+  for (let i = 0; i < section10Count; ++i) {
+    section10s.push(readSection10(br))
+  }
+  br.stepOut()
+
+  br.stepIn(fieldOffset)
+  let fields1: Field[], fields2: Field[]
+  if (game !== Game.DarkSouls3 && type in ActionFieldTypes) {
+    const pos = br.position
+    try {
+      fields1 = readFieldsWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, Action)
+      fields2 = readFieldsWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, Action)
+    } catch {
+      br.position = pos
+      fields1 = readFields(br, fieldCount1, Action)
+      fields2 = readFields(br, fieldCount2, Action)
+    }
+  } else {
+    fields1 = readFields(br, fieldCount1, Action)
+    fields2 = readFields(br, fieldCount2, Action)
+  }
+  br.stepOut()
+  if (type in Actions) {
+    const action = new Actions[type]()
+    action.type = type
+    action.fields1 = fields1
+    action.fields2 = fields2
+    action.properties1 = properties1
+    action.properties2 = properties2
+    action.section10s = section10s
+    return action
+  } else {
+    return new Action(type, fields1, fields2, properties1, properties2, section10s)
+  }
+}
+
+function writeAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
+  const count = actions.length
+  bw.writeInt16(this.type)
+  bw.writeUint8(0) // Unk02
+  bw.writeUint8(0) // Unk03
+  bw.writeInt32(0) // Unk04
+  bw.writeInt32(this.fields1.length)
+  bw.writeInt32(this.section10s.length)
+  bw.writeInt32(this.properties1.length)
+  bw.writeInt32(this.fields2.length)
+  bw.writeInt32(0)
+  bw.writeInt32(this.properties2.length)
+  bw.reserveInt32(`ActionFieldsOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`ActionSection10sOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`ActionPropertiesOffset${count}`)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  actions.push(this)
+}
+
+function writeActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  bw.fill(`ActionPropertiesOffset${index}`, bw.position)
+  for (const property of this.properties1) {
+    writeProperty(property, bw, properties, false)
+  }
+  for (const property of this.properties2) {
+    writeProperty(property, bw, properties, false)
+  }
+}
+
+function writeActionSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
+  bw.fill(`ActionSection10sOffset${index}`, bw.position)
+  for (const section10 of (this as Action).section10s) {
+    writeSection10.call(section10, bw, section10s)
+  }
+}
+
+function writeActionFields(bw: BinaryWriter, game: Game, index: number): number {
+  const count: number = this.fields1.length + this.fields2.length
+  if (count === 0) {
+    bw.fill(`ActionFieldsOffset${index}`, 0)
+  } else {
+    bw.fill(`ActionFieldsOffset${index}`, bw.position)
+    for (const field of (this as Action).fields1) {
+      writeField.call(field, bw)
+    }
+    for (const field of (this as Action).fields2) {
+      writeField.call(field, bw)
+    }
+  }
+  return count
+}
+
+function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
+  const fieldOffset = br.readInt32()
+  br.assertInt32(0)
+  br.position += 4 // Section10 offset
+  br.assertInt32(0)
+  const propertyOffset = br.readInt32()
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+
+  const c: {
+    fields1: Field[]
+    fields2: Field[]
+    properties1: AnyProperty[]
+    properties2: AnyProperty[]
+  } = {
+    fields1: [],
+    fields2: [],
+    properties1: [],
+    properties2: [],
+  }
+
+  br.stepIn(propertyOffset)
+  for (let i = 0; i < propertyCount1; ++i) {
+    c.properties1.push(readProperty(br, false))
+  }
+  for (let i = 0; i < propertyCount2; ++i) {
+    c.properties2.push(readProperty(br, false))
+  }
+  br.stepOut()
+
+  br.stepIn(fieldOffset)
+  const adt = ActionData[type]
+  const gameData: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+  if ('fields1' in gameData) {
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), 
+    this)
+  } else {
+    c.fields1 = readFields(br, fieldCount1, this)
+  }
+  if ('fields2' in gameData) {
+    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), this)
+  } else {
+    c.fields2 = readFields(br, fieldCount2, this)
+  }
+  br.stepOut()
+  return new Actions[type](
+    Object.fromEntries(
+      Object.entries(adt.props).map(([name, prop]) => {
+        if (!(game in prop.paths)) return null
+        const v = c[prop.paths[game][0]][prop.paths[game][1]]
+        if (v instanceof Field) {
+          return [name, v.value]
+        } else {
+          return [name, v]
+        }
+      }).filter(e => e !== null) as unknown as [string, any]
+    )
+  )
+}
+
+function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
+  if (game === Game.Generic) {
+    throw new Error('DataActions cannot be formatted for Game.Generic.')
+  }
+  const adt = ActionData[this.type]
+  const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+  const count = actions.length
+  bw.writeInt16(this.type)
+  bw.writeUint8(0) // Unk02
+  bw.writeUint8(0) // Unk03
+  bw.writeInt32(0) // Unk04
+  bw.writeInt32((data.fields1 ?? []).length)
+  bw.writeInt32(0) // Section10 count
+  bw.writeInt32((data.properties1 ?? []).length)
+  bw.writeInt32((data.fields2 ?? []).length)
+  bw.writeInt32(0)
+  bw.writeInt32((data.properties2 ?? []).length)
+  bw.reserveInt32(`ActionFieldsOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`ActionSection10sOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`ActionPropertiesOffset${count}`)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  actions.push(this)
+}
+
+function writeDataActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  const properties1 = this.getProperties(game, 'properties1')
+  const properties2 = this.getProperties(game, 'properties2')
+  bw.fill(`ActionPropertiesOffset${index}`, bw.position)
+  for (const property of properties1) {
+    writeProperty(property, bw, properties, false)
+  }
+  for (const property of properties2) {
+    writeProperty(property, bw, properties, false)
+  }
+}
+
+function writeDataActionSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
+  bw.fill(`ActionSection10sOffset${index}`, bw.position)
+}
+
+function writeDataActionFields(bw: BinaryWriter, game: Game, index: number): number {
+  const fields1 = (this as DataAction).getFields(game, 'fields1')
+  const fields2 = (this as DataAction).getFields(game, 'fields2')
+  const count = fields1.length + fields2.length
+  if (count === 0) {
+    bw.fill(`ActionFieldsOffset${index}`, 0)
+  } else {
+    bw.fill(`ActionFieldsOffset${index}`, bw.position)
+    for (const field of fields1) {
+      writeField.call(field, bw)
+    }
+    for (const field of fields2) {
+      writeField.call(field, bw)
+    }
+  }
+  return count
+}
+
+function readAnyAction(br: BinaryReader, game: Game): IAction {
+  const type = br.readInt16()
+  br.position += 6
+  // br.readUint8() // Unk02
+  // br.readUint8() // Unk03
+  // br.readInt32() // Unk04
+  const fieldCount1 = br.readInt32()
+  const section10Count = br.readInt32()
+  const propertyCount1 = br.readInt32()
+  const fieldCount2 = br.readInt32()
+  br.assertInt32(0)
+  const propertyCount2 = br.readInt32()
+
+  if (game !== Game.Generic && type in ActionData) {
+    const adt = ActionData[type]
+    const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+    if (
+      section10Count === 0 &&
+      fieldCount1 === (data.fields1?.length ?? 0) &&
+      fieldCount2 <= (data.fields2?.length ?? 0) &&
+      propertyCount1 === (data.properties1?.length ?? 0) &&
+      propertyCount2 === (data.properties2?.length ?? 0)
+    ) {
+      return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
+    } else {
+      return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+    }
+  } else {
+    return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+  }
+}
+
+function writeAnyAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
+  ;(this instanceof Action ? writeAction : writeDataAction).call(this, bw, game, actions)
+}
+
+function writeAnyActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  ;(this instanceof Action ? writeActionProperties : writeDataActionProperties).call(this, bw, game, index, properties)
+}
+
+function writeAnyActionSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
+  ;(this instanceof Action ? writeActionSection10s : writeDataActionSection10s).call(this, bw, index, section10s)
+}
+
+function writeAnyActionFields(bw: BinaryWriter, game: Game, index: number): number {
+  return (this instanceof Action ? writeActionFields : writeDataActionFields).call(this, bw, game, index)
+}
+
+function readNode(br: BinaryReader, game: Game): Node {
+  const type = br.readInt16()
+  br.assertUint8(0)
+  br.assertUint8(1)
+  br.assertInt32(0)
+  const effectCount = br.readInt32()
+  const actionCount = br.readInt32()
+  const nodeCount = br.readInt32()
+  br.assertInt32(0)
+  const effectOffset = br.readInt32()
+  br.assertInt32(0)
+  const actionOffset = br.readInt32()
+  br.assertInt32(0)
+  const nodeOffset = br.readInt32()
+  br.assertInt32(0)
+  br.stepIn(nodeOffset)
+  const nodes = []
+  for (let i = 0; i < nodeCount; ++i) {
+    nodes.push(readNode(br, game))
+  }
+  br.stepOut()
+  br.stepIn(effectOffset)
+  const effects = []
+  for (let i = 0; i < effectCount; ++i) {
+    effects.push(readEffect(br, game))
+  }
+  br.stepOut()
+  br.stepIn(actionOffset)
+  const actions = []
+  for (let i = 0; i < actionCount; ++i) {
+    actions.push(readAnyAction(br, game))
+  }
+  br.stepOut()
+  if (game !== Game.Generic) switch (type) {
+    case NodeType.Root:
+      if (effectCount === 0 && actionCount === (game === Game.DarkSouls3 || game === Game.Sekiro ? 3 : 4)) {
+        return new RootNode(
+          nodes,
+          game === Game.DarkSouls3 || game === Game.Sekiro ? null :
+            actions.find(e => e.type >= 700 && e.type <= 702) ?? new Action(ActionType.Unk700),
+          actions.find(e => e.type === ActionType.Unk10100),
+          actions.find(e => e.type === ActionType.Unk10400),
+          actions.find(e => e.type === ActionType.Unk10500)
+        )
+      }
+      break
+    case NodeType.Proxy:
+      if (effectCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
+        return new ProxyNode(actions[0].referenceID)
+      }
+      break
+    case NodeType.LevelOfDetail:
+      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
+        return new LevelOfDetailNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      }
+      break
+    case NodeType.Basic:
+      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
+        return new BasicNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      }
+      break
+    case NodeType.SharedEmitter:
+      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
+        return new SharedEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      }
+      break
+  }
+  return new GenericNode(type, actions, effects, nodes)
+}
+
+function writeNode(bw: BinaryWriter, game: Game, nodes: Node[]) {
+  if (game === Game.Generic && !(this instanceof GenericNode)) {
+    throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
+  }
+  const count = nodes.length
+  let effectCount = 0
+  let actionCount = 0
+  let childCount = 0
+  if (this instanceof GenericNode) {
+    effectCount = this.effects.length
+    actionCount = this.actions.length
+    childCount = this.nodes.length
+  } else if (this instanceof NodeWithEffects) {
+    effectCount = this.effects.length
+    actionCount = 1
+    childCount = this.nodes.length
+  } else if (this instanceof RootNode) {
+    actionCount = game === Game.DarkSouls3 || game === Game.Sekiro ? 3 : 4
+    childCount = this.nodes.length
+  } else if (this instanceof ProxyNode) {
+    actionCount = 1
+  }
+  bw.writeInt16(this.type)
+  bw.writeUint8(0)
+  bw.writeUint8(1)
+  bw.writeInt32(0)
+  bw.writeInt32(effectCount)
+  bw.writeInt32(actionCount)
+  bw.writeInt32(childCount)
+  bw.writeInt32(0)
+  bw.reserveInt32(`NodeEffectsOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`NodeActionsOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`NodeChildNodesOffset${count}`)
+  bw.writeInt32(0)
+  nodes.push(this)
+}
+
+function writeNodeChildren(bw: BinaryWriter, game: Game, nodes: Node[]) {
+  const num = nodes.indexOf(this)
+  let childCount = 0
+  if (this instanceof GenericNode || this instanceof NodeWithEffects || this instanceof RootNode) {
+    childCount = this.nodes.length
+  }
+  if (childCount === 0) {
+    bw.fill(`NodeChildNodesOffset${num}`, 0)
+  } else {
+    bw.fill(`NodeChildNodesOffset${num}`, bw.position)
+    const children = (this as Node).getNodes(game)
+    for (const node of children) {
+      writeNode.call(node, bw, game, nodes)
+    }
+    for (const node of children) {
+      writeNodeChildren.call(node, bw, game, nodes)
+    }
+  }
+}
+
+function writeNodeEffects(bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
+  let effectCount = 0
+  if (this instanceof GenericNode || this instanceof NodeWithEffects) {
+    effectCount = this.effects.length
+  }
+  if (effectCount === 0) {
+    bw.fill(`NodeEffectsOffset${index}`, 0)
+  } else {
+    bw.fill(`NodeEffectsOffset${index}`, bw.position)
+    const nodeEffects = (this as Node).getEffects(game)
+    for (let i = 0; i < nodeEffects.length; ++i) {
+      writeEffect.call(nodeEffects[i], bw, effectCounter.value + i)
+    }
+    effectCounter.value += nodeEffects.length
+  }
+}
+
+function writeNodeActions(bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
+  bw.fill(`NodeActionsOffset${index}`, bw.position)
+  const nodeActions = (this as Node).getActions(game)
+  const nodeEffects = (this as Node).getEffects(game)
+  for (const action of nodeActions) {
+    writeAnyAction.call(action, bw, game, actions)
+  }
+  for (let i = 0; i < nodeEffects.length; ++i) {
+    writeEffectActions.call(nodeEffects[i], bw, game, effectCounter.value + i, actions)
+  }
+  effectCounter.value += nodeEffects.length
+}
+
+function readEffect(br: BinaryReader, game: Game): Effect {
+  const type = br.readInt16()
+  const effect = new (type in Effects ? Effects[type] : Effect)
+  effect.type = type
+  br.assertUint8(0)
+  br.assertUint8(1)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  const actionCount = br.readInt32()
+  br.assertInt32(0)
+  br.assertInt32(0)
+  const actionOffset = br.readInt32()
+  br.assertInt32(0)
+  br.stepIn(actionOffset)
+  effect.actions = []
+  for (let i = 0; i < actionCount; ++i) {
+    effect.actions.push(readAnyAction(br, game))
+  }
+  br.stepOut()
+  return effect
+}
+
+function writeEffect(bw: BinaryWriter, index: number) {
+  bw.writeInt16(this.type)
+  bw.writeUint8(0)
+  bw.writeUint8(1)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(this.actions.length)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.reserveInt32(`EffectActionsOffset${index}`)
+  bw.writeInt32(0)
+}
+
+function writeEffectActions(bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+  bw.fill(`EffectActionsOffset${index}`, bw.position)
+  for (const action of this.actions) {
+    writeAnyAction.call(action, bw, game, actions)
+  }
+}
+
+function readModifier(br: BinaryReader) {
+  const typeEnumA = br.readUint16()
+  const teA1 = typeEnumA >>> 12 & 0b11
+  const teA2 = typeEnumA >>> 4 & 0b1111
+  const modifierType = teA1 << 4 | teA2
+  const valueType = typeEnumA & 0b11
+  if (!(modifierType in ModifierType)) {
+    throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
+  }
+  br.assertUint8(0)
+  br.assertUint8(1)
+  const typeEnumB = br.readUint32()
+  const fieldCount = br.readInt32()
+  const propertyCount = br.readInt32()
+  const fieldOffset = br.readInt32()
+  br.assertInt32(0)
+  const propertyOffset = br.readInt32()
+  br.assertInt32(0)
+  br.stepIn(propertyOffset)
+  const properties = []
+  for (let i = 0; i < propertyCount; ++i) {
+    properties.push(readProperty(br, true))
+  }
+  br.stepOut()
+  const fields = readFieldsAt(br, fieldOffset, fieldCount, this)
+  const mod = new Modifier(modifierType, valueType, fields, properties)
+  mod.typeEnumB = typeEnumB
+  return mod
+}
+
+function writeModifier(bw: BinaryWriter, modifiers: Modifier[]) {
+  const count = modifiers.length
+  bw.writeInt16(this.typeEnumA)
+  bw.writeUint8(0)
+  bw.writeUint8(1)
+  bw.writeInt32(this.typeEnumB)
+  bw.writeInt32(this.fields.length)
+  bw.writeInt32(this.properties.length)
+  bw.reserveInt32(`Section8FieldsOffset${count}`)
+  bw.writeInt32(0)
+  bw.reserveInt32(`Section8Section9sOffset${count}`)
+  bw.writeInt32(0)
+  modifiers.push(this)
+}
+
+function writeModifierProperties(bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
+  bw.fill(`Section8Section9sOffset${index}`, bw.position)
+  for (const property of this.properties) {
+    writeProperty(property, bw, properties, true)
+  }
+}
+
+function writeModifierFields(bw: BinaryWriter, index: number): number {
+  bw.fill(`Section8FieldsOffset${index}`, bw.position)
+  for (const field of (this as Modifier).fields) {
+    writeField.call(field, bw)
+  }
+  return this.fields.length
+}
+
+function readSection10(br: BinaryReader) {
+  const offset = br.readInt32()
+  br.assertInt32(0)
+  const count = br.readInt32()
+  br.assertInt32(0)
+  return new Section10(readFieldsAt(br, offset, count, this))
+}
+
+function writeSection10(bw: BinaryWriter, section10s: Section10[]) {
+  const count = section10s.length
+  bw.reserveInt32(`Section10FieldsOffset${count}`)
+  bw.writeInt32(0)
+  bw.writeInt32(this.fields.length)
+  bw.writeInt32(0)
+  section10s.push(this)
+}
+
+function writeSection10Fields(bw: BinaryWriter, index: number): number {
+  bw.fill(`Section10FieldsOffset${index}`, bw.position)
+  for (const field of (this as Section10).fields) {
+    writeField.call(field, bw)
+  }
+  return this.fields.length
+}
+
+function readState(br: BinaryReader) {
+  br.assertInt32(0)
+  const count = br.readInt32()
+  const offset = br.readInt32()
+  br.assertInt32(0)
+  br.stepIn(offset)
+  const conditions: StateCondition[] = []
+  for (let i = 0; i < count; ++i) {
+    conditions.push(readStateCondition(br))
+  }
+  br.stepOut()
+  return new State(conditions)
+}
+
+function writeState(bw: BinaryWriter, index: number) {
+  bw.writeInt32(0)
+  bw.writeInt32(this.conditions.length)
+  bw.reserveInt32(`StateConditionsOffset${index}`)
+  bw.writeInt32(0)
+}
+
+function writeStateConditions(bw: BinaryWriter, index: number, conditions: StateCondition[]) {
+  bw.fill(`StateConditionsOffset${index}`, bw.position)
+  for (const condition of (this as State).conditions) {
+    writeStateCondition.call(condition, bw, conditions)
+  }
+}
+
+function readStateCondition(br: BinaryReader) {
+  const bf1 = br.readInt16()
+  const operator = bf1 & 0b11
+  const unk1 = (bf1 & 0b1100) >>> 2
+  br.assertUint8(0)
+  br.assertUint8(1)
+  br.assertInt32(0)
+  const targetStateIndex = br.readInt32()
+  br.assertInt32(0)
+  const leftOperand = br.assertInt16(-4, -3, -2, -1)
+  br.assertUint8(0)
+  br.assertUint8(1)
+  br.assertInt32(0)
+  const hasLeftValue = !!br.assertInt32(0, 1)
+  br.assertInt32(0)
+  const leftOffset = br.readInt32()
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  const rightOperand = br.assertInt16(-4, -3, -2, -1)
+  br.assertUint8(0)
+  br.assertUint8(1)
+  br.assertInt32(0)
+  const hasRightValue = !!br.assertInt32(0, 1)
+  br.assertInt32(0)
+  const rightOffset = br.readInt32()
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  br.assertInt32(0)
+  return new StateCondition(
+    operator,
+    unk1,
+    targetStateIndex,
+    leftOperand,
+    hasLeftValue ? readStateConditionOperandValue(br, leftOperand, leftOffset) : null,
+    rightOperand,
+    hasRightValue ? readStateConditionOperandValue(br, rightOperand, rightOffset) : null,
+  ).sortOperands()
+}
+
+function readStateConditionOperandValue(br: BinaryReader, type: number, offset: number) {
+  switch (type) {
+    case OperandType.Literal: {
+      br.stepIn(offset)
+      const value = br.readFloat32()
+      br.stepOut()
+      return value
+    }
+    case OperandType.External: {
+      br.stepIn(offset)
+      const value = br.readInt32()
+      br.stepOut()
+      return value
+    }
+    case OperandType.UnkMinus2:
+    case OperandType.StateTime:
+      throw new Error('Unexpected value for operand without value: ' + OperandType[type])
+  }
+}
+
+function writeFormattedStateCondition(bw: BinaryWriter, conditions: StateCondition[]) {
+  const count = conditions.length
+  bw.writeInt16(this.operator | this.unk1 << 2)
+  bw.writeUint8(0)
+  bw.writeUint8(1)
+  bw.writeInt32(0)
+  bw.writeInt32(this.nextState)
+  bw.writeInt32(0)
+  bw.writeInt16(this.leftOperandType)
+  bw.writeInt8(0)
+  bw.writeInt8(1)
+  bw.writeInt32(0)
+  bw.writeInt32(+(this.leftOperandValue !== null))
+  bw.writeInt32(0)
+  bw.reserveInt32(`ConditionLeftOffset${count}`)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt16(this.rightOperandType)
+  bw.writeInt8(0)
+  bw.writeInt8(1)
+  bw.writeInt32(0)
+  bw.writeInt32(+(this.rightOperandValue !== null))
+  bw.writeInt32(0)
+  bw.reserveInt32(`ConditionRightOffset${count}`)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  bw.writeInt32(0)
+  conditions.push(this)
+}
+
+function writeStateCondition(bw: BinaryWriter, conditions: StateCondition[]) {
+  writeFormattedStateCondition.call((this as StateCondition).formatCondition(), bw, conditions)
+}
+
+function writeStateConditionFields(bw: BinaryWriter, index: number): number {
+  let count = 0
+  if (this.leftOperandValue === null) {
+    bw.fill(`ConditionLeftOffset${index}`, 0)
+  } else {
+    if (this.leftOperandType === OperandType.Literal) {
+      bw.fill(`ConditionLeftOffset${index}`, bw.position)
+      bw.writeFloat32(this.leftOperandValue)
+    } else {
+      bw.fill(`ConditionLeftOffset${index}`, bw.position)
+      bw.writeInt32(this.leftOperandValue)
+    }
+    count++
+  }
+  if (this.rightOperandValue === null) {
+    bw.fill(`ConditionRightOffset${index}`, 0)
+  } else {
+    if (this.rightOperandType === OperandType.Literal) {
+      bw.fill(`ConditionRightOffset${index}`, bw.position)
+      bw.writeFloat32(this.rightOperandValue)
+    } else {
+      bw.fill(`ConditionRightOffset${index}`, bw.position)
+      bw.writeInt32(this.rightOperandValue)
+    }
+    count++
+  }
+  return count
+}
+
+function readField(br: BinaryReader, context: any, index: number) {
+  let ffxField: NumericalField = null
+  let isInt = false
+
+  if (context?.[0] in PropertyFunction) {
+    if (context[0] === PropertyFunction.CompCurve) {
+      isInt = index > 0 && index <= context[1] + 1
+    } else if (context[0] !== PropertyFunction.Constant) {
+      isInt = !index
+    }
+  } else if (context instanceof StateCondition) {
+    if (index === 0) {
+      isInt = (context.leftOperandType & 3) > 0
+    } else {
+      isInt = (context.rightOperandType & 3) > 0
+    }
+  } else {
+    const single = br.getFloat32(br.position)
+    if (single >=  9.99999974737875E-05 && single <  1000000.0 ||
+        single <= -9.99999974737875E-05 && single > -1000000.0
+    ) {
+      ffxField = new FloatField(single)
+    } else {
+      isInt = true
+    }
+  }
+
+  if (ffxField === null) {
+    if (isInt) {
+      ffxField = new IntField(br.getInt32(br.position))
+    } else {
+      ffxField = new FloatField(br.getFloat32(br.position))
+    }
+  }
+
+  br.position += 4
+  return ffxField
+}
+
+function readFields(br: BinaryReader, count: number, context: any) {
+  const ffxFieldList: NumericalField[] = []
+  for (let i = 0; i < count; ++i) {
+    ffxFieldList.push(readField(br, context, i))
+  }
+  return ffxFieldList
+}
+
+function readFieldsAt(br: BinaryReader, offset: number, count: number, context: any) {
+  br.stepIn(offset)
+  const ffxFieldList = readFields(br, count, context)
+  br.stepOut()
+  return ffxFieldList
+}
+
+function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], context: any): Field[] {
+  return arrayOf(count, i => {
+    switch (types[i]) {
+      case FieldType.Boolean:
+        return new BoolField(!!br.assertInt32(0, 1))
+      case FieldType.Integer:
+        return new IntField(br.readInt32())
+      case FieldType.Float:
+        return new FloatField(br.readFloat32())
+      default:
+        return readField(br, context, 0)
+    }
+  })
+}
+
+function writeField(bw: BinaryWriter) {
+  switch (this.type) {
+    case FieldType.Boolean:
+      return bw.writeInt32(+this.value)
+    case FieldType.Integer:
+      return bw.writeInt32(this.value as number)
+    case FieldType.Float:
+      return bw.writeFloat32(this.value as number)
+    default:
+      throw new Error('Invalid field type: ' + this.type)
+  }
 }
 
 class BinaryReader extends DataView {
@@ -1601,12 +2709,12 @@ class BinaryWriter {
         break
       }
       case 2: {
-        this.#transDV[reservation.func](0, value, this.littleEndian)
+        this.#transDV[reservation.func as string](0, value, this.littleEndian)
         this.array.splice(reservation.offset, 2, ...this.#transArr16)
         break
       }
       case 4: {
-        this.#transDV[reservation.func](0, value, this.littleEndian)
+        this.#transDV[reservation.func as string](0, value, this.littleEndian)
         this.array.splice(reservation.offset, 4, ...this.#transArr32)
         break
       }
@@ -1627,10 +2735,9 @@ class BinaryWriter {
 class FXR {
 
   id: number
-  version: FXRVersion
 
   states: State[]
-  root: RootNode
+  root: RootNode | GenericNode
 
   references: number[]
   externalValues: number[]
@@ -1642,8 +2749,7 @@ class FXR {
    */
   constructor(
     id: number,
-    version = FXRVersion.Sekiro,
-    root: RootNode = new RootNode,
+    root: RootNode | GenericNode = new RootNode,
     states: State[] = [ new State ],
     references: number[] = [],
     externalValues: number[] = [],
@@ -1651,7 +2757,6 @@ class FXR {
     // unkEmpty: number[] = [],
   ) {
     this.id = id
-    this.version = version
     this.root = root
     this.states = states
     this.references = references
@@ -1664,22 +2769,15 @@ class FXR {
    * Parses an FXR file.
    * @param buffer ArrayBuffer containing the contents of the FXR file.
    */
-  static read(buffer: ArrayBuffer, version: FXRVersion = null) {
+  static read(buffer: ArrayBuffer, game: Game = Game.EldenRing) {
     const br = new BinaryReader(buffer)
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    if (version !== null) {
-      br.assertInt16(
-        FXRVersion.DarkSouls3,
-        FXRVersion.Sekiro
-      )
-    } else {
-      version = br.assertInt16(
-        FXRVersion.DarkSouls3,
-        FXRVersion.Sekiro
-      )
-    }
+    const version = br.assertInt16(
+      FXRVersion.DarkSouls3,
+      FXRVersion.Sekiro
+    )
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
@@ -1740,16 +2838,15 @@ class FXR {
     br.stepIn(statesOffset)
     const states: State[] = []
     for (let i = 0; i < stateCount; ++i) {
-      states.push(State.read(br))
+      states.push(readState(br))
     }
     br.stepOut()
 
     br.position = nodeOffset
-    const rootNode = Node.read(br, version) as RootNode
+    const rootNode = readNode(br, game) as RootNode | GenericNode
 
     return new FXR(
       id,
-      version,
       rootNode,
       states,
       references,
@@ -1763,11 +2860,12 @@ class FXR {
    * Serialize to the FXR file format.
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
-  toArrayBuffer() {
+  toArrayBuffer(game: Game = Game.EldenRing) {
+    const version = GameVersionMap[game]
     const bw = new BinaryWriter
     bw.writeString('FXR\0')
     bw.writeInt16(0)
-    bw.writeUint16(this.version)
+    bw.writeUint16(version)
     bw.writeInt32(1)
     bw.writeInt32(this.id)
     bw.reserveInt32('StateListOffset')
@@ -1795,7 +2893,7 @@ class FXR {
     bw.writeInt32(1)
     bw.writeInt32(0)
 
-    if (this.version === FXRVersion.Sekiro) {
+    if (version === FXRVersion.Sekiro) {
       bw.reserveInt32('ReferencesOffset')
       bw.writeInt32(this.references.length)
       bw.reserveInt32('ExternalValuesOffset')
@@ -1817,27 +2915,27 @@ class FXR {
     bw.fill('StatesOffset1', bw.position)
     bw.fill('StatesOffset2', bw.position)
     for (let i = 0; i < this.states.length; ++i) {
-      this.states[i].write(bw, i)
+      writeState.call(this.states[i], bw, i)
     }
 
     bw.pad(16)
     bw.fill('ConditionOffset', bw.position)
     const conditions: StateCondition[] = []
     for (let i = 0; i < this.states.length; ++i) {
-      this.states[i].writeConditions(bw, i, conditions)
+      writeStateConditions.call(this.states[i], bw, i, conditions)
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    this.root.write(bw, nodes)
-    this.root.writeNodes(bw, nodes)
+    writeNode.call(this.root, bw, game, nodes)
+    writeNodeChildren.call(this.root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
     let counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
-      nodes[i].writeEffects(bw, i, counter)
+      writeNodeEffects.call(nodes[i], bw, game, i, counter)
     }
     bw.fill('EffectCount', counter.value)
     bw.pad(16)
@@ -1845,14 +2943,14 @@ class FXR {
     counter.value = 0
     const actions: Action[] = []
     for (let i = 0; i < nodes.length; ++i) {
-      nodes[i].writeActions(bw, i, counter, actions)
+      writeNodeActions.call(nodes[i], bw, game, i, counter, actions)
     }
     bw.fill('ActionCount', actions.length)
     bw.pad(16)
     bw.fill('PropertyOffset', bw.position)
     const properties: IModifiableProperty<any, any>[] = []
     for (let i = 0; i < actions.length; ++i) {
-      actions[i].writeProperties(bw, i, properties)
+      writeAnyActionProperties.call(actions[i], bw, game, i, properties)
     }
     bw.fill('PropertyCount', properties.length)
     bw.pad(16)
@@ -1866,41 +2964,41 @@ class FXR {
     bw.fill('Section9Offset', bw.position)
     const modProps: Property<any, any>[] = []
     for (let i = 0; i < modifiers.length; ++i) {
-      modifiers[i].writeProperties(bw, i, modProps)
+      writeModifierProperties.call(modifiers[i], bw, i, modProps)
     }
     bw.fill('Section9Count', modProps.length)
     bw.pad(16)
     bw.fill('Section10Offset', bw.position)
     const section10s: Section10[] = []
     for (let i = 0; i < actions.length; ++i) {
-      actions[i].writeSection10s(bw, i, section10s)
+      writeAnyActionSection10s.call(actions[i], bw, i, section10s)
     }
     bw.fill('Section10Count', section10s.length)
     bw.pad(16)
     bw.fill('FieldOffset', bw.position)
     let fieldCount = 0
     for (let i = 0; i < conditions.length; ++i) {
-      fieldCount += conditions[i].writeFields(bw, i)
+      fieldCount += writeStateConditionFields.call(conditions[i], bw, i)
     }
     for (let i = 0; i < actions.length; ++i) {
-      fieldCount += actions[i].writeFields(bw, i)
+      fieldCount += writeAnyActionFields.call(actions[i], bw, game, i)
     }
     for (let i = 0; i < properties.length; ++i) {
       fieldCount += writePropertyFields(properties[i], bw, i, false)
     }
     for (let i = 0; i < modifiers.length; ++i) {
-      fieldCount += modifiers[i].writeFields(bw, i)
+      fieldCount += writeModifierFields.call(modifiers[i], bw, i)
     }
     for (let i = 0; i < modProps.length; ++i) {
       fieldCount += writePropertyFields(modProps[i], bw, i, true)
     }
     for (let i = 0; i < section10s.length; ++i) {
-      fieldCount += section10s[i].writeFields(bw, i)
+      fieldCount += writeSection10Fields.call(section10s[i], bw, i)
     }
     bw.fill('FieldCount', fieldCount)
     bw.pad(16)
 
-    if (this.version !== FXRVersion.Sekiro) {
+    if (version !== FXRVersion.Sekiro) {
       return bw.getArrayBuffer()
     }
 
@@ -1929,7 +3027,6 @@ class FXR {
 
   static fromJSON({
     id,
-    version,
     states,
     root,
     references,
@@ -1937,7 +3034,6 @@ class FXR {
     unkBloodEnabler
   }: {
     id: number
-    version: string
     states: string[]
     root: any
     references: number[]
@@ -1947,8 +3043,7 @@ class FXR {
   }) {
     return new FXR(
       id,
-      FXRVersion[version],
-      Node.fromJSON(root),
+      Node.fromJSON(root) as RootNode | GenericNode,
       states.map(state => State.from(state)),
       references,
       externalValues,
@@ -1959,7 +3054,6 @@ class FXR {
   toJSON() {
     return {
       id: this.id,
-      version: FXRVersion[this.version],
       states: this.states.map(state => state.toString()),
       references: this.references,
       externalValues: this.externalValues,
@@ -1977,8 +3071,7 @@ class FXR {
   minify() {
     return new FXR(
       this.id,
-      this.version,
-      this.root.minify(),
+      this.root.minify() as RootNode | GenericNode,
       this.states,
       this.references,
       this.externalValues,
@@ -1995,8 +3088,8 @@ class FXR {
     const externalValues: number[] = []
     let unkBloodEnabler = false
     for (const node of this.root.walk()) {
-      if (node.type === NodeType.Proxy) {
-        references.push(node.actions[0].fields1[0].value as number)
+      if (node instanceof ProxyNode) {
+        references.push(node.sfxID)
       }
     }
     for (const prop of this.root.walkProperties()) {
@@ -2011,10 +3104,10 @@ class FXR {
     for (const state of this.states) {
       for (const condition of state.conditions) {
         if (condition.leftOperandType === OperandType.External) {
-          externalValues.push(condition.leftOperandValue)
+          externalValues.push(condition.leftOperandValue as number)
         }
         if (condition.rightOperandType === OperandType.External) {
-          externalValues.push(condition.rightOperandValue)
+          externalValues.push(condition.rightOperandValue as number)
         }
       }
     }
@@ -2057,34 +3150,6 @@ class State {
    */
   static from(stateString: string) {
     return new State(stateString.split('&&').filter(e => e.trim().length > 0).map(e => StateCondition.from(e)))
-  }
-
-  static read(br: BinaryReader) {
-    br.assertInt32(0)
-    const count = br.readInt32()
-    const offset = br.readInt32()
-    br.assertInt32(0)
-    br.stepIn(offset)
-    const conditions = []
-    for (let i = 0; i < count; ++i) {
-      conditions.push(StateCondition.read(br))
-    }
-    br.stepOut()
-    return new State(conditions)
-  }
-
-  write(bw: BinaryWriter, index: number) {
-    bw.writeInt32(0)
-    bw.writeInt32(this.conditions.length)
-    bw.reserveInt32(`StateConditionsOffset${index}`)
-    bw.writeInt32(0)
-  }
-
-  writeConditions(bw: BinaryWriter, index: number, conditions: StateCondition[]) {
-    bw.fill(`StateConditionsOffset${index}`, bw.position)
-    for (const condition of this.conditions) {
-      condition.write(bw, conditions)
-    }
   }
 
   toString() {
@@ -2230,70 +3295,6 @@ class StateCondition {
     return new StateCondition(op, 2, nextState, left.type, left.value, right.type, right.value)
   }
 
-  static read(br: BinaryReader) {
-    const bf1 = br.readInt16()
-    const operator = bf1 & 0b11
-    const unk1 = (bf1 & 0b1100) >>> 2
-    br.assertUint8(0)
-    br.assertUint8(1)
-    br.assertInt32(0)
-    const targetStateIndex = br.readInt32()
-    br.assertInt32(0)
-    const leftOperand = br.assertInt16(-4, -3, -2, -1)
-    br.assertUint8(0)
-    br.assertUint8(1)
-    br.assertInt32(0)
-    const hasLeftValue = !!br.assertInt32(0, 1)
-    br.assertInt32(0)
-    const leftOffset = br.readInt32()
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    const rightOperand = br.assertInt16(-4, -3, -2, -1)
-    br.assertUint8(0)
-    br.assertUint8(1)
-    br.assertInt32(0)
-    const hasRightValue = !!br.assertInt32(0, 1)
-    br.assertInt32(0)
-    const rightOffset = br.readInt32()
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    return new StateCondition(
-      operator,
-      unk1,
-      targetStateIndex,
-      leftOperand,
-      hasLeftValue ? StateCondition.readOperandValue(br, leftOperand, leftOffset) : null,
-      rightOperand,
-      hasRightValue ? StateCondition.readOperandValue(br, rightOperand, rightOffset) : null,
-    ).sortOperands()
-  }
-
-  static readOperandValue(br: BinaryReader, type: number, offset: number) {
-    switch (type) {
-      case OperandType.Literal: {
-        br.stepIn(offset)
-        const value = br.readFloat32()
-        br.stepOut()
-        return value
-      }
-      case OperandType.External: {
-        br.stepIn(offset)
-        const value = br.readInt32()
-        br.stepOut()
-        return value
-      }
-      case OperandType.UnkMinus2:
-      case OperandType.StateTime:
-        throw new Error('Unexpected value for operand without value: ' + OperandType[type])
-    }
-  }
-
   /**
    * Swaps the operands and changes the operator to match if the left operand
    * is a literal value and the right operand is a non-literal value. This
@@ -2339,74 +3340,6 @@ class StateCondition {
       this.rightOperandType, this.rightOperandValue,
       this.leftOperandType, this.leftOperandValue
     )
-  }
-
-  #write(bw: BinaryWriter, conditions: StateCondition[]) {
-    const count = conditions.length
-    bw.writeInt16(this.operator | this.unk1 << 2)
-    bw.writeUint8(0)
-    bw.writeUint8(1)
-    bw.writeInt32(0)
-    bw.writeInt32(this.nextState)
-    bw.writeInt32(0)
-    bw.writeInt16(this.leftOperandType)
-    bw.writeInt8(0)
-    bw.writeInt8(1)
-    bw.writeInt32(0)
-    bw.writeInt32(+(this.leftOperandValue !== null))
-    bw.writeInt32(0)
-    bw.reserveInt32(`ConditionLeftOffset${count}`)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt16(this.rightOperandType)
-    bw.writeInt8(0)
-    bw.writeInt8(1)
-    bw.writeInt32(0)
-    bw.writeInt32(+(this.rightOperandValue !== null))
-    bw.writeInt32(0)
-    bw.reserveInt32(`ConditionRightOffset${count}`)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    conditions.push(this)
-  }
-
-  write(bw: BinaryWriter, conditions: StateCondition[]) {
-    this.formatCondition().#write(bw, conditions)
-  }
-
-  writeFields(bw: BinaryWriter, index: number): number {
-    let count = 0
-    if (this.leftOperandValue === null) {
-      bw.fill(`ConditionLeftOffset${index}`, 0)
-    } else {
-      if (this.leftOperandType === OperandType.Literal) {
-        bw.fill(`ConditionLeftOffset${index}`, bw.position)
-        bw.writeFloat32(this.leftOperandValue)
-      } else {
-        bw.fill(`ConditionLeftOffset${index}`, bw.position)
-        bw.writeInt32(this.leftOperandValue)
-      }
-      count++
-    }
-    if (this.rightOperandValue === null) {
-      bw.fill(`ConditionRightOffset${index}`, 0)
-    } else {
-      if (this.rightOperandType === OperandType.Literal) {
-        bw.fill(`ConditionRightOffset${index}`, bw.position)
-        bw.writeFloat32(this.rightOperandValue)
-      } else {
-        bw.fill(`ConditionRightOffset${index}`, bw.position)
-        bw.writeInt32(this.rightOperandValue)
-      }
-      count++
-    }
-    return count
   }
 
   clone() {
@@ -2456,121 +3389,503 @@ class StateCondition {
  * The base class for all nodes.
  * 
  * A node is a container with actions, effects, and other nodes, and they form
- * the general structure of the FXR.
+ * the tree structure of the FXR.
  */
-class Node {
+abstract class Node {
 
-  type: NodeType
-  actions: Action[] = []
-  effects: Effect[] = []
-  nodes: Node[] = []
+  constructor(public readonly type: NodeType) {}
+
+  abstract getActions(game: Game): IAction[]
+  getEffects(game: Game): Effect[] { return [] }
+  getNodes(game: Game): Node[] { return [] }
+  abstract toJSON(): any
+  minify(): Node { return this }
+
+  static fromJSON(obj: any): Node {
+    switch (obj.type) {
+      case NodeType.Root:
+        return RootNode.fromJSON(obj)
+      case NodeType.Proxy:
+        return ProxyNode.fromJSON(obj)
+      case NodeType.LevelOfDetail:
+        return LevelOfDetailNode.fromJSON(obj)
+      case NodeType.Basic:
+        return BasicNode.fromJSON(obj)
+      case NodeType.SharedEmitter:
+        return SharedEmitterNode.fromJSON(obj)
+      default:
+        return GenericNode.fromJSON(obj)
+    }
+  }
+
+  /**
+   * Yields all nodes in this branch, including this node.
+   */
+  *walk(): Generator<Node> {
+    yield this
+    if (
+      this instanceof GenericNode ||
+      this instanceof RootNode ||
+      this instanceof NodeWithEffects
+    ) {
+      for (const node of this.nodes) {
+        yield* node.walk()
+      }
+    }
+  }
+
+  /**
+   * Yields all effects in this branch.
+   */
+  *walkEffects() {
+    for (const node of this.walk()) {
+      if (node instanceof NodeWithEffects) {
+        yield* node.effects
+      }
+    }
+  }
+
+  /**
+   * Yields all actions in this branch, excluding node actions from
+   * {@link NodeWithEffects nodes with effects}, as those are not stored as
+   * actions internally.
+   */
+  *walkActions() {
+    for (const node of this.walk()) {
+      if (node instanceof GenericNode) {
+        yield* node.actions
+      } else if (node instanceof RootNode) {
+        yield node.unk70x
+        yield node.unk10100
+        yield node.unk10400
+        yield node.unk10500
+      }
+      if (node instanceof GenericNode || node instanceof NodeWithEffects) {
+        for (const effect of node.effects) {
+          yield* effect.actions
+        }
+      }
+    }
+  }
+
+  /**
+   * Yields all properties in this branch, excluding properties inside
+   * modifiers and properties in the form of {@link PropertyValue}s in
+   * {@link DataAction}s.
+   */
+  *walkProperties() {
+    for (const action of this.walkActions()) {
+      if (action instanceof Action) {
+        yield* action.properties1
+        yield* action.properties2
+      } else {
+        for (const prop of Object.keys(ActionData[action.type].props)) {
+          if (action[prop] instanceof Property) {
+            yield action[prop]
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Scales the entire branch by a factor. This updates all sizes, offsets,
+   * lengths, and radii of the actions in the branch, except certain
+   * multiplicative fields and properties.
+   * @param factor The factor to scale the branch with.
+   */
+  scale(factor: number) {
+    for (const effect of this.walkEffects()) if (
+      effect.type === EffectType.Basic || effect.type === EffectType.SharedEmitter
+    ) {
+      const scaleDataProp = (action: any, prop: string) => {
+        if (action[prop] instanceof Property) {
+          action[prop].scale(factor)
+        } else if (Array.isArray(action[prop])) {
+          action[prop] = action[prop].map((e: number) => e * factor)
+        } else {
+          action[prop] *= factor
+        }
+      }
+      const slot1 = effect.actions[1] as ActionWithNumericalFields
+      switch (slot1.type) {
+        case ActionType.RandomNodeTransform:
+          slot1.fields1[6] = new FloatField(slot1.fields1[6].value * factor)
+          slot1.fields1[7] = new FloatField(slot1.fields1[7].value * factor)
+          slot1.fields1[8] = new FloatField(slot1.fields1[8].value * factor)
+        case ActionType.StaticNodeTransform:
+          slot1.fields1[0] = new FloatField(slot1.fields1[0].value * factor)
+          slot1.fields1[1] = new FloatField(slot1.fields1[1].value * factor)
+          slot1.fields1[2] = new FloatField(slot1.fields1[2].value * factor)
+          break
+      }
+      const slot2 = effect.actions[2] as Action
+      switch (slot2.type) {
+        case ActionType.NodeTranslation:
+          slot2.properties1[0].scale(factor)
+          break
+        case ActionType.NodeAcceleration:
+        case ActionType.NodeAccelerationRandomTurns:
+        case ActionType.NodeAccelerationPartialFollow:
+        case ActionType.NodeAccelerationSpin:
+          slot2.properties1[0].scale(factor)
+          slot2.properties1[1].scale(factor)
+          slot2.properties1[3].scale(factor)
+          break
+        case ActionType.NodeSpeed:
+        case ActionType.NodeSpeedRandomTurns:
+        case ActionType.NodeSpeedPartialFollow:
+        case ActionType.NodeSpeedSpin:
+          slot2.properties1[0].scale(factor)
+          slot2.properties1[2].scale(factor)
+          break
+      }
+      const slot4 = effect.actions[1] as Action
+      if (slot4.type === ActionType.EqualDistanceEmitter) {
+        slot4.properties1[0].scale(factor)
+      }
+      const slot5 = effect.actions[5]
+      if (slot5 instanceof Action) {
+        switch (slot5.type) {
+          case ActionType.BoxEmitterShape:
+            slot5.properties1[2].scale(factor)
+          case ActionType.RectangleEmitterShape:
+            slot5.properties1[1].scale(factor)
+          case ActionType.DiskEmitterShape:
+          case ActionType.SphereEmitterShape:
+            slot5.properties1[0].scale(factor)
+            break
+        }
+      } else if (slot5.type === ActionType.CylinderEmitterShape) {
+        scaleDataProp(slot5, 'radius')
+        scaleDataProp(slot5, 'height')
+      }
+
+      if (effect.type === EffectType.Basic) {
+        const slot7 = effect.actions[7] as Action
+        slot7.properties1[0].scale(factor)
+
+        const slot9 = effect.actions[9] as ActionWithNumericalFields | DataAction
+        if (slot9 instanceof Action) {
+          switch (slot9.type) {
+            case ActionType.PointSprite:
+            case ActionType.Tracer:
+            case ActionType.Unk10012_Tracer:
+              slot9.properties1[2].scale(factor)
+              break
+            case ActionType.Line:
+              slot9.properties1[1].scale(factor)
+              break
+            case ActionType.QuadLine:
+              slot9.properties1[1].scale(factor)
+              slot9.properties1[2].scale(factor)
+              break
+            case ActionType.MultiTextureBillboardEx:
+              slot9.properties1[1].scale(factor)
+              slot9.properties1[2].scale(factor)
+              slot9.properties1[3].scale(factor)
+              slot9.properties1[4].scale(factor)
+              slot9.properties1[5].scale(factor)
+              break
+            case ActionType.Model:
+              slot9.properties1[1].scale(factor)
+              slot9.properties1[2].scale(factor)
+              slot9.properties1[3].scale(factor)
+              break
+            case ActionType.Distortion:
+              slot9.properties1[1].scale(factor)
+              slot9.properties1[2].scale(factor)
+              slot9.properties1[3].scale(factor)
+              slot9.properties1[4].scale(factor)
+              slot9.properties1[5].scale(factor)
+              slot9.properties1[6].scale(factor)
+              break
+            case ActionType.RadialBlur:
+              slot9.properties1[2].scale(factor)
+              slot9.properties1[3].scale(factor)
+              slot9.properties1[4].scale(factor)
+              slot9.properties1[5].scale(factor)
+              slot9.properties1[6].scale(factor)
+              slot9.properties1[9].scale(factor)
+              break
+            case ActionType.PointLight:
+              slot9.properties1[2].scale(factor)
+              slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
+              slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
+              slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
+              break
+            case ActionType.SpotLight:
+              slot9.properties1[4].scale(factor)
+              slot9.properties1[5].scale(factor)
+              slot9.properties1[6].scale(factor)
+              slot9.properties1[7].scale(factor)
+              slot9.fields1[4] = new FloatField(slot9.fields1[4].value * factor)
+              slot9.fields1[5] = new FloatField(slot9.fields1[5].value * factor)
+              slot9.fields1[6] = new FloatField(slot9.fields1[6].value * factor)
+              break
+          }
+          switch (slot9.type) {
+            case ActionType.PointSprite:
+            case ActionType.Line:
+            case ActionType.QuadLine:
+            case ActionType.MultiTextureBillboardEx:
+            case ActionType.Model:
+            case ActionType.Tracer:
+            case ActionType.Distortion:
+            case ActionType.RadialBlur:
+            case ActionType.Unk10000_StandardParticle:
+            case ActionType.Unk10001_StandardCorrectParticle:
+            case ActionType.Unk10012_Tracer:
+            case ActionType.Unk10015_RichModel:
+              for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
+                slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
+              }
+              slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
+              break
+          }
+        } else if (slot9.type === ActionType.BillboardEx) {
+          scaleDataProp(slot9, 'offsetX')
+          scaleDataProp(slot9, 'offsetY')
+          scaleDataProp(slot9, 'offsetZ')
+          scaleDataProp(slot9, 'width')
+          scaleDataProp(slot9, 'height')
+          scaleDataProp(slot9, 'depthOffset')
+          for (const prop of [
+            'unkDistFadeClose0',
+            'unkDistFadeClose1',
+            'unkDistFadeFar0',
+            'unkDistFadeFar1',
+            'minDistance',
+            'maxDistance',
+          ]) if (slot9[prop] > 0) {
+            scaleDataProp(slot9, prop)
+          }
+          scaleDataProp(slot9, 'negativeDepthOffset')
+        }
+        const slot10 = effect.actions[10] as Action
+        switch (slot10.type) {
+          case ActionType.ParticleAcceleration:
+          case ActionType.ParticleSpeed:
+          case ActionType.ParticleSpeedRandomTurns:
+          case ActionType.ParticleSpeedPartialFollow:
+          case ActionType.ParticleAccelerationRandomTurns:
+          case ActionType.ParticleAccelerationPartialFollow:
+            slot10.properties1[0].scale(factor)
+            slot10.properties1[1].scale(factor)
+            break
+        }
+        const slot13 = effect.actions[13] as Action
+        switch (slot13.type) {
+          case ActionType.NodeWindAcceleration:
+          case ActionType.NodeWindSpeed:
+            slot13.properties1[0].scale(factor)
+            break
+        }
+        const slot14 = effect.actions[14] as Action
+        switch (slot14.type) {
+          case ActionType.ParticleWindAcceleration:
+          case ActionType.ParticleWindSpeed:
+            slot14.properties1[0].scale(factor)
+            break
+        }
+      } else { // Shared emitter effect
+        const slot9 = effect.actions[9] as Action
+        switch (slot9.type) {
+          case ActionType.NodeWindAcceleration:
+          case ActionType.NodeWindSpeed:
+            slot9.properties1[0].scale(factor)
+            break
+        }
+      }
+    }
+  }
+
+  /**
+   * Recolors the entire branch by modifying color properties and fields using
+   * a function.
+   * @param func The function used to recolor the branch. It is passed the
+   * original color and should return the color to replace it with.
+   */
+  recolor(func: (color: Vector4) => Vector4) {
+    const procFields = (list: NumericalField[], i: number, alpha = false) => {
+      const [r, g, b, a] = func([
+        list[i  ].value,
+        list[i+1].value,
+        list[i+2].value,
+        alpha ? list[i+3].value : 1
+      ])
+      list[i  ] = new FloatField(r)
+      list[i+1] = new FloatField(g)
+      list[i+2] = new FloatField(b)
+      if (alpha) {
+        list[i+3] = new FloatField(a)
+      }
+    }
+    const procProp = (container: IProperty<ValueType.Vector4, any>[] | DataAction, key: number | string) => {
+      let prop = container[key]
+      if (prop instanceof ValueProperty) {
+        prop.value = func(prop.value)
+      } else if (prop instanceof KeyframeProperty) {
+        for (const keyframe of prop.keyframes) {
+          keyframe.value = func(keyframe.value as Vector4)
+        }
+      } else if (prop instanceof ComponentKeyframeProperty) {
+        const positions = new Set<number>
+        for (const comp of prop.components) {
+          for (const keyframe of comp.keyframes) {
+            positions.add(keyframe.position)
+          }
+        }
+        const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe<ValueType.Vector4>(e, prop.valueAt(e)))
+        container[key] = new LinearProperty(prop.loop, keyframes)
+        if ('modifiers' in prop) {
+          (container[key] as IModifiableProperty<ValueType.Vector4, any>).modifiers = prop.modifiers
+        }
+        prop = container[key]
+      }
+      if ('modifiers' in prop) {
+        for (const mod of (prop as IModifiableProperty<ValueType.Vector4, any>).modifiers) {
+          switch (mod.type) {
+            case ModifierType.Randomizer2:
+              procFields(mod.fields, 8, true)
+            case ModifierType.Randomizer1:
+            case ModifierType.Randomizer3:
+              procFields(mod.fields, 4, true)
+              break
+            case ModifierType.ExternalValue1:
+            case ModifierType.ExternalValue2:
+              procProp(mod.properties, 0)
+              break
+          }
+        }
+      }
+    }
+    const procDataProp = (action: DataAction, prop: string) => {
+      if (action[prop] instanceof Property) {
+        procProp(action, prop)
+      } else if (Array.isArray(action[prop])) {
+        action[prop] = func(action[prop])
+      }
+    }
+    for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
+      procProp((effect.actions[7] as Action).properties1, 4)
+      const slot9 = effect.actions[9] as ActionWithNumericalFields | DataAction
+      if (slot9 instanceof Action) {
+        switch (slot9.type) {
+          case ActionType.PointSprite:
+            procProp(slot9.properties1, 3)
+            procProp(slot9.properties1, 4)
+            procProp(slot9.properties1, 5)
+            break
+          case ActionType.Line:
+            procProp(slot9.properties1, 2)
+            procProp(slot9.properties1, 3)
+            procProp(slot9.properties1, 4)
+            procProp(slot9.properties1, 5)
+            procProp(slot9.properties1, 7)
+            break
+          case ActionType.QuadLine:
+            procProp(slot9.properties1, 3)
+            procProp(slot9.properties1, 4)
+            procProp(slot9.properties1, 5)
+            procProp(slot9.properties1, 6)
+            procProp(slot9.properties1, 9)
+            break
+          case ActionType.MultiTextureBillboardEx:
+            procProp(slot9.properties1, 15)
+            procProp(slot9.properties1, 16)
+            procProp(slot9.properties1, 17)
+            procProp(slot9.properties1, 18)
+            procProp(slot9.properties1, 19)
+            procProp(slot9.properties1, 20)
+            break
+          case ActionType.Model:
+            procProp(slot9.properties1, 14)
+            procProp(slot9.properties1, 15)
+            procProp(slot9.properties1, 16)
+            break
+          case ActionType.Tracer:
+          case ActionType.Unk10012_Tracer:
+            procProp(slot9.properties1, 6)
+            procProp(slot9.properties1, 7)
+            procProp(slot9.properties1, 8)
+            break
+          case ActionType.Distortion:
+          case ActionType.RadialBlur:
+            procProp(slot9.properties1, 7)
+            procProp(slot9.properties1, 8)
+            break
+          case ActionType.PointLight:
+          case ActionType.SpotLight:
+            procProp(slot9.properties1, 0)
+            procProp(slot9.properties1, 1)
+            break
+          case ActionType.Unk10000_StandardParticle:
+          case ActionType.Unk10001_StandardCorrectParticle:
+            procProp(slot9.properties1, 13)
+            procProp(slot9.properties2, 3)
+            procProp(slot9.properties2, 4)
+            procProp(slot9.properties2, 5)
+            break
+          case ActionType.Unk10014_LensFlare:
+            procProp(slot9.properties1, 2)
+            procProp(slot9.properties1, 5)
+            procProp(slot9.properties1, 8)
+            procProp(slot9.properties1, 11)
+            break
+          case ActionType.Unk10015_RichModel:
+            procProp(slot9.properties1, 13)
+            procProp(slot9.properties1, 14)
+            procProp(slot9.properties1, 15)
+        }
+        switch (slot9.type) {
+          case ActionType.PointSprite:
+          case ActionType.Line:
+          case ActionType.QuadLine:
+          case ActionType.BillboardEx:
+          case ActionType.MultiTextureBillboardEx:
+          case ActionType.Model:
+          case ActionType.Tracer:
+          case ActionType.Distortion:
+          case ActionType.RadialBlur:
+          case ActionType.Unk10012_Tracer:
+          case ActionType.Unk10015_RichModel:
+            procProp(slot9.properties2, 3)
+            procProp(slot9.properties2, 4)
+            procProp(slot9.properties2, 5)
+            procFields(slot9.fields2, 5)
+            break
+        }
+      } else if (slot9.type === ActionType.BillboardEx) {
+        procDataProp(slot9, 'color1')
+        procDataProp(slot9, 'color2')
+        procDataProp(slot9, 'color3')
+      }
+    }
+  }
+
+}
+
+/**
+ * This class has the same structure as a node in the FXR file format, meaning
+ * it can be used to hold any information that a node from the format can. It
+ * is meant to only be used as a fallback if none of the more specific node
+ * classes can be used for something.
+ */
+class GenericNode extends Node {
 
   constructor(
     type: NodeType,
-    actions: Action[] = [],
-    effects: Effect[] = [],
-    nodes: Node[] = []
+    public actions: IAction[],
+    public effects: Effect[],
+    public nodes: Node[]
   ) {
-    this.type = type
-    this.actions = actions
-    this.effects = effects
-    this.nodes = nodes
+    super(type)
   }
 
-  static read(br: BinaryReader, version: FXRVersion) {
-    const type = br.readInt16()
-    const node = new (type in Nodes ? Nodes[type] : Node)
-    node.type = type
-    br.assertUint8(0)
-    br.assertUint8(1)
-    br.assertInt32(0)
-    const effectCount = br.readInt32()
-    const actionCount = br.readInt32()
-    const nodeCount = br.readInt32()
-    br.assertInt32(0)
-    const effectOffset = br.readInt32()
-    br.assertInt32(0)
-    const actionOffset = br.readInt32()
-    br.assertInt32(0)
-    const nodeOffset = br.readInt32()
-    br.assertInt32(0)
-    br.stepIn(nodeOffset)
-    node.nodes = []
-    for (let i = 0; i < nodeCount; ++i) {
-      node.nodes.push(Node.read(br, version))
-    }
-    br.stepOut()
-    br.stepIn(effectOffset)
-    node.effects = []
-    for (let i = 0; i < effectCount; ++i) {
-      node.effects.push(Effect.read(br, version))
-    }
-    br.stepOut()
-    br.stepIn(actionOffset)
-    node.actions = []
-    for (let i = 0; i < actionCount; ++i) {
-      node.actions.push(Action.read(br, version))
-    }
-    br.stepOut()
-    return node
-  }
-
-  write(bw: BinaryWriter, nodes: Node[]) {
-    const count = nodes.length
-    bw.writeInt16(this.type)
-    bw.writeUint8(0)
-    bw.writeUint8(1)
-    bw.writeInt32(0)
-    bw.writeInt32(this.effects.length)
-    bw.writeInt32(this.actions.length)
-    bw.writeInt32(this.nodes.length)
-    bw.writeInt32(0)
-    bw.reserveInt32(`NodeEffectsOffset${count}`)
-    bw.writeInt32(0)
-    bw.reserveInt32(`NodeActionsOffset${count}`)
-    bw.writeInt32(0)
-    bw.reserveInt32(`NodeChildNodesOffset${count}`)
-    bw.writeInt32(0)
-    nodes.push(this)
-  }
-
-  writeNodes(bw: BinaryWriter, nodes: Node[]) {
-    const num = nodes.indexOf(this)
-    if (this.nodes.length === 0) {
-      bw.fill(`NodeChildNodesOffset${num}`, 0)
-    } else {
-      bw.fill(`NodeChildNodesOffset${num}`, bw.position)
-      for (const node of this.nodes) {
-        node.write(bw, nodes)
-      }
-      for (const node of this.nodes) {
-        node.writeNodes(bw, nodes)
-      }
-    }
-  }
-
-  writeEffects(bw: BinaryWriter, index: number, effectCounter: { value: number }) {
-    if (this.effects.length === 0) {
-      bw.fill(`NodeEffectsOffset${index}`, 0)
-    } else {
-      bw.fill(`NodeEffectsOffset${index}`, bw.position)
-      for (let i = 0; i < this.effects.length; ++i) {
-        this.effects[i].write(bw, effectCounter.value + i)
-      }
-      effectCounter.value += this.effects.length
-    }
-  }
-
-  writeActions(bw: BinaryWriter, index: number, effectCounter: { value: number }, actions: Action[]) {
-    bw.fill(`NodeActionsOffset${index}`, bw.position)
-    for (const action of this.actions) {
-      action.write(bw, actions)
-    }
-    for (let i = 0; i < this.effects.length; ++i) {
-      this.effects[i].writeActions(bw, effectCounter.value + i, actions)
-    }
-    effectCounter.value += this.effects.length
-  }
+  getActions(game: Game): IAction[] { return this.actions }
+  getEffects(game: Game): Effect[] { return this.effects }
+  getNodes(game: Game): Node[] { return this.nodes }
 
   static fromJSON({
     type,
@@ -2601,7 +3916,7 @@ class Node {
   }
 
   minify() {
-    return new Node(
+    return new GenericNode(
       this.type,
       this.actions.map(action => action.minify()),
       this.effects.map(effect => effect.minify()),
@@ -2609,456 +3924,119 @@ class Node {
     )
   }
 
-  /**
-   * Yields all nodes in this branch, including this node.
-   */
-  *walk(): Generator<Node> {
-    yield this
-    for (const node of this.nodes) {
-      yield* node.walk()
-    }
-  }
-
-  /**
-   * Yields all effects in this branch.
-   */
-  *walkEffects() {
-    for (const node of this.walk()) {
-      yield* node.effects
-    }
-  }
-
-  /**
-   * Yields all actions in this branch.
-   */
-  *walkActions() {
-    for (const node of this.walk()) {
-      yield* node.actions
-      for (const effect of node.effects) {
-        yield* effect.actions
-      }
-    }
-  }
-
-  /**
-   * Yields all properties in this branch, excluding properties inside
-   * modifiers.
-   */
-  *walkProperties() {
-    for (const action of this.walkActions()) {
-      yield* action.properties1
-      yield* action.properties2
-    }
-  }
-
-  /**
-   * Scales the entire branch by a factor. This updates all sizes, offsets,
-   * lengths, and radii of the actions in the branch, except certain
-   * multiplicative fields and properties.
-   * 
-   * This will not work properly in Dark Souls 3 FXRs due to some actions
-   * having different indices for various properties and fields.
-   * @param factor The factor to scale the branch with.
-   */
-  scale(factor: number) {
-    for (const effect of this.walkEffects()) if (
-      effect.type === EffectType.Basic || effect.type === EffectType.SharedEmitter
-    ) {
-      const slot1 = effect.actions[1] as ActionWithNumericalFields
-      switch (slot1.type) {
-        case ActionType.RandomNodeTransform:
-          slot1.fields1[6] = new FloatField(slot1.fields1[6].value * factor)
-          slot1.fields1[7] = new FloatField(slot1.fields1[7].value * factor)
-          slot1.fields1[8] = new FloatField(slot1.fields1[8].value * factor)
-        case ActionType.StaticNodeTransform:
-          slot1.fields1[0] = new FloatField(slot1.fields1[0].value * factor)
-          slot1.fields1[1] = new FloatField(slot1.fields1[1].value * factor)
-          slot1.fields1[2] = new FloatField(slot1.fields1[2].value * factor)
-          break
-      }
-      const slot2 = effect.actions[2]
-      switch (slot2.type) {
-        case ActionType.NodeTranslation:
-          slot2.properties1[0].scale(factor)
-          break
-        case ActionType.NodeAcceleration:
-        case ActionType.NodeAccelerationRandomTurns:
-        case ActionType.NodeAccelerationPartialFollow:
-        case ActionType.NodeAccelerationSpin:
-          slot2.properties1[0].scale(factor)
-          slot2.properties1[1].scale(factor)
-          slot2.properties1[3].scale(factor)
-          break
-        case ActionType.NodeSpeed:
-        case ActionType.NodeSpeedRandomTurns:
-        case ActionType.NodeSpeedPartialFollow:
-        case ActionType.NodeSpeedSpin:
-          slot2.properties1[0].scale(factor)
-          slot2.properties1[2].scale(factor)
-          break
-      }
-      const slot4 = effect.actions[1]
-      if (slot4.type === ActionType.EqualDistanceEmitter) {
-        slot4.properties1[0].scale(factor)
-      }
-      const slot5 = effect.actions[5]
-      switch (slot5.type) {
-        case ActionType.BoxEmitterShape:
-          slot5.properties1[2].scale(factor)
-        case ActionType.RectangleEmitterShape:
-        case ActionType.CylinderEmitterShape:
-          slot5.properties1[1].scale(factor)
-        case ActionType.DiskEmitterShape:
-        case ActionType.SphereEmitterShape:
-          slot5.properties1[0].scale(factor)
-          break
-      }
-
-      if (effect.type === EffectType.Basic) {
-        const slot7 = effect.actions[7]
-        slot7.properties1[0].scale(factor)
-
-        const slot9 = effect.actions[9] as ActionWithNumericalFields
-        switch (slot9.type) {
-          case ActionType.PointSprite:
-          case ActionType.Tracer:
-          case ActionType.Unk10012_Tracer:
-            slot9.properties1[2].scale(factor)
-            break
-          case ActionType.Line:
-            slot9.properties1[1].scale(factor)
-            break
-          case ActionType.QuadLine:
-            slot9.properties1[1].scale(factor)
-            slot9.properties1[2].scale(factor)
-            break
-          case ActionType.BillboardEx:
-            slot9.properties1[2].scale(factor)
-            slot9.properties1[3].scale(factor)
-            slot9.properties1[4].scale(factor)
-            slot9.properties1[5].scale(factor)
-            slot9.properties1[6].scale(factor)
-            slot9.properties1[20].scale(factor)
-            break
-          case ActionType.MultiTextureBillboardEx:
-            slot9.properties1[1].scale(factor)
-            slot9.properties1[2].scale(factor)
-            slot9.properties1[3].scale(factor)
-            slot9.properties1[4].scale(factor)
-            slot9.properties1[5].scale(factor)
-            break
-          case ActionType.Model:
-            slot9.properties1[1].scale(factor)
-            slot9.properties1[2].scale(factor)
-            slot9.properties1[3].scale(factor)
-            break
-          case ActionType.Distortion:
-            slot9.properties1[1].scale(factor)
-            slot9.properties1[2].scale(factor)
-            slot9.properties1[3].scale(factor)
-            slot9.properties1[4].scale(factor)
-            slot9.properties1[5].scale(factor)
-            slot9.properties1[6].scale(factor)
-            break
-          case ActionType.RadialBlur:
-            slot9.properties1[2].scale(factor)
-            slot9.properties1[3].scale(factor)
-            slot9.properties1[4].scale(factor)
-            slot9.properties1[5].scale(factor)
-            slot9.properties1[6].scale(factor)
-            slot9.properties1[9].scale(factor)
-            break
-          case ActionType.PointLight:
-            slot9.properties1[2].scale(factor)
-            slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
-            slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
-            slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
-            break
-          case ActionType.SpotLight:
-            slot9.properties1[4].scale(factor)
-            slot9.properties1[5].scale(factor)
-            slot9.properties1[6].scale(factor)
-            slot9.properties1[7].scale(factor)
-            slot9.fields1[4] = new FloatField(slot9.fields1[4].value * factor)
-            slot9.fields1[5] = new FloatField(slot9.fields1[5].value * factor)
-            slot9.fields1[6] = new FloatField(slot9.fields1[6].value * factor)
-            break
-        }
-        switch (slot9.type) {
-          case ActionType.PointSprite:
-          case ActionType.Line:
-          case ActionType.QuadLine:
-          case ActionType.BillboardEx:
-          case ActionType.MultiTextureBillboardEx:
-          case ActionType.Model:
-          case ActionType.Tracer:
-          case ActionType.Distortion:
-          case ActionType.RadialBlur:
-          case ActionType.Unk10000_StandardParticle:
-          case ActionType.Unk10001_StandardCorrectParticle:
-          case ActionType.Unk10012_Tracer:
-          case ActionType.Unk10015_RichModel:
-            for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
-              slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
-            }
-            slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
-            break
-        }
-        const slot10 = effect.actions[10]
-        switch (slot10.type) {
-          case ActionType.ParticleAcceleration:
-          case ActionType.ParticleSpeed:
-          case ActionType.ParticleSpeedRandomTurns:
-          case ActionType.ParticleSpeedPartialFollow:
-          case ActionType.ParticleAccelerationRandomTurns:
-          case ActionType.ParticleAccelerationPartialFollow:
-            slot10.properties1[0].scale(factor)
-            slot10.properties1[1].scale(factor)
-            break
-        }
-        const slot13 = effect.actions[13]
-        switch (slot13.type) {
-          case ActionType.NodeWindAcceleration:
-          case ActionType.NodeWindSpeed:
-            slot13.properties1[0].scale(factor)
-            break
-        }
-        const slot14 = effect.actions[14]
-        switch (slot14.type) {
-          case ActionType.ParticleWindAcceleration:
-          case ActionType.ParticleWindSpeed:
-            slot14.properties1[0].scale(factor)
-            break
-        }
-      } else { // Shared emitter effect
-        const slot9 = effect.actions[9]
-        switch (slot9.type) {
-          case ActionType.NodeWindAcceleration:
-          case ActionType.NodeWindSpeed:
-            slot9.properties1[0].scale(factor)
-            break
-        }
-      }
-    }
-  }
-
-  /**
-   * Recolors the entire branch by modifying color properties and fields using
-   * a function.
-   * 
-   * This will not work properly in Dark Souls 3 FXRs due to some actions
-   * having different indices for various properties and fields.
-   * @param func The function used to recolor the branch. It is passed the
-   * original color and should return the color to replace it with.
-   */
-  recolor(func: (color: Vector4) => Vector4) {
-    const procFields = (list: NumericalField[], i: number, alpha = false) => {
-      const [r, g, b, a] = func([
-        list[i  ].value,
-        list[i+1].value,
-        list[i+2].value,
-        alpha ? list[i+3].value : 1
-      ])
-      list[i  ] = new FloatField(r)
-      list[i+1] = new FloatField(g)
-      list[i+2] = new FloatField(b)
-      if (alpha) {
-        list[i+3] = new FloatField(a)
-      }
-    }
-    const procProp = (list: IProperty<ValueType.Vector4, any>[], index: number) => {
-      let prop = list[index]
-      if (prop instanceof ValueProperty) {
-        if (prop.function <= PropertyFunction.One) {
-          prop.function = PropertyFunction.Constant
-        }
-        prop.value = func(prop.value)
-      } else if (prop instanceof KeyframeProperty) {
-        for (const keyframe of prop.keyframes) {
-          keyframe.value = func(keyframe.value as Vector4)
-        }
-      } else if (prop instanceof ComponentKeyframeProperty) {
-        const positions = new Set<number>
-        for (const comp of prop.components) {
-          for (const keyframe of comp.keyframes) {
-            positions.add(keyframe.position)
-          }
-        }
-        const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe<ValueType.Vector4>(e, prop.valueAt(e)))
-        list[index] = new LinearProperty(prop.loop, keyframes)
-        if ('modifiers' in prop) {
-          (list[index] as IModifiableProperty<ValueType.Vector4, any>).modifiers = prop.modifiers
-        }
-        prop = list[index]
-      }
-      if ('modifiers' in prop) {
-        for (const mod of (prop as IModifiableProperty<ValueType.Vector4, any>).modifiers) {
-          switch (mod.type) {
-            case ModifierType.Randomizer2:
-              procFields(mod.fields, 8, true)
-            case ModifierType.Randomizer1:
-            case ModifierType.Randomizer3:
-              procFields(mod.fields, 4, true)
-              break
-            case ModifierType.ExternalValue1:
-            case ModifierType.ExternalValue2:
-              procProp(mod.properties, 0)
-              break
-          }
-        }
-      }
-    }
-    for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
-      procProp(effect.actions[7].properties1, 4)
-      const slot9 = effect.actions[9] as ActionWithNumericalFields
-      switch (slot9.type) {
-        case ActionType.PointSprite:
-          procProp(slot9.properties1, 3)
-          procProp(slot9.properties1, 4)
-          procProp(slot9.properties1, 5)
-          break
-        case ActionType.Line:
-          procProp(slot9.properties1, 2)
-          procProp(slot9.properties1, 3)
-          procProp(slot9.properties1, 4)
-          procProp(slot9.properties1, 5)
-          procProp(slot9.properties1, 7)
-          break
-        case ActionType.QuadLine:
-          procProp(slot9.properties1, 3)
-          procProp(slot9.properties1, 4)
-          procProp(slot9.properties1, 5)
-          procProp(slot9.properties1, 6)
-          procProp(slot9.properties1, 9)
-          break
-        case ActionType.BillboardEx:
-          procProp(slot9.properties1, 7)
-          procProp(slot9.properties1, 8)
-          procProp(slot9.properties1, 9)
-          break
-        case ActionType.MultiTextureBillboardEx:
-          procProp(slot9.properties1, 15)
-          procProp(slot9.properties1, 16)
-          procProp(slot9.properties1, 17)
-          procProp(slot9.properties1, 18)
-          procProp(slot9.properties1, 19)
-          procProp(slot9.properties1, 20)
-          break
-        case ActionType.Model:
-          procProp(slot9.properties1, 14)
-          procProp(slot9.properties1, 15)
-          procProp(slot9.properties1, 16)
-          break
-        case ActionType.Tracer:
-        case ActionType.Unk10012_Tracer:
-          procProp(slot9.properties1, 6)
-          procProp(slot9.properties1, 7)
-          procProp(slot9.properties1, 8)
-          break
-        case ActionType.Distortion:
-        case ActionType.RadialBlur:
-          procProp(slot9.properties1, 7)
-          procProp(slot9.properties1, 8)
-          break
-        case ActionType.PointLight:
-        case ActionType.SpotLight:
-          procProp(slot9.properties1, 0)
-          procProp(slot9.properties1, 1)
-          break
-        case ActionType.Unk10000_StandardParticle:
-        case ActionType.Unk10001_StandardCorrectParticle:
-          procProp(slot9.properties1, 13)
-          procProp(slot9.properties2, 3)
-          procProp(slot9.properties2, 4)
-          procProp(slot9.properties2, 5)
-          break
-        case ActionType.Unk10014_LensFlare:
-          procProp(slot9.properties1, 2)
-          procProp(slot9.properties1, 5)
-          procProp(slot9.properties1, 8)
-          procProp(slot9.properties1, 11)
-          break
-        case ActionType.Unk10015_RichModel:
-          procProp(slot9.properties1, 13)
-          procProp(slot9.properties1, 14)
-          procProp(slot9.properties1, 15)
-      }
-      switch (slot9.type) {
-        case ActionType.PointSprite:
-        case ActionType.Line:
-        case ActionType.QuadLine:
-        case ActionType.BillboardEx:
-        case ActionType.MultiTextureBillboardEx:
-        case ActionType.Model:
-        case ActionType.Tracer:
-        case ActionType.Distortion:
-        case ActionType.RadialBlur:
-        case ActionType.Unk10012_Tracer:
-        case ActionType.Unk10015_RichModel:
-          procProp(slot9.properties2, 3)
-          procProp(slot9.properties2, 4)
-          procProp(slot9.properties2, 5)
-          procFields(slot9.fields2, 5)
-          break
-      }
-    }
-  }
-
 }
 
 /**
- * Simplifies the creation of new {@link NodeType.Root root nodes} by giving
- * them default actions.
+ * The root of the FXR tree structure.
  */
 class RootNode extends Node {
 
   constructor(
-    rateOfTime: ScalarPropertyArg = 1,
-    effects: Effect[] = [],
-    nodes: Node[] = [],
+    public nodes: Node[] = [],
+    public unk70x: IAction = new Action(ActionType.Unk700),
+    public unk10100: IAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
+    public unk10400: IAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
+    public unk10500: IAction = new Unk10500
   ) {
-    super(NodeType.Root, [
-      new Action(ActionType.Unk700),
-      new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
-      new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
-      new Action(ActionType.Unk10500, arrayOf(10, () => new IntField(0)), [], [
-        rateOfTime instanceof Property ? rateOfTime : new ConstantProperty(rateOfTime as number)
-      ]),
-    ], effects, nodes)
+    super(NodeType.Root)
   }
 
-  get rateOfTime(): ScalarProperty { return this.actions.find(a => a.type === ActionType.Unk10500)?.properties1[0] }
-  set rateOfTime(value: ScalarPropertyArg) {
-    if (value instanceof Property) {
-      this.actions.find(a => a.type === ActionType.Unk10500).properties1[0] = value
+  getActions(game: Game): IAction[] {
+    switch (game) {
+      case Game.DarkSouls3:
+      case Game.Sekiro:
+        return [
+          this.unk10100,
+          this.unk10400,
+          this.unk10500
+        ]
+      case Game.EldenRing:
+      case Game.ArmoredCore6:
+        return [
+          this.unk70x,
+          this.unk10100,
+          this.unk10400,
+          this.unk10500
+        ]
+    }
+  }
+
+  getEffects(game: Game): Effect[] { return [] }
+  getNodes(game: Game): Node[] { return this.nodes }
+
+  minify(): Node {
+    return new RootNode(
+      this.nodes.map(node => node.minify()),
+      this.unk70x.minify(),
+      this.unk10100.minify(),
+      this.unk10400.minify(),
+      this.unk10500.minify()
+    )
+  }
+
+  static fromJSON(obj: any): Node {
+    if (!(
+      'nodes' in obj ||
+      'unk70x' in obj ||
+      'unk10100' in obj ||
+      'unk10400' in obj ||
+      'unk10500' in obj
+    )) return GenericNode.fromJSON(obj)
+    return new RootNode(
+      obj.nodes,
+      obj.unk70x,
+      obj.unk10100,
+      obj.unk10400,
+      obj.unk10500
+    )
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      unk70x: this.unk70x.toJSON(),
+      unk10100: this.unk10100.toJSON(),
+      unk10400: this.unk10400.toJSON(),
+      unk10500: this.unk10500.toJSON(),
+      nodes: this.nodes.map(node => node.toJSON())
+    }
+  }
+
+  get rateOfTime() {
+    if (this.unk10500 instanceof Unk10500) {
+      return this.unk10500.rateOfTime
     } else {
-      this.actions.find(a => a.type === ActionType.Unk10500).properties1[0] = new ConstantProperty(value as number)
+      return null
+    }
+  }
+  set rateOfTime(value: ScalarPropertyArg) {
+    if (this.unk10500 instanceof Unk10500) {
+      this.unk10500.rateOfTime = value
     }
   }
 
 }
 
 /**
- * Acts as a node containing another FXR.
+ * Acts as a node containing another SFX.
  */
 class ProxyNode extends Node {
 
-  declare actions: [FXRReference]
-
   /**
-   * @param fxrID The ID of the FXR that this node should act as a proxy for.
+   * @param sfxID The ID of the SFX that this node should act as a proxy for.
    */
-  constructor(fxrID: number) {
-    super(NodeType.Proxy, [
-      new FXRReference(fxrID)
-    ])
+  constructor(public sfxID: number) { super(NodeType.Proxy) }
+
+  getActions(game: Game): IAction[] {
+    return [ new SFXReference(this.sfxID) ]
   }
 
-  /**
-   * The ID of the FXR that this node should act as a proxy for.
-   */
-  get fxrID() { return this.actions[0].referenceID }
-  set fxrID(value) { this.actions[0].referenceID = value }
+  toJSON() {
+    return {
+      type: this.type,
+      sfxID: this.sfxID
+    }
+  }
 
 }
 
@@ -3067,12 +4045,35 @@ class ProxyNode extends Node {
  */
 class NodeWithEffects extends Node {
 
-  constructor(type: NodeType, effects: Effect[] = [], nodes: Node[] = []) {
-    super(type, [ new StateEffectMap ], effects, nodes)
+  stateEffectMap: number[] = [0]
+
+  constructor(type: NodeType, public effects: Effect[], public nodes: Node[]) {
+    super(type)
+  }
+
+  getActions(game: Game): IAction[] {
+    return [ new StateEffectMap(...this.stateEffectMap) ]
+  }
+
+  getEffects(game: Game): Effect[] {
+    return this.effects
+  }
+
+  getNodes(game: Game): Node[] {
+    return this.nodes
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      stateEffectMap: this.stateEffectMap,
+      effects: this.effects,
+      nodes: this.nodes
+    }
   }
 
   mapStates(...effectIndices: number[]) {
-    this.actions = [new StateEffectMap(...effectIndices)]
+    this.stateEffectMap = effectIndices
     return this
   }
 
@@ -3099,7 +4100,7 @@ class LevelOfDetailNode extends NodeWithEffects {
 
   /**
    * Alternative method to construct the node. Use this if you don't need
-   * multiple effects or a non-infinite duration.
+   * multiple effects or a finite duration.
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
    * @param nodes An array of child nodes.
@@ -3108,6 +4109,20 @@ class LevelOfDetailNode extends NodeWithEffects {
     return new LevelOfDetailNode([
       new LevelOfDetailEffect(-1, thresholds)
     ], nodes)
+  }
+
+  static fromJSON(obj: any): Node {
+    return new LevelOfDetailNode(
+      obj.effects.map((e: any) => LevelOfDetailEffect.fromJSON(e)),
+      obj.nodes.map((e: any) => Node.fromJSON(e))
+    ).mapStates(...obj.stateEffectMap)
+  }
+
+  minify(): Node {
+    return new LevelOfDetailNode(
+      this.effects.map(e => e.minify()),
+      this.nodes.map(e => e.minify())
+    ).mapStates(...this.stateEffectMap)
   }
 
 }
@@ -3123,13 +4138,13 @@ class BasicNode extends NodeWithEffects {
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: Effect[] | Action[] = [], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: Effect[] | IAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    if (effectsOrEffectActions.every(e => e instanceof Action)) {
+    if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicEffect(effectsOrEffectActions as Action[])
+        new BasicEffect(effectsOrEffectActions as IAction[])
       ], nodes)
     } else {
       super(
@@ -3138,6 +4153,20 @@ class BasicNode extends NodeWithEffects {
         nodes
       )
     }
+  }
+
+  static fromJSON(obj: any): Node {
+    return new BasicNode(
+      obj.effects.map((e: any) => Effect.fromJSON(e)),
+      obj.nodes.map((e: any) => Node.fromJSON(e))
+    ).mapStates(...obj.stateEffectMap)
+  }
+
+  minify(): Node {
+    return new BasicNode(
+      this.effects.map(e => e.minify()),
+      this.nodes.map(e => e.minify())
+    ).mapStates(...this.stateEffectMap)
   }
 
 }
@@ -3165,6 +4194,20 @@ class SharedEmitterNode extends NodeWithEffects {
     }
   }
 
+  static fromJSON(obj: any): Node {
+    return new SharedEmitterNode(
+      obj.effects.map((e: any) => Effect.fromJSON(e)),
+      obj.nodes.map((e: any) => Node.fromJSON(e))
+    ).mapStates(...obj.stateEffectMap)
+  }
+
+  minify(): Node {
+    return new SharedEmitterNode(
+      this.effects.map(e => e.minify()),
+      this.nodes.map(e => e.minify())
+    ).mapStates(...this.stateEffectMap)
+  }
+
 }
 
 const Nodes = {
@@ -3177,53 +4220,11 @@ const Nodes = {
 class Effect {
 
   type: EffectType
-  actions: Action[]
+  actions: IAction[]
 
-  constructor(type: EffectType, actions: Action[] = []) {
+  constructor(type: EffectType, actions: IAction[] = []) {
     this.type = type
     this.actions = actions
-  }
-
-  static read(br: BinaryReader, version: FXRVersion) {
-    const type = br.readInt16()
-    const effect = new (type in Effects ? Effects[type] : Effect)
-    effect.type = type
-    br.assertUint8(0)
-    br.assertUint8(1)
-    br.assertInt32(0)
-    br.assertInt32(0)
-    const actionCount = br.readInt32()
-    br.assertInt32(0)
-    br.assertInt32(0)
-    const actionOffset = br.readInt32()
-    br.assertInt32(0)
-    br.stepIn(actionOffset)
-    effect.actions = []
-    for (let i = 0; i < actionCount; ++i) {
-      effect.actions.push(Action.read(br, version))
-    }
-    br.stepOut()
-    return effect
-  }
-
-  write(bw: BinaryWriter, index: number) {
-    bw.writeInt16(this.type)
-    bw.writeUint8(0)
-    bw.writeUint8(1)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(this.actions.length)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.reserveInt32(`EffectActionsOffset${index}`)
-    bw.writeInt32(0)
-  }
-
-  writeActions(bw: BinaryWriter, index: number, actions: Action[]) {
-    bw.fill(`EffectActionsOffset${index}`, bw.position)
-    for (const action of this.actions) {
-      action.write(bw, actions)
-    }
   }
 
   static fromJSON({
@@ -3303,7 +4304,7 @@ class BasicEffect extends Effect {
    * and it does not need to be a complete list. Actions will be placed in the
    * slots they fit in.
    */
-  constructor(actions: Action[] = []) {
+  constructor(actions: IAction[] = []) {
     super(EffectType.Basic, [
       new NodeAttributes,
       new Action,
@@ -3328,14 +4329,14 @@ class BasicEffect extends Effect {
         new Field,
         new Field,
       ], [], [
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
-        new ZeroProperty,
+        new ConstantProperty(0),
+        new ConstantProperty(0),
+        new ConstantProperty(0),
+        new ConstantProperty(0),
+        new ConstantProperty(0),
+        new ConstantProperty(0),
+        new ConstantProperty(0),
+        new ConstantProperty(0),
       ]),
       new Action,
       new Action,
@@ -3372,13 +4373,13 @@ class BasicEffect extends Effect {
  * 14    | {@link ActionType.None None}
  */
 class SharedEmitterEffect extends Effect {
-  
+
   /**
    * @param actions Actions to use in the effect. The order does not matter,
    * and it does not need to be a complete list. Actions will be placed in the
    * slots they fit in.
    */
-  constructor(actions: Action[] = []) {
+  constructor(actions: IAction[] = []) {
     super(EffectType.SharedEmitter, [
       new NodeAttributes,
       new Action,
@@ -3568,7 +4569,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
-  [ActionType.FXRReference]: {
+  [ActionType.SFXReference]: {
     Fields1: [
       FieldType.Integer
     ],
@@ -3619,14 +4620,6 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
-  [ActionType.CylinderEmitterShape]: {
-    Fields1: [
-      FieldType.Integer,
-      FieldType.Boolean,
-      FieldType.Boolean,
-    ],
-    Fields2: []
-  },
   [ActionType.CircularParticleSpread]: {
     Fields1: [
       FieldType.Boolean,
@@ -3661,29 +4654,6 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     Fields1: [
       FieldType.Integer,
       null,
-      null,
-    ],
-    Fields2: commonFields2Types
-  },
-  [ActionType.BillboardEx]: {
-    Fields1: [
-      FieldType.Integer, // Orientation mode
-      FieldType.Integer, // Normal map ID
-      FieldType.Float, // Random width mult
-      FieldType.Float, // Random height mult
-      FieldType.Boolean, // Uniform scale
-      FieldType.Integer,
-      FieldType.Integer, // Columns
-      FieldType.Integer, // Total frames
-      FieldType.Boolean, // Interpolate frames
-      FieldType.Integer,
-      FieldType.Integer,
-      FieldType.Float,
-      FieldType.Integer,
-      null,
-      null,
-      FieldType.Integer,
-      FieldType.Integer,
       null,
     ],
     Fields2: commonFields2Types
@@ -3897,7 +4867,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
   }
 }
 
-class Action {
+class Action implements IAction {
 
   type: ActionType
   fields1: Field[]
@@ -3920,132 +4890,6 @@ class Action {
     this.properties1 = properties1
     this.properties2 = properties2
     this.section10s = section10s
-  }
-
-  static read(br: BinaryReader, version: FXRVersion): Action {
-    const type = br.readInt16()
-    br.position += 6
-    // br.readUint8() // Unk02
-    // br.readUint8() // Unk03
-    // br.readInt32() // Unk04
-    const fieldCount1 = br.readInt32()
-    const section10Count = br.readInt32()
-    const propertyCount1 = br.readInt32()
-    const fieldCount2 = br.readInt32()
-    br.assertInt32(0)
-    const propertyCount2 = br.readInt32()
-    const fieldOffset = br.readInt32()
-    br.assertInt32(0)
-    const section10Offset = br.readInt32()
-    br.assertInt32(0)
-    const propertyOffset = br.readInt32()
-    br.assertInt32(0)
-    br.assertInt32(0)
-    br.assertInt32(0)
-
-    br.stepIn(propertyOffset)
-    const properties1: AnyProperty[] = []
-    const properties2: AnyProperty[] = []
-    for (let i = 0; i < propertyCount1; ++i) {
-      properties1.push(readProperty(br, false))
-    }
-    for (let i = 0; i < propertyCount2; ++i) {
-      properties2.push(readProperty(br, false))
-    }
-    br.stepOut()
-
-    br.stepIn(section10Offset)
-    const section10s: Section10[] = []
-    for (let i = 0; i < section10Count; ++i) {
-      section10s.push(Section10.read(br))
-    }
-    br.stepOut()
-
-    br.stepIn(fieldOffset)
-    let fields1: Field[], fields2: Field[]
-    if (version !== FXRVersion.DarkSouls3 && type in ActionFieldTypes) {
-      const pos = br.position
-      try {
-        fields1 = Field.readWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, this)
-        fields2 = Field.readWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, this)
-      } catch {
-        br.position = pos
-        fields1 = Field.readMany(br, fieldCount1, this)
-        fields2 = Field.readMany(br, fieldCount2, this)
-      }
-    } else {
-      fields1 = Field.readMany(br, fieldCount1, this)
-      fields2 = Field.readMany(br, fieldCount2, this)
-    }
-    br.stepOut()
-    if (type in Actions) {
-      const action = new Actions[type]()
-      action.type = type
-      action.fields1 = fields1
-      action.fields2 = fields2
-      action.properties1 = properties1
-      action.properties2 = properties2
-      action.section10s = section10s
-      return action
-    } else {
-      return new Action(type, fields1, fields2, properties1, properties2, section10s)
-    }
-  }
-
-  write(bw: BinaryWriter, actions: Action[]) {
-    const count = actions.length
-    bw.writeInt16(this.type)
-    bw.writeUint8(0) // Unk02
-    bw.writeUint8(0) // Unk03
-    bw.writeInt32(0) // Unk04
-    bw.writeInt32(this.fields1.length)
-    bw.writeInt32(this.section10s.length)
-    bw.writeInt32(this.properties1.length)
-    bw.writeInt32(this.fields2.length)
-    bw.writeInt32(0)
-    bw.writeInt32(this.properties2.length)
-    bw.reserveInt32(`ActionFieldsOffset${count}`)
-    bw.writeInt32(0)
-    bw.reserveInt32(`ActionSection10sOffset${count}`)
-    bw.writeInt32(0)
-    bw.reserveInt32(`ActionPropertiesOffset${count}`)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    bw.writeInt32(0)
-    actions.push(this)
-  }
-
-  writeProperties(bw: BinaryWriter, index: number, properties: IModifiableProperty<any, any>[]) {
-    bw.fill(`ActionPropertiesOffset${index}`, bw.position)
-    for (const property of this.properties1) {
-      writeProperty(property, bw, properties, false)
-    }
-    for (const property of this.properties2) {
-      writeProperty(property, bw, properties, false)
-    }
-  }
-
-  writeSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
-    bw.fill(`ActionSection10sOffset${index}`, bw.position)
-    for (const section10 of this.section10s) {
-      section10.write(bw, section10s)
-    }
-  }
-
-  writeFields(bw: BinaryWriter, index: number): number {
-    const count = this.fields1.length + this.fields2.length
-    if (count === 0) {
-      bw.fill(`ActionFieldsOffset${index}`, 0)
-    } else {
-      bw.fill(`ActionFieldsOffset${index}`, bw.position)
-      for (const field of this.fields1) {
-        field.write(bw)
-      }
-      for (const field of this.fields2) {
-        field.write(bw)
-      }
-    }
-    return count
   }
 
   withFields1(...fields: { index: number, field: Field | number | boolean }[]) {
@@ -4150,14 +4994,68 @@ class Action {
    * 
    * Actions that can not be minified will not be changed.
    */
-  minify() {
-    return new Action(
-      this.type,
-      this.fields1,
-      this.fields2,
-      this.properties1.map(prop => prop.minify()),
-      this.properties2.map(prop => prop.minify()),
-      this.section10s
+  minify(): Action {
+    return this
+  }
+
+}
+
+/**
+ * Base class for all actions that are defined in {@link ActionData}. The main
+ * difference is that these actions don't use fields or properties, and cannot
+ * have Section10s. Instead, these actions will automatically generate the
+ * lists of fields and properties based on the game they're being written for.
+ * 
+ * Aside from from these actions using class properties instead of action
+ * fields and properties, there is not much different to the end user. It is
+ * mainly just a different way to define actions in the source code that
+ * allows those actions to work in multiple games.
+ */
+class DataAction implements IAction {
+
+  constructor(public readonly type: ActionType = 0) {}
+
+  assign(props: any = {}) {
+    for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+      this[k] = props[k] ?? v.default
+    }
+    return this
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      ...Object.fromEntries(
+        Object.keys(ActionData[this.type].props).map(prop => {
+          const v = this[prop]
+          if (v instanceof Property) {
+            return [prop, v.toJSON()]
+          }
+          return [prop, v]
+        })
+      )
+    }
+  }
+
+  minify(): DataAction {
+    return this
+  }
+
+  getFields(game: Game, list: 'fields1' | 'fields2'): Field[] {
+    const adt = ActionData[this.type]
+    const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+    return (data[list] ?? []).map((name: string) => new Field(
+      adt.props[name].field,
+      this[name] instanceof Property ? this[name].valueAt(0) : this[name]
+    ))
+  }
+
+  getProperties(game: Game, list: 'properties1' | 'properties2'): AnyProperty[] {
+    const adt = ActionData[this.type]
+    const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+    return (data[list] ?? []).map((name: string) => Array.isArray(adt.props[name].default) ?
+      vectorFromArg(this[name]) :
+      scalarFromArg(this[name])
     )
   }
 
@@ -4255,7 +5153,7 @@ export interface NodeMovementParams {
    * - If {@link speedZMultiplier} is set:
    * {@link PropertyArgument.EffectAge Effect age}
    * - If {@link speedZMultiplier} is **not** set:
-   * {@link PropertyArgument.Constant Constant 0}
+   * {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link speedZMultiplier}
@@ -5183,7 +6081,7 @@ class NodeAttributes extends Action {
     /**
      * The node duration in seconds. Defaults to -1 (infinite).
      * 
-     * **Argument**: {@link PropertyArgument.Constant Constant 0}
+     * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
      */
     duration?: ScalarPropertyArg
     /**
@@ -5244,7 +6142,7 @@ class ParticleAttributes extends Action {
     /**
      * The particle duration in seconds. Defaults to -1 (infinite).
      * 
-     * **Argument**: {@link PropertyArgument.Constant Constant 0}
+     * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
      */
     duration?: ScalarPropertyArg
   } = {}) {
@@ -5395,26 +6293,22 @@ class ParticleMultiplier extends Action {
 }
 
 /**
- * References another FXR by its ID.
+ * References another SFX by its ID.
  */
-class FXRReference extends Action {
-
-  declare fields1: [IntField]
+class SFXReference extends DataAction {
 
   /**
-   * @param referenceID The ID of the referenced FXR.
+   * The ID of the referenced SFX.
+   */
+  referenceID: number
+
+  /**
+   * @param referenceID The ID of the referenced SFX.
    */
   constructor(referenceID: number) {
-    super(ActionType.FXRReference, [
-      new IntField(referenceID)
-    ])
+    super(ActionType.SFXReference)
+    this.assign({ referenceID })
   }
-
-  /**
-   * The ID of the referenced FXR.
-   */
-  get referenceID() { return this.fields1[0].value }
-  set referenceID(value) { this.fields1[0].value = value }
 
 }
 
@@ -5464,6 +6358,11 @@ class StateEffectMap extends Action {
     ])
   }
 
+  get effectIndices() { return this.section10s[0].fields.map(e => e.value) }
+  set effectIndices(value: number[]) {
+    this.section10s[0].fields = value.map(e => new IntField(e))
+  }
+
 }
 
 /**
@@ -5489,68 +6388,6 @@ class EmitRandomParticles extends Action {
       new Section10(weights.map(w => new IntField(w)))
     ])
   }
-
-}
-
-/**
- * Emits particles periodically.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | interval
- * 1     | perInterval
- * 2     | totalIntervals
- * 3     | maxConcurrent
- */
-class PeriodicEmitter extends Action {
-
-  /**
-   * @param interval Time between emitting new particles in seconds.
-   * @param perInterval The number of particles to emit per interval. They all
-   * spawn at the same time per interval.
-   * @param totalIntervals The total number of intervals to emit particles.
-   * Once this limit is reached, the emitter is will stop emitting.
-   * @param maxConcurrent Maximum number of concurrent particles. Defaults to
-   * -1 (infinite).
-   * @param unkField Unknown. Fields1, index 0.
-   */
-  constructor(
-    interval: ScalarPropertyArg = 1,
-    perInterval: ScalarPropertyArg = 1,
-    totalIntervals: ScalarPropertyArg = -1,
-    maxConcurrent: ScalarPropertyArg = -1,
-    unkField: number = 1
-  ) {
-    super(ActionType.PeriodicEmitter, [
-      new IntField(unkField)
-    ], [], [
-      interval instanceof Property ? interval : new ConstantProperty(interval as number),
-      perInterval instanceof Property ? perInterval : new ConstantProperty(perInterval as number),
-      totalIntervals instanceof Property ? totalIntervals : new ConstantProperty(totalIntervals as number),
-      maxConcurrent instanceof Property ? maxConcurrent : new ConstantProperty(maxConcurrent as number),
-    ])
-  }
-
-  get interval() { return this.properties1[0] }
-  set interval(value) { this.properties1[0] = value }
-
-  get perInterval() { return this.properties1[1] }
-  set perInterval(value) { this.properties1[1] = value }
-
-  get total() { return this.properties1[2] }
-  set total(value) { this.properties1[2] = value }
-
-  get maxConcurrent() { return this.properties1[3] }
-  set maxConcurrent(value) { this.properties1[3] = value }
-
-  get unkField() { return this.fields1[0].value }
-  set unkField(value) { this.fields1[0].value = value }
 
 }
 
@@ -5808,53 +6645,6 @@ class BoxEmitterShape extends Action {
       sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
       sizeY instanceof Property ? sizeY : new ConstantProperty(sizeY as number),
       sizeZ instanceof Property ? sizeZ : new ConstantProperty(sizeZ as number),
-    ])
-  }
-
-}
-
-/**
- * Makes the emitter cylindrical.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 1     | volume
- * 2     | yAxis
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | radius
- * 1     | height
- */
-class CylinderEmitterShape extends Action {
-
-  /**
-   * @param volume If true, particles will be emitted from anywhere within the
-   * cylinder. Otherwise the particles will be emitted from the surface of the
-   * cylinder. Defaults to true.
-   * @param radius The radius of the cylinder. Defaults to 1.
-   * @param height The height of the cylinder. Defaults to 1.
-   * @param yAxis If true, the cylinder will be aligned with the Y-axis instead
-   * of the Z-axis. Defaults to true.
-   * @param unkField Unknown. Fields1, index 0. Defaults to 5.
-   */
-  constructor(
-    volume: boolean = true,
-    radius: ScalarPropertyArg = 1,
-    height: ScalarPropertyArg = 1,
-    yAxis: boolean = true,
-    unkField: number = 5,
-  ) {
-    super(ActionType.CylinderEmitterShape, [
-      new IntField(unkField),
-      new BoolField(volume),
-      new BoolField(yAxis),
-    ], [], [
-      radius instanceof Property ? radius : new ConstantProperty(radius as number),
-      height instanceof Property ? height : new ConstantProperty(height as number),
     ])
   }
 
@@ -6243,13 +7033,13 @@ export interface PointSpriteParams {
   /**
    * Texture ID. Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   texture?: BlendMode | ScalarProperty
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: BlendMode | ScalarProperty
   /**
@@ -6420,28 +7210,28 @@ class PointSprite extends CommonFields2Action {
   /**
    * Texture ID.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get texture() { return this.properties1[0].valueAt(0) as BlendMode }
   set texture(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
   /**
    * Texture ID.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get textureProperty() { return this.properties1[0] }
 
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
   set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[1] }
 
@@ -6500,7 +7290,7 @@ export interface LineParams {
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: BlendMode | ScalarProperty
   /**
@@ -6702,14 +7492,14 @@ class Line extends CommonFields2Action {
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
   set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[0] }
 
@@ -7063,963 +7853,11 @@ class QuadLine extends CommonFields2Action {
 
 }
 
-export interface BillboardExParams {
-  /**
-   * Texture ID. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   */
-  texture?: ScalarPropertyArg
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * X position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetX?: ScalarPropertyArg
-  /**
-   * Y position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetY?: ScalarPropertyArg
-  /**
-   * Z position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetZ?: ScalarPropertyArg
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  width?: ScalarPropertyArg
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
-   * height, and this property is ignored.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  height?: ScalarPropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color1?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  color2?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
-   */
-  color3?: Vector4PropertyArg
-  /**
-   * Parts of the particle with less opacity than this threshold will be
-   * invisible. The range is 0-255. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaThreshold?: ScalarPropertyArg
-  /**
-   * Rotation around the X-axis in degrees. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  rotationX?: ScalarPropertyArg
-  /**
-   * Rotation around the Y-axis in degrees. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  rotationY?: ScalarPropertyArg
-  /**
-   * Rotation around the Z-axis in degrees. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  rotationZ?: ScalarPropertyArg
-  /**
-   * Rotation speed around the X-axis in degrees per second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  rotationSpeedX?: ScalarPropertyArg
-  /**
-   * Rotation speed around the Y-axis in degrees per second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  rotationSpeedY?: ScalarPropertyArg
-  /**
-   * Rotation speed around the Z-axis in degrees per second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  rotationSpeedZ?: ScalarPropertyArg
-  /**
-   * Multiplier for the rotation speed around the X-axis. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedX}
-   */
-  rotationSpeedMultiplierX?: ScalarPropertyArg
-  /**
-   * Multiplier for the rotation speed around the Y-axis. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedY}
-   */
-  rotationSpeedMultiplierY?: ScalarPropertyArg
-  /**
-   * Multiplier for the rotation speed around the Z-axis. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedZ}
-   */
-  rotationSpeedMultiplierZ?: ScalarPropertyArg
-  /**
-   * Positive values will make the particle draw in front of objects closer to
-   * the camera, while negative values will make it draw behind objects farther
-   * away from the camera. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link negativeDepthOffset}
-   */
-  depthOffset?: ScalarPropertyArg
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated
-   * using a {@link PropertyFunction.Linear linear property} or similar.
-   * Defaults to 0.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
-   * properties is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarPropertyArg
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarPropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-  /**
-   * Controls the orientation mode for the particles. See
-   * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.CameraPlane}.
-   */
-  orientation?: OrientationMode
-  /**
-   * Normal map ID. Defaults to 0.
-   */
-  normalMap?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * width of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly thinner, down to half
-   * width. Setting it to 2 will make them randomly wider, up to double width.
-   * Defaults to 1.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   */
-  scaleVariationX?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * height of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly shorter, down to half
-   * height. Setting it to 2 will make them randomly taller, up to double
-   * height. Defaults to 1.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
-   * the height, and this field is ignored.
-   */
-  scaleVariationY?: number
-  /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored. Defaults to false.
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   */
-  uniformScale?: boolean
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the number of columns in the texture. It should equal
-   * `textureWidth / frameWidth`. Defaults to 1.
-   * 
-   * See also:
-   * - {@link BillboardExParams.totalFrames totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the total number of frames in the texture. Defaults to 1.
-   * 
-   * See also:
-   * - {@link BillboardExParams.columns columns}
-   */
-  totalFrames?: number
-  /**
-   * If enabled, the texture animation will use linear interpolation to mix
-   * frames when the frame index is not a whole number. For example, if the
-   * frame index is 0.5, enabling this will cause the average of the first two
-   * frames to be shown instead of just the first frame.
-   * 
-   * If disabled, the frame index will just be truncated to get a whole number.
-   * 
-   * Defaults to true.
-   * 
-   * See also:
-   * - {@link BillboardExParams.frameIndex frameIndex}
-   */
-  interpolateFrames?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera. Defaults to 0.
-   * 
-   * {@link ActionType.BillboardEx BillboardEx} has a
-   * {@link BillboardExParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  negativeDepthOffset?: number
-  /**
-   * Controls how dark shaded parts of the particle are. Defaults to 0.
-   */
-  shadowDarkness?: number
-  /**
-   * Specular texture ID. Defaults to 0.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are. Defaults to 0.25.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information. Defaults to {@link LightingMode.Unlit}.
-   */
-  lighting?: LightingMode
-  /**
-   * Controls how bright the specular highlights are. Defaults to 0.5.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number
-  unkScalarProp1_23?: ScalarPropertyArg
-  unkScalarProp1_24?: ScalarPropertyArg
-  unkScalarProp2_2?: ScalarPropertyArg
-  unkVec4Prop2_3?: Vector4PropertyArg
-  unkVec4Prop2_4?: Vector4PropertyArg
-  unkVec4Prop2_5?: Vector4PropertyArg
-  unkScalarProp2_6?: ScalarPropertyArg
-}
-/**
- * Particle with a texture that may be animated. This is the most common
- * particle type and it has a lot of useful fields and properties.
- */
-class BillboardEx extends CommonFields2Action {
-
-  constructor({
-    texture = 1,
-    blendMode = BlendMode.Normal,
-    offsetX = 0,
-    offsetY = 0,
-    offsetZ = 0,
-    width = 1,
-    height = 1,
-    color1 = [1, 1, 1, 1],
-    color2 = [1, 1, 1, 1],
-    color3 = [1, 1, 1, 1],
-    alphaThreshold = 0,
-    rotationX = 0,
-    rotationY = 0,
-    rotationZ = 0,
-    rotationSpeedX = 0,
-    rotationSpeedY = 0,
-    rotationSpeedZ = 0,
-    rotationSpeedMultiplierX = 1,
-    rotationSpeedMultiplierY = 1,
-    rotationSpeedMultiplierZ = 1,
-    depthOffset = 0,
-    frameIndex = 0,
-    frameIndexOffset = 0,
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-    orientation = OrientationMode.CameraPlane,
-    normalMap = 0,
-    scaleVariationX = 1,
-    scaleVariationY = 1,
-    uniformScale = false,
-    columns = 1,
-    totalFrames = 1,
-    interpolateFrames = true,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-    negativeDepthOffset = 0,
-    shadowDarkness = 0,
-    specular = 0,
-    glossiness = 0.25,
-    lighting = LightingMode.Unlit,
-    specularity = 0.5,
-    unkScalarProp1_23 = 0,
-    unkScalarProp1_24 = 0,
-    unkScalarProp2_2 = 0,
-    unkVec4Prop2_3 = [1, 1, 1, 1],
-    unkVec4Prop2_4 = [1, 1, 1, 1],
-    unkVec4Prop2_5 = [1, 1, 1, 1],
-    unkScalarProp2_6 = 0,
-  }: BillboardExParams = {}) {
-    super(ActionType.BillboardEx, [
-      /*  0 */ new IntField(orientation),
-      /*  1 */ new IntField(normalMap),
-      /*  2 */ new FloatField(scaleVariationX),
-      /*  3 */ new FloatField(scaleVariationY),
-      /*  4 */ new BoolField(uniformScale),
-      /*  5 */ new IntField(0),
-      /*  6 */ new IntField(columns),
-      /*  7 */ new IntField(totalFrames),
-      /*  8 */ new BoolField(interpolateFrames),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new FloatField(-1),
-      /* 12 */ new IntField(1),
-      /* 13 */ new IntField(0),
-      /* 14 */ new IntField(0),
-      /* 15 */ new IntField(1),
-      /* 16 */ new IntField(1),
-      /* 17 */ new IntField(0),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new IntField(0),
-      /*  4 */ new IntField(1),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new IntField(0),
-      /* 21 */ new IntField(0),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1),
-      /* 26 */ new FloatField(negativeDepthOffset),
-      /* 27 */ new IntField(1),
-      /* 28 */ new IntField(0),
-      /* 29 */ new FloatField(5),
-      /* 30 */ new FloatField(shadowDarkness),
-      /* 31 */ new IntField(0),
-      /* 32 */ new IntField(1),
-      /* 33 */ new IntField(specular),
-      /* 34 */ new FloatField(glossiness),
-      /* 35 */ new IntField(lighting),
-      /* 36 */ new IntField(-2),
-      /* 37 */ new IntField(0),
-      /* 38 */ new FloatField(specularity),
-      /* 39 */ new IntField(1),
-      /* 40 */ new IntField(0),
-      /* 41 */ new IntField(0),
-      /* 42 */ new IntField(0),
-      /* 43 */ new IntField(0),
-      /* 44 */ new IntField(0),
-    ], [
-      /*  0 */ scalarFromArg(texture),
-      /*  1 */ scalarFromArg(blendMode),
-      /*  2 */ scalarFromArg(offsetX),
-      /*  3 */ scalarFromArg(offsetY),
-      /*  4 */ scalarFromArg(offsetZ),
-      /*  5 */ scalarFromArg(width),
-      /*  6 */ scalarFromArg(height),
-      /*  7 */ vectorFromArg(color1),
-      /*  8 */ vectorFromArg(color2),
-      /*  9 */ vectorFromArg(color3),
-      /* 10 */ scalarFromArg(alphaThreshold),
-      /* 11 */ scalarFromArg(rotationX),
-      /* 12 */ scalarFromArg(rotationY),
-      /* 13 */ scalarFromArg(rotationZ),
-      /* 14 */ scalarFromArg(rotationSpeedX),
-      /* 15 */ scalarFromArg(rotationSpeedMultiplierX),
-      /* 16 */ scalarFromArg(rotationSpeedY),
-      /* 17 */ scalarFromArg(rotationSpeedMultiplierY),
-      /* 18 */ scalarFromArg(rotationSpeedZ),
-      /* 19 */ scalarFromArg(rotationSpeedMultiplierZ),
-      /* 20 */ scalarFromArg(depthOffset),
-      /* 21 */ scalarFromArg(frameIndex),
-      /* 22 */ scalarFromArg(frameIndexOffset),
-      /* 23 */ scalarFromArg(unkScalarProp1_23),
-      /* 24 */ scalarFromArg(unkScalarProp1_24),
-    ], [
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ scalarFromArg(unkScalarProp2_2),
-      /*  3 */ vectorFromArg(unkVec4Prop2_3),
-      /*  4 */ vectorFromArg(unkVec4Prop2_4),
-      /*  5 */ vectorFromArg(unkVec4Prop2_5),
-      /*  6 */ scalarFromArg(unkScalarProp2_6),
-    ])
-  }
-
-  /**
-   * Texture ID.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   */
-  get texture() { return this.properties1[0] }
-  set texture(value) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   */
-  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
-  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 1, value) }
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[1] }
-
-  /**
-   * X position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get offsetX() { return this.properties1[2] }
-  set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Y position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get offsetY() { return this.properties1[3] }
-  set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Z position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get offsetZ() { return this.properties1[4] }
-  set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get width() { return this.properties1[5] }
-  set width(value) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
-   * height, and this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get height() { return this.properties1[6] }
-  set height(value) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color1() { return this.properties1[7] }
-  set color1(value) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  get color2() { return this.properties1[8] }
-  set color2(value) { setPropertyInList(this.properties1, 8, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
-   */
-  get color3() { return this.properties1[9] }
-  set color3(value) { setPropertyInList(this.properties1, 9, value) }
-
-  /**
-   * Parts of the particle with less opacity than this threshold will be
-   * invisible. The range is 0-255.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaThreshold() { return this.properties1[10] }
-  set alphaThreshold(value) { setPropertyInList(this.properties1, 10, value) }
-
-  /**
-   * Rotation around the X-axis in degrees.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  get rotationX() { return this.properties1[11] }
-  set rotationX(value) { setPropertyInList(this.properties1, 11, value) }
-
-  /**
-   * Rotation around the Y-axis in degrees.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  get rotationY() { return this.properties1[12] }
-  set rotationY(value) { setPropertyInList(this.properties1, 12, value) }
-
-  /**
-   * Rotation around the Z-axis in degrees.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  get rotationZ() { return this.properties1[13] }
-  set rotationZ(value) { setPropertyInList(this.properties1, 13, value) }
-
-  /**
-   * Rotation speed around the X-axis in degrees per second.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  get rotationSpeedX() { return this.properties1[14] }
-  set rotationSpeedX(value) { setPropertyInList(this.properties1, 14, value) }
-
-  /**
-   * Rotation speed around the Y-axis in degrees per second.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  get rotationSpeedY() { return this.properties1[16] }
-  set rotationSpeedY(value) { setPropertyInList(this.properties1, 16, value) }
-
-  /**
-   * Rotation speed around the Z-axis in degrees per second.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  get rotationSpeedZ() { return this.properties1[18] }
-  set rotationSpeedZ(value) { setPropertyInList(this.properties1, 18, value) }
-
-  /**
-   * Multiplier for the rotation speed around the X-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedX}
-   */
-  get rotationSpeedMultiplierX() { return this.properties1[15] }
-  set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 15, value) }
-
-  /**
-   * Multiplier for the rotation speed around the Y-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedY}
-   */
-  get rotationSpeedMultiplierY() { return this.properties1[17] }
-  set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 17, value) }
-
-  /**
-   * Multiplier for the rotation speed around the Z-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedZ}
-   */
-  get rotationSpeedMultiplierZ() { return this.properties1[19] }
-  set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 19, value) }
-
-  /**
-   * Positive values will make the particle draw in front of objects closer to
-   * the camera, while negative values will make it draw behind objects farther
-   * away from the camera.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link negativeDepthOffset}
-   */
-  get depthOffset() { return this.properties1[20] }
-  set depthOffset(value) { setPropertyInList(this.properties1, 20, value) }
-
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated
-   * using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
-   * properties is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get frameIndex() { return this.properties1[21] }
-  set frameIndex(value) { setPropertyInList(this.properties1, 21, value) }
-
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get frameIndexOffset() { return this.properties1[22] }
-  set frameIndexOffset(value) { setPropertyInList(this.properties1, 22, value) }
-
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
-
-  /**
-   * Controls the orientation mode for the particles. See
-   * {@link OrientationMode} for more information.
-   */
-  get orientation() { return this.fields1[0].value as OrientationMode }
-  set orientation(value) { this.fields1[0].value = value }
-
-  /**
-   * Normal map ID.
-   */
-  get normalMap() { return this.fields1[1].value as number }
-  set normalMap(value) { this.fields1[1].value = value }
-
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * width of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly thinner, down to half
-   * width. Setting it to 2 will make them randomly wider, up to double width.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   */
-  get scaleVariationX() { return this.fields1[2].value as number }
-  set scaleVariationX(value) { this.fields1[2].value = value }
-
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * height of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly shorter, down to half
-   * height. Setting it to 2 will make them randomly taller, up to double
-   * height.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
-   * the height, and this field is ignored.
-   */
-  get scaleVariationY() { return this.fields1[3].value as number }
-  set scaleVariationY(value) { this.fields1[3].value = value }
-
-  /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored.
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   */
-  get uniformScale() { return this.fields1[4].value as boolean }
-  set uniformScale(value) { this.fields1[4].value = value }
-
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the number of columns in the texture. It should equal
-   * `textureWidth / frameWidth`.
-   * 
-   * See also:
-   * - {@link BillboardExParams.totalFrames totalFrames}
-   */
-  get columns() { return this.fields1[6].value as number }
-  set columns(value) { this.fields1[6].value = value }
-
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the total number of frames in the texture.
-   * 
-   * See also:
-   * - {@link BillboardExParams.columns columns}
-   */
-  get totalFrames() { return this.fields1[7].value as number }
-  set totalFrames(value) { this.fields1[7].value = value }
-
-  /**
-   * If enabled, the texture animation will use linear interpolation to mix
-   * frames when the frame index is not a whole number. For example, if the
-   * frame index is 0.5, enabling this will cause the average of the first two
-   * frames to be shown instead of just the first frame.
-   * 
-   * If disabled, the frame index will just be truncated to get a whole number.
-   * 
-   * See also:
-   * - {@link BillboardExParams.frameIndex frameIndex}
-   */
-  get interpolateFrames() { return this.fields1[8].value as number }
-  set interpolateFrames(value) { this.fields1[8].value = value }
-
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera.
-   * 
-   * {@link ActionType.BillboardEx BillboardEx} has a
-   * {@link BillboardExParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  get negativeDepthOffset() { return this.fields2[26].value as number }
-  set negativeDepthOffset(value) { this.fields2[26].value = value }
-
-  /**
-   * Controls how dark shaded parts of the particle are.
-   */
-  get shadowDarkness() { return this.fields2[30].value as number }
-  set shadowDarkness(value) { this.fields2[30].value = value }
-
-  /**
-   * Specular texture ID. Defaults to 0.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  get specular() { return this.fields2[33].value as number }
-  set specular(value) { this.fields2[33].value = value }
-
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  get glossiness() { return this.fields2[34].value as number }
-  set glossiness(value) { this.fields2[34].value = value }
-
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information.
-   */
-  get lighting() { return this.fields2[35].value as LightingMode }
-  set lighting(value) { this.fields2[35].value = value }
-
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  get specularity() { return this.fields2[38].value as number }
-  set specularity(value) { this.fields2[38].value = value }
-
-}
-
 export interface MultiTextureBillboardExParams {
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: BlendMode | ScalarProperty
   /**
@@ -8064,7 +7902,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Rotation around the X-axis in degrees. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedX}
@@ -8074,7 +7912,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Rotation around the Y-axis in degrees. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedY}
@@ -8084,7 +7922,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Rotation around the Z-axis in degrees. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedZ}
@@ -8235,13 +8073,13 @@ export interface MultiTextureBillboardExParams {
   /**
    * Horizontal offset for the UV coordinates of Layer 1. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer1OffsetU?: ScalarPropertyArg
   /**
    * Vertical offset for the UV coordinates of Layer 1. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer1OffsetV?: ScalarPropertyArg
   /**
@@ -8271,13 +8109,13 @@ export interface MultiTextureBillboardExParams {
   /**
    * Horizontal offset for the UV coordinates of Layer 2. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer2OffsetU?: ScalarPropertyArg
   /**
    * Vertical offset for the UV coordinates of Layer 2. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer2OffsetV?: ScalarPropertyArg
   /**
@@ -8655,14 +8493,14 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Blend mode. See {@link BlendMode} for more information.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
   set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
   /**
    * Blend mode. See {@link BlendMode} for more information.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[0] }
 
@@ -8714,7 +8552,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Rotation around the X-axis in degrees.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedX}
@@ -8726,7 +8564,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Rotation around the Y-axis in degrees.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedY}
@@ -8738,7 +8576,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Rotation around the Z-axis in degrees.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedZ}
@@ -8922,7 +8760,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Horizontal offset for the UV coordinates of Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get layer1OffsetU() { return this.properties1[32] }
   set layer1OffsetU(value) { setPropertyInList(this.properties1, 32, value) }
@@ -8930,7 +8768,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Vertical offset for the UV coordinates of Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get layer1OffsetV() { return this.properties1[33] }
   set layer1OffsetV(value) { setPropertyInList(this.properties1, 33, value) }
@@ -8970,7 +8808,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Horizontal offset for the UV coordinates of Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get layer2OffsetU() { return this.properties1[38] }
   set layer2OffsetU(value) { setPropertyInList(this.properties1, 38, value) }
@@ -8978,7 +8816,7 @@ class MultiTextureBillboardEx extends CommonFields2Action {
   /**
    * Vertical offset for the UV coordinates of Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get layer2OffsetV() { return this.properties1[39] }
   set layer2OffsetV(value) { setPropertyInList(this.properties1, 39, value) }
@@ -9300,7 +9138,7 @@ export interface ModelParams {
   /**
    * The ID of the model to use. Defaults to 80201.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   model?: ScalarPropertyArg
   /**
@@ -9347,7 +9185,7 @@ export interface ModelParams {
   /**
    * Rotation around the X-axis in degrees. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedX}
@@ -9357,7 +9195,7 @@ export interface ModelParams {
   /**
    * Rotation around the Y-axis in degrees. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedY}
@@ -9367,7 +9205,7 @@ export interface ModelParams {
   /**
    * Rotation around the Z-axis in degrees. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedZ}
@@ -9437,7 +9275,7 @@ export interface ModelParams {
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: BlendMode | ScalarProperty
   /**
@@ -9483,7 +9321,7 @@ export interface ModelParams {
    * using {@link columns} and/or {@link totalFrames}, this property has no
    * effect.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   offsetU?: ScalarPropertyArg
   /**
@@ -9493,7 +9331,7 @@ export interface ModelParams {
    * using {@link columns} and/or {@link totalFrames}, this property has no
    * effect.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   offsetV?: ScalarPropertyArg
   /**
@@ -9791,14 +9629,14 @@ class Model extends CommonFields2Action {
   /**
    * The ID of the model to use.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get model() { return this.properties1[0].valueAt(0) as number }
   set model(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
   /**
    * The ID of the model to use.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get modelProperty() { return this.properties1[0] }
 
@@ -9846,7 +9684,7 @@ class Model extends CommonFields2Action {
   /**
    * Rotation around the X-axis in degrees.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedX}
@@ -9858,7 +9696,7 @@ class Model extends CommonFields2Action {
   /**
    * Rotation around the Y-axis in degrees.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedY}
@@ -9870,7 +9708,7 @@ class Model extends CommonFields2Action {
   /**
    * Rotation around the Z-axis in degrees.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
    * - {@link rotationSpeedZ}
@@ -9954,14 +9792,14 @@ class Model extends CommonFields2Action {
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[13].valueAt(0) as BlendMode }
   set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 13, value) }
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[13] }
 
@@ -10017,7 +9855,7 @@ class Model extends CommonFields2Action {
    * using {@link columns} and/or {@link totalFrames}, this property has no
    * effect.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get offsetU() { return this.properties1[20] }
   set offsetU(value) { setPropertyInList(this.properties1, 20, value) }
@@ -10029,7 +9867,7 @@ class Model extends CommonFields2Action {
    * using {@link columns} and/or {@link totalFrames}, this property has no
    * effect.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get offsetV() { return this.properties1[21] }
   set offsetV(value) { setPropertyInList(this.properties1, 21, value) }
@@ -10238,13 +10076,13 @@ export interface TracerParams {
   /**
    * The ID of the texture for the trail. Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   texture?: ScalarPropertyArg
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: ScalarPropertyArg
   /**
@@ -10595,7 +10433,7 @@ class Tracer extends CommonFields2Action {
   /**
    * The ID of the texture for the trail.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get texture() { return this.properties1[0] }
   set texture(value) { setPropertyInList(this.properties1, 0, value) }
@@ -10603,14 +10441,14 @@ class Tracer extends CommonFields2Action {
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
   set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 1, value) }
   /**
    * Blend mode.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[1] }
 
@@ -10860,7 +10698,7 @@ export interface DistortionParams {
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: BlendMode | ScalarProperty
   /**
@@ -10946,13 +10784,13 @@ export interface DistortionParams {
   /**
    * Horizontal offset for the {@link normalMap normal map}. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   normalMapOffsetU?: ScalarPropertyArg
   /**
    * Vertical offset for the {@link normalMap normal map}. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   normalMapOffsetV?: ScalarPropertyArg
   /**
@@ -11213,14 +11051,14 @@ class Distortion extends CommonFields2Action {
   /**
    * Blend mode. See {@link BlendMode} for more information.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
   set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
   /**
    * Blend mode. See {@link BlendMode} for more information.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[0] }
 
@@ -11320,7 +11158,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Horizontal offset for the {@link normalMap normal map}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get normalMapOffsetU() { return this.properties1[13] }
   set normalMapOffsetU(value) { setPropertyInList(this.properties1, 13, value) }
@@ -11328,7 +11166,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Vertical offset for the {@link normalMap normal map}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get normalMapOffsetV() { return this.properties1[14] }
   set normalMapOffsetV(value) { setPropertyInList(this.properties1, 14, value) }
@@ -11429,14 +11267,14 @@ export interface RadialBlurParams {
   /**
    * Blend mode. Defaults to {@link BlendMode.Normal}.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode?: BlendMode | ScalarProperty
   /**
    * Mask texture ID. This texture is used to control the opacity of the
    * particle. Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   mask?: ScalarPropertyArg
   /**
@@ -11613,14 +11451,14 @@ class RadialBlur extends CommonFields2Action {
   /**
    * Blend mode. See {@link BlendMode} for more information.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
   set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
   /**
    * Blend mode. See {@link BlendMode} for more information.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get blendModeProperty() { return this.properties1[0] }
 
@@ -11628,7 +11466,7 @@ class RadialBlur extends CommonFields2Action {
    * Mask texture ID. This texture is used to control the opacity of the
    * particle.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get mask() { return this.properties1[1].valueAt(0) }
   set mask(value) { setPropertyInList(this.properties1, 1, value) }
@@ -11636,7 +11474,7 @@ class RadialBlur extends CommonFields2Action {
    * Mask texture ID. This texture is used to control the opacity of the
    * particle.
    * 
-   * **Argument**: {@link PropertyArgument.Constant Constant 0}
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   get maskProperty() { return this.properties1[1] }
 
@@ -13109,6 +12947,1104 @@ class SpotLight extends Action {
 
 }
 
+/*#ActionClasses start*/
+export interface PeriodicEmitterParams {
+  /**
+   * Time between emitting new particles in seconds.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  interval?: ScalarPropertyArg
+  /**
+   * The number of particles to emit per interval. They all spawn at the same time per interval.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  perInterval?: ScalarPropertyArg
+  /**
+   * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  totalIntervals?: ScalarPropertyArg
+  /**
+   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxConcurrent?: ScalarPropertyArg
+  unk_ds3_f1_1?: number
+}
+
+/**
+ * Emits particles periodically.
+ */
+class PeriodicEmitter extends DataAction {
+  declare type: ActionType.PeriodicEmitter
+  /**
+   * Time between emitting new particles in seconds.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  interval: ScalarPropertyArg
+  /**
+   * The number of particles to emit per interval. They all spawn at the same time per interval.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  perInterval: ScalarPropertyArg
+  /**
+   * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  totalIntervals: ScalarPropertyArg
+  /**
+   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxConcurrent: ScalarPropertyArg
+  unk_ds3_f1_1: number
+  constructor(props: PeriodicEmitterParams = {}) {
+    super(ActionType.PeriodicEmitter)
+    this.assign(props)
+  }
+}
+
+export interface CylinderEmitterShapeParams {
+  unk_ds3_f1_0?: number
+  /**
+   * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
+   * 
+   * **Default**: `true`
+   */
+  volume?: boolean
+  /**
+   * If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
+   * 
+   * **Default**: `true`
+   */
+  yAxis?: boolean
+  /**
+   * The radius of the cylinder.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius?: ScalarPropertyArg
+  /**
+   * The height of the cylinder.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  height?: ScalarPropertyArg
+}
+
+/**
+ * Makes the emitter cylindrical.
+ */
+class CylinderEmitterShape extends DataAction {
+  declare type: ActionType.CylinderEmitterShape
+  unk_ds3_f1_0: number
+  /**
+   * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
+   */
+  volume: boolean
+  /**
+   * If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
+   */
+  yAxis: boolean
+  /**
+   * The radius of the cylinder.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius: ScalarPropertyArg
+  /**
+   * The height of the cylinder.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  height: ScalarPropertyArg
+  constructor(props: CylinderEmitterShapeParams = {}) {
+    super(ActionType.CylinderEmitterShape)
+    this.assign(props)
+  }
+}
+
+export interface BillboardExParams {
+  /**
+   * Texture ID.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture?: ScalarPropertyArg
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * X position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  alphaThreshold?: ScalarPropertyArg
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX?: ScalarPropertyArg
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY?: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ?: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   */
+  rotationSpeedMultiplierX?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   */
+  rotationSpeedMultiplierY?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   */
+  rotationSpeedMultiplierZ?: ScalarPropertyArg
+  /**
+   * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  depthOffset?: ScalarPropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.CameraPlane}
+   */
+  orientation?: OrientationMode
+  /**
+   * Normal map texture ID.
+   * 
+   * **Default**: `0`
+   */
+  normalMap?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   */
+  scaleVariationY?: number
+  /**
+   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  uniformScale?: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix frames when the frame index is not a whole number. For example, if the frame index is 0.5, enabling this will cause the average of the first two frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will be truncated to get a whole number.
+   * 
+   * **Default**: `true`
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
+   */
+  interpolateFrames?: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Negative values will make the particle draw in front of objects closer to the camera, while positive values will make it draw behind objects farther away from the camera.
+   * 
+   * **Default**: `0`
+   */
+  negativeDepthOffset?: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
+   */
+  shadowDarkness?: number
+  /**
+   * Specular texture ID.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * **Default**: `0.25`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  unk_ds3_f1_7?: number
+  unk_ds3_f1_11?: number
+  unk_ds3_f1_12?: number
+  unk_ds3_f1_13?: number
+  unk_ds3_f1_14?: number
+  unk_ds3_f1_15?: number
+  unk_ds3_f1_16?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: boolean
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unk_ds3_f2_25?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p1_21?: ScalarPropertyArg
+  unk_ds3_p1_22?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f1_15?: number
+  unk_sdt_f1_16?: number
+  unk_sdt_f1_17?: number
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_sdt_f2_39?: number
+  unk_sdt_f2_40?: number
+  unk_sdt_f2_41?: number
+  unk_sdt_f2_42?: number
+  unk_sdt_f2_43?: number
+  unk_sdt_f2_44?: number
+}
+
+/**
+ * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+ */
+class BillboardEx extends DataAction {
+  declare type: ActionType.BillboardEx
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture: ScalarPropertyArg
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color3: Vector4PropertyArg
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  alphaThreshold: ScalarPropertyArg
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX: ScalarPropertyArg
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX: ScalarPropertyArg
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   */
+  rotationSpeedMultiplierX: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   */
+  rotationSpeedMultiplierY: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   */
+  rotationSpeedMultiplierZ: ScalarPropertyArg
+  /**
+   * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  depthOffset: ScalarPropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   */
+  orientation: OrientationMode
+  /**
+   * Normal map texture ID.
+   */
+  normalMap: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   */
+  scaleVariationX: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   */
+  scaleVariationY: number
+  /**
+   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  uniformScale: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames: number
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix frames when the frame index is not a whole number. For example, if the frame index is 0.5, enabling this will cause the average of the first two frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will be truncated to get a whole number.
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
+   */
+  interpolateFrames: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Negative values will make the particle draw in front of objects closer to the camera, while positive values will make it draw behind objects farther away from the camera.
+   */
+  negativeDepthOffset: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  shadowDarkness: number
+  /**
+   * Specular texture ID.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more information.
+   */
+  lighting: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f1_16: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: boolean
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unk_ds3_f2_25: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p1_21: ScalarPropertyArg
+  unk_ds3_p1_22: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f1_15: number
+  unk_sdt_f1_16: number
+  unk_sdt_f1_17: number
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_sdt_f2_39: number
+  unk_sdt_f2_40: number
+  unk_sdt_f2_41: number
+  unk_sdt_f2_42: number
+  unk_sdt_f2_43: number
+  unk_sdt_f2_44: number
+  constructor(props: BillboardExParams = {}) {
+    super(ActionType.BillboardEx)
+    this.assign(props)
+  }
+}
+
+export interface Unk10500Params {
+  /**
+   * Controls how fast time passes for the entire effect.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rateOfTime?: ScalarPropertyArg
+  unk_ds3_f1_0?: number
+  unk_ds3_f1_1?: number
+  unk_ds3_f1_2?: number
+  unk_ds3_f1_3?: number
+  unk_ds3_f1_4?: number
+  unk_ds3_f1_5?: number
+  unk_ds3_f1_6?: number
+  unk_ds3_f1_7?: number
+  unk_ds3_f1_8?: number
+  unk_sdt_f1_9?: number
+}
+
+/**
+ * Unknown root node action.
+ */
+class Unk10500 extends DataAction {
+  declare type: ActionType.Unk10500
+  /**
+   * Controls how fast time passes for the entire effect.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rateOfTime: ScalarPropertyArg
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  unk_ds3_f1_2: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_6: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_sdt_f1_9: number
+  constructor(props: Unk10500Params = {}) {
+    super(ActionType.Unk10500)
+    this.assign(props)
+  }
+}
+/*#ActionClasses end*/
+
 const Actions = {
   NodeMovement,
   [ActionType.NodeAcceleration]: NodeMovement, NodeAcceleration: NodeMovement,
@@ -13139,11 +14075,9 @@ const Actions = {
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
-  [ActionType.FXRReference]: FXRReference, FXRReference,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
-  [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
@@ -13151,7 +14085,6 @@ const Actions = {
   [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
-  [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
   [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
@@ -13159,7 +14092,6 @@ const Actions = {
   [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
-  [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
@@ -13172,6 +14104,14 @@ const Actions = {
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.SpotLight]: SpotLight, SpotLight,
+
+  /*#ActionsList start*/
+  [ActionType.SFXReference]: SFXReference, SFXReference,
+  [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
+  [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.BillboardEx]: BillboardEx, BillboardEx,
+  [ActionType.Unk10500]: Unk10500, Unk10500,
+  /*#ActionsList end*/
 }
 
 class Field {
@@ -13184,82 +14124,6 @@ class Field {
     this.value = value
   }
 
-  static read(br: BinaryReader, context: any, index: number) {
-    let ffxField: NumericalField = null
-    let isInt = false
-
-    if (context instanceof Property) {
-      if (context.function === PropertyFunction.CompCurve) {
-        isInt = index > 0 && index <= context.valueType + 1
-      } else if (context.function !== PropertyFunction.Constant) {
-        isInt = !index
-      }
-    } else if (context instanceof StateCondition) {
-      if (index === 0) {
-        isInt = (context.leftOperandType & 3) > 0
-      } else {
-        isInt = (context.rightOperandType & 3) > 0
-      }
-    } else {
-      const single = br.getFloat32(br.position)
-      if (single >=  9.99999974737875E-05 && single <  1000000.0 ||
-          single <= -9.99999974737875E-05 && single > -1000000.0
-      ) {
-        ffxField = new FloatField(single)
-      } else {
-        isInt = true
-      }
-    }
-
-    if (ffxField === null) {
-      if (isInt) {
-        ffxField = new IntField(br.getInt32(br.position))
-      } else {
-        ffxField = new FloatField(br.getFloat32(br.position))
-      }
-    }
-
-    br.position += 4
-    return ffxField
-  }
-
-  static readAt(br: BinaryReader, offset: number, context: any, index: number) {
-    br.stepIn(offset)
-    const field = Field.read(br, context, index)
-    br.stepOut()
-    return field
-  }
-
-  static readMany(br: BinaryReader, count: number, context: any) {
-    const ffxFieldList: NumericalField[] = []
-    for (let i = 0; i < count; ++i) {
-      ffxFieldList.push(Field.read(br, context, i))
-    }
-    return ffxFieldList
-  }
-
-  static readManyAt(br: BinaryReader, offset: number, count: number, context: any) {
-    br.stepIn(offset)
-    const ffxFieldList = Field.readMany(br, count, context)
-    br.stepOut()
-    return ffxFieldList
-  }
-
-  static readWithTypes(br: BinaryReader, count: number, types: any[], context: any) {
-    return arrayOf(count, i => {
-      switch (types[i]) {
-        case FieldType.Boolean:
-          return new BoolField(!!br.assertInt32(0, 1))
-        case FieldType.Integer:
-          return new IntField(br.readInt32())
-        case FieldType.Float:
-          return new FloatField(br.readFloat32())
-        default:
-          return Field.read(br, context, 0)
-      }
-    })
-  }
-
   /**
    * Creates a copy of a field.
    * @param field The field to copy.
@@ -13267,19 +14131,6 @@ class Field {
    */
   static copy(field: Field) {
     return new Field(field.type, field.value)
-  }
-
-  write(bw: BinaryWriter) {
-    switch (this.type) {
-      case FieldType.Boolean:
-        return bw.writeInt32(+this.value)
-      case FieldType.Integer:
-        return bw.writeInt32(this.value as number)
-      case FieldType.Float:
-        return bw.writeFloat32(this.value as number)
-      default:
-        throw new Error('Invalid field type: ' + this.type)
-    }
   }
 
   static fromJSON({
@@ -13383,58 +14234,20 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  static fromJSON(obj: {
-    function: string
-  }) {
-    switch (PropertyFunction[obj.function]) {
-      case PropertyFunction.Constant:
-        return ValueProperty.fromJSON(obj)
-      case PropertyFunction.Stepped:
-      case PropertyFunction.Linear:
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
-        return KeyframeProperty.fromJSON(obj)
-      case PropertyFunction.CompCurve:
-        return ComponentKeyframeProperty.fromJSON(obj)
+  static fromJSON(obj: any) {
+    if ('function' in obj) {
+      switch (PropertyFunction[obj.function as string]) {
+        case PropertyFunction.Stepped:
+        case PropertyFunction.Linear:
+        case PropertyFunction.Curve1:
+        case PropertyFunction.Curve2:
+          return KeyframeProperty.fromJSON(obj)
+        case PropertyFunction.CompCurve:
+          return ComponentKeyframeProperty.fromJSON(obj)
+      }
+    } else {
+      return ValueProperty.fromJSON(obj)
     }
-  }
-
-  /**
-   * Creates a {@link ZeroProperty} with a {@link RandomizerModifier},
-   * effectively creating a property with a random value in a given range.
-   * @param minValue The lower bound of the range of possible values for the
-   * property.
-   * @param maxValue The upper bound of the range of possible values for the
-   * property.
-   * @param seed A seed or set of seeds for the random number generator to use
-   * to generate the random property values.
-   * @returns 
-   */
-  static random(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
-    return new ZeroProperty(Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar, [
-      new RandomizerModifier(minValue, maxValue, seed)
-    ])
-  }
-
-  /**
-   * Generates a rainbow color animation with a configurable duration.
-   * @param duration How long it takes to go around the entire hue circle in
-   * seconds. Defaults to 4 seconds.
-   * @param loop Controls whether the animation should loop or not. Defaults to
-   * true.
-   * @returns 
-   */
-  static rainbow(duration: number = 4, loop: boolean = true) {
-    const unit = duration / 6
-    return new LinearProperty(loop, [
-      new Keyframe(0,        [1, 0, 0, 1]),
-      new Keyframe(unit,     [1, 0, 1, 1]),
-      new Keyframe(unit * 2, [0, 0, 1, 1]),
-      new Keyframe(unit * 3, [0, 1, 1, 1]),
-      new Keyframe(unit * 4, [0, 1, 0, 1]),
-      new Keyframe(unit * 5, [1, 1, 0, 1]),
-      new Keyframe(unit * 6, [1, 0, 0, 1]),
-    ])
   }
 
   abstract fieldCount: number
@@ -13443,7 +14256,6 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract scale(factor: number): void
   abstract power(exponent: number): void
   abstract add(summand: number): void
-  abstract minify(): Property<T, any>
   abstract valueAt(arg: number): ValueTypeMap[T]
   abstract clone(): Property<T, F>
 
@@ -13451,43 +14263,37 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
 
 class ValueProperty<T extends ValueType>
   extends Property<T, ValuePropertyFunction>
-  implements IModifiableProperty<T, ValuePropertyFunction>, IValueProperty<T, ValuePropertyFunction> {
+  implements IModifiableProperty<T, ValuePropertyFunction>, IValueProperty<T> {
 
   value: ValueTypeMap[T]
 
   constructor(
     valueType: T,
-    func: ValuePropertyFunction,
     value: ValueTypeMap[T],
     modifiers: Modifier[] = []
   ) {
-    super(valueType, func, modifiers)
+    super(valueType, PropertyFunction.Constant, modifiers)
     this.value = value
   }
 
+  get isZero() { return Array.isArray(this.value) ? this.value.every(e => e === 0) : this.value === 0 }
+  get isOne()  { return Array.isArray(this.value) ? this.value.every(e => e === 1) : this.value === 1 }
+
   get fieldCount(): number {
-    switch (this.function) {
-      case PropertyFunction.Zero:
-      case PropertyFunction.One:
-        return 0
-      case PropertyFunction.Constant:
-        return this.componentCount
+    if (this.isZero || this.isOne) {
+      return 0
     }
+    return this.componentCount
   }
 
   get fields(): NumericalField[] {
-    switch (this.function) {
-      case PropertyFunction.Zero:
-      case PropertyFunction.One:
-        return []
-      case PropertyFunction.Constant:
-        if (this.valueType === ValueType.Scalar) {
-          return [ new FloatField(this.value as number) ]
-        }
-        return (this.value as Vector).map(e => new FloatField(e))
-      default:
-        throw new Error('Incompatible or unknown function in value property: ' + this.function)
+    if (this.isZero || this.isOne) {
+      return []
     }
+    if (this.valueType === ValueType.Scalar) {
+      return [ new FloatField(this.value as number) ]
+    }
+    return (this.value as Vector).map(e => new FloatField(e))
   }
 
   static fromFields<T extends ValueType>(
@@ -13498,11 +14304,11 @@ class ValueProperty<T extends ValueType>
   ): ValueProperty<T> {
     switch (func) {
       case PropertyFunction.Zero:
-        return new ZeroProperty(valueType).withModifiers(
+        return new ConstantProperty(...(Array(valueType + 1).fill(0) as [number] | Vector)).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
-        return new OneProperty(valueType).withModifiers(
+        new ConstantProperty(...(Array(valueType + 1).fill(1) as [number] | Vector)).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
@@ -13515,9 +14321,7 @@ class ValueProperty<T extends ValueType>
   }
 
   static fromJSON(obj: {
-    function: string
-    value?: PropertyValue
-    loop?: boolean
+    value: PropertyValue
     modifiers?: any[]
   }) {
     return new ConstantProperty(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
@@ -13526,37 +14330,17 @@ class ValueProperty<T extends ValueType>
   }
 
   toJSON() {
-    switch (this.function) {
-      case PropertyFunction.Zero:
-      case PropertyFunction.One: {
-        const o: {
-          function: string
-          value: PropertyValue
-          modifiers?: any[]
-        } = {
-          function: 'Constant',
-          value: this.valueType === ValueType.Scalar ? this.function : Array(this.componentCount).fill(this.function) as Vector,
-        }
-        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
-        return o
-      }
-      case PropertyFunction.Constant: {
-        const o: {
-          function: string
-          value: PropertyValue
-          modifiers?: any[]
-        } = {
-          function: PropertyFunction[this.function],
-          value: this.value,
-        }
-        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
-        return o
-      }
+    const o: {
+      value: PropertyValue
+      modifiers?: any[]
+    } = {
+      value: this.value,
     }
+    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+    return o
   }
 
   scale(factor: number) {
-    this.function = PropertyFunction.Constant
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) *= factor
     } else {
@@ -13565,7 +14349,6 @@ class ValueProperty<T extends ValueType>
   }
 
   power(exponent: number) {
-    this.function = PropertyFunction.Constant
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) **= exponent
     } else {
@@ -13574,35 +14357,10 @@ class ValueProperty<T extends ValueType>
   }
 
   add(summand: number) {
-    this.function = PropertyFunction.Constant
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) += summand
     } else {
       this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
-    }
-  }
-
-  minify(): ValueProperty<T> {
-    switch (this.function) {
-      case PropertyFunction.Zero:
-      case PropertyFunction.One:
-        return this
-      case PropertyFunction.Constant:
-        if (
-          Array.isArray(this.value) &&
-            this.value.every(e => e === 0) ||
-            this.value === 0
-        ) {
-          return new ZeroProperty(this.valueType)
-        }
-        if (
-          Array.isArray(this.value) &&
-            this.value.every(e => e === 1) ||
-            this.value === 1
-        ) {
-          return new OneProperty(this.valueType)
-        }
-        return this
     }
   }
 
@@ -13611,7 +14369,7 @@ class ValueProperty<T extends ValueType>
   }
 
   clone(): ValueProperty<T> {
-    return new ValueProperty(this.valueType, this.function, this.value, this.modifiers.map(e => Modifier.copy(e)))
+    return new ValueProperty(this.valueType, this.value, this.modifiers.map(e => Modifier.copy(e)))
   }
 
 }
@@ -13679,13 +14437,13 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField(e.unkTangent2 as number) ] :
-              e => (e.unkTangent2 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField(e.unkTangent1 as number) ] :
+              e => (e.unkTangent1 as Vector).map(e => new FloatField(e))
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField(e.unkTangent1 as number) ] :
-              e => (e.unkTangent1 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField(e.unkTangent2 as number) ] :
+              e => (e.unkTangent2 as Vector).map(e => new FloatField(e))
           ),
         ]
       default:
@@ -13823,10 +14581,6 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
         kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
       }
     }
-  }
-
-  minify(): this {
-    return this
   }
 
   valueAt(arg: number): ValueTypeMap[T] {
@@ -13981,10 +14735,6 @@ class ComponentKeyframeProperty<T extends ValueType>
     }
   }
 
-  minify(): this {
-    return this
-  }
-
   valueAt(arg: number): ValueTypeMap[T] {
     return (
       this.valueType === ValueType.Scalar ?
@@ -14004,38 +14754,11 @@ class ComponentKeyframeProperty<T extends ValueType>
 
 }
 
-class ZeroProperty extends ValueProperty<any> {
-  constructor(valueType: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
-    super(
-      valueType,
-      PropertyFunction.Zero,
-      valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0),
-      modifiers
-    )
-  }
-}
-
-class OneProperty extends ValueProperty<any> {
-  constructor(valueType: ValueType = ValueType.Scalar, modifiers: Modifier[] = []) {
-    super(
-      valueType,
-      PropertyFunction.One,
-      valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1),
-      modifiers
-    )
-  }
-}
-
 class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
-  constructor(
-    ...args:
-      T extends ValueType.Scalar ? [number] :
-      T extends ValueType.Vector2 ? Vector2 :
-      T extends ValueType.Vector3 ? Vector3 :
-      Vector4
-  ) {
-    super(args.length - 1 as T, PropertyFunction.Constant, (args.length === 1 ? args[0] : args) as ValueTypeMap[T])
+  constructor(...args: number[]) {
+    args = args.slice(0, 4)
+    super(args.length - 1 as T, (args.length === 1 ? args[0] : args) as ValueTypeMap[T])
   }
 
 }
@@ -14167,6 +14890,46 @@ class Curve2Property<T extends ValueType> extends KeyframeProperty<T, PropertyFu
 
 }
 
+/**
+ * Creates a property with a {@link RandomizerModifier} and no value,
+ * effectively creating a property with a random value in a given range.
+ * @param minValue The lower bound of the range of possible values for the
+ * property.
+ * @param maxValue The upper bound of the range of possible values for the
+ * property.
+ * @param seed A seed or set of seeds for the random number generator to use
+ * to generate the random property values.
+ * @returns 
+ */
+function RandomProperty(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
+  return new ValueProperty(
+    (Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar) as ValueType,
+    Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0,
+    [ new RandomizerModifier(minValue, maxValue, seed) ]
+  )
+}
+
+/**
+ * Generates a rainbow color animation property with a configurable duration.
+ * @param duration How long it takes to go around the entire hue circle in
+ * seconds. Defaults to 4 seconds.
+ * @param loop Controls whether the animation should loop or not. Defaults to
+ * true.
+ * @returns 
+ */
+function RainbowProperty(duration: number = 4, loop: boolean = true) {
+  const unit = duration / 6
+  return new LinearProperty(loop, [
+    new Keyframe(0,        [1, 0, 0, 1]),
+    new Keyframe(unit,     [1, 0, 1, 1]),
+    new Keyframe(unit * 2, [0, 0, 1, 1]),
+    new Keyframe(unit * 3, [0, 1, 1, 1]),
+    new Keyframe(unit * 4, [0, 1, 0, 1]),
+    new Keyframe(unit * 5, [1, 1, 0, 1]),
+    new Keyframe(unit * 6, [1, 0, 0, 1]),
+  ])
+}
+
 class Modifier {
 
   static #typeEnumBValues = {
@@ -14202,36 +14965,6 @@ class Modifier {
     return (type >>> 4 | 0b1100) << 12 | (type & 0b1111) << 4 | valueType
   }
 
-  static read(br: BinaryReader) {
-    const typeEnumA = br.readUint16()
-    const teA1 = typeEnumA >>> 12 & 0b11
-    const teA2 = typeEnumA >>> 4 & 0b1111
-    const modifierType = teA1 << 4 | teA2
-    const valueType = typeEnumA & 0b11
-    if (!(modifierType in ModifierType)) {
-      throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
-    }
-    br.assertUint8(0)
-    br.assertUint8(1)
-    const typeEnumB = br.readUint32()
-    const fieldCount = br.readInt32()
-    const propertyCount = br.readInt32()
-    const fieldOffset = br.readInt32()
-    br.assertInt32(0)
-    const propertyOffset = br.readInt32()
-    br.assertInt32(0)
-    br.stepIn(propertyOffset)
-    const properties = []
-    for (let i = 0; i < propertyCount; ++i) {
-      properties.push(readProperty(br, true))
-    }
-    br.stepOut()
-    const fields = Field.readManyAt(br, fieldOffset, fieldCount, this)
-    const mod = new Modifier(modifierType, valueType, fields, properties)
-    mod.typeEnumB = typeEnumB
-    return mod
-  }
-
   static copy(mod: Modifier) {
     const copy = new Modifier(
       mod.type,
@@ -14241,36 +14974,6 @@ class Modifier {
     )
     copy.typeEnumB = mod.typeEnumB
     return copy
-  }
-
-  write(bw: BinaryWriter, modifiers: Modifier[]) {
-    const count = modifiers.length
-    bw.writeInt16(this.typeEnumA)
-    bw.writeUint8(0)
-    bw.writeUint8(1)
-    bw.writeInt32(this.typeEnumB)
-    bw.writeInt32(this.fields.length)
-    bw.writeInt32(this.properties.length)
-    bw.reserveInt32(`Section8FieldsOffset${count}`)
-    bw.writeInt32(0)
-    bw.reserveInt32(`Section8Section9sOffset${count}`)
-    bw.writeInt32(0)
-    modifiers.push(this)
-  }
-
-  writeProperties(bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
-    bw.fill(`Section8Section9sOffset${index}`, bw.position)
-    for (const property of this.properties) {
-      writeProperty(property, bw, properties, true)
-    }
-  }
-
-  writeFields(bw: BinaryWriter, index: number): number {
-    bw.fill(`Section8FieldsOffset${index}`, bw.position)
-    for (const field of this.fields) {
-      field.write(bw)
-    }
-    return this.fields.length
   }
 
   get type(): ModifierType {
@@ -14487,39 +15190,14 @@ class RandomizerModifier extends Modifier {
 
 class Section10 {
 
-  fields: Field[]
+  fields: NumericalField[]
 
-  constructor(fields: Field[]) {
+  constructor(fields: NumericalField[]) {
     this.fields = fields
   }
 
-  static read(br: BinaryReader) {
-    const offset = br.readInt32()
-    br.assertInt32(0)
-    const count = br.readInt32()
-    br.assertInt32(0)
-    return new Section10(Field.readManyAt(br, offset, count, this))
-  }
-
-  write(bw: BinaryWriter, section10s: Section10[]) {
-    const count = section10s.length
-    bw.reserveInt32(`Section10FieldsOffset${count}`)
-    bw.writeInt32(0)
-    bw.writeInt32(this.fields.length)
-    bw.writeInt32(0)
-    section10s.push(this)
-  }
-
-  writeFields(bw: BinaryWriter, index: number): number {
-    bw.fill(`Section10FieldsOffset${index}`, bw.position)
-    for (const field of this.fields) {
-      field.write(bw)
-    }
-    return this.fields.length
-  }
-
   static fromJSON(fields: []) {
-    return new Section10(fields.map(field => Field.fromJSON(field)))
+    return new Section10(fields.map(field => Field.fromJSON(field) as NumericalField))
   }
 
   toJSON() {
@@ -14529,6 +15207,7 @@ class Section10 {
 }
 
 export {
+  Game,
   FXRVersion,
   NodeType,
   EffectType,
@@ -14553,6 +15232,7 @@ export {
   Effects,
   EffectActionSlots,
   Actions,
+  ActionData,
 
   FXR,
 
@@ -14560,6 +15240,7 @@ export {
   StateCondition,
 
   Node,
+  GenericNode,
   NodeWithEffects,
   RootNode,
   ProxyNode,
@@ -14573,6 +15254,7 @@ export {
   SharedEmitterEffect,
 
   Action,
+  DataAction,
   NodeMovement,
   NodeTranslation,
   NodeTransform,
@@ -14582,12 +15264,10 @@ export {
   NodeAttributes,
   ParticleAttributes,
   ParticleMultiplier,
-  FXRReference,
   LevelOfDetailThresholds,
   StateEffectMap,
   EmitAllParticles,
   EmitRandomParticles,
-  PeriodicEmitter,
   EqualDistanceEmitter,
   OneTimeEmitter,
   PointEmitterShape,
@@ -14595,7 +15275,6 @@ export {
   RectangleEmitterShape,
   SphereEmitterShape,
   BoxEmitterShape,
-  CylinderEmitterShape,
   NoParticleSpread,
   CircularParticleSpread,
   EllipticalParticleSpread,
@@ -14604,7 +15283,6 @@ export {
   PointSprite,
   Line,
   QuadLine,
-  BillboardEx,
   MultiTextureBillboardEx,
   Model,
   Tracer,
@@ -14617,6 +15295,13 @@ export {
   ParticleWindAcceleration,
   WaterInteraction,
   SpotLight,
+  /*#ActionsExport start*/
+  SFXReference,
+  PeriodicEmitter,
+  CylinderEmitterShape,
+  BillboardEx,
+  Unk10500,
+  /*#ActionsExport end*/
 
   Field,
   BoolField,
@@ -14628,12 +15313,12 @@ export {
   ValueProperty,
   KeyframeProperty,
   ComponentKeyframeProperty,
-  ZeroProperty,
-  OneProperty,
   ConstantProperty,
   SteppedProperty,
   LinearProperty,
   Curve2Property,
+  RandomProperty,
+  RainbowProperty,
 
   Modifier,
   ExternalValueModifier,

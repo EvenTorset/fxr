@@ -160,5 +160,6 @@ await fs.writeFile('f000402030.fxr', Buffer.from(fxr.toArrayBuffer()))
 ## Thanks
 - ivi - WitchyBND, FXR research
 - The12thAvenger - Help with figuring out various unknowns
+- Rayan - Testing, feedback, FXR research
 
 It's also worth mentioning everyone on [WitchyBND's contributors list](https://github.com/ividyon/WitchyBND?tab=readme-ov-file#contributors), especially anyone who has contributed to its FXR class.

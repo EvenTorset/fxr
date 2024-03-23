@@ -1,24 +1,30 @@
 {
   "name": "@cccode/fxr",
   "version": "5.0.1",
-  "description": "JavaScript library for editing FXR files from Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
+  "description": "JavaScript library for creating and editing FXR files from Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
-  "main": "./js/fxr.js",
-  "module": "./js/fxr.js",
+  "main": "./dist/esm/fxr.js",
+  "module": "./dist/esm/fxr.js",
   "exports": {
-    "import": "./js/fxr.js",
-    "require": "./js/cjs/fxr.js"
+    "import": "./dist/esm/fxr.js",
+    "require": "./dist/cjs/fxr.js"
   },
-  "types": "./js/fxr.d.ts",
+  "types": "./dist/esm/fxr.d.ts",
   "scripts": {
-    "docs": "npx typedoc",
-    "build": "npx tsc && npx terser js/fxr.js -o js/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='js/fxr.js.map',filename='js/fxr.min.js.map'\" && npx cpy js/fxr.d.ts --rename=fxr.min.d.ts --flat js && npx tsc --p tsconfig-cjs.json && npx terser js/cjs/fxr.js -o js/cjs/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='js/cjs/fxr.js.map',filename='js/cjs/fxr.min.js.map'\" && npx cpy js/cjs/fxr.d.ts --rename=fxr.min.d.ts --flat js/cjs && echo {\"type\":\"commonjs\"} > js/cjs/package.json",
-    "watch": "npx tsc --watch"
+    "build:yaml": "node build/run.js",
+    "docs": "npm run build:yaml && npx typedoc --tsconfig tsconfig-esm.json",
+    "build:ts:esm": "npx tsc --p tsconfig-esm.json",
+    "build:ts:cjs": "npx tsc --p tsconfig-cjs.json && echo {\"type\":\"commonjs\"} > dist/cjs/package.json",
+    "build:minify": "npx terser dist/esm/fxr.js -o dist/esm/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='dist/esm/fxr.js.map',filename='dist/esm/fxr.min.js.map'\" && npx cpy dist/esm/fxr.d.ts --rename=fxr.min.d.ts --flat dist/esm && npx terser dist/cjs/fxr.js -o dist/cjs/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='dist/cjs/fxr.js.map',filename='dist/cjs/fxr.min.js.map'\" && npx cpy dist/cjs/fxr.d.ts --rename=fxr.min.d.ts --flat dist/cjs",
+    "build": "npm run build:yaml && npm run build:ts:esm && npm run build:ts:cjs && npm run build:minify",
+    "build:quick": "npm run build:yaml && npm run build:ts:esm",
+    "watch:dist": "npx tsc --p tsconfig-esm.json --watch",
+    "watch:src": "node build/watch.js",
+    "watch": "npm-run-all --parallel watch:*"
   },
   "files": [
-    "/js",
-    "/fxr.ts"
+    "/dist"
   ],
   "keywords": [
     "typescript",
@@ -35,9 +41,12 @@
   },
   "homepage": "https://fxr-docs.pages.dev/",
   "devDependencies": {
+    "chokidar": "^3.6.0",
     "cpy-cli": "^5.0.0",
-    "terser": "^5.26.0",
-    "typedoc": "^0.25.6",
-    "typescript": "^5.3.3"
+    "npm-run-all2": "^6.1.2",
+    "terser": "^5.29.2",
+    "typedoc": "^0.25.12",
+    "typescript": "^5.4.3",
+    "yaml": "^2.4.1"
   }
 }

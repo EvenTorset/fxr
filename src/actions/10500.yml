@@ -1,0 +1,82 @@
+type: 10500
+name: Unk10500
+desc: >
+  Unknown root node action.
+properties:
+  rateOfTime:
+    type: ScalarPropertyArg
+    field: float
+    default: 1
+    argument: EffectAge
+    desc: >
+      Controls how fast time passes for the entire effect.
+  unk_ds3_f1_0:
+    field: int
+    default: 0
+  unk_ds3_f1_1:
+    field: float
+    default: 0
+  unk_ds3_f1_2:
+    field: int
+    default: 0
+  unk_ds3_f1_3:
+    field: float
+    default: 0
+  unk_ds3_f1_4:
+    field: float
+    default: 0
+  unk_ds3_f1_5:
+    field: float
+    default: 0
+  unk_ds3_f1_6:
+    field: int
+    default: 0
+  unk_ds3_f1_7:
+    field: int
+    default: 0
+  unk_ds3_f1_8:
+    field: int
+    default: 0
+  unk_sdt_f1_9:
+    field: int
+    default: 0
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+  SDT:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+      - unk_sdt_f1_9
+      - rateOfTime
+  ER:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+      - unk_sdt_f1_9
+    properties1:
+      - rateOfTime
+  AC6: ER

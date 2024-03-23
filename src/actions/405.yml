@@ -1,0 +1,45 @@
+type: 405
+name: CylinderEmitterShape
+desc: >
+  Makes the emitter cylindrical.
+properties:
+  unk_ds3_f1_0:
+    field: int
+    default: 5
+  volume:
+    field: bool
+    default: true
+    desc: >
+      If true, particles will be emitted from anywhere within the cylinder.
+      Otherwise the particles will be emitted only from the surface of the
+      cylinder, excluding the ends.
+  yAxis:
+    field: bool
+    default: true
+    desc: >
+      If true, the cylinder will be aligned with the Y-axis instead of the
+      Z-axis.
+  radius:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: >
+      The radius of the cylinder.
+  height:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: >
+      The height of the cylinder.
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - volume
+      - yAxis
+    properties1:
+      - radius
+      - height
+  SDT: DS3
+  ER: DS3
+  AC6: DS3
