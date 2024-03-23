@@ -14308,7 +14308,7 @@ class ValueProperty<T extends ValueType>
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
-        new ConstantProperty(...(Array(valueType + 1).fill(1) as [number] | Vector)).withModifiers(
+        return new ConstantProperty(...(Array(valueType + 1).fill(1) as [number] | Vector)).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
