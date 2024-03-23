@@ -1,7 +1,7 @@
 {
   "name": "@cccode/fxr",
   "version": "5.0.1",
-  "description": "JavaScript library for creating and editing FXR files from Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
+  "description": "JavaScript library for creating and editing FXR files for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
   "main": "./dist/esm/fxr.js",
@@ -13,15 +13,15 @@
   "types": "./dist/esm/fxr.d.ts",
   "scripts": {
     "build:yaml": "node build/run.js",
-    "docs": "npm run build:yaml && npx typedoc --tsconfig tsconfig-esm.json",
     "build:ts:esm": "npx tsc --p tsconfig-esm.json",
     "build:ts:cjs": "npx tsc --p tsconfig-cjs.json && echo {\"type\":\"commonjs\"} > dist/cjs/package.json",
+    "build:ts": "npm-run-all --parallel build:ts:*",
     "build:minify": "npx terser dist/esm/fxr.js -o dist/esm/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='dist/esm/fxr.js.map',filename='dist/esm/fxr.min.js.map'\" && npx cpy dist/esm/fxr.d.ts --rename=fxr.min.d.ts --flat dist/esm && npx terser dist/cjs/fxr.js -o dist/cjs/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='dist/cjs/fxr.js.map',filename='dist/cjs/fxr.min.js.map'\" && npx cpy dist/cjs/fxr.d.ts --rename=fxr.min.d.ts --flat dist/cjs",
-    "build": "npm run build:yaml && npm run build:ts:esm && npm run build:ts:cjs && npm run build:minify",
-    "build:quick": "npm run build:yaml && npm run build:ts:esm",
+    "build": "npm-run-all build:yaml build:ts build:minify",
     "watch:dist": "npx tsc --p tsconfig-esm.json --watch",
     "watch:src": "node build/watch.js",
-    "watch": "npm-run-all --parallel watch:*"
+    "watch": "npm-run-all --parallel watch:*",
+    "docs": "npm run build:yaml && npx typedoc --tsconfig tsconfig.json"
   },
   "files": [
     "/dist"
