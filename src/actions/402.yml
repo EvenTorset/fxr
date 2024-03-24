@@ -1,0 +1,44 @@
+type: 402
+name: RectangleEmitterShape
+desc: |
+  Makes the emitter rectangular.
+properties:
+  direction:
+    type: InitialDirection
+    field: int
+    default: InitialDirection.Emitter
+    desc: |
+      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+  sizeX:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Width of the rectangle.
+  sizeY:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Height of the rectangle.
+  distribution:
+    type: ScalarPropertyArg
+    default: 0
+    argument: EffectAge
+    desc: |
+      Controls how the random emission points are distributed within the rectangle.
+      - At 0, particles are equally likely to emit from anywhere inside the rectangle.
+      - At 1, particles have a 100% chance of being emitted from the center point.
+      - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
+      - Values between these smoothly blend between them.
+games:
+  DS3:
+    fields1:
+      - direction
+    properties1:
+      - sizeX
+      - sizeY
+      - distribution
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

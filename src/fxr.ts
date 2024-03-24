@@ -304,36 +304,6 @@ enum ActionType {
    */
   OneTimeEmitter = 399,
   /**
-   * Makes the emitter a single point.
-   * 
-   * This action type has a specialized subclass: {@link PointEmitterShape}
-   */
-  PointEmitterShape = 400,
-  /**
-   * Makes the emitter disk-shaped.
-   * 
-   * This action type has a specialized subclass: {@link DiskEmitterShape}
-   */
-  DiskEmitterShape = 401,
-  /**
-   * Makes the emitter rectangular.
-   * 
-   * This action type has a specialized subclass: {@link RectangleEmitterShape}
-   */
-  RectangleEmitterShape = 402,
-  /**
-   * Makes the emitter spherical.
-   * 
-   * This action type has a specialized subclass: {@link SphereEmitterShape}
-   */
-  SphereEmitterShape =  403,
-  /**
-   * Makes the emitter cuboidal.
-   * 
-   * This action type has a specialized subclass: {@link BoxEmitterShape}
-   */
-  BoxEmitterShape = 404,
-  /**
    * Makes all particles use the default initial direction from the emitter.
    * 
    * A particle's initial direction is used for various things that need a
@@ -391,15 +361,6 @@ enum ActionType {
    * {@link RectangularParticleSpread}
    */
   RectangularParticleSpread = 503,
-  /**
-   * Simple rectangular particle, very similar to
-   * {@link ActionType.Line Line particles}, but has properties that control
-   * the width as well as the length. It automatically rotates to match the
-   * direction it's moving.
-   * 
-   * This action type has a specialized subclass: {@link QuadLine}
-   */
-  QuadLine = 602,
   /**
    * Particle with multiple texture that can scroll.
    * 
@@ -524,6 +485,36 @@ enum ActionType {
    */
   PeriodicEmitter = 300,
   /**
+   * Makes the emitter a single point.
+   * 
+   * This action type has a specialized subclass: {@link PointEmitterShape}
+   */
+  PointEmitterShape = 400,
+  /**
+   * Makes the emitter disk-shaped.
+   * 
+   * This action type has a specialized subclass: {@link DiskEmitterShape}
+   */
+  DiskEmitterShape = 401,
+  /**
+   * Makes the emitter rectangular.
+   * 
+   * This action type has a specialized subclass: {@link RectangleEmitterShape}
+   */
+  RectangleEmitterShape = 402,
+  /**
+   * Makes the emitter spherical.
+   * 
+   * This action type has a specialized subclass: {@link SphereEmitterShape}
+   */
+  SphereEmitterShape = 403,
+  /**
+   * Makes the emitter cuboidal.
+   * 
+   * This action type has a specialized subclass: {@link BoxEmitterShape}
+   */
+  BoxEmitterShape = 404,
+  /**
    * Makes the emitter cylindrical.
    * 
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
@@ -541,6 +532,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Line}
    */
   Line = 601,
+  /**
+   * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+   * 
+   * This action type has a specialized subclass: {@link QuadLine}
+   */
+  QuadLine = 602,
   /**
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
    * 
@@ -1064,6 +1061,59 @@ enum DistortionShape {
   Ellipsoid = 2,
 }
 
+/**
+ * A particle's initial direction is used for various things that require a
+ * direction, but does not have a set one to follow.
+ * - {@link ActionType.ParticleMultiplier ParticleMultiplier action}'s
+ * {@link ParticleMultiplierParams.speed speed}.
+ * - {@link ActionType.Line Line action}'s initial rotation.
+ * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
+ * 
+ * The initial direction can be further modified by the following actions:
+ * - {@link ActionType.NoParticleSpread NoParticleSpread}
+ * - {@link ActionType.CircularParticleSpread CircularParticleSpread}
+ * - {@link ActionType.EllipticalParticleSpread EllipticalParticleSpread}
+ * - {@link ActionType.RectangularParticleSpread RectangularParticleSpread}
+ */
+enum InitialDirection {
+  /**
+   * The direction will depend on the emitter shape.
+   * | Emitter&nbsp;Shape | Direction |
+   * |:-|:-|
+   * | {@link ActionType.PointEmitterShape Point} | Same as {@link LocalNorth}. |
+   * | {@link ActionType.DiskEmitterShape Disk} | Same as {@link LocalNorth}. |
+   * | {@link ActionType.RectangleEmitterShape Rectangle} | Same as {@link LocalNorth}. |
+   * | {@link ActionType.SphereEmitterShape Sphere} | The direction cannot be changed for this emitter shape. |
+   * | {@link ActionType.BoxEmitterShape Box} | If {@link BoxEmitterShape.volume volume} is true, it picks a direction parallel to a random local axis. If volume is false, the direction will be out from the box, perpendicular to the side where the particle was emitted. |
+   * | {@link ActionType.CylinderEmitterShape Cylinder} | Out from the cylinder's axis. |
+   */
+  Emitter = 0,
+  /**
+   * Global up. (+Y)
+   */
+  Up = 1,
+  /**
+   * Global down. (-Y)
+   */
+  Down = 2,
+  /**
+   * Global north. (+Z)
+   */
+  North = 3,
+  /**
+   * Local up. (+Y)
+   */
+  LocalUp = 4,
+  /**
+   * Local down. (-Y)
+   */
+  LocalDown = 5,
+  /**
+   * Local north. (+Z)
+   */
+  LocalNorth = 6,
+}
+
 const ActionData: {
   [x: string]: {
     props: {
@@ -1120,22 +1170,100 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.PointEmitterShape]: {
+    props: {
+      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['direction']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.DiskEmitterShape]: {
+    props: {
+      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
+      radius: { default: 1, paths: {} },
+      distribution: { default: 0, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['direction'],
+        properties1: ['radius','distribution']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.RectangleEmitterShape]: {
+    props: {
+      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
+      sizeX: { default: 1, paths: {} },
+      sizeY: { default: 1, paths: {} },
+      distribution: { default: 0, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['direction'],
+        properties1: ['sizeX','sizeY','distribution']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.SphereEmitterShape]: {
+    props: {
+      volume: { default: true, paths: {}, field: FieldType.Boolean },
+      radius: { default: 1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['volume'],
+        properties1: ['radius']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.BoxEmitterShape]: {
+    props: {
+      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
+      volume: { default: true, paths: {}, field: FieldType.Boolean },
+      sizeX: { default: 1, paths: {} },
+      sizeY: { default: 1, paths: {} },
+      sizeZ: { default: 1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['direction','volume'],
+        properties1: ['sizeX','sizeY','sizeZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.CylinderEmitterShape]: {
     props: {
-      unk_ds3_f1_0: { default: 5, paths: {}, field: FieldType.Integer },
+      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
       volume: { default: true, paths: {}, field: FieldType.Boolean },
       yAxis: { default: true, paths: {}, field: FieldType.Boolean },
       radius: { default: 1, paths: {} },
       height: { default: 1, paths: {} },
     },
     games: {
-      [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','volume','yAxis'],
+      [Game.Sekiro]: {
+        fields1: ['direction','volume','yAxis'],
         properties1: ['radius','height']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
     }
   },
   [ActionType.PointSprite]: {
@@ -1229,7 +1357,7 @@ const ActionData: {
       color2: { default: [1, 1, 1, 1], paths: {} },
       startColor: { default: [1, 1, 1, 1], paths: {} },
       endColor: { default: [1, 1, 1, 1], paths: {} },
-      LengthMultiplier: { default: 1, paths: {} },
+      lengthMultiplier: { default: 1, paths: {} },
       color3: { default: [1, 1, 1, 1], paths: {} },
       rgbMultiplier: { default: 1, paths: {} },
       alphaMultiplier: { default: 1, paths: {} },
@@ -1299,6 +1427,91 @@ const ActionData: {
         fields1: ['unk_ds3_f1_1','unk_er_f1_1','unk_er_f1_2'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.QuadLine]: {
+    props: {
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      width: { default: 1, paths: {} },
+      length: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      startColor: { default: [1, 1, 1, 1], paths: {} },
+      endColor: { default: [1, 1, 1, 1], paths: {} },
+      widthMultiplier: { default: 1, paths: {} },
+      lengthMultiplier: { default: 1, paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_1: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_2: { default: 1, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['blendMode','unk_ds3_f1_1'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_1'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        properties1: ['blendMode','width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: {
+        fields1: ['unk_ds3_f1_1','unk_er_f1_1','unk_er_f1_2'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        properties1: ['blendMode','width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.ArmoredCore6]: Game.EldenRing
@@ -6616,205 +6829,6 @@ class OneTimeEmitter extends Action {
 }
 
 /**
- * Makes the emitter a single point.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- */
-class PointEmitterShape extends Action {
-
-  /**
-   * @param unkField Unknown. Fields1, index 0. Defaults to 5.
-   */
-  constructor(unkField: number = 5) {
-    super(ActionType.PointEmitterShape, [
-      new IntField(unkField)
-    ])
-  }
-
-}
-
-/**
- * Makes the emitter disk-shaped. The normal of the disk is aligned with the
- * Z-axis.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | radius
- * 1     | centerWeight
- */
-class DiskEmitterShape extends Action {
-
-  /**
-   * @param radius The radius of the disk in meters. Defaults to 1.
-   * @param centerWeight
-   * Controls the weight of the center of the disk for picking random
-   * positions to emit from.
-   * - At 0, particles are equally likely to emit from anywhere inside the
-   * disk.
-   * - At 1, particles have a 100% chance of being emitted from the center
-   * point.
-   * - At -1, particles have a 100% chance of being emitted from the perimeter
-   * circle of the disk.
-   * 
-   * Defaults to 0.
-   * @param unkField Unknown. Fields1, index 0. Defaults to 5.
-   */
-  constructor(
-    radius: ScalarPropertyArg = 1,
-    centerWeight: ScalarPropertyArg = 0,
-    unkField: number = 5
-  ) {
-    super(ActionType.DiskEmitterShape, [
-      new IntField(unkField)
-    ], [], [
-      radius instanceof Property ? radius : new ConstantProperty(radius as number),
-      centerWeight instanceof Property ? centerWeight : new ConstantProperty(centerWeight as number),
-    ])
-  }
-
-}
-
-/**
- * Makes the emitter rectangular. The normal of the rectangle is aligned
- * with the Z-axis.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | sizeX
- * 1     | sizeY
- * 2     | centerWeight
- */
-class RectangleEmitterShape extends Action {
-
-  /**
-   * @param sizeX Width of the rectangle. Defaults to 1.
-   * @param sizeY Height of the rectangle. Defaults to sizeX.
-   * @param centerWeight
-   * Controls the weight of the center of the rectangle for picking random
-   * positions to emit from.
-   * - At 0, particles are equally likely to emit from anywhere inside the
-   * rectangle.
-   * - At 1, particles have a 100% chance of being emitted from the center
-   * point.
-   * - At -1, particles have a 100% chance of being emitted from the perimeter
-   * of the rectangle.
-   * 
-   * Defaults to 0.
-   * @param unkField Unknown. Fields1, index 0. Defaults to 5.
-   */
-  constructor(
-    sizeX: ScalarPropertyArg = 1,
-    sizeY: ScalarPropertyArg = sizeX instanceof Property ? sizeX.clone() : sizeX,
-    centerWeight: ScalarPropertyArg = 0,
-    unkField: number = 5
-  ) {
-    super(ActionType.RectangleEmitterShape, [
-      new IntField(unkField)
-    ], [], [
-      sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
-      sizeY instanceof Property ? sizeY : new ConstantProperty(sizeY as number),
-      centerWeight instanceof Property ? centerWeight : new ConstantProperty(centerWeight as number),
-    ])
-  }
-
-}
-
-/**
- * Makes the emitter spherical.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | volume
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | radius
- */
-class SphereEmitterShape extends Action {
-
-  /**
-   * @param volume If true, particles will be emitted from anywhere within the
-   * sphere. Otherwise the particles will be emitted from the surface of the
-   * sphere. Defaults to true.
-   * @param radius The radius of the sphere in meters. Defaults to 1.
-   */
-  constructor(
-    volume: boolean = true,
-    radius: ScalarPropertyArg = 1,
-  ) {
-    super(ActionType.SphereEmitterShape, [
-      new BoolField(volume)
-    ], [], [
-      radius instanceof Property ? radius : new ConstantProperty(radius as number),
-    ])
-  }
-
-}
-
-/**
- * Makes the emitter cuboidal.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 1     | volume
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | sizeX
- * 1     | sizeY
- * 2     | sizeZ
- */
-class BoxEmitterShape extends Action {
-
-  /**
-   * @param volume If true, particles will be emitted from anywhere within the
-   * cuboid. Otherwise the particles will be emitted from the surface of the
-   * cuboid. Defaults to true.
-   * @param sizeX Width of the cuboid. Defaults to 1.
-   * @param sizeY Height of the cuboid. Defaults to sizeX.
-   * @param sizeZ Depth of the cuboid. Defaults to sizeX.
-   * @param unkField Unknown. Fields1, index 0. Defaults to 0.
-   */
-  constructor(
-    volume: boolean = true,
-    sizeX: ScalarPropertyArg = 1,
-    sizeY: ScalarPropertyArg = sizeX instanceof Property ? sizeX.clone() : sizeX,
-    sizeZ: ScalarPropertyArg = sizeX instanceof Property ? sizeX.clone() : sizeX,
-    unkField: number = 0,
-  ) {
-    super(ActionType.BoxEmitterShape, [
-      new IntField(unkField),
-      new BoolField(volume),
-    ], [], [
-      sizeX instanceof Property ? sizeX : new ConstantProperty(sizeX as number),
-      sizeY instanceof Property ? sizeY : new ConstantProperty(sizeY as number),
-      sizeZ instanceof Property ? sizeZ : new ConstantProperty(sizeZ as number),
-    ])
-  }
-
-}
-
-/**
  * Makes all particles use the default initial direction from the emitter.
  * 
  * A particle's initial direction is used for various things that need a
@@ -7190,270 +7204,6 @@ class CommonFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface QuadLineParams {
-  blendMode?: BlendMode | ScalarProperty
-  width?: ScalarPropertyArg
-  height?: ScalarPropertyArg
-  /**
-   * Color multiplier for the entire rectangle.
-   * 
-   * Seemingly identical to {@link color2}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color1?: Vector4PropertyArg
-  /**
-   * Color multiplier for the entire rectangle.
-   * 
-   * Seemingly identical to {@link color1}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color2?: Vector4PropertyArg
-  /**
-   * The color for the "start" edge of the rectangle.
-   * 
-   * This color transitions linearly into the {@link endColor end color} across the rectangle.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  startColor?: Vector4PropertyArg
-  /**
-   * The color for the "end" edge of the rectangle.
-   * 
-   * This color transitions linearly into the {@link startColor start color} across the rectangle.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  endColor?: Vector4PropertyArg
-  widthMultiplier?: ScalarPropertyArg
-  heightMultiplier?: ScalarPropertyArg
-  /**
-   * Color multiplier for the entire rectangle.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  color3?: Vector4PropertyArg
-  rgbMultiplier?: ScalarPropertyArg
-  alphaMultiplier?: ScalarPropertyArg
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-  unkScalarProp2_2?: ScalarPropertyArg
-  unkVec4Prop2_3?: Vector4PropertyArg
-  unkVec4Prop2_4?: Vector4PropertyArg
-  unkVec4Prop2_5?: Vector4PropertyArg
-  unkScalarProp2_6?: ScalarPropertyArg
-}
-/**
- * Simple rectangular particle, very similar to
- * {@link ActionType.Line Line particles}, but has properties that control
- * the width as well as the length. It automatically rotates to match the
- * direction it's moving.
- */
-class QuadLine extends CommonFields2Action {
-
-  constructor({
-    blendMode = BlendMode.Normal,
-    width = 1,
-    height = 1,
-    color1 = [1, 1, 1, 1],
-    color2 = [1, 1, 1, 1],
-    startColor = [1, 1, 1, 1],
-    endColor = [1, 1, 1, 1],
-    widthMultiplier = 1,
-    heightMultiplier = 1,
-    color3 = [1, 1, 1, 1],
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-    unkScalarProp2_2 = 0,
-    unkVec4Prop2_3 = [1, 1, 1, 1],
-    unkVec4Prop2_4 = [1, 1, 1, 1],
-    unkVec4Prop2_5 = [1, 1, 1, 1],
-    unkScalarProp2_6 = 0,
-  }: QuadLineParams = {}) {
-    super(ActionType.QuadLine, [
-      /*  0 */ new IntField(-1),
-      /*  1 */ new IntField(1),
-      /*  2 */ new IntField(1),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new IntField(0),
-      /*  4 */ new IntField(1),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new IntField(0),
-      /* 21 */ new IntField(0),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1),
-      /* 26 */ new FloatField(0),
-      /* 27 */ new IntField(1),
-      /* 28 */ new IntField(0),
-      /* 29 */ new FloatField(5),
-      /* 30 */ new FloatField(0),
-      /* 31 */ new IntField(0),
-      /* 32 */ new IntField(1),
-      /* 33 */ new BoolField(false),
-      /* 34 */ new FloatField(0),
-      /* 35 */ new IntField(-1),
-      /* 36 */ new IntField(-2),
-      /* 37 */ new IntField(0),
-      /* 38 */ new FloatField(0),
-      /* 39 */ new IntField(1),
-    ], [ // Properties1
-      /*  0 */ scalarFromArg(blendMode),
-      /*  1 */ scalarFromArg(width),
-      /*  2 */ scalarFromArg(height),
-      /*  3 */ vectorFromArg(color1),
-      /*  4 */ vectorFromArg(color2),
-      /*  5 */ vectorFromArg(startColor),
-      /*  6 */ vectorFromArg(endColor),
-      /*  7 */ scalarFromArg(widthMultiplier),
-      /*  8 */ scalarFromArg(heightMultiplier),
-      /*  9 */ vectorFromArg(color3),
-    ], [ // Properties2
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ scalarFromArg(unkScalarProp2_2),
-      /*  3 */ vectorFromArg(unkVec4Prop2_3),
-      /*  4 */ vectorFromArg(unkVec4Prop2_4),
-      /*  5 */ vectorFromArg(unkVec4Prop2_5),
-      /*  6 */ scalarFromArg(unkScalarProp2_6),
-    ])
-  }
-
-  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
-  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
-  get blendModeProperty() { return this.properties1[0] }
-
-  get width() { return this.properties1[1] }
-  set width(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
-
-  get height() { return this.properties1[2] }
-  set height(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Color multiplier for the entire rectangle.
-   * 
-   * Seemingly identical to {@link color2}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color1() { return this.properties1[3] }
-  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Color multiplier for the entire rectangle.
-   * 
-   * Seemingly identical to {@link color1}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color2() { return this.properties1[4] }
-  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * The color for the "start" edge of the rectangle.
-   * 
-   * This color transitions linearly into the {@link endColor end color} across the rectangle.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get startColor() { return this.properties1[5] }
-  set startColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * The color for the "end" edge of the rectangle.
-   * 
-   * This color transitions linearly into the {@link startColor start color} across the rectangle.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get endColor() { return this.properties1[6] }
-  set endColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 6, value) }
-
-  get widthMultiplier() { return this.properties1[7] }
-  set widthMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 7, value) }
-
-  get heightMultiplier() { return this.properties1[8] }
-  set heightMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 8, value) }
-
-  /**
-   * Color multiplier for the entire rectangle.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get color3() { return this.properties1[9] }
-  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 9, value) }
-
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
-
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -12624,8 +12374,285 @@ class PeriodicEmitter extends DataAction {
   }
 }
 
+export interface PointEmitterShapeParams {
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  direction?: InitialDirection
+}
+
+/**
+ * Makes the emitter a single point.
+ */
+class PointEmitterShape extends DataAction {
+  declare type: ActionType.PointEmitterShape
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   */
+  direction: InitialDirection
+  constructor(props: PointEmitterShapeParams = {}) {
+    super(ActionType.PointEmitterShape)
+    this.assign(props)
+  }
+}
+
+export interface DiskEmitterShapeParams {
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  direction?: InitialDirection
+  /**
+   * Radius of the disk.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius?: ScalarPropertyArg
+  /**
+   * Controls how the random emission points are distributed within the disk.
+   * - At 0, particles are equally likely to emit from anywhere inside the disk.
+   * - At 1, particles have a 100% chance of being emitted from the center point.
+   * - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
+   * - Values between these smoothly blend between them.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution?: ScalarPropertyArg
+}
+
+/**
+ * Makes the emitter disk-shaped.
+ */
+class DiskEmitterShape extends DataAction {
+  declare type: ActionType.DiskEmitterShape
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   */
+  direction: InitialDirection
+  /**
+   * Radius of the disk.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius: ScalarPropertyArg
+  /**
+   * Controls how the random emission points are distributed within the disk.
+   * - At 0, particles are equally likely to emit from anywhere inside the disk.
+   * - At 1, particles have a 100% chance of being emitted from the center point.
+   * - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
+   * - Values between these smoothly blend between them.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution: ScalarPropertyArg
+  constructor(props: DiskEmitterShapeParams = {}) {
+    super(ActionType.DiskEmitterShape)
+    this.assign(props)
+  }
+}
+
+export interface RectangleEmitterShapeParams {
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  direction?: InitialDirection
+  /**
+   * Width of the rectangle.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeX?: ScalarPropertyArg
+  /**
+   * Height of the rectangle.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeY?: ScalarPropertyArg
+  /**
+   * Controls how the random emission points are distributed within the rectangle.
+   * - At 0, particles are equally likely to emit from anywhere inside the rectangle.
+   * - At 1, particles have a 100% chance of being emitted from the center point.
+   * - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
+   * - Values between these smoothly blend between them.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution?: ScalarPropertyArg
+}
+
+/**
+ * Makes the emitter rectangular.
+ */
+class RectangleEmitterShape extends DataAction {
+  declare type: ActionType.RectangleEmitterShape
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   */
+  direction: InitialDirection
+  /**
+   * Width of the rectangle.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeX: ScalarPropertyArg
+  /**
+   * Height of the rectangle.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeY: ScalarPropertyArg
+  /**
+   * Controls how the random emission points are distributed within the rectangle.
+   * - At 0, particles are equally likely to emit from anywhere inside the rectangle.
+   * - At 1, particles have a 100% chance of being emitted from the center point.
+   * - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
+   * - Values between these smoothly blend between them.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution: ScalarPropertyArg
+  constructor(props: RectangleEmitterShapeParams = {}) {
+    super(ActionType.RectangleEmitterShape)
+    this.assign(props)
+  }
+}
+
+export interface SphereEmitterShapeParams {
+  /**
+   * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
+   * 
+   * **Default**: `true`
+   */
+  volume?: boolean
+  /**
+   * Radius of the sphere.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius?: ScalarPropertyArg
+}
+
+/**
+ * Makes the emitter spherical.
+ */
+class SphereEmitterShape extends DataAction {
+  declare type: ActionType.SphereEmitterShape
+  /**
+   * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
+   */
+  volume: boolean
+  /**
+   * Radius of the sphere.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius: ScalarPropertyArg
+  constructor(props: SphereEmitterShapeParams = {}) {
+    super(ActionType.SphereEmitterShape)
+    this.assign(props)
+  }
+}
+
+export interface BoxEmitterShapeParams {
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  direction?: InitialDirection
+  /**
+   * If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
+   * 
+   * **Default**: `true`
+   */
+  volume?: boolean
+  /**
+   * Width of the cuboid.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeX?: ScalarPropertyArg
+  /**
+   * Height of the cuboid.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeY?: ScalarPropertyArg
+  /**
+   * Depth of the cuboid.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeZ?: ScalarPropertyArg
+}
+
+/**
+ * Makes the emitter cuboidal.
+ */
+class BoxEmitterShape extends DataAction {
+  declare type: ActionType.BoxEmitterShape
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   */
+  direction: InitialDirection
+  /**
+   * If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
+   */
+  volume: boolean
+  /**
+   * Width of the cuboid.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeX: ScalarPropertyArg
+  /**
+   * Height of the cuboid.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeY: ScalarPropertyArg
+  /**
+   * Depth of the cuboid.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  sizeZ: ScalarPropertyArg
+  constructor(props: BoxEmitterShapeParams = {}) {
+    super(ActionType.BoxEmitterShape)
+    this.assign(props)
+  }
+}
+
 export interface CylinderEmitterShapeParams {
-  unk_ds3_f1_0?: number
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  direction?: InitialDirection
   /**
    * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
    * 
@@ -12661,7 +12688,10 @@ export interface CylinderEmitterShapeParams {
  */
 class CylinderEmitterShape extends DataAction {
   declare type: ActionType.CylinderEmitterShape
-  unk_ds3_f1_0: number
+  /**
+   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   */
+  direction: InitialDirection
   /**
    * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
    */
@@ -13105,7 +13135,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  LengthMultiplier?: ScalarPropertyArg
+  lengthMultiplier?: ScalarPropertyArg
   /**
    * Color multiplier.
    * 
@@ -13301,7 +13331,7 @@ class Line extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  LengthMultiplier: ScalarPropertyArg
+  lengthMultiplier: ScalarPropertyArg
   /**
    * Color multiplier.
    * 
@@ -13430,6 +13460,428 @@ class Line extends DataAction {
   unk_er_f1_2: number
   constructor(props: LineParams = {}) {
     super(ActionType.Line)
+    this.assign(props)
+  }
+}
+
+export interface QuadLineParams {
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * The width of the line.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link widthMultiplier}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * The length of the line.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  length?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * The color for the leading edge of the quad.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  startColor?: Vector4PropertyArg
+  /**
+   * The color for the trailing edge of the quad.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  endColor?: Vector4PropertyArg
+  /**
+   * Multiplier for the line {@link width}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  widthMultiplier?: ScalarPropertyArg
+  /**
+   * Multiplier for the line {@link length}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  lengthMultiplier?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  unk_ds3_f1_1?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: number
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_30?: number
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_33?: number
+  unk_sdt_f2_34?: number
+  unk_sdt_f2_35?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_sdt_f2_38?: number
+  unk_sdt_f2_39?: number
+  unk_er_f1_1?: number
+  unk_er_f1_2?: number
+}
+
+/**
+ * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+ */
+class QuadLine extends DataAction {
+  declare type: ActionType.QuadLine
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * The width of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link widthMultiplier}
+   */
+  width: ScalarPropertyArg
+  /**
+   * The length of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  length: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color2: Vector4PropertyArg
+  /**
+   * The color for the leading edge of the quad.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  startColor: Vector4PropertyArg
+  /**
+   * The color for the trailing edge of the quad.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  endColor: Vector4PropertyArg
+  /**
+   * Multiplier for the line {@link width}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  widthMultiplier: ScalarPropertyArg
+  /**
+   * Multiplier for the line {@link length}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  lengthMultiplier: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  unk_ds3_f1_1: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_30: number
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_33: number
+  unk_sdt_f2_34: number
+  unk_sdt_f2_35: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_sdt_f2_38: number
+  unk_sdt_f2_39: number
+  unk_er_f1_1: number
+  unk_er_f1_2: number
+  constructor(props: QuadLineParams = {}) {
+    super(ActionType.QuadLine)
     this.assign(props)
   }
 }
@@ -14422,16 +14874,10 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
-  [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
-  [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
-  [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
-  [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
-  [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
   [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
   [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
-  [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
@@ -14448,9 +14894,15 @@ const Actions = {
   /*#ActionsList start*/
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
+  [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
+  [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
+  [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
+  [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
+  [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
   [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.Line]: Line, Line,
+  [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   /*#ActionsList end*/
@@ -15612,17 +16064,11 @@ export {
   EmitRandomParticles,
   EqualDistanceEmitter,
   OneTimeEmitter,
-  PointEmitterShape,
-  DiskEmitterShape,
-  RectangleEmitterShape,
-  SphereEmitterShape,
-  BoxEmitterShape,
   NoParticleSpread,
   CircularParticleSpread,
   EllipticalParticleSpread,
   RectangularParticleSpread,
   CommonFields2Action,
-  QuadLine,
   MultiTextureBillboardEx,
   Model,
   Tracer,
@@ -15638,9 +16084,15 @@ export {
   /*#ActionsExport start*/
   SFXReference,
   PeriodicEmitter,
+  PointEmitterShape,
+  DiskEmitterShape,
+  RectangleEmitterShape,
+  SphereEmitterShape,
+  BoxEmitterShape,
   CylinderEmitterShape,
   PointSprite,
   Line,
+  QuadLine,
   BillboardEx,
   Unk10500,
   /*#ActionsExport end*/

@@ -1,0 +1,46 @@
+type: 404
+name: BoxEmitterShape
+desc: |
+  Makes the emitter cuboidal.
+properties:
+  direction:
+    type: InitialDirection
+    field: int
+    default: InitialDirection.Emitter
+    desc: |
+      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+  volume:
+    field: bool
+    default: true
+    desc: |
+      If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
+  sizeX:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Width of the cuboid.
+  sizeY:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Height of the cuboid.
+  sizeZ:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Depth of the cuboid.
+games:
+  DS3:
+    fields1:
+      - direction
+      - volume
+    properties1:
+      - sizeX
+      - sizeY
+      - sizeZ
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

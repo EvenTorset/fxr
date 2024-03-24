@@ -1,7 +1,7 @@
-type: 601
-name: Line
+type: 602
+name: QuadLine
 desc: |
-  Simple line particle. It automatically rotates to match the direction it's moving.
+  Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
 properties:
   blendMode:
     type: BlendMode | ScalarProperty
@@ -10,6 +10,14 @@ properties:
     argument: Constant0
     desc: |
       Blend mode.
+  width:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EmissionTime
+    desc: | 
+      The width of the line.
+    see:
+      - widthMultiplier
   length:
     type: ScalarPropertyArg
     default: 1
@@ -35,13 +43,19 @@ properties:
     default: [1, 1, 1, 1]
     argument: EffectAge
     desc: |
-      The color for the start of the line.
+      The color for the leading edge of the quad.
   endColor:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
     argument: EffectAge
     desc: |
-      The color for the end of the line.
+      The color for the trailing edge of the quad.
+  widthMultiplier:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: | 
+      Multiplier for the line {@link width}.
   lengthMultiplier:
     type: ScalarPropertyArg
     default: 1
@@ -294,11 +308,13 @@ games:
       - unk_ds3_f2_28
       - unk_ds3_f2_29
     properties1:
+      - width
       - length
       - color1
       - color2
       - startColor
       - endColor
+      - widthMultiplier
       - lengthMultiplier
       - color3
     properties2: &props2
@@ -355,11 +371,13 @@ games:
       - unk_sdt_f2_39
     properties1: &sdt_props1
       - blendMode
+      - width
       - length
       - color1
       - color2
       - startColor
       - endColor
+      - widthMultiplier
       - lengthMultiplier
       - color3
     properties2: *props2

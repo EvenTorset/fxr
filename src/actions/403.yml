@@ -1,0 +1,25 @@
+type: 403
+name: SphereEmitterShape
+desc: |
+  Makes the emitter spherical.
+properties:
+  volume:
+    field: bool
+    default: true
+    desc: |
+      If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
+  radius:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Radius of the sphere.
+games:
+  DS3:
+    fields1:
+      - volume
+    properties1:
+      - radius
+  SDT: DS3
+  ER: DS3
+  AC6: DS3
