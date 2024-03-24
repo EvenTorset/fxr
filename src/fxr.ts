@@ -291,13 +291,6 @@ enum ActionType {
    */
   EmitRandomParticles = 201,
   /**
-   * Emits particles once it has moved a certain distance from where it last
-   * emitted particles.
-   * 
-   * This action type has a specialized subclass: {@link EqualDistanceEmitter}
-   */
-  EqualDistanceEmitter = 301,
-  /**
    * Emits one particle once.
    * 
    * This action type has a specialized subclass: {@link OneTimeEmitter}
@@ -484,6 +477,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PeriodicEmitter}
    */
   PeriodicEmitter = 300,
+  /**
+   * Emits particles once it has moved a certain distance from where it last emitted particles.
+   * 
+   * This action type has a specialized subclass: {@link EqualDistanceEmitter}
+   */
+  EqualDistanceEmitter = 301,
   /**
    * Makes the emitter a single point.
    * 
@@ -1169,6 +1168,24 @@ const ActionData: {
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.EqualDistanceEmitter]: {
+    props: {
+      threshold: { default: 0.1, paths: {} },
+      maxConcurrent: { default: -1, paths: {} },
+      unk_ds3_f1_0: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p1_1: { default: -1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
+        properties1: ['threshold','unk_ds3_p1_1','maxConcurrent']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.PointEmitterShape]: {
@@ -6760,53 +6777,6 @@ class EmitRandomParticles extends Action {
 }
 
 /**
- * Emits particles once it has moved a certain distance from where it last
- * emitted particles.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField0
- * 1     | unkField1
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | threshold
- * 1     | unkProp
- * 2     | maxConcurrent
- */
-class EqualDistanceEmitter extends Action {
-
-  /**
-   * @param threshold How much the emitter must move to trigger emission.
-   * Defaults to 0.1.
-   * @param maxConcurrent How many particles from this emitter are allowed at
-   * the same time. Defaults to 100.
-   * @param unkField0 Unknown. Fields1, index 0. Defaults to 1.
-   * @param unkField1 Unknown. Fields1, index 1. Defaults to 0.
-   * @param unkProp Unknown. Properties1, index 1. Defaults to -1.
-   */
-  constructor(
-    threshold: ScalarPropertyArg = 0.1,
-    maxConcurrent: ScalarPropertyArg = 100,
-    unkField0: number = 1,
-    unkField1: number = 0,
-    unkProp: ScalarPropertyArg = -1
-  ) {
-    super(ActionType.EqualDistanceEmitter, [
-      new IntField(unkField0),
-      new IntField(unkField1),
-    ], [], [
-      threshold instanceof Property ? threshold : new ConstantProperty(threshold as number),
-      unkProp instanceof Property ? unkProp : new ConstantProperty(unkProp as number),
-      maxConcurrent instanceof Property ? maxConcurrent : new ConstantProperty(maxConcurrent as number),
-    ])
-  }
-
-}
-
-/**
  * Emits one particle once.
  * 
  * Contains no fields or properties.
@@ -12365,6 +12335,54 @@ class PeriodicEmitter extends DataAction {
   }
 }
 
+export interface EqualDistanceEmitterParams {
+  /**
+   * How much the emitter must move to trigger emission.
+   * 
+   * **Default**: `0.1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  threshold?: ScalarPropertyArg
+  /**
+   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxConcurrent?: ScalarPropertyArg
+  unk_ds3_f1_0?: number
+  unk_ds3_f1_1?: number
+  unk_ds3_p1_1?: ScalarPropertyArg
+}
+
+/**
+ * Emits particles once it has moved a certain distance from where it last emitted particles.
+ */
+class EqualDistanceEmitter extends DataAction {
+  declare type: ActionType.EqualDistanceEmitter
+  /**
+   * How much the emitter must move to trigger emission.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  threshold: ScalarPropertyArg
+  /**
+   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxConcurrent: ScalarPropertyArg
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  unk_ds3_p1_1: ScalarPropertyArg
+  constructor(props: EqualDistanceEmitterParams = {}) {
+    super(ActionType.EqualDistanceEmitter)
+    this.assign(props)
+  }
+}
+
 export interface PointEmitterShapeParams {
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
@@ -14863,7 +14881,6 @@ const Actions = {
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
-  [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
@@ -16055,7 +16072,6 @@ export {
   StateEffectMap,
   EmitAllParticles,
   EmitRandomParticles,
-  EqualDistanceEmitter,
   OneTimeEmitter,
   NoParticleSpread,
   CircularParticleSpread,
@@ -16077,6 +16093,7 @@ export {
   /*#ActionsExport start*/
   SFXReference,
   PeriodicEmitter,
+  EqualDistanceEmitter,
   PointEmitterShape,
   DiskEmitterShape,
   RectangleEmitterShape,
