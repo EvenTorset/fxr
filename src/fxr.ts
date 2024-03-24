@@ -298,62 +298,11 @@ enum ActionType {
   OneTimeEmitter = 399,
   /**
    * Makes all particles use the default initial direction from the emitter.
-   * 
-   * A particle's initial direction is used for various things that need a
-   * direction but lack an inherent direction, for example the speed from the
-   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
-   * also used to set the rotation of {@link ActionType.Line Line} and
-   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
-   * default initial direction is controlled by the emitter shape.
+   * See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link NoParticleSpread}
    */
   NoParticleSpread = 500,
-  /**
-   * Gives each particle a random initial direction offset within a circular
-   * cone.
-   * 
-   * A particle's initial direction is used for various things that need a
-   * direction but lack an inherent direction, for example the speed from the
-   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
-   * also used to set the rotation of {@link ActionType.Line Line} and
-   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
-   * default initial direction is controlled by the emitter shape.
-   * 
-   * This action type has a specialized subclass:
-   * {@link CircularParticleSpread}
-   */
-  CircularParticleSpread = 501,
-  /**
-   * Gives each particle a random initial direction offset within an elliptical
-   * cone.
-   * 
-   * A particle's initial direction is used for various things that need a
-   * direction but lack an inherent direction, for example the speed from the
-   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
-   * also used to set the rotation of {@link ActionType.Line Line} and
-   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
-   * default initial direction is controlled by the emitter shape.
-   * 
-   * This action type has a specialized subclass:
-   * {@link EllipticalParticleSpread}
-   */
-  EllipticalParticleSpread = 502,
-  /**
-   * Gives each particle a random initial direction offset within a rectangular
-   * cone.
-   * 
-   * A particle's initial direction is used for various things that need a
-   * direction but lack an inherent direction, for example the speed from the
-   * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is
-   * also used to set the rotation of {@link ActionType.Line Line} and
-   * {@link ActionType.QuadLine QuadLine} particles without any movement. The
-   * default initial direction is controlled by the emitter shape.
-   * 
-   * This action type has a specialized subclass:
-   * {@link RectangularParticleSpread}
-   */
-  RectangularParticleSpread = 503,
   /**
    * Particle with multiple texture that can scroll.
    * 
@@ -519,6 +468,24 @@ enum ActionType {
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
+  /**
+   * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+   * 
+   * This action type has a specialized subclass: {@link CircularParticleSpread}
+   */
+  CircularParticleSpread = 501,
+  /**
+   * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+   * 
+   * This action type has a specialized subclass: {@link EllipticalParticleSpread}
+   */
+  EllipticalParticleSpread = 502,
+  /**
+   * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+   * 
+   * This action type has a specialized subclass: {@link RectangularParticleSpread}
+   */
+  RectangularParticleSpread = 503,
   /**
    * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
    * 
@@ -1282,6 +1249,58 @@ const ActionData: {
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.CircularParticleSpread]: {
+    props: {
+      unk_er_f1_0: { default: false, paths: {}, field: FieldType.Boolean },
+      angle: { default: 30, paths: {} },
+      distribution: { default: 0, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        properties1: ['angle','distribution']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
+        fields1: ['unk_er_f1_0'],
+        properties1: ['angle','distribution']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.EllipticalParticleSpread]: {
+    props: {
+      unk_er_f1_0: { default: false, paths: {}, field: FieldType.Boolean },
+      angleX: { default: 30, paths: {} },
+      angleY: { default: 30, paths: {} },
+      distribution: { default: 0, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        properties1: ['angleX','angleY','distribution']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
+        fields1: ['unk_er_f1_0'],
+        properties1: ['angleX','angleY','distribution']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.RectangularParticleSpread]: {
+    props: {
+      angleX: { default: 30, paths: {} },
+      angleY: { default: 30, paths: {} },
+      distribution: { default: 0, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        properties1: ['angleX','angleY','distribution']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.PointSprite]: {
@@ -6790,315 +6809,14 @@ class OneTimeEmitter extends Action {
 }
 
 /**
- * Makes all particles use the default initial direction from the emitter.
- * 
- * A particle's initial direction is used for various things that need a
- * direction but lack an inherent direction, for example the speed from the
- * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
- * used to set the rotation of {@link ActionType.Line Line} and
- * {@link ActionType.QuadLine QuadLine} particles without any movement. The
- * default initial direction is controlled by the emitter shape.
+ * Makes all particles use the default initial direction from the emitter. See
+ * {@link InitialDirection} for more information.
  */
 class NoParticleSpread extends Action {
 
   constructor() {
     super(ActionType.NoParticleSpread)
   }
-
-}
-
-/**
- * Gives each particle a random initial direction offset within a circular
- * cone.
- * 
- * A particle's initial direction is used for various things that need a
- * direction but lack an inherent direction, for example the speed from the
- * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
- * used to set the rotation of {@link ActionType.Line Line} and
- * {@link ActionType.QuadLine QuadLine} particles without any movement. The
- * default initial direction is controlled by the emitter shape.
- */
-class CircularParticleSpread extends Action {
-
-  declare fields1: [BoolField]
-
-  /**
-   * @param angle The maximum change in direction in degrees, the angle of the
-   * cone. Defaults to 30.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param distribution Controls the distribution of the random directions
-   * that can be chosen.
-   * 
-   * - At 0, all directions within the cone have an equal chance of being
-   * chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
-   * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angle}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some
-   * unexpected things.
-   * 
-   * Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param unkField No so much unknown, just unnamed. If enabled, this limits
-   * the possible directions to only positive values on one axis, effectively
-   * cutting the cone of possible directions in half. Defaults to false.
-   */
-  constructor(
-    angle: ScalarPropertyArg = 30,
-    distribution: ScalarPropertyArg = 0,
-    unkField: boolean = false
-  ) {
-    super(ActionType.CircularParticleSpread, [
-      new BoolField(unkField)
-    ], [], [
-      scalarFromArg(angle),
-      scalarFromArg(distribution),
-    ])
-  }
-
-  /**
-   * The maximum change in direction in degrees, the angle of the cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get angle(): ScalarProperty { return this.properties1[0] }
-  set angle(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * Controls the distribution of the random directions that can be chosen.
-   * 
-   * - At 0, all directions within the cone have an equal chance of being
-   * chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
-   * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angle}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some
-   * unexpected things.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get distribution(): ScalarProperty { return this.properties1[1] }
-  set distribution(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * No so much unknown, just unnamed. If enabled, this limits the possible
-   * directions to only positive values on one axis, effectively cutting the
-   * cone of possible directions in half.
-   */
-  get unkField() { return this.fields1[0].value }
-  set unkField(value) { this.fields1[0].value = value }
-
-}
-
-/**
- * Gives each particle a random initial direction offset within an elliptical
- * cone.
- * 
- * A particle's initial direction is used for various things that need a
- * direction but lack an inherent direction, for example the speed from the
- * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
- * used to set the rotation of {@link ActionType.Line Line} and
- * {@link ActionType.QuadLine QuadLine} particles without any movement. The
- * default initial direction is controlled by the emitter shape.
- */
-class EllipticalParticleSpread extends Action {
-
-  declare fields1: [BoolField]
-
-  /**
-   * @param angleX The maximum change in direction in degrees, one of the
-   * angles of the elliptical cone. Defaults to 30.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * See also:
-   * - {@link angleY}
-   * @param angleX The maximum change in direction in degrees, one of the
-   * angles of the elliptical cone. Defaults to 30.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * See also:
-   * - {@link angleX}
-   * @param distribution Controls the distribution of the random directions
-   * that can be chosen.
-   * 
-   * - At 0, all directions within the cone have an equal chance of being
-   * chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
-   * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angleX} and {@link angleY}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some
-   * unexpected things.
-   * 
-   * Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param unkField No so much unknown, just unnamed. If enabled, this limits
-   * the possible directions to only positive values on one axis, effectively
-   * cutting the cone of possible directions in half. Defaults to false.
-   */
-  constructor(
-    angleX: ScalarPropertyArg = 30,
-    angleY: ScalarPropertyArg = 30,
-    distribution: ScalarPropertyArg = 0,
-    unkField: boolean = false
-  ) {
-    super(ActionType.CircularParticleSpread, [
-      new BoolField(unkField)
-    ], [], [
-      scalarFromArg(angleX),
-      scalarFromArg(angleY),
-      scalarFromArg(distribution),
-    ])
-  }
-
-  /**
-   * The maximum change in direction in degrees, one of the angles of the
-   * elliptical cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get angleX(): ScalarProperty { return this.properties1[0] }
-  set angleX(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * The maximum change in direction in degrees, one of the angles of the
-   * elliptical cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get angleY(): ScalarProperty { return this.properties1[1] }
-  set angleY(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Controls the distribution of the random directions that can be chosen.
-   * 
-   * - At 0, all directions within the cone have an equal chance of being
-   * chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
-   * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angleX} and {@link angleY}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some
-   * unexpected things.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get distribution(): ScalarProperty { return this.properties1[2] }
-  set distribution(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * No so much unknown, just unnamed. If enabled, this limits the possible
-   * directions to only positive values on one axis, effectively cutting the
-   * cone of possible directions in half.
-   */
-  get unkField() { return this.fields1[0].value }
-  set unkField(value) { this.fields1[0].value = value }
-
-}
-
-/**
- * Gives each particle a random initial direction offset within a rectangular
- * cone.
- * 
- * A particle's initial direction is used for various things that need a
- * direction but lack an inherent direction, for example the speed from the
- * {@link ActionType.ParticleMultiplier ParticleMultiplier} action. It is also
- * used to set the rotation of {@link ActionType.Line Line} and
- * {@link ActionType.QuadLine QuadLine} particles without any movement. The
- * default initial direction is controlled by the emitter shape.
- */
-class RectangularParticleSpread extends Action {
-
-  /**
-   * @param angleX The maximum change in direction in degrees, one of the
-   * angles of the rectangular cone. Defaults to 30.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * See also:
-   * - {@link angleY}
-   * @param angleX The maximum change in direction in degrees, one of the
-   * angles of the rectangular cone. Defaults to 30.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * See also:
-   * - {@link angleX}
-   * @param distribution Controls the distribution of the random directions
-   * that can be chosen.
-   * 
-   * - At 0, all directions within the cone have an equal chance of being
-   * chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
-   * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angleX} and {@link angleY}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some
-   * unexpected things.
-   * 
-   * Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  constructor(
-    angleX: ScalarPropertyArg = 30,
-    angleY: ScalarPropertyArg = 30,
-    distribution: ScalarPropertyArg = 0
-  ) {
-    super(ActionType.CircularParticleSpread, [], [], [
-      scalarFromArg(angleX),
-      scalarFromArg(angleY),
-      scalarFromArg(distribution),
-    ])
-  }
-
-  /**
-   * The maximum change in direction in degrees, one of the angles of the
-   * rectangular cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get angleX(): ScalarProperty { return this.properties1[0] }
-  set angleX(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * The maximum change in direction in degrees, one of the angles of the
-   * rectangular cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get angleY(): ScalarProperty { return this.properties1[1] }
-  set angleY(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Controls the distribution of the random directions that can be chosen.
-   * 
-   * - At 0, all directions within the cone have an equal chance of being
-   * chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen
-   * direction will always be a fixed number of degrees away from the default
-   * direction based on {@link angleX} and {@link angleY}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some
-   * unexpected things.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get distribution(): ScalarProperty { return this.properties1[2] }
-  set distribution(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
 
 }
 
@@ -12727,6 +12445,234 @@ class CylinderEmitterShape extends DataAction {
   }
 }
 
+export interface CircularParticleSpreadParams {
+  /**
+   * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+   * 
+   * **Default**: `false`
+   */
+  unk_er_f1_0?: boolean
+  /**
+   * The maximum change in direction in degrees, the angle of the cone.
+   * 
+   * **Default**: `30`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angle?: ScalarPropertyArg
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * - At 0, all directions within the cone have an equal chance of being chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angle}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution?: ScalarPropertyArg
+}
+
+/**
+ * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+ */
+class CircularParticleSpread extends DataAction {
+  declare type: ActionType.CircularParticleSpread
+  /**
+   * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+   */
+  unk_er_f1_0: boolean
+  /**
+   * The maximum change in direction in degrees, the angle of the cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angle: ScalarPropertyArg
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * - At 0, all directions within the cone have an equal chance of being chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angle}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution: ScalarPropertyArg
+  constructor(props: CircularParticleSpreadParams = {}) {
+    super(ActionType.CircularParticleSpread)
+    this.assign(props)
+  }
+}
+
+export interface EllipticalParticleSpreadParams {
+  /**
+   * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+   * 
+   * **Default**: `false`
+   */
+  unk_er_f1_0?: boolean
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Default**: `30`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   */
+  angleX?: ScalarPropertyArg
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Default**: `30`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   */
+  angleY?: ScalarPropertyArg
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * - At 0, all directions within the cone have an equal chance of being chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution?: ScalarPropertyArg
+}
+
+/**
+ * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+ */
+class EllipticalParticleSpread extends DataAction {
+  declare type: ActionType.EllipticalParticleSpread
+  /**
+   * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+   */
+  unk_er_f1_0: boolean
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   */
+  angleX: ScalarPropertyArg
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   */
+  angleY: ScalarPropertyArg
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * - At 0, all directions within the cone have an equal chance of being chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution: ScalarPropertyArg
+  constructor(props: EllipticalParticleSpreadParams = {}) {
+    super(ActionType.EllipticalParticleSpread)
+    this.assign(props)
+  }
+}
+
+export interface RectangularParticleSpreadParams {
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Default**: `30`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   */
+  angleX?: ScalarPropertyArg
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Default**: `30`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleX}
+   */
+  angleY?: ScalarPropertyArg
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * - At 0, all directions within the cone have an equal chance of being chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution?: ScalarPropertyArg
+}
+
+/**
+ * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+ */
+class RectangularParticleSpread extends DataAction {
+  declare type: ActionType.RectangularParticleSpread
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleY}
+   */
+  angleX: ScalarPropertyArg
+  /**
+   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angleX}
+   */
+  angleY: ScalarPropertyArg
+  /**
+   * Controls the distribution of the random directions that can be chosen.
+   * - At 0, all directions within the cone have an equal chance of being chosen.
+   * - At 1, the default direction is guaranteed to be chosen.
+   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
+   * - Values between these values smoothly blend between them.
+   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  distribution: ScalarPropertyArg
+  constructor(props: RectangularParticleSpreadParams = {}) {
+    super(ActionType.RectangularParticleSpread)
+    this.assign(props)
+  }
+}
+
 export interface PointSpriteParams {
   /**
    * Texture ID.
@@ -14883,9 +14829,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
-  [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
-  [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
@@ -16074,9 +16017,6 @@ export {
   EmitRandomParticles,
   OneTimeEmitter,
   NoParticleSpread,
-  CircularParticleSpread,
-  EllipticalParticleSpread,
-  RectangularParticleSpread,
   CommonFields2Action,
   MultiTextureBillboardEx,
   Model,
@@ -16100,6 +16040,9 @@ export {
   SphereEmitterShape,
   BoxEmitterShape,
   CylinderEmitterShape,
+  CircularParticleSpread,
+  EllipticalParticleSpread,
+  RectangularParticleSpread,
   PointSprite,
   Line,
   QuadLine,
