@@ -5404,6 +5404,11 @@ class Action implements IAction {
 
 }
 
+export interface ActionWithNumericalFields extends Action {
+  fields1: NumericalField[]
+  fields2: NumericalField[]
+}
+
 /**
  * Base class for all actions that are defined in {@link ActionData}. The main
  * difference is that these actions don't use fields or properties, and cannot
@@ -5847,11 +5852,6 @@ class NodeMovement extends Action {
     }
   }
 
-}
-
-export interface ActionWithNumericalFields extends Action {
-  fields1: NumericalField[]
-  fields2: NumericalField[]
 }
 
 /**
