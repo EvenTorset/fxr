@@ -76,6 +76,31 @@ export default async function() {
   for (const fn of fs.readdirSync(actionsDir).sort(naturalSorter)) {
     const data = yaml.parse(await fs.promises.readFile(path.join(actionsDir, fn), 'utf-8'))
 
+    for (const prop of Object.keys(data.properties)) {
+      let found = false
+      search:
+      for (const game of Object.values(data.games)) if (typeof game === 'object') {
+        for (const list of Object.values(game)) {
+          if (list.includes(prop)) {
+            found = true
+            break search
+          }
+        }
+      }
+      if (!found) {
+        console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is not used by any games.`)
+      }
+    }
+    for (const game of Object.values(data.games)) if (typeof game === 'object') {
+      for (const list of Object.values(game)) {
+        for (const prop of list) {
+          if (!(prop in data.properties)) {
+            console.warn(`YAML Warning: Action ${data.type} (${data.name}) is missing the '${prop}' class property.`)
+          }
+        }
+      }
+    }
+
     actionsExport.push(data.name)
 
     actionTypes.push(`
