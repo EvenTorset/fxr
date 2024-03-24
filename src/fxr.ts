@@ -662,6 +662,7 @@ export interface IKeyframeProperty<T extends ValueType, F extends PropertyFuncti
   keyframes: IKeyframe<T>[]
   sortKeyframes(): void
   clone(): IKeyframeProperty<T, F>
+  duration: number
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -15400,6 +15401,14 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
     )
   }
 
+  get duration() { return Math.max(...this.keyframes.map(kf => kf.position)) }
+  set duration(value: number) {
+    const factor = value / this.duration
+    for (const kf of this.keyframes) {
+      kf.position *= factor
+    }
+  }
+
 }
 
 class ComponentKeyframeProperty<T extends ValueType>
@@ -15518,6 +15527,16 @@ class ComponentKeyframeProperty<T extends ValueType>
       this.components.map(e => e.clone()),
       this.modifiers.map(e => Modifier.copy(e))
     )
+  }
+
+  get duration() { return Math.max(...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
+  set duration(value: number) {
+    const factor = value / this.duration
+    for (const c of this.components) {
+      for (const kf of c.keyframes) {
+        kf.position *= factor
+      }
+    }
   }
 
 }
