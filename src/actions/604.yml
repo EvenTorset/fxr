@@ -28,7 +28,10 @@ properties:
     field: bool
     default: false
     desc: |
-      Layer 2 texture ID.
+      If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+    see:
+      - width
+      - height
   columns:
     field: int
     default: 1

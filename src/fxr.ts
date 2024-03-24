@@ -13773,9 +13773,13 @@ export interface MultiTextureBillboardExParams {
    */
   layer2?: number
   /**
-   * Layer 2 texture ID.
+   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
    * 
    * **Default**: `false`
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
    */
   uniformScale?: boolean
   /**
@@ -14364,7 +14368,11 @@ class MultiTextureBillboardEx extends DataAction {
    */
   layer2: number
   /**
-   * Layer 2 texture ID.
+   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
    */
   uniformScale: boolean
   /**
