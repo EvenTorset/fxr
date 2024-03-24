@@ -70,7 +70,7 @@ export default async function() {
   const actionTypes = []
   const actionDataEntries = []
   const classes = []
-  const actionsListEntries = []
+  // const actionsListEntries = []
   const actionsExport = []
 
   for (const fn of fs.readdirSync(actionsDir).sort(naturalSorter)) {
@@ -189,7 +189,7 @@ export default async function() {
       )
     }
 
-    actionsListEntries.push(`[ActionType.${data.name}]: ${data.name}, ${data.name},`)
+    // actionsListEntries.push(`[ActionType.${data.name}]: ${data.name}, ${data.name},`)
   }
 
   let libSrc = await fs.promises.readFile(path.join(srcDir, 'fxr.ts'), 'utf-8')
@@ -202,7 +202,7 @@ export default async function() {
   replace('ActionType', '  '+actionTypes.join('\n  '))
   replace('ActionData', '  '+actionDataEntries.join(',\n  '))
   replace('ActionClasses', classes.join('\n\n'))
-  replace('ActionsList', '  '+actionsListEntries.join('\n  '))
+  // replace('ActionsList', '  '+actionsListEntries.join('\n  '))
   replace('ActionsExport', '  '+actionsExport.join(',\n  ') + ',')
 
   await fs.promises.writeFile(path.join(srcDir, 'fxr.ts'), libSrc)

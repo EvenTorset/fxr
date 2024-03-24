@@ -1958,7 +1958,7 @@ function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index:
   return fieldCount
 }
 
-function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
+function readAction(br: BinaryReader, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   const section10Offset = br.readInt32()
@@ -1987,21 +1987,8 @@ function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: num
   br.stepOut()
 
   br.stepIn(fieldOffset)
-  let fields1: Field[], fields2: Field[]
-  if (game !== Game.DarkSouls3 && type in ActionFieldTypes) {
-    const pos = br.position
-    try {
-      fields1 = readFieldsWithTypes(br, fieldCount1, ActionFieldTypes[type].Fields1, Action)
-      fields2 = readFieldsWithTypes(br, fieldCount2, ActionFieldTypes[type].Fields2, Action)
-    } catch {
-      br.position = pos
-      fields1 = readFields(br, fieldCount1, Action)
-      fields2 = readFields(br, fieldCount2, Action)
-    }
-  } else {
-    fields1 = readFields(br, fieldCount1, Action)
-    fields2 = readFields(br, fieldCount2, Action)
-  }
+  const fields1 = readFields(br, fieldCount1, Action)
+  const fields2 = readFields(br, fieldCount2, Action)
   br.stepOut()
   if (type in Actions) {
     const action = new Actions[type]()
@@ -2221,10 +2208,10 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
     ) {
       return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
     } else {
-      return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+      return readAction(br, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     }
   } else {
-    return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+    return readAction(br, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
   }
 }
 
@@ -14890,22 +14877,6 @@ const Actions = {
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.SpotLight]: SpotLight, SpotLight,
-
-  /*#ActionsList start*/
-  [ActionType.SFXReference]: SFXReference, SFXReference,
-  [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
-  [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
-  [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
-  [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
-  [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
-  [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
-  [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
-  [ActionType.PointSprite]: PointSprite, PointSprite,
-  [ActionType.Line]: Line, Line,
-  [ActionType.QuadLine]: QuadLine, QuadLine,
-  [ActionType.BillboardEx]: BillboardEx, BillboardEx,
-  [ActionType.Unk10500]: Unk10500, Unk10500,
-  /*#ActionsList end*/
 }
 
 class Field {
