@@ -40,6 +40,8 @@ properties:
       The width of the particle.
 
       If {@link uniformScale} is enabled, this also controls the height.
+    see:
+      - scaleVariationX
   height:
     type: ScalarPropertyArg
     default: 1
@@ -48,6 +50,8 @@ properties:
       The height of the particle.
 
       If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+    see:
+      - scaleVariationY
   color1:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]

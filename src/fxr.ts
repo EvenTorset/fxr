@@ -304,13 +304,6 @@ enum ActionType {
    */
   NoParticleSpread = 500,
   /**
-   * Particle with multiple texture that can scroll.
-   * 
-   * This action type has a specialized subclass:
-   * {@link MultiTextureBillboardEx}
-   */
-  MultiTextureBillboardEx = 604,
-  /**
    * Particle with a 3D model.
    * 
    * This action type has a specialized subclass: {@link Model}
@@ -510,6 +503,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link BillboardEx}
    */
   BillboardEx = 603,
+  /**
+   * Particle with multiple textures that can scroll.
+   * 
+   * This action type has a specialized subclass: {@link MultiTextureBillboardEx}
+   */
+  MultiTextureBillboardEx = 604,
   /**
    * Unknown root node action.
    * 
@@ -1667,6 +1666,149 @@ const ActionData: {
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.MultiTextureBillboardEx]: {
+    props: {
+      orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
+      mask: { default: 1, paths: {}, field: FieldType.Integer },
+      layer1: { default: 1, paths: {}, field: FieldType.Integer },
+      layer2: { default: 1, paths: {}, field: FieldType.Integer },
+      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      columns: { default: 1, paths: {}, field: FieldType.Integer },
+      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
+      interpolateFrames: { default: true, paths: {}, field: FieldType.Boolean },
+      depthBlend: { default: true, paths: {}, field: FieldType.Boolean },
+      octagonal: { default: false, paths: {}, field: FieldType.Boolean },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
+      specular: { default: 0, paths: {}, field: FieldType.Integer },
+      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
+      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      offsetX: { default: 0, paths: {} },
+      offsetY: { default: 0, paths: {} },
+      offsetZ: { default: 0, paths: {} },
+      width: { default: 1, paths: {} },
+      height: { default: 1, paths: {} },
+      rotationX: { default: 0, paths: {} },
+      rotationY: { default: 0, paths: {} },
+      rotationZ: { default: 0, paths: {} },
+      rotationSpeedX: { default: 0, paths: {} },
+      rotationSpeedY: { default: 0, paths: {} },
+      rotationSpeedZ: { default: 0, paths: {} },
+      rotationSpeedMultiplierX: { default: 1, paths: {} },
+      rotationSpeedMultiplierY: { default: 1, paths: {} },
+      rotationSpeedMultiplierZ: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      layersColor: { default: [1, 1, 1, 1], paths: {} },
+      layer1Color: { default: [1, 1, 1, 1], paths: {} },
+      layer2Color: { default: [1, 1, 1, 1], paths: {} },
+      alphaThreshold: { default: 0, paths: {} },
+      frameIndex: { default: 0, paths: {} },
+      frameIndexOffset: { default: 0, paths: {} },
+      layer1SpeedU: { default: 0, paths: {} },
+      layer1SpeedV: { default: 0, paths: {} },
+      layer1OffsetU: { default: 0, paths: {} },
+      layer1OffsetV: { default: 0, paths: {} },
+      layer1ScaleU: { default: 1, paths: {} },
+      layer1ScaleV: { default: 1, paths: {} },
+      layer2SpeedU: { default: 0, paths: {} },
+      layer2SpeedV: { default: 0, paths: {} },
+      layer2OffsetU: { default: 0, paths: {} },
+      layer2OffsetV: { default: 0, paths: {} },
+      layer2ScaleU: { default: 1, paths: {} },
+      layer2ScaleV: { default: 1, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_10: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
+      unk_ds3_p1_23: { default: 0, paths: {} },
+      unk_ds3_p1_24: { default: 0, paths: {} },
+      unk_ds3_p1_25: { default: 0, paths: {} },
+      unk_ds3_p1_26: { default: 0, paths: {} },
+      unk_ds3_p1_27: { default: 1, paths: {} },
+      unk_ds3_p1_28: { default: 1, paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_40: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_44: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_45: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ac6_f2_46: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: {
+        fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: {
+        fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      }
     }
   },
   [ActionType.Unk10500]: {
@@ -6883,1158 +7025,6 @@ class CommonFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface MultiTextureBillboardExParams {
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * X position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetX?: ScalarPropertyArg
-  /**
-   * Y position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetY?: ScalarPropertyArg
-  /**
-   * Z position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetZ?: ScalarPropertyArg
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  width?: ScalarPropertyArg
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
-   * height, and this property is ignored.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  height?: ScalarPropertyArg
-  /**
-   * Rotation around the X-axis in degrees. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  rotationX?: ScalarPropertyArg
-  /**
-   * Rotation around the Y-axis in degrees. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  rotationY?: ScalarPropertyArg
-  /**
-   * Rotation around the Z-axis in degrees. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  rotationZ?: ScalarPropertyArg
-  /**
-   * Rotation speed around the X-axis in degrees per second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  rotationSpeedX?: ScalarPropertyArg
-  /**
-   * Rotation speed around the Y-axis in degrees per second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  rotationSpeedY?: ScalarPropertyArg
-  /**
-   * Rotation speed around the Z-axis in degrees per second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  rotationSpeedZ?: ScalarPropertyArg
-  /**
-   * Multiplier for the rotation speed around the X-axis. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedX}
-   */
-  rotationSpeedMultiplierX?: ScalarPropertyArg
-  /**
-   * Multiplier for the rotation speed around the Y-axis. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedY}
-   */
-  rotationSpeedMultiplierY?: ScalarPropertyArg
-  /**
-   * Multiplier for the rotation speed around the Z-axis. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedZ}
-   */
-  rotationSpeedMultiplierZ?: ScalarPropertyArg
-  /**
-   * Color multiplier for the particle. Seemingly identical to {@link color3}?
-   * Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color1?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  color2?: Vector4PropertyArg
-  /**
-   * Color multiplier for the particle. Seemingly identical to {@link color1}?
-   * Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}.
-   */
-  color3?: Vector4PropertyArg
-  /**
-   * Color multiplier for both of the texture layers. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layersColor?: Vector4PropertyArg
-  /**
-   * Color multiplier for Layer 1. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1Color?: Vector4PropertyArg
-  /**
-   * Color multiplier for Layer 2. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2Color?: Vector4PropertyArg
-  /**
-   * Parts of the particle with less opacity than this threshold will be
-   * invisible. The range is 0-255. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaThreshold?: ScalarPropertyArg
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated
-   * using a {@link PropertyFunction.Linear linear property} or similar.
-   * Defaults to 0.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
-   * properties is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link interpolateFrames}
-   */
-  frameIndex?: ScalarPropertyArg
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link interpolateFrames}
-   */
-  frameIndexOffset?: ScalarPropertyArg
-  /**
-   * Horiztonal scroll speed for Layer 1. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1SpeedU?: ScalarPropertyArg
-  /**
-   * Vertical scroll speed for Layer 1. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1SpeedV?: ScalarPropertyArg
-  /**
-   * Horizontal offset for the UV coordinates of Layer 1. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer1OffsetU?: ScalarPropertyArg
-  /**
-   * Vertical offset for the UV coordinates of Layer 1. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer1OffsetV?: ScalarPropertyArg
-  /**
-   * Horizontal scale for the UV coordinates of Layer 1. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1ScaleU?: ScalarPropertyArg
-  /**
-   * Vertical scale for the UV coordinates of Layer 1. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1ScaleV?: ScalarPropertyArg
-  /**
-   * Horiztonal scroll speed for Layer 2. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2SpeedU?: ScalarPropertyArg
-  /**
-   * Vertical scroll speed for Layer 2. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2SpeedV?: ScalarPropertyArg
-  /**
-   * Horizontal offset for the UV coordinates of Layer 2. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer2OffsetU?: ScalarPropertyArg
-  /**
-   * Vertical offset for the UV coordinates of Layer 2. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer2OffsetV?: ScalarPropertyArg
-  /**
-   * Horizontal scale for the UV coordinates of Layer 2. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2ScaleU?: ScalarPropertyArg
-  /**
-   * Vertical scale for the UV coordinates of Layer 2. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2ScaleV?: ScalarPropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-  /**
-   * Controls the orientation mode for the particles. See
-   * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.CameraPlane}.
-   */
-  orientation?: OrientationMode
-  /**
-   * Mask texture ID. Defaults to 1.
-   */
-  mask?: number
-  /**
-   * Layer 1 texture ID. Defaults to 1.
-   */
-  layer1?: number
-  /**
-   * Layer 2 texture ID. Defaults to 1.
-   */
-  layer2?: number
-  /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored. Defaults to false.
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   */
-  uniformScale?: boolean
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the number of columns in the texture. It should equal
-   * `textureWidth / frameWidth`. Defaults to 1.
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the total number of frames in the texture. Defaults to 1.
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * If enabled, the texture animation will use linear interpolation to mix
-   * frames when the frame index is not a whole number. For example, if the
-   * frame index is 0.5, enabling this will cause the average of the first two
-   * frames to be shown instead of just the first frame.
-   * 
-   * If disabled, the frame index will just be truncated to get a whole number.
-   * 
-   * Defaults to true.
-   * 
-   * See also:
-   * - {@link frameIndex}
-   * - {@link frameIndexOffset}
-   */
-  interpolateFrames?: boolean
-  /**
-   * Controls how the particles should intersect with objects they touch. If
-   * disabled, the particles will simply be cut off where they intersect
-   * objects. If enabled, they will instead display in front of the object if
-   * they are close enough, and will fade out with distance from the object's
-   * surface that is blocking the view of the particle. Defaults to true.
-   */
-  depthBlend?: boolean
-  /**
-   * Controls the shape of the particles. If disabled, the particles will be
-   * rectangular. If enabled, they will be octagonal. Defaults to false.
-   */
-  octagonal?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera. Defaults to 0.
-   * 
-   * {@link ActionType.BillboardEx BillboardEx} has a
-   * {@link BillboardExParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  negativeDepthOffset?: number
-  /**
-   * Controls how dark shaded parts of the particle are. Defaults to 0.
-   */
-  shadowDarkness?: number
-  /**
-   * Specular texture ID. Defaults to 0.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are. Defaults to 0.25.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information. Defaults to {@link LightingMode.Unlit}.
-   */
-  lighting?: LightingMode
-  /**
-   * Controls how bright the specular highlights are. Defaults to 0.5.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number
-}
-/**
- * Particle with multiple texture that can scroll.
- */
-class MultiTextureBillboardEx extends CommonFields2Action {
-
-  constructor({
-    orientation = OrientationMode.CameraPlane,
-    mask = 1,
-    layer1 = 1,
-    layer2 = 1,
-    uniformScale = false,
-    columns = 1,
-    totalFrames = 1,
-    interpolateFrames = true,
-    depthBlend = true,
-    octagonal = false,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-    negativeDepthOffset = 0,
-    shadowDarkness = 0,
-    specular = 0,
-    glossiness = 0.25,
-    lighting = LightingMode.Unlit,
-    specularity = 0.5,
-    blendMode = BlendMode.Normal,
-    offsetX = 0,
-    offsetY = 0,
-    offsetZ = 0,
-    width = 1,
-    height = 1,
-    rotationX = 0,
-    rotationY = 0,
-    rotationZ = 0,
-    rotationSpeedX = 0,
-    rotationSpeedY = 0,
-    rotationSpeedZ = 0,
-    rotationSpeedMultiplierX = 1,
-    rotationSpeedMultiplierY = 1,
-    rotationSpeedMultiplierZ = 1,
-    color1 = [1, 1, 1, 1],
-    color2 = [1, 1, 1, 1],
-    color3 = [1, 1, 1, 1],
-    layersColor = [1, 1, 1, 1],
-    layer1Color = [1, 1, 1, 1],
-    layer2Color = [1, 1, 1, 1],
-    alphaThreshold = 0,
-    frameIndex = 0,
-    frameIndexOffset = 0,
-    layer1SpeedU = 0,
-    layer1SpeedV = 0,
-    layer1OffsetU = 0,
-    layer1OffsetV = 0,
-    layer1ScaleU = 1,
-    layer1ScaleV = 1,
-    layer2SpeedU = 0,
-    layer2SpeedV = 0,
-    layer2OffsetU = 0,
-    layer2OffsetV = 0,
-    layer2ScaleU = 1,
-    layer2ScaleV = 1,
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-  }: MultiTextureBillboardExParams = {}) {
-    super(ActionType.MultiTextureBillboardEx, [
-      /*  0 */ new IntField(orientation),
-      /*  1 */ new IntField(mask),
-      /*  2 */ new IntField(layer1),
-      /*  3 */ new IntField(layer2),
-      /*  4 */ new BoolField(uniformScale),
-      /*  5 */ new IntField(0),
-      /*  6 */ new IntField(columns),
-      /*  7 */ new IntField(totalFrames),
-      /*  8 */ new BoolField(interpolateFrames),
-      /*  9 */ new IntField(-2),
-      /* 10 */ new IntField(-2),
-      /* 11 */ new BoolField(depthBlend),
-      /* 12 */ new BoolField(octagonal),
-      /* 13 */ new IntField(0),
-      /* 14 */ new IntField(1),
-      /* 15 */ new IntField(1),
-      /* 16 */ new IntField(0),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new IntField(0),
-      /*  4 */ new IntField(1),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new IntField(0),
-      /* 21 */ new IntField(0),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1),
-      /* 26 */ new FloatField(negativeDepthOffset),
-      /* 27 */ new IntField(1),
-      /* 28 */ new IntField(0),
-      /* 29 */ new FloatField(5),
-      /* 30 */ new FloatField(shadowDarkness),
-      /* 31 */ new IntField(0),
-      /* 32 */ new IntField(1),
-      /* 33 */ new IntField(specular),
-      /* 34 */ new FloatField(glossiness),
-      /* 35 */ new IntField(lighting),
-      /* 36 */ new IntField(-2),
-      /* 37 */ new IntField(0),
-      /* 38 */ new FloatField(specularity),
-      /* 39 */ new IntField(1),
-      /* 40 */ new IntField(0),
-      /* 41 */ new IntField(0),
-      /* 42 */ new IntField(0),
-      /* 43 */ new IntField(0),
-      /* 44 */ new IntField(0),
-      /* 45 */ new IntField(0),
-    ], [
-      /*  0 */ scalarFromArg(blendMode),
-      /*  1 */ scalarFromArg(offsetX),
-      /*  2 */ scalarFromArg(offsetY),
-      /*  3 */ scalarFromArg(offsetZ),
-      /*  4 */ scalarFromArg(width),
-      /*  5 */ scalarFromArg(height),
-      /*  6 */ scalarFromArg(rotationX),
-      /*  7 */ scalarFromArg(rotationY),
-      /*  8 */ scalarFromArg(rotationZ),
-      /*  9 */ scalarFromArg(rotationSpeedX),
-      /* 10 */ scalarFromArg(rotationSpeedMultiplierX),
-      /* 11 */ scalarFromArg(rotationSpeedY),
-      /* 12 */ scalarFromArg(rotationSpeedMultiplierY),
-      /* 13 */ scalarFromArg(rotationSpeedZ),
-      /* 14 */ scalarFromArg(rotationSpeedMultiplierZ),
-      /* 15 */ vectorFromArg(color1),
-      /* 16 */ vectorFromArg(color2),
-      /* 17 */ vectorFromArg(color3),
-      /* 18 */ vectorFromArg(layersColor),
-      /* 19 */ vectorFromArg(layer1Color),
-      /* 20 */ vectorFromArg(layer2Color),
-      /* 21 */ scalarFromArg(alphaThreshold),
-      /* 22 */ scalarFromArg(frameIndex),
-      /* 23 */ scalarFromArg(frameIndexOffset),
-      /* 24 */ new ConstantProperty(0),
-      /* 25 */ new ConstantProperty(0),
-      /* 26 */ new ConstantProperty(0),
-      /* 27 */ new ConstantProperty(0),
-      /* 28 */ new ConstantProperty(1),
-      /* 29 */ new ConstantProperty(1),
-      /* 30 */ scalarFromArg(layer1SpeedU),
-      /* 31 */ scalarFromArg(layer1SpeedV),
-      /* 32 */ scalarFromArg(layer1OffsetU),
-      /* 33 */ scalarFromArg(layer1OffsetV),
-      /* 34 */ scalarFromArg(layer1ScaleU),
-      /* 35 */ scalarFromArg(layer1ScaleV),
-      /* 30 */ scalarFromArg(layer2SpeedU),
-      /* 31 */ scalarFromArg(layer2SpeedV),
-      /* 38 */ scalarFromArg(layer2OffsetU),
-      /* 39 */ scalarFromArg(layer2OffsetV),
-      /* 34 */ scalarFromArg(layer2ScaleU),
-      /* 35 */ scalarFromArg(layer2ScaleV),
-    ], [
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ new ConstantProperty(0),
-      /*  3 */ new ConstantProperty(1, 1, 1, 1),
-      /*  4 */ new ConstantProperty(1, 1, 1, 1),
-      /*  5 */ new ConstantProperty(1, 1, 1, 1),
-      /*  6 */ new ConstantProperty(0),
-    ])
-  }
-
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
-  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[0] }
-
-  /**
-   * X position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get offsetX() { return this.properties1[1] }
-  set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Y position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get offsetY() { return this.properties1[2] }
-  set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Z position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get offsetZ() { return this.properties1[3] }
-  set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get width() { return this.properties1[4] }
-  set width(value) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
-   * height, and this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get height() { return this.properties1[5] }
-  set height(value) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * Rotation around the X-axis in degrees.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  get rotationX() { return this.properties1[6] }
-  set rotationX(value) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * Rotation around the Y-axis in degrees.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  get rotationY() { return this.properties1[7] }
-  set rotationY(value) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Rotation around the Z-axis in degrees.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  get rotationZ() { return this.properties1[8] }
-  set rotationZ(value) { setPropertyInList(this.properties1, 8, value) }
-
-  /**
-   * Rotation speed around the X-axis in degrees per second.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
-   */
-  get rotationSpeedX() { return this.properties1[9] }
-  set rotationSpeedX(value) { setPropertyInList(this.properties1, 9, value) }
-
-  /**
-   * Rotation speed around the Y-axis in degrees per second.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
-   */
-  get rotationSpeedY() { return this.properties1[11] }
-  set rotationSpeedY(value) { setPropertyInList(this.properties1, 11, value) }
-
-  /**
-   * Rotation speed around the Z-axis in degrees per second.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
-   */
-  get rotationSpeedZ() { return this.properties1[13] }
-  set rotationSpeedZ(value) { setPropertyInList(this.properties1, 13, value) }
-
-  /**
-   * Multiplier for the rotation speed around the X-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link rotationSpeedX}
-   */
-  get rotationSpeedMultiplierX() { return this.properties1[10] }
-  set rotationSpeedMultiplierX(value) { setPropertyInList(this.properties1, 10, value) }
-
-  /**
-   * Multiplier for the rotation speed around the Y-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link rotationSpeedY}
-   */
-  get rotationSpeedMultiplierY() { return this.properties1[12] }
-  set rotationSpeedMultiplierY(value) { setPropertyInList(this.properties1, 12, value) }
-
-  /**
-   * Multiplier for the rotation speed around the Z-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link rotationSpeedZ}
-   */
-  get rotationSpeedMultiplierZ() { return this.properties1[14] }
-  set rotationSpeedMultiplierZ(value) { setPropertyInList(this.properties1, 14, value) }
-
-  /**
-   * Color multiplier for the particle. Seemingly identical to {@link color3}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color1() { return this.properties1[15] }
-  set color1(value) { setPropertyInList(this.properties1, 15, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  get color2() { return this.properties1[16] }
-  set color2(value) { setPropertyInList(this.properties1, 16, value) }
-
-  /**
-   * Color multiplier for the particle. Seemingly identical to {@link color1}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}.
-   */
-  get color3() { return this.properties1[17] }
-  set color3(value) { setPropertyInList(this.properties1, 17, value) }
-
-  /**
-   * Color multiplier for both of the texture layers.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layersColor() { return this.properties1[18] }
-  set layersColor(value) { setPropertyInList(this.properties1, 18, value) }
-
-  /**
-   * Color multiplier for Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer1Color() { return this.properties1[19] }
-  set layer1Color(value) { setPropertyInList(this.properties1, 19, value) }
-
-  /**
-   * Color multiplier for Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer2Color() { return this.properties1[20] }
-  set layer2Color(value) { setPropertyInList(this.properties1, 20, value) }
-
-  /**
-   * Parts of the particle with less opacity than this threshold will be
-   * invisible. The range is 0-255.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaThreshold() { return this.properties1[21] }
-  set alphaThreshold(value) { setPropertyInList(this.properties1, 21, value) }
-
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated
-   * using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
-   * properties is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link interpolateFrames}
-   */
-  get frameIndex() { return this.properties1[22] }
-  set frameIndex(value) { setPropertyInList(this.properties1, 22, value) }
-
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link interpolateFrames}
-   */
-  get frameIndexOffset() { return this.properties1[23] }
-  set frameIndexOffset(value) { setPropertyInList(this.properties1, 23, value) }
-
-  /**
-   * Horiztonal scroll speed for Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer1SpeedU() { return this.properties1[30] }
-  set layer1SpeedU(value) { setPropertyInList(this.properties1, 30, value) }
-
-  /**
-   * Vertical scroll speed for Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer1SpeedV() { return this.properties1[31] }
-  set layer1SpeedV(value) { setPropertyInList(this.properties1, 31, value) }
-
-  /**
-   * Horizontal offset for the UV coordinates of Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get layer1OffsetU() { return this.properties1[32] }
-  set layer1OffsetU(value) { setPropertyInList(this.properties1, 32, value) }
-
-  /**
-   * Vertical offset for the UV coordinates of Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get layer1OffsetV() { return this.properties1[33] }
-  set layer1OffsetV(value) { setPropertyInList(this.properties1, 33, value) }
-
-  /**
-   * Horizontal scale for the UV coordinates of Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer1ScaleU() { return this.properties1[34] }
-  set layer1ScaleU(value) { setPropertyInList(this.properties1, 34, value) }
-
-  /**
-   * Vertical scale for the UV coordinates of Layer 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer1ScaleV() { return this.properties1[35] }
-  set layer1ScaleV(value) { setPropertyInList(this.properties1, 35, value) }
-
-  /**
-   * Horiztonal scroll speed for Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer2SpeedU() { return this.properties1[36] }
-  set layer2SpeedU(value) { setPropertyInList(this.properties1, 36, value) }
-
-  /**
-   * Vertical scroll speed for Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer2SpeedV() { return this.properties1[37] }
-  set layer2SpeedV(value) { setPropertyInList(this.properties1, 37, value) }
-
-  /**
-   * Horizontal offset for the UV coordinates of Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get layer2OffsetU() { return this.properties1[38] }
-  set layer2OffsetU(value) { setPropertyInList(this.properties1, 38, value) }
-
-  /**
-   * Vertical offset for the UV coordinates of Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get layer2OffsetV() { return this.properties1[39] }
-  set layer2OffsetV(value) { setPropertyInList(this.properties1, 39, value) }
-
-  /**
-   * Horizontal scale for the UV coordinates of Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer2ScaleU() { return this.properties1[40] }
-  set layer2ScaleU(value) { setPropertyInList(this.properties1, 40, value) }
-
-  /**
-   * Vertical scale for the UV coordinates of Layer 2.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get layer2ScaleV() { return this.properties1[41] }
-  set layer2ScaleV(value) { setPropertyInList(this.properties1, 41, value) }
-
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
-
-  /**
-   * Controls the orientation mode for the particles. See
-   * {@link OrientationMode} for more information.
-   */
-  get orientation() { return this.fields1[0].value as OrientationMode }
-  set orientation(value) { this.fields1[0].value = value }
-
-  /**
-   * Mask texture ID.
-   */
-  get mask() { return this.fields1[1].value as number }
-  set mask(value) { this.fields1[1].value = value }
-
-  /**
-   * Layer 1 texture ID.
-   */
-  get layer1() { return this.fields1[2].value as number }
-  set layer1(value) { this.fields1[2].value = value }
-
-  /**
-   * Layer 2 texture ID.
-   */
-  get layer2() { return this.fields1[3].value as number }
-  set layer2(value) { this.fields1[3].value = value }
-
-  /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored.
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   */
-  get uniformScale() { return this.fields1[4].value as boolean }
-  set uniformScale(value) { this.fields1[4].value = value }
-
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the number of columns in the texture. It should equal
-   * `textureWidth / frameWidth`.
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  get columns() { return this.fields1[6].value as number }
-  set columns(value) { this.fields1[6].value = value }
-
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the total number of frames in the texture.
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  get totalFrames() { return this.fields1[7].value as number }
-  set totalFrames(value) { this.fields1[7].value = value }
-
-  /**
-   * If enabled, the texture animation will use linear interpolation to mix
-   * frames when the frame index is not a whole number. For example, if the
-   * frame index is 0.5, enabling this will cause the average of the first two
-   * frames to be shown instead of just the first frame.
-   * 
-   * If disabled, the frame index will just be truncated to get a whole number.
-   * 
-   * See also:
-   * - {@link frameIndex}
-   * - {@link frameIndexOffset}
-   */
-  get interpolateFrames() { return this.fields1[8].value as number }
-  set interpolateFrames(value) { this.fields1[8].value = value }
-
-  /**
-   * Controls how the particles should intersect with objects they touch. If
-   * disabled, the particles will simply be cut off where they intersect
-   * objects. If enabled, they will instead display in front of the object if
-   * they are close enough, and will fade out with distance from the object's
-   * surface that is blocking the view of the particle.
-   */
-  get depthBlend() { return this.fields1[11].value as boolean }
-  set depthBlend(value) { this.fields1[11].value = value }
-
-  /**
-   * Controls the shape of the particles. If disabled, the particles will be
-   * rectangular. If enabled, they will be octagonal.
-   */
-  get octagonal() { return this.fields1[12].value as boolean }
-  set octagonal(value) { this.fields1[12].value = value }
-
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera.
-   * 
-   * {@link ActionType.BillboardEx BillboardEx} has a
-   * {@link BillboardExParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  get negativeDepthOffset() { return this.fields2[26].value as number }
-  set negativeDepthOffset(value) { this.fields2[26].value = value }
-
-  /**
-   * Controls how dark shaded parts of the particle are.
-   */
-  get shadowDarkness() { return this.fields2[30].value as number }
-  set shadowDarkness(value) { this.fields2[30].value = value }
-
-  /**
-   * Specular texture ID. Defaults to 0.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  get specular() { return this.fields2[33].value as number }
-  set specular(value) { this.fields2[33].value = value }
-
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  get glossiness() { return this.fields2[34].value as number }
-  set glossiness(value) { this.fields2[34].value = value }
-
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information.
-   */
-  get lighting() { return this.fields2[35].value as LightingMode }
-  set lighting(value) { this.fields2[35].value = value }
-
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  get specularity() { return this.fields2[38].value as number }
-  set specularity(value) { this.fields2[38].value = value }
 
 }
 
@@ -13890,6 +12880,9 @@ export interface BillboardExParams {
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
    */
   width?: ScalarPropertyArg
   /**
@@ -13900,6 +12893,9 @@ export interface BillboardExParams {
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
    */
   height?: ScalarPropertyArg
   /**
@@ -14374,6 +13370,9 @@ class BillboardEx extends DataAction {
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
    */
   width: ScalarPropertyArg
   /**
@@ -14382,6 +13381,9 @@ class BillboardEx extends DataAction {
    * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
    */
   height: ScalarPropertyArg
   /**
@@ -14745,6 +13747,1086 @@ class BillboardEx extends DataAction {
   }
 }
 
+export interface MultiTextureBillboardExParams {
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.CameraPlane}
+   */
+  orientation?: OrientationMode
+  /**
+   * Mask texture ID.
+   * 
+   * **Default**: `1`
+   */
+  mask?: number
+  /**
+   * Layer 1 texture ID.
+   * 
+   * **Default**: `1`
+   */
+  layer1?: number
+  /**
+   * Layer 2 texture ID.
+   * 
+   * **Default**: `1`
+   */
+  layer2?: number
+  /**
+   * Layer 2 texture ID.
+   * 
+   * **Default**: `false`
+   */
+  uniformScale?: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix frames when the frame index is not a whole number. For example, if the frame index is 0.5, enabling this will cause the average of the first two frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will be truncated to get a whole number.
+   * 
+   * **Default**: `true`
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
+   */
+  interpolateFrames?: boolean
+  /**
+   * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
+   * 
+   * **Default**: `true`
+   */
+  depthBlend?: boolean
+  /**
+   * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
+   * 
+   * **Default**: `false`
+   */
+  octagonal?: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
+   */
+  shadowDarkness?: number
+  /**
+   * Specular texture ID.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * **Default**: `0.25`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * X position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height?: ScalarPropertyArg
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX?: ScalarPropertyArg
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY?: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ?: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY?: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   */
+  rotationSpeedMultiplierX?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   */
+  rotationSpeedMultiplierY?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   */
+  rotationSpeedMultiplierZ?: ScalarPropertyArg
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Color multiplier for both of the texture layers.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layersColor?: Vector4PropertyArg
+  /**
+   * Color multiplier for Layer 1.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1Color?: Vector4PropertyArg
+  /**
+   * Color multiplier for Layer 2.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2Color?: Vector4PropertyArg
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  alphaThreshold?: ScalarPropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: ScalarPropertyArg
+  /**
+   * Horiztonal scroll speed for Layer 1.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1SpeedU?: ScalarPropertyArg
+  /**
+   * Vertical scroll speed for Layer 1.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1SpeedV?: ScalarPropertyArg
+  /**
+   * Horizontal offset for the UV coordinates of Layer 1.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer1OffsetU?: ScalarPropertyArg
+  /**
+   * Vertical offset for the UV coordinates of Layer 1.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer1OffsetV?: ScalarPropertyArg
+  /**
+   * Horizontal scale for the UV coordinates of Layer 1.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1ScaleU?: ScalarPropertyArg
+  /**
+   * Vertical scale for the UV coordinates of Layer 1.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1ScaleV?: ScalarPropertyArg
+  /**
+   * Horiztonal scroll speed for Layer 2.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2SpeedU?: ScalarPropertyArg
+  /**
+   * Vertical scroll speed for Layer 2.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2SpeedV?: ScalarPropertyArg
+  /**
+   * Horizontal offset for the UV coordinates of Layer 2.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer2OffsetU?: ScalarPropertyArg
+  /**
+   * Vertical offset for the UV coordinates of Layer 2.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer2OffsetV?: ScalarPropertyArg
+  /**
+   * Horizontal scale for the UV coordinates of Layer 2.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2ScaleU?: ScalarPropertyArg
+  /**
+   * Vertical scale for the UV coordinates of Layer 2.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2ScaleV?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  unk_ds3_f1_6?: number
+  unk_ds3_f1_10?: number
+  unk_ds3_f1_11?: number
+  unk_ds3_f1_14?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: number
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p1_23?: ScalarPropertyArg
+  unk_ds3_p1_24?: ScalarPropertyArg
+  unk_ds3_p1_25?: ScalarPropertyArg
+  unk_ds3_p1_26?: ScalarPropertyArg
+  unk_ds3_p1_27?: ScalarPropertyArg
+  unk_ds3_p1_28?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_sdt_f2_39?: number
+  unk_sdt_f2_40?: number
+  unk_sdt_f2_41?: number
+  unk_er_f1_14?: number
+  unk_er_f1_15?: number
+  unk_er_f1_16?: number
+  unk_er_f2_42?: number
+  unk_er_f2_43?: number
+  unk_er_f2_44?: number
+  unk_er_f2_45?: number
+  unk_ac6_f2_46?: number
+}
+
+/**
+ * Particle with multiple textures that can scroll.
+ */
+class MultiTextureBillboardEx extends DataAction {
+  declare type: ActionType.MultiTextureBillboardEx
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   */
+  orientation: OrientationMode
+  /**
+   * Mask texture ID.
+   */
+  mask: number
+  /**
+   * Layer 1 texture ID.
+   */
+  layer1: number
+  /**
+   * Layer 2 texture ID.
+   */
+  layer2: number
+  /**
+   * Layer 2 texture ID.
+   */
+  uniformScale: boolean
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames: number
+  /**
+   * If enabled, the texture animation will use linear interpolation to mix frames when the frame index is not a whole number. For example, if the frame index is 0.5, enabling this will cause the average of the first two frames to be shown instead of just the first frame.
+   * 
+   * If disabled, the frame index will be truncated to get a whole number.
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
+   */
+  interpolateFrames: boolean
+  /**
+   * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
+   */
+  depthBlend: boolean
+  /**
+   * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
+   */
+  octagonal: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  shadowDarkness: number
+  /**
+   * Specular texture ID.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness: number
+  /**
+   * Controls how the particles are lit. See {@link LightingMode} for more information.
+   */
+  lighting: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity: number
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetX: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetY: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  offsetZ: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  height: ScalarPropertyArg
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX: ScalarPropertyArg
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY: ScalarPropertyArg
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ: ScalarPropertyArg
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX: ScalarPropertyArg
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY: ScalarPropertyArg
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   */
+  rotationSpeedMultiplierX: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   */
+  rotationSpeedMultiplierY: ScalarPropertyArg
+  /**
+   * Multiplier for {@link rotationSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   */
+  rotationSpeedMultiplierZ: ScalarPropertyArg
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1: Vector4PropertyArg
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2: Vector4PropertyArg
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color3: Vector4PropertyArg
+  /**
+   * Color multiplier for both of the texture layers.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layersColor: Vector4PropertyArg
+  /**
+   * Color multiplier for Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1Color: Vector4PropertyArg
+  /**
+   * Color multiplier for Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2Color: Vector4PropertyArg
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  alphaThreshold: ScalarPropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset: ScalarPropertyArg
+  /**
+   * Horiztonal scroll speed for Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1SpeedU: ScalarPropertyArg
+  /**
+   * Vertical scroll speed for Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1SpeedV: ScalarPropertyArg
+  /**
+   * Horizontal offset for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer1OffsetU: ScalarPropertyArg
+  /**
+   * Vertical offset for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer1OffsetV: ScalarPropertyArg
+  /**
+   * Horizontal scale for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1ScaleU: ScalarPropertyArg
+  /**
+   * Vertical scale for the UV coordinates of Layer 1.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer1ScaleV: ScalarPropertyArg
+  /**
+   * Horiztonal scroll speed for Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2SpeedU: ScalarPropertyArg
+  /**
+   * Vertical scroll speed for Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2SpeedV: ScalarPropertyArg
+  /**
+   * Horizontal offset for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer2OffsetU: ScalarPropertyArg
+  /**
+   * Vertical offset for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer2OffsetV: ScalarPropertyArg
+  /**
+   * Horizontal scale for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2ScaleU: ScalarPropertyArg
+  /**
+   * Vertical scale for the UV coordinates of Layer 2.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer2ScaleV: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  unk_ds3_f1_6: number
+  unk_ds3_f1_10: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_14: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p1_23: ScalarPropertyArg
+  unk_ds3_p1_24: ScalarPropertyArg
+  unk_ds3_p1_25: ScalarPropertyArg
+  unk_ds3_p1_26: ScalarPropertyArg
+  unk_ds3_p1_27: ScalarPropertyArg
+  unk_ds3_p1_28: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_sdt_f2_39: number
+  unk_sdt_f2_40: number
+  unk_sdt_f2_41: number
+  unk_er_f1_14: number
+  unk_er_f1_15: number
+  unk_er_f1_16: number
+  unk_er_f2_42: number
+  unk_er_f2_43: number
+  unk_er_f2_44: number
+  unk_er_f2_45: number
+  unk_ac6_f2_46: number
+  constructor(props: MultiTextureBillboardExParams = {}) {
+    super(ActionType.MultiTextureBillboardEx)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -14829,7 +14911,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
   [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.Distortion]: Distortion, Distortion,
@@ -15974,6 +16055,7 @@ export {
   LightingMode,
   DistortionMode,
   DistortionShape,
+  InitialDirection,
 
   Nodes,
   Effects,
@@ -16018,7 +16100,6 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   CommonFields2Action,
-  MultiTextureBillboardEx,
   Model,
   Tracer,
   Distortion,
@@ -16047,6 +16128,7 @@ export {
   Line,
   QuadLine,
   BillboardEx,
+  MultiTextureBillboardEx,
   Unk10500,
   /*#ActionsExport end*/
 
