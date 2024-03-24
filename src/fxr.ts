@@ -392,13 +392,6 @@ enum ActionType {
    */
   RectangularParticleSpread = 503,
   /**
-   * Simple line particle. It automatically rotates to match the direction it's
-   * moving.
-   * 
-   * This action type has a specialized subclass: {@link Line}
-   */
-  Line = 601,
-  /**
    * Simple rectangular particle, very similar to
    * {@link ActionType.Line Line particles}, but has properties that control
    * the width as well as the length. It automatically rotates to match the
@@ -542,6 +535,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PointSprite}
    */
   PointSprite = 600,
+  /**
+   * Simple line particle. It automatically rotates to match the direction it's moving.
+   * 
+   * This action type has a specialized subclass: {@link Line}
+   */
+  Line = 601,
   /**
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
    * 
@@ -1093,11 +1092,11 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-      fields1: ['referenceID']
-    },
-    [Game.Sekiro]: Game.DarkSouls3,
-    [Game.EldenRing]: Game.DarkSouls3,
-    [Game.ArmoredCore6]: Game.DarkSouls3
+        fields1: ['referenceID']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.PeriodicEmitter]: {
@@ -1110,15 +1109,15 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-      fields1: ['maxConcurrent','unk_ds3_f1_1'],
-      properties1: ['interval','perInterval','totalIntervals']
-    },
-    [Game.Sekiro]: {
-      fields1: ['unk_ds3_f1_1'],
-      properties1: ['interval','perInterval','totalIntervals','maxConcurrent']
-    },
-    [Game.EldenRing]: Game.Sekiro,
-    [Game.ArmoredCore6]: Game.Sekiro
+        fields1: ['maxConcurrent','unk_ds3_f1_1'],
+        properties1: ['interval','perInterval','totalIntervals']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_1'],
+        properties1: ['interval','perInterval','totalIntervals','maxConcurrent']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
     }
   },
   [ActionType.CylinderEmitterShape]: {
@@ -1131,12 +1130,12 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-      fields1: ['unk_ds3_f1_0','volume','yAxis'],
-      properties1: ['radius','height']
-    },
-    [Game.Sekiro]: Game.DarkSouls3,
-    [Game.EldenRing]: Game.DarkSouls3,
-    [Game.ArmoredCore6]: Game.DarkSouls3
+        fields1: ['unk_ds3_f1_0','volume','yAxis'],
+        properties1: ['radius','height']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.PointSprite]: {
@@ -1202,24 +1201,107 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-      fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-      properties1: ['size','color1','color2','color3'],
-      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['size','color1','color2','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        properties1: ['texture','blendMode','size','color1','color2','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: {
+        fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+        properties1: ['texture','blendMode','size','color1','color2','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.Line]: {
+    props: {
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      length: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      startColor: { default: [1, 1, 1, 1], paths: {} },
+      endColor: { default: [1, 1, 1, 1], paths: {} },
+      LengthMultiplier: { default: 1, paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_1: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_2: { default: 1, paths: {}, field: FieldType.Integer },
     },
-    [Game.Sekiro]: {
-      fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
-      properties1: ['texture','blendMode','size','color1','color2','color3'],
-      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
-    },
-    [Game.EldenRing]: {
-      fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
-      properties1: ['texture','blendMode','size','color1','color2','color3'],
-      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
-    },
-    [Game.ArmoredCore6]: Game.EldenRing
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['blendMode','unk_ds3_f1_1'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_1'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: {
+        fields1: ['unk_ds3_f1_1','unk_er_f1_1','unk_er_f1_2'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
     }
   },
   [ActionType.BillboardEx]: {
@@ -1322,19 +1404,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-      fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-      properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
-      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
-    },
-    [Game.Sekiro]: {
-      fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-      fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
-      properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
-      properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
-    },
-    [Game.EldenRing]: Game.Sekiro,
-    [Game.ArmoredCore6]: Game.Sekiro
+        fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
+        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
     }
   },
   [ActionType.Unk10500]: {
@@ -1353,16 +1435,16 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-      fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8']
-    },
-    [Game.Sekiro]: {
-      fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
-    },
-    [Game.EldenRing]: {
-      fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
-      properties1: ['rateOfTime']
-    },
-    [Game.ArmoredCore6]: Game.EldenRing
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
+      },
+      [Game.EldenRing]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+        properties1: ['rateOfTime']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
     }
   }
   /*#ActionData end*/
@@ -7108,309 +7190,6 @@ class CommonFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface LineParams {
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * The length of the line. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link lengthMultiplier}
-   */
-  length?: ScalarPropertyArg
-  /**
-   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
-   * 
-   * Seemingly identical to {@link color2}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color1?: Vector4PropertyArg
-  /**
-   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
-   * 
-   * Seemingly identical to {@link color1}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color2?: Vector4PropertyArg
-  /**
-   * The color for the start of the line. Defaults to [1, 1, 1, 1].
-   * 
-   * This color transitions linearly into the {@link endColor end color} across the line.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  startColor?: Vector4PropertyArg
-  /**
-   * The color for the end of the line. Defaults to [1, 1, 1, 1].
-   * 
-   * This color transitions linearly into the {@link startColor start color} across the line.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  endColor?: Vector4PropertyArg
-  /**
-   * Multiplier for the line {@link length}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  lengthMultiplier?: ScalarPropertyArg
-  /**
-   * Color multiplier for the entire line. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  color3?: Vector4PropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-}
-/**
- * Simple line particle. It automatically rotates to match the direction it's
- * moving.
- */
-class Line extends CommonFields2Action {
-
-  constructor({
-    blendMode = BlendMode.Normal,
-    length = 1,
-    color1 = [1, 1, 1, 1],
-    color2 = [1, 1, 1, 1],
-    startColor = [1, 1, 1, 1],
-    endColor = [1, 1, 1, 1],
-    lengthMultiplier = 1,
-    color3 = [1, 1, 1, 1],
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-  }: LineParams = {}) {
-    super(ActionType.Line, [
-      /*  0 */ new IntField(-1),
-      /*  1 */ new IntField(1),
-      /*  2 */ new IntField(1),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new IntField(0),
-      /*  4 */ new IntField(1),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new IntField(0),
-      /* 21 */ new IntField(0),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1),
-      /* 26 */ new FloatField(0),
-      /* 27 */ new IntField(0),
-      /* 28 */ new IntField(0),
-      /* 29 */ new IntField(0),
-      /* 30 */ new IntField(0),
-      /* 31 */ new IntField(0),
-      /* 32 */ new IntField(0),
-      /* 33 */ new IntField(0),
-      /* 34 */ new FloatField(0),
-      /* 35 */ new IntField(-2),
-      /* 36 */ new IntField(-2),
-      /* 37 */ new IntField(0),
-      /* 38 */ new IntField(0),
-      /* 39 */ new IntField(0),
-    ], [
-      /*  0 */ scalarFromArg(blendMode),
-      /*  1 */ scalarFromArg(length),
-      /*  2 */ vectorFromArg(color1),
-      /*  3 */ vectorFromArg(color2),
-      /*  4 */ vectorFromArg(startColor),
-      /*  5 */ vectorFromArg(endColor),
-      /*  6 */ scalarFromArg(lengthMultiplier),
-      /*  7 */ vectorFromArg(color3),
-    ], [
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ new ConstantProperty(0),
-      /*  3 */ new ConstantProperty(1, 1, 1, 1),
-      /*  4 */ new ConstantProperty(1, 1, 1, 1),
-      /*  5 */ new ConstantProperty(1, 1, 1, 1),
-      /*  6 */ new ConstantProperty(0),
-    ])
-  }
-
-  /**
-   * Blend mode.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
-  set blendMode(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
-  /**
-   * Blend mode.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[0] }
-
-  /**
-   * The length of the line.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link lengthMultiplier}
-   */
-  get length() { return this.properties1[1] }
-  set length(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Color multiplier for the entire line.
-   * 
-   * Seemingly identical to {@link color2}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color1() { return this.properties1[2] }
-  set color1(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Color multiplier for the entire line.
-   * 
-   * Seemingly identical to {@link color1}?
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color2() { return this.properties1[3] }
-  set color2(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * The color for the start of the line.
-   * 
-   * This color transitions linearly into the {@link endColor end color} across the line.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get startColor() { return this.properties1[4] }
-  set startColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * The color for the end of the line.
-   * 
-   * This color transitions linearly into the {@link startColor start color} across the line.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get endColor() { return this.properties1[5] }
-  set endColor(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * Multiplier for the line {@link length}.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get lengthMultiplier() { return this.properties1[6] }
-  set lengthMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * Color multiplier for the entire line.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get color3() { return this.properties1[7] }
-  set color3(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value: ScalarPropertyArg) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -13267,6 +13046,394 @@ class PointSprite extends DataAction {
   }
 }
 
+export interface LineParams {
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * The length of the line.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  length?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * The color for the start of the line.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  startColor?: Vector4PropertyArg
+  /**
+   * The color for the end of the line.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  endColor?: Vector4PropertyArg
+  /**
+   * Multiplier for the line {@link length}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  LengthMultiplier?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  unk_ds3_f1_1?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: number
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_30?: number
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_33?: number
+  unk_sdt_f2_34?: number
+  unk_sdt_f2_35?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_sdt_f2_38?: number
+  unk_sdt_f2_39?: number
+  unk_er_f1_1?: number
+  unk_er_f1_2?: number
+}
+
+/**
+ * Simple line particle. It automatically rotates to match the direction it's moving.
+ */
+class Line extends DataAction {
+  declare type: ActionType.Line
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * The length of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link lengthMultiplier}
+   */
+  length: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color2: Vector4PropertyArg
+  /**
+   * The color for the start of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  startColor: Vector4PropertyArg
+  /**
+   * The color for the end of the line.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  endColor: Vector4PropertyArg
+  /**
+   * Multiplier for the line {@link length}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  LengthMultiplier: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color3: Vector4PropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  unk_ds3_f1_1: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_30: number
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_33: number
+  unk_sdt_f2_34: number
+  unk_sdt_f2_35: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_sdt_f2_38: number
+  unk_sdt_f2_39: number
+  unk_er_f1_1: number
+  unk_er_f1_2: number
+  constructor(props: LineParams = {}) {
+    super(ActionType.Line)
+    this.assign(props)
+  }
+}
+
 export interface BillboardExParams {
   /**
    * Texture ID.
@@ -14264,7 +14431,6 @@ const Actions = {
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
   [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
   [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
-  [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
@@ -14284,6 +14450,7 @@ const Actions = {
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
   [ActionType.PointSprite]: PointSprite, PointSprite,
+  [ActionType.Line]: Line, Line,
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   /*#ActionsList end*/
@@ -15455,7 +15622,6 @@ export {
   EllipticalParticleSpread,
   RectangularParticleSpread,
   CommonFields2Action,
-  Line,
   QuadLine,
   MultiTextureBillboardEx,
   Model,
@@ -15474,6 +15640,7 @@ export {
   PeriodicEmitter,
   CylinderEmitterShape,
   PointSprite,
+  Line,
   BillboardEx,
   Unk10500,
   /*#ActionsExport end*/

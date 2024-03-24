@@ -107,10 +107,10 @@ export default async function() {
               [${gameMap[k]}]: {
                 ${Object.entries(v).map(([lk, lv]) => {
                   return `${lk}: [${lv.map(e => `'${e}'`).join(',')}]`
-                }).join(',\n          ')}
+                }).join(',\n            ')}
               }
-            `.trim().replace(/^\s{14}(?=\})/m, ' '.repeat(8)).replace(/^\s{16}/m, ' '.repeat(10))
-          }).join(',\n        ')}
+            `.trim().replace(/^\s{14}(?=\})/m, ' '.repeat(10)).replace(/^\s{16}/m, ' '.repeat(12))
+          }).join(',\n          ')}
         }
       }
     `.trim().replace(/^\s{4}/gm, ''))
