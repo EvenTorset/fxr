@@ -2126,6 +2126,9 @@ function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
   const adt = ActionData[this.type]
+  if (!(game in adt.games)) {
+    throw new Error(`${ActionType[this.type]} does not have data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
+  }
   const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
   const count = actions.length
   bw.writeInt16(this.type)
