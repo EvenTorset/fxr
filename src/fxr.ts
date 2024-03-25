@@ -865,9 +865,9 @@ enum PropertyArgument {
    */
   Constant0,
   /**
-   * Time in seconds since the particle was emitted.
+   * Time in seconds since the instance (particle or other visual part) was emitted.
    */
-  ParticleAge,
+  InstanceAge,
   /**
    * Time in seconds since the {@link Effect} became active.
    * 
@@ -1938,9 +1938,9 @@ const ActionData: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
       normalMap: { default: 0, paths: {}, field: FieldType.Integer },
-      segmentInterval: { default: 0, paths: {}, field: FieldType.Integer },
-      segmentDuration: { default: 1, paths: {}, field: FieldType.Integer },
-      concurrentSegments: { default: 1, paths: {}, field: FieldType.Integer },
+      segmentInterval: { default: 0, paths: {}, field: FieldType.Float },
+      segmentDuration: { default: 1, paths: {}, field: FieldType.Float },
+      concurrentSegments: { default: 100, paths: {}, field: FieldType.Integer },
       columns: { default: 1, paths: {}, field: FieldType.Integer },
       totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
       attachedUV: { default: 1, paths: {}, field: FieldType.Boolean },
@@ -6604,7 +6604,7 @@ export interface ParticleMovementParams {
    * Downwards acceleration. This will always point towards global down, even
    * if the node is rotated. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   gravity?: ScalarPropertyArg
   /**
@@ -6615,7 +6615,7 @@ export interface ParticleMovementParams {
    * - {@link speed}
    * - {@link speedMult}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   acceleration?: ScalarPropertyArg
   /**
@@ -6625,7 +6625,7 @@ export interface ParticleMovementParams {
    * - {@link speed}
    * - {@link speedMult}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   accelerationMult?: ScalarPropertyArg
   /**
@@ -6642,7 +6642,7 @@ export interface ParticleMovementParams {
    * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
    * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speed?: ScalarPropertyArg
   /**
@@ -6658,7 +6658,7 @@ export interface ParticleMovementParams {
    * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
    * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedMult?: ScalarPropertyArg
   /**
@@ -6670,7 +6670,7 @@ export interface ParticleMovementParams {
    * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
    * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   maxTurnAngle?: ScalarPropertyArg
   /**
@@ -6693,7 +6693,7 @@ export interface ParticleMovementParams {
    * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
    * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   followRotation?: boolean
   /**
@@ -6708,7 +6708,7 @@ export interface ParticleMovementParams {
    * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
    * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link followRotation}
@@ -6909,7 +6909,7 @@ class ParticleAttributes extends Action {
     duration = -1,
   }: {
     /**
-     * Controls how the particle is attached to its parent. Defaults to
+     * Controls how the particles are attached to its parent. Defaults to
      * {@link AttachMode.Parent}.
      */
     attachment?: AttachMode
@@ -7392,19 +7392,19 @@ export interface DistortionParams {
   /**
    * X position offset. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetX?: ScalarPropertyArg
   /**
    * Y position offset. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetY?: ScalarPropertyArg
   /**
    * Z position offset. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetZ?: ScalarPropertyArg
   /**
@@ -7414,7 +7414,7 @@ export interface DistortionParams {
    * 
    * Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   sizeX?: ScalarPropertyArg
   /**
@@ -7425,7 +7425,7 @@ export interface DistortionParams {
    * 
    * Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   sizeY?: ScalarPropertyArg
   /**
@@ -7436,27 +7436,27 @@ export interface DistortionParams {
    * 
    * Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   sizeZ?: ScalarPropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color?: Vector4PropertyArg
   /**
    * Controls the intensity of the distortion effect. At 0, there is no
    * distortion at all. Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   intensity?: ScalarPropertyArg
   /**
    * Controls the speed of the stirring effect in radians per second. Requires
    * {@link mode} to be set to {@link DistortionMode.Stir}. Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   stirSpeed?: ScalarPropertyArg
   /**
@@ -7466,7 +7466,7 @@ export interface DistortionParams {
    * but there might be strange artifacts around the edges of the distortion.
    * Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   radius?: ScalarPropertyArg
   /**
@@ -7485,13 +7485,13 @@ export interface DistortionParams {
    * Horizontal offset speed for the {@link normalMap normal map}. Defaults to
    * 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   normalMapSpeedU?: ScalarPropertyArg
   /**
    * Vertical offset speed for the {@link normalMap normal map}. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   normalMapSpeedV?: ScalarPropertyArg
   /**
@@ -7753,7 +7753,7 @@ class Distortion extends CommonFields2Action {
   /**
    * X position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get offsetX() { return this.properties1[1] }
   set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
@@ -7761,7 +7761,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Y position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get offsetY() { return this.properties1[2] }
   set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
@@ -7769,7 +7769,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Z position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get offsetZ() { return this.properties1[3] }
   set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
@@ -7779,7 +7779,7 @@ class Distortion extends CommonFields2Action {
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get sizeX() { return this.properties1[4] }
   set sizeX(value) { setPropertyInList(this.properties1, 4, value) }
@@ -7790,7 +7790,7 @@ class Distortion extends CommonFields2Action {
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the
    * height, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get sizeY() { return this.properties1[5] }
   set sizeY(value) { setPropertyInList(this.properties1, 5, value) }
@@ -7801,7 +7801,7 @@ class Distortion extends CommonFields2Action {
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the
    * depth, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get sizeZ() { return this.properties1[6] }
   set sizeZ(value) { setPropertyInList(this.properties1, 6, value) }
@@ -7809,7 +7809,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get color() { return this.properties1[7] }
   set color(value) { setPropertyInList(this.properties1, 7, value) }
@@ -7818,7 +7818,7 @@ class Distortion extends CommonFields2Action {
    * Controls the intensity of the distortion effect. At 0, there is no
    * distortion at all.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get intensity() { return this.properties1[9] }
   set intensity(value) { setPropertyInList(this.properties1, 9, value) }
@@ -7827,7 +7827,7 @@ class Distortion extends CommonFields2Action {
    * Controls the speed of the stirring effect in radians per second. Requires
    * {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get stirSpeed() { return this.properties1[11] }
   set stirSpeed(value) { setPropertyInList(this.properties1, 11, value) }
@@ -7838,7 +7838,7 @@ class Distortion extends CommonFields2Action {
    * particle's rectangle. At values greater than 1, it is the same size as 1,
    * but there might be strange artifacts around the edges of the distortion.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get radius() { return this.properties1[12] }
   set radius(value) { setPropertyInList(this.properties1, 12, value) }
@@ -7862,7 +7862,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Horizontal offset speed for the {@link normalMap normal map}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get normalMapSpeedU() { return this.properties1[15] }
   set normalMapSpeedU(value) { setPropertyInList(this.properties1, 15, value) }
@@ -7870,7 +7870,7 @@ class Distortion extends CommonFields2Action {
   /**
    * Vertical offset speed for the {@link normalMap normal map}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get normalMapSpeedV() { return this.properties1[16] }
   set normalMapSpeedV(value) { setPropertyInList(this.properties1, 16, value) }
@@ -7968,19 +7968,19 @@ export interface RadialBlurParams {
   /**
    * X position offset. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetX?: ScalarPropertyArg
   /**
    * Y position offset. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetY?: ScalarPropertyArg
   /**
    * Z position offset. Defaults to 0.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetZ?: ScalarPropertyArg
   /**
@@ -7990,7 +7990,7 @@ export interface RadialBlurParams {
    * 
    * Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   width?: ScalarPropertyArg
   /**
@@ -8001,20 +8001,20 @@ export interface RadialBlurParams {
    * 
    * Defaults to 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   height?: ScalarPropertyArg
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color?: Vector4PropertyArg
   /**
    * Controls the amount of blur to apply. Values greater than 1 may appear
    * glitchy. Defaults to 0.5.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   blurRadius?: ScalarPropertyArg
   /**
@@ -8169,7 +8169,7 @@ class RadialBlur extends CommonFields2Action {
   /**
    * X position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get offsetX() { return this.properties1[2] }
   set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
@@ -8177,7 +8177,7 @@ class RadialBlur extends CommonFields2Action {
   /**
    * Y position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get offsetY() { return this.properties1[3] }
   set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
@@ -8185,7 +8185,7 @@ class RadialBlur extends CommonFields2Action {
   /**
    * Z position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get offsetZ() { return this.properties1[4] }
   set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
@@ -8195,7 +8195,7 @@ class RadialBlur extends CommonFields2Action {
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get width() { return this.properties1[5] }
   set width(value) { setPropertyInList(this.properties1, 5, value) }
@@ -8206,7 +8206,7 @@ class RadialBlur extends CommonFields2Action {
    * If {@link uniformScale} is enabled, {@link width} also controls the
    * height, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get height() { return this.properties1[6] }
   set height(value) { setPropertyInList(this.properties1, 6, value) }
@@ -8214,7 +8214,7 @@ class RadialBlur extends CommonFields2Action {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get color() { return this.properties1[7] }
   set color(value) { setPropertyInList(this.properties1, 7, value) }
@@ -8223,7 +8223,7 @@ class RadialBlur extends CommonFields2Action {
    * Controls the amount of blur to apply. Values greater than 1 may appear
    * glitchy.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   get blurRadius() { return this.properties1[9] }
   set blurRadius(value) { setPropertyInList(this.properties1, 9, value) }
@@ -10350,7 +10350,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   size?: ScalarPropertyArg
   /**
@@ -10358,7 +10358,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -10537,13 +10537,13 @@ class PointSprite extends DataAction {
   /**
    * Particle size.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   size: ScalarPropertyArg
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
@@ -10711,7 +10711,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -10719,7 +10719,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color2?: Vector4PropertyArg
   /**
@@ -10915,13 +10915,13 @@ class Line extends DataAction {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color2: Vector4PropertyArg
   /**
@@ -11110,7 +11110,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -11118,7 +11118,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color2?: Vector4PropertyArg
   /**
@@ -11331,13 +11331,13 @@ class QuadLine extends DataAction {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color2: Vector4PropertyArg
   /**
@@ -11518,7 +11518,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetX?: ScalarPropertyArg
   /**
@@ -11526,7 +11526,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetY?: ScalarPropertyArg
   /**
@@ -11534,7 +11534,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetZ?: ScalarPropertyArg
   /**
@@ -11544,7 +11544,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationX}
@@ -11557,7 +11557,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -11568,7 +11568,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -11584,7 +11584,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3?: Vector4PropertyArg
   /**
@@ -11592,7 +11592,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   alphaThreshold?: ScalarPropertyArg
   /**
@@ -11636,7 +11636,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -11648,7 +11648,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -11660,7 +11660,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -11672,7 +11672,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -11683,7 +11683,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -11694,7 +11694,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -11705,7 +11705,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   depthOffset?: ScalarPropertyArg
   /**
@@ -11715,7 +11715,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex?: ScalarPropertyArg
   /**
@@ -11723,7 +11723,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset?: ScalarPropertyArg
   /**
@@ -12014,19 +12014,19 @@ class BillboardEx extends DataAction {
   /**
    * X position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetX: ScalarPropertyArg
   /**
    * Y position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetY: ScalarPropertyArg
   /**
    * Z position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetZ: ScalarPropertyArg
   /**
@@ -12034,7 +12034,7 @@ class BillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationX}
@@ -12045,7 +12045,7 @@ class BillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -12054,7 +12054,7 @@ class BillboardEx extends DataAction {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
@@ -12066,13 +12066,13 @@ class BillboardEx extends DataAction {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3: Vector4PropertyArg
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   alphaThreshold: ScalarPropertyArg
   /**
@@ -12108,7 +12108,7 @@ class BillboardEx extends DataAction {
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -12118,7 +12118,7 @@ class BillboardEx extends DataAction {
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -12128,7 +12128,7 @@ class BillboardEx extends DataAction {
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -12138,7 +12138,7 @@ class BillboardEx extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -12147,7 +12147,7 @@ class BillboardEx extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -12156,7 +12156,7 @@ class BillboardEx extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -12165,7 +12165,7 @@ class BillboardEx extends DataAction {
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   depthOffset: ScalarPropertyArg
   /**
@@ -12173,13 +12173,13 @@ class BillboardEx extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex: ScalarPropertyArg
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset: ScalarPropertyArg
   /**
@@ -12625,7 +12625,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetX?: ScalarPropertyArg
   /**
@@ -12633,7 +12633,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetY?: ScalarPropertyArg
   /**
@@ -12641,7 +12641,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetZ?: ScalarPropertyArg
   /**
@@ -12651,7 +12651,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   width?: ScalarPropertyArg
   /**
@@ -12661,7 +12661,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   height?: ScalarPropertyArg
   /**
@@ -12705,7 +12705,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -12717,7 +12717,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -12729,7 +12729,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -12741,7 +12741,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -12752,7 +12752,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -12763,7 +12763,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -12774,7 +12774,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -12790,7 +12790,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3?: Vector4PropertyArg
   /**
@@ -12798,7 +12798,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layersColor?: Vector4PropertyArg
   /**
@@ -12806,7 +12806,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1Color?: Vector4PropertyArg
   /**
@@ -12814,7 +12814,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2Color?: Vector4PropertyArg
   /**
@@ -12822,7 +12822,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   alphaThreshold?: ScalarPropertyArg
   /**
@@ -12832,7 +12832,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex?: ScalarPropertyArg
   /**
@@ -12840,7 +12840,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset?: ScalarPropertyArg
   /**
@@ -12848,7 +12848,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1SpeedU?: ScalarPropertyArg
   /**
@@ -12856,7 +12856,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1SpeedV?: ScalarPropertyArg
   /**
@@ -12880,7 +12880,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1ScaleU?: ScalarPropertyArg
   /**
@@ -12888,7 +12888,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1ScaleV?: ScalarPropertyArg
   /**
@@ -12896,7 +12896,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2SpeedU?: ScalarPropertyArg
   /**
@@ -12904,7 +12904,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2SpeedV?: ScalarPropertyArg
   /**
@@ -12928,7 +12928,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2ScaleU?: ScalarPropertyArg
   /**
@@ -12936,7 +12936,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2ScaleV?: ScalarPropertyArg
   /**
@@ -13182,19 +13182,19 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * X position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetX: ScalarPropertyArg
   /**
    * Y position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetY: ScalarPropertyArg
   /**
    * Z position offset.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   offsetZ: ScalarPropertyArg
   /**
@@ -13202,7 +13202,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   width: ScalarPropertyArg
   /**
@@ -13210,7 +13210,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   height: ScalarPropertyArg
   /**
@@ -13246,7 +13246,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -13256,7 +13256,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -13266,7 +13266,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -13276,7 +13276,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -13285,7 +13285,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -13294,7 +13294,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -13303,7 +13303,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Color multiplier for the particle.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
@@ -13315,31 +13315,31 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Color multiplier for the particle.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3: Vector4PropertyArg
   /**
    * Color multiplier for both of the texture layers.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layersColor: Vector4PropertyArg
   /**
    * Color multiplier for Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1Color: Vector4PropertyArg
   /**
    * Color multiplier for Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2Color: Vector4PropertyArg
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   alphaThreshold: ScalarPropertyArg
   /**
@@ -13347,25 +13347,25 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex: ScalarPropertyArg
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset: ScalarPropertyArg
   /**
    * Horiztonal scroll speed for Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1SpeedU: ScalarPropertyArg
   /**
    * Vertical scroll speed for Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1SpeedV: ScalarPropertyArg
   /**
@@ -13383,25 +13383,25 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal scale for the UV coordinates of Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1ScaleU: ScalarPropertyArg
   /**
    * Vertical scale for the UV coordinates of Layer 1.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer1ScaleV: ScalarPropertyArg
   /**
    * Horiztonal scroll speed for Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2SpeedU: ScalarPropertyArg
   /**
    * Vertical scroll speed for Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2SpeedV: ScalarPropertyArg
   /**
@@ -13419,13 +13419,13 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal scale for the UV coordinates of Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2ScaleU: ScalarPropertyArg
   /**
    * Vertical scale for the UV coordinates of Layer 2.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   layer2ScaleV: ScalarPropertyArg
   /**
@@ -13674,7 +13674,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationX}
@@ -13689,7 +13689,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -13704,7 +13704,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationZ}
@@ -13753,7 +13753,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -13765,7 +13765,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -13777,7 +13777,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -13789,7 +13789,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -13800,7 +13800,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -13811,7 +13811,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -13832,7 +13832,7 @@ export interface ModelParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -13848,7 +13848,7 @@ export interface ModelParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3?: Vector4PropertyArg
   /**
@@ -13858,7 +13858,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex?: ScalarPropertyArg
   /**
@@ -13866,7 +13866,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset?: ScalarPropertyArg
   /**
@@ -13900,7 +13900,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link speedUMultiplier}
@@ -13912,7 +13912,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedUMultiplier?: ScalarPropertyArg
   /**
@@ -13922,7 +13922,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link speedVMultiplier}
@@ -13934,7 +13934,7 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedVMultiplier?: ScalarPropertyArg
   /**
@@ -14153,7 +14153,7 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also controls the height and depth.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationX}
@@ -14166,7 +14166,7 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -14179,7 +14179,7 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link scaleVariationZ}
@@ -14220,7 +14220,7 @@ class Model extends DataAction {
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -14230,7 +14230,7 @@ class Model extends DataAction {
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -14240,7 +14240,7 @@ class Model extends DataAction {
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -14250,7 +14250,7 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationX}
@@ -14259,7 +14259,7 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationY}
@@ -14268,7 +14268,7 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link rotationZ}
@@ -14285,7 +14285,7 @@ class Model extends DataAction {
   /**
    * Color multiplier for the particle.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
@@ -14297,7 +14297,7 @@ class Model extends DataAction {
   /**
    * Color multiplier for the particle.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3: Vector4PropertyArg
   /**
@@ -14305,13 +14305,13 @@ class Model extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex: ScalarPropertyArg
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset: ScalarPropertyArg
   /**
@@ -14339,7 +14339,7 @@ class Model extends DataAction {
    * 
    * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link speedUMultiplier}
@@ -14349,7 +14349,7 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link speedU}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedUMultiplier: ScalarPropertyArg
   /**
@@ -14357,7 +14357,7 @@ class Model extends DataAction {
    * 
    * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
    * - {@link speedVMultiplier}
@@ -14367,7 +14367,7 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link speedV}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedVMultiplier: ScalarPropertyArg
   /**
@@ -14468,7 +14468,7 @@ export interface TracerParams {
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
    * 
-   * **Default**: `1`
+   * **Default**: `100`
    */
   concurrentSegments?: number
   /**
@@ -14639,7 +14639,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   width?: ScalarPropertyArg
   /**
@@ -14647,7 +14647,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   widthMultiplier?: ScalarPropertyArg
   /**
@@ -14655,7 +14655,7 @@ export interface TracerParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1?: Vector4PropertyArg
   /**
@@ -14671,7 +14671,7 @@ export interface TracerParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3?: Vector4PropertyArg
   /**
@@ -14679,7 +14679,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   alphaThreshold?: ScalarPropertyArg
   /**
@@ -14689,7 +14689,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex?: ScalarPropertyArg
   /**
@@ -14697,7 +14697,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset?: ScalarPropertyArg
   /**
@@ -14705,7 +14705,7 @@ export interface TracerParams {
    * 
    * **Default**: `0.1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   textureFraction?: ScalarPropertyArg
   /**
@@ -14713,7 +14713,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedU?: ScalarPropertyArg
   /**
@@ -14721,7 +14721,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   varianceV?: ScalarPropertyArg
   /**
@@ -14947,19 +14947,19 @@ class Tracer extends DataAction {
   /**
    * The width of the trail.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   width: ScalarPropertyArg
   /**
    * Multiplier for {@link width}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   widthMultiplier: ScalarPropertyArg
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color1: Vector4PropertyArg
   /**
@@ -14971,13 +14971,13 @@ class Tracer extends DataAction {
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   color3: Vector4PropertyArg
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   alphaThreshold: ScalarPropertyArg
   /**
@@ -14985,31 +14985,31 @@ class Tracer extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndex: ScalarPropertyArg
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   frameIndexOffset: ScalarPropertyArg
   /**
    * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   textureFraction: ScalarPropertyArg
   /**
    * Controls how fast the UV coordinates should move horizontally.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   speedU: ScalarPropertyArg
   /**
    * Controls how much the UV coordinates should be randomly offset by per segment.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
   varianceV: ScalarPropertyArg
   /**

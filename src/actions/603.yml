@@ -19,23 +19,23 @@ properties:
       Blend mode.
   offsetX:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       X position offset.
   offsetY:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Y position offset.
   offsetZ:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Z position offset.
   width:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The width of the particle.
 
@@ -45,7 +45,7 @@ properties:
   height:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The height of the particle.
 
@@ -55,7 +55,7 @@ properties:
   color1:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier.
   color2:
@@ -67,12 +67,12 @@ properties:
   color3:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier.
   alphaThreshold:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
   rotationX:
@@ -101,7 +101,7 @@ properties:
       - rotationSpeedMultiplierZ
   rotationSpeedX:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Rotation speed around the X-axis in degrees per second.
     see:
@@ -109,7 +109,7 @@ properties:
       - rotationSpeedMultiplierX
   rotationSpeedY:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Rotation speed around the Y-axis in degrees per second.
     see:
@@ -117,7 +117,7 @@ properties:
       - rotationSpeedMultiplierY
   rotationSpeedZ:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Rotation speed around the Z-axis in degrees per second.
     see:
@@ -126,7 +126,7 @@ properties:
   rotationSpeedMultiplierX:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link rotationSpeedX}.
     see:
@@ -134,7 +134,7 @@ properties:
   rotationSpeedMultiplierY:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link rotationSpeedY}.
     see:
@@ -142,26 +142,26 @@ properties:
   rotationSpeedMultiplierZ:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link rotationSpeedZ}.
     see:
       - rotationZ
   depthOffset:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
   frameIndex:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
   frameIndexOffset:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
   rgbMultiplier:

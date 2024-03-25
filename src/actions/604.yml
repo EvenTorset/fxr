@@ -178,23 +178,23 @@ properties:
       Blend mode.
   offsetX:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       X position offset.
   offsetY:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Y position offset.
   offsetZ:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Z position offset.
   width:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The width of the particle.
 
@@ -202,7 +202,7 @@ properties:
   height:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The height of the particle.
 
@@ -233,7 +233,7 @@ properties:
       - rotationSpeedMultiplierZ
   rotationSpeedX:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Rotation speed around the X-axis in degrees per second.
     see:
@@ -241,7 +241,7 @@ properties:
       - rotationSpeedMultiplierX
   rotationSpeedY:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Rotation speed around the Y-axis in degrees per second.
     see:
@@ -249,7 +249,7 @@ properties:
       - rotationSpeedMultiplierY
   rotationSpeedZ:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Rotation speed around the Z-axis in degrees per second.
     see:
@@ -258,7 +258,7 @@ properties:
   rotationSpeedMultiplierX:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link rotationSpeedX}.
     see:
@@ -266,7 +266,7 @@ properties:
   rotationSpeedMultiplierY:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link rotationSpeedY}.
     see:
@@ -274,7 +274,7 @@ properties:
   rotationSpeedMultiplierZ:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link rotationSpeedZ}.
     see:
@@ -282,7 +282,7 @@ properties:
   color1:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier for the particle.
   color2:
@@ -294,54 +294,54 @@ properties:
   color3:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier for the particle.
   layersColor:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier for both of the texture layers.
   layer1Color:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier for Layer 1.
   layer2Color:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier for Layer 2.
   alphaThreshold:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
   frameIndex:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
   frameIndexOffset:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
   layer1SpeedU:
     type: ScalarPropertyArg
     default: 0
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Horiztonal scroll speed for Layer 1.
   layer1SpeedV:
     type: ScalarPropertyArg
     default: 0
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Vertical scroll speed for Layer 1.
   layer1OffsetU:
@@ -359,25 +359,25 @@ properties:
   layer1ScaleU:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Horizontal scale for the UV coordinates of Layer 1.
   layer1ScaleV:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Vertical scale for the UV coordinates of Layer 1.
   layer2SpeedU:
     type: ScalarPropertyArg
     default: 0
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Horiztonal scroll speed for Layer 2.
   layer2SpeedV:
     type: ScalarPropertyArg
     default: 0
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Vertical scroll speed for Layer 2.
   layer2OffsetU:
@@ -395,13 +395,13 @@ properties:
   layer2ScaleU:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Horizontal scale for the UV coordinates of Layer 2.
   layer2ScaleV:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Vertical scale for the UV coordinates of Layer 2.
   rgbMultiplier:

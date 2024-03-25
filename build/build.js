@@ -30,7 +30,7 @@ const gameMap = {
 
 const argumentNames = {
   Constant0: 'Constant 0',
-  ParticleAge: 'Particle age',
+  InstanceAge: 'Instance age',
   EmissionTime: 'Emission time',
   EffectAge: 'Effect age',
 }

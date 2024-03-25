@@ -166,19 +166,19 @@ properties:
   width:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The width of the trail.
   widthMultiplier:
     type: ScalarPropertyArg
     default: 1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Multiplier for {@link width}.
   color1:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier.
   color2:
@@ -190,40 +190,40 @@ properties:
   color3:
     type: Vector4PropertyArg
     default: [1, 1, 1, 1]
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Color multiplier.
   alphaThreshold:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
   frameIndex:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
   frameIndexOffset:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
   textureFraction:
     type: ScalarPropertyArg
     default: 0.1
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
   speedU:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Controls how fast the UV coordinates should move horizontally.
   varianceV:
     type: ScalarPropertyArg
-    argument: ParticleAge
+    argument: InstanceAge
     desc: |
       Controls how much the UV coordinates should be randomly offset by per segment.
   rgbMultiplier:
