@@ -304,14 +304,6 @@ enum ActionType {
    */
   NoParticleSpread = 500,
   /**
-   * A particle that distorts anything seen through it.
-   * 
-   * Note: This particle is not visible if the "Effects" setting is set to "Low".
-   * 
-   * This action type has a specialized subclass: {@link Distortion}
-   */
-  Distortion = 607,
-  /**
    * A particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -509,6 +501,14 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Tracer}
    */
   Tracer = 606,
+  /**
+   * A particle that distorts anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * This action type has a specialized subclass: {@link Distortion}
+   */
+  Distortion = 607,
   /**
    * Unknown root node action.
    * 
@@ -2035,6 +2035,110 @@ const ActionData: {
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.Distortion]: {
+    props: {
+      mode: { default: DistortionMode.NormalMap, paths: {}, field: FieldType.Integer },
+      shape: { default: DistortionShape.Rectangle, paths: {}, field: FieldType.Integer },
+      orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
+      texture: { default: 0, paths: {}, field: FieldType.Integer },
+      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
+      mask: { default: 0, paths: {}, field: FieldType.Integer },
+      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      scaleVariationZ: { default: 1, paths: {}, field: FieldType.Float },
+      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      offsetX: { default: 0, paths: {} },
+      offsetY: { default: 0, paths: {} },
+      offsetZ: { default: 0, paths: {} },
+      sizeX: { default: 1, paths: {} },
+      sizeY: { default: 1, paths: {} },
+      sizeZ: { default: 1, paths: {} },
+      color: { default: [1, 1, 1, 1], paths: {} },
+      intensity: { default: 1, paths: {} },
+      stirSpeed: { default: 1, paths: {} },
+      radius: { default: 1, paths: {} },
+      normalMapOffsetU: { default: 0, paths: {} },
+      normalMapOffsetV: { default: 0, paths: {} },
+      normalMapSpeedU: { default: 0, paths: {} },
+      normalMapSpeedV: { default: 0, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      unk_ds3_f1_11: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p1_7: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p1_9: { default: 0, paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_35: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_12: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_13: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_p2_7: { default: 1, paths: {} },
+      unk_er_p2_8: { default: 1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['mode','shape','orientation','texture','normalMap','mask','blendMode','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: {
+        fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12','unk_er_f1_12','unk_er_f1_13'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_er_p2_7','unk_er_p2_8']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -7263,644 +7367,6 @@ class CommonFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface DistortionParams {
-  /**
-   * Controls what type of distortion to apply. See {@link DistortionMode} for
-   * more details. Defaults to {@link DistortionMode.NormalMap}.
-   */
-  mode?: DistortionMode
-  /**
-   * Controls the shape of the particle. See {@link DistortionShape} for more
-   * information. Defaults to {@link DistortionShape.Rectangle}.
-   */
-  shape?: DistortionShape
-  /**
-   * Controls the orientation mode for the particles. See
-   * {@link OrientationMode} for more information. Defaults to
-   * {@link OrientationMode.CameraPlane}.
-   */
-  orientation?: OrientationMode
-  /**
-   * Texture ID. Defaults to 0 (no texture).
-   * 
-   * This texture seems to completely hide the distortion effect. It's probably
-   * best to just leave it at 0 unless you are trying to figure out how to use
-   * it properly.
-   */
-  texture?: number
-  /**
-   * Normal map ID. Defaults to 0 (no texture).
-   * 
-   * Only used if the distortion {@link mode} is set to something that uses it.
-   */
-  normalMap?: number
-  /**
-   * Mask texture ID. This texture is used to control the color and opacity of
-   * the particle. Defaults to 0 (no texture).
-   */
-  mask?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * width of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly thinner, down to half
-   * width. Setting it to 2 will make them randomly wider, up to double width.
-   * Defaults to 1.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   */
-  scaleVariationX?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * height of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly shorter, down to half
-   * height. Setting it to 2 will make them randomly taller, up to double
-   * height. Defaults to 1.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
-   * the height, and this field is ignored.
-   */
-  scaleVariationY?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * depth of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly shallower, down to
-   * half depth. Setting it to 2 will make them randomly deeper, up to double
-   * depth. Defaults to 1.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
-   * the depth, and this field is ignored.
-   */
-  scaleVariationZ?: number
-  /**
-   * If enabled, the particle X scale-related properties and fields will
-   * control the scale in all axes, and the Y and Z counterparts will be
-   * ignored. Defaults to false.
-   * 
-   * See also:
-   * - {@link sizeX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  uniformScale?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * X position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  offsetX?: ScalarPropertyArg
-  /**
-   * Y position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  offsetY?: ScalarPropertyArg
-  /**
-   * Z position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  offsetZ?: ScalarPropertyArg
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  sizeX?: ScalarPropertyArg
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
-   * height, and this property is ignored.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  sizeY?: ScalarPropertyArg
-  /**
-   * The depth of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
-   * depth, and this property is ignored.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  sizeZ?: ScalarPropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  color?: Vector4PropertyArg
-  /**
-   * Controls the intensity of the distortion effect. At 0, there is no
-   * distortion at all. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  intensity?: ScalarPropertyArg
-  /**
-   * Controls the speed of the stirring effect in radians per second. Requires
-   * {@link mode} to be set to {@link DistortionMode.Stir}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  stirSpeed?: ScalarPropertyArg
-  /**
-   * The distortion effect is only applied to an ellipse inside the particle.
-   * This property controls how large this ellipse is. At 1, it inscribes the
-   * particle's rectangle. At values greater than 1, it is the same size as 1,
-   * but there might be strange artifacts around the edges of the distortion.
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  radius?: ScalarPropertyArg
-  /**
-   * Horizontal offset for the {@link normalMap normal map}. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  normalMapOffsetU?: ScalarPropertyArg
-  /**
-   * Vertical offset for the {@link normalMap normal map}. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  normalMapOffsetV?: ScalarPropertyArg
-  /**
-   * Horizontal offset speed for the {@link normalMap normal map}. Defaults to
-   * 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  normalMapSpeedU?: ScalarPropertyArg
-  /**
-   * Vertical offset speed for the {@link normalMap normal map}. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  normalMapSpeedV?: ScalarPropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-}
-/**
- * A particle that distorts anything seen through it.
- * 
- * Note: This particle is not visible if the "Effects" setting is set to "Low".
- */
-class Distortion extends CommonFields2Action {
-
-  constructor({
-    mode = DistortionMode.NormalMap,
-    shape = DistortionShape.Rectangle,
-    orientation = OrientationMode.CameraPlane,
-    texture = 0,
-    normalMap = 0,
-    mask = 0,
-    scaleVariationX = 1,
-    scaleVariationY = 1,
-    scaleVariationZ = 1,
-    uniformScale = false,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-    blendMode = BlendMode.Normal,
-    offsetX = 0,
-    offsetY = 0,
-    offsetZ = 0,
-    sizeX = 1,
-    sizeY = 1,
-    sizeZ = 1,
-    color = [1, 1, 1, 1],
-    intensity = 1,
-    stirSpeed = 1,
-    radius = 1,
-    normalMapOffsetU = 0,
-    normalMapOffsetV = 0,
-    normalMapSpeedU = 0,
-    normalMapSpeedV = 0,
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-  }: DistortionParams = {}) {
-    super(ActionType.Distortion, [
-      new IntField(mode),
-      new IntField(shape),
-      new IntField(orientation),
-      new IntField(texture),
-      new IntField(normalMap),
-      new IntField(mask),
-      new FloatField(scaleVariationX),
-      new FloatField(scaleVariationY),
-      new FloatField(scaleVariationZ),
-      new BoolField(uniformScale),
-      new IntField(-2),
-      new IntField(0),
-      new IntField(1),
-      new IntField(1),
-    ], [
-      new IntField(0),
-      new IntField(0),
-      new IntField(8),
-      new FloatField(1),
-      new IntField(0),
-      new FloatField(bloomColor[0]),
-      new FloatField(bloomColor[1]),
-      new FloatField(bloomColor[2]),
-      new FloatField(bloomStrength),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new FloatField(-1),
-      new FloatField(-1),
-      new FloatField(-1),
-      new FloatField(-1),
-      new FloatField(minDistance),
-      new FloatField(maxDistance),
-      new IntField(1),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new FloatField(0),
-      new IntField(0),
-      new IntField(1),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(0),
-      new IntField(-1),
-      new IntField(-2),
-      new IntField(0),
-      new IntField(0),
-    ], [
-      scalarFromArg(blendMode),
-      scalarFromArg(offsetX),
-      scalarFromArg(offsetY),
-      scalarFromArg(offsetZ),
-      scalarFromArg(sizeX),
-      scalarFromArg(sizeY),
-      scalarFromArg(sizeZ),
-      vectorFromArg(color),
-      new ConstantProperty(1, 1, 1, 1),
-      scalarFromArg(intensity),
-      new ConstantProperty(0),
-      scalarFromArg(stirSpeed),
-      scalarFromArg(radius),
-      scalarFromArg(normalMapOffsetU),
-      scalarFromArg(normalMapOffsetV),
-      scalarFromArg(normalMapSpeedU),
-      scalarFromArg(normalMapSpeedV),
-    ], [
-      scalarFromArg(rgbMultiplier),
-      scalarFromArg(alphaMultiplier),
-      new ConstantProperty(0),
-      new ConstantProperty(1, 1, 1, 1),
-      new ConstantProperty(1, 1, 1, 1),
-      new ConstantProperty(1, 1, 1, 1),
-      new ConstantProperty(0),
-      new ConstantProperty(1),
-      new ConstantProperty(1),
-    ])
-  }
-
-  /**
-   * Controls what type of distortion to apply. See {@link DistortionMode} for
-   * more details.
-   */
-  get mode() { return this.fields1[0].value as DistortionMode }
-  set mode(value) { this.fields1[0].value = value }
-
-  /**
-   * Controls the shape of the particle. See {@link DistortionShape} for more
-   * information.
-   */
-  get shape() { return this.fields1[1].value as DistortionShape }
-  set shape(value) { this.fields1[1].value = value }
-
-  /**
-   * Controls the orientation mode for the particles. See
-   * {@link OrientationMode} for more information.
-   */
-  get orientation() { return this.fields1[2].value as OrientationMode }
-  set orientation(value) { this.fields1[2].value = value }
-
-  /**
-   * Texture ID.
-   * 
-   * This texture seems to completely hide the distortion effect. It's probably
-   * best to just leave it at 0 unless you are trying to figure out how to use
-   * it properly.
-   */
-  get texture() { return this.fields1[3].value as number }
-  set texture(value) { this.fields1[3].value = value }
-
-  /**
-   * Normal map ID.
-   * 
-   * Only used if the distortion {@link mode} is set to something that uses it.
-   */
-  get normalMap() { return this.fields1[4].value as number }
-  set normalMap(value) { this.fields1[4].value = value }
-
-  /**
-   * Mask texture ID. This texture is used to control the color and opacity of
-   * the particle.
-   */
-  get mask() { return this.fields1[5].value as number }
-  set mask(value) { this.fields1[5].value = value }
-
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * width of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly thinner, down to half
-   * width. Setting it to 2 will make them randomly wider, up to double width.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   */
-  get scaleVariationX() { return this.fields1[6].value as number }
-  set scaleVariationX(value) { this.fields1[6].value = value }
-
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * height of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly shorter, down to half
-   * height. Setting it to 2 will make them randomly taller, up to double
-   * height.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
-   * the height, and this field is ignored.
-   */
-  get scaleVariationY() { return this.fields1[7].value as number }
-  set scaleVariationY(value) { this.fields1[7].value = value }
-
-  /**
-   * Each particle will pick a random number between this value and 1, and the
-   * depth of the particle will be multiplied by this number. For example,
-   * setting this to 0.5 will make the particles randomly shallower, down to
-   * half depth. Setting it to 2 will make them randomly deeper, up to double
-   * depth.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects
-   * the depth, and this field is ignored.
-   */
-  get scaleVariationZ() { return this.fields1[8].value as number }
-  set scaleVariationZ(value) { this.fields1[8].value = value }
-
-  /**
-   * If enabled, the particle X scale-related properties and fields will
-   * control the scale in all axes, and the Y and Z counterparts will be
-   * ignored.
-   * 
-   * See also:
-   * - {@link sizeX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  get uniformScale() { return this.fields1[9].value as boolean }
-  set uniformScale(value) { this.fields1[9].value = value }
-
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
-  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[0] }
-
-  /**
-   * X position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get offsetX() { return this.properties1[1] }
-  set offsetX(value) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Y position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get offsetY() { return this.properties1[2] }
-  set offsetY(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Z position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get offsetZ() { return this.properties1[3] }
-  set offsetZ(value) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get sizeX() { return this.properties1[4] }
-  set sizeX(value) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
-   * height, and this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get sizeY() { return this.properties1[5] }
-  set sizeY(value) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * The depth of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the
-   * depth, and this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get sizeZ() { return this.properties1[6] }
-  set sizeZ(value) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get color() { return this.properties1[7] }
-  set color(value) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Controls the intensity of the distortion effect. At 0, there is no
-   * distortion at all.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get intensity() { return this.properties1[9] }
-  set intensity(value) { setPropertyInList(this.properties1, 9, value) }
-
-  /**
-   * Controls the speed of the stirring effect in radians per second. Requires
-   * {@link mode} to be set to {@link DistortionMode.Stir}.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get stirSpeed() { return this.properties1[11] }
-  set stirSpeed(value) { setPropertyInList(this.properties1, 11, value) }
-
-  /**
-   * The distortion effect is only applied to an ellipse inside the particle.
-   * This property controls how large this ellipse is. At 1, it inscribes the
-   * particle's rectangle. At values greater than 1, it is the same size as 1,
-   * but there might be strange artifacts around the edges of the distortion.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get radius() { return this.properties1[12] }
-  set radius(value) { setPropertyInList(this.properties1, 12, value) }
-
-  /**
-   * Horizontal offset for the {@link normalMap normal map}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get normalMapOffsetU() { return this.properties1[13] }
-  set normalMapOffsetU(value) { setPropertyInList(this.properties1, 13, value) }
-
-  /**
-   * Vertical offset for the {@link normalMap normal map}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get normalMapOffsetV() { return this.properties1[14] }
-  set normalMapOffsetV(value) { setPropertyInList(this.properties1, 14, value) }
-
-  /**
-   * Horizontal offset speed for the {@link normalMap normal map}.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get normalMapSpeedU() { return this.properties1[15] }
-  set normalMapSpeedU(value) { setPropertyInList(this.properties1, 15, value) }
-
-  /**
-   * Vertical offset speed for the {@link normalMap normal map}.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get normalMapSpeedV() { return this.properties1[16] }
-  set normalMapSpeedV(value) { setPropertyInList(this.properties1, 16, value) }
-
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -15086,6 +14552,702 @@ class Tracer extends DataAction {
   }
 }
 
+export interface DistortionParams {
+  /**
+   * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
+   * 
+   * **Default**: {@link DistortionMode.NormalMap}
+   */
+  mode?: DistortionMode
+  /**
+   * Controls the shape of the particle. See {@link DistortionShape} for more information.
+   * 
+   * **Default**: {@link DistortionShape.Rectangle}
+   */
+  shape?: DistortionShape
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.CameraPlane}
+   */
+  orientation?: OrientationMode
+  /**
+   * Texture ID.
+   * 
+   * This texture seems to completely hide the distortion effect. It's probably best to just leave it at 0 unless you are trying to figure out how to use it properly.
+   * 
+   * **Default**: `0`
+   */
+  texture?: number
+  /**
+   * Normal map texture ID.
+   * 
+   * Only used if the distortion {@link mode} is set to something that uses it.
+   * 
+   * **Default**: `0`
+   */
+  normalMap?: number
+  /**
+   * Mask texture ID. This texture is used to control the color and opacity of the particle.
+   * 
+   * **Default**: `0`
+   */
+  mask?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationY?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  scaleVariationZ?: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * X position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   */
+  sizeX?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link sizeX}
+   * - {@link sizeZ}
+   */
+  sizeY?: ScalarPropertyArg
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+   * 
+   * If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationZ}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   */
+  sizeZ?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color?: Vector4PropertyArg
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  intensity?: ScalarPropertyArg
+  /**
+   * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  stirSpeed?: ScalarPropertyArg
+  /**
+   * The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  radius?: ScalarPropertyArg
+  /**
+   * Horizontal offset for the {@link normalMap normal map}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  normalMapOffsetU?: ScalarPropertyArg
+  /**
+   * Vertical offset for the {@link normalMap normal map}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  normalMapOffsetV?: ScalarPropertyArg
+  /**
+   * Horizontal offset speed for the {@link normalMap normal map}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  normalMapSpeedU?: ScalarPropertyArg
+  /**
+   * Vertical offset speed for the {@link normalMap normal map}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  normalMapSpeedV?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  unk_ds3_f1_11?: number
+  unk_ds3_f1_12?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: number
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p1_7?: Vector4PropertyArg
+  unk_ds3_p1_9?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_30?: number
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_33?: number
+  unk_sdt_f2_34?: number
+  unk_sdt_f2_35?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_sdt_f2_38?: number
+  unk_er_f1_12?: number
+  unk_er_f1_13?: number
+  unk_er_p2_7?: ScalarPropertyArg
+  unk_er_p2_8?: ScalarPropertyArg
+}
+
+/**
+ * A particle that distorts anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ */
+class Distortion extends DataAction {
+  declare type: ActionType.Distortion
+  /**
+   * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
+   */
+  mode: DistortionMode
+  /**
+   * Controls the shape of the particle. See {@link DistortionShape} for more information.
+   */
+  shape: DistortionShape
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   */
+  orientation: OrientationMode
+  /**
+   * Texture ID.
+   * 
+   * This texture seems to completely hide the distortion effect. It's probably best to just leave it at 0 unless you are trying to figure out how to use it properly.
+   */
+  texture: number
+  /**
+   * Normal map texture ID.
+   * 
+   * Only used if the distortion {@link mode} is set to something that uses it.
+   */
+  normalMap: number
+  /**
+   * Mask texture ID. This texture is used to control the color and opacity of the particle.
+   */
+  mask: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationX: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationY: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  scaleVariationZ: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  uniformScale: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  offsetX: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  offsetY: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  offsetZ: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   */
+  sizeX: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link sizeX}
+   * - {@link sizeZ}
+   */
+  sizeY: ScalarPropertyArg
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+   * 
+   * If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationZ}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   */
+  sizeZ: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color: Vector4PropertyArg
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  intensity: ScalarPropertyArg
+  /**
+   * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  stirSpeed: ScalarPropertyArg
+  /**
+   * The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  radius: ScalarPropertyArg
+  /**
+   * Horizontal offset for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  normalMapOffsetU: ScalarPropertyArg
+  /**
+   * Vertical offset for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  normalMapOffsetV: ScalarPropertyArg
+  /**
+   * Horizontal offset speed for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  normalMapSpeedU: ScalarPropertyArg
+  /**
+   * Vertical offset speed for the {@link normalMap normal map}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  normalMapSpeedV: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p1_7: Vector4PropertyArg
+  unk_ds3_p1_9: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_30: number
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_33: number
+  unk_sdt_f2_34: number
+  unk_sdt_f2_35: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_sdt_f2_38: number
+  unk_er_f1_12: number
+  unk_er_f1_13: number
+  unk_er_p2_7: ScalarPropertyArg
+  unk_er_p2_8: ScalarPropertyArg
+  constructor(props: DistortionParams = {}) {
+    super(ActionType.Distortion)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -15170,7 +15332,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
@@ -16357,7 +16518,6 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   CommonFields2Action,
-  Distortion,
   RadialBlur,
   PointLight,
   NodeWindSpeed,
@@ -16386,6 +16546,7 @@ export {
   MultiTextureBillboardEx,
   Model,
   Tracer,
+  Distortion,
   Unk10500,
   /*#ActionsExport end*/
 
