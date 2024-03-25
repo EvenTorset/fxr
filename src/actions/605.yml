@@ -1,0 +1,764 @@
+type: 605
+name: Model
+desc: |
+  Particle with a 3D model.
+properties:
+  orientation:
+    type: OrientationMode
+    field: int
+    default: OrientationMode.LocalSouth
+    desc: |
+      Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+  scaleVariationX:
+    field: float
+    default: 1
+    desc: |
+      Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+
+      If {@link uniformScale} is enabled, this also affects the height.
+    see:
+      - scaleVariationY
+      - scaleVariationZ
+  scaleVariationY:
+    field: float
+    default: 1
+    desc: |
+      Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+
+      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+    see:
+      - scaleVariationX
+      - scaleVariationZ
+  scaleVariationZ:
+    field: float
+    default: 1
+    desc: |
+      Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+
+      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+    see:
+      - scaleVariationX
+      - scaleVariationY
+  uniformScale:
+    field: bool
+    default: false
+    desc: |
+      If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+    see:
+      - sizeX
+      - sizeY
+      - sizeZ
+      - scaleVariationX
+      - scaleVariationY
+      - scaleVariationZ
+  columns:
+    field: int
+    default: 1
+    desc: |
+      To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+    see:
+      - totalFrames
+  totalFrames:
+    field: int
+    default: 1
+    desc: |
+      To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+    see:
+      - columns
+  bloomRed:
+    field: float
+    default: 1
+    desc: |
+      Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+  bloomGreen:
+    field: float
+    default: 1
+    desc: |
+      Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomRed
+      - bloomBlue
+      - bloomStrength
+  bloomBlue:
+    field: float
+    default: 1
+    desc: |
+      Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomRed
+      - bloomGreen
+      - bloomStrength
+  bloomStrength:
+    field: float
+    desc: |
+      Controls the strength of the additional bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+  minDistance:
+    field: float
+    default: -1
+    desc: |
+      Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    see:
+      - maxDistance
+  maxDistance:
+    field: float
+    default: -1
+    desc: |
+      Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    see:
+      - minDistance
+  lighting:
+    type: LightingMode
+    field: int
+    default: LightingMode.Lit
+    desc: |
+      Controls how the particles are lit. See {@link LightingMode} for more information.
+  model:
+    type: ScalarPropertyArg
+    field: int
+    default: 80201
+    argument: Constant0
+    desc: |
+      Model ID.
+  sizeX:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      The width of the particle.
+
+      If {@link uniformScale} is enabled, this also controls the height and depth.
+    see:
+      - scaleVariationX
+      - sizeY
+      - sizeZ
+  sizeY:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      The height of the particle.
+
+      If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+    see:
+      - scaleVariationY
+      - sizeX
+      - sizeZ
+  sizeZ:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      The depth of the particle.
+
+      If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+    see:
+      - scaleVariationZ
+      - sizeX
+      - sizeY
+  rotationX:
+    type: ScalarPropertyArg
+    argument: Constant0
+    desc: |
+      Rotation around the X-axis in degrees.
+    see:
+      - rotationSpeedX
+      - rotationSpeedMultiplierX
+  rotationY:
+    type: ScalarPropertyArg
+    argument: Constant0
+    desc: |
+      Rotation around the Y-axis in degrees.
+    see:
+      - rotationSpeedY
+      - rotationSpeedMultiplierY
+  rotationZ:
+    type: ScalarPropertyArg
+    argument: Constant0
+    desc: |
+      Rotation around the Z-axis in degrees.
+    see:
+      - rotationSpeedZ
+      - rotationSpeedMultiplierZ
+  rotationSpeedX:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Rotation speed around the X-axis in degrees per second.
+    see:
+      - rotationX
+      - rotationSpeedMultiplierX
+  rotationSpeedY:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Rotation speed around the Y-axis in degrees per second.
+    see:
+      - rotationY
+      - rotationSpeedMultiplierY
+  rotationSpeedZ:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Rotation speed around the Z-axis in degrees per second.
+    see:
+      - rotationZ
+      - rotationSpeedMultiplierZ
+  rotationSpeedMultiplierX:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link rotationSpeedX}.
+    see:
+      - rotationX
+  rotationSpeedMultiplierY:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link rotationSpeedY}.
+    see:
+      - rotationY
+  rotationSpeedMultiplierZ:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link rotationSpeedZ}.
+    see:
+      - rotationZ
+  blendMode:
+    type: BlendMode | ScalarProperty
+    field: int
+    default: BlendMode.Normal
+    argument: Constant0
+    desc: |
+      Blend mode.
+
+      Note that the materials used by the model may affect how the different blend modes work. Don't expect the blend modes to always work exactly like they do in other types of instances.
+  color1:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    desc: |
+      Color multiplier for the particle.
+  color2:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+    argument: EmissionTime
+    desc: |
+      Color multiplier for the particle.
+  color3:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    desc: |
+      Color multiplier for the particle.
+  frameIndex:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+
+      Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+  frameIndexOffset:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+  offsetU:
+    type: ScalarPropertyArg
+    default: 0
+    argument: Constant0
+    desc: |
+      Horizontal offset for the UV coordinates of the model.
+
+      If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+    see:
+      - speedU
+      - offsetV
+  offsetV:
+    type: ScalarPropertyArg
+    default: 0
+    argument: Constant0
+    desc: |
+      Vertical offset for the UV coordinates of the model.
+
+      If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+  speedU:
+    type: ScalarPropertyArg
+    default: 0
+    argument: ParticleAge
+    desc: |
+      Horiztonal scroll speed for the model's texture.
+
+      If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+    see:
+      - speedUMultiplier
+      - offsetU
+  speedUMultiplier:
+    type: ScalarPropertyArg
+    default: 0
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link speedU}.
+  speedV:
+    type: ScalarPropertyArg
+    default: 0
+    argument: ParticleAge
+    desc: |
+      Vertical scroll speed for the model's texture.
+
+      If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+    see:
+      - speedVMultiplier
+      - offsetV
+  speedVMultiplier:
+    type: ScalarPropertyArg
+    default: 0
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link speedV}.
+  rgbMultiplier:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+  alphaMultiplier:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Alpha multiplier.
+  unk_ds3_f1_9: # specular strength? from ds3 notes sheet
+    field: int
+    default: -2
+  unk_ds3_f1_10: # roughness strength? from ds3 notes sheet
+    field: int
+    default: -2
+  unk_ds3_f1_11:
+    field: bool
+    default: true
+  unk_ds3_f1_12:
+    field: bool
+    default: true
+  unk_ds3_f1_13:
+    field: int
+    default: 1
+  unk_ds3_f1_14: # animation ID? from ds3 notes sheet
+    field: int
+  unk_ds3_f1_15:
+    field: int
+  unk_ds3_f1_16:
+    field: int
+    default: 1
+  unk_ds3_f1_17: # animation speed? from ds3 notes sheet
+    field: float
+    default: 1
+  unk_ds3_f1_18:
+    field: int
+  unk_ds3_f2_0:
+    field: int
+  unk_ds3_f2_1:
+    field: int
+  unk_ds3_f2_2:
+    field: int
+    default: 8
+  unk_ds3_f2_3:
+    field: int
+  unk_ds3_f2_4:
+    field: int
+    default: 1
+  unk_ds3_f2_9:
+    field: int
+  unk_ds3_f2_10:
+    field: int
+  unk_ds3_f2_11:
+    field: int
+  unk_ds3_f2_12:
+    field: int
+  unk_ds3_f2_13:
+    field: int
+  unkDistFadeClose0:
+    field: float
+    default: -1
+  unkDistFadeClose1:
+    field: float
+    default: -1
+  unkDistFadeFar0:
+    field: float
+    default: -1
+  unkDistFadeFar1:
+    field: float
+    default: -1
+  unk_ds3_f2_20:
+    field: int
+  unk_ds3_f2_21:
+    field: int
+  unk_ds3_f2_22:
+    field: int
+  unk_ds3_f2_23:
+    field: int
+  unk_ds3_f2_24:
+    field: float
+  unkDepthBlend1:
+    field: float
+    default: 1
+  unkDepthBlend2:
+    field: float
+  unk_ds3_f2_27:
+    field: int
+    default: 1
+  unk_ds3_f2_28:
+    field: int
+  unk_ds3_p1_15:
+    type: ScalarPropertyArg
+  unk_ds3_p1_24:
+    type: ScalarPropertyArg
+  unk_ds3_p2_2:
+    type: ScalarPropertyArg
+  unk_ds3_p2_3:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_4:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_5:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_6:
+    type: ScalarPropertyArg
+  unk_sdt_f2_29:
+    field: float
+  unk_sdt_f2_30:
+    field: float
+  unk_sdt_f2_31:
+    field: int
+  unk_sdt_f2_32:
+    field: int
+    default: 1
+  unk_sdt_f2_33:
+    field: int
+  unk_sdt_f2_34:
+    field: float
+  unk_sdt_f2_36:
+    field: int
+    default: -2
+  unk_sdt_f2_37:
+    field: int
+  unk_er_f1_17:
+    field: int
+    default: 1
+  unk_er_f1_18:
+    field: int
+    default: 1
+  unk_er_f1_19:
+    field: int
+  unk_ac6_f2_38:
+    field: int
+games:
+  DS3:
+    fields1:
+      - orientation
+      - model
+      - scaleVariationX
+      - scaleVariationY
+      - scaleVariationZ
+      - uniformScale
+      - blendMode
+      - columns
+      - totalFrames
+      - unk_ds3_f1_9
+      - unk_ds3_f1_10
+      - unk_ds3_f1_11
+      - unk_ds3_f1_12
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+      - unk_ds3_f1_16
+      - unk_ds3_f1_17
+      - unk_ds3_f1_18
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+    properties1:
+      - sizeX
+      - sizeY
+      - sizeZ
+      - rotationX
+      - rotationY
+      - rotationZ
+      - rotationSpeedX
+      - rotationSpeedMultiplierX
+      - rotationSpeedY
+      - rotationSpeedMultiplierY
+      - rotationSpeedZ
+      - rotationSpeedMultiplierZ
+      - color1
+      - color2
+      - color3
+      - unk_ds3_p1_15
+      - frameIndex
+      - frameIndexOffset
+      - offsetU
+      - offsetV
+      - speedU
+      - speedUMultiplier
+      - speedV
+      - speedVMultiplier
+      - unk_ds3_p1_24
+    properties2: &props2
+      - rgbMultiplier
+      - alphaMultiplier
+      - unk_ds3_p2_2
+      - unk_ds3_p2_3
+      - unk_ds3_p2_4
+      - unk_ds3_p2_5
+      - unk_ds3_p2_6
+  SDT:
+    fields1:
+      - orientation
+      - scaleVariationX
+      - scaleVariationY
+      - scaleVariationZ
+      - uniformScale
+      - columns
+      - totalFrames
+      - unk_ds3_f1_9
+      - unk_ds3_f1_10
+      - unk_ds3_f1_11
+      - unk_ds3_f1_12
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+      - unk_ds3_f1_16
+      - unk_ds3_f1_17
+      - unk_ds3_f1_18
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_sdt_f2_29
+      - unk_sdt_f2_30
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - unk_sdt_f2_33
+      - unk_sdt_f2_34
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+    properties1: &sdt_props1
+      - model
+      - sizeX
+      - sizeY
+      - sizeZ
+      - rotationX
+      - rotationY
+      - rotationZ
+      - rotationSpeedX
+      - rotationSpeedMultiplierX
+      - rotationSpeedY
+      - rotationSpeedMultiplierY
+      - rotationSpeedZ
+      - rotationSpeedMultiplierZ
+      - blendMode
+      - color1
+      - color2
+      - color3
+      - unk_ds3_p1_15
+      - frameIndex
+      - frameIndexOffset
+      - offsetU
+      - offsetV
+      - speedU
+      - speedUMultiplier
+      - speedV
+      - speedVMultiplier
+      - unk_ds3_p1_24
+    properties2: *props2
+  ER:
+    fields1: &er_fields1
+      - orientation
+      - scaleVariationX
+      - scaleVariationY
+      - scaleVariationZ
+      - uniformScale
+      - columns
+      - totalFrames
+      - unk_ds3_f1_9
+      - unk_ds3_f1_10
+      - unk_ds3_f1_11
+      - unk_ds3_f1_12
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+      - unk_ds3_f1_16
+      - unk_ds3_f1_17
+      - unk_ds3_f1_18
+      - unk_er_f1_17
+      - unk_er_f1_18
+      - unk_er_f1_19
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_sdt_f2_29
+      - unk_sdt_f2_30
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - unk_sdt_f2_33
+      - unk_sdt_f2_34
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+      - unk_ac6_f2_38
+    properties1: *sdt_props1
+    properties2: *props2
+  AC6:
+    fields1: *er_fields1
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_sdt_f2_29
+      - unk_sdt_f2_30
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - unk_sdt_f2_33
+      - unk_sdt_f2_34
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+      - unk_ac6_f2_38
+    properties1: *sdt_props1
+    properties2: *props2
