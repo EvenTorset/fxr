@@ -1,0 +1,561 @@
+type: 606
+name: Tracer
+desc: |
+  Creates a trail behind moving effects.
+properties:
+  orientation:
+    type: TracerOrientationMode
+    field: int
+    default: TracerOrientationMode.LocalZ
+    desc: |
+      Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+  normalMap:
+    field: int
+    default: 0
+    desc: |
+      Normal map texture ID.
+  segmentInterval:
+    field: int
+    default: 0
+    desc: |
+      The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+  segmentDuration:
+    field: int
+    default: 1
+    desc: |
+      The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+  concurrentSegments:
+    field: int
+    default: 1
+    desc: |
+      The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+  columns:
+    field: int
+    default: 1
+    desc: |
+      To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+    see:
+      - totalFrames
+  totalFrames:
+    field: int
+    default: 1
+    desc: |
+      To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+    see:
+      - columns
+  attachedUV:
+    field: bool
+    default: 1
+    desc: |
+      Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+  bloomRed:
+    field: float
+    default: 1
+    desc: |
+      Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+  bloomGreen:
+    field: float
+    default: 1
+    desc: |
+      Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomRed
+      - bloomBlue
+      - bloomStrength
+  bloomBlue:
+    field: float
+    default: 1
+    desc: |
+      Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomRed
+      - bloomGreen
+      - bloomStrength
+  bloomStrength:
+    field: float
+    desc: |
+      Controls the strength of the additional bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+  minDistance:
+    field: float
+    default: -1
+    desc: |
+      Minimum view distance. If the trail is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    see:
+      - maxDistance
+  maxDistance:
+    field: float
+    default: -1
+    desc: |
+      Maximum view distance. If the trail is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    see:
+      - minDistance
+  shadowDarkness:
+    field: float
+    desc: |
+      Controls how dark shaded parts of the trail are.
+  specular:
+    field: int
+    desc: |
+      Specular texture ID.
+    see:
+      - lighting
+      - glossiness
+      - specularity
+  glossiness:
+    field: float
+    default: 0.25
+    desc: |
+      Controls how sharp the specular highlights are.
+    see:
+      - lighting
+      - specular
+      - specularity
+  lighting:
+    type: LightingMode
+    field: int
+    default: LightingMode.Unlit
+    desc: |
+      Controls how the trail is lit. See {@link LightingMode} for more information.
+  specularity:
+    field: float
+    default: 0.5
+    desc: |
+      Controls how bright the specular highlights are.
+    see:
+      - lighting
+      - specular
+      - glossiness
+  texture:
+    type: ScalarPropertyArg
+    field: int
+    default: 1
+    argument: Constant0
+    desc: |
+      Texture ID.
+  blendMode:
+    type: BlendMode | ScalarProperty
+    field: int
+    default: BlendMode.Normal
+    argument: Constant0
+    desc: |
+      Blend mode.
+  width:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      The width of the trail.
+  widthMultiplier:
+    type: ScalarPropertyArg
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link width}.
+  color1:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    desc: |
+      Color multiplier.
+  color2:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+    argument: EmissionTime
+    desc: |
+      Color multiplier.
+  color3:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    desc: |
+      Color multiplier.
+  alphaThreshold:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+  frameIndex:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+
+      Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+  frameIndexOffset:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+  textureFraction:
+    type: ScalarPropertyArg
+    default: 0.1
+    argument: ParticleAge
+    desc: |
+      Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
+  speedU:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Controls how fast the UV coordinates should move horizontally.
+  varianceV:
+    type: ScalarPropertyArg
+    argument: ParticleAge
+    desc: |
+      Controls how much the UV coordinates should be randomly offset by per segment.
+  rgbMultiplier:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+  alphaMultiplier:
+    type: ScalarPropertyArg
+    default: 1
+    argument: EffectAge
+    desc: |
+      Alpha multiplier.
+  unk_ds3_f1_7:
+    field: int
+  unk_ds3_f1_8:
+    field: int
+  unk_ds3_f1_9:
+    field: float
+  unk_ds3_f1_13:
+    field: int
+    default: -1
+  unk_ds3_f1_14:
+    field: int
+    default: -1
+  unk_ds3_f1_15:
+    field: int
+  unk_ds3_f2_0:
+    field: int
+  unk_ds3_f2_1:
+    field: bool
+  unk_ds3_f2_2:
+    field: int
+    default: 8
+  unk_ds3_f2_3:
+    field: int
+  unk_ds3_f2_4:
+    field: int
+    default: 1
+  unk_ds3_f2_9:
+    field: int
+  unk_ds3_f2_10:
+    field: int
+  unk_ds3_f2_11:
+    field: int
+  unk_ds3_f2_12:
+    field: int
+  unk_ds3_f2_13:
+    field: int
+  unkDistFadeClose0:
+    field: float
+    default: -1
+  unkDistFadeClose1:
+    field: float
+    default: -1
+  unkDistFadeFar0:
+    field: float
+    default: -1
+  unkDistFadeFar1:
+    field: float
+    default: -1
+  unk_ds3_f2_20:
+    field: int
+  unk_ds3_f2_21:
+    field: int
+  unk_ds3_f2_22:
+    field: int
+  unk_ds3_f2_23:
+    field: int
+  unk_ds3_f2_24:
+    field: int
+  unkDepthBlend1:
+    field: float
+    default: 1
+  unkDepthBlend2:
+    field: float
+  unk_ds3_f2_27:
+    field: int
+    default: 1
+  unk_ds3_f2_28:
+    field: int
+  unk_ds3_f2_29:
+    field: float
+    default: 5
+  unk_ds3_p1_2:
+    type: ScalarPropertyArg
+  unk_ds3_p1_3:
+    type: ScalarPropertyArg
+  unk_ds3_p1_13:
+    type: ScalarPropertyArg
+    default: -1
+  unk_ds3_p2_2:
+    type: ScalarPropertyArg
+  unk_ds3_p2_3:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_4:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_5:
+    type: Vector4PropertyArg
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_6:
+    type: ScalarPropertyArg
+  unk_sdt_f2_31:
+    field: int
+  unk_sdt_f2_32:
+    field: int
+    default: 1
+  unk_sdt_f2_36:
+    field: int
+    default: -2
+  unk_sdt_f2_37:
+    field: int
+  unk_er_f1_14:
+    field: int
+    default: 1
+  unk_er_f1_15:
+    field: int
+    default: 1
+  unk_er_f1_16:
+    field: int
+  unk_er_f2_39:
+    field: int
+games:
+  DS3:
+    fields1:
+      - orientation
+      - texture
+      - normalMap
+      - blendMode
+      - segmentInterval
+      - segmentDuration
+      - concurrentSegments
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+      - unk_ds3_f1_9
+      - columns
+      - totalFrames
+      - attachedUV
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_ds3_f2_29
+    properties1:
+      - width
+      - widthMultiplier
+      - unk_ds3_p1_2
+      - unk_ds3_p1_3
+      - color1
+      - color2
+      - color3
+      - alphaThreshold
+      - frameIndex
+      - frameIndexOffset
+      - textureFraction
+      - speedU
+      - varianceV
+      - unk_ds3_p1_13
+    properties2: &props2
+      - rgbMultiplier
+      - alphaMultiplier
+      - unk_ds3_p2_2
+      - unk_ds3_p2_3
+      - unk_ds3_p2_4
+      - unk_ds3_p2_5
+      - unk_ds3_p2_6
+  SDT:
+    fields1:
+      - orientation
+      - normalMap
+      - segmentInterval
+      - segmentDuration
+      - concurrentSegments
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+      - unk_ds3_f1_9
+      - columns
+      - totalFrames
+      - attachedUV
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_ds3_f2_29
+      - shadowDarkness
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - specular
+      - glossiness
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+      - specularity
+    properties1: &sdt_props1
+      - texture
+      - blendMode
+      - width
+      - widthMultiplier
+      - unk_ds3_p1_2
+      - unk_ds3_p1_3
+      - color1
+      - color2
+      - color3
+      - alphaThreshold
+      - frameIndex
+      - frameIndexOffset
+      - textureFraction
+      - speedU
+      - varianceV
+      - unk_ds3_p1_13
+    properties2: *props2
+  ER:
+    fields1:
+      - orientation
+      - normalMap
+      - segmentInterval
+      - segmentDuration
+      - concurrentSegments
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+      - unk_ds3_f1_9
+      - columns
+      - totalFrames
+      - attachedUV
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+      - unk_er_f1_14
+      - unk_er_f1_15
+      - unk_er_f1_16
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_ds3_f2_29
+      - shadowDarkness
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - specular
+      - glossiness
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+      - specularity
+      - unk_er_f2_39
+    properties1: *sdt_props1
+    properties2: *props2
+  AC6: ER

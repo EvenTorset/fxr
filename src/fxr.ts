@@ -304,12 +304,6 @@ enum ActionType {
    */
   NoParticleSpread = 500,
   /**
-   * Creates a trail behind moving effects.
-   * 
-   * This action type has a specialized subclass: {@link Tracer}
-   */
-  Tracer = 606,
-  /**
    * A particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -509,6 +503,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Model}
    */
   Model = 605,
+  /**
+   * Creates a trail behind moving effects.
+   * 
+   * This action type has a specialized subclass: {@link Tracer}
+   */
+  Tracer = 606,
   /**
    * Unknown root node action.
    * 
@@ -1932,6 +1932,111 @@ const ActionData: {
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       }
+    }
+  },
+  [ActionType.Tracer]: {
+    props: {
+      orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
+      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
+      segmentInterval: { default: 0, paths: {}, field: FieldType.Integer },
+      segmentDuration: { default: 1, paths: {}, field: FieldType.Integer },
+      concurrentSegments: { default: 1, paths: {}, field: FieldType.Integer },
+      columns: { default: 1, paths: {}, field: FieldType.Integer },
+      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
+      attachedUV: { default: 1, paths: {}, field: FieldType.Boolean },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
+      specular: { default: 0, paths: {}, field: FieldType.Integer },
+      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
+      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
+      texture: { default: 1, paths: {}, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      width: { default: 1, paths: {} },
+      widthMultiplier: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      alphaThreshold: { default: 0, paths: {} },
+      frameIndex: { default: 0, paths: {} },
+      frameIndexOffset: { default: 0, paths: {} },
+      textureFraction: { default: 0.1, paths: {} },
+      speedU: { default: 0, paths: {} },
+      varianceV: { default: 0, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_9: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
+      unk_ds3_p1_2: { default: 0, paths: {} },
+      unk_ds3_p1_3: { default: 0, paths: {} },
+      unk_ds3_p1_13: { default: -1, paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.EldenRing]: {
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
     }
   },
   [ActionType.Unk10500]: {
@@ -7148,643 +7253,6 @@ class CommonFields2Action extends Action {
    */
   get maxDistance() { return this.fields2[19].value as number }
   set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface TracerParams {
-  /**
-   * Tracer orientation mode. See {@link TracerOrientationMode} for more
-   * information. Defaults to {@link TracerOrientationMode.LocalZ}.
-   */
-  orientation?: TracerOrientationMode
-  /**
-   * Normal map texture ID. Defaults to 0.
-   */
-  normalMap?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how
-   * many seconds to wait between new segments being created. Lower values
-   * produce a smoother trail. Defaults to 0.
-   */
-  segmentInterval?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how
-   * long each segment should last in seconds. Defaults to 1.
-   */
-  segmentDuration?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how
-   * many segments may exist at the same time. Defaults to 50.
-   */
-  concurrentSegments?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the number of columns in the texture. It should equal
-   * `textureWidth / frameWidth`. Defaults to 1.
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the total number of frames in the texture. Defaults to 1.
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * Controls whether or not the UV of the trail should be attached to the node
-   * or not. If it is attached, the texture will slide along the segments to
-   * follow the source wherever it moves, as if it was a flag attached to a
-   * pole. If it is not attached, the texture will stay where it was when the
-   * segment was created, like a skid mark on a road where the road is the
-   * segments and the mark is the texture, it wouldn't follow the car/node.
-   * Defaults to false.
-   */
-  attachedUV?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera. Defaults to 0.
-   * 
-   * {@link ActionType.BillboardEx BillboardEx} has a
-   * {@link BillboardExParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  negativeDepthOffset?: number
-  /**
-   * Controls how dark shaded parts of the particle are. Defaults to 0.
-   */
-  shadowDarkness?: number
-  /**
-   * Specular texture ID. Defaults to 0.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are. Defaults to 0.25.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information. Defaults to {@link LightingMode.Unlit}.
-   */
-  lighting?: LightingMode
-  /**
-   * Controls how bright the specular highlights are. Defaults to 0.5.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number
-  /**
-   * The ID of the texture for the trail. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  texture?: ScalarPropertyArg
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: ScalarPropertyArg
-  /**
-   * The width of the trail. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  width?: ScalarPropertyArg
-  /**
-   * Multiplier for {@link width}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  widthMultiplier?: ScalarPropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color1?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  color2?: Vector4PropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
-   */
-  color3?: Vector4PropertyArg
-  /**
-   * Parts of the particle with less opacity than this threshold will be
-   * invisible. The range is 0-255. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaThreshold?: ScalarPropertyArg
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated
-   * using a {@link PropertyFunction.Linear linear property} or similar.
-   * Defaults to 0.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
-   * properties is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarPropertyArg
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarPropertyArg
-  /**
-   * Controls how much of the texture's width is used per segment. If
-   * {@link attachedUV} is enabled, this instead controls how much of the
-   * texture's width to use for the entire trail. Defaults to 0.1.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  textureFraction?: ScalarPropertyArg
-  /**
-   * Controls how fast the UV coordinates should move horizontally. Defaults
-   * to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedU?: ScalarPropertyArg
-  /**
-   * Controls how much the UV coordinates should be randomly offset by per
-   * segment. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  varianceV?: ScalarPropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-}
-/**
- * Creates a trail behind moving effects.
- */
-class Tracer extends CommonFields2Action {
-
-  constructor({
-    orientation = TracerOrientationMode.LocalZ,
-    normalMap = 0,
-    segmentInterval = 0,
-    segmentDuration = 1,
-    concurrentSegments = 50,
-    columns = 1,
-    totalFrames = 1,
-    attachedUV = false,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-    negativeDepthOffset = 0,
-    shadowDarkness = 0,
-    specular = 0,
-    glossiness = 0.25,
-    lighting = LightingMode.Unlit,
-    specularity = 0.5,
-    texture = 1,
-    blendMode = BlendMode.Normal,
-    width = 1,
-    widthMultiplier = 1,
-    color1 = [1, 1, 1, 1],
-    color2 = [1, 1, 1, 1],
-    color3 = [1, 1, 1, 1],
-    alphaThreshold = 0,
-    frameIndex = 0,
-    frameIndexOffset = 0,
-    textureFraction = 0.1,
-    speedU = 0,
-    varianceV = 0,
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-  }: TracerParams = {}) {
-    super(ActionType.Tracer, [
-      /*  0 */ new IntField(orientation),
-      /*  1 */ new IntField(normalMap),
-      /*  2 */ new FloatField(segmentInterval),
-      /*  3 */ new FloatField(segmentDuration),
-      /*  4 */ new IntField(concurrentSegments),
-      /*  5 */ new IntField(0),
-      /*  6 */ new IntField(0),
-      /*  7 */ new FloatField(0),
-      /*  8 */ new IntField(columns),
-      /*  9 */ new IntField(totalFrames),
-      /* 10 */ new BoolField(attachedUV),
-      /* 11 */ new IntField(-1),
-      /* 12 */ new IntField(-1),
-      /* 13 */ new IntField(0),
-      /* 14 */ new IntField(1),
-      /* 15 */ new IntField(1),
-      /* 16 */ new IntField(0),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new IntField(0),
-      /*  4 */ new IntField(1),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new IntField(0),
-      /* 21 */ new IntField(0),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1),
-      /* 26 */ new FloatField(negativeDepthOffset),
-      /* 27 */ new IntField(1),
-      /* 28 */ new IntField(0),
-      /* 29 */ new FloatField(5),
-      /* 30 */ new FloatField(shadowDarkness),
-      /* 31 */ new IntField(0),
-      /* 32 */ new IntField(1),
-      /* 33 */ new IntField(specular),
-      /* 34 */ new FloatField(glossiness),
-      /* 35 */ new IntField(lighting),
-      /* 36 */ new IntField(-2),
-      /* 37 */ new IntField(0),
-      /* 38 */ new FloatField(specularity),
-      /* 39 */ new IntField(0),
-    ], [
-      /*  0 */ scalarFromArg(texture),
-      /*  1 */ scalarFromArg(blendMode),
-      /*  2 */ scalarFromArg(width),
-      /*  3 */ scalarFromArg(widthMultiplier),
-      /*  4 */ new ConstantProperty(0),
-      /*  5 */ new ConstantProperty(0),
-      /*  6 */ vectorFromArg(color1),
-      /*  7 */ vectorFromArg(color2),
-      /*  8 */ vectorFromArg(color3),
-      /*  9 */ scalarFromArg(alphaThreshold),
-      /* 10 */ scalarFromArg(frameIndex),
-      /* 11 */ scalarFromArg(frameIndexOffset),
-      /* 12 */ scalarFromArg(textureFraction),
-      /* 13 */ scalarFromArg(speedU),
-      /* 14 */ scalarFromArg(varianceV),
-      /* 15 */ new ConstantProperty(-1),
-    ], [
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ new ConstantProperty(0),
-      /*  3 */ new ConstantProperty(1, 1, 1, 1),
-      /*  4 */ new ConstantProperty(1, 1, 1, 1),
-      /*  5 */ new ConstantProperty(1, 1, 1, 1),
-      /*  6 */ new ConstantProperty(0),
-    ])
-  }
-
-  /**
-   * Controls the orientation mode for the trail. Note that this is **not**
-   * {@link OrientationMode} - It works differently for this action, and not
-   * all of the values have been documented yet.
-   */
-  get orientation() { return this.fields1[0].value as number }
-  set orientation(value) { this.fields1[0].value = value }
-
-  /**
-   * Normal map texture ID.
-   */
-  get normalMap() { return this.fields1[1].value as number }
-  set normalMap(value) { this.fields1[1].value = value }
-
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how
-   * many seconds to wait between new segments being created. Lower values
-   * produce a smoother trail.
-   */
-  get segmentInterval() { return this.fields1[2].value as number }
-  set segmentInterval(value) { this.fields1[2].value = value }
-
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how
-   * long each segment should last in seconds.
-   */
-  get segmentDuration() { return this.fields1[3].value as number }
-  set segmentDuration(value) { this.fields1[3].value = value }
-
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how
-   * many segments may exist at the same time.
-   */
-  get concurrentSegments() { return this.fields1[4].value as number }
-  set concurrentSegments(value) { this.fields1[4].value = value }
-
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the number of columns in the texture. It should equal
-   * `textureWidth / frameWidth`.
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  get columns() { return this.fields1[8].value as number }
-  set columns(value) { this.fields1[8].value = value }
-
-  /**
-   * To split the texture into multiple animation frames, this value must be
-   * set to the total number of frames in the texture.
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  get totalFrames() { return this.fields1[9].value as number }
-  set totalFrames(value) { this.fields1[9].value = value }
-
-  /**
-   * Controls whether or not the UV of the trail should be attached to the node
-   * or not. If it is attached, the texture will slide along the segments to
-   * follow the source wherever it moves, as if it was a flag attached to a
-   * pole. If it is not attached, the texture will stay where it was when the
-   * segment was created, like a skid mark on a road where the road is the
-   * segments and the mark is the texture, it wouldn't follow the car/node.
-   */
-  get attachedUV() { return this.fields1[10].value as boolean }
-  set attachedUV(value) { this.fields1[10].value = value }
-
-  /**
-   * Negative values will make the particle draw in front of objects closer to
-   * the camera, while positive values will make it draw behind objects farther
-   * away from the camera.
-   * 
-   * {@link ActionType.BillboardEx BillboardEx} has a
-   * {@link BillboardExParams.depthOffset property} that works the
-   * same way, but reversed. Since that property was discovered before this
-   * field, this field was given the "negative" name.
-   */
-  get negativeDepthOffset() { return this.fields2[26].value as number }
-  set negativeDepthOffset(value) { this.fields2[26].value = value }
-
-  /**
-   * Controls how dark shaded parts of the particle are.
-   */
-  get shadowDarkness() { return this.fields2[30].value as number }
-  set shadowDarkness(value) { this.fields2[30].value = value }
-
-  /**
-   * Specular texture ID. Defaults to 0.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  get specular() { return this.fields2[33].value as number }
-  set specular(value) { this.fields2[33].value = value }
-
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  get glossiness() { return this.fields2[34].value as number }
-  set glossiness(value) { this.fields2[34].value = value }
-
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more
-   * information.
-   */
-  get lighting() { return this.fields2[35].value as LightingMode }
-  set lighting(value) { this.fields2[35].value = value }
-
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  get specularity() { return this.fields2[38].value as number }
-  set specularity(value) { this.fields2[38].value = value }
-
-  /**
-   * The ID of the texture for the trail.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get texture() { return this.properties1[0] }
-  set texture(value) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * Blend mode.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendMode() { return this.properties1[1].valueAt(0) as BlendMode }
-  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 1, value) }
-  /**
-   * Blend mode.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[1] }
-
-  /**
-   * The width of the trail.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get width() { return this.properties1[2] }
-  set width(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Multiplier for {@link width}.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  get widthMultiplier() { return this.properties1[3] }
-  set widthMultiplier(value) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get color1() { return this.properties1[6] }
-  set color1(value) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  get color2() { return this.properties1[7] }
-  set color2(value) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}.
-   */
-  get color3() { return this.properties1[8] }
-  set color3(value) { setPropertyInList(this.properties1, 8, value) }
-
-  /**
-   * Parts of the particle with less opacity than this threshold will be
-   * invisible. The range is 0-255.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaThreshold() { return this.properties1[10] }
-  set alphaThreshold(value) { setPropertyInList(this.properties1, 10, value) }
-
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated
-   * using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two
-   * properties is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get frameIndex() { return this.properties1[10] }
-  set frameIndex(value) { setPropertyInList(this.properties1, 10, value) }
-
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties
-   * is the actual frame index that gets used.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get frameIndexOffset() { return this.properties1[11] }
-  set frameIndexOffset(value) { setPropertyInList(this.properties1, 11, value) }
-
-  /**
-   * Controls how much of the texture's width is used per segment. If
-   * {@link attachedUV} is enabled, this instead controls how much of the
-   * texture's width to use for the entire trail.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get textureFraction() { return this.properties1[12] }
-  set textureFraction(value) { setPropertyInList(this.properties1, 12, value) }
-
-  /**
-   * Controls how fast the UV coordinates should move horizontally.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get speedU() { return this.properties1[13] }
-  set speedU(value) { setPropertyInList(this.properties1, 13, value) }
-
-  /**
-   * Controls how much the UV coordinates should be randomly offset by per
-   * segment.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  get varianceV() { return this.properties1[14] }
-  set varianceV(value) { setPropertyInList(this.properties1, 14, value) }
-  
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -14972,6 +14440,642 @@ class Model extends DataAction {
   }
 }
 
+export interface TracerParams {
+  /**
+   * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+   * 
+   * **Default**: {@link TracerOrientationMode.LocalZ}
+   */
+  orientation?: TracerOrientationMode
+  /**
+   * Normal map texture ID.
+   * 
+   * **Default**: `0`
+   */
+  normalMap?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+   * 
+   * **Default**: `0`
+   */
+  segmentInterval?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+   * 
+   * **Default**: `1`
+   */
+  segmentDuration?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+   * 
+   * **Default**: `1`
+   */
+  concurrentSegments?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+   * 
+   * **Default**: `1`
+   */
+  attachedUV?: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the trail is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the trail is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Controls how dark shaded parts of the trail are.
+   * 
+   * **Default**: `0`
+   */
+  shadowDarkness?: number
+  /**
+   * Specular texture ID.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * **Default**: `0.25`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the trail is lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  /**
+   * Texture ID.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture?: ScalarPropertyArg
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * The width of the trail.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * Multiplier for {@link width}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  widthMultiplier?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color3?: Vector4PropertyArg
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  alphaThreshold?: ScalarPropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex?: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset?: ScalarPropertyArg
+  /**
+   * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
+   * 
+   * **Default**: `0.1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  textureFraction?: ScalarPropertyArg
+  /**
+   * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedU?: ScalarPropertyArg
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per segment.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  varianceV?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  unk_ds3_f1_7?: number
+  unk_ds3_f1_8?: number
+  unk_ds3_f1_9?: number
+  unk_ds3_f1_13?: number
+  unk_ds3_f1_14?: number
+  unk_ds3_f1_15?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: boolean
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p1_2?: ScalarPropertyArg
+  unk_ds3_p1_3?: ScalarPropertyArg
+  unk_ds3_p1_13?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_31?: number
+  unk_sdt_f2_32?: number
+  unk_sdt_f2_36?: number
+  unk_sdt_f2_37?: number
+  unk_er_f1_14?: number
+  unk_er_f1_15?: number
+  unk_er_f1_16?: number
+  unk_er_f2_39?: number
+}
+
+/**
+ * Creates a trail behind moving effects.
+ */
+class Tracer extends DataAction {
+  declare type: ActionType.Tracer
+  /**
+   * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+   */
+  orientation: TracerOrientationMode
+  /**
+   * Normal map texture ID.
+   */
+  normalMap: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+   */
+  segmentInterval: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+   */
+  segmentDuration: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+   */
+  concurrentSegments: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames: number
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+   */
+  attachedUV: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the trail is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the trail is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Controls how dark shaded parts of the trail are.
+   */
+  shadowDarkness: number
+  /**
+   * Specular texture ID.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness: number
+  /**
+   * Controls how the trail is lit. See {@link LightingMode} for more information.
+   */
+  lighting: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity: number
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture: ScalarPropertyArg
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * The width of the trail.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  width: ScalarPropertyArg
+  /**
+   * Multiplier for {@link width}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  widthMultiplier: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color1: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2: Vector4PropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  color3: Vector4PropertyArg
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  alphaThreshold: ScalarPropertyArg
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndex: ScalarPropertyArg
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  frameIndexOffset: ScalarPropertyArg
+  /**
+   * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  textureFraction: ScalarPropertyArg
+  /**
+   * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedU: ScalarPropertyArg
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per segment.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  varianceV: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: boolean
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p1_2: ScalarPropertyArg
+  unk_ds3_p1_3: ScalarPropertyArg
+  unk_ds3_p1_13: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_er_f1_14: number
+  unk_er_f1_15: number
+  unk_er_f1_16: number
+  unk_er_f2_39: number
+  constructor(props: TracerParams = {}) {
+    super(ActionType.Tracer)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -15056,7 +15160,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
@@ -16244,7 +16347,6 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   CommonFields2Action,
-  Tracer,
   Distortion,
   RadialBlur,
   PointLight,
@@ -16273,6 +16375,7 @@ export {
   BillboardEx,
   MultiTextureBillboardEx,
   Model,
+  Tracer,
   Unk10500,
   /*#ActionsExport end*/
 
