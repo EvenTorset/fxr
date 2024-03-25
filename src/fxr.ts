@@ -5792,7 +5792,7 @@ export interface ActionWithNumericalFields extends Action {
  */
 class DataAction implements IAction {
 
-  constructor(public readonly type: ActionType = 0) {}
+  constructor(public readonly type: ActionType) {}
 
   assign(props: any = {}) {
     for (const [k, v] of Object.entries(ActionData[this.type].props)) {
@@ -5835,6 +5835,16 @@ class DataAction implements IAction {
     return (data[list] ?? []).map((name: string) => Array.isArray(adt.props[name].default) ?
       vectorFromArg(this[name]) :
       scalarFromArg(this[name])
+    )
+  }
+
+  toAction(game: Game) {
+    return new Action(
+      this.type,
+      this.getFields(game, 'fields1'),
+      this.getFields(game, 'fields2'),
+      this.getProperties(game, 'properties1'),
+      this.getProperties(game, 'properties2')
     )
   }
 
