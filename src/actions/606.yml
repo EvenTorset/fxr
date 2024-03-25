@@ -15,12 +15,12 @@ properties:
     desc: |
       Normal map texture ID.
   segmentInterval:
-    field: int
+    field: float
     default: 0
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
   segmentDuration:
-    field: int
+    field: float
     default: 1
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
