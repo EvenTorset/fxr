@@ -294,7 +294,7 @@ games:
       - color1
       - color2
       - color3
-    properties2: &props2
+    properties2:
       - rgbMultiplier
       - alphaMultiplier
       - unk_ds3_p2_2
@@ -347,14 +347,14 @@ games:
       - unk_sdt_f2_36
       - unk_sdt_f2_37
       - unk_sdt_f2_38
-    properties1: &sdt_props1
+    properties1:
       - texture
       - blendMode
       - size
       - color1
       - color2
       - color3
-    properties2: *props2
+    properties2: DS3
   ER:
     fields1:
       - unk_ds3_f1_2
@@ -403,6 +403,6 @@ games:
       - unk_sdt_f2_37
       - unk_sdt_f2_38
       - unk_er_f2_39
-    properties1: *sdt_props1
-    properties2: *props2
+    properties1: SDT
+    properties2: DS3
   AC6: ER

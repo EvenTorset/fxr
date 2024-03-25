@@ -37,7 +37,7 @@ properties:
       - Values outside of the -1 to 1 range also work, but may do some unexpected things.
 games:
   DS3:
-    properties1: &props
+    properties1:
       - angleX
       - angleY
       - distribution
@@ -45,5 +45,5 @@ games:
   ER:
     fields1:
       - unk_er_f1_0
-    properties1: *props
+    properties1: DS3
   AC6: ER

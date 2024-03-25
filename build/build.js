@@ -80,7 +80,7 @@ export default async function() {
       let found = false
       search:
       for (const game of Object.values(data.games)) if (typeof game === 'object') {
-        for (const list of Object.values(game)) {
+        for (const list of Object.values(game)) if (Array.isArray(list)) {
           if (list.includes(prop)) {
             found = true
             break search
@@ -92,7 +92,7 @@ export default async function() {
       }
     }
     for (const game of Object.values(data.games)) if (typeof game === 'object') {
-      for (const list of Object.values(game)) {
+      for (const list of Object.values(game)) if (Array.isArray(list)) {
         for (const prop of list) {
           if (!(prop in data.properties)) {
             console.warn(`YAML Warning: Action ${data.type} (${data.name}) is missing the '${prop}' class property.`)
@@ -131,7 +131,14 @@ export default async function() {
             return `
               [${gameMap[k]}]: {
                 ${Object.entries(v).map(([lk, lv]) => {
-                  return `${lk}: [${lv.map(e => `'${e}'`).join(',')}]`
+                  if (Array.isArray(lv)) {
+                    return `${lk}: [${lv.map(e => `'${e}'`).join(',')}]`
+                  } else {
+                    if (data.games[lv]?.[lk] === undefined) {
+                      console.warn(`YAML Warning: ${data.type}.games.${k}.${lk} refers to a game without ${lk}: ${lv}`)
+                    }
+                    return `${lk}: ${gameMap[lv]}`
+                  }
                 }).join(',\n            ')}
               }
             `.trim().replace(/^\s{14}(?=\})/m, ' '.repeat(10)).replace(/^\s{16}/m, ' '.repeat(12))

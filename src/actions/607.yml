@@ -441,7 +441,7 @@ games:
       - normalMapOffsetV
       - normalMapSpeedU
       - normalMapSpeedV
-    properties2: &ds3_props2
+    properties2:
       - rgbMultiplier
       - alphaMultiplier
       - unk_ds3_p2_2
@@ -463,7 +463,7 @@ games:
       - uniformScale
       - unk_ds3_f1_11
       - unk_ds3_f1_12
-    fields2: &sdt_field2
+    fields2:
       - unk_ds3_f2_0
       - unk_ds3_f2_1
       - unk_ds3_f2_2
@@ -503,7 +503,7 @@ games:
       - unk_sdt_f2_36
       - unk_sdt_f2_37
       - unk_sdt_f2_38
-    properties1: &sdt_props1
+    properties1:
       - blendMode
       - offsetX
       - offsetY
@@ -521,7 +521,7 @@ games:
       - normalMapOffsetV
       - normalMapSpeedU
       - normalMapSpeedV
-    properties2: *ds3_props2
+    properties2: DS3
   ER:
     fields1:
       - mode
@@ -538,9 +538,9 @@ games:
       - unk_ds3_f1_12
       - unk_er_f1_12
       - unk_er_f1_13
-    fields2: *sdt_field2
-    properties1: *sdt_props1
-    properties2: &er_props2
+    fields2: SDT
+    properties1: SDT
+    properties2:
       - rgbMultiplier
       - alphaMultiplier
       - unk_ds3_p2_2

@@ -535,7 +535,7 @@ games:
       - frameIndexOffset
       - unk_ds3_p1_21
       - unk_ds3_p1_22
-    properties2: &props2
+    properties2:
       - rgbMultiplier
       - alphaMultiplier
       - unk_ds3_p2_2
@@ -635,6 +635,6 @@ games:
       - frameIndexOffset
       - unk_ds3_p1_21
       - unk_ds3_p1_22
-    properties2: *props2
+    properties2: DS3
   ER: SDT
   AC6: SDT

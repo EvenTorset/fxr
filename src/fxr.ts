@@ -1080,6 +1080,12 @@ enum InitialDirection {
   LocalNorth = 6,
 }
 
+export type ActionGameDataEntry = {
+  fields1?: string[] | Game
+  fields2?: string[] | Game
+  properties1?: string[] | Game
+  properties2?: string[] | Game
+}
 const ActionData: {
   [x: string]: {
     props: {
@@ -1092,12 +1098,7 @@ const ActionData: {
       }
     }
     games: {
-      [game: string]: {
-        fields1?: string[]
-        fields2?: string[]
-        properties1?: string[]
-        properties2?: string[]
-      } | Game
+      [game: string]: ActionGameDataEntry | Game
     }
   }
 } = {
@@ -1263,7 +1264,7 @@ const ActionData: {
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: {
         fields1: ['unk_er_f1_0'],
-        properties1: ['angle','distribution']
+        properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -1282,7 +1283,7 @@ const ActionData: {
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: {
         fields1: ['unk_er_f1_0'],
-        properties1: ['angleX','angleY','distribution']
+        properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -1374,13 +1375,13 @@ const ActionData: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: ['texture','blendMode','size','color1','color2','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
-        properties1: ['texture','blendMode','size','color1','color2','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -1457,13 +1458,13 @@ const ActionData: {
         fields1: ['unk_ds3_f1_1'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_1','unk_er_f1_1','unk_er_f1_2'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
-        properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        fields2: Game.Sekiro,
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -1542,13 +1543,13 @@ const ActionData: {
         fields1: ['unk_ds3_f1_1'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_1','unk_er_f1_1','unk_er_f1_2'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
-        properties1: ['blendMode','width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        fields2: Game.Sekiro,
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -1662,7 +1663,7 @@ const ActionData: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
         properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -1795,19 +1796,19 @@ const ActionData: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
         properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
-        fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields1: Game.EldenRing,
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       }
     }
   },
@@ -1918,19 +1919,19 @@ const ActionData: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
+        fields1: Game.EldenRing,
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       }
     }
   },
@@ -2028,13 +2029,13 @@ const ActionData: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -2132,12 +2133,12 @@ const ActionData: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: ['blendMode','offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12','unk_er_f1_12','unk_er_f1_13'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
+        fields2: Game.Sekiro,
+        properties1: Game.Sekiro,
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_er_p2_7','unk_er_p2_8']
       },
       [Game.ArmoredCore6]: Game.EldenRing
@@ -2173,10 +2174,11 @@ const ActionData: {
   }
   /*#ActionData end*/
 }
-for (const action of Object.values(ActionData)) {
-  for (const [name, prop] of Object.entries(action.props)) {
-    for (const [game, data] of Object.entries(action.games)) {
-      for (const [k, list] of Object.entries(data)) {
+for (const [type, action] of Object.entries(ActionData)) {
+  for (const game of Object.keys(action.games)) {
+    const gameData = getActionGameData(type as unknown as ActionType, game as unknown as Game)
+    for (const [name, prop] of Object.entries(action.props)) {
+      for (const [k, list] of Object.entries(gameData)) {
         const i = list.indexOf(name)
         if (i >= 0) {
           prop.paths[game] = [k, i]
@@ -2184,6 +2186,36 @@ for (const action of Object.values(ActionData)) {
         }
       }
     }
+  }
+}
+
+function getActionGameData(type: ActionType, game: Game) {
+  const adt = ActionData[type]
+  if (!(game in adt.games)) {
+    throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
+  }
+  const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
+  data.fields1 ??= []
+  data.fields2 ??= []
+  data.properties1 ??= []
+  data.properties2 ??= []
+  if (typeof data.fields1 === 'number') {
+    data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
+  }
+  if (typeof data.fields2 === 'number') {
+    data.fields2 = (adt.games[data.fields2] as ActionGameDataEntry).fields2
+  }
+  if (typeof data.properties1 === 'number') {
+    data.properties1 = (adt.games[data.properties1] as ActionGameDataEntry).properties1
+  }
+  if (typeof data.properties2 === 'number') {
+    data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
+  }
+  return data as {
+    fields1: string[]
+    fields2: string[]
+    properties1: string[]
+    properties2: string[]
   }
 }
 
@@ -2604,10 +2636,9 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
 
   br.stepIn(fieldOffset)
   const adt = ActionData[type]
-  const gameData: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+  const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
-    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), 
-    this)
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), this)
   } else {
     c.fields1 = readFields(br, fieldCount1, this)
   }
@@ -2636,22 +2667,18 @@ function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
   if (game === Game.Generic) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
-  const adt = ActionData[this.type]
-  if (!(game in adt.games)) {
-    throw new Error(`${ActionType[this.type]} does not have data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
-  }
-  const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+  const data = getActionGameData(this.type, game)
   const count = actions.length
   bw.writeInt16(this.type)
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
-  bw.writeInt32((data.fields1 ?? []).length)
+  bw.writeInt32(data.fields1.length)
   bw.writeInt32(0) // Section10 count
-  bw.writeInt32((data.properties1 ?? []).length)
-  bw.writeInt32((data.fields2 ?? []).length)
+  bw.writeInt32(data.properties1.length)
+  bw.writeInt32(data.fields2.length)
   bw.writeInt32(0)
-  bw.writeInt32((data.properties2 ?? []).length)
+  bw.writeInt32(data.properties2.length)
   bw.reserveInt32(`ActionFieldsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`ActionSection10sOffset${count}`)
@@ -2711,14 +2738,13 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
   const propertyCount2 = br.readInt32()
 
   if (game !== Game.Generic && type in ActionData) {
-    const adt = ActionData[type]
-    const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
+    const data = getActionGameData(type, game)
     if (
       section10Count === 0 &&
-      fieldCount1 === (data.fields1?.length ?? 0) &&
-      fieldCount2 <= (data.fields2?.length ?? 0) &&
-      propertyCount1 === (data.properties1?.length ?? 0) &&
-      propertyCount2 === (data.properties2?.length ?? 0)
+      fieldCount1 === data.fields1.length &&
+      fieldCount2 <= data.fields2.length &&
+      propertyCount1 === data.properties1.length &&
+      propertyCount2 === data.properties2.length
     ) {
       return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
     } else {
@@ -5925,18 +5951,16 @@ class DataAction implements IAction {
   }
 
   getFields(game: Game, list: 'fields1' | 'fields2'): Field[] {
-    const adt = ActionData[this.type]
-    const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
-    return (data[list] ?? []).map((name: string) => new Field(
-      adt.props[name].field,
+    const data = getActionGameData(this.type, game)
+    return data[list].map((name: string) => new Field(
+      ActionData[this.type].props[name].field,
       this[name] instanceof Property ? this[name].valueAt(0) : this[name]
     ))
   }
 
   getProperties(game: Game, list: 'properties1' | 'properties2'): AnyProperty[] {
-    const adt = ActionData[this.type]
-    const data: any = adt.games[(typeof adt.games[game] === 'number' ? adt.games[game] : game) as unknown as string]
-    return (data[list] ?? []).map((name: string) => Array.isArray(adt.props[name].default) ?
+    const data = getActionGameData(this.type, game)
+    return (data[list] ?? []).map((name: string) => Array.isArray(ActionData[this.type].props[name].default) ?
       vectorFromArg(this[name]) :
       scalarFromArg(this[name])
     )
