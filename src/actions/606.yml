@@ -26,7 +26,7 @@ properties:
       The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
   concurrentSegments:
     field: int
-    default: 1
+    default: 100
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
   columns:
