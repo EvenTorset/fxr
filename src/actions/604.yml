@@ -144,7 +144,6 @@ properties:
     see:
       - lighting
       - glossiness
-      - specularity
   glossiness:
     field: float
     default: 0.25
@@ -153,22 +152,15 @@ properties:
     see:
       - lighting
       - specular
-      - specularity
   lighting:
     type: LightingMode
     field: int
     default: LightingMode.Unlit
     desc: |
       Controls how the particles are lit. See {@link LightingMode} for more information.
-  specularity:
-    field: float
-    default: 0.5
-    desc: |
-      Controls how bright the specular highlights are.
-    see:
-      - lighting
-      - specular
-      - glossiness
+  unk_sdt_f2_38:
+    field: int
+    default: 1
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
@@ -699,7 +691,7 @@ games:
       - lighting
       - unk_sdt_f2_36
       - unk_sdt_f2_37
-      - specularity
+      - unk_sdt_f2_38
       - unk_sdt_f2_39
       - unk_sdt_f2_40
       - unk_sdt_f2_41
@@ -805,7 +797,7 @@ games:
       - lighting
       - unk_sdt_f2_36
       - unk_sdt_f2_37
-      - specularity
+      - unk_sdt_f2_38
       - unk_sdt_f2_39
       - unk_sdt_f2_40
       - unk_sdt_f2_41
@@ -856,7 +848,7 @@ games:
       - lighting
       - unk_sdt_f2_36
       - unk_sdt_f2_37
-      - specularity
+      - unk_sdt_f2_38
       - unk_sdt_f2_39
       - unk_sdt_f2_40
       - unk_sdt_f2_41
