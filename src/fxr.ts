@@ -303,12 +303,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NoParticleSpread}
    */
   NoParticleSpread = 500,
-  /**
-   * Point light source.
-   * 
-   * This action type has a specialized subclass: {@link PointLight}
-   */
-  PointLight = 609,
   Unk700 = 700, // Root node action
   Unk701 = 701, // Root node action
   Unk702 = 702, // Root node action
@@ -509,6 +503,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link RadialBlur}
    */
   RadialBlur = 608,
+  /**
+   * Point light source.
+   * 
+   * This action type has a specialized subclass: {@link PointLight}
+   */
+  PointLight = 609,
   /**
    * Unknown root node action.
    * 
@@ -1092,6 +1092,8 @@ const ActionData: {
       [name: string]: {
         default: any
         field?: FieldType
+        write?: (value: any) => any
+        read?: (value: any) => any
         paths: {
           [game: string]: [string, number]
         }
@@ -2222,6 +2224,82 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.PointLight]: {
+    props: {
+      diffuseColor: { default: [1, 1, 1, 1], paths: {} },
+      specularColor: { default: [1, 1, 1, 1], paths: {} },
+      radius: { default: 10, paths: {} },
+      diffuseMultiplier: { default: 1, paths: {} },
+      specularMultiplier: { default: 1, paths: {} },
+      jitterAndFlicker: { default: false, paths: {}, field: FieldType.Boolean },
+      jitterAcceleration: { default: 1, paths: {}, field: FieldType.Float },
+      jitterX: { default: 0, paths: {}, field: FieldType.Float },
+      jitterY: { default: 0, paths: {}, field: FieldType.Float },
+      jitterZ: { default: 0, paths: {}, field: FieldType.Float },
+      flickerIntervalMin: { default: 0, paths: {}, field: FieldType.Float },
+      flickerIntervalMax: { default: 1, paths: {}, field: FieldType.Float },
+      flickerBrightness: { default: 0.5, paths: {}, field: FieldType.Float },
+      shadows: { default: false, paths: {}, field: FieldType.Boolean },
+      separateSpecular: { default: false, paths: {}, field: FieldType.Boolean },
+      fadeOutTime: { default: 0, paths: {}, field: FieldType.Integer, read: value => value / 30, write: value => Math.round(value * 30) },
+      shadowDarkness: { default: 1, paths: {}, field: FieldType.Float },
+      volumeDensity: { default: 0, paths: {}, field: FieldType.Float },
+      phaseFunction: { default: true, paths: {}, field: FieldType.Boolean },
+      asymmetryParam: { default: 0.75, paths: {}, field: FieldType.Float },
+      falloffExponent: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_12: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_15: { default: false, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_16: { default: 2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_17: { default: true, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_18: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_19: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 100, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p1_3: { default: 0, paths: {} },
+      unk_ds3_p1_4: { default: 0, paths: {} },
+      unk_ds3_p1_5: { default: 0, paths: {} },
+      unk_ds3_p1_6: { default: 0, paths: {} },
+      unk_ds3_p1_7: { default: 10, paths: {} },
+      unk_ds3_p1_8: { default: 10, paths: {} },
+      unk_ds3_p1_9: { default: 10, paths: {} },
+      unk_ds3_p2_0: { default: 1, paths: {} },
+      unk_ds3_p2_1: { default: 1, paths: {} },
+      unk_sdt_f2_25: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_p2_2: { default: 1, paths: {} },
+      unk_er_f2_29: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f2_30: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f2_31: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','unk_ds3_f2_12','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24'],
+        properties1: ['diffuseColor','specularColor','radius','unk_ds3_p1_3','unk_ds3_p1_4','unk_ds3_p1_5','unk_ds3_p1_6','unk_ds3_p1_7','unk_ds3_p1_8','unk_ds3_p1_9'],
+        properties2: ['unk_ds3_p2_0','unk_ds3_p2_1']
+      },
+      [Game.Sekiro]: {
+        fields1: Game.DarkSouls3,
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent'],
+        properties1: Game.DarkSouls3,
+        properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_sdt_p2_2','diffuseMultiplier','specularMultiplier']
+      },
+      [Game.EldenRing]: {
+        fields1: Game.DarkSouls3,
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
+        properties1: Game.DarkSouls3,
+        properties2: Game.Sekiro
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
   [ActionType.Unk10500]: {
     props: {
       rateOfTime: { default: 1, paths: {}, field: FieldType.Float },
@@ -2732,9 +2810,9 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
         if (!(game in prop.paths)) return null
         const v = c[prop.paths[game][0]][prop.paths[game][1]]
         if (v instanceof Field) {
-          return [name, v.value]
+          return [name, 'read' in prop ? prop.read(v.value) : v.value]
         } else {
-          return [name, v]
+          return [name, 'read' in prop ? prop.read(v) : v]
         }
       }).filter(e => e !== null) as unknown as [string, any]
     )
@@ -6029,18 +6107,22 @@ class DataAction implements IAction {
 
   getFields(game: Game, list: 'fields1' | 'fields2'): Field[] {
     const data = getActionGameData(this.type, game)
-    return data[list].map((name: string) => new Field(
-      ActionData[this.type].props[name].field,
-      this[name] instanceof Property ? this[name].valueAt(0) : this[name]
-    ))
+    return data[list].map((name: string) => {
+      const prop = ActionData[this.type].props[name]
+      const v = this[name] instanceof Property ? this[name].valueAt(0) : this[name]
+      return new Field(prop.field, 'write' in prop ? prop.write(v) : v)
+    })
   }
 
   getProperties(game: Game, list: 'properties1' | 'properties2'): AnyProperty[] {
     const data = getActionGameData(this.type, game)
-    return (data[list] ?? []).map((name: string) => Array.isArray(ActionData[this.type].props[name].default) ?
-      vectorFromArg(this[name]) :
-      scalarFromArg(this[name])
-    )
+    return (data[list] ?? []).map((name: string) => {
+      const prop = ActionData[this.type].props[name]
+      const v = Array.isArray(prop.default) ?
+        vectorFromArg(this[name]) :
+        scalarFromArg(this[name])
+      return 'write' in prop ? prop.write(v) as AnyProperty : v
+    })
   }
 
   toAction(game: Game) {
@@ -7405,489 +7487,6 @@ class NoParticleSpread extends Action {
 
 }
 
-export interface PointLightParams {
-  /**
-   * Controls the diffuse color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this also controls the specular
-   * color of the light.
-   * 
-   * Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  diffuseColor?: Vector4PropertyArg
-  /**
-   * Controls the specular color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored and
-   * {@link diffuseColor} controls both the diffuse as well as the specular
-   * color.
-   * 
-   * Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  specularColor?: Vector4PropertyArg
-  /**
-   * The maximum distance that the light may travel from the source, and the
-   * radius of the sphere in which other effects caused by the light source
-   * (for example {@link volumeDensity} and its related fields) may act. Defaults
-   * to 10.
-   */
-  radius?: ScalarPropertyArg
-  /**
-   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
-   * easily adjusting the brightness of the light without changing the color.
-   * 
-   * If {@link separateSpecular} is disabled, this also affects the specular
-   * color of the light.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  diffuseMultiplier?: ScalarPropertyArg
-  /**
-   * A scalar multiplier for the {@link specularColor specular color}.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  specularMultiplier?: ScalarPropertyArg
-  /**
-   * Toggles the jitter and flicker animations for the light. Defaults to
-   * false.
-   * 
-   * See also:
-   * - {@link jitterAcceleration}
-   * - {@link jitter}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  jitterAndFlicker?: boolean
-  /**
-   * Controls the acceleration of the jittering. Defaults to 1.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitter}
-   */
-  jitterAcceleration?: number
-  /**
-   * Controls how much the light should move around randomly. Defaults to
-   * [0, 0, 0].
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   */
-  jitter?: Vector3
-  /**
-   * Controls the minimum interval for flickering. Defaults to 0.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMin?: number
-  /**
-   * Controls the maximum interval for flickering. Defaults to 1.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMax?: number
-  /**
-   * Brightness multiplier for the light when it flickers. Defaults to 0.5.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   */
-  flickerBrightness?: number
-  /**
-   * Controls if the light should have shadows or not.
-   * 
-   * Note: Objects also have a setting for casting shadows, and both must be
-   * enabled for an object to cast shadows from this light source.
-   * 
-   * Defaults to false.
-   */
-  shadows?: boolean
-  /**
-   * When enabled, this allows other properties and fields of the action to
-   * control the specular color independently of the diffuse color. When
-   * disabled, the diffuse counterpart of the properties or fields will affect
-   * both the diffuse and specular color. Defaults to false.
-   * 
-   * See also:
-   * - {@link diffuseColor}
-   * - {@link specularColor}
-   * - {@link diffuseMultiplier}
-   * - {@link specularMultiplier}
-   */
-  separateSpecular?: boolean
-  /**
-   * The number of seconds the light takes to fade to nothing after being
-   * destroyed.
-   * 
-   * Due to how the field this represents works, the time will be rounded to
-   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
-   * as the units.
-   * 
-   * Defaults to 0.
-   */
-  fadeOutTime?: number
-  /**
-   * Controls how dark shadows from this light source are. At 0, the shadows
-   * will be entirely invisible. Defaults to 1.
-   */
-  shadowDarkness?: number
-  /**
-   * Controls the density of some sort of fake fog in the volume hit by the
-   * light. The fog does not affect the actual light produced by the source and
-   * is not affected by shadows. Defaults to 0.
-   * 
-   * See also:
-   * - {@link phaseFunction}
-   * - {@link asymmetryParam}
-   */
-  volumeDensity?: number
-  /**
-   * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link volumeDensity}. Defaults to true.
-   */
-  phaseFunction?: boolean
-  /**
-   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
-   * value is ignored if {@link phaseFunction} is disabled, and the fog will
-   * scatter the light equally in all directions.
-   * 
-   * - At 0, the light is scattered equally in every direction.
-   * - As the value approaches 1, the light is scattered more and more forward,
-   * in the same direction as the light was already traveling. This means that
-   * the fake fog will be less visible from the side or behind, and more
-   * visible from in front of the light.
-   * - At 1, the fog will not scatter the light at all, so it will be entirely
-   * invisible.
-   * - Values above 1 produce unnatural-looking effects where the light darkens
-   * the fog instead.
-   * 
-   * Defaults to 0.75.
-   */
-  asymmetryParam?: number
-  /**
-   * Controls the falloff exponent of the light.
-   * 
-   * Note: This is possibly something else, but the behavior is pretty similar
-   * to a falloff exponent in a few ways.
-   * 
-   * Defaults to 1.
-   */
-  falloffExponent?: number
-}
-/**
- * Point light source.
- */
-class PointLight extends Action {
-
-  constructor({
-    diffuseColor = [1, 1, 1, 1],
-    specularColor = diffuseColor instanceof Property ? diffuseColor.clone() : diffuseColor.slice() as Vector4,
-    radius = 10,
-    diffuseMultiplier = 1,
-    specularMultiplier = 1,
-    jitterAndFlicker = false,
-    jitterAcceleration = 1,
-    jitter = [0, 0, 0],
-    flickerIntervalMin = 0,
-    flickerIntervalMax = 1,
-    flickerBrightness = 0.5,
-    shadows = false,
-    separateSpecular = false,
-    fadeOutTime = 0,
-    shadowDarkness = 1,
-    volumeDensity = 0,
-    phaseFunction = true,
-    asymmetryParam = 0.5,
-    falloffExponent = 1,
-  }: PointLightParams = {}) {
-    super(ActionType.PointLight, [
-      /*  0 */ new IntField(0),
-      /*  1 */ new FloatField(0),
-    ], [ // Fields 2
-      /*  0 */ new IntField(0),
-      /*  1 */ new BoolField(jitterAndFlicker),
-      /*  2 */ new FloatField(jitterAcceleration),
-      /*  3 */ new FloatField(0),
-      /*  4 */ new FloatField(jitter[0]),
-      /*  5 */ new FloatField(jitter[1]),
-      /*  6 */ new FloatField(jitter[2]),
-      /*  7 */ new FloatField(flickerIntervalMin),
-      /*  8 */ new FloatField(flickerIntervalMax),
-      /*  9 */ new FloatField(flickerBrightness),
-      /* 10 */ new BoolField(shadows),
-      /* 11 */ new BoolField(separateSpecular),
-      /* 12 */ new IntField(Math.round(fadeOutTime * 30)),
-      /* 13 */ new FloatField(shadowDarkness),
-      /* 14 */ new BoolField(false),
-      /* 15 */ new IntField(2),
-      /* 16 */ new BoolField(false),
-      /* 17 */ new FloatField(0.5),
-      /* 18 */ new FloatField(0.5),
-      /* 19 */ new FloatField(0.5),
-      /* 20 */ new IntField(1),
-      /* 21 */ new IntField(100),
-      /* 22 */ new IntField(1),
-      /* 23 */ new IntField(1),
-      /* 24 */ new FloatField(volumeDensity),
-      /* 25 */ new FloatField(0),
-      /* 26 */ new BoolField(phaseFunction),
-      /* 27 */ new FloatField(asymmetryParam),
-      /* 28 */ new FloatField(falloffExponent),
-      /* 29 */ new IntField(1),
-      /* 30 */ new FloatField(1),
-      /* 31 */ new IntField(1),
-      /* 32 */ new IntField(1),
-    ], [ // Properties1
-      /*  0 */ vectorFromArg(diffuseColor),
-      /*  1 */ vectorFromArg(specularColor),
-      /*  2 */ scalarFromArg(radius),
-      /*  3 */ new ConstantProperty(0),
-      /*  4 */ new ConstantProperty(0),
-      /*  5 */ new ConstantProperty(0),
-      /*  6 */ new ConstantProperty(0),
-      /*  7 */ new ConstantProperty(10),
-      /*  8 */ new ConstantProperty(10),
-      /*  9 */ new ConstantProperty(10),
-    ], [ // Properties2
-      /*  0 */ new ConstantProperty(1),
-      /*  1 */ new ConstantProperty(1),
-      /*  2 */ new ConstantProperty(1),
-      /*  3 */ scalarFromArg(diffuseMultiplier),
-      /*  4 */ scalarFromArg(specularMultiplier),
-    ])
-  }
-
-  /**
-   * Controls the diffuse color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this also controls the specular
-   * color of the light.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get diffuseColor() { return this.properties1[0] }
-  set diffuseColor(value) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * Controls the specular color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored and
-   * {@link diffuseColor} controls both the diffuse as well as the specular
-   * color.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get specularColor() { return this.properties1[1] }
-  set specularColor(value) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * The maximum distance that the light may travel from the source, and the
-   * radius of the sphere in which other effects caused by the light source
-   * (for example {@link volumeDensity} and its related fields) may act.
-   */
-  get radius() { return this.properties1[2] }
-  set radius(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
-   * easily adjusting the brightness of the light without changing the color.
-   * 
-   * If {@link separateSpecular} is disabled, this also affects the specular
-   * color of the light.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get diffuseMultiplier() { return this.properties2[3] }
-  set diffuseMultiplier(value) { setPropertyInList(this.properties2, 3, value) }
-
-  /**
-   * A scalar multiplier for the {@link specularColor specular color}.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get specularMultiplier() { return this.properties1[4] }
-  set specularMultiplier(value) { setPropertyInList(this.properties2, 4, value) }
-
-  /**
-   * Toggles the jitter and flicker animations for the light. Defaults to
-   * false.
-   * 
-   * See also:
-   * - {@link jitterAcceleration}
-   * - {@link jitter}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  get jitterAndFlicker() { return this.fields2[1].value as boolean }
-  set jitterAndFlicker(value) { this.fields2[1].value = value }
-
-  /**
-   * Controls the acceleration of the jittering. Defaults to 1.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitter}
-   */
-  get jitterAcceleration() { return this.fields2[2].value as number }
-  set jitterAcceleration(value) { this.fields2[2].value = value }
-
-  /**
-   * Controls how much the light should move around randomly.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   */
-  get jitter() { return this.fields2.slice(4, 7).map(f => f.value) as Vector3 }
-  set jitter(value) { for (let i = 2; i >= 0; i--) this.fields2[4 + i].value = value[i] }
-
-  /**
-   * Controls the minimum interval for flickering.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  get flickerIntervalMin() { return this.fields2[7].value as number }
-  set flickerIntervalMin(value) { this.fields2[7].value = value }
-
-  /**
-   * Controls the maximum interval for flickering.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerBrightness}
-   */
-  get flickerIntervalMax() { return this.fields2[8].value as number }
-  set flickerIntervalMax(value) { this.fields2[8].value = value }
-
-  /**
-   * Brightness multiplier for the light when it flickers.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   */
-  get flickerBrightness() { return this.fields2[9].value as number }
-  set flickerBrightness(value) { this.fields2[9].value = value }
-
-  /**
-   * Controls if the light should have shadows or not.
-   * 
-   * Note: Objects also have a setting for casting shadows, and both must be
-   * enabled for an object to cast shadows from this light source.
-   */
-  get shadows() { return this.fields2[10].value as boolean }
-  set shadows(value) { this.fields2[10].value = value }
-
-  /**
-   * When enabled, this allows other properties and fields of the action to
-   * control the specular color independently of the diffuse color. When
-   * disabled, the diffuse counterpart of the properties or fields will affect
-   * both the diffuse and specular color.
-   * 
-   * See also:
-   * - {@link diffuseColor}
-   * - {@link specularColor}
-   * - {@link diffuseMultiplier}
-   * - {@link specularMultiplier}
-   */
-  get separateSpecular() { return this.fields2[11].value as boolean }
-  set separateSpecular(value) { this.fields2[11].value = value }
-
-  /**
-   * The number of seconds the light takes to fade to nothing after being
-   * destroyed.
-   * 
-   * Due to how the field this represents works, the time will be rounded to
-   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
-   * as the units.
-   */
-  get fadeOutTime() { return (this.fields2[12].value as number) / 30 }
-  set fadeOutTime(value) { this.fields2[12].value = Math.round(value * 30) }
-
-  /**
-   * Controls how dark shadows from this light source are. At 0, the shadows
-   * will be entirely invisible.
-   */
-  get shadowDarkness() { return this.fields2[13].value as number }
-  set shadowDarkness(value) { this.fields2[13].value = value }
-
-  /**
-   * Controls the density of some sort of fake fog in the volume hit by the
-   * light. The fog does not affect the actual light produced by the source and
-   * is not affected by shadows.
-   * 
-   * See also:
-   * - {@link phaseFunction}
-   * - {@link asymmetryParam}
-   */
-  get volumeDensity() { return this.fields2[24].value as number }
-  set volumeDensity(value) { this.fields2[24].value = value }
-
-  /**
-   * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link volumeDensity}.
-   */
-  get phaseFunction() { return this.fields2[26].value as boolean }
-  set phaseFunction(value) { this.fields2[26].value = value }
-
-  /**
-   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
-   * value is ignored if {@link phaseFunction} is disabled, and the fog will
-   * scatter the light equally in all directions.
-   * 
-   * - At 0, the light is scattered equally in every direction.
-   * - As the value approaches 1, the light is scattered more and more forward,
-   * in the same direction as the light was already traveling. This means that
-   * the fake fog will be less visible from the side or behind, and more
-   * visible from in front of the light.
-   * - At 1, the fog will not scatter the light at all, so it will be entirely
-   * invisible.
-   * - Values above 1 produce unnatural-looking effects where the light darkens
-   * the fog instead.
-   */
-  get asymmetryParam() { return this.fields2[27].value as number }
-  set asymmetryParam(value) { this.fields2[27].value = value }
-
-  /**
-   * Controls the falloff exponent of the light.
-   * 
-   * Note: This is possibly something else, but the behavior is pretty similar
-   * to a falloff exponent in a few ways.
-   */
-  get falloffExponent() { return this.fields2[28].value as number }
-  set falloffExponent(value) { this.fields2[28].value = value }
-
-}
-
 /**
  * Controls how effective the wind is at pushing the node.
  */
@@ -8827,6 +8426,11 @@ export interface PeriodicEmitterParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   maxConcurrent?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_1?: number
 }
 
@@ -8883,8 +8487,25 @@ export interface EqualDistanceEmitterParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   maxConcurrent?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   unk_ds3_p1_1?: ScalarPropertyArg
 }
 
@@ -9629,49 +9250,269 @@ export interface PointSpriteParams {
    * - {@link minDistance}
    */
   maxDistance?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_sdt_f2_35?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_38?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_39?: number
 }
 
@@ -10006,47 +9847,257 @@ export interface LineParams {
    * - {@link minDistance}
    */
   maxDistance?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_35?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_38?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_39?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_2?: number
 }
 
@@ -10413,47 +10464,257 @@ export interface QuadLineParams {
    * - {@link minDistance}
    */
   maxDistance?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_35?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_38?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_39?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_2?: number
 }
 
@@ -11099,56 +11360,311 @@ export interface BillboardExParams {
    * - {@link glossiness}
    */
   specularity?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `5`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_21?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_22?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_17?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_39?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_40?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_41?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_42?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_43?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_44?: number
 }
 
@@ -11757,6 +12273,11 @@ export interface MultiTextureBillboardExParams {
    * **Default**: {@link LightingMode.Unlit}
    */
   lighting?: LightingMode
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_38?: number
   /**
    * Blend mode.
@@ -12101,59 +12622,329 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_6?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `5`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_23?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_24?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_25?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_26?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_27?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_28?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_39?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_40?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_41?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_42?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_43?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_44?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_45?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_46?: number
 }
 
@@ -13089,57 +13880,317 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `true`
+   */
   unk_ds3_f1_11?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `true`
+   */
   unk_ds3_f1_12?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_17?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_18?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_15?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_24?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_17?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_18?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_19?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_38?: number
 }
 
@@ -13876,51 +14927,281 @@ export interface TracerParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `5`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_p1_13?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_39?: number
 }
 
@@ -14540,51 +15821,281 @@ export interface DistortionParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p1_7?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_9?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unk_sdt_f2_35?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_38?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_p2_7?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_p2_8?: ScalarPropertyArg
 }
 
@@ -15113,39 +16624,209 @@ export interface RadialBlurParams {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   alphaMultiplier?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
   unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0.5`
+   */
   unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p1_6?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5?: Vector4PropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_4?: number
 }
 
@@ -15362,6 +17043,623 @@ class RadialBlur extends DataAction {
   }
 }
 
+export interface PointLightParams {
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link specularColor}
+   */
+  diffuseColor?: Vector4PropertyArg
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularColor?: Vector4PropertyArg
+  /**
+   * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
+   * 
+   * **Default**: `10`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius?: ScalarPropertyArg
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseMultiplier?: ScalarPropertyArg
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularMultiplier?: ScalarPropertyArg
+  /**
+   * Toggles the jitter and flicker animations for the light.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker?: boolean
+  /**
+   * Controls the acceleration of the jittering.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterAcceleration?: number
+  /**
+   * Controls how much the light should move around randomly on the X-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterX?: number
+  /**
+   * Controls how much the light should move around randomly on the Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterZ}
+   */
+  jitterY?: number
+  /**
+   * Controls how much the light should move around randomly on the Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   */
+  jitterZ?: number
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin?: number
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax?: number
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness?: number
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+   * 
+   * **Default**: `false`
+   */
+  shadows?: boolean
+  /**
+   * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
+  separateSpecular?: boolean
+  /**
+   * The number of seconds the light takes to fade to nothing after being destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+   * 
+   * **Default**: `0`
+   */
+  fadeOutTime?: number
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+   * 
+   * **Default**: `1`
+   */
+  shadowDarkness?: number
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  volumeDensity?: number
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+   * 
+   * **Default**: `true`
+   */
+  phaseFunction?: boolean
+  /**
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+   * 
+   * **Default**: `0.75`
+   */
+  asymmetryParam?: number
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+   * 
+   * **Default**: `1`
+   */
+  falloffExponent?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_3?: number
+  /**
+   * Unknown. Only used in Dark Souls 3.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `false`
+   */
+  unk_ds3_f2_15?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `2`
+   */
+  unk_ds3_f2_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `true`
+   */
+  unk_ds3_f2_17?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_18?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_19?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `100`
+   */
+  unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_3?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_4?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_5?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_6?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `10`
+   */
+  unk_ds3_p1_7?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `10`
+   */
+  unk_ds3_p1_8?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `10`
+   */
+  unk_ds3_p1_9?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p2_0?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p2_1?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f2_25?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_p2_2?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_32?: number
+}
+
+/**
+ * Point light source.
+ */
+class PointLight extends DataAction {
+  declare type: ActionType.PointLight
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link specularColor}
+   */
+  diffuseColor: Vector4PropertyArg
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularColor: Vector4PropertyArg
+  /**
+   * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radius: ScalarPropertyArg
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseMultiplier: ScalarPropertyArg
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularMultiplier: ScalarPropertyArg
+  /**
+   * Toggles the jitter and flicker animations for the light.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker: boolean
+  /**
+   * Controls the acceleration of the jittering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterAcceleration: number
+  /**
+   * Controls how much the light should move around randomly on the X-axis.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterX: number
+  /**
+   * Controls how much the light should move around randomly on the Y-axis.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterZ}
+   */
+  jitterY: number
+  /**
+   * Controls how much the light should move around randomly on the Z-axis.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   */
+  jitterZ: number
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin: number
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax: number
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness: number
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+   */
+  shadows: boolean
+  /**
+   * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
+  separateSpecular: boolean
+  /**
+   * The number of seconds the light takes to fade to nothing after being destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+   */
+  fadeOutTime: number
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+   */
+  shadowDarkness: number
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  volumeDensity: number
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+   */
+  phaseFunction: boolean
+  /**
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+   */
+  asymmetryParam: number
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+   */
+  falloffExponent: number
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_3: number
+  /**
+   * Unknown. Only used in Dark Souls 3.
+   */
+  unk_ds3_f2_12: number
+  unk_ds3_f2_15: boolean
+  unk_ds3_f2_16: number
+  unk_ds3_f2_17: boolean
+  unk_ds3_f2_18: number
+  unk_ds3_f2_19: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unk_ds3_p1_3: ScalarPropertyArg
+  unk_ds3_p1_4: ScalarPropertyArg
+  unk_ds3_p1_5: ScalarPropertyArg
+  unk_ds3_p1_6: ScalarPropertyArg
+  unk_ds3_p1_7: ScalarPropertyArg
+  unk_ds3_p1_8: ScalarPropertyArg
+  unk_ds3_p1_9: ScalarPropertyArg
+  unk_ds3_p2_0: ScalarPropertyArg
+  unk_ds3_p2_1: ScalarPropertyArg
+  unk_sdt_f2_25: number
+  unk_sdt_p2_2: ScalarPropertyArg
+  unk_er_f2_29: number
+  unk_er_f2_30: number
+  unk_er_f2_31: number
+  unk_er_f2_32: number
+  constructor(props: PointLightParams = {}) {
+    super(ActionType.PointLight)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -15371,15 +17669,65 @@ export interface Unk10500Params {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   rateOfTime?: ScalarPropertyArg
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_5?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_6?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_9?: number
 }
 
@@ -15446,7 +17794,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
@@ -16646,7 +18993,6 @@ export {
   EmitRandomParticles,
   OneTimeEmitter,
   NoParticleSpread,
-  PointLight,
   NodeWindSpeed,
   ParticleWindSpeed,
   NodeWindAcceleration,
@@ -16675,6 +19021,7 @@ export {
   Tracer,
   Distortion,
   RadialBlur,
+  PointLight,
   Unk10500,
   /*#ActionsExport end*/
 

@@ -120,7 +120,7 @@ export default async function() {
             if (Array.isArray(defValue)) {
               defValue = `[${defValue.join(', ')}]`
             }
-            return `${k}: { default: ${defValue}, paths: {}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''} },`
+            return `${k}: { default: ${defValue}, paths: {}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
           }).join('\n          ')}
         },
         games: {
@@ -159,10 +159,9 @@ export default async function() {
             } else {
               defValue = `\`${defValue}\``
             }
-            return (
-              'desc' in v ? `
+            return (`
                 /**
-                 * ${v.desc.trim().replace(/\n/g, '\n   * ')}
+                 * ${'desc' in v ? v.desc.trim().replace(/\n/g, '\n   * ') : 'Unknown.'}
                  * 
                  * **Default**: ${defValue}${
                   'argument' in v ? `
@@ -173,7 +172,7 @@ export default async function() {
                  * See also:
                  * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
                  */
-              ` : '\n  '
+              `
             ) + `${k}?: ${v.type ?? typeMap[v.field]}`
           })
             .join('')
