@@ -1,0 +1,40 @@
+type: 10013
+name: WaterInteraction
+desc: |
+  Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+properties:
+  texture:
+    field: int
+    default: 50004
+    desc: |
+      The ID for a texture that controls the shape of the interaction.
+  depth:
+    field: float
+    default: 1
+    desc: |
+      Controls how deep to push the water, or how intense the ripples caused by the interaction are.
+  scale:
+    field: float
+    default: 1
+    desc: |
+      Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
+  descent:
+    field: float
+    default: 0.15
+    desc: |
+      The time it takes for the water to be pushed down to the {@link depth} in seconds.
+  duration:
+    field: float
+    default: 0.15
+    desc: |
+      The duration of the interaction in seconds. Basically how long to hold the water pressed down.
+games:
+  SDT:
+    fields1:
+      - texture
+      - depth
+      - scale
+      - descent
+      - duration
+  ER: SDT
+  AC6: SDT

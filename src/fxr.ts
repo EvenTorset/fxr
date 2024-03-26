@@ -346,15 +346,6 @@ enum ActionType {
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
   Unk10012_Tracer = 10012,
-  /**
-   * Simulates an interaction with water, allowing effects to create ripples in
-   * nearby water. The interaction basically pushes water in a shape controlled
-   * by a texture down to a given depth and holds it there for a duration before
-   * releasing it.
-   * 
-   * This action type has a specialized subclass: {@link WaterInteraction}
-   */
-  WaterInteraction = 10013,
   Unk10014_LensFlare = 10014,
   Unk10015_RichModel = 10015,
   Unk10100 = 10100, // Root node action
@@ -509,6 +500,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
+  /**
+   * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+   * 
+   * This action type has a specialized subclass: {@link WaterInteraction}
+   */
+  WaterInteraction = 10013,
   /**
    * Unknown root node action.
    * 
@@ -2298,6 +2295,22 @@ const ActionData: {
         properties2: Game.Sekiro
       },
       [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.WaterInteraction]: {
+    props: {
+      texture: { default: 50004, paths: {}, field: FieldType.Integer },
+      depth: { default: 1, paths: {}, field: FieldType.Float },
+      scale: { default: 1, paths: {}, field: FieldType.Float },
+      descent: { default: 0.15, paths: {}, field: FieldType.Float },
+      duration: { default: 0.15, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.Sekiro]: {
+        fields1: ['texture','depth','scale','descent','duration']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
     }
   },
   [ActionType.Unk10500]: {
@@ -7769,93 +7782,6 @@ class ParticleWindAcceleration extends Action {
       return new Action
     }
   }
-
-}
-
-export interface WaterInteractionParams {
-  /**
-   * The ID for a texture that controls the shape of the interaction. Defaults
-   * to 50004.
-   */
-  texture?: number
-  /**
-   * Controls how deep to push the water, or how intense the ripples caused by
-   * the interaction are. Defaults to 1.
-   */
-  depth?: number
-  /**
-   * Controls the size of the interaction area. Ripples caused by the
-   * interaction may go outside of the area. Defaults to 1.
-   */
-  scale?: number
-  /**
-   * The time it takes for the water to be pushed down to the {@link depth} in
-   * seconds. Defaults to 0.15.
-   */
-  descent?: number
-  /**
-   * The duration of the interaction in seconds. Basically how long to hold the
-   * water pressed down. Defaults to 0.15.
-   */
-  duration?: number
-}
-/**
- * Simulates an interaction with water, allowing effects to create ripples in
- * nearby water. The interaction basically pushes water in a shape controlled
- * by a texture down to a given depth and holds it there for a duration before
- * releasing it.
- */
-class WaterInteraction extends Action {
-
-  constructor({
-    texture = 50004,
-    depth = 1,
-    scale = 1,
-    descent = 0.15,
-    duration = 0.15,
-  }: WaterInteractionParams = {}) {
-    super(ActionType.WaterInteraction, [
-      new IntField(texture),
-      new FloatField(depth),
-      new FloatField(scale),
-      new FloatField(descent),
-      new FloatField(duration),
-    ])
-  }
-
-  /**
-   * The ID for a texture that controls the shape of the interaction.
-   */
-  get texture() { return this.fields1[0].value as number }
-  set texture(value) { this.fields1[0].value = value }
-
-  /**
-   * Controls how deep to push the water, or how intense the ripples caused by
-   * the interaction are.
-   */
-  get depth() { return this.fields1[1].value as number }
-  set depth(value) { this.fields1[1].value = value }
-
-  /**
-   * Controls the size of the interaction area. Ripples caused by the
-   * interaction may go outside of the area.
-   */
-  get scale() { return this.fields1[2].value as number }
-  set scale(value) { this.fields1[2].value = value }
-
-  /**
-   * The time it takes for the water to be pushed down to the {@link depth} in
-   * seconds.
-   */
-  get descent() { return this.fields1[3].value as number }
-  set descent(value) { this.fields1[3].value = value }
-
-  /**
-   * The duration of the interaction in seconds. Basically how long to hold the
-   * water pressed down.
-   */
-  get duration() { return this.fields1[4].value as number }
-  set duration(value) { this.fields1[4].value = value }
 
 }
 
@@ -17660,6 +17586,70 @@ class PointLight extends DataAction {
   }
 }
 
+export interface WaterInteractionParams {
+  /**
+   * The ID for a texture that controls the shape of the interaction.
+   * 
+   * **Default**: `50004`
+   */
+  texture?: number
+  /**
+   * Controls how deep to push the water, or how intense the ripples caused by the interaction are.
+   * 
+   * **Default**: `1`
+   */
+  depth?: number
+  /**
+   * Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
+   * 
+   * **Default**: `1`
+   */
+  scale?: number
+  /**
+   * The time it takes for the water to be pushed down to the {@link depth} in seconds.
+   * 
+   * **Default**: `0.15`
+   */
+  descent?: number
+  /**
+   * The duration of the interaction in seconds. Basically how long to hold the water pressed down.
+   * 
+   * **Default**: `0.15`
+   */
+  duration?: number
+}
+
+/**
+ * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+ */
+class WaterInteraction extends DataAction {
+  declare type: ActionType.WaterInteraction
+  /**
+   * The ID for a texture that controls the shape of the interaction.
+   */
+  texture: number
+  /**
+   * Controls how deep to push the water, or how intense the ripples caused by the interaction are.
+   */
+  depth: number
+  /**
+   * Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
+   */
+  scale: number
+  /**
+   * The time it takes for the water to be pushed down to the {@link depth} in seconds.
+   */
+  descent: number
+  /**
+   * The duration of the interaction in seconds. Basically how long to hold the water pressed down.
+   */
+  duration: number
+  constructor(props: WaterInteractionParams = {}) {
+    super(ActionType.WaterInteraction)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -17798,7 +17788,6 @@ const Actions = {
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
-  [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.SpotLight]: SpotLight, SpotLight,
 }
 
@@ -18997,7 +18986,6 @@ export {
   ParticleWindSpeed,
   NodeWindAcceleration,
   ParticleWindAcceleration,
-  WaterInteraction,
   SpotLight,
   /*#ActionsExport start*/
   SFXReference,
@@ -19022,6 +19010,7 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
+  WaterInteraction,
   Unk10500,
   /*#ActionsExport end*/
 
