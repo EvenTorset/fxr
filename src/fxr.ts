@@ -15638,13 +15638,21 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
   }
 
   get fields(): NumericalField[] {
+    const cc = this.componentCount
     switch (this.function) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
         this.sortKeyframes()
         return [
           new IntField(this.keyframes.length),
-          ...arrayOf(2 * this.componentCount, () => new FloatField),
+          ...(cc === 1 ?
+            [Math.min(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
+          ...(cc === 1 ?
+            [Math.max(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -15657,7 +15665,14 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
         this.sortKeyframes()
         return [
           new IntField(this.keyframes.length),
-          ...arrayOf(2 * this.componentCount, () => new FloatField),
+          ...(cc === 1 ?
+            [Math.min(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
+          ...(cc === 1 ?
+            [Math.max(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -15908,7 +15923,8 @@ class ComponentKeyframeProperty<T extends ValueType>
         0
       )),
       ...this.components.map(e => new IntField(e.keyframes.length)),
-      ...arrayOf(2 * this.componentCount, () => new FloatField),
+      ...this.components.map(comp => new FloatField(Math.min(...comp.keyframes.map(e => e.value)))),
+      ...this.components.map(comp => new FloatField(Math.max(...comp.keyframes.map(e => e.value)))),
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
