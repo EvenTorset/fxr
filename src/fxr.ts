@@ -304,14 +304,6 @@ enum ActionType {
    */
   NoParticleSpread = 500,
   /**
-   * A particle that applies a radial blur to anything seen through it.
-   * 
-   * Note: This particle is not visible if the "Effects" setting is set to "Low".
-   * 
-   * This action type has a specialized subclass: {@link RadialBlur}
-   */
-  RadialBlur = 608,
-  /**
    * Point light source.
    * 
    * This action type has a specialized subclass: {@link PointLight}
@@ -509,6 +501,14 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Distortion}
    */
   Distortion = 607,
+  /**
+   * A particle that applies a radial blur to anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * This action type has a specialized subclass: {@link RadialBlur}
+   */
+  RadialBlur = 608,
   /**
    * Unknown root node action.
    * 
@@ -2140,6 +2140,84 @@ const ActionData: {
         fields2: Game.Sekiro,
         properties1: Game.Sekiro,
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_er_p2_7','unk_er_p2_8']
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.RadialBlur]: {
+    props: {
+      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      iterations: { default: 1, paths: {}, field: FieldType.Integer },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      mask: { default: 1, paths: {}, field: FieldType.Integer },
+      offsetX: { default: 0, paths: {} },
+      offsetY: { default: 0, paths: {} },
+      offsetZ: { default: 0, paths: {} },
+      width: { default: 1, paths: {} },
+      height: { default: 1, paths: {} },
+      color: { default: [1, 1, 1, 1], paths: {} },
+      blurRadius: { default: 0.5, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0.5, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_21: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_p1_6: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Float },
+      unk_er_f1_3: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_4: { default: 1, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['blendMode','mask','uniformScale','iterations','unk_ds3_f1_4'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['uniformScale','iterations','unk_ds3_f1_4'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30'],
+        properties1: ['blendMode','mask','offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
+        properties2: Game.DarkSouls3
+      },
+      [Game.EldenRing]: {
+        fields1: ['uniformScale','iterations','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
+        fields2: Game.Sekiro,
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -7324,425 +7402,6 @@ class NoParticleSpread extends Action {
   constructor() {
     super(ActionType.NoParticleSpread)
   }
-
-}
-
-/**
- * Super class for some of the 6xx actions that share part of their fields2
- * structure with other 6xx actions.
- */
-class CommonFields2Action extends Action {
-
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  get bloomColor() {
-    return [
-      this.fields2[5].value as number,
-      this.fields2[6].value as number,
-      this.fields2[7].value as number,
-    ] as Vector3
-  }
-  set bloomColor([r, g, b]) {
-    this.fields2[5].value = r
-    this.fields2[6].value = g
-    this.fields2[7].value = b
-  }
-
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  get bloomStrength() { return this.fields2[8].value as number }
-  set bloomStrength(value) { this.fields2[8].value = value }
-
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  get minDistance() { return this.fields2[18].value as number }
-  set minDistance(value) { this.fields2[18].value = value }
-
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  get maxDistance() { return this.fields2[19].value as number }
-  set maxDistance(value) { this.fields2[19].value = value }
-
-}
-
-export interface RadialBlurParams {
-  /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored. Defaults to false.
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   */
-  uniformScale?: boolean
-  /**
-   * Controls how many times to apply the effect. Higher values can have a
-   * significant impact on performance. Defaults to 1.
-   */
-  iterations?: number
-  /**
-   * Controls the color of the additional bloom effect. The colors of the
-   * particles will be multiplied with this color to get the final color
-   * of the bloom effect. Defaults to [1, 1, 1].
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomStrength}
-   */
-  bloomColor?: Vector3
-  /**
-   * Controls the strength of the additional bloom effect. Defaults to 0.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloomStrength?: number
-  /**
-   * Minimum view distance. If the particle is closer than this distance from
-   * the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link maxDistance}
-   */
-  minDistance?: number
-  /**
-   * Maximum view distance. If the particle is farther away than this distance
-   * from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * Defaults to -1.
-   * 
-   * See also:
-   * - {@link minDistance}
-   */
-  maxDistance?: number
-  /**
-   * Blend mode. Defaults to {@link BlendMode.Normal}.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * Mask texture ID. This texture is used to control the opacity of the
-   * particle. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  mask?: ScalarPropertyArg
-  /**
-   * X position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  offsetX?: ScalarPropertyArg
-  /**
-   * Y position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  offsetY?: ScalarPropertyArg
-  /**
-   * Z position offset. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  offsetZ?: ScalarPropertyArg
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  width?: ScalarPropertyArg
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
-   * height, and this property is ignored.
-   * 
-   * Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  height?: ScalarPropertyArg
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  color?: Vector4PropertyArg
-  /**
-   * Controls the amount of blur to apply. Values greater than 1 may appear
-   * glitchy. Defaults to 0.5.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  blurRadius?: ScalarPropertyArg
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  rgbMultiplier?: ScalarPropertyArg
-  /**
-   * Alpha multiplier. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  alphaMultiplier?: ScalarPropertyArg
-}
-/**
- * A particle that applies a radial blur to anything seen through it.
- * 
- * Note: This particle is not visible if the "Effects" setting is set to "Low".
- */
-class RadialBlur extends CommonFields2Action {
-
-  constructor({
-    uniformScale = false,
-    iterations = 1,
-    bloomColor = [1, 1, 1],
-    bloomStrength = 0,
-    minDistance = -1,
-    maxDistance = -1,
-    blendMode = BlendMode.Normal,
-    mask = 1,
-    offsetX = 0,
-    offsetY = 0,
-    offsetZ = 0,
-    width = 1,
-    height = 1,
-    color = [1, 1, 1, 1],
-    blurRadius = 0.5,
-    rgbMultiplier = 1,
-    alphaMultiplier = 1,
-  }: RadialBlurParams = {}) {
-    super(ActionType.RadialBlur, [
-      /*  0 */ new BoolField(uniformScale),
-      /*  1 */ new IntField(iterations),
-      /*  2 */ new IntField(0),
-      /*  3 */ new IntField(1),
-      /*  4 */ new IntField(1),
-    ], [
-      /*  0 */ new IntField(0),
-      /*  1 */ new IntField(0),
-      /*  2 */ new IntField(8),
-      /*  3 */ new FloatField(1),
-      /*  4 */ new IntField(0),
-      /*  5 */ new FloatField(bloomColor[0]),
-      /*  6 */ new FloatField(bloomColor[1]),
-      /*  7 */ new FloatField(bloomColor[2]),
-      /*  8 */ new FloatField(bloomStrength),
-      /*  9 */ new IntField(0),
-      /* 10 */ new IntField(0),
-      /* 11 */ new IntField(0),
-      /* 12 */ new IntField(0),
-      /* 13 */ new IntField(0),
-      /* 14 */ new FloatField(-1),
-      /* 15 */ new FloatField(-1),
-      /* 16 */ new FloatField(-1),
-      /* 17 */ new FloatField(-1),
-      /* 18 */ new FloatField(minDistance),
-      /* 19 */ new FloatField(maxDistance),
-      /* 20 */ new FloatField(0.5),
-      /* 21 */ new IntField(1),
-      /* 22 */ new IntField(0),
-      /* 23 */ new IntField(0),
-      /* 24 */ new IntField(0),
-      /* 25 */ new FloatField(1), // depth blend 1
-      /* 26 */ new FloatField(0), // depth blend 2
-      /* 27 */ new IntField(1),
-      /* 28 */ new IntField(0),
-      /* 29 */ new FloatField(0),
-      /* 30 */ new FloatField(0),
-    ], [
-      /*  0 */ scalarFromArg(blendMode),
-      /*  1 */ scalarFromArg(mask),
-      /*  2 */ scalarFromArg(offsetX),
-      /*  3 */ scalarFromArg(offsetY),
-      /*  4 */ scalarFromArg(offsetZ),
-      /*  5 */ scalarFromArg(width),
-      /*  6 */ scalarFromArg(height),
-      /*  7 */ vectorFromArg(color),
-      /*  8 */ new ConstantProperty(1, 1, 1, 1),
-      /*  9 */ scalarFromArg(blurRadius),
-    ], [
-      /*  0 */ scalarFromArg(rgbMultiplier),
-      /*  1 */ scalarFromArg(alphaMultiplier),
-      /*  2 */ new ConstantProperty(0),
-      /*  3 */ new ConstantProperty(1, 1, 1, 1),
-      /*  4 */ new ConstantProperty(1, 1, 1, 1),
-      /*  5 */ new ConstantProperty(1, 1, 1, 1),
-      /*  6 */ new ConstantProperty(0),
-    ])
-  }
-
-  /**
-   * If enabled, the particle width-related properties and fields will control
-   * both the width and height of the particles, and the height counterparts
-   * will be ignored.
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   */
-  get uniformScale() { return this.fields1[0].value as number }
-  set uniformScale(value) { this.fields1[0].value = value }
-
-  /**
-   * Controls how many times to apply the effect. Higher values can have a
-   * significant impact on performance. Defaults to 1.
-   */
-  get iterations() { return this.fields1[1].value as number }
-  set iterations(value) { this.fields1[1].value = value }
-
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendMode() { return this.properties1[0].valueAt(0) as BlendMode }
-  set blendMode(value: BlendMode | ScalarProperty) { setPropertyInList(this.properties1, 0, value) }
-  /**
-   * Blend mode. See {@link BlendMode} for more information.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get blendModeProperty() { return this.properties1[0] }
-
-  /**
-   * Mask texture ID. This texture is used to control the opacity of the
-   * particle.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get mask() { return this.properties1[1].valueAt(0) }
-  set mask(value) { setPropertyInList(this.properties1, 1, value) }
-  /**
-   * Mask texture ID. This texture is used to control the opacity of the
-   * particle.
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  get maskProperty() { return this.properties1[1] }
-
-  /**
-   * X position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get offsetX() { return this.properties1[2] }
-  set offsetX(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Y position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get offsetY() { return this.properties1[3] }
-  set offsetY(value) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Z position offset.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get offsetZ() { return this.properties1[4] }
-  set offsetZ(value) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get width() { return this.properties1[5] }
-  set width(value) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the
-   * height, and this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get height() { return this.properties1[6] }
-  set height(value) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get color() { return this.properties1[7] }
-  set color(value) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Controls the amount of blur to apply. Values greater than 1 may appear
-   * glitchy.
-   * 
-   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
-   */
-  get blurRadius() { return this.properties1[9] }
-  set blurRadius(value) { setPropertyInList(this.properties1, 9, value) }
-
-  /**
-   * Scalar multiplier for the color that does not affect the alpha.
-   * Effectively a brightness multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get rgbMultiplier() { return this.properties2[0] }
-  set rgbMultiplier(value) { setPropertyInList(this.properties2, 0, value) }
-
-  /**
-   * Alpha multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get alphaMultiplier() { return this.properties2[1] }
-  set alphaMultiplier(value) { setPropertyInList(this.properties2, 1, value) }
 
 }
 
@@ -15249,6 +14908,460 @@ class Distortion extends DataAction {
   }
 }
 
+export interface RadialBlurParams {
+  /**
+   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls how many times to apply the effect. Higher values can have a significant impact on performance.
+   * 
+   * **Default**: `1`
+   */
+  iterations?: number
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the particle.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  mask?: ScalarPropertyArg
+  /**
+   * X position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link offsetY}
+   * - {@link offsetZ}
+   */
+  offsetX?: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link offsetX}
+   * - {@link offsetZ}
+   */
+  offsetY?: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link offsetX}
+   * - {@link offsetY}
+   */
+  offsetZ?: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link height}
+   */
+  width?: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link width}
+   */
+  height?: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color?: Vector4PropertyArg
+  /**
+   * Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
+   * 
+   * **Default**: `0.5`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  blurRadius?: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarPropertyArg
+  unk_ds3_f1_4?: number
+  unk_ds3_f2_0?: number
+  unk_ds3_f2_1?: number
+  unk_ds3_f2_2?: number
+  unk_ds3_f2_3?: number
+  unk_ds3_f2_4?: number
+  unk_ds3_f2_9?: number
+  unk_ds3_f2_10?: number
+  unk_ds3_f2_11?: number
+  unk_ds3_f2_12?: number
+  unk_ds3_f2_13?: number
+  unkDistFadeClose0?: number
+  unkDistFadeClose1?: number
+  unkDistFadeFar0?: number
+  unkDistFadeFar1?: number
+  unk_ds3_f2_20?: number
+  unk_ds3_f2_21?: number
+  unk_ds3_f2_22?: number
+  unk_ds3_f2_23?: number
+  unk_ds3_f2_24?: number
+  unkDepthBlend1?: number
+  unkDepthBlend2?: number
+  unk_ds3_f2_27?: number
+  unk_ds3_f2_28?: number
+  unk_ds3_f2_29?: number
+  unk_ds3_p1_6?: Vector4PropertyArg
+  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_sdt_f2_30?: number
+  unk_er_f1_3?: number
+  unk_er_f1_4?: number
+}
+
+/**
+ * A particle that applies a radial blur to anything seen through it.
+   * 
+   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ */
+class RadialBlur extends DataAction {
+  declare type: ActionType.RadialBlur
+  /**
+   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * See also:
+   * - {@link width}
+   * - {@link height}
+   */
+  uniformScale: boolean
+  /**
+   * Controls how many times to apply the effect. Higher values can have a significant impact on performance.
+   */
+  iterations: number
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * Mask texture ID. This texture is used to control the opacity of the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  mask: ScalarPropertyArg
+  /**
+   * X position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link offsetY}
+   * - {@link offsetZ}
+   */
+  offsetX: ScalarPropertyArg
+  /**
+   * Y position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link offsetX}
+   * - {@link offsetZ}
+   */
+  offsetY: ScalarPropertyArg
+  /**
+   * Z position offset.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link offsetX}
+   * - {@link offsetY}
+   */
+  offsetZ: ScalarPropertyArg
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link height}
+   */
+  width: ScalarPropertyArg
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link width}
+   */
+  height: ScalarPropertyArg
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color: Vector4PropertyArg
+  /**
+   * Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  blurRadius: ScalarPropertyArg
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarPropertyArg
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarPropertyArg
+  unk_ds3_f1_4: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p1_6: Vector4PropertyArg
+  unk_ds3_p2_2: ScalarPropertyArg
+  unk_ds3_p2_3: Vector4PropertyArg
+  unk_ds3_p2_4: Vector4PropertyArg
+  unk_ds3_p2_5: Vector4PropertyArg
+  unk_ds3_p2_6: ScalarPropertyArg
+  unk_sdt_f2_30: number
+  unk_er_f1_3: number
+  unk_er_f1_4: number
+  constructor(props: RadialBlurParams = {}) {
+    super(ActionType.RadialBlur)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -15333,7 +15446,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
@@ -16534,8 +16646,6 @@ export {
   EmitRandomParticles,
   OneTimeEmitter,
   NoParticleSpread,
-  CommonFields2Action,
-  RadialBlur,
   PointLight,
   NodeWindSpeed,
   ParticleWindSpeed,
@@ -16564,6 +16674,7 @@ export {
   Model,
   Tracer,
   Distortion,
+  RadialBlur,
   Unk10500,
   /*#ActionsExport end*/
 
