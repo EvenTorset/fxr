@@ -3322,8 +3322,7 @@ class BinaryReader extends DataView {
   }
 
   getFloat32(offset: number) {
-    // Rounding to get rid of most errors from precision loss
-    return Math.round(super.getFloat32(offset, this.littleEndian) * 1e7) / 1e7
+    return super.getFloat32(offset, this.littleEndian)
   }
 
   getFloat64(offset: number) {
