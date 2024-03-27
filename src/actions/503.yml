@@ -4,7 +4,7 @@ desc: |
   Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
 properties:
   angleX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 30
     argument: EffectAge
     desc: |
@@ -12,7 +12,7 @@ properties:
     see:
       - angleY
   angleY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 30
     argument: EffectAge
     desc: |
@@ -20,7 +20,7 @@ properties:
     see:
       - angleX
   distribution:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: EffectAge
     desc: |

@@ -169,22 +169,22 @@ properties:
     desc: |
       Blend mode.
   offsetX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       X position offset.
   offsetY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Y position offset.
   offsetZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Z position offset.
   width:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -192,7 +192,7 @@ properties:
 
       If {@link uniformScale} is enabled, this also controls the height.
   height:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -200,7 +200,7 @@ properties:
 
       If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
   rotationX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the X-axis in degrees.
@@ -208,7 +208,7 @@ properties:
       - rotationSpeedX
       - rotationSpeedMultiplierX
   rotationY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the Y-axis in degrees.
@@ -216,7 +216,7 @@ properties:
       - rotationSpeedY
       - rotationSpeedMultiplierY
   rotationZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the Z-axis in degrees.
@@ -224,7 +224,7 @@ properties:
       - rotationSpeedZ
       - rotationSpeedMultiplierZ
   rotationSpeedX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Rotation speed around the X-axis in degrees per second.
@@ -232,7 +232,7 @@ properties:
       - rotationX
       - rotationSpeedMultiplierX
   rotationSpeedY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Rotation speed around the Y-axis in degrees per second.
@@ -240,7 +240,7 @@ properties:
       - rotationY
       - rotationSpeedMultiplierY
   rotationSpeedZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Rotation speed around the Z-axis in degrees per second.
@@ -248,7 +248,7 @@ properties:
       - rotationZ
       - rotationSpeedMultiplierZ
   rotationSpeedMultiplierX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -256,7 +256,7 @@ properties:
     see:
       - rotationX
   rotationSpeedMultiplierY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -264,7 +264,7 @@ properties:
     see:
       - rotationY
   rotationSpeedMultiplierZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -272,138 +272,138 @@ properties:
     see:
       - rotationZ
   color1:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier for the particle.
   color2:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EmissionTime
     desc: |
       Color multiplier for the particle.
   color3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier for the particle.
   layersColor:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier for both of the texture layers.
   layer1Color:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier for Layer 1.
   layer2Color:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier for Layer 2.
   alphaThreshold:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
   frameIndex:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
   frameIndexOffset:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
   layer1SpeedU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: InstanceAge
     desc: |
       Horiztonal scroll speed for Layer 1.
   layer1SpeedV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: InstanceAge
     desc: |
       Vertical scroll speed for Layer 1.
   layer1OffsetU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: Constant0
     desc: |
       Horizontal offset for the UV coordinates of Layer 1.
   layer1OffsetV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: Constant0
     desc: |
       Vertical offset for the UV coordinates of Layer 1.
   layer1ScaleU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Horizontal scale for the UV coordinates of Layer 1.
   layer1ScaleV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Vertical scale for the UV coordinates of Layer 1.
   layer2SpeedU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: InstanceAge
     desc: |
       Horiztonal scroll speed for Layer 2.
   layer2SpeedV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: InstanceAge
     desc: |
       Vertical scroll speed for Layer 2.
   layer2OffsetU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: Constant0
     desc: |
       Horizontal offset for the UV coordinates of Layer 2.
   layer2OffsetV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: Constant0
     desc: |
       Vertical offset for the UV coordinates of Layer 2.
   layer2ScaleU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Horizontal scale for the UV coordinates of Layer 2.
   layer2ScaleV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Vertical scale for the UV coordinates of Layer 2.
   rgbMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
@@ -476,32 +476,32 @@ properties:
     field: float
     default: 5
   unk_ds3_p1_23:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p1_24:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p1_25:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p1_26:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p1_27:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
   unk_ds3_p1_28:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
   unk_ds3_p2_2:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p2_3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_sdt_f2_31:
     field: int
   unk_sdt_f2_32:

@@ -9,7 +9,7 @@ properties:
     desc: |
       No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
   angleX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 30
     argument: EffectAge
     desc: |
@@ -17,7 +17,7 @@ properties:
     see:
       - angleY
   angleY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 30
     argument: EffectAge
     desc: |
@@ -25,7 +25,7 @@ properties:
     see:
       - angleY
   distribution:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: EffectAge
     desc: |

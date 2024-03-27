@@ -4,7 +4,7 @@ desc: >
   Unknown root node action.
 properties:
   rateOfTime:
-    type: ScalarPropertyArg
+    type: ScalarValue
     field: float
     default: 1
     argument: EffectAge

@@ -10,13 +10,13 @@ properties:
     desc: |
       Controls the initial direction for particles. See {@link InitialDirection} for more information.
   radius:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Radius of the disk.
   distribution:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: EffectAge
     desc: |

@@ -10,19 +10,19 @@ properties:
     desc: |
       Controls the initial direction for particles. See {@link InitialDirection} for more information.
   sizeX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Width of the rectangle.
   sizeY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Height of the rectangle.
   distribution:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: EffectAge
     desc: |

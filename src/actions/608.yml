@@ -91,14 +91,14 @@ properties:
     desc: |
       Blend mode.
   mask:
-    type: ScalarPropertyArg
+    type: ScalarValue
     field: int
     default: 1
     argument: Constant0
     desc: |
       Mask texture ID. This texture is used to control the opacity of the particle.
   offsetX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       X position offset.
@@ -106,7 +106,7 @@ properties:
       - offsetY
       - offsetZ
   offsetY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Y position offset.
@@ -114,7 +114,7 @@ properties:
       - offsetX
       - offsetZ
   offsetZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Z position offset.
@@ -122,7 +122,7 @@ properties:
       - offsetX
       - offsetY
   width:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -132,7 +132,7 @@ properties:
     see:
       - height
   height:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -142,25 +142,25 @@ properties:
     see:
       - width
   color:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier.
   blurRadius:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0.5
     argument: InstanceAge
     desc: |
       Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
   rgbMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
@@ -226,21 +226,21 @@ properties:
   unk_ds3_f2_29:
     field: float
   unk_ds3_p1_6:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_2:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p2_3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_sdt_f2_30:
     field: float
   unk_er_f1_3:

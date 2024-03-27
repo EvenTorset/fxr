@@ -9,13 +9,13 @@ properties:
     desc: |
       No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
   angle:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 30
     argument: EffectAge
     desc: |
       The maximum change in direction in degrees, the angle of the cone.
   distribution:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
     argument: EffectAge
     desc: |

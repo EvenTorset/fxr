@@ -355,12 +355,6 @@ enum ActionType {
   Unk10302_CollisionFieldArea = 10302,
   Unk10303_ForceFieldTurbulenceArea = 10303,
   Unk10400 = 10400, // Root node action
-  /**
-   * Spot light source.
-   * 
-   * This action type has a specialized subclass: {@link SpotLight}
-   */
-  SpotLight = 11000,
 
   // Data Actions
   /*#ActionType start*/
@@ -512,6 +506,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Unk10500}
    */
   Unk10500 = 10500,
+  /**
+   * Light source with an elliptic cone shape, a spot light.
+   * 
+   * This action type has a specialized subclass: {@link SpotLight}
+   */
+  SpotLight = 11000,
   /*#ActionType end*/
 }
 
@@ -607,9 +607,9 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fieldCount: number
   fields: NumericalField[]
   toJSON(): any
-  scale(factor: number): void
-  power(exponent: number): void
-  add(summand: number): void
+  scale(factor: number): this
+  power(exponent: number): this
+  add(summand: number): this
   valueAt(arg: number): ValueTypeMap[T]
   clone(): IProperty<T, F>
 }
@@ -648,11 +648,12 @@ export type Vector2Property = Property<ValueType.Vector2, any>
 export type Vector3Property = Property<ValueType.Vector3, any>
 export type Vector4Property = Property<ValueType.Vector4, any>
 export type VectorProperty = Vector2Property | Vector3Property | Vector4Property
-export type ScalarPropertyArg = number | ScalarProperty
-export type Vector2PropertyArg = Vector2 | Vector2Property
-export type Vector3PropertyArg = Vector3 | Vector3Property
-export type Vector4PropertyArg = Vector4 | Vector4Property
-export type VectorPropertyArg = Vector | VectorProperty
+export type AnyValue = AnyProperty | PropertyValue
+export type ScalarValue = number | ScalarProperty
+export type Vector2Value = Vector2 | Vector2Property
+export type Vector3Value = Vector3 | Vector3Property
+export type Vector4Value = Vector4 | Vector4Property
+export type VectorValue = Vector | VectorProperty
 
 enum ModifierType {
   /**
@@ -1089,8 +1090,6 @@ const ActionData: {
       [name: string]: {
         default: any
         field?: FieldType
-        write?: (value: any) => any
-        read?: (value: any) => any
         paths: {
           [game: string]: [string, number]
         }
@@ -2238,7 +2237,7 @@ const ActionData: {
       flickerBrightness: { default: 0.5, paths: {}, field: FieldType.Float },
       shadows: { default: false, paths: {}, field: FieldType.Boolean },
       separateSpecular: { default: false, paths: {}, field: FieldType.Boolean },
-      fadeOutTime: { default: 0, paths: {}, field: FieldType.Integer, read: value => value / 30, write: value => Math.round(value * 30) },
+      fadeOutTime: { default: 0, paths: {}, field: FieldType.Integer },
       shadowDarkness: { default: 1, paths: {}, field: FieldType.Float },
       volumeDensity: { default: 0, paths: {}, field: FieldType.Float },
       phaseFunction: { default: true, paths: {}, field: FieldType.Boolean },
@@ -2340,6 +2339,71 @@ const ActionData: {
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
+  },
+  [ActionType.SpotLight]: {
+    props: {
+      diffuseColor: { default: [1, 1, 1, 1], paths: {} },
+      specularColor: { default: [1, 1, 1, 1], paths: {} },
+      diffuseMultiplier: { default: 1, paths: {} },
+      specularMultiplier: { default: 1, paths: {} },
+      near: { default: 0.01, paths: {} },
+      far: { default: 50, paths: {} },
+      radiusX: { default: 50, paths: {} },
+      radiusY: { default: 50, paths: {} },
+      jitterAndFlicker: { default: false, paths: {}, field: FieldType.Boolean },
+      jitterAcceleration: { default: 1, paths: {}, field: FieldType.Float },
+      jitterX: { default: 0, paths: {}, field: FieldType.Float },
+      jitterY: { default: 0, paths: {}, field: FieldType.Float },
+      jitterZ: { default: 0, paths: {}, field: FieldType.Float },
+      flickerIntervalMin: { default: 0, paths: {}, field: FieldType.Float },
+      flickerIntervalMax: { default: 1, paths: {}, field: FieldType.Float },
+      flickerBrightness: { default: 0.5, paths: {}, field: FieldType.Float },
+      shadows: { default: false, paths: {}, field: FieldType.Boolean },
+      separateSpecular: { default: false, paths: {}, field: FieldType.Boolean },
+      fadeOutTime: { default: 0, paths: {}, field: FieldType.Integer },
+      shadowDarkness: { default: 1, paths: {}, field: FieldType.Float },
+      volumeDensity: { default: 0, paths: {}, field: FieldType.Float },
+      phaseFunction: { default: true, paths: {}, field: FieldType.Boolean },
+      asymmetryParam: { default: 0.75, paths: {}, field: FieldType.Float },
+      falloffExponent: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_0: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 2, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p1_6: { default: 1, paths: {} },
+      unk_ds3_p1_7: { default: 1, paths: {} },
+      unk_sdt_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_3: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_f1_16: { default: 100, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_18: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_f1_20: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_p1_10: { default: 1, paths: {} },
+      unk_er_f1_24: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_25: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_26: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_27: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','shadows','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','fadeOutTime','unk_ds3_f1_7','unk_ds3_f1_8'],
+        properties1: ['diffuseColor','specularColor','near','far','radiusX','radiusY','unk_ds3_p1_6','unk_ds3_p1_7']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent'],
+        properties1: ['diffuseColor','specularColor','diffuseMultiplier','specularMultiplier','near','far','radiusX','radiusY','unk_ds3_p1_6','unk_ds3_p1_7','unk_sdt_p1_10']
+      },
+      [Game.EldenRing]: {
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent','unk_er_f1_24','unk_er_f1_25'],
+        properties1: Game.Sekiro
+      },
+      [Game.ArmoredCore6]: {
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent','unk_er_f1_24','unk_er_f1_25','unk_ac6_f1_26','unk_ac6_f1_27'],
+        properties1: Game.Sekiro
+      }
+    }
   }
   /*#ActionData end*/
 }
@@ -2355,36 +2419,6 @@ for (const [type, action] of Object.entries(ActionData)) {
         }
       }
     }
-  }
-}
-
-function getActionGameData(type: ActionType, game: Game) {
-  const adt = ActionData[type]
-  if (!(game in adt.games)) {
-    throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
-  }
-  const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
-  data.fields1 ??= []
-  data.fields2 ??= []
-  data.properties1 ??= []
-  data.properties2 ??= []
-  if (typeof data.fields1 === 'number') {
-    data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
-  }
-  if (typeof data.fields2 === 'number') {
-    data.fields2 = (adt.games[data.fields2] as ActionGameDataEntry).fields2
-  }
-  if (typeof data.properties1 === 'number') {
-    data.properties1 = (adt.games[data.properties1] as ActionGameDataEntry).properties1
-  }
-  if (typeof data.properties2 === 'number') {
-    data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
-  }
-  return data as {
-    fields1: string[]
-    fields2: string[]
-    properties1: string[]
-    properties2: string[]
   }
 }
 
@@ -2561,11 +2595,11 @@ function setPropertyInList(list: Property<any, any>[], index: number, value: Pro
   }
 }
 
-function scalarFromArg(scalar: ScalarPropertyArg) {
+function scalarFromArg(scalar: ScalarValue) {
   return scalar instanceof Property ? scalar : new ConstantProperty(scalar)
 }
 
-function vectorFromArg(vector: VectorPropertyArg) {
+function vectorFromArg(vector: VectorValue) {
   return vector instanceof Property ? vector : new ConstantProperty(...vector)
 }
 
@@ -2817,25 +2851,31 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
     c.fields2 = readFields(br, fieldCount2, this)
   }
   br.stepOut()
-  return new Actions[type](
-    Object.fromEntries(
-      Object.entries(adt.props).map(([name, prop]) => {
-        if (!(game in prop.paths)) return null
-        const v = c[prop.paths[game][0]][prop.paths[game][1]]
-        if (v instanceof Field) {
-          return [name, 'read' in prop ? prop.read(v.value) : v.value]
-        } else {
-          return [name, 'read' in prop ? prop.read(v) : v]
-        }
-      }).filter(e => e !== null) as unknown as [string, any]
-    )
+  let params = Object.fromEntries(
+    Object.entries(adt.props).filter(([name, prop]) => game in prop.paths).map(([name, prop]) => {
+      const v = c[prop.paths[game][0]][prop.paths[game][1]]
+      if (v instanceof Field) {
+        return [name, v.value]
+      } else {
+        return [name, v]
+      }
+    })
   )
+  if (type in ActionDataConversion) {
+    params = ActionDataConversion[type].read(params)
+  }
+  return new DataActions[type](params)
 }
 
 function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
   if (game === Game.Generic) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
+  bw.convertedDataActions.set(this,
+    this.type in ActionDataConversion ?
+    ActionDataConversion[this.type].write(Object.assign(Object.create(null), this), game) :
+    this
+  )
   const data = getActionGameData(this.type, game)
   const count = actions.length
   bw.writeInt16(this.type)
@@ -2860,8 +2900,9 @@ function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
 }
 
 function writeDataActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
-  const properties1 = this.getProperties(game, 'properties1')
-  const properties2 = this.getProperties(game, 'properties2')
+  const conProps = bw.convertedDataActions.get(this)
+  const properties1: AnyProperty[] = this.getProperties.call(conProps, game, 'properties1')
+  const properties2: AnyProperty[] = this.getProperties.call(conProps, game, 'properties2')
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
     writeProperty(property, bw, properties, false)
@@ -2876,8 +2917,9 @@ function writeDataActionSection10s(bw: BinaryWriter, index: number, section10s: 
 }
 
 function writeDataActionFields(bw: BinaryWriter, game: Game, index: number): number {
-  const fields1 = (this as DataAction).getFields(game, 'fields1')
-  const fields2 = (this as DataAction).getFields(game, 'fields2')
+  const conProps = bw.convertedDataActions.get(this)
+  const fields1: Field[] = this.getFields.call(conProps, game, 'fields1')
+  const fields2: Field[] = this.getFields.call(conProps, game, 'fields2')
   const count = fields1.length + fields2.length
   if (count === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
@@ -2910,7 +2952,7 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
     const data = getActionGameData(type, game)
     if (
       section10Count === 0 &&
-      fieldCount1 === data.fields1.length &&
+      fieldCount1 <= data.fields1.length &&
       fieldCount2 <= data.fields2.length &&
       propertyCount1 === data.properties1.length &&
       propertyCount2 === data.properties2.length
@@ -3468,6 +3510,291 @@ function writeField(bw: BinaryWriter) {
   }
 }
 
+function modScalarToVec(mod: Modifier, vt: ValueType) {
+  const cc = vt + 1
+  switch (mod.type) {
+    case ModifierType.Randomizer1:
+    case ModifierType.Randomizer3:
+      return new Modifier(mod.type, vt, [
+        ...arrayOf(cc, () => new IntField(mod.fields[0].value)),
+        ...arrayOf(cc, () => new FloatField(mod.fields[1].value))
+      ])
+    case ModifierType.Randomizer2:
+      return new Modifier(mod.type, vt, [
+        ...arrayOf(cc, () => new IntField(mod.fields[0].value)),
+        ...arrayOf(cc, () => new FloatField(mod.fields[1].value)),
+        ...arrayOf(cc, () => new FloatField(mod.fields[2].value))
+      ])
+    case ModifierType.ExternalValue1:
+    case ModifierType.ExternalValue2:
+      let prop = mod.properties[0]
+      if (prop instanceof ValueProperty) {
+        prop = new ValueProperty(vt, arrayOf(cc,
+          () => (prop as ValueProperty<ValueType.Scalar>).value as number
+        ) as Vector)
+      } else if (prop instanceof KeyframeProperty) {
+        prop = new KeyframeProperty(vt, prop.function, prop.loop, prop.keyframes.map(kf =>
+          new Keyframe(kf.position, arrayOf(cc, () => kf.value) as Vector)
+        ))
+      } else if (prop instanceof ComponentKeyframeProperty) {
+        prop = new ComponentKeyframeProperty(vt, prop.loop,
+          arrayOf(cc, () => (prop as ComponentKeyframeProperty<any>).components[0].clone())
+        )
+      }
+      return new Modifier(mod.type, vt, mod.fields, [ prop ])
+  }
+}
+
+function modMultPropVal(mod: Modifier, v: PropertyValue) {
+  mod = Modifier.copy(mod)
+  const cc = mod.valueType + 1
+  if (typeof v === 'number') {
+    switch (mod.type) {
+      case ModifierType.Randomizer2:
+        for (let i = cc - 1; i >= 0; i--) {
+          mod.fields[cc * 2 + i].value *= v
+        }
+      case ModifierType.Randomizer1:
+        for (let i = cc - 1; i >= 0; i--) {
+          mod.fields[cc + i].value *= v
+        }
+    }
+  } else {
+    switch (mod.type) {
+      case ModifierType.Randomizer2:
+        for (let i = cc - 1; i >= 0; i--) {
+          mod.fields[cc * 2 + i].value *= v[i]
+        }
+      case ModifierType.Randomizer1:
+        for (let i = cc - 1; i >= 0; i--) {
+          mod.fields[cc + i].value *= v[i]
+        }
+    }
+  }
+  return mod
+}
+
+/**
+ * Multiplies one number, vector, or a property of either kind by another
+ * number, vector, or property.
+ * 
+ * Multiplying two vectors of different dimensionalities is not supported, but
+ * a vector and a scalar will work.
+ * @param p1 
+ * @param p2 
+ * @returns 
+ */
+function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
+  if (p1 instanceof ComponentKeyframeProperty) {
+    p1 = p1.combineComponents()
+  }
+  if (p2 instanceof ComponentKeyframeProperty) {
+    p2 = p2.combineComponents()
+  }
+  if (typeof p1 === 'number') {
+    if (typeof p2 === 'number') {
+      return p1 * p2
+    } else if (Array.isArray(p2)) {
+      return p2.map(e => e * p1) as Vector
+    } else if (p2 instanceof ValueProperty) {
+      return new ValueProperty(
+        p2.valueType,
+        anyValueMult(p1, p2.value),
+        p2.modifiers.map(mod => modMultPropVal(mod, p1))
+      )
+    } else if (p2 instanceof KeyframeProperty) {
+      return new KeyframeProperty(
+        p2.valueType,
+        p2.function,
+        p2.loop,
+        p2.keyframes.map(kf => new Keyframe(
+          kf.position,
+          (Array.isArray(kf.value) ? kf.value.map(e => e * p1) : kf.value * p1) as PropertyValue
+        )),
+        p2.modifiers.map(mod => modMultPropVal(mod, p1))
+      )
+    }
+  } else if (Array.isArray(p1)) {
+    if (Array.isArray(p2)) {
+      return p2.map((e, i) => e * p1[i]) as Vector
+    } else if (p2 instanceof ValueProperty) {
+      let mods = p2.modifiers
+      if (p2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => modScalarToVec(mod, p1.length - 1))
+      }
+      return new ValueProperty(
+        p1.length - 1,
+        anyValueMult(p1, p2.value),
+        mods.map(mod => modMultPropVal(mod, p1))
+      )
+    } else if (p2 instanceof KeyframeProperty) {
+      let mods = p2.modifiers
+      if (p2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => modScalarToVec(mod, p1.length - 1))
+      }
+      return new KeyframeProperty(
+        p1.length - 1,
+        p2.function,
+        p2.loop,
+        p2.keyframes.map(kf => new Keyframe(
+          kf.position,
+          (Array.isArray(kf.value) ?
+            kf.value.map((e, i) => e * p1[i]) :
+            p1.map(e => e * kf.value)
+          ) as PropertyValue
+        )),
+        mods.map(mod => modMultPropVal(mod, p1))
+      )
+    }
+  } else if (p1 instanceof ValueProperty) {
+    if (p2 instanceof ValueProperty) {
+      let p1Mods = p1.modifiers
+      let p2Mods = p2.modifiers
+      const vt = Math.max(p1.valueType, p2.valueType)
+      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
+        p1Mods = p1Mods.map(mod => modScalarToVec(mod, vt))
+      }
+      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
+        p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
+      }
+      return new ValueProperty(vt, anyValueMult(p1.value, p2.value), [
+        ...p1Mods.map(mod => modMultPropVal(mod, p2.value)),
+        ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
+      ])
+    } else if (p2 instanceof KeyframeProperty) {
+      let p1Mods = p1.modifiers
+      let p2Mods = p2.modifiers
+      const vt = Math.max(p1.valueType, p2.valueType)
+      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
+        p1Mods = p1Mods.map(mod => modScalarToVec(mod, vt))
+      }
+      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
+        p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
+      }
+      return new KeyframeProperty(
+        p2.valueType,
+        p2.function,
+        p2.loop,
+        p2.keyframes.map(kf => new Keyframe(
+          kf.position,
+          (Array.isArray(kf.value) ?
+            kf.value.map((e, i) => e * p1.value[i]) :
+            p1.value.map(e => e * kf.value)
+          ) as PropertyValue
+        )),
+        [
+          ...p1Mods.map(mod => modMultPropVal(mod, p2.valueAt(0))),
+          ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
+        ]
+      )
+    }
+  } else if (p1 instanceof KeyframeProperty && p2 instanceof KeyframeProperty) {
+    const positions = new Set<number>
+    for (const keyframe of p1.keyframes) {
+      positions.add(keyframe.position)
+    }
+    for (const keyframe of p2.keyframes) {
+      positions.add(keyframe.position)
+    }
+    let p1Mods = p1.modifiers
+    let p2Mods = p2.modifiers
+    const vt = Math.max(p1.valueType, p2.valueType)
+    if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
+      p1Mods = p1Mods.map(mod => modScalarToVec(mod, vt))
+    }
+    if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
+      p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
+    }
+    return new LinearProperty(
+      this.loop,
+      Array.from(positions)
+        .sort((a, b) => a - b)
+        .map(e => new Keyframe(e,
+          anyValueMult(p1.valueAt(e), p2.valueAt(e)) as PropertyValue
+        ))
+    ).withModifiers(
+      ...p1Mods.map(mod => modMultPropVal(mod, p2.valueAt(0))),
+      ...p2Mods.map(mod => modMultPropVal(mod, p1.valueAt(0))),
+    )
+  }
+  // If none of the stuff above returned, p1 is more complex than p2, so just
+  // swap them and return the result of that instead.
+  return anyValueMult(p2, p1)
+}
+
+function getActionGameData(type: ActionType, game: Game) {
+  const adt = ActionData[type]
+  if (!(game in adt.games)) {
+    throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
+  }
+  const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
+  data.fields1 ??= []
+  data.fields2 ??= []
+  data.properties1 ??= []
+  data.properties2 ??= []
+  if (typeof data.fields1 === 'number') {
+    data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
+  }
+  if (typeof data.fields2 === 'number') {
+    data.fields2 = (adt.games[data.fields2] as ActionGameDataEntry).fields2
+  }
+  if (typeof data.properties1 === 'number') {
+    data.properties1 = (adt.games[data.properties1] as ActionGameDataEntry).properties1
+  }
+  if (typeof data.properties2 === 'number') {
+    data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
+  }
+  return data as {
+    fields1: string[]
+    fields2: string[]
+    properties1: string[]
+    properties2: string[]
+  }
+}
+
+const ActionDataConversion = {
+  [ActionType.PointLight]: {
+    read(props: PointLightParams, game: Game) {
+      props.fadeOutTime = props.fadeOutTime / 30
+      return props
+    },
+    write(props: PointLightParams, game: Game) {
+      props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      return props
+    }
+  },
+  [ActionType.SpotLight]: {
+    read(props: SpotLightParams, game: Game) {
+      props.fadeOutTime = props.fadeOutTime / 30
+      if (game === Game.DarkSouls3) {
+        props.diffuseColor = anyValueMult(1/255, props.diffuseColor) as Vector4Value
+        props.specularColor = anyValueMult(1/255, props.specularColor) as Vector4Value
+        props.diffuseMultiplier = 255/100
+        props.specularMultiplier = 255/100
+      } else {
+        props.diffuseMultiplier = anyValueMult(1/100, props.diffuseMultiplier) as ScalarValue
+        props.specularMultiplier = anyValueMult(1/100, props.specularMultiplier) as ScalarValue
+      }
+      return props
+    },
+    write(props: SpotLightParams, game: Game) {
+      props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      if (game === Game.DarkSouls3) {
+        props.diffuseColor = anyValueMult(anyValueMult(100, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
+        if (!props.separateSpecular) {
+          props.specularColor = props.diffuseColor instanceof Property ? props.diffuseColor.clone() : props.diffuseColor
+        } else {
+          props.specularColor = anyValueMult(anyValueMult(100, props.specularMultiplier), props.specularColor) as Vector4Value
+        }
+      } else {
+        props.diffuseMultiplier = anyValueMult(100, props.diffuseMultiplier) as ScalarValue
+        props.specularMultiplier = anyValueMult(100, props.specularMultiplier) as ScalarValue
+      }
+      return props
+    }
+  }
+}
+
 class BinaryReader extends DataView {
 
   position: number = 0
@@ -3629,6 +3956,8 @@ class BinaryWriter {
   #transDV = new DataView(this.#transBuf)
   #transArr16 = new Int8Array(this.#transBuf, 0, 2)
   #transArr32 = new Int8Array(this.#transBuf, 0, 4)
+
+  convertedDataActions = new Map<DataAction, any>
 
   constructor(littleEndian: boolean = true) {
     this.littleEndian = littleEndian
@@ -4802,18 +5131,7 @@ abstract class Node {
           keyframe.value = func(keyframe.value as Vector4)
         }
       } else if (prop instanceof ComponentKeyframeProperty) {
-        const positions = new Set<number>
-        for (const comp of prop.components) {
-          for (const keyframe of comp.keyframes) {
-            positions.add(keyframe.position)
-          }
-        }
-        const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe<ValueType.Vector4>(e, prop.valueAt(e)))
-        container[key] = new LinearProperty(prop.loop, keyframes)
-        if ('modifiers' in prop) {
-          (container[key] as IModifiableProperty<ValueType.Vector4, any>).modifiers = prop.modifiers
-        }
-        prop = container[key]
+        prop = container[key] = prop.combineComponents()
       }
       if ('modifiers' in prop) {
         for (const mod of (prop as IModifiableProperty<ValueType.Vector4, any>).modifiers) {
@@ -5081,7 +5399,7 @@ class RootNode extends Node {
       return null
     }
   }
-  set rateOfTime(value: ScalarPropertyArg) {
+  set rateOfTime(value: ScalarValue) {
     if (this.unk10500 instanceof Unk10500) {
       this.unk10500.rateOfTime = value
     }
@@ -5338,7 +5656,7 @@ class LevelOfDetailEffect extends Effect {
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
    */
-  constructor(duration: ScalarPropertyArg, thresholds: number[]) {
+  constructor(duration: ScalarValue, thresholds: number[]) {
     super(EffectType.LevelOfDetail, [
       new LevelOfDetailThresholds(duration, thresholds)
     ])
@@ -6122,8 +6440,7 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return data[list].map((name: string) => {
       const prop = ActionData[this.type].props[name]
-      const v = this[name] instanceof Property ? this[name].valueAt(0) : this[name]
-      return new Field(prop.field, 'write' in prop ? prop.write(v) : v)
+      return new Field(prop.field, this[name] instanceof Property ? this[name].valueAt(0) : this[name])
     })
   }
 
@@ -6131,10 +6448,9 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return (data[list] ?? []).map((name: string) => {
       const prop = ActionData[this.type].props[name]
-      const v = Array.isArray(prop.default) ?
+      return Array.isArray(prop.default) ?
         vectorFromArg(this[name]) :
         scalarFromArg(this[name])
-      return 'write' in prop ? prop.write(v) as AnyProperty : v
     })
   }
 
@@ -6166,7 +6482,7 @@ export interface NodeMovementParams {
    * See also:
    * - {@link spinXMultiplier}
    */
-  spinX?: ScalarPropertyArg
+  spinX?: ScalarValue
   /**
    * Multiplier for {@link spinX}. Defaults to 1.
    * 
@@ -6178,7 +6494,7 @@ export interface NodeMovementParams {
    * - {@link followFactor}
    * - {@link followRotation}
    */
-  spinXMultiplier?: ScalarPropertyArg
+  spinXMultiplier?: ScalarValue
   /**
    * Controls how fast the node should spin around its Y-axis in degrees per
    * second. Defaults to 0.
@@ -6194,7 +6510,7 @@ export interface NodeMovementParams {
    * See also:
    * - {@link spinYMultiplier}
    */
-  spinY?: ScalarPropertyArg
+  spinY?: ScalarValue
   /**
    * Multiplier for {@link spinY}. Defaults to 1.
    * 
@@ -6206,7 +6522,7 @@ export interface NodeMovementParams {
    * - {@link followFactor}
    * - {@link followRotation}
    */
-  spinYMultiplier?: ScalarPropertyArg
+  spinYMultiplier?: ScalarValue
   /**
    * Controls how fast the node should spin around its Z-axis in degrees per
    * second. Defaults to 0.
@@ -6222,7 +6538,7 @@ export interface NodeMovementParams {
    * See also:
    * - {@link spinZMultiplier}
    */
-  spinZ?: ScalarPropertyArg
+  spinZ?: ScalarValue
   /**
    * Multiplier for {@link spinZ}. Defaults to 1.
    * 
@@ -6234,7 +6550,7 @@ export interface NodeMovementParams {
    * - {@link followFactor}
    * - {@link followRotation}
    */
-  spinZMultiplier?: ScalarPropertyArg
+  spinZMultiplier?: ScalarValue
   /**
    * Controls the speed of the node along its Z-axis. Defaults to 0.
    * 
@@ -6247,7 +6563,7 @@ export interface NodeMovementParams {
    * See also:
    * - {@link speedZMultiplier}
    */
-  speedZ?: ScalarPropertyArg
+  speedZ?: ScalarValue
   /**
    * Multiplier for {@link speedZ}. Defaults to 1.
    * 
@@ -6257,7 +6573,7 @@ export interface NodeMovementParams {
    * - {@link accelerationZ}
    * - {@link accelerationZMultiplier}
    */
-  speedZMultiplier?: ScalarPropertyArg
+  speedZMultiplier?: ScalarValue
   /**
    * Controls the acceleration of the node in the +Z direction. This value
    * cannot be negative. Defaults to 0.
@@ -6270,7 +6586,7 @@ export interface NodeMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  accelerationZ?: ScalarPropertyArg
+  accelerationZ?: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}. Defaults to 1.
    * 
@@ -6279,13 +6595,13 @@ export interface NodeMovementParams {
    * Incompatible with the following parameters:
    * - {@link speedZMultiplier}
    */
-  accelerationZMultiplier?: ScalarPropertyArg
+  accelerationZMultiplier?: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis. Defaults to 0.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  accelerationY?: ScalarPropertyArg
+  accelerationY?: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals
    * defined by {@link turnInterval}. Defaults to 0.
@@ -6300,7 +6616,7 @@ export interface NodeMovementParams {
    * - {@link spinZ}
    * - {@link spinZMultiplier}
    */
-  maxTurnAngle?: ScalarPropertyArg
+  maxTurnAngle?: ScalarValue
   /**
    * The node will turn a random amount based on {@link maxTurnAngle} at
    * this interval. The units are seconds, but due to how the field that stores
@@ -6337,7 +6653,7 @@ export interface NodeMovementParams {
    * See also:
    * - {@link followRotation}
    */
-  followFactor?: ScalarPropertyArg
+  followFactor?: ScalarValue
   /**
    * Disabling this will make {@link followFactor} only affect translation and
    * not rotation. Defaults to true.
@@ -6558,7 +6874,7 @@ class NodeTranslation extends Action {
    * @param unkField Unknown. Fields1, index 0. An integer that has at least
    * three valid values: 0, 1, 2. Defaults to 0.
    */
-  constructor(translation: Vector3PropertyArg = [0, 0, 0], unkField: number = 0) {
+  constructor(translation: Vector3Value = [0, 0, 0], unkField: number = 0) {
     super(ActionType.NodeTranslation, [
       new IntField(unkField)
     ], [], [
@@ -6916,35 +7232,35 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  gravity?: ScalarPropertyArg
+  gravity?: ScalarValue
   /**
    * The acceleration for the particles. The direction depends on the emitter
    * shape. Defaults to 0.
    * 
    * This can not be used together with any of the speed properties:
    * - {@link speed}
-   * - {@link speedMult}
+   * - {@link speedMultiplier}
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  acceleration?: ScalarPropertyArg
+  acceleration?: ScalarValue
   /**
    * Multiplier for the {@link acceleration} property. Defaults to 1.
    * 
    * This can not be used together with any of the speed properties:
    * - {@link speed}
-   * - {@link speedMult}
+   * - {@link speedMultiplier}
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  accelerationMult?: ScalarPropertyArg
+  accelerationMultiplier?: ScalarValue
   /**
    * The speed that the particles will travel at. The direction depends on the
    * emitter shape. Defaults to 0.
    * 
    * This can not be used together with any of the acceleration properties:
    * - {@link acceleration}
-   * - {@link accelerationMult}
+   * - {@link accelerationMultiplier}
    * 
    * Setting this will produce one of the speed actions instead of one of the
    * acceleration actions:
@@ -6954,13 +7270,13 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speed?: ScalarPropertyArg
+  speed?: ScalarValue
   /**
    * Multiplier for the {@link speed} property. Defaults to 1.
    * 
    * This can not be used together with any of the acceleration properties:
    * - {@link acceleration}
-   * - {@link accelerationMult}
+   * - {@link accelerationMultiplier}
    * 
    * Setting this will produce one of the speed actions instead of one of the
    * acceleration actions:
@@ -6970,7 +7286,7 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedMult?: ScalarPropertyArg
+  speedMultiplier?: ScalarValue
   /**
    * The particles will turn a random amount based on this value at intervals
    * defined by {@link turnInterval}. Defaults to 0.
@@ -6982,7 +7298,7 @@ export interface ParticleMovementParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  maxTurnAngle?: ScalarPropertyArg
+  maxTurnAngle?: ScalarValue
   /**
    * The particles will turn a random amount based on {@link maxTurnAngle} at
    * this interval. The units are seconds, but due to how the field that stores
@@ -7023,7 +7339,7 @@ export interface ParticleMovementParams {
    * See also:
    * - {@link followRotation}
    */
-  followFactor?: ScalarPropertyArg
+  followFactor?: ScalarValue
   /**
    * Unknown. Fields1, index 0.
    */
@@ -7058,25 +7374,25 @@ class ParticleMovement extends Action {
     maxTurnAngle = null,
     turnInterval = null,
     acceleration = null,
-    accelerationMult = null,
+    accelerationMultiplier = null,
     speed = null,
-    speedMult = null,
+    speedMultiplier = null,
     followRotation = null,
     followFactor = null,
     unkField0 = 0,
     unkField1 = null,
   }: ParticleMovementParams = {}) {
-    let asProp: ScalarPropertyArg, asMultProp: ScalarPropertyArg
-    const isSpeedAct = speed !== null || speedMult !== null
+    let asProp: ScalarValue, asMultProp: ScalarValue
+    const isSpeedAct = speed !== null || speedMultiplier !== null
     if (isSpeedAct) {
-      if (acceleration !== null || accelerationMult !== null) {
+      if (acceleration !== null || accelerationMultiplier !== null) {
         throw new Error('The speed properties and the acceleration properties cannot be used together in a ParticleMovement action.')
       }
       asProp = speed ?? 0
-      asMultProp = speedMult ?? 1
+      asMultProp = speedMultiplier ?? 1
     } else {
       asProp = acceleration ?? 0
-      asMultProp = accelerationMult ?? 1
+      asMultProp = accelerationMultiplier ?? 1
     }
     if (followFactor !== null || followRotation !== null) {
       turnInterval ??= 0
@@ -7167,7 +7483,7 @@ class NodeAttributes extends Action {
      * 
      * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
      */
-    duration?: ScalarPropertyArg
+    duration?: ScalarValue
     /**
      * The delay before the node becomes active. Defaults to 0.
      */
@@ -7228,7 +7544,7 @@ class ParticleAttributes extends Action {
      * 
      * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
      */
-    duration?: ScalarPropertyArg
+    duration?: ScalarValue
   } = {}) {
     super(ActionType.ParticleAttributes, [
       new IntField(attachment)
@@ -7253,34 +7569,34 @@ export interface ParticleMultiplierParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  speed?: ScalarPropertyArg
+  speed?: ScalarValue
   /**
    * Multiplier for the scale along the X-axis. If {@link uniformScale} is
    * enabled, this scales the particles uniformly. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  scaleX?: ScalarPropertyArg
+  scaleX?: ScalarValue
   /**
    * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
    * enabled, this property is ignored. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  scaleY?: ScalarPropertyArg
+  scaleY?: ScalarValue
   /**
    * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
    * enabled, this property is ignored. Defaults to 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  scaleZ?: ScalarPropertyArg
+  scaleZ?: ScalarValue
   /**
    * Color multiplier. Defaults to [1, 1, 1, 1].
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color?: Vector4PropertyArg
+  color?: Vector4Value
 }
 /**
  * Controls various multipliers as well as the speed of particles.
@@ -7337,7 +7653,7 @@ class ParticleMultiplier extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get speed(): ScalarProperty { return this.properties1[0] }
-  set speed(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  set speed(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * Multiplier for the scale along the X-axis. If {@link uniformScale} is
@@ -7346,7 +7662,7 @@ class ParticleMultiplier extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get scaleX(): ScalarProperty { return this.properties1[1] }
-  set scaleX(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  set scaleX(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
@@ -7355,7 +7671,7 @@ class ParticleMultiplier extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get scaleY(): ScalarProperty { return this.properties1[2] }
-  set scaleY(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 2, value) }
+  set scaleY(value: ScalarValue) { setPropertyInList(this.properties1, 2, value) }
 
   /**
    * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
@@ -7364,7 +7680,7 @@ class ParticleMultiplier extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get scaleZ(): ScalarProperty { return this.properties1[3] }
-  set scaleZ(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 3, value) }
+  set scaleZ(value: ScalarValue) { setPropertyInList(this.properties1, 3, value) }
 
   /**
    * Color multiplier.
@@ -7372,7 +7688,7 @@ class ParticleMultiplier extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get color(): Vector4Property { return this.properties1[4] }
-  set color(value: Vector4PropertyArg) { setPropertyInList(this.properties1, 4, value) }
+  set color(value: Vector4Value) { setPropertyInList(this.properties1, 4, value) }
 
 }
 
@@ -7412,7 +7728,7 @@ class LevelOfDetailThresholds extends Action {
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
    */
-  constructor(duration: ScalarPropertyArg = -1, thresholds: number[] = []) {
+  constructor(duration: ScalarValue = -1, thresholds: number[] = []) {
     thresholds = arrayOf(5, i => thresholds[i] ?? 1000)
     super(
       ActionType.LevelOfDetail,
@@ -7511,7 +7827,7 @@ class NodeWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeed: ScalarPropertyArg = 0,
+    windSpeed: ScalarValue = 0,
     /**
      * A multiplier for
      * {@link windSpeed the speed in the direction of the wind}.
@@ -7519,7 +7835,7 @@ class NodeWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeedMult: ScalarPropertyArg = 1,
+    windSpeedMultiplier: ScalarValue = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7530,7 +7846,7 @@ class NodeWindSpeed extends Action {
       new BoolField(enabled),
     ], [], [
       scalarFromArg(windSpeed),
-      scalarFromArg(windSpeedMult),
+      scalarFromArg(windSpeedMultiplier),
     ])
   }
 
@@ -7540,7 +7856,7 @@ class NodeWindSpeed extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get windSpeed(): ScalarProperty { return this.properties1[0] }
-  set windSpeed(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  set windSpeed(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7548,8 +7864,8 @@ class NodeWindSpeed extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windSpeedMult(): ScalarProperty { return this.properties1[1] }
-  set windSpeedMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  get windSpeedMultiplier(): ScalarProperty { return this.properties1[1] }
+  set windSpeedMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7579,7 +7895,7 @@ class ParticleWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeed: ScalarPropertyArg = 0,
+    windSpeed: ScalarValue = 0,
     /**
      * A multiplier for
      * {@link windSpeed the speed in the direction of the wind}.
@@ -7587,7 +7903,7 @@ class ParticleWindSpeed extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windSpeedMult: ScalarPropertyArg = 1,
+    windSpeedMultiplier: ScalarValue = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7604,7 +7920,7 @@ class ParticleWindSpeed extends Action {
       new IntField(unkField1),
     ], [], [
       scalarFromArg(windSpeed),
-      scalarFromArg(windSpeedMult),
+      scalarFromArg(windSpeedMultiplier),
     ])
   }
 
@@ -7614,7 +7930,7 @@ class ParticleWindSpeed extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get windSpeed(): ScalarProperty { return this.properties1[0] }
-  set windSpeed(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  set windSpeed(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7622,8 +7938,8 @@ class ParticleWindSpeed extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windSpeedMult(): ScalarProperty { return this.properties1[1] }
-  set windSpeedMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  get windSpeedMultiplier(): ScalarProperty { return this.properties1[1] }
+  set windSpeedMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7652,7 +7968,7 @@ class NodeWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAcceleration: ScalarPropertyArg = 0,
+    windAcceleration: ScalarValue = 0,
     /**
      * A multiplier for
      * {@link windAcceleration the acceleration in the direction of the wind}.
@@ -7660,7 +7976,7 @@ class NodeWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAccelerationMult: ScalarPropertyArg = 1,
+    windAccelerationMultiplier: ScalarValue = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7671,7 +7987,7 @@ class NodeWindAcceleration extends Action {
       new BoolField(enabled),
     ], [], [
       scalarFromArg(windAcceleration),
-      scalarFromArg(windAccelerationMult),
+      scalarFromArg(windAccelerationMultiplier),
     ])
   }
 
@@ -7681,7 +7997,7 @@ class NodeWindAcceleration extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get windAcceleration(): ScalarProperty { return this.properties1[0] }
-  set windAcceleration(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  set windAcceleration(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7689,8 +8005,8 @@ class NodeWindAcceleration extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windAccelerationMult(): ScalarProperty { return this.properties1[1] }
-  set windAccelerationMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  get windAccelerationMultiplier(): ScalarProperty { return this.properties1[1] }
+  set windAccelerationMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7723,7 +8039,7 @@ class ParticleWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAcceleration: ScalarPropertyArg = 0,
+    windAcceleration: ScalarValue = 0,
     /**
      * A multiplier for
      * {@link windAcceleration the acceleration in the direction of the wind}.
@@ -7731,7 +8047,7 @@ class ParticleWindAcceleration extends Action {
      * 
      * **Argument**: {@link PropertyArgument.EffectAge Effect age}
      */
-    windAccelerationMult: ScalarPropertyArg = 1,
+    windAccelerationMultiplier: ScalarValue = 1,
     /**
      * Controls whether the wind should have any effect at all or not. Defaults
      * to true.
@@ -7748,7 +8064,7 @@ class ParticleWindAcceleration extends Action {
       new IntField(unkField1),
     ], [], [
       scalarFromArg(windAcceleration),
-      scalarFromArg(windAccelerationMult),
+      scalarFromArg(windAccelerationMultiplier),
     ])
   }
 
@@ -7758,7 +8074,7 @@ class ParticleWindAcceleration extends Action {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   get windAcceleration(): ScalarProperty { return this.properties1[0] }
-  set windAcceleration(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 0, value) }
+  set windAcceleration(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
 
   /**
    * A multiplier for
@@ -7766,8 +8082,8 @@ class ParticleWindAcceleration extends Action {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  get windAccelerationMult(): ScalarProperty { return this.properties1[1] }
-  set windAccelerationMult(value: ScalarPropertyArg) { setPropertyInList(this.properties1, 1, value) }
+  get windAccelerationMultiplier(): ScalarProperty { return this.properties1[1] }
+  set windAccelerationMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
 
   /**
    * Controls whether the wind should have any effect at all or not.
@@ -7785,539 +8101,6 @@ class ParticleWindAcceleration extends Action {
 
 }
 
-export interface SpotLightParams {
-  /**
-   * Controls the diffuse color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this also controls the specular
-   * color of the light.
-   * 
-   * Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  diffuseColor?: Vector4PropertyArg
-  /**
-   * Controls the specular color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored and
-   * {@link diffuseColor} controls both the diffuse as well as the specular
-   * color.
-   * 
-   * Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  specularColor?: Vector4PropertyArg
-  /**
-   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
-   * easily adjusting the brightness of the light without changing the color.
-   * 
-   * If {@link separateSpecular} is disabled, this also affects the specular
-   * color of the light.
-   * 
-   * Defaults to 100.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  diffuseMultiplier?: ScalarPropertyArg
-  /**
-   * A scalar multiplier for the {@link specularColor specular color}.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored.
-   * 
-   * Defaults to 100.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  specularMultiplier?: ScalarPropertyArg
-  /**
-   * Controls where the light starts in the cone. It bascially "slices off" the
-   * tip of the cone. If set to 0, it acts as if it is set to 0.5. Defaults to
-   * 0.01.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  near?: ScalarPropertyArg
-  /**
-   * Controls how far away the base of the cone is from the light source.
-   * Defaults to 50.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  far?: ScalarPropertyArg
-  /**
-   * The default value for {@link xRadius} and {@link yRadius}. Just a
-   * convenient way to control both at the same time. This value is not used if
-   * {@link xRadius} and {@link yRadius} are given values. Defaults to 50.
-   */
-  radius?: ScalarPropertyArg
-  /**
-   * The X radius for the elliptic base of the cone. Defaults to
-   * {@link radius}.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  xRadius?: ScalarPropertyArg
-  /**
-   * The Y radius for the elliptic base of the cone. Defaults to
-   * {@link radius}.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  yRadius?: ScalarPropertyArg
-  /**
-   * Toggles the jitter and flicker animations for the light. Defaults to
-   * false.
-   * 
-   * See also:
-   * - {@link jitterAcceleration}
-   * - {@link jitter}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  jitterAndFlicker?: boolean
-  /**
-   * Controls the acceleration of the jittering. Defaults to 1.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitter}
-   */
-  jitterAcceleration?: number
-  /**
-   * Controls how much the light should move around randomly. Defaults to
-   * [0, 0, 0].
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   */
-  jitter?: Vector3
-  /**
-   * Controls the minimum interval for flickering. Defaults to 0.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMin?: number
-  /**
-   * Controls the maximum interval for flickering. Defaults to 1.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMax?: number
-  /**
-   * Brightness multiplier for the light when it flickers. Defaults to 0.5.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   */
-  flickerBrightness?: number
-  /**
-   * Controls if the light should have shadows or not.
-   * 
-   * Note: Objects also have a setting for casting shadows, and both must be
-   * enabled for an object to cast shadows from this light source.
-   * 
-   * Defaults to false.
-   */
-  shadows?: boolean
-  /**
-   * When enabled, this allows other properties and fields of the action to
-   * control the specular color independently of the diffuse color. When
-   * disabled, the diffuse counterpart of the properties or fields will affect
-   * both the diffuse and specular color. Defaults to false.
-   * 
-   * See also:
-   * - {@link diffuseColor}
-   * - {@link specularColor}
-   * - {@link diffuseMultiplier}
-   * - {@link specularMultiplier}
-   */
-  separateSpecular?: boolean
-  /**
-   * Controls how dark shadows from this light source are. At 0, the shadows
-   * will be entirely invisible. Defaults to 1.
-   */
-  shadowDarkness?: number
-  /**
-   * The number of seconds the light takes to fade to nothing after being
-   * destroyed.
-   * 
-   * Due to how the field this represents works, the time will be rounded to
-   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
-   * as the units.
-   * 
-   * Defaults to 0.
-   */
-  fadeOutTime?: number
-  /**
-   * Controls the density of some sort of fake fog in the volume hit by the
-   * light. The fog does not affect the actual light produced by the source and
-   * is not affected by shadows. Defaults to 0.
-   * 
-   * See also:
-   * - {@link phaseFunction}
-   * - {@link asymmetryParam}
-   */
-  volumeDensity?: number
-  /**
-   * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link volumeDensity}. Defaults to true.
-   */
-  phaseFunction?: boolean
-  /**
-   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
-   * value is ignored if {@link phaseFunction} is disabled, and the fog will
-   * scatter the light equally in all directions.
-   * 
-   * - At 0, the light is scattered equally in every direction.
-   * - As the value approaches 1, the light is scattered more and more forward,
-   * in the same direction as the light was already traveling. This means that
-   * the fake fog will be less visible from the side or behind, and more
-   * visible from in front of the light.
-   * - At 1, the fog will not scatter the light at all, so it will be entirely
-   * invisible.
-   * - Values above 1 produce unnatural-looking effects where the light darkens
-   * the fog instead.
-   * 
-   * Defaults to 0.75.
-   */
-  asymmetryParam?: number
-  /**
-   * Controls the falloff exponent of the light.
-   * 
-   * Note: This is possibly something else, but the behavior is pretty similar
-   * to a falloff exponent in a few ways.
-   * 
-   * Defaults to 1.
-   */
-  falloffExponent?: number
-  unkScalarProp8?: ScalarPropertyArg
-  unkScalarProp9?: ScalarPropertyArg
-  unkScalarProp10?: ScalarPropertyArg
-}
-/**
- * Light source with an elliptic cone shape, a spot light.
- * 
- * It points towards +Z.
- */
-class SpotLight extends Action {
-
-  constructor({
-    diffuseColor = [1, 1, 1, 1],
-    specularColor = [1, 1, 1, 1],
-    diffuseMultiplier = 100,
-    specularMultiplier = 100,
-    near = 0.01,
-    far = 50,
-    radius = 50,
-    xRadius = radius instanceof Property ? radius.clone() : radius,
-    yRadius = radius instanceof Property ? radius.clone() : radius,
-    jitterAndFlicker = false,
-    jitterAcceleration = 1,
-    jitter = [0, 0, 0],
-    flickerIntervalMin = 0,
-    flickerIntervalMax = 1,
-    flickerBrightness = 0.5,
-    shadows = false,
-    separateSpecular = false,
-    shadowDarkness = 1,
-    fadeOutTime = 0,
-    volumeDensity = 0,
-    phaseFunction = true,
-    asymmetryParam = 0.75,
-    falloffExponent = 1,
-    unkScalarProp8 = 1,
-    unkScalarProp9 = 1,
-    unkScalarProp10 = 1,
-  }: SpotLightParams = {}) {
-    super(ActionType.SpotLight, [
-      /*  0 */ new IntField(0),
-      /*  1 */ new BoolField(jitterAndFlicker),
-      /*  2 */ new FloatField(jitterAcceleration),
-      /*  3 */ new FloatField(0),
-      /*  4 */ new FloatField(jitter[0]),
-      /*  5 */ new FloatField(jitter[1]),
-      /*  6 */ new FloatField(jitter[2]),
-      /*  7 */ new FloatField(flickerIntervalMin),
-      /*  8 */ new FloatField(flickerIntervalMax),
-      /*  9 */ new FloatField(flickerBrightness),
-      /* 10 */ new BoolField(shadows),
-      /* 11 */ new BoolField(separateSpecular),
-      /* 12 */ new FloatField(shadowDarkness),
-      /* 13 */ new IntField(2),
-      /* 14 */ new IntField(1),
-      /* 15 */ new IntField(Math.round(fadeOutTime * 30)),
-      /* 16 */ new IntField(100),
-      /* 17 */ new IntField(0),
-      /* 18 */ new FloatField(0),
-      /* 19 */ new FloatField(volumeDensity),
-      /* 20 */ new FloatField(0),
-      /* 21 */ new BoolField(phaseFunction),
-      /* 22 */ new FloatField(asymmetryParam),
-      /* 23 */ new FloatField(falloffExponent),
-      /* 24 */ new IntField(1),
-      /* 25 */ new FloatField(1),
-    ], [], [
-      /*  0 */ vectorFromArg(diffuseColor),
-      /*  1 */ vectorFromArg(specularColor),
-      /*  2 */ scalarFromArg(diffuseMultiplier),
-      /*  3 */ scalarFromArg(specularMultiplier),
-      /*  4 */ scalarFromArg(near),
-      /*  5 */ scalarFromArg(far),
-      /*  6 */ scalarFromArg(xRadius),
-      /*  7 */ scalarFromArg(yRadius),
-      /*  8 */ scalarFromArg(unkScalarProp8),
-      /*  9 */ scalarFromArg(unkScalarProp9),
-      /* 10 */ scalarFromArg(unkScalarProp10),
-    ])
-  }
-
-  /**
-   * Controls the diffuse color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this also controls the specular
-   * color of the light.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get diffuseColor() { return this.properties1[0] }
-  set diffuseColor(value) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * Controls the specular color of the light.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored and
-   * {@link diffuseColor} controls both the diffuse as well as the specular
-   * color.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get specularColor() { return this.properties1[1] }
-  set specularColor(value) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for
-   * easily adjusting the brightness of the light without changing the color.
-   * 
-   * If {@link separateSpecular} is disabled, this also affects the specular
-   * color of the light.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get diffuseMultiplier() { return this.properties1[2] }
-  set diffuseMultiplier(value) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * A scalar multiplier for the {@link specularColor specular color}.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get specularMultiplier() { return this.properties1[3] }
-  set specularMultiplier(value) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Controls where the light starts in the cone. It bascially "slices off" the
-   * tip of the cone. If set to 0, it acts as if it is set to 0.5.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get near() { return this.properties1[4] }
-  set near(value) { setPropertyInList(this.properties1, 4, value) }
-
-  /**
-   * Controls how far away the base of the cone is from the light source.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get far() { return this.properties1[5] }
-  set far(value) { setPropertyInList(this.properties1, 5, value) }
-
-  /**
-   * The X radius for the elliptic base of the cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get xRadius() { return this.properties1[6] }
-  set xRadius(value) { setPropertyInList(this.properties1, 6, value) }
-
-  /**
-   * The Y radius for the elliptic base of the cone.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get yRadius() { return this.properties1[7] }
-  set yRadius(value) { setPropertyInList(this.properties1, 7, value) }
-
-  /**
-   * Toggles the jitter and flicker animations for the light. Defaults to
-   * false.
-   * 
-   * See also:
-   * - {@link jitterAcceleration}
-   * - {@link jitter}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  get jitterAndFlicker() { return this.fields2[1].value as boolean }
-  set jitterAndFlicker(value) { this.fields2[1].value = value }
-
-  /**
-   * Controls the acceleration of the jittering. Defaults to 1.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitter}
-   */
-  get jitterAcceleration() { return this.fields2[2].value as number }
-  set jitterAcceleration(value) { this.fields2[2].value = value }
-
-  /**
-   * Controls how much the light should move around randomly.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   */
-  get jitter() { return this.fields2.slice(4, 7).map(f => f.value) as Vector3 }
-  set jitter(value) { for (let i = 2; i >= 0; i--) this.fields2[4 + i].value = value[i] }
-
-  /**
-   * Controls the minimum interval for flickering.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  get flickerIntervalMin() { return this.fields2[7].value as number }
-  set flickerIntervalMin(value) { this.fields2[7].value = value }
-
-  /**
-   * Controls the maximum interval for flickering.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerBrightness}
-   */
-  get flickerIntervalMax() { return this.fields2[8].value as number }
-  set flickerIntervalMax(value) { this.fields2[8].value = value }
-
-  /**
-   * Brightness multiplier for the light when it flickers.
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   */
-  get flickerBrightness() { return this.fields2[9].value as number }
-  set flickerBrightness(value) { this.fields2[9].value = value }
-
-  /**
-   * Controls if the light should have shadows or not.
-   * 
-   * Note: Objects also have a setting for casting shadows, and both must be
-   * enabled for an object to cast shadows from this light source.
-   */
-  get shadows() { return this.fields1[10].value as boolean }
-  set shadows(value) { this.fields1[10].value = value }
-
-  /**
-   * When enabled, this allows other properties and fields of the action to
-   * control the specular color independently of the diffuse color. When
-   * disabled, the diffuse counterpart of the properties or fields will affect
-   * both the diffuse and specular color.
-   * 
-   * See also:
-   * - {@link diffuseColor}
-   * - {@link specularColor}
-   * - {@link diffuseMultiplier}
-   * - {@link specularMultiplier}
-   */
-  get separateSpecular() { return this.fields1[11].value as boolean }
-  set separateSpecular(value) { this.fields1[11].value = value }
-
-  /**
-   * Controls how dark shadows from this light source are. At 0, the shadows
-   * will be entirely invisible.
-   */
-  get shadowDarkness() { return this.fields1[12].value as number }
-  set shadowDarkness(value) { this.fields1[12].value = value }
-
-  /**
-   * The number of seconds the light takes to fade to nothing after being
-   * destroyed.
-   * 
-   * Due to how the field this represents works, the time will be rounded to
-   * the nearest multiple of 1/30s. The field itself is an integer with 1/30s
-   * as the units.
-   */
-  get fadeOutTime() { return (this.fields1[15].value as number) / 30 }
-  set fadeOutTime(value) { this.fields1[15].value = Math.round(value * 30) }
-
-  /**
-   * Controls the density of some sort of fake fog in the volume hit by the
-   * light. The fog does not affect the actual light produced by the source and
-   * is not affected by shadows.
-   * 
-   * See also:
-   * - {@link phaseFunction}
-   * - {@link asymmetryParam}
-   */
-  get volumeDensity() { return this.fields1[19].value as number }
-  set volumeDensity(value) { this.fields1[19].value = value }
-
-  /**
-   * Controls whether or not {@link asymmetryParam} affects the fake fog from
-   * {@link volumeDensity}.
-   */
-  get phaseFunction() { return this.fields1[21].value as boolean }
-  set phaseFunction(value) { this.fields1[21].value = value }
-
-  /**
-   * Controls how the fake fog from {@link volumeDensity} scatters the light. This
-   * value is ignored if {@link phaseFunction} is disabled, and the fog will
-   * scatter the light equally in all directions.
-   * 
-   * - At 0, the light is scattered equally in every direction.
-   * - As the value approaches 1, the light is scattered more and more forward,
-   * in the same direction as the light was already traveling. This means that
-   * the fake fog will be less visible from the side or behind, and more
-   * visible from in front of the light.
-   * - At 1, the fog will not scatter the light at all, so it will be entirely
-   * invisible.
-   * - Values above 1 produce unnatural-looking effects where the light darkens
-   * the fog instead.
-   */
-  get asymmetryParam() { return this.fields1[22].value as number }
-  set asymmetryParam(value) { this.fields1[22].value = value }
-
-  /**
-   * Controls the falloff exponent of the light.
-   * 
-   * Note: This is possibly something else, but the behavior is pretty similar
-   * to a falloff exponent in a few ways.
-   */
-  get falloffExponent() { return this.fields1[23].value as number }
-  set falloffExponent(value) { this.fields1[23].value = value }
-
-}
-
 /*#ActionClasses start*/
 export interface PeriodicEmitterParams {
   /**
@@ -8327,7 +8110,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  interval?: ScalarPropertyArg
+  interval?: ScalarValue
   /**
    * The number of particles to emit per interval. They all spawn at the same time per interval.
    * 
@@ -8335,7 +8118,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  perInterval?: ScalarPropertyArg
+  perInterval?: ScalarValue
   /**
    * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
    * 
@@ -8343,7 +8126,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  totalIntervals?: ScalarPropertyArg
+  totalIntervals?: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
@@ -8351,7 +8134,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  maxConcurrent?: ScalarPropertyArg
+  maxConcurrent?: ScalarValue
   /**
    * Unknown.
    * 
@@ -8370,25 +8153,25 @@ class PeriodicEmitter extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  interval: ScalarPropertyArg
+  interval: ScalarValue
   /**
    * The number of particles to emit per interval. They all spawn at the same time per interval.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  perInterval: ScalarPropertyArg
+  perInterval: ScalarValue
   /**
    * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  totalIntervals: ScalarPropertyArg
+  totalIntervals: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  maxConcurrent: ScalarPropertyArg
+  maxConcurrent: ScalarValue
   unk_ds3_f1_1: number
   constructor(props: PeriodicEmitterParams = {}) {
     super(ActionType.PeriodicEmitter)
@@ -8404,7 +8187,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  threshold?: ScalarPropertyArg
+  threshold?: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
@@ -8412,7 +8195,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  maxConcurrent?: ScalarPropertyArg
+  maxConcurrent?: ScalarValue
   /**
    * Unknown.
    * 
@@ -8432,7 +8215,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p1_1?: ScalarPropertyArg
+  unk_ds3_p1_1?: ScalarValue
 }
 
 /**
@@ -8445,16 +8228,16 @@ class EqualDistanceEmitter extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  threshold: ScalarPropertyArg
+  threshold: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  maxConcurrent: ScalarPropertyArg
+  maxConcurrent: ScalarValue
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
-  unk_ds3_p1_1: ScalarPropertyArg
+  unk_ds3_p1_1: ScalarValue
   constructor(props: EqualDistanceEmitterParams = {}) {
     super(ActionType.EqualDistanceEmitter)
     this.assign(props)
@@ -8499,7 +8282,7 @@ export interface DiskEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius?: ScalarPropertyArg
+  radius?: ScalarValue
   /**
    * Controls how the random emission points are distributed within the disk.
    * - At 0, particles are equally likely to emit from anywhere inside the disk.
@@ -8511,7 +8294,7 @@ export interface DiskEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution?: ScalarPropertyArg
+  distribution?: ScalarValue
 }
 
 /**
@@ -8528,7 +8311,7 @@ class DiskEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius: ScalarPropertyArg
+  radius: ScalarValue
   /**
    * Controls how the random emission points are distributed within the disk.
    * - At 0, particles are equally likely to emit from anywhere inside the disk.
@@ -8538,7 +8321,7 @@ class DiskEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution: ScalarPropertyArg
+  distribution: ScalarValue
   constructor(props: DiskEmitterShapeParams = {}) {
     super(ActionType.DiskEmitterShape)
     this.assign(props)
@@ -8559,7 +8342,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeX?: ScalarPropertyArg
+  sizeX?: ScalarValue
   /**
    * Height of the rectangle.
    * 
@@ -8567,7 +8350,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeY?: ScalarPropertyArg
+  sizeY?: ScalarValue
   /**
    * Controls how the random emission points are distributed within the rectangle.
    * - At 0, particles are equally likely to emit from anywhere inside the rectangle.
@@ -8579,7 +8362,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution?: ScalarPropertyArg
+  distribution?: ScalarValue
 }
 
 /**
@@ -8596,13 +8379,13 @@ class RectangleEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeX: ScalarPropertyArg
+  sizeX: ScalarValue
   /**
    * Height of the rectangle.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeY: ScalarPropertyArg
+  sizeY: ScalarValue
   /**
    * Controls how the random emission points are distributed within the rectangle.
    * - At 0, particles are equally likely to emit from anywhere inside the rectangle.
@@ -8612,7 +8395,7 @@ class RectangleEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution: ScalarPropertyArg
+  distribution: ScalarValue
   constructor(props: RectangleEmitterShapeParams = {}) {
     super(ActionType.RectangleEmitterShape)
     this.assign(props)
@@ -8633,7 +8416,7 @@ export interface SphereEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius?: ScalarPropertyArg
+  radius?: ScalarValue
 }
 
 /**
@@ -8650,7 +8433,7 @@ class SphereEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius: ScalarPropertyArg
+  radius: ScalarValue
   constructor(props: SphereEmitterShapeParams = {}) {
     super(ActionType.SphereEmitterShape)
     this.assign(props)
@@ -8677,7 +8460,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeX?: ScalarPropertyArg
+  sizeX?: ScalarValue
   /**
    * Height of the cuboid.
    * 
@@ -8685,7 +8468,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeY?: ScalarPropertyArg
+  sizeY?: ScalarValue
   /**
    * Depth of the cuboid.
    * 
@@ -8693,7 +8476,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeZ?: ScalarPropertyArg
+  sizeZ?: ScalarValue
 }
 
 /**
@@ -8714,19 +8497,19 @@ class BoxEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeX: ScalarPropertyArg
+  sizeX: ScalarValue
   /**
    * Height of the cuboid.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeY: ScalarPropertyArg
+  sizeY: ScalarValue
   /**
    * Depth of the cuboid.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  sizeZ: ScalarPropertyArg
+  sizeZ: ScalarValue
   constructor(props: BoxEmitterShapeParams = {}) {
     super(ActionType.BoxEmitterShape)
     this.assign(props)
@@ -8759,7 +8542,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius?: ScalarPropertyArg
+  radius?: ScalarValue
   /**
    * The height of the cylinder.
    * 
@@ -8767,7 +8550,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  height?: ScalarPropertyArg
+  height?: ScalarValue
 }
 
 /**
@@ -8792,13 +8575,13 @@ class CylinderEmitterShape extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius: ScalarPropertyArg
+  radius: ScalarValue
   /**
    * The height of the cylinder.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  height: ScalarPropertyArg
+  height: ScalarValue
   constructor(props: CylinderEmitterShapeParams = {}) {
     super(ActionType.CylinderEmitterShape)
     this.assign(props)
@@ -8819,7 +8602,7 @@ export interface CircularParticleSpreadParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  angle?: ScalarPropertyArg
+  angle?: ScalarValue
   /**
    * Controls the distribution of the random directions that can be chosen.
    * - At 0, all directions within the cone have an equal chance of being chosen.
@@ -8832,7 +8615,7 @@ export interface CircularParticleSpreadParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution?: ScalarPropertyArg
+  distribution?: ScalarValue
 }
 
 /**
@@ -8849,7 +8632,7 @@ class CircularParticleSpread extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  angle: ScalarPropertyArg
+  angle: ScalarValue
   /**
    * Controls the distribution of the random directions that can be chosen.
    * - At 0, all directions within the cone have an equal chance of being chosen.
@@ -8860,7 +8643,7 @@ class CircularParticleSpread extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution: ScalarPropertyArg
+  distribution: ScalarValue
   constructor(props: CircularParticleSpreadParams = {}) {
     super(ActionType.CircularParticleSpread)
     this.assign(props)
@@ -8884,7 +8667,7 @@ export interface EllipticalParticleSpreadParams {
    * See also:
    * - {@link angleY}
    */
-  angleX?: ScalarPropertyArg
+  angleX?: ScalarValue
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -8895,7 +8678,7 @@ export interface EllipticalParticleSpreadParams {
    * See also:
    * - {@link angleY}
    */
-  angleY?: ScalarPropertyArg
+  angleY?: ScalarValue
   /**
    * Controls the distribution of the random directions that can be chosen.
    * - At 0, all directions within the cone have an equal chance of being chosen.
@@ -8908,7 +8691,7 @@ export interface EllipticalParticleSpreadParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution?: ScalarPropertyArg
+  distribution?: ScalarValue
 }
 
 /**
@@ -8928,7 +8711,7 @@ class EllipticalParticleSpread extends DataAction {
    * See also:
    * - {@link angleY}
    */
-  angleX: ScalarPropertyArg
+  angleX: ScalarValue
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -8937,7 +8720,7 @@ class EllipticalParticleSpread extends DataAction {
    * See also:
    * - {@link angleY}
    */
-  angleY: ScalarPropertyArg
+  angleY: ScalarValue
   /**
    * Controls the distribution of the random directions that can be chosen.
    * - At 0, all directions within the cone have an equal chance of being chosen.
@@ -8948,7 +8731,7 @@ class EllipticalParticleSpread extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution: ScalarPropertyArg
+  distribution: ScalarValue
   constructor(props: EllipticalParticleSpreadParams = {}) {
     super(ActionType.EllipticalParticleSpread)
     this.assign(props)
@@ -8966,7 +8749,7 @@ export interface RectangularParticleSpreadParams {
    * See also:
    * - {@link angleY}
    */
-  angleX?: ScalarPropertyArg
+  angleX?: ScalarValue
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -8977,7 +8760,7 @@ export interface RectangularParticleSpreadParams {
    * See also:
    * - {@link angleX}
    */
-  angleY?: ScalarPropertyArg
+  angleY?: ScalarValue
   /**
    * Controls the distribution of the random directions that can be chosen.
    * - At 0, all directions within the cone have an equal chance of being chosen.
@@ -8990,7 +8773,7 @@ export interface RectangularParticleSpreadParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution?: ScalarPropertyArg
+  distribution?: ScalarValue
 }
 
 /**
@@ -9006,7 +8789,7 @@ class RectangularParticleSpread extends DataAction {
    * See also:
    * - {@link angleY}
    */
-  angleX: ScalarPropertyArg
+  angleX: ScalarValue
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -9015,7 +8798,7 @@ class RectangularParticleSpread extends DataAction {
    * See also:
    * - {@link angleX}
    */
-  angleY: ScalarPropertyArg
+  angleY: ScalarValue
   /**
    * Controls the distribution of the random directions that can be chosen.
    * - At 0, all directions within the cone have an equal chance of being chosen.
@@ -9026,7 +8809,7 @@ class RectangularParticleSpread extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  distribution: ScalarPropertyArg
+  distribution: ScalarValue
   constructor(props: RectangularParticleSpreadParams = {}) {
     super(ActionType.RectangularParticleSpread)
     this.assign(props)
@@ -9041,7 +8824,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  texture?: ScalarPropertyArg
+  texture?: ScalarValue
   /**
    * Blend mode.
    * 
@@ -9057,7 +8840,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  size?: ScalarPropertyArg
+  size?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -9065,7 +8848,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -9073,7 +8856,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -9081,7 +8864,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -9089,7 +8872,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -9097,7 +8880,7 @@ export interface PointSpriteParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
@@ -9343,31 +9126,31 @@ export interface PointSpriteParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -9452,7 +9235,7 @@ class PointSprite extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  texture: ScalarPropertyArg
+  texture: ScalarValue
   /**
    * Blend mode.
    * 
@@ -9464,37 +9247,37 @@ class PointSprite extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  size: ScalarPropertyArg
+  size: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   /**
    * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
@@ -9588,11 +9371,11 @@ class PointSprite extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -9630,7 +9413,7 @@ export interface LineParams {
    * See also:
    * - {@link lengthMultiplier}
    */
-  length?: ScalarPropertyArg
+  length?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -9638,7 +9421,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -9646,7 +9429,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * The color for the start of the line.
    * 
@@ -9654,7 +9437,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  startColor?: Vector4PropertyArg
+  startColor?: Vector4Value
   /**
    * The color for the end of the line.
    * 
@@ -9662,7 +9445,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  endColor?: Vector4PropertyArg
+  endColor?: Vector4Value
   /**
    * Multiplier for the line {@link length}.
    * 
@@ -9670,7 +9453,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  lengthMultiplier?: ScalarPropertyArg
+  lengthMultiplier?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -9678,7 +9461,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -9686,7 +9469,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -9694,7 +9477,7 @@ export interface LineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
@@ -9928,31 +9711,31 @@ export interface LineParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -10046,55 +9829,55 @@ class Line extends DataAction {
    * See also:
    * - {@link lengthMultiplier}
    */
-  length: ScalarPropertyArg
+  length: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * The color for the start of the line.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  startColor: Vector4PropertyArg
+  startColor: Vector4Value
   /**
    * The color for the end of the line.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  endColor: Vector4PropertyArg
+  endColor: Vector4Value
   /**
    * Multiplier for the line {@link length}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  lengthMultiplier: ScalarPropertyArg
+  lengthMultiplier: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   /**
    * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
@@ -10186,11 +9969,11 @@ class Line extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -10228,7 +10011,7 @@ export interface QuadLineParams {
    * See also:
    * - {@link widthMultiplier}
    */
-  width?: ScalarPropertyArg
+  width?: ScalarValue
   /**
    * The length of the line.
    * 
@@ -10239,7 +10022,7 @@ export interface QuadLineParams {
    * See also:
    * - {@link lengthMultiplier}
    */
-  length?: ScalarPropertyArg
+  length?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -10247,7 +10030,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -10255,7 +10038,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * The color for the leading edge of the quad.
    * 
@@ -10263,7 +10046,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  startColor?: Vector4PropertyArg
+  startColor?: Vector4Value
   /**
    * The color for the trailing edge of the quad.
    * 
@@ -10271,7 +10054,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  endColor?: Vector4PropertyArg
+  endColor?: Vector4Value
   /**
    * Multiplier for the line {@link width}.
    * 
@@ -10279,7 +10062,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  widthMultiplier?: ScalarPropertyArg
+  widthMultiplier?: ScalarValue
   /**
    * Multiplier for the line {@link length}.
    * 
@@ -10287,7 +10070,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  lengthMultiplier?: ScalarPropertyArg
+  lengthMultiplier?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -10295,7 +10078,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -10303,7 +10086,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -10311,7 +10094,7 @@ export interface QuadLineParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
@@ -10545,31 +10328,31 @@ export interface QuadLineParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -10663,7 +10446,7 @@ class QuadLine extends DataAction {
    * See also:
    * - {@link widthMultiplier}
    */
-  width: ScalarPropertyArg
+  width: ScalarValue
   /**
    * The length of the line.
    * 
@@ -10672,61 +10455,61 @@ class QuadLine extends DataAction {
    * See also:
    * - {@link lengthMultiplier}
    */
-  length: ScalarPropertyArg
+  length: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * The color for the leading edge of the quad.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  startColor: Vector4PropertyArg
+  startColor: Vector4Value
   /**
    * The color for the trailing edge of the quad.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  endColor: Vector4PropertyArg
+  endColor: Vector4Value
   /**
    * Multiplier for the line {@link width}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  widthMultiplier: ScalarPropertyArg
+  widthMultiplier: ScalarValue
   /**
    * Multiplier for the line {@link length}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  lengthMultiplier: ScalarPropertyArg
+  lengthMultiplier: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   /**
    * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
@@ -10818,11 +10601,11 @@ class QuadLine extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -10849,7 +10632,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  texture?: ScalarPropertyArg
+  texture?: ScalarValue
   /**
    * Blend mode.
    * 
@@ -10865,7 +10648,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetX?: ScalarPropertyArg
+  offsetX?: ScalarValue
   /**
    * Y position offset.
    * 
@@ -10873,7 +10656,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetY?: ScalarPropertyArg
+  offsetY?: ScalarValue
   /**
    * Z position offset.
    * 
@@ -10881,7 +10664,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetZ?: ScalarPropertyArg
+  offsetZ?: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -10894,7 +10677,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link scaleVariationX}
    */
-  width?: ScalarPropertyArg
+  width?: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -10907,7 +10690,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link scaleVariationY}
    */
-  height?: ScalarPropertyArg
+  height?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -10915,7 +10698,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -10923,7 +10706,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -10931,7 +10714,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
@@ -10939,7 +10722,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  alphaThreshold?: ScalarPropertyArg
+  alphaThreshold?: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -10951,7 +10734,7 @@ export interface BillboardExParams {
    * - {@link rotationSpeedX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationX?: ScalarPropertyArg
+  rotationX?: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
    * 
@@ -10963,7 +10746,7 @@ export interface BillboardExParams {
    * - {@link rotationSpeedY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationY?: ScalarPropertyArg
+  rotationY?: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
    * 
@@ -10975,7 +10758,7 @@ export interface BillboardExParams {
    * - {@link rotationSpeedZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationZ?: ScalarPropertyArg
+  rotationZ?: ScalarValue
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
@@ -10987,7 +10770,7 @@ export interface BillboardExParams {
    * - {@link rotationX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarPropertyArg
+  rotationSpeedX?: ScalarValue
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
@@ -10999,7 +10782,7 @@ export interface BillboardExParams {
    * - {@link rotationY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarPropertyArg
+  rotationSpeedY?: ScalarValue
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
@@ -11011,7 +10794,7 @@ export interface BillboardExParams {
    * - {@link rotationZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarPropertyArg
+  rotationSpeedZ?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
@@ -11022,7 +10805,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarPropertyArg
+  rotationSpeedMultiplierX?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
@@ -11033,7 +10816,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarPropertyArg
+  rotationSpeedMultiplierY?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
@@ -11044,7 +10827,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarPropertyArg
+  rotationSpeedMultiplierZ?: ScalarValue
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
@@ -11052,7 +10835,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  depthOffset?: ScalarPropertyArg
+  depthOffset?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -11062,7 +10845,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex?: ScalarPropertyArg
+  frameIndex?: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
@@ -11070,7 +10853,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset?: ScalarPropertyArg
+  frameIndexOffset?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -11078,7 +10861,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -11086,7 +10869,7 @@ export interface BillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
    * 
@@ -11477,43 +11260,43 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_21?: ScalarPropertyArg
+  unk_ds3_p1_21?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_22?: ScalarPropertyArg
+  unk_ds3_p1_22?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -11604,7 +11387,7 @@ class BillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  texture: ScalarPropertyArg
+  texture: ScalarValue
   /**
    * Blend mode.
    * 
@@ -11616,19 +11399,19 @@ class BillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetX: ScalarPropertyArg
+  offsetX: ScalarValue
   /**
    * Y position offset.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetY: ScalarPropertyArg
+  offsetY: ScalarValue
   /**
    * Z position offset.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetZ: ScalarPropertyArg
+  offsetZ: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -11639,7 +11422,7 @@ class BillboardEx extends DataAction {
    * See also:
    * - {@link scaleVariationX}
    */
-  width: ScalarPropertyArg
+  width: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -11650,31 +11433,31 @@ class BillboardEx extends DataAction {
    * See also:
    * - {@link scaleVariationY}
    */
-  height: ScalarPropertyArg
+  height: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  alphaThreshold: ScalarPropertyArg
+  alphaThreshold: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -11684,7 +11467,7 @@ class BillboardEx extends DataAction {
    * - {@link rotationSpeedX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationX: ScalarPropertyArg
+  rotationX: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
    * 
@@ -11694,7 +11477,7 @@ class BillboardEx extends DataAction {
    * - {@link rotationSpeedY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationY: ScalarPropertyArg
+  rotationY: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
    * 
@@ -11704,7 +11487,7 @@ class BillboardEx extends DataAction {
    * - {@link rotationSpeedZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationZ: ScalarPropertyArg
+  rotationZ: ScalarValue
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
@@ -11714,7 +11497,7 @@ class BillboardEx extends DataAction {
    * - {@link rotationX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarPropertyArg
+  rotationSpeedX: ScalarValue
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
@@ -11724,7 +11507,7 @@ class BillboardEx extends DataAction {
    * - {@link rotationY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarPropertyArg
+  rotationSpeedY: ScalarValue
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
@@ -11734,7 +11517,7 @@ class BillboardEx extends DataAction {
    * - {@link rotationZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarPropertyArg
+  rotationSpeedZ: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
@@ -11743,7 +11526,7 @@ class BillboardEx extends DataAction {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarPropertyArg
+  rotationSpeedMultiplierX: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
@@ -11752,7 +11535,7 @@ class BillboardEx extends DataAction {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarPropertyArg
+  rotationSpeedMultiplierY: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
@@ -11761,13 +11544,13 @@ class BillboardEx extends DataAction {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarPropertyArg
+  rotationSpeedMultiplierZ: ScalarValue
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  depthOffset: ScalarPropertyArg
+  depthOffset: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -11775,25 +11558,25 @@ class BillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex: ScalarPropertyArg
+  frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset: ScalarPropertyArg
+  frameIndexOffset: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
    */
@@ -11986,13 +11769,13 @@ class BillboardEx extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p1_21: ScalarPropertyArg
-  unk_ds3_p1_22: ScalarPropertyArg
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p1_21: ScalarValue
+  unk_ds3_p1_22: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f1_15: number
   unk_sdt_f1_16: number
   unk_sdt_f1_17: number
@@ -12220,7 +12003,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetX?: ScalarPropertyArg
+  offsetX?: ScalarValue
   /**
    * Y position offset.
    * 
@@ -12228,7 +12011,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetY?: ScalarPropertyArg
+  offsetY?: ScalarValue
   /**
    * Z position offset.
    * 
@@ -12236,7 +12019,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetZ?: ScalarPropertyArg
+  offsetZ?: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -12246,7 +12029,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  width?: ScalarPropertyArg
+  width?: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -12256,7 +12039,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  height?: ScalarPropertyArg
+  height?: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -12268,7 +12051,7 @@ export interface MultiTextureBillboardExParams {
    * - {@link rotationSpeedX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationX?: ScalarPropertyArg
+  rotationX?: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
    * 
@@ -12280,7 +12063,7 @@ export interface MultiTextureBillboardExParams {
    * - {@link rotationSpeedY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationY?: ScalarPropertyArg
+  rotationY?: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
    * 
@@ -12292,7 +12075,7 @@ export interface MultiTextureBillboardExParams {
    * - {@link rotationSpeedZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationZ?: ScalarPropertyArg
+  rotationZ?: ScalarValue
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
@@ -12304,7 +12087,7 @@ export interface MultiTextureBillboardExParams {
    * - {@link rotationX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarPropertyArg
+  rotationSpeedX?: ScalarValue
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
@@ -12316,7 +12099,7 @@ export interface MultiTextureBillboardExParams {
    * - {@link rotationY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarPropertyArg
+  rotationSpeedY?: ScalarValue
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
@@ -12328,7 +12111,7 @@ export interface MultiTextureBillboardExParams {
    * - {@link rotationZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarPropertyArg
+  rotationSpeedZ?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
@@ -12339,7 +12122,7 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarPropertyArg
+  rotationSpeedMultiplierX?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
@@ -12350,7 +12133,7 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarPropertyArg
+  rotationSpeedMultiplierY?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
@@ -12361,7 +12144,7 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarPropertyArg
+  rotationSpeedMultiplierZ?: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -12369,7 +12152,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
@@ -12377,7 +12160,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
@@ -12385,7 +12168,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * Color multiplier for both of the texture layers.
    * 
@@ -12393,7 +12176,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layersColor?: Vector4PropertyArg
+  layersColor?: Vector4Value
   /**
    * Color multiplier for Layer 1.
    * 
@@ -12401,7 +12184,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1Color?: Vector4PropertyArg
+  layer1Color?: Vector4Value
   /**
    * Color multiplier for Layer 2.
    * 
@@ -12409,7 +12192,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2Color?: Vector4PropertyArg
+  layer2Color?: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
@@ -12417,7 +12200,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  alphaThreshold?: ScalarPropertyArg
+  alphaThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -12427,7 +12210,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex?: ScalarPropertyArg
+  frameIndex?: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
@@ -12435,7 +12218,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset?: ScalarPropertyArg
+  frameIndexOffset?: ScalarValue
   /**
    * Horiztonal scroll speed for Layer 1.
    * 
@@ -12443,7 +12226,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1SpeedU?: ScalarPropertyArg
+  layer1SpeedU?: ScalarValue
   /**
    * Vertical scroll speed for Layer 1.
    * 
@@ -12451,7 +12234,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1SpeedV?: ScalarPropertyArg
+  layer1SpeedV?: ScalarValue
   /**
    * Horizontal offset for the UV coordinates of Layer 1.
    * 
@@ -12459,7 +12242,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer1OffsetU?: ScalarPropertyArg
+  layer1OffsetU?: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 1.
    * 
@@ -12467,7 +12250,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer1OffsetV?: ScalarPropertyArg
+  layer1OffsetV?: ScalarValue
   /**
    * Horizontal scale for the UV coordinates of Layer 1.
    * 
@@ -12475,7 +12258,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1ScaleU?: ScalarPropertyArg
+  layer1ScaleU?: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 1.
    * 
@@ -12483,7 +12266,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1ScaleV?: ScalarPropertyArg
+  layer1ScaleV?: ScalarValue
   /**
    * Horiztonal scroll speed for Layer 2.
    * 
@@ -12491,7 +12274,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2SpeedU?: ScalarPropertyArg
+  layer2SpeedU?: ScalarValue
   /**
    * Vertical scroll speed for Layer 2.
    * 
@@ -12499,7 +12282,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2SpeedV?: ScalarPropertyArg
+  layer2SpeedV?: ScalarValue
   /**
    * Horizontal offset for the UV coordinates of Layer 2.
    * 
@@ -12507,7 +12290,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer2OffsetU?: ScalarPropertyArg
+  layer2OffsetU?: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 2.
    * 
@@ -12515,7 +12298,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer2OffsetV?: ScalarPropertyArg
+  layer2OffsetV?: ScalarValue
   /**
    * Horizontal scale for the UV coordinates of Layer 2.
    * 
@@ -12523,7 +12306,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2ScaleU?: ScalarPropertyArg
+  layer2ScaleU?: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 2.
    * 
@@ -12531,7 +12314,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2ScaleV?: ScalarPropertyArg
+  layer2ScaleV?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -12539,7 +12322,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -12547,7 +12330,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Unknown.
    * 
@@ -12721,67 +12504,67 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_23?: ScalarPropertyArg
+  unk_ds3_p1_23?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_24?: ScalarPropertyArg
+  unk_ds3_p1_24?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_25?: ScalarPropertyArg
+  unk_ds3_p1_25?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_26?: ScalarPropertyArg
+  unk_ds3_p1_26?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `1`
    */
-  unk_ds3_p1_27?: ScalarPropertyArg
+  unk_ds3_p1_27?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `1`
    */
-  unk_ds3_p1_28?: ScalarPropertyArg
+  unk_ds3_p1_28?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -13037,19 +12820,19 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetX: ScalarPropertyArg
+  offsetX: ScalarValue
   /**
    * Y position offset.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetY: ScalarPropertyArg
+  offsetY: ScalarValue
   /**
    * Z position offset.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetZ: ScalarPropertyArg
+  offsetZ: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -13057,7 +12840,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  width: ScalarPropertyArg
+  width: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -13065,7 +12848,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  height: ScalarPropertyArg
+  height: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -13075,7 +12858,7 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link rotationSpeedX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationX: ScalarPropertyArg
+  rotationX: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
    * 
@@ -13085,7 +12868,7 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link rotationSpeedY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationY: ScalarPropertyArg
+  rotationY: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
    * 
@@ -13095,7 +12878,7 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link rotationSpeedZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationZ: ScalarPropertyArg
+  rotationZ: ScalarValue
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
@@ -13105,7 +12888,7 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link rotationX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarPropertyArg
+  rotationSpeedX: ScalarValue
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
@@ -13115,7 +12898,7 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link rotationY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarPropertyArg
+  rotationSpeedY: ScalarValue
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
@@ -13125,7 +12908,7 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link rotationZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarPropertyArg
+  rotationSpeedZ: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
@@ -13134,7 +12917,7 @@ class MultiTextureBillboardEx extends DataAction {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarPropertyArg
+  rotationSpeedMultiplierX: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
@@ -13143,7 +12926,7 @@ class MultiTextureBillboardEx extends DataAction {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarPropertyArg
+  rotationSpeedMultiplierY: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
@@ -13152,49 +12935,49 @@ class MultiTextureBillboardEx extends DataAction {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarPropertyArg
+  rotationSpeedMultiplierZ: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * Color multiplier for both of the texture layers.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layersColor: Vector4PropertyArg
+  layersColor: Vector4Value
   /**
    * Color multiplier for Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1Color: Vector4PropertyArg
+  layer1Color: Vector4Value
   /**
    * Color multiplier for Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2Color: Vector4PropertyArg
+  layer2Color: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  alphaThreshold: ScalarPropertyArg
+  alphaThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -13202,97 +12985,97 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex: ScalarPropertyArg
+  frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset: ScalarPropertyArg
+  frameIndexOffset: ScalarValue
   /**
    * Horiztonal scroll speed for Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1SpeedU: ScalarPropertyArg
+  layer1SpeedU: ScalarValue
   /**
    * Vertical scroll speed for Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1SpeedV: ScalarPropertyArg
+  layer1SpeedV: ScalarValue
   /**
    * Horizontal offset for the UV coordinates of Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer1OffsetU: ScalarPropertyArg
+  layer1OffsetU: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer1OffsetV: ScalarPropertyArg
+  layer1OffsetV: ScalarValue
   /**
    * Horizontal scale for the UV coordinates of Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1ScaleU: ScalarPropertyArg
+  layer1ScaleU: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 1.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer1ScaleV: ScalarPropertyArg
+  layer1ScaleV: ScalarValue
   /**
    * Horiztonal scroll speed for Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2SpeedU: ScalarPropertyArg
+  layer2SpeedU: ScalarValue
   /**
    * Vertical scroll speed for Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2SpeedV: ScalarPropertyArg
+  layer2SpeedV: ScalarValue
   /**
    * Horizontal offset for the UV coordinates of Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer2OffsetU: ScalarPropertyArg
+  layer2OffsetU: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  layer2OffsetV: ScalarPropertyArg
+  layer2OffsetV: ScalarValue
   /**
    * Horizontal scale for the UV coordinates of Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2ScaleU: ScalarPropertyArg
+  layer2ScaleU: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 2.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  layer2ScaleV: ScalarPropertyArg
+  layer2ScaleV: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   unk_ds3_f1_6: number
   unk_ds3_f1_10: number
   unk_ds3_f1_11: number
@@ -13321,17 +13104,17 @@ class MultiTextureBillboardEx extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p1_23: ScalarPropertyArg
-  unk_ds3_p1_24: ScalarPropertyArg
-  unk_ds3_p1_25: ScalarPropertyArg
-  unk_ds3_p1_26: ScalarPropertyArg
-  unk_ds3_p1_27: ScalarPropertyArg
-  unk_ds3_p1_28: ScalarPropertyArg
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p1_23: ScalarValue
+  unk_ds3_p1_24: ScalarValue
+  unk_ds3_p1_25: ScalarValue
+  unk_ds3_p1_26: ScalarValue
+  unk_ds3_p1_27: ScalarValue
+  unk_ds3_p1_28: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -13519,7 +13302,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  model?: ScalarPropertyArg
+  model?: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -13534,7 +13317,7 @@ export interface ModelParams {
    * - {@link sizeY}
    * - {@link sizeZ}
    */
-  sizeX?: ScalarPropertyArg
+  sizeX?: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -13549,7 +13332,7 @@ export interface ModelParams {
    * - {@link sizeX}
    * - {@link sizeZ}
    */
-  sizeY?: ScalarPropertyArg
+  sizeY?: ScalarValue
   /**
    * The depth of the particle.
    * 
@@ -13564,7 +13347,7 @@ export interface ModelParams {
    * - {@link sizeX}
    * - {@link sizeY}
    */
-  sizeZ?: ScalarPropertyArg
+  sizeZ?: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -13576,7 +13359,7 @@ export interface ModelParams {
    * - {@link rotationSpeedX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationX?: ScalarPropertyArg
+  rotationX?: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
    * 
@@ -13588,7 +13371,7 @@ export interface ModelParams {
    * - {@link rotationSpeedY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationY?: ScalarPropertyArg
+  rotationY?: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
    * 
@@ -13600,7 +13383,7 @@ export interface ModelParams {
    * - {@link rotationSpeedZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationZ?: ScalarPropertyArg
+  rotationZ?: ScalarValue
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
@@ -13612,7 +13395,7 @@ export interface ModelParams {
    * - {@link rotationX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarPropertyArg
+  rotationSpeedX?: ScalarValue
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
@@ -13624,7 +13407,7 @@ export interface ModelParams {
    * - {@link rotationY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarPropertyArg
+  rotationSpeedY?: ScalarValue
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
@@ -13636,7 +13419,7 @@ export interface ModelParams {
    * - {@link rotationZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarPropertyArg
+  rotationSpeedZ?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
@@ -13647,7 +13430,7 @@ export interface ModelParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarPropertyArg
+  rotationSpeedMultiplierX?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
@@ -13658,7 +13441,7 @@ export interface ModelParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarPropertyArg
+  rotationSpeedMultiplierY?: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
@@ -13669,7 +13452,7 @@ export interface ModelParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarPropertyArg
+  rotationSpeedMultiplierZ?: ScalarValue
   /**
    * Blend mode.
    * 
@@ -13687,7 +13470,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
@@ -13695,7 +13478,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
@@ -13703,7 +13486,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -13713,7 +13496,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex?: ScalarPropertyArg
+  frameIndex?: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
@@ -13721,7 +13504,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset?: ScalarPropertyArg
+  frameIndexOffset?: ScalarValue
   /**
    * Horizontal offset for the UV coordinates of the model.
    * 
@@ -13735,7 +13518,7 @@ export interface ModelParams {
    * - {@link speedU}
    * - {@link offsetV}
    */
-  offsetU?: ScalarPropertyArg
+  offsetU?: ScalarValue
   /**
    * Vertical offset for the UV coordinates of the model.
    * 
@@ -13745,7 +13528,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  offsetV?: ScalarPropertyArg
+  offsetV?: ScalarValue
   /**
    * Horiztonal scroll speed for the model's texture.
    * 
@@ -13759,7 +13542,7 @@ export interface ModelParams {
    * - {@link speedUMultiplier}
    * - {@link offsetU}
    */
-  speedU?: ScalarPropertyArg
+  speedU?: ScalarValue
   /**
    * Multiplier for {@link speedU}.
    * 
@@ -13767,7 +13550,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedUMultiplier?: ScalarPropertyArg
+  speedUMultiplier?: ScalarValue
   /**
    * Vertical scroll speed for the model's texture.
    * 
@@ -13781,7 +13564,7 @@ export interface ModelParams {
    * - {@link speedVMultiplier}
    * - {@link offsetV}
    */
-  speedV?: ScalarPropertyArg
+  speedV?: ScalarValue
   /**
    * Multiplier for {@link speedV}.
    * 
@@ -13789,7 +13572,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedVMultiplier?: ScalarPropertyArg
+  speedVMultiplier?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -13797,7 +13580,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -13805,7 +13588,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Unknown.
    * 
@@ -14009,43 +13792,43 @@ export interface ModelParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_15?: ScalarPropertyArg
+  unk_ds3_p1_15?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_24?: ScalarPropertyArg
+  unk_ds3_p1_24?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -14260,7 +14043,7 @@ class Model extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  model: ScalarPropertyArg
+  model: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -14273,7 +14056,7 @@ class Model extends DataAction {
    * - {@link sizeY}
    * - {@link sizeZ}
    */
-  sizeX: ScalarPropertyArg
+  sizeX: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -14286,7 +14069,7 @@ class Model extends DataAction {
    * - {@link sizeX}
    * - {@link sizeZ}
    */
-  sizeY: ScalarPropertyArg
+  sizeY: ScalarValue
   /**
    * The depth of the particle.
    * 
@@ -14299,7 +14082,7 @@ class Model extends DataAction {
    * - {@link sizeX}
    * - {@link sizeY}
    */
-  sizeZ: ScalarPropertyArg
+  sizeZ: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -14309,7 +14092,7 @@ class Model extends DataAction {
    * - {@link rotationSpeedX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationX: ScalarPropertyArg
+  rotationX: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
    * 
@@ -14319,7 +14102,7 @@ class Model extends DataAction {
    * - {@link rotationSpeedY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationY: ScalarPropertyArg
+  rotationY: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
    * 
@@ -14329,7 +14112,7 @@ class Model extends DataAction {
    * - {@link rotationSpeedZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationZ: ScalarPropertyArg
+  rotationZ: ScalarValue
   /**
    * Rotation speed around the X-axis in degrees per second.
    * 
@@ -14339,7 +14122,7 @@ class Model extends DataAction {
    * - {@link rotationX}
    * - {@link rotationSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarPropertyArg
+  rotationSpeedX: ScalarValue
   /**
    * Rotation speed around the Y-axis in degrees per second.
    * 
@@ -14349,7 +14132,7 @@ class Model extends DataAction {
    * - {@link rotationY}
    * - {@link rotationSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarPropertyArg
+  rotationSpeedY: ScalarValue
   /**
    * Rotation speed around the Z-axis in degrees per second.
    * 
@@ -14359,7 +14142,7 @@ class Model extends DataAction {
    * - {@link rotationZ}
    * - {@link rotationSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarPropertyArg
+  rotationSpeedZ: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedX}.
    * 
@@ -14368,7 +14151,7 @@ class Model extends DataAction {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarPropertyArg
+  rotationSpeedMultiplierX: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedY}.
    * 
@@ -14377,7 +14160,7 @@ class Model extends DataAction {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarPropertyArg
+  rotationSpeedMultiplierY: ScalarValue
   /**
    * Multiplier for {@link rotationSpeedZ}.
    * 
@@ -14386,7 +14169,7 @@ class Model extends DataAction {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarPropertyArg
+  rotationSpeedMultiplierZ: ScalarValue
   /**
    * Blend mode.
    * 
@@ -14400,19 +14183,19 @@ class Model extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -14420,13 +14203,13 @@ class Model extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex: ScalarPropertyArg
+  frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset: ScalarPropertyArg
+  frameIndexOffset: ScalarValue
   /**
    * Horizontal offset for the UV coordinates of the model.
    * 
@@ -14438,7 +14221,7 @@ class Model extends DataAction {
    * - {@link speedU}
    * - {@link offsetV}
    */
-  offsetU: ScalarPropertyArg
+  offsetU: ScalarValue
   /**
    * Vertical offset for the UV coordinates of the model.
    * 
@@ -14446,7 +14229,7 @@ class Model extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  offsetV: ScalarPropertyArg
+  offsetV: ScalarValue
   /**
    * Horiztonal scroll speed for the model's texture.
    * 
@@ -14458,13 +14241,13 @@ class Model extends DataAction {
    * - {@link speedUMultiplier}
    * - {@link offsetU}
    */
-  speedU: ScalarPropertyArg
+  speedU: ScalarValue
   /**
    * Multiplier for {@link speedU}.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedUMultiplier: ScalarPropertyArg
+  speedUMultiplier: ScalarValue
   /**
    * Vertical scroll speed for the model's texture.
    * 
@@ -14476,25 +14259,25 @@ class Model extends DataAction {
    * - {@link speedVMultiplier}
    * - {@link offsetV}
    */
-  speedV: ScalarPropertyArg
+  speedV: ScalarValue
   /**
    * Multiplier for {@link speedV}.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedVMultiplier: ScalarPropertyArg
+  speedVMultiplier: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   unk_ds3_f1_9: number
   unk_ds3_f1_10: number
   unk_ds3_f1_11: boolean
@@ -14528,13 +14311,13 @@ class Model extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
-  unk_ds3_p1_15: ScalarPropertyArg
-  unk_ds3_p1_24: ScalarPropertyArg
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p1_15: ScalarValue
+  unk_ds3_p1_24: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
@@ -14738,7 +14521,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  texture?: ScalarPropertyArg
+  texture?: ScalarValue
   /**
    * Blend mode.
    * 
@@ -14754,7 +14537,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  width?: ScalarPropertyArg
+  width?: ScalarValue
   /**
    * Multiplier for {@link width}.
    * 
@@ -14762,7 +14545,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  widthMultiplier?: ScalarPropertyArg
+  widthMultiplier?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -14770,7 +14553,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1?: Vector4PropertyArg
+  color1?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -14778,7 +14561,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2?: Vector4PropertyArg
+  color2?: Vector4Value
   /**
    * Color multiplier.
    * 
@@ -14786,7 +14569,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3?: Vector4PropertyArg
+  color3?: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
@@ -14794,7 +14577,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  alphaThreshold?: ScalarPropertyArg
+  alphaThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -14804,7 +14587,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex?: ScalarPropertyArg
+  frameIndex?: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
@@ -14812,7 +14595,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset?: ScalarPropertyArg
+  frameIndexOffset?: ScalarValue
   /**
    * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
    * 
@@ -14820,7 +14603,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  textureFraction?: ScalarPropertyArg
+  textureFraction?: ScalarValue
   /**
    * Controls how fast the UV coordinates should move horizontally.
    * 
@@ -14828,7 +14611,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedU?: ScalarPropertyArg
+  speedU?: ScalarValue
   /**
    * Controls how much the UV coordinates should be randomly offset by per segment.
    * 
@@ -14836,7 +14619,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  varianceV?: ScalarPropertyArg
+  varianceV?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -14844,7 +14627,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -14852,7 +14635,7 @@ export interface TracerParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Unknown.
    * 
@@ -15038,49 +14821,49 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_2?: ScalarPropertyArg
+  unk_ds3_p1_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_3?: ScalarPropertyArg
+  unk_ds3_p1_3?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `-1`
    */
-  unk_ds3_p1_13?: ScalarPropertyArg
+  unk_ds3_p1_13?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -15280,7 +15063,7 @@ class Tracer extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  texture: ScalarPropertyArg
+  texture: ScalarValue
   /**
    * Blend mode.
    * 
@@ -15292,37 +15075,37 @@ class Tracer extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  width: ScalarPropertyArg
+  width: ScalarValue
   /**
    * Multiplier for {@link width}.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  widthMultiplier: ScalarPropertyArg
+  widthMultiplier: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color1: Vector4PropertyArg
+  color1: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
-  color2: Vector4PropertyArg
+  color2: Vector4Value
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color3: Vector4PropertyArg
+  color3: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  alphaThreshold: ScalarPropertyArg
+  alphaThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -15330,43 +15113,43 @@ class Tracer extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndex: ScalarPropertyArg
+  frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  frameIndexOffset: ScalarPropertyArg
+  frameIndexOffset: ScalarValue
   /**
    * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  textureFraction: ScalarPropertyArg
+  textureFraction: ScalarValue
   /**
    * Controls how fast the UV coordinates should move horizontally.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedU: ScalarPropertyArg
+  speedU: ScalarValue
   /**
    * Controls how much the UV coordinates should be randomly offset by per segment.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  varianceV: ScalarPropertyArg
+  varianceV: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   unk_ds3_f1_7: number
   unk_ds3_f1_8: number
   unk_ds3_f1_9: number
@@ -15397,14 +15180,14 @@ class Tracer extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p1_2: ScalarPropertyArg
-  unk_ds3_p1_3: ScalarPropertyArg
-  unk_ds3_p1_13: ScalarPropertyArg
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p1_2: ScalarValue
+  unk_ds3_p1_3: ScalarValue
+  unk_ds3_p1_13: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -15603,7 +15386,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetX?: ScalarPropertyArg
+  offsetX?: ScalarValue
   /**
    * Y position offset.
    * 
@@ -15611,7 +15394,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetY?: ScalarPropertyArg
+  offsetY?: ScalarValue
   /**
    * Z position offset.
    * 
@@ -15619,7 +15402,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetZ?: ScalarPropertyArg
+  offsetZ?: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -15634,7 +15417,7 @@ export interface DistortionParams {
    * - {@link sizeY}
    * - {@link sizeZ}
    */
-  sizeX?: ScalarPropertyArg
+  sizeX?: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -15649,7 +15432,7 @@ export interface DistortionParams {
    * - {@link sizeX}
    * - {@link sizeZ}
    */
-  sizeY?: ScalarPropertyArg
+  sizeY?: ScalarValue
   /**
    * The depth of the particle.
    * 
@@ -15666,7 +15449,7 @@ export interface DistortionParams {
    * - {@link sizeX}
    * - {@link sizeY}
    */
-  sizeZ?: ScalarPropertyArg
+  sizeZ?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -15674,7 +15457,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color?: Vector4PropertyArg
+  color?: Vector4Value
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
@@ -15682,7 +15465,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  intensity?: ScalarPropertyArg
+  intensity?: ScalarValue
   /**
    * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
@@ -15690,7 +15473,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  stirSpeed?: ScalarPropertyArg
+  stirSpeed?: ScalarValue
   /**
    * The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
    * 
@@ -15698,7 +15481,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  radius?: ScalarPropertyArg
+  radius?: ScalarValue
   /**
    * Horizontal offset for the {@link normalMap normal map}.
    * 
@@ -15706,7 +15489,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  normalMapOffsetU?: ScalarPropertyArg
+  normalMapOffsetU?: ScalarValue
   /**
    * Vertical offset for the {@link normalMap normal map}.
    * 
@@ -15714,7 +15497,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  normalMapOffsetV?: ScalarPropertyArg
+  normalMapOffsetV?: ScalarValue
   /**
    * Horizontal offset speed for the {@link normalMap normal map}.
    * 
@@ -15722,7 +15505,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  normalMapSpeedU?: ScalarPropertyArg
+  normalMapSpeedU?: ScalarValue
   /**
    * Vertical offset speed for the {@link normalMap normal map}.
    * 
@@ -15730,7 +15513,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  normalMapSpeedV?: ScalarPropertyArg
+  normalMapSpeedV?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -15738,7 +15521,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -15746,7 +15529,7 @@ export interface DistortionParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Unknown.
    * 
@@ -15908,43 +15691,43 @@ export interface DistortionParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p1_7?: Vector4PropertyArg
+  unk_ds3_p1_7?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_9?: ScalarPropertyArg
+  unk_ds3_p1_9?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -16016,13 +15799,13 @@ export interface DistortionParams {
    * 
    * **Default**: `1`
    */
-  unk_er_p2_7?: ScalarPropertyArg
+  unk_er_p2_7?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `1`
    */
-  unk_er_p2_8?: ScalarPropertyArg
+  unk_er_p2_8?: ScalarValue
 }
 
 /**
@@ -16179,19 +15962,19 @@ class Distortion extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetX: ScalarPropertyArg
+  offsetX: ScalarValue
   /**
    * Y position offset.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetY: ScalarPropertyArg
+  offsetY: ScalarValue
   /**
    * Z position offset.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  offsetZ: ScalarPropertyArg
+  offsetZ: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -16204,7 +15987,7 @@ class Distortion extends DataAction {
    * - {@link sizeY}
    * - {@link sizeZ}
    */
-  sizeX: ScalarPropertyArg
+  sizeX: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -16217,7 +16000,7 @@ class Distortion extends DataAction {
    * - {@link sizeX}
    * - {@link sizeZ}
    */
-  sizeY: ScalarPropertyArg
+  sizeY: ScalarValue
   /**
    * The depth of the particle.
    * 
@@ -16232,67 +16015,67 @@ class Distortion extends DataAction {
    * - {@link sizeX}
    * - {@link sizeY}
    */
-  sizeZ: ScalarPropertyArg
+  sizeZ: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color: Vector4PropertyArg
+  color: Vector4Value
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  intensity: ScalarPropertyArg
+  intensity: ScalarValue
   /**
    * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  stirSpeed: ScalarPropertyArg
+  stirSpeed: ScalarValue
   /**
    * The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  radius: ScalarPropertyArg
+  radius: ScalarValue
   /**
    * Horizontal offset for the {@link normalMap normal map}.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  normalMapOffsetU: ScalarPropertyArg
+  normalMapOffsetU: ScalarValue
   /**
    * Vertical offset for the {@link normalMap normal map}.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  normalMapOffsetV: ScalarPropertyArg
+  normalMapOffsetV: ScalarValue
   /**
    * Horizontal offset speed for the {@link normalMap normal map}.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  normalMapSpeedU: ScalarPropertyArg
+  normalMapSpeedU: ScalarValue
   /**
    * Vertical offset speed for the {@link normalMap normal map}.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  normalMapSpeedV: ScalarPropertyArg
+  normalMapSpeedV: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   unk_ds3_f1_11: number
   unk_ds3_f1_12: number
   unk_ds3_f2_0: number
@@ -16319,13 +16102,13 @@ class Distortion extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p1_7: Vector4PropertyArg
-  unk_ds3_p1_9: ScalarPropertyArg
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p1_7: Vector4Value
+  unk_ds3_p1_9: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -16337,8 +16120,8 @@ class Distortion extends DataAction {
   unk_sdt_f2_38: number
   unk_er_f1_12: number
   unk_er_f1_13: number
-  unk_er_p2_7: ScalarPropertyArg
-  unk_er_p2_8: ScalarPropertyArg
+  unk_er_p2_7: ScalarValue
+  unk_er_p2_8: ScalarValue
   constructor(props: DistortionParams = {}) {
     super(ActionType.Distortion)
     this.assign(props)
@@ -16455,7 +16238,7 @@ export interface RadialBlurParams {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  mask?: ScalarPropertyArg
+  mask?: ScalarValue
   /**
    * X position offset.
    * 
@@ -16467,7 +16250,7 @@ export interface RadialBlurParams {
    * - {@link offsetY}
    * - {@link offsetZ}
    */
-  offsetX?: ScalarPropertyArg
+  offsetX?: ScalarValue
   /**
    * Y position offset.
    * 
@@ -16479,7 +16262,7 @@ export interface RadialBlurParams {
    * - {@link offsetX}
    * - {@link offsetZ}
    */
-  offsetY?: ScalarPropertyArg
+  offsetY?: ScalarValue
   /**
    * Z position offset.
    * 
@@ -16491,7 +16274,7 @@ export interface RadialBlurParams {
    * - {@link offsetX}
    * - {@link offsetY}
    */
-  offsetZ?: ScalarPropertyArg
+  offsetZ?: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -16504,7 +16287,7 @@ export interface RadialBlurParams {
    * See also:
    * - {@link height}
    */
-  width?: ScalarPropertyArg
+  width?: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -16517,7 +16300,7 @@ export interface RadialBlurParams {
    * See also:
    * - {@link width}
    */
-  height?: ScalarPropertyArg
+  height?: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -16525,7 +16308,7 @@ export interface RadialBlurParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color?: Vector4PropertyArg
+  color?: Vector4Value
   /**
    * Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
    * 
@@ -16533,7 +16316,7 @@ export interface RadialBlurParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  blurRadius?: ScalarPropertyArg
+  blurRadius?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -16541,7 +16324,7 @@ export interface RadialBlurParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier?: ScalarPropertyArg
+  rgbMultiplier?: ScalarValue
   /**
    * Alpha multiplier.
    * 
@@ -16549,7 +16332,7 @@ export interface RadialBlurParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier?: ScalarPropertyArg
+  alphaMultiplier?: ScalarValue
   /**
    * Unknown.
    * 
@@ -16705,37 +16488,37 @@ export interface RadialBlurParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p1_6?: Vector4PropertyArg
+  unk_ds3_p1_6?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarPropertyArg
+  unk_ds3_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4PropertyArg
+  unk_ds3_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4PropertyArg
+  unk_ds3_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4PropertyArg
+  unk_ds3_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarPropertyArg
+  unk_ds3_p2_6?: ScalarValue
   /**
    * Unknown.
    * 
@@ -16852,7 +16635,7 @@ class RadialBlur extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  mask: ScalarPropertyArg
+  mask: ScalarValue
   /**
    * X position offset.
    * 
@@ -16862,7 +16645,7 @@ class RadialBlur extends DataAction {
    * - {@link offsetY}
    * - {@link offsetZ}
    */
-  offsetX: ScalarPropertyArg
+  offsetX: ScalarValue
   /**
    * Y position offset.
    * 
@@ -16872,7 +16655,7 @@ class RadialBlur extends DataAction {
    * - {@link offsetX}
    * - {@link offsetZ}
    */
-  offsetY: ScalarPropertyArg
+  offsetY: ScalarValue
   /**
    * Z position offset.
    * 
@@ -16882,7 +16665,7 @@ class RadialBlur extends DataAction {
    * - {@link offsetX}
    * - {@link offsetY}
    */
-  offsetZ: ScalarPropertyArg
+  offsetZ: ScalarValue
   /**
    * The width of the particle.
    * 
@@ -16893,7 +16676,7 @@ class RadialBlur extends DataAction {
    * See also:
    * - {@link height}
    */
-  width: ScalarPropertyArg
+  width: ScalarValue
   /**
    * The height of the particle.
    * 
@@ -16904,31 +16687,31 @@ class RadialBlur extends DataAction {
    * See also:
    * - {@link width}
    */
-  height: ScalarPropertyArg
+  height: ScalarValue
   /**
    * Color multiplier.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  color: Vector4PropertyArg
+  color: Vector4Value
   /**
    * Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  blurRadius: ScalarPropertyArg
+  blurRadius: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rgbMultiplier: ScalarPropertyArg
+  rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  alphaMultiplier: ScalarPropertyArg
+  alphaMultiplier: ScalarValue
   unk_ds3_f1_4: number
   unk_ds3_f2_0: number
   unk_ds3_f2_1: number
@@ -16954,12 +16737,12 @@ class RadialBlur extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_ds3_f2_29: number
-  unk_ds3_p1_6: Vector4PropertyArg
-  unk_ds3_p2_2: ScalarPropertyArg
-  unk_ds3_p2_3: Vector4PropertyArg
-  unk_ds3_p2_4: Vector4PropertyArg
-  unk_ds3_p2_5: Vector4PropertyArg
-  unk_ds3_p2_6: ScalarPropertyArg
+  unk_ds3_p1_6: Vector4Value
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
   unk_sdt_f2_30: number
   unk_er_f1_3: number
   unk_er_f1_4: number
@@ -16982,7 +16765,7 @@ export interface PointLightParams {
    * See also:
    * - {@link specularColor}
    */
-  diffuseColor?: Vector4PropertyArg
+  diffuseColor?: Vector4Value
   /**
    * Controls the specular color of the light.
    * 
@@ -16992,7 +16775,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularColor?: Vector4PropertyArg
+  specularColor?: Vector4Value
   /**
    * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
    * 
@@ -17000,7 +16783,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius?: ScalarPropertyArg
+  radius?: ScalarValue
   /**
    * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
    * 
@@ -17010,7 +16793,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  diffuseMultiplier?: ScalarPropertyArg
+  diffuseMultiplier?: ScalarValue
   /**
    * A scalar multiplier for the {@link specularColor specular color}.
    * 
@@ -17020,7 +16803,7 @@ export interface PointLightParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularMultiplier?: ScalarPropertyArg
+  specularMultiplier?: ScalarValue
   /**
    * Toggles the jitter and flicker animations for the light.
    * 
@@ -17281,55 +17064,55 @@ export interface PointLightParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_3?: ScalarPropertyArg
+  unk_ds3_p1_3?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_4?: ScalarPropertyArg
+  unk_ds3_p1_4?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_5?: ScalarPropertyArg
+  unk_ds3_p1_5?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p1_6?: ScalarPropertyArg
+  unk_ds3_p1_6?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `10`
    */
-  unk_ds3_p1_7?: ScalarPropertyArg
+  unk_ds3_p1_7?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `10`
    */
-  unk_ds3_p1_8?: ScalarPropertyArg
+  unk_ds3_p1_8?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `10`
    */
-  unk_ds3_p1_9?: ScalarPropertyArg
+  unk_ds3_p1_9?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `1`
    */
-  unk_ds3_p2_0?: ScalarPropertyArg
+  unk_ds3_p2_0?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `1`
    */
-  unk_ds3_p2_1?: ScalarPropertyArg
+  unk_ds3_p2_1?: ScalarValue
   /**
    * Unknown.
    * 
@@ -17341,7 +17124,7 @@ export interface PointLightParams {
    * 
    * **Default**: `1`
    */
-  unk_sdt_p2_2?: ScalarPropertyArg
+  unk_sdt_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
@@ -17383,7 +17166,7 @@ class PointLight extends DataAction {
    * See also:
    * - {@link specularColor}
    */
-  diffuseColor: Vector4PropertyArg
+  diffuseColor: Vector4Value
   /**
    * Controls the specular color of the light.
    * 
@@ -17391,13 +17174,13 @@ class PointLight extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularColor: Vector4PropertyArg
+  specularColor: Vector4Value
   /**
    * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  radius: ScalarPropertyArg
+  radius: ScalarValue
   /**
    * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
    * 
@@ -17405,7 +17188,7 @@ class PointLight extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  diffuseMultiplier: ScalarPropertyArg
+  diffuseMultiplier: ScalarValue
   /**
    * A scalar multiplier for the {@link specularColor specular color}.
    * 
@@ -17413,7 +17196,7 @@ class PointLight extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  specularMultiplier: ScalarPropertyArg
+  specularMultiplier: ScalarValue
   /**
    * Toggles the jitter and flicker animations for the light.
    * 
@@ -17565,17 +17348,17 @@ class PointLight extends DataAction {
   unk_ds3_f2_22: number
   unk_ds3_f2_23: number
   unk_ds3_f2_24: number
-  unk_ds3_p1_3: ScalarPropertyArg
-  unk_ds3_p1_4: ScalarPropertyArg
-  unk_ds3_p1_5: ScalarPropertyArg
-  unk_ds3_p1_6: ScalarPropertyArg
-  unk_ds3_p1_7: ScalarPropertyArg
-  unk_ds3_p1_8: ScalarPropertyArg
-  unk_ds3_p1_9: ScalarPropertyArg
-  unk_ds3_p2_0: ScalarPropertyArg
-  unk_ds3_p2_1: ScalarPropertyArg
+  unk_ds3_p1_3: ScalarValue
+  unk_ds3_p1_4: ScalarValue
+  unk_ds3_p1_5: ScalarValue
+  unk_ds3_p1_6: ScalarValue
+  unk_ds3_p1_7: ScalarValue
+  unk_ds3_p1_8: ScalarValue
+  unk_ds3_p1_9: ScalarValue
+  unk_ds3_p2_0: ScalarValue
+  unk_ds3_p2_1: ScalarValue
   unk_sdt_f2_25: number
-  unk_sdt_p2_2: ScalarPropertyArg
+  unk_sdt_p2_2: ScalarValue
   unk_er_f2_29: number
   unk_er_f2_30: number
   unk_er_f2_31: number
@@ -17658,7 +17441,7 @@ export interface Unk10500Params {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rateOfTime?: ScalarPropertyArg
+  rateOfTime?: ScalarValue
   /**
    * Unknown.
    * 
@@ -17731,7 +17514,7 @@ class Unk10500 extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  rateOfTime: ScalarPropertyArg
+  rateOfTime: ScalarValue
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -17744,6 +17527,579 @@ class Unk10500 extends DataAction {
   unk_sdt_f1_9: number
   constructor(props: Unk10500Params = {}) {
     super(ActionType.Unk10500)
+    this.assign(props)
+  }
+}
+
+export interface SpotLightParams {
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseColor?: Vector4Value
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularColor?: Vector4Value
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseMultiplier?: ScalarValue
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularMultiplier?: ScalarValue
+  /**
+   * Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
+   * 
+   * **Default**: `0.01`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  near?: ScalarValue
+  /**
+   * Controls how far away the base of the cone is from the light source.
+   * 
+   * **Default**: `50`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  far?: ScalarValue
+  /**
+   * The X radius for the elliptic base of the cone.
+   * 
+   * **Default**: `50`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radiusX?: ScalarValue
+  /**
+   * The Y radius for the elliptic base of the cone.
+   * 
+   * **Default**: `50`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radiusY?: ScalarValue
+  /**
+   * Toggles the jitter and flicker animations for the light.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker?: boolean
+  /**
+   * Controls the acceleration of the jittering.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterAcceleration?: number
+  /**
+   * Controls how much the light should move around randomly on the X-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterX?: number
+  /**
+   * Controls how much the light should move around randomly on the Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterZ}
+   */
+  jitterY?: number
+  /**
+   * Controls how much the light should move around randomly on the Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   */
+  jitterZ?: number
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin?: number
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax?: number
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness?: number
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+   * 
+   * **Default**: `false`
+   */
+  shadows?: boolean
+  /**
+   * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
+  separateSpecular?: boolean
+  /**
+   * The number of seconds the light takes to fade to nothing after being destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+   * 
+   * **Default**: `0`
+   */
+  fadeOutTime?: number
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+   * 
+   * **Default**: `1`
+   */
+  shadowDarkness?: number
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  volumeDensity?: number
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+   * 
+   * **Default**: `true`
+   */
+  phaseFunction?: boolean
+  /**
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+   * 
+   * **Default**: `0.75`
+   */
+  asymmetryParam?: number
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+   * 
+   * **Default**: `1`
+   */
+  falloffExponent?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `2`
+   */
+  unk_ds3_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p1_6?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p1_7?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `100`
+   */
+  unk_sdt_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_17?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_18?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_p1_10?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_25?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_26?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_27?: number
+}
+
+/**
+ * Light source with an elliptic cone shape, a spot light.
+ */
+class SpotLight extends DataAction {
+  declare type: ActionType.SpotLight
+  /**
+   * Controls the diffuse color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseColor: Vector4Value
+  /**
+   * Controls the specular color of the light.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularColor: Vector4Value
+  /**
+   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
+   * 
+   * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  diffuseMultiplier: ScalarValue
+  /**
+   * A scalar multiplier for the {@link specularColor specular color}.
+   * 
+   * If {@link separateSpecular} is disabled, this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  specularMultiplier: ScalarValue
+  /**
+   * Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  near: ScalarValue
+  /**
+   * Controls how far away the base of the cone is from the light source.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  far: ScalarValue
+  /**
+   * The X radius for the elliptic base of the cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radiusX: ScalarValue
+  /**
+   * The Y radius for the elliptic base of the cone.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  radiusY: ScalarValue
+  /**
+   * Toggles the jitter and flicker animations for the light.
+   * 
+   * See also:
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  jitterAndFlicker: boolean
+  /**
+   * Controls the acceleration of the jittering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterAcceleration: number
+  /**
+   * Controls how much the light should move around randomly on the X-axis.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterY}
+   * - {@link jitterZ}
+   */
+  jitterX: number
+  /**
+   * Controls how much the light should move around randomly on the Y-axis.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterZ}
+   */
+  jitterY: number
+  /**
+   * Controls how much the light should move around randomly on the Z-axis.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link jitterAcceleration}
+   * - {@link jitterX}
+   * - {@link jitterY}
+   */
+  jitterZ: number
+  /**
+   * Controls the minimum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMax}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMin: number
+  /**
+   * Controls the maximum interval for flickering.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerBrightness}
+   */
+  flickerIntervalMax: number
+  /**
+   * Brightness multiplier for the light when it flickers.
+   * 
+   * See also:
+   * - {@link jitterAndFlicker}
+   * - {@link flickerIntervalMin}
+   * - {@link flickerIntervalMax}
+   */
+  flickerBrightness: number
+  /**
+   * Controls if the light should have shadows or not.
+   * 
+   * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+   */
+  shadows: boolean
+  /**
+   * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+   * 
+   * See also:
+   * - {@link diffuseColor}
+   * - {@link specularColor}
+   * - {@link diffuseMultiplier}
+   * - {@link specularMultiplier}
+   */
+  separateSpecular: boolean
+  /**
+   * The number of seconds the light takes to fade to nothing after being destroyed.
+   * 
+   * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+   */
+  fadeOutTime: number
+  /**
+   * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+   */
+  shadowDarkness: number
+  /**
+   * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+   * 
+   * See also:
+   * - {@link phaseFunction}
+   * - {@link asymmetryParam}
+   */
+  volumeDensity: number
+  /**
+   * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+   */
+  phaseFunction: boolean
+  /**
+   * Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
+   * 
+   * - At 0, the light is scattered equally in every direction.
+   * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
+   * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
+   * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+   */
+  asymmetryParam: number
+  /**
+   * Controls the falloff exponent of the light.
+   * 
+   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+   */
+  falloffExponent: number
+  unk_ds3_f1_0: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_p1_6: ScalarValue
+  unk_ds3_p1_7: ScalarValue
+  unk_sdt_f1_0: number
+  unk_sdt_f1_3: number
+  unk_sdt_f1_16: number
+  unk_sdt_f1_17: number
+  unk_sdt_f1_18: number
+  unk_sdt_f1_20: number
+  unk_sdt_p1_10: ScalarValue
+  unk_er_f1_24: number
+  unk_er_f1_25: number
+  unk_ac6_f1_26: number
+  unk_ac6_f1_27: number
+  constructor(props: SpotLightParams = {}) {
+    super(ActionType.SpotLight)
     this.assign(props)
   }
 }
@@ -17788,7 +18144,36 @@ const Actions = {
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
+}
+
+const DataActions = {
+  /*#ActionsList start*/
+  [ActionType.SFXReference]: SFXReference, SFXReference,
+  [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
+  [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
+  [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
+  [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
+  [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
+  [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
+  [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
+  [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
+  [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
+  [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
+  [ActionType.PointSprite]: PointSprite, PointSprite,
+  [ActionType.Line]: Line, Line,
+  [ActionType.QuadLine]: QuadLine, QuadLine,
+  [ActionType.BillboardEx]: BillboardEx, BillboardEx,
+  [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
+  [ActionType.Model]: Model, Model,
+  [ActionType.Tracer]: Tracer, Tracer,
+  [ActionType.Distortion]: Distortion, Distortion,
+  [ActionType.RadialBlur]: RadialBlur, RadialBlur,
+  [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
+  [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
+  /*#ActionsList end*/
 }
 
 class Field {
@@ -17911,6 +18296,22 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
+  protected modifiersScale(factor: number) {
+    for (const mod of this.modifiers) {
+      const cc = mod.valueType + 1
+      switch (mod.type) {
+        case ModifierType.Randomizer2:
+          for (let i = cc * 3 - 1; i >= cc * 2; i--) {
+            mod.fields[i].value *= factor
+          }
+        case ModifierType.Randomizer1:
+          for (let i = cc * 2 - 1; i >= cc; i--) {
+            mod.fields[i].value *= factor
+          }
+      }
+    }
+  }
+
   static fromJSON(obj: any) {
     if ('function' in obj) {
       switch (PropertyFunction[obj.function as string]) {
@@ -17930,9 +18331,9 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract fieldCount: number
   abstract fields: NumericalField[]
   abstract toJSON(): any
-  abstract scale(factor: number): void
-  abstract power(exponent: number): void
-  abstract add(summand: number): void
+  abstract scale(factor: number): this
+  abstract power(exponent: number): this
+  abstract add(summand: number): this
   abstract valueAt(arg: number): ValueTypeMap[T]
   abstract clone(): Property<T, F>
 
@@ -18000,21 +18401,26 @@ class ValueProperty<T extends ValueType>
   static fromJSON(obj: {
     value: PropertyValue
     modifiers?: any[]
-  }) {
+  } | PropertyValue) {
+    if (Array.isArray(obj)) {
+      return new ConstantProperty(...obj)
+    } else if (typeof obj === 'number') {
+      return new ConstantProperty(obj)
+    }
     return new ConstantProperty(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
       ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e))
     )
   }
 
   toJSON() {
-    const o: {
-      value: PropertyValue
-      modifiers?: any[]
-    } = {
-      value: this.value,
+    if (this.modifiers.length > 0) {
+      return {
+        value: this.value,
+        modifiers: this.modifiers.map(mod => mod.toJSON())
+      }
+    } else {
+      return this.value
     }
-    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
-    return o
   }
 
   scale(factor: number) {
@@ -18023,6 +18429,8 @@ class ValueProperty<T extends ValueType>
     } else {
       this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
     }
+    this.modifiersScale(factor)
+    return this
   }
 
   power(exponent: number) {
@@ -18031,6 +18439,7 @@ class ValueProperty<T extends ValueType>
     } else {
       this.value = (this.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
     }
+    return this
   }
 
   add(summand: number) {
@@ -18039,6 +18448,7 @@ class ValueProperty<T extends ValueType>
     } else {
       this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
     }
+    return this
   }
 
   valueAt(arg: number): ValueTypeMap[T] {
@@ -18253,6 +18663,8 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
         kf.value = (kf.value as Vector).map(e => e * factor) as ValueTypeMap[T]
       }
     }
+    this.modifiersScale(factor)
+    return this
   }
 
   power(exponent: number) {
@@ -18263,6 +18675,7 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
         kf.value = (kf.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
       }
     }
+    return this
   }
 
   add(summand: number) {
@@ -18273,6 +18686,7 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
         kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
       }
     }
+    return this
   }
 
   valueAt(arg: number): ValueTypeMap[T] {
@@ -18422,18 +18836,22 @@ class ComponentKeyframeProperty<T extends ValueType>
     for (const comp of this.components) {
       comp.scale(factor)
     }
+    this.modifiersScale(factor)
+    return this
   }
 
   power(exponent: number) {
     for (const comp of this.components) {
       comp.power(exponent)
     }
+    return this
   }
 
   add(summand: number) {
     for (const comp of this.components) {
       comp.add(summand)
     }
+    return this
   }
 
   valueAt(arg: number): ValueTypeMap[T] {
@@ -18451,6 +18869,25 @@ class ComponentKeyframeProperty<T extends ValueType>
       this.components.map(e => e.clone()),
       this.modifiers.map(e => Modifier.copy(e))
     )
+  }
+
+  /**
+   * Combines the components to form a new {@link KeyframeProperty} with
+   * roughly the same values and the same modifiers.
+   * 
+   * Note that linear interpolation is used to approximate both sampling of the
+   * components as well as the function of the output property, meaning that
+   * non-linear curves used are lost in this conversion.
+   */
+  combineComponents() {
+    const positions = new Set<number>
+    for (const comp of this.components) {
+      for (const keyframe of comp.keyframes) {
+        positions.add(keyframe.position)
+      }
+    }
+    const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe(e, this.valueAt(e)))
+    return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => Modifier.copy(mod)))
   }
 
   get duration() { return Math.max(...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
@@ -18943,8 +19380,9 @@ export {
   Nodes,
   Effects,
   EffectActionSlots,
-  Actions,
   ActionData,
+  Actions,
+  DataActions,
 
   FXR,
 
@@ -18986,7 +19424,6 @@ export {
   ParticleWindSpeed,
   NodeWindAcceleration,
   ParticleWindAcceleration,
-  SpotLight,
   /*#ActionsExport start*/
   SFXReference,
   PeriodicEmitter,
@@ -19012,6 +19449,7 @@ export {
   PointLight,
   WaterInteraction,
   Unk10500,
+  SpotLight,
   /*#ActionsExport end*/
 
   Field,
@@ -19030,6 +19468,7 @@ export {
   Curve2Property,
   RandomProperty,
   RainbowProperty,
+  anyValueMult,
 
   Modifier,
   ExternalValueModifier,

@@ -157,22 +157,22 @@ properties:
     desc: |
       Blend mode.
   offsetX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       X position offset.
   offsetY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Y position offset.
   offsetZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Z position offset.
   sizeX:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -184,7 +184,7 @@ properties:
       - sizeY
       - sizeZ
   sizeY:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -196,7 +196,7 @@ properties:
       - sizeX
       - sizeZ
   sizeZ:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
@@ -210,57 +210,57 @@ properties:
       - sizeX
       - sizeY
   color:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier.
   intensity:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Controls the intensity of the distortion effect. At 0, there is no distortion at all.
   stirSpeed:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
   radius:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
   normalMapOffsetU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: Constant0
     desc: |
       Horizontal offset for the {@link normalMap normal map}.
   normalMapOffsetV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: Constant0
     desc: |
       Vertical offset for the {@link normalMap normal map}.
   normalMapSpeedU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Horizontal offset speed for the {@link normalMap normal map}.
   normalMapSpeedV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Vertical offset speed for the {@link normalMap normal map}.
   rgbMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
@@ -328,23 +328,23 @@ properties:
   unk_ds3_f2_29:
     field: int
   unk_ds3_p1_7:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p1_9:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p2_2:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p2_3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_sdt_f2_30:
     field: int
   unk_sdt_f2_31:
@@ -372,10 +372,10 @@ properties:
     field: int
     default: 1
   unk_er_p2_7:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
   unk_er_p2_8:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
 games:
   DS3:

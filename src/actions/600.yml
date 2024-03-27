@@ -4,7 +4,7 @@ desc: |
   Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
 properties:
   texture:
-    type: ScalarPropertyArg
+    type: ScalarValue
     field: int
     default: 1
     argument: Constant0
@@ -18,37 +18,37 @@ properties:
     desc: |
       Blend mode.
   size:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Particle size.
   color1:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier.
   color2:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EmissionTime
     desc: |
       Color multiplier.
   color3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
     desc: |
       Color multiplier.
   rgbMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
@@ -200,19 +200,19 @@ properties:
     field: int
     default: 0
   unk_ds3_p2_2:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
   unk_ds3_p2_3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0
   unk_sdt_f2_30:
     field: int

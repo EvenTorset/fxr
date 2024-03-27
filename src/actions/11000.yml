@@ -1,7 +1,7 @@
-type: 609
-name: PointLight
+type: 11000
+name: SpotLight
 desc: |
-  Point light source.
+  Light source with an elliptic cone shape, a spot light.
 properties:
   diffuseColor:
     type: Vector4Value
@@ -11,8 +11,6 @@ properties:
       Controls the diffuse color of the light.
 
       If {@link separateSpecular} is disabled, this also controls the specular color of the light.
-    see:
-      - specularColor
   specularColor:
     type: Vector4Value
     default: [1, 1, 1, 1]
@@ -21,12 +19,6 @@ properties:
       Controls the specular color of the light.
 
       If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
-  radius:
-    type: ScalarValue
-    default: 10
-    argument: EffectAge
-    desc: |
-      The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
   diffuseMultiplier:
     type: ScalarValue
     default: 1
@@ -43,6 +35,30 @@ properties:
       A scalar multiplier for the {@link specularColor specular color}.
 
       If {@link separateSpecular} is disabled, this property is ignored.
+  near:
+    type: ScalarValue
+    default: 0.01
+    argument: EffectAge
+    desc: |
+      Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
+  far:
+    type: ScalarValue
+    default: 50
+    argument: EffectAge
+    desc: |
+      Controls how far away the base of the cone is from the light source.
+  radiusX:
+    type: ScalarValue
+    default: 50
+    argument: EffectAge
+    desc: |
+      The X radius for the elliptic base of the cone.
+  radiusY:
+    type: ScalarValue
+    default: 50
+    argument: EffectAge
+    desc: |
+      The Y radius for the elliptic base of the cone.
   jitterAndFlicker:
     field: bool
     default: false
@@ -180,132 +196,80 @@ properties:
       Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
   unk_ds3_f1_0:
     field: int
-  unk_ds3_f1_1:
-    field: float
-  unk_ds3_f2_0:
-    field: int
-  unk_ds3_f2_3:
-    field: float
-  unk_ds3_f2_12:
-    field: float
     default: 1
-    desc: |
-      Unknown. Only used in Dark Souls 3.
-  unk_ds3_f2_15:
-    field: bool
-    default: false
-  unk_ds3_f2_16:
+  unk_ds3_f1_3:
     field: int
     default: 2
-  unk_ds3_f2_17:
-    field: bool
-    default: true
-  unk_ds3_f2_18:
+  unk_ds3_f1_4:
+    field: int
+    default: 1
+  unk_ds3_f1_5:
     field: float
-  unk_ds3_f2_19:
-    field: float
-  unk_ds3_f2_20:
-    field: float
-  unk_ds3_f2_21:
+    default: 1
+  unk_ds3_f1_7:
     field: int
-  unk_ds3_f2_22:
+  unk_ds3_f1_8:
     field: int
-    default: 100
-  unk_ds3_f2_23:
-    field: int
-  unk_ds3_f2_24:
-    field: int
-  unk_ds3_p1_3:
-    type: ScalarValue
-  unk_ds3_p1_4:
-    type: ScalarValue
-  unk_ds3_p1_5:
-    type: ScalarValue
   unk_ds3_p1_6:
     type: ScalarValue
+    default: 1
   unk_ds3_p1_7:
     type: ScalarValue
-    default: 10
-  unk_ds3_p1_8:
-    type: ScalarValue
-    default: 10
-  unk_ds3_p1_9:
-    type: ScalarValue
-    default: 10
-  unk_ds3_p2_0:
-    type: ScalarValue
     default: 1
-  unk_ds3_p2_1:
-    type: ScalarValue
-    default: 1
-  unk_sdt_f2_25:
+  unk_sdt_f1_0:
+    field: int
+  unk_sdt_f1_3:
     field: float
-  unk_sdt_p2_2:
+  unk_sdt_f1_16:
+    field: int
+    default: 100
+  unk_sdt_f1_17:
+    field: int
+  unk_sdt_f1_18:
+    field: float
+  unk_sdt_f1_20:
+    field: float
+  unk_sdt_p1_10:
     type: ScalarValue
     default: 1
-  unk_er_f2_29:
+  unk_er_f1_24:
     field: int
     default: 1
-  unk_er_f2_30:
+  unk_er_f1_25:
     field: float
     default: 1
-  unk_er_f2_31:
+  unk_ac6_f1_26:
     field: int
     default: 1
-  unk_er_f2_32:
+  unk_ac6_f1_27:
     field: int
 games:
   DS3:
     fields1:
       - unk_ds3_f1_0
-      - unk_ds3_f1_1
-    fields2:
-      - unk_ds3_f2_0
-      - jitterAndFlicker
-      - jitterAcceleration
-      - unk_ds3_f2_3
-      - jitterX
-      - jitterY
-      - jitterZ
-      - flickerIntervalMin
-      - flickerIntervalMax
-      - flickerBrightness
       - shadows
-      - separateSpecular
-      - unk_ds3_f2_12
-      - fadeOutTime
       - shadowDarkness
-      - unk_ds3_f2_15
-      - unk_ds3_f2_16
-      - unk_ds3_f2_17
-      - unk_ds3_f2_18
-      - unk_ds3_f2_19
-      - unk_ds3_f2_20
-      - unk_ds3_f2_21
-      - unk_ds3_f2_22
-      - unk_ds3_f2_23
-      - unk_ds3_f2_24
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - fadeOutTime
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
     properties1:
       - diffuseColor
       - specularColor
-      - radius
-      - unk_ds3_p1_3
-      - unk_ds3_p1_4
-      - unk_ds3_p1_5
+      - near
+      - far
+      - radiusX
+      - radiusY
       - unk_ds3_p1_6
       - unk_ds3_p1_7
-      - unk_ds3_p1_8
-      - unk_ds3_p1_9
-    properties2:
-      - unk_ds3_p2_0
-      - unk_ds3_p2_1
   SDT:
-    fields1: DS3
-    fields2:
-      - unk_ds3_f2_0
+    fields1:
+      - unk_sdt_f1_0
       - jitterAndFlicker
       - jitterAcceleration
-      - unk_ds3_f2_3
+      - unk_sdt_f1_3
       - jitterX
       - jitterY
       - jitterZ
@@ -314,37 +278,36 @@ games:
       - flickerBrightness
       - shadows
       - separateSpecular
-      - fadeOutTime
       - shadowDarkness
-      - unk_ds3_f2_15
-      - unk_ds3_f2_16
-      - unk_ds3_f2_17
-      - unk_ds3_f2_18
-      - unk_ds3_f2_19
-      - unk_ds3_f2_20
-      - unk_ds3_f2_21
-      - unk_ds3_f2_22
-      - unk_ds3_f2_23
-      - unk_ds3_f2_24
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - fadeOutTime
+      - unk_sdt_f1_16
+      - unk_sdt_f1_17
+      - unk_sdt_f1_18
       - volumeDensity
-      - unk_sdt_f2_25
+      - unk_sdt_f1_20
       - phaseFunction
       - asymmetryParam
       - falloffExponent
-    properties1: DS3
-    properties2:
-      - unk_ds3_p2_0
-      - unk_ds3_p2_1
-      - unk_sdt_p2_2
+    properties1:
+      - diffuseColor
+      - specularColor
       - diffuseMultiplier
       - specularMultiplier
+      - near
+      - far
+      - radiusX
+      - radiusY
+      - unk_ds3_p1_6
+      - unk_ds3_p1_7
+      - unk_sdt_p1_10
   ER:
-    fields1: DS3
-    fields2:
-      - unk_ds3_f2_0
+    fields1:
+      - unk_sdt_f1_0
       - jitterAndFlicker
       - jitterAcceleration
-      - unk_ds3_f2_3
+      - unk_sdt_f1_3
       - jitterX
       - jitterY
       - jitterZ
@@ -353,27 +316,49 @@ games:
       - flickerBrightness
       - shadows
       - separateSpecular
-      - fadeOutTime
       - shadowDarkness
-      - unk_ds3_f2_15
-      - unk_ds3_f2_16
-      - unk_ds3_f2_17
-      - unk_ds3_f2_18
-      - unk_ds3_f2_19
-      - unk_ds3_f2_20
-      - unk_ds3_f2_21
-      - unk_ds3_f2_22
-      - unk_ds3_f2_23
-      - unk_ds3_f2_24
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - fadeOutTime
+      - unk_sdt_f1_16
+      - unk_sdt_f1_17
+      - unk_sdt_f1_18
       - volumeDensity
-      - unk_sdt_f2_25
+      - unk_sdt_f1_20
       - phaseFunction
       - asymmetryParam
       - falloffExponent
-      - unk_er_f2_29
-      - unk_er_f2_30
-      - unk_er_f2_31
-      - unk_er_f2_32
-    properties1: DS3
-    properties2: SDT
-  AC6: ER
+      - unk_er_f1_24
+      - unk_er_f1_25
+    properties1: SDT
+  AC6:
+    fields1:
+      - unk_sdt_f1_0
+      - jitterAndFlicker
+      - jitterAcceleration
+      - unk_sdt_f1_3
+      - jitterX
+      - jitterY
+      - jitterZ
+      - flickerIntervalMin
+      - flickerIntervalMax
+      - flickerBrightness
+      - shadows
+      - separateSpecular
+      - shadowDarkness
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - fadeOutTime
+      - unk_sdt_f1_16
+      - unk_sdt_f1_17
+      - unk_sdt_f1_18
+      - volumeDensity
+      - unk_sdt_f1_20
+      - phaseFunction
+      - asymmetryParam
+      - falloffExponent
+      - unk_er_f1_24
+      - unk_er_f1_25
+      - unk_ac6_f1_26
+      - unk_ac6_f1_27
+    properties1: SDT

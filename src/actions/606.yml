@@ -150,7 +150,7 @@ properties:
       - specular
       - glossiness
   texture:
-    type: ScalarPropertyArg
+    type: ScalarValue
     field: int
     default: 1
     argument: Constant0
@@ -164,76 +164,76 @@ properties:
     desc: |
       Blend mode.
   width:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       The width of the trail.
   widthMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: InstanceAge
     desc: |
       Multiplier for {@link width}.
   color1:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier.
   color2:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EmissionTime
     desc: |
       Color multiplier.
   color3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
     argument: InstanceAge
     desc: |
       Color multiplier.
   alphaThreshold:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
   frameIndex:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
   frameIndexOffset:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
   textureFraction:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 0.1
     argument: InstanceAge
     desc: |
       Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
   speedU:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Controls how fast the UV coordinates should move horizontally.
   varianceV:
-    type: ScalarPropertyArg
+    type: ScalarValue
     argument: InstanceAge
     desc: |
       Controls how much the UV coordinates should be randomly offset by per segment.
   rgbMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
@@ -310,25 +310,25 @@ properties:
     field: float
     default: 5
   unk_ds3_p1_2:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p1_3:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p1_13:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: -1
   unk_ds3_p2_2:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_ds3_p2_3:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
-    type: Vector4PropertyArg
+    type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
-    type: ScalarPropertyArg
+    type: ScalarValue
   unk_sdt_f2_31:
     field: int
   unk_sdt_f2_32:

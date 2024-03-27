@@ -20,13 +20,13 @@ properties:
     desc: |
       If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
   radius:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
       The radius of the cylinder.
   height:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |

@@ -4,25 +4,25 @@ desc: >
   Emits particles periodically.
 properties:
   interval:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: >
       Time between emitting new particles in seconds.
   perInterval:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: 1
     argument: EffectAge
     desc: >
       The number of particles to emit per interval. They all spawn at the same time per interval.
   totalIntervals:
-    type: ScalarPropertyArg
+    type: ScalarValue
     default: -1
     argument: EffectAge
     desc: >
       The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
   maxConcurrent:
-    type: ScalarPropertyArg
+    type: ScalarValue
     field: int
     default: -1
     argument: EffectAge
