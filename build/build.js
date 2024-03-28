@@ -126,6 +126,9 @@ export default async function(writeToDist = true) {
         games: {
           ${Object.entries(data.games).map(([k, v]) => {
             if (typeof v === 'string') {
+              if (v === 'fallback') {
+                return `[${gameMap[k]}]: -2`
+              }
               return `[${gameMap[k]}]: ${gameMap[v]}`
             }
             return `

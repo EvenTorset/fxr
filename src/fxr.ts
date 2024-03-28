@@ -17,23 +17,23 @@ enum Game {
    * classes other than {@link GenericNode}, or any {@link DataAction}s, it
    * must be given a specific game to write to.
    */
-  Generic,
+  Generic = -1,
   /**
    * Dark Souls III
    */
-  DarkSouls3,
+  DarkSouls3 = 0,
   /**
    * Sekiro: Shadows Die Twice
    */
-  Sekiro,
+  Sekiro = 1,
   /**
    * Elden Ring
    */
-  EldenRing,
+  EldenRing = 2,
   /**
    * Armored Core VI Fires of Rubicon
    */
-  ArmoredCore6
+  ArmoredCore6 = 3
 }
 
 enum FXRVersion {
@@ -306,37 +306,6 @@ enum ActionType {
   Unk700 = 700, // Root node action
   Unk701 = 701, // Root node action
   Unk702 = 702, // Root node action
-  /**
-   * Controls how effective the wind is at pushing the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeWindSpeed}
-  */
-  NodeWindSpeed = 731,
-  /**
-   * Controls how effective the wind is at pushing the particles emitted from
-   * the node.
-   * 
-   * This action type has a specialized subclass:
-   * {@link ParticleWindSpeed}
-  */
-  ParticleWindSpeed = 732,
-  /**
-   * Controls how effective the wind is at accelerating the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeWindAcceleration}
-   */
-  NodeWindAcceleration = 733,
-  /**
-   * Controls how effective the wind is at accelerating the particles emitted
-   * from the node.
-   * 
-   * Acceleration requires slot 10 to have an action that enables acceleration
-   * of the particles.
-   * 
-   * This action type has a specialized subclass:
-   * {@link ParticleWindAcceleration}
-   */
-  ParticleWindAcceleration = 734,
   Unk800 = 800,
   Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
@@ -492,6 +461,32 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
+  /**
+   * Controls how effective the wind is at pushing the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeWindSpeed}
+   */
+  NodeWindSpeed = 731,
+  /**
+   * Controls how effective the wind is at pushing the particles emitted from the node.
+   * 
+   * This action type has a specialized subclass: {@link ParticleWindSpeed}
+   */
+  ParticleWindSpeed = 732,
+  /**
+   * Controls how effective the wind is at accelerating the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeWindAcceleration}
+   */
+  NodeWindAcceleration = 733,
+  /**
+   * Controls how effective the wind is at accelerating the particles emitted from the node.
+   * 
+   * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleWindAcceleration}
+   */
+  ParticleWindAcceleration = 734,
   /**
    * Creates a trail behind moving effects.
    * 
@@ -1107,7 +1102,7 @@ const ActionData: {
       }
     }
     games: {
-      [game: string]: ActionGameDataEntry | Game
+      [game: string]: ActionGameDataEntry | Game | -2
     }
   }
 } = {
@@ -2307,6 +2302,72 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.NodeWindSpeed]: {
+    props: {
+      windSpeed: { default: 0, paths: {} },
+      windSpeedMultiplier: { default: 1, paths: {} },
+      enabled: { default: true, paths: {}, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: -2,
+      [Game.Sekiro]: {
+        fields1: ['enabled'],
+        properties1: ['windSpeed','windSpeedMultiplier']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.ParticleWindSpeed]: {
+    props: {
+      windSpeed: { default: 0, paths: {} },
+      windSpeedMultiplier: { default: 1, paths: {} },
+      enabled: { default: true, paths: {}, field: FieldType.Boolean },
+      unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: -2,
+      [Game.Sekiro]: {
+        fields1: ['enabled','unk_sdt_f1_1'],
+        properties1: ['windSpeed','windSpeedMultiplier']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.NodeWindAcceleration]: {
+    props: {
+      windAcceleration: { default: 0, paths: {} },
+      windAccelerationMultiplier: { default: 1, paths: {} },
+      enabled: { default: true, paths: {}, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: -2,
+      [Game.Sekiro]: {
+        fields1: ['enabled'],
+        properties1: ['windAcceleration','windAccelerationMultiplier']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.ParticleWindAcceleration]: {
+    props: {
+      windAcceleration: { default: 0, paths: {} },
+      windAccelerationMultiplier: { default: 1, paths: {} },
+      enabled: { default: true, paths: {}, field: FieldType.Boolean },
+      unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: -2,
+      [Game.Sekiro]: {
+        fields1: ['enabled','unk_sdt_f1_1'],
+        properties1: ['windAcceleration','windAccelerationMultiplier']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
   [ActionType.Tracer2]: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
@@ -3113,7 +3174,7 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
       }
     })
   )
-  if (type in ActionDataConversion) {
+  if (type in ActionDataConversion && 'read' in ActionDataConversion[type]) {
     params = ActionDataConversion[type].read(params)
   }
   return new DataActions[type](params)
@@ -3124,7 +3185,7 @@ function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
   bw.convertedDataActions.set(this,
-    this.type in ActionDataConversion ?
+    this.type in ActionDataConversion && 'write' in ActionDataConversion[this.type] ?
     ActionDataConversion[this.type].write(Object.assign(Object.create(null), this), game) :
     this
   )
@@ -3219,7 +3280,15 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
 }
 
 function writeAnyAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
-  ;(this instanceof Action ? writeAction : writeDataAction).call(this, bw, game, actions)
+  if (this instanceof DataAction) {
+    if (ActionData[this.type].games[game] === -2) {
+      writeAction.call(ActionDataConversion[this.type].fallback(this, game), bw, game, actions)
+    } else {
+      writeDataAction.call(this, bw, game, actions)
+    }
+  } else {
+    writeAction.call(this, bw, game, actions)
+  }
 }
 
 function writeAnyActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
@@ -4076,6 +4145,26 @@ const ActionDataConversion = {
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
+    }
+  },
+  [ActionType.NodeWindSpeed]: {
+    fallback(action: NodeWindSpeed, game: Game) {
+      return new Action
+    }
+  },
+  [ActionType.ParticleWindSpeed]: {
+    fallback(action: ParticleWindSpeed, game: Game) {
+      return new Action
+    }
+  },
+  [ActionType.NodeWindAcceleration]: {
+    fallback(action: NodeWindAcceleration, game: Game) {
+      return new Action
+    }
+  },
+  [ActionType.ParticleWindAcceleration]: {
+    fallback(action: ParticleWindAcceleration, game: Game) {
+      return new Action
     }
   },
   [ActionType.RichModel]: {
@@ -8123,291 +8212,6 @@ class NoParticleSpread extends Action {
 
   constructor() {
     super(ActionType.NoParticleSpread)
-  }
-
-}
-
-/**
- * Controls how effective the wind is at pushing the node.
- */
-class NodeWindSpeed extends Action {
-
-  constructor(
-    /**
-     * The speed in the direction of the wind. Defaults to 0.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windSpeed: ScalarValue = 0,
-    /**
-     * A multiplier for
-     * {@link windSpeed the speed in the direction of the wind}.
-     * Defalts to 1.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windSpeedMultiplier: ScalarValue = 1,
-    /**
-     * Controls whether the wind should have any effect at all or not. Defaults
-     * to true.
-     */
-    enabled: boolean = true,
-  ) {
-    super(ActionType.NodeWindSpeed, [
-      new BoolField(enabled),
-    ], [], [
-      scalarFromArg(windSpeed),
-      scalarFromArg(windSpeedMultiplier),
-    ])
-  }
-
-  /**
-   * The speed in the direction of the wind.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windSpeed(): ScalarProperty { return this.properties1[0] }
-  set windSpeed(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * A multiplier for
-   * {@link windSpeed the speed in the direction of the wind}.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windSpeedMultiplier(): ScalarProperty { return this.properties1[1] }
-  set windSpeedMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  get enabled() { return this.fields1[0].value as boolean }
-  set enabled(value) { this.fields1[0].value = value }
-
-  minify(): Action {
-    if (this.enabled) {
-      return this
-    } else {
-      return new Action
-    }
-  }
-
-}
-
-/**
- * Controls how effective the wind is at pushing the particles emitted from
- * the node.
- */
-class ParticleWindSpeed extends Action {
-
-  constructor(
-    /**
-     * The speed in the direction of the wind. Defaults to 0.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windSpeed: ScalarValue = 0,
-    /**
-     * A multiplier for
-     * {@link windSpeed the speed in the direction of the wind}.
-     * Defalts to 1.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windSpeedMultiplier: ScalarValue = 1,
-    /**
-     * Controls whether the wind should have any effect at all or not. Defaults
-     * to true.
-     */
-    enabled: boolean = true,
-    /**
-     * Unknown. Fields1, index 1. 0 and 1 seems to be valid values, while all
-     * other values cause the wind to not affect the particles. Defaults to 0.
-     */
-    unkField1: number = 0
-  ) {
-    super(ActionType.ParticleWindSpeed, [
-      new BoolField(enabled),
-      new IntField(unkField1),
-    ], [], [
-      scalarFromArg(windSpeed),
-      scalarFromArg(windSpeedMultiplier),
-    ])
-  }
-
-  /**
-   * The speed in the direction of the wind.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windSpeed(): ScalarProperty { return this.properties1[0] }
-  set windSpeed(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * A multiplier for
-   * {@link windSpeed the speed in the direction of the wind}.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windSpeedMultiplier(): ScalarProperty { return this.properties1[1] }
-  set windSpeedMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  get enabled() { return this.fields1[0].value as boolean }
-  set enabled(value) { this.fields1[0].value = value }
-
-  minify(): Action {
-    if (this.enabled) {
-      return this
-    } else {
-      return new Action
-    }
-  }
-
-}
-
-/**
- * Controls how effective the wind is at accelerating the node.
- */
-class NodeWindAcceleration extends Action {
-
-  constructor(
-    /**
-     * The acceleration in the direction of the wind. Defaults to 0.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windAcceleration: ScalarValue = 0,
-    /**
-     * A multiplier for
-     * {@link windAcceleration the acceleration in the direction of the wind}.
-     * Defalts to 1.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windAccelerationMultiplier: ScalarValue = 1,
-    /**
-     * Controls whether the wind should have any effect at all or not. Defaults
-     * to true.
-     */
-    enabled: boolean = true,
-  ) {
-    super(ActionType.NodeWindAcceleration, [
-      new BoolField(enabled),
-    ], [], [
-      scalarFromArg(windAcceleration),
-      scalarFromArg(windAccelerationMultiplier),
-    ])
-  }
-
-  /**
-   * The acceleration in the direction of the wind.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windAcceleration(): ScalarProperty { return this.properties1[0] }
-  set windAcceleration(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * A multiplier for
-   * {@link windAcceleration the acceleration in the direction of the wind}.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windAccelerationMultiplier(): ScalarProperty { return this.properties1[1] }
-  set windAccelerationMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  get enabled() { return this.fields1[0].value as boolean }
-  set enabled(value) { this.fields1[0].value = value }
-
-  minify(): Action {
-    if (this.enabled) {
-      return this
-    } else {
-      return new Action
-    }
-  }
-
-}
-
-/**
- * Controls how effective the wind is at accelerating the particles emitted
- * from the node.
- * 
- * Acceleration requires slot 10 to have an action that enables acceleration
- * of the particles.
- */
-class ParticleWindAcceleration extends Action {
-
-  constructor(
-    /**
-     * The acceleration in the direction of the wind. Defaults to 0.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windAcceleration: ScalarValue = 0,
-    /**
-     * A multiplier for
-     * {@link windAcceleration the acceleration in the direction of the wind}.
-     * Defalts to 1.
-     * 
-     * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-     */
-    windAccelerationMultiplier: ScalarValue = 1,
-    /**
-     * Controls whether the wind should have any effect at all or not. Defaults
-     * to true.
-     */
-    enabled: boolean = true,
-    /**
-     * Unknown. Fields1, index 1. 0 and 1 seems to be valid values, while all
-     * other values cause the wind to not affect the particles. Defaults to 0.
-     */
-    unkField1: number = 0
-  ) {
-    super(ActionType.ParticleWindAcceleration, [
-      new BoolField(enabled),
-      new IntField(unkField1),
-    ], [], [
-      scalarFromArg(windAcceleration),
-      scalarFromArg(windAccelerationMultiplier),
-    ])
-  }
-
-  /**
-   * The acceleration in the direction of the wind.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windAcceleration(): ScalarProperty { return this.properties1[0] }
-  set windAcceleration(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * A multiplier for
-   * {@link windAcceleration the acceleration in the direction of the wind}.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get windAccelerationMultiplier(): ScalarProperty { return this.properties1[1] }
-  set windAccelerationMultiplier(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  get enabled() { return this.fields1[0].value as boolean }
-  set enabled(value) { this.fields1[0].value = value }
-
-  minify(): Action {
-    if (this.enabled) {
-      return this
-    } else {
-      return new Action
-    }
   }
 
 }
@@ -17713,6 +17517,236 @@ class PointLight extends DataAction {
   }
 }
 
+export interface NodeWindSpeedParams {
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeed?: ScalarValue
+  /**
+   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeedMultiplier?: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   * 
+   * **Default**: `true`
+   */
+  enabled?: boolean
+}
+
+/**
+ * Controls how effective the wind is at pushing the node.
+ */
+class NodeWindSpeed extends DataAction {
+  declare type: ActionType.NodeWindSpeed
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeed: ScalarValue
+  /**
+   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeedMultiplier: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  enabled: boolean
+  constructor(props: NodeWindSpeedParams = {}) {
+    super(ActionType.NodeWindSpeed)
+    this.assign(props)
+  }
+}
+
+export interface ParticleWindSpeedParams {
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeed?: ScalarValue
+  /**
+   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeedMultiplier?: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   * 
+   * **Default**: `true`
+   */
+  enabled?: boolean
+  /**
+   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_1?: number
+}
+
+/**
+ * Controls how effective the wind is at pushing the particles emitted from the node.
+ */
+class ParticleWindSpeed extends DataAction {
+  declare type: ActionType.ParticleWindSpeed
+  /**
+   * The speed in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeed: ScalarValue
+  /**
+   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windSpeedMultiplier: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  enabled: boolean
+  /**
+   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
+   */
+  unk_sdt_f1_1: number
+  constructor(props: ParticleWindSpeedParams = {}) {
+    super(ActionType.ParticleWindSpeed)
+    this.assign(props)
+  }
+}
+
+export interface NodeWindAccelerationParams {
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAcceleration?: ScalarValue
+  /**
+   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAccelerationMultiplier?: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   * 
+   * **Default**: `true`
+   */
+  enabled?: boolean
+}
+
+/**
+ * Controls how effective the wind is at accelerating the node.
+ */
+class NodeWindAcceleration extends DataAction {
+  declare type: ActionType.NodeWindAcceleration
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAcceleration: ScalarValue
+  /**
+   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAccelerationMultiplier: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  enabled: boolean
+  constructor(props: NodeWindAccelerationParams = {}) {
+    super(ActionType.NodeWindAcceleration)
+    this.assign(props)
+  }
+}
+
+export interface ParticleWindAccelerationParams {
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAcceleration?: ScalarValue
+  /**
+   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAccelerationMultiplier?: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   * 
+   * **Default**: `true`
+   */
+  enabled?: boolean
+  /**
+   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_1?: number
+}
+
+/**
+ * Controls how effective the wind is at accelerating the particles emitted from the node.
+   * 
+   * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
+ */
+class ParticleWindAcceleration extends DataAction {
+  declare type: ActionType.ParticleWindAcceleration
+  /**
+   * The acceleration in the direction of the wind.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAcceleration: ScalarValue
+  /**
+   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  windAccelerationMultiplier: ScalarValue
+  /**
+   * Controls whether the wind should have any effect at all or not.
+   */
+  enabled: boolean
+  /**
+   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
+   */
+  unk_sdt_f1_1: number
+  constructor(props: ParticleWindAccelerationParams = {}) {
+    super(ActionType.ParticleWindAcceleration)
+    this.assign(props)
+  }
+}
+
 export interface Tracer2Params {
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
@@ -20627,10 +20661,6 @@ const Actions = {
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
-  [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
-  [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
-  [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
 }
 
 const DataActions = {
@@ -20657,6 +20687,10 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
+  [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
+  [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
+  [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.Tracer2]: Tracer2, Tracer2,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.RichModel]: RichModel, RichModel,
@@ -21985,10 +22019,6 @@ export {
   EmitRandomParticles,
   OneTimeEmitter,
   NoParticleSpread,
-  NodeWindSpeed,
-  ParticleWindSpeed,
-  NodeWindAcceleration,
-  ParticleWindAcceleration,
   /*#ActionsExport start*/
   SFXReference,
   PeriodicEmitter,
@@ -22012,6 +22042,10 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
+  NodeWindSpeed,
+  ParticleWindSpeed,
+  NodeWindAcceleration,
+  ParticleWindAcceleration,
   Tracer2,
   WaterInteraction,
   RichModel,
