@@ -345,7 +345,6 @@ enum ActionType {
   Unk10008_SparkParticle = 10008,
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
-  Unk10012_Tracer = 10012,
   Unk10014_LensFlare = 10014,
   Unk10015_RichModel = 10015,
   Unk10100 = 10100, // Root node action
@@ -494,6 +493,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
+  /**
+   * Creates a trail behind moving effects.
+   * 
+   * This action type has a specialized subclass: {@link Tracer2}
+   */
+  Tracer2 = 10012,
   /**
    * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
    * 
@@ -2296,6 +2301,117 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.Tracer2]: {
+    props: {
+      orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
+      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
+      segmentInterval: { default: 0, paths: {}, field: FieldType.Float },
+      segmentDuration: { default: 1, paths: {}, field: FieldType.Float },
+      concurrentSegments: { default: 100, paths: {}, field: FieldType.Integer },
+      columns: { default: 1, paths: {}, field: FieldType.Integer },
+      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
+      attachedUV: { default: 1, paths: {}, field: FieldType.Boolean },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
+      specular: { default: 0, paths: {}, field: FieldType.Integer },
+      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
+      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
+      texture: { default: 1, paths: {}, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
+      width: { default: 1, paths: {} },
+      widthMultiplier: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      alphaThreshold: { default: 0, paths: {} },
+      frameIndex: { default: 0, paths: {} },
+      frameIndexOffset: { default: 0, paths: {} },
+      textureFraction: { default: 0.1, paths: {} },
+      speedU: { default: 0, paths: {} },
+      varianceV: { default: 0, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_9: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: -1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
+      unk_ds3_p1_2: { default: 0, paths: {} },
+      unk_ds3_p1_3: { default: 0, paths: {} },
+      unk_ds3_p1_13: { default: -1, paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_18: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_19: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_40: { default: 1, paths: {}, field: FieldType.Float },
+      unk_sdt_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Float },
+      unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Float },
+      unk_sdt_f1_17: { default: 1, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.Sekiro]: {
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: Game.DarkSouls3
+      },
+      [Game.EldenRing]: {
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
   [ActionType.WaterInteraction]: {
     props: {
       texture: { default: 50004, paths: {}, field: FieldType.Integer },
@@ -2490,7 +2606,7 @@ const EffectActionSlots = {
       ActionType.Unk10008_SparkParticle,
       ActionType.Unk10009_SparkCorrectParticle,
       ActionType.Unk10010_Tracer,
-      ActionType.Unk10012_Tracer,
+      ActionType.Tracer2,
       ActionType.WaterInteraction,
       ActionType.Unk10014_LensFlare,
       ActionType.Unk10015_RichModel,
@@ -3584,7 +3700,7 @@ function modMultPropVal(mod: Modifier, v: PropertyValue) {
  * @param p2 
  * @returns 
  */
-function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
+function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
   if (p1 instanceof ComponentKeyframeProperty) {
     p1 = p1.combineComponents()
   }
@@ -3593,15 +3709,15 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
   }
   if (typeof p1 === 'number') {
     if (typeof p2 === 'number') {
-      return p1 * p2
+      return p1 * p2 as T
     } else if (Array.isArray(p2)) {
-      return p2.map(e => e * p1) as Vector
+      return p2.map(e => e * p1) as unknown as T
     } else if (p2 instanceof ValueProperty) {
       return new ValueProperty(
         p2.valueType,
         anyValueMult(p1, p2.value),
         p2.modifiers.map(mod => modMultPropVal(mod, p1))
-      )
+      ) as unknown as T
     } else if (p2 instanceof KeyframeProperty) {
       return new KeyframeProperty(
         p2.valueType,
@@ -3612,11 +3728,11 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
           (Array.isArray(kf.value) ? kf.value.map(e => e * p1) : kf.value * p1) as PropertyValue
         )),
         p2.modifiers.map(mod => modMultPropVal(mod, p1))
-      )
+      ) as unknown as T
     }
   } else if (Array.isArray(p1)) {
     if (Array.isArray(p2)) {
-      return p2.map((e, i) => e * p1[i]) as Vector
+      return p2.map((e, i) => e * p1[i]) as unknown as T
     } else if (p2 instanceof ValueProperty) {
       let mods = p2.modifiers
       if (p2.valueType === ValueType.Scalar) {
@@ -3626,7 +3742,7 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
         p1.length - 1,
         anyValueMult(p1, p2.value),
         mods.map(mod => modMultPropVal(mod, p1))
-      )
+      ) as unknown as T
     } else if (p2 instanceof KeyframeProperty) {
       let mods = p2.modifiers
       if (p2.valueType === ValueType.Scalar) {
@@ -3644,7 +3760,7 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
           ) as PropertyValue
         )),
         mods.map(mod => modMultPropVal(mod, p1))
-      )
+      ) as unknown as T
     }
   } else if (p1 instanceof ValueProperty) {
     if (p2 instanceof ValueProperty) {
@@ -3660,7 +3776,7 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
       return new ValueProperty(vt, anyValueMult(p1.value, p2.value), [
         ...p1Mods.map(mod => modMultPropVal(mod, p2.value)),
         ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
-      ])
+      ]) as unknown as T
     } else if (p2 instanceof KeyframeProperty) {
       let p1Mods = p1.modifiers
       let p2Mods = p2.modifiers
@@ -3686,7 +3802,7 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
           ...p1Mods.map(mod => modMultPropVal(mod, p2.valueAt(0))),
           ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
         ]
-      )
+      ) as unknown as T
     }
   } else if (p1 instanceof KeyframeProperty && p2 instanceof KeyframeProperty) {
     const positions = new Set<number>
@@ -3715,7 +3831,7 @@ function anyValueMult(p1: AnyValue, p2: AnyValue): AnyValue {
     ).withModifiers(
       ...p1Mods.map(mod => modMultPropVal(mod, p2.valueAt(0))),
       ...p2Mods.map(mod => modMultPropVal(mod, p1.valueAt(0))),
-    )
+    ) as unknown as T
   }
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
@@ -4899,15 +5015,6 @@ abstract class Node {
     for (const effect of this.walkEffects()) if (
       effect.type === EffectType.Basic || effect.type === EffectType.SharedEmitter
     ) {
-      const scaleDataProp = (action: any, prop: string) => {
-        if (action[prop] instanceof Property) {
-          action[prop].scale(factor)
-        } else if (Array.isArray(action[prop])) {
-          action[prop] = action[prop].map((e: number) => e * factor)
-        } else {
-          action[prop] *= factor
-        }
-      }
       const slot1 = effect.actions[1] as ActionWithNumericalFields
       switch (slot1.type) {
         case ActionType.RandomNodeTransform:
@@ -4941,25 +5048,23 @@ abstract class Node {
           slot2.properties1[2].scale(factor)
           break
       }
-      const slot4 = effect.actions[1] as Action
-      if (slot4.type === ActionType.EqualDistanceEmitter) {
-        slot4.properties1[0].scale(factor)
+      const slot4 = effect.actions[4]
+      if (slot4 instanceof EqualDistanceEmitter) {
+        slot4.threshold = anyValueMult(factor, slot4.threshold)
       }
       const slot5 = effect.actions[5]
-      if (slot5 instanceof Action) {
-        switch (slot5.type) {
-          case ActionType.BoxEmitterShape:
-            slot5.properties1[2].scale(factor)
-          case ActionType.RectangleEmitterShape:
-            slot5.properties1[1].scale(factor)
-          case ActionType.DiskEmitterShape:
-          case ActionType.SphereEmitterShape:
-            slot5.properties1[0].scale(factor)
-            break
-        }
-      } else if (slot5.type === ActionType.CylinderEmitterShape) {
-        scaleDataProp(slot5, 'radius')
-        scaleDataProp(slot5, 'height')
+      if (slot5 instanceof DiskEmitterShape || slot5 instanceof SphereEmitterShape) {
+        slot5.radius = anyValueMult(factor, slot5.radius)
+      } else if (slot5 instanceof RectangleEmitterShape) {
+        slot5.sizeX = anyValueMult(factor, slot5.sizeX)
+        slot5.sizeY = anyValueMult(factor, slot5.sizeY)
+      } else if (slot5 instanceof BoxEmitterShape) {
+        slot5.sizeX = anyValueMult(factor, slot5.sizeX)
+        slot5.sizeY = anyValueMult(factor, slot5.sizeY)
+        slot5.sizeZ = anyValueMult(factor, slot5.sizeZ)
+      } else if (slot5 instanceof CylinderEmitterShape) {
+        slot5.radius = anyValueMult(factor, slot5.radius)
+        slot5.height = anyValueMult(factor, slot5.height)
       }
 
       if (effect.type === EffectType.Basic) {
@@ -4967,90 +5072,74 @@ abstract class Node {
         slot7.properties1[0].scale(factor)
 
         const slot9 = effect.actions[9] as ActionWithNumericalFields | DataAction
-        if (slot9 instanceof Action) {
-          switch (slot9.type) {
-            case ActionType.PointSprite:
-            case ActionType.Tracer:
-            case ActionType.Unk10012_Tracer:
-              slot9.properties1[2].scale(factor)
-              break
-            case ActionType.Line:
-              slot9.properties1[1].scale(factor)
-              break
-            case ActionType.QuadLine:
-              slot9.properties1[1].scale(factor)
-              slot9.properties1[2].scale(factor)
-              break
-            case ActionType.MultiTextureBillboardEx:
-              slot9.properties1[1].scale(factor)
-              slot9.properties1[2].scale(factor)
-              slot9.properties1[3].scale(factor)
-              slot9.properties1[4].scale(factor)
-              slot9.properties1[5].scale(factor)
-              break
-            case ActionType.Model:
-              slot9.properties1[1].scale(factor)
-              slot9.properties1[2].scale(factor)
-              slot9.properties1[3].scale(factor)
-              break
-            case ActionType.Distortion:
-              slot9.properties1[1].scale(factor)
-              slot9.properties1[2].scale(factor)
-              slot9.properties1[3].scale(factor)
-              slot9.properties1[4].scale(factor)
-              slot9.properties1[5].scale(factor)
-              slot9.properties1[6].scale(factor)
-              break
-            case ActionType.RadialBlur:
-              slot9.properties1[2].scale(factor)
-              slot9.properties1[3].scale(factor)
-              slot9.properties1[4].scale(factor)
-              slot9.properties1[5].scale(factor)
-              slot9.properties1[6].scale(factor)
-              slot9.properties1[9].scale(factor)
-              break
-            case ActionType.PointLight:
-              slot9.properties1[2].scale(factor)
-              slot9.fields2[4] = new FloatField(slot9.fields2[4].value * factor)
-              slot9.fields2[5] = new FloatField(slot9.fields2[5].value * factor)
-              slot9.fields2[6] = new FloatField(slot9.fields2[6].value * factor)
-              break
-            case ActionType.SpotLight:
-              slot9.properties1[4].scale(factor)
-              slot9.properties1[5].scale(factor)
-              slot9.properties1[6].scale(factor)
-              slot9.properties1[7].scale(factor)
-              slot9.fields1[4] = new FloatField(slot9.fields1[4].value * factor)
-              slot9.fields1[5] = new FloatField(slot9.fields1[5].value * factor)
-              slot9.fields1[6] = new FloatField(slot9.fields1[6].value * factor)
-              break
-          }
-          switch (slot9.type) {
-            case ActionType.PointSprite:
-            case ActionType.Line:
-            case ActionType.QuadLine:
-            case ActionType.MultiTextureBillboardEx:
-            case ActionType.Model:
-            case ActionType.Tracer:
-            case ActionType.Distortion:
-            case ActionType.RadialBlur:
-            case ActionType.Unk10000_StandardParticle:
-            case ActionType.Unk10001_StandardCorrectParticle:
-            case ActionType.Unk10012_Tracer:
-            case ActionType.Unk10015_RichModel:
-              for (let i = 19; i >= 14; i--) if (slot9.fields2[i].value > 0) {
-                slot9.fields2[i] = new FloatField(slot9.fields2[i].value * factor)
-              }
-              slot9.fields2[26] = new FloatField(slot9.fields2[26].value * factor)
-              break
-          }
-        } else if (slot9.type === ActionType.BillboardEx) {
-          scaleDataProp(slot9, 'offsetX')
-          scaleDataProp(slot9, 'offsetY')
-          scaleDataProp(slot9, 'offsetZ')
-          scaleDataProp(slot9, 'width')
-          scaleDataProp(slot9, 'height')
-          scaleDataProp(slot9, 'depthOffset')
+        if (slot9 instanceof PointSprite) {
+          slot9.size = anyValueMult(factor, slot9.size)
+        } else if (slot9 instanceof Line) {
+          slot9.length = anyValueMult(factor, slot9.length)
+        } else if (slot9 instanceof QuadLine) {
+          slot9.width = anyValueMult(factor, slot9.width)
+          slot9.length = anyValueMult(factor, slot9.length)
+        } else if (slot9 instanceof BillboardEx) {
+          slot9.offsetX = anyValueMult(factor, slot9.offsetX)
+          slot9.offsetY = anyValueMult(factor, slot9.offsetY)
+          slot9.offsetZ = anyValueMult(factor, slot9.offsetZ)
+          slot9.width = anyValueMult(factor, slot9.width)
+          slot9.height = anyValueMult(factor, slot9.height)
+          slot9.depthOffset = anyValueMult(factor, slot9.depthOffset)
+        } else if (slot9 instanceof MultiTextureBillboardEx) {
+          slot9.offsetX = anyValueMult(factor, slot9.offsetX)
+          slot9.offsetY = anyValueMult(factor, slot9.offsetY)
+          slot9.offsetZ = anyValueMult(factor, slot9.offsetZ)
+          slot9.width = anyValueMult(factor, slot9.width)
+          slot9.height = anyValueMult(factor, slot9.height)
+        } else if (slot9 instanceof Model) {
+          slot9.sizeX = anyValueMult(factor, slot9.sizeX)
+          slot9.sizeY = anyValueMult(factor, slot9.sizeY)
+          slot9.sizeZ = anyValueMult(factor, slot9.sizeZ)
+        } else if (slot9 instanceof Tracer || slot9 instanceof Tracer2) {
+          slot9.width = anyValueMult(factor, slot9.width)
+        } else if (slot9 instanceof Distortion) {
+          slot9.offsetX = anyValueMult(factor, slot9.offsetX)
+          slot9.offsetY = anyValueMult(factor, slot9.offsetY)
+          slot9.offsetZ = anyValueMult(factor, slot9.offsetZ)
+          slot9.sizeX = anyValueMult(factor, slot9.sizeX)
+          slot9.sizeY = anyValueMult(factor, slot9.sizeY)
+          slot9.sizeZ = anyValueMult(factor, slot9.sizeZ)
+        } else if (slot9 instanceof RadialBlur) {
+          slot9.offsetX = anyValueMult(factor, slot9.offsetX)
+          slot9.offsetY = anyValueMult(factor, slot9.offsetY)
+          slot9.offsetZ = anyValueMult(factor, slot9.offsetZ)
+          slot9.width = anyValueMult(factor, slot9.width)
+          slot9.height = anyValueMult(factor, slot9.height)
+          slot9.blurRadius = anyValueMult(factor, slot9.blurRadius)
+        } else if (slot9 instanceof PointLight) {
+          slot9.radius = anyValueMult(factor, slot9.radius)
+          slot9.jitterAcceleration *= factor
+          slot9.jitterX *= factor
+          slot9.jitterY *= factor
+          slot9.jitterZ *= factor
+        } else if (slot9 instanceof SpotLight) {
+          slot9.near = anyValueMult(factor, slot9.near)
+          slot9.far = anyValueMult(factor, slot9.far)
+          slot9.radiusX = anyValueMult(factor, slot9.radiusX)
+          slot9.radiusY = anyValueMult(factor, slot9.radiusY)
+          slot9.jitterAcceleration *= factor
+          slot9.jitterX *= factor
+          slot9.jitterY *= factor
+          slot9.jitterZ *= factor
+        }
+        if (
+          slot9 instanceof PointSprite ||
+          slot9 instanceof Line ||
+          slot9 instanceof QuadLine ||
+          slot9 instanceof BillboardEx ||
+          slot9 instanceof MultiTextureBillboardEx ||
+          slot9 instanceof Model ||
+          slot9 instanceof Tracer ||
+          slot9 instanceof Distortion ||
+          slot9 instanceof RadialBlur ||
+          slot9 instanceof Tracer2
+        ) {
           for (const prop of [
             'unkDistFadeClose0',
             'unkDistFadeClose1',
@@ -5059,9 +5148,9 @@ abstract class Node {
             'minDistance',
             'maxDistance',
           ]) if (slot9[prop] > 0) {
-            scaleDataProp(slot9, prop)
+            slot9[prop] *= factor
           }
-          scaleDataProp(slot9, 'negativeDepthOffset')
+          slot9.unkDepthBlend2 *= factor
         }
         const slot10 = effect.actions[10] as Action
         switch (slot10.type) {
@@ -5195,7 +5284,7 @@ abstract class Node {
             procProp(slot9.properties1, 16)
             break
           case ActionType.Tracer:
-          case ActionType.Unk10012_Tracer:
+          case ActionType.Tracer2:
             procProp(slot9.properties1, 6)
             procProp(slot9.properties1, 7)
             procProp(slot9.properties1, 8)
@@ -5238,7 +5327,7 @@ abstract class Node {
           case ActionType.Tracer:
           case ActionType.Distortion:
           case ActionType.RadialBlur:
-          case ActionType.Unk10012_Tracer:
+          case ActionType.Tracer2:
           case ActionType.Unk10015_RichModel:
             procProp(slot9.properties2, 3)
             procProp(slot9.properties2, 4)
@@ -17369,6 +17458,914 @@ class PointLight extends DataAction {
   }
 }
 
+export interface Tracer2Params {
+  /**
+   * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+   * 
+   * **Default**: {@link TracerOrientationMode.LocalZ}
+   */
+  orientation?: TracerOrientationMode
+  /**
+   * Normal map texture ID.
+   * 
+   * **Default**: `0`
+   */
+  normalMap?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+   * 
+   * **Default**: `0`
+   */
+  segmentInterval?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+   * 
+   * **Default**: `1`
+   */
+  segmentDuration?: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+   * 
+   * **Default**: `100`
+   */
+  concurrentSegments?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+   * 
+   * **Default**: `1`
+   */
+  attachedUV?: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the trail is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the trail is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Controls how dark shaded parts of the trail are.
+   * 
+   * **Default**: `0`
+   */
+  shadowDarkness?: number
+  /**
+   * Specular texture ID.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * **Default**: `0.25`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Controls how the trail is lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
+  lighting?: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  /**
+   * Texture ID.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture?: ScalarValue
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode?: BlendMode | ScalarProperty
+  /**
+   * The width of the trail.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  width?: ScalarValue
+  /**
+   * Multiplier for {@link width}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  widthMultiplier?: ScalarValue
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color1?: Vector4Value
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4Value
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color3?: Vector4Value
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  alphaThreshold?: ScalarValue
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  frameIndex?: ScalarValue
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  frameIndexOffset?: ScalarValue
+  /**
+   * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
+   * 
+   * **Default**: `0.1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  textureFraction?: ScalarValue
+  /**
+   * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  speedU?: ScalarValue
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per segment.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  varianceV?: ScalarValue
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarValue
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_1?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
+  unk_ds3_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `5`
+   */
+  unk_ds3_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_3?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_p1_13?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_3?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_4?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_5?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_6?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
+  unk_sdt_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_18?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_19?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_39?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_40?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_17?: number
+}
+
+/**
+ * Creates a trail behind moving effects.
+ */
+class Tracer2 extends DataAction {
+  declare type: ActionType.Tracer2
+  /**
+   * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+   */
+  orientation: TracerOrientationMode
+  /**
+   * Normal map texture ID.
+   */
+  normalMap: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+   */
+  segmentInterval: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+   */
+  segmentDuration: number
+  /**
+   * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+   */
+  concurrentSegments: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames: number
+  /**
+   * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+   */
+  attachedUV: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the trail is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the trail is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Controls how dark shaded parts of the trail are.
+   */
+  shadowDarkness: number
+  /**
+   * Specular texture ID.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness: number
+  /**
+   * Controls how the trail is lit. See {@link LightingMode} for more information.
+   */
+  lighting: LightingMode
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity: number
+  /**
+   * Texture ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  texture: ScalarValue
+  /**
+   * Blend mode.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  blendMode: BlendMode | ScalarProperty
+  /**
+   * The width of the trail.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  width: ScalarValue
+  /**
+   * Multiplier for {@link width}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  widthMultiplier: ScalarValue
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color1: Vector4Value
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2: Vector4Value
+  /**
+   * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color3: Vector4Value
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  alphaThreshold: ScalarValue
+  /**
+   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
+   * 
+   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  frameIndex: ScalarValue
+  /**
+   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  frameIndexOffset: ScalarValue
+  /**
+   * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  textureFraction: ScalarValue
+  /**
+   * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  speedU: ScalarValue
+  /**
+   * Controls how much the UV coordinates should be randomly offset by per segment.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  varianceV: ScalarValue
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarValue
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarValue
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: boolean
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_ds3_f2_29: number
+  unk_ds3_p1_2: ScalarValue
+  unk_ds3_p1_3: ScalarValue
+  unk_ds3_p1_13: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
+  unk_sdt_f2_31: number
+  unk_sdt_f2_32: number
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  unk_er_f1_18: number
+  unk_er_f1_19: number
+  unk_er_f1_20: number
+  unk_er_f1_21: number
+  unk_er_f2_39: number
+  unk_er_f2_40: number
+  unk_sdt_f1_14: number
+  unk_sdt_f1_15: number
+  unk_sdt_f1_16: number
+  unk_sdt_f1_17: number
+  constructor(props: Tracer2Params = {}) {
+    super(ActionType.Tracer2)
+    this.assign(props)
+  }
+}
+
 export interface WaterInteractionParams {
   /**
    * The ID for a texture that controls the shape of the interaction.
@@ -18170,6 +19167,7 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.Tracer2]: Tracer2, Tracer2,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
@@ -19447,6 +20445,7 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
+  Tracer2,
   WaterInteraction,
   Unk10500,
   SpotLight,
