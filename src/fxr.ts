@@ -583,13 +583,13 @@ export type ValuePropertyFunction =
   PropertyFunction.One |
   PropertyFunction.Constant
 
-export type KeyframePropertyFunction =
+export type SequencePropertyFunction =
   PropertyFunction.Stepped |
   PropertyFunction.Linear |
   PropertyFunction.Curve1 |
   PropertyFunction.Curve2
 
-export type ComponentKeyframePropertyFunction = PropertyFunction.CompCurve
+export type ComponentSequencePropertyFunction = PropertyFunction.CompCurve
 
 export type ValueTypeMap = {
   [ValueType.Scalar]: number
@@ -624,11 +624,11 @@ export interface IValueProperty<T extends ValueType> extends IProperty<T, ValueP
   clone(): IValueProperty<T>
 }
 
-export interface IKeyframeProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+export interface ISequenceProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
   loop: boolean
   keyframes: IKeyframe<T>[]
   sortKeyframes(): void
-  clone(): IKeyframeProperty<T, F>
+  clone(): ISequenceProperty<T, F>
   duration: number
 }
 
@@ -2764,9 +2764,9 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     case PropertyFunction.Linear:
     case PropertyFunction.Curve1:
     case PropertyFunction.Curve2:
-      return KeyframeProperty.fromFields(type, func, loop, modifiers, fields) as unknown as T
+      return SequenceProperty.fromFields(type, func, loop, modifiers, fields) as unknown as T
     case PropertyFunction.CompCurve:
-      return ComponentKeyframeProperty.fromFields(type, loop, modifiers, fields) as unknown as T
+      return ComponentSequenceProperty.fromFields(type, loop, modifiers, fields) as unknown as T
     default:
       throw new Error('Unknown property function: ' + func)
   }
@@ -3648,13 +3648,13 @@ function modScalarToVec(mod: Modifier, vt: ValueType) {
         prop = new ValueProperty(vt, arrayOf(cc,
           () => (prop as ValueProperty<ValueType.Scalar>).value as number
         ) as Vector)
-      } else if (prop instanceof KeyframeProperty) {
-        prop = new KeyframeProperty(vt, prop.function, prop.loop, prop.keyframes.map(kf =>
+      } else if (prop instanceof SequenceProperty) {
+        prop = new SequenceProperty(vt, prop.function, prop.loop, prop.keyframes.map(kf =>
           new Keyframe(kf.position, arrayOf(cc, () => kf.value) as Vector)
         ))
-      } else if (prop instanceof ComponentKeyframeProperty) {
-        prop = new ComponentKeyframeProperty(vt, prop.loop,
-          arrayOf(cc, () => (prop as ComponentKeyframeProperty<any>).components[0].clone())
+      } else if (prop instanceof ComponentSequenceProperty) {
+        prop = new ComponentSequenceProperty(vt, prop.loop,
+          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].clone())
         )
       }
       return new Modifier(mod.type, vt, mod.fields, [ prop ])
@@ -3701,10 +3701,10 @@ function modMultPropVal(mod: Modifier, v: PropertyValue) {
  * @returns 
  */
 function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
-  if (p1 instanceof ComponentKeyframeProperty) {
+  if (p1 instanceof ComponentSequenceProperty) {
     p1 = p1.combineComponents()
   }
-  if (p2 instanceof ComponentKeyframeProperty) {
+  if (p2 instanceof ComponentSequenceProperty) {
     p2 = p2.combineComponents()
   }
   if (typeof p1 === 'number') {
@@ -3718,8 +3718,8 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
         anyValueMult(p1, p2.value),
         p2.modifiers.map(mod => modMultPropVal(mod, p1))
       ) as unknown as T
-    } else if (p2 instanceof KeyframeProperty) {
-      return new KeyframeProperty(
+    } else if (p2 instanceof SequenceProperty) {
+      return new SequenceProperty(
         p2.valueType,
         p2.function,
         p2.loop,
@@ -3743,12 +3743,12 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
         anyValueMult(p1, p2.value),
         mods.map(mod => modMultPropVal(mod, p1))
       ) as unknown as T
-    } else if (p2 instanceof KeyframeProperty) {
+    } else if (p2 instanceof SequenceProperty) {
       let mods = p2.modifiers
       if (p2.valueType === ValueType.Scalar) {
         mods = mods.map(mod => modScalarToVec(mod, p1.length - 1))
       }
-      return new KeyframeProperty(
+      return new SequenceProperty(
         p1.length - 1,
         p2.function,
         p2.loop,
@@ -3777,7 +3777,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
         ...p1Mods.map(mod => modMultPropVal(mod, p2.value)),
         ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
       ]) as unknown as T
-    } else if (p2 instanceof KeyframeProperty) {
+    } else if (p2 instanceof SequenceProperty) {
       let p1Mods = p1.modifiers
       let p2Mods = p2.modifiers
       const vt = Math.max(p1.valueType, p2.valueType)
@@ -3787,7 +3787,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
       if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
         p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
       }
-      return new KeyframeProperty(
+      return new SequenceProperty(
         p2.valueType,
         p2.function,
         p2.loop,
@@ -3804,7 +3804,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
         ]
       ) as unknown as T
     }
-  } else if (p1 instanceof KeyframeProperty && p2 instanceof KeyframeProperty) {
+  } else if (p1 instanceof SequenceProperty && p2 instanceof SequenceProperty) {
     const positions = new Set<number>
     for (const keyframe of p1.keyframes) {
       positions.add(keyframe.position)
@@ -5215,11 +5215,11 @@ abstract class Node {
       let prop = container[key]
       if (prop instanceof ValueProperty) {
         prop.value = func(prop.value)
-      } else if (prop instanceof KeyframeProperty) {
+      } else if (prop instanceof SequenceProperty) {
         for (const keyframe of prop.keyframes) {
           keyframe.value = func(keyframe.value as Vector4)
         }
-      } else if (prop instanceof ComponentKeyframeProperty) {
+      } else if (prop instanceof ComponentSequenceProperty) {
         prop = container[key] = prop.combineComponents()
       }
       if ('modifiers' in prop) {
@@ -19317,9 +19317,9 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
         case PropertyFunction.Linear:
         case PropertyFunction.Curve1:
         case PropertyFunction.Curve2:
-          return KeyframeProperty.fromJSON(obj)
+          return SequenceProperty.fromJSON(obj)
         case PropertyFunction.CompCurve:
-          return ComponentKeyframeProperty.fromJSON(obj)
+          return ComponentSequenceProperty.fromJSON(obj)
       }
     } else {
       return ValueProperty.fromJSON(obj)
@@ -19459,9 +19459,9 @@ class ValueProperty<T extends ValueType>
 
 }
 
-class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
+class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   extends Property<T, F>
-  implements IModifiableProperty<T, F>, IKeyframeProperty<T, F> {
+  implements IModifiableProperty<T, F>, ISequenceProperty<T, F> {
 
   loop: boolean
   keyframes: IKeyframe<T>[]
@@ -19551,17 +19551,17 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
     }
   }
 
-  static fromFields<T extends ValueType, F extends KeyframePropertyFunction>(
+  static fromFields<T extends ValueType, F extends SequencePropertyFunction>(
     valueType: T,
     func: F,
     loop: boolean,
     modifiers: Modifier[],
     fieldValues: number[]
-  ): KeyframeProperty<T, F> {
+  ): SequenceProperty<T, F> {
     switch (func) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
-        return new KeyframeProperty(valueType, func, loop, arrayOf(
+        return new SequenceProperty(valueType, func, loop, arrayOf(
           fieldValues[0],
           i => new Keyframe(
             fieldValues[1 + 2 * (valueType + 1) + i],
@@ -19573,7 +19573,7 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
         ), modifiers)
       case PropertyFunction.Curve1:
       case PropertyFunction.Curve2:
-        return new KeyframeProperty(valueType, func, loop, arrayOf(
+        return new SequenceProperty(valueType, func, loop, arrayOf(
           fieldValues[0],
           i => new Keyframe(
             fieldValues[1 + 2 * (valueType + 1) + i],
@@ -19602,7 +19602,7 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
     keyframes?: IKeyframe<any>[]
     loop?: boolean
   }) {
-    return new KeyframeProperty(
+    return new SequenceProperty(
       Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar,
       PropertyFunction[obj.function],
       obj.loop ?? false,
@@ -19726,8 +19726,8 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
     }
   }
 
-  clone(): KeyframeProperty<T, F> {
-    return new KeyframeProperty(
+  clone(): SequenceProperty<T, F> {
+    return new SequenceProperty(
       this.valueType,
       this.function,
       this.loop,
@@ -19746,18 +19746,18 @@ class KeyframeProperty<T extends ValueType, F extends KeyframePropertyFunction>
 
 }
 
-class ComponentKeyframeProperty<T extends ValueType>
+class ComponentSequenceProperty<T extends ValueType>
   extends Property<T, PropertyFunction.CompCurve>
   implements IModifiableProperty<T, PropertyFunction.CompCurve> {
 
   declare function: PropertyFunction.CompCurve
   loop: boolean
-  components: IKeyframeProperty<ValueType.Scalar, PropertyFunction.Curve2>[]
+  components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[]
 
   constructor(
     valueType: T,
     loop: boolean = false,
-    components: IKeyframeProperty<ValueType.Scalar, PropertyFunction.Curve2>[],
+    components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[],
     modifiers: Modifier[] = []
   ) {
     super(valueType, PropertyFunction.CompCurve, modifiers)
@@ -19799,10 +19799,10 @@ class ComponentKeyframeProperty<T extends ValueType>
     loop: boolean,
     modifiers: Modifier[],
     fieldValues: number[]
-  ): ComponentKeyframeProperty<T> {
+  ): ComponentSequenceProperty<T> {
     let offset = 1 + 3 * (valueType + 1)
-    return new ComponentKeyframeProperty(valueType, loop, arrayOf(valueType + 1, i => {
-      return KeyframeProperty.fromFields(ValueType.Scalar, PropertyFunction.Curve2, false, [], [
+    return new ComponentSequenceProperty(valueType, loop, arrayOf(valueType + 1, i => {
+      return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Curve2, false, [], [
         fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
       ])
@@ -19860,8 +19860,8 @@ class ComponentKeyframeProperty<T extends ValueType>
     ) as ValueTypeMap[T]
   }
 
-  clone(): ComponentKeyframeProperty<T> {
-    return new ComponentKeyframeProperty(
+  clone(): ComponentSequenceProperty<T> {
+    return new ComponentSequenceProperty(
       this.valueType,
       this.loop,
       this.components.map(e => e.clone()),
@@ -19870,7 +19870,7 @@ class ComponentKeyframeProperty<T extends ValueType>
   }
 
   /**
-   * Combines the components to form a new {@link KeyframeProperty} with
+   * Combines the components to form a new {@link SequenceProperty} with
    * roughly the same values and the same modifiers.
    * 
    * Note that linear interpolation is used to approximate both sampling of the
@@ -19909,7 +19909,7 @@ class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
 }
 
-class SteppedProperty<T extends ValueType> extends KeyframeProperty<T, PropertyFunction.Stepped> {
+class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Stepped> {
 
   constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
     if (keyframes.length < 2) {
@@ -19921,7 +19921,7 @@ class SteppedProperty<T extends ValueType> extends KeyframeProperty<T, PropertyF
 
 }
 
-class LinearProperty<T extends ValueType> extends KeyframeProperty<T, PropertyFunction.Linear> {
+class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {
 
   constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
     if (keyframes.length < 2) {
@@ -20024,7 +20024,7 @@ class LinearProperty<T extends ValueType> extends KeyframeProperty<T, PropertyFu
 
 }
 
-class Curve2Property<T extends ValueType> extends KeyframeProperty<T, PropertyFunction.Curve2> {
+class Curve2Property<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Curve2> {
 
   constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
     if (keyframes.length < 2) {
@@ -20243,7 +20243,7 @@ class ExternalValueModifier extends Modifier {
  */
 class BloodVisibilityModifier extends ExternalValueModifier {
 
-  declare properties: [KeyframeProperty<any, any>]
+  declare properties: [SequenceProperty<any, any>]
 
   /**
    * @param onValue The value when "Display Blood" is set to "On".
@@ -20459,8 +20459,8 @@ export {
   Keyframe,
   Property,
   ValueProperty,
-  KeyframeProperty,
-  ComponentKeyframeProperty,
+  SequenceProperty,
+  ComponentSequenceProperty,
   ConstantProperty,
   SteppedProperty,
   LinearProperty,
