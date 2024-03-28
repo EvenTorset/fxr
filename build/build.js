@@ -150,7 +150,7 @@ export default async function(writeToDist = true) {
     if (!data.omitClass) {
       classes.push(`
         export interface ${data.name}Params {
-          ${Object.entries(data.properties).map(([k, v]) => {
+          ${Object.entries(data.properties).filter(e => !e[1].omitClassProp).map(([k, v]) => {
             let defValue = v.default ?? 0
             if (typeof defValue === 'string') {
               defValue = `{@link ${defValue}}`
@@ -190,7 +190,7 @@ export default async function(writeToDist = true) {
          */
         class ${data.name} extends DataAction {
           declare type: ActionType.${data.name}
-          ${Object.entries(data.properties).map(([k, v]) => {
+          ${Object.entries(data.properties).filter(e => !e[1].omitClassProp).map(([k, v]) => {
             return (
               'desc' in v ? `
                 /**

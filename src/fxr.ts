@@ -346,7 +346,6 @@ enum ActionType {
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
   Unk10014_LensFlare = 10014,
-  Unk10015_RichModel = 10015,
   Unk10100 = 10100, // Root node action
   Unk10200_ForceFieldCancelArea = 10200,
   Unk10300_ForceFieldWindArea = 10300,
@@ -506,6 +505,12 @@ enum ActionType {
    */
   WaterInteraction = 10013,
   /**
+   * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+   * 
+   * This action type has a specialized subclass: {@link RichModel}
+   */
+  RichModel = 10015,
+  /**
    * Unknown root node action.
    * 
    * This action type has a specialized subclass: {@link Unk10500}
@@ -617,6 +622,7 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   add(summand: number): this
   valueAt(arg: number): ValueTypeMap[T]
   clone(): IProperty<T, F>
+  separateComponents(): IProperty<ValueType.Scalar, F>[]
 }
 
 export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
@@ -1830,7 +1836,6 @@ const ActionData: {
       bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
       minDistance: { default: -1, paths: {}, field: FieldType.Float },
       maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      lighting: { default: LightingMode.Lit, paths: {}, field: FieldType.Integer },
       model: { default: 80201, paths: {}, field: FieldType.Integer },
       sizeX: { default: 1, paths: {} },
       sizeY: { default: 1, paths: {} },
@@ -1853,9 +1858,9 @@ const ActionData: {
       offsetU: { default: 0, paths: {} },
       offsetV: { default: 0, paths: {} },
       speedU: { default: 0, paths: {} },
-      speedUMultiplier: { default: 0, paths: {} },
+      speedMultiplierU: { default: 0, paths: {} },
       speedV: { default: 0, paths: {} },
-      speedVMultiplier: { default: 0, paths: {} },
+      speedMultiplierV: { default: 0, paths: {} },
       rgbMultiplier: { default: 1, paths: {} },
       alphaMultiplier: { default: 1, paths: {} },
       unk_ds3_f1_9: { default: -2, paths: {}, field: FieldType.Integer },
@@ -1904,6 +1909,7 @@ const ActionData: {
       unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
       unk_er_f1_17: { default: 1, paths: {}, field: FieldType.Integer },
@@ -1915,24 +1921,24 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28'],
-        properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
+        properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -2428,6 +2434,136 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.RichModel]: {
+    props: {
+      orientation: { default: OrientationMode.LocalSouth, paths: {}, field: FieldType.Integer },
+      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      scaleVariationZ: { default: 1, paths: {}, field: FieldType.Float },
+      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
+      minDistance: { default: -1, paths: {}, field: FieldType.Float },
+      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
+      model: { default: 80201, paths: {}, field: FieldType.Integer },
+      sizeX: { default: 1, paths: {} },
+      sizeY: { default: 1, paths: {} },
+      sizeZ: { default: 1, paths: {} },
+      rotationX: { default: 0, paths: {} },
+      rotationY: { default: 0, paths: {} },
+      rotationZ: { default: 0, paths: {} },
+      rotationSpeedX: { default: 0, paths: {} },
+      rotationSpeedY: { default: 0, paths: {} },
+      rotationSpeedZ: { default: 0, paths: {} },
+      rotationSpeedMultiplierX: { default: 1, paths: {} },
+      rotationSpeedMultiplierY: { default: 1, paths: {} },
+      rotationSpeedMultiplierZ: { default: 1, paths: {} },
+      color1: { default: [1, 1, 1, 1], paths: {} },
+      color2: { default: [1, 1, 1, 1], paths: {} },
+      color3: { default: [1, 1, 1, 1], paths: {} },
+      uOffset: { default: 0, paths: {} },
+      vOffset: { default: 0, paths: {} },
+      uSpeed: { default: 0, paths: {} },
+      uSpeedMultiplier: { default: 0, paths: {} },
+      vSpeed: { default: 0, paths: {} },
+      vSpeedMultiplier: { default: 0, paths: {} },
+      rgbMultiplier: { default: 1, paths: {} },
+      alphaMultiplier: { default: 1, paths: {} },
+      animation: { default: 0, paths: {}, field: FieldType.Integer },
+      loopAnimation: { default: 1, paths: {}, field: FieldType.Boolean },
+      animationSpeed: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f1_5: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_6: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_8: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_er_f1_9: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_er_f1_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_14: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_18: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_19: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_25: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
+      unk_er_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
+      unk_er_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
+      unk_er_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_28: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_er_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_31: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_34: { default: 0.5, paths: {}, field: FieldType.Float },
+      unk_er_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_er_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_er_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_p1_16: { default: 0, paths: {} },
+      unk_er_p1_17: { default: 0, paths: {} },
+      rgbMultiplier2: { default: 1, paths: {} },
+      unk_er_p1_19: { default: 0, paths: {} },
+      unk_er_p1_20: { default: 0, paths: {} },
+      unk_ds3_p2_2: { default: 0, paths: {} },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
+      unk_ds3_p2_6: { default: 0, paths: {} },
+      unk_ac6_f1_24: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_25: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_26: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_27: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_28: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_33: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_34: { default: 0, paths: {}, field: FieldType.Integer },
+      uvOffset: { default: [0, 0], paths: {} },
+      uvSpeed: { default: [0, 0], paths: {} },
+      uvSpeedMultiplier: { default: [1, 1], paths: {} },
+    },
+    games: {
+      [Game.EldenRing]: {
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','animation','unk_er_f1_11','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
+        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      },
+      [Game.ArmoredCore6]: {
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','animation','unk_er_f1_11','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
+        fields2: Game.EldenRing,
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+      }
+    }
+  },
   [ActionType.Unk10500]: {
     props: {
       rateOfTime: { default: 1, paths: {}, field: FieldType.Float },
@@ -2609,7 +2745,7 @@ const EffectActionSlots = {
       ActionType.Tracer2,
       ActionType.WaterInteraction,
       ActionType.Unk10014_LensFlare,
-      ActionType.Unk10015_RichModel,
+      ActionType.RichModel,
       ActionType.Unk10200_ForceFieldCancelArea,
       ActionType.Unk10300_ForceFieldWindArea,
       ActionType.Unk10301_ForceFieldGravityArea,
@@ -3070,8 +3206,8 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
       section10Count === 0 &&
       fieldCount1 <= data.fields1.length &&
       fieldCount2 <= data.fields2.length &&
-      propertyCount1 === data.properties1.length &&
-      propertyCount2 === data.properties2.length
+      propertyCount1 <= data.properties1.length &&
+      propertyCount2 <= data.properties2.length
     ) {
       return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
     } else {
@@ -3868,6 +4004,69 @@ function getActionGameData(type: ActionType, game: Game) {
   }
 }
 
+function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
+  return new LinearProperty(prop.loop, prop.keyframes.flatMap((kf, i, a) => [
+    new Keyframe(i === 0 ? 0 : a[i].position - 0.001, kf.value),
+    Keyframe.copy(kf)
+  ]).slice(1, -1))
+}
+
+function combineComponents(...comps: ScalarValue[]): VectorValue {
+  comps = comps.map(c => c instanceof SequenceProperty && c.function === PropertyFunction.Stepped ? steppedToLinearProperty(c) : c)
+  if (!comps.some(c => c instanceof Property)) {
+    return comps as Vector
+  }
+  const positions = new Set<number>
+  for (const comp of comps) {
+    if (comp instanceof SequenceProperty) {
+      for (const keyframe of comp.keyframes) {
+        positions.add(keyframe.position)
+      }
+    } else if (comp instanceof ComponentSequenceProperty) {
+      for (const keyframe of comp.components[0].keyframes) {
+        positions.add(keyframe.position)
+      }
+    }
+  }
+  const keyframes = Array.from(positions).sort((a, b) => a - b)
+    .map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
+  const vt: ValueType = comps.length - 1
+  return new LinearProperty(this.loop, keyframes).withModifiers(...comps.flatMap((c, i) => {
+    if (typeof c === 'number') {
+      return []
+    }
+    return c.modifiers.map(mod => {
+      switch (mod.type) {
+        case ModifierType.ExternalValue1:
+        case ModifierType.ExternalValue2:
+          return new Modifier(mod.type, vt, mod.fields.map(e => Field.copy(e)), [
+            combineComponents(...arrayOf(comps.length, j => j === i ? mod.properties[0] as ScalarProperty : 1)) as VectorProperty
+          ])
+        case ModifierType.Randomizer1:
+        case ModifierType.Randomizer3:
+          return new Modifier(mod.type, vt, [
+            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
+            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
+          ])
+        case ModifierType.Randomizer2:
+          return new Modifier(mod.type, vt, [
+            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
+            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
+            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[2]) : new FloatField),
+          ])
+      }
+    })
+  })) as VectorProperty
+}
+
+function separateComponents(value: VectorValue): ScalarValue[] {
+  if (value instanceof Property) {
+    return value.separateComponents()
+  } else {
+    return value
+  }
+}
+
 const ActionDataConversion = {
   [ActionType.PointLight]: {
     read(props: PointLightParams, game: Game) {
@@ -3876,6 +4075,24 @@ const ActionDataConversion = {
     },
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      return props
+    }
+  },
+  [ActionType.RichModel]: {
+    read(props: any, game: Game) {
+      if (game === Game.EldenRing) {
+        props.uvOffset = combineComponents(props.uOffset, props.vOffset)
+        props.uvSpeed = combineComponents(props.uSpeed, props.vSpeed)
+        props.uvSpeedMultiplier = combineComponents(props.uSpeedMultiplier, props.vSpeedMultiplier)
+      }
+      return props
+    },
+    write(props: any, game: Game) {
+      if (game === Game.EldenRing) {
+        ;[props.uOffset, props.vOffset] = separateComponents(props.uvOffset)
+        ;[props.uSpeed, props.vSpeed] = separateComponents(props.uvSpeed)
+        ;[props.uSpeedMultiplier, props.vSpeedMultiplier] = separateComponents(props.uvSpeedMultiplier)
+      }
       return props
     }
   },
@@ -5118,6 +5335,10 @@ abstract class Node {
           slot9.jitterX *= factor
           slot9.jitterY *= factor
           slot9.jitterZ *= factor
+        } else if (slot9 instanceof RichModel) {
+          slot9.sizeX = anyValueMult(factor, slot9.sizeX)
+          slot9.sizeY = anyValueMult(factor, slot9.sizeY)
+          slot9.sizeZ = anyValueMult(factor, slot9.sizeZ)
         } else if (slot9 instanceof SpotLight) {
           slot9.near = anyValueMult(factor, slot9.near)
           slot9.far = anyValueMult(factor, slot9.far)
@@ -5138,7 +5359,8 @@ abstract class Node {
           slot9 instanceof Tracer ||
           slot9 instanceof Distortion ||
           slot9 instanceof RadialBlur ||
-          slot9 instanceof Tracer2
+          slot9 instanceof Tracer2 ||
+          slot9 instanceof RichModel
         ) {
           for (const prop of [
             'unkDistFadeClose0',
@@ -5312,7 +5534,7 @@ abstract class Node {
             procProp(slot9.properties1, 8)
             procProp(slot9.properties1, 11)
             break
-          case ActionType.Unk10015_RichModel:
+          case ActionType.RichModel:
             procProp(slot9.properties1, 13)
             procProp(slot9.properties1, 14)
             procProp(slot9.properties1, 15)
@@ -5328,7 +5550,7 @@ abstract class Node {
           case ActionType.Distortion:
           case ActionType.RadialBlur:
           case ActionType.Tracer2:
-          case ActionType.Unk10015_RichModel:
+          case ActionType.RichModel:
             procProp(slot9.properties2, 3)
             procProp(slot9.properties2, 4)
             procProp(slot9.properties2, 5)
@@ -13379,12 +13601,6 @@ export interface ModelParams {
    */
   maxDistance?: number
   /**
-   * Controls how the particles are lit. See {@link LightingMode} for more information.
-   * 
-   * **Default**: {@link LightingMode.Lit}
-   */
-  lighting?: LightingMode
-  /**
    * Model ID.
    * 
    * **Default**: `80201`
@@ -13628,7 +13844,7 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
-   * - {@link speedUMultiplier}
+   * - {@link speedMultiplierU}
    * - {@link offsetU}
    */
   speedU?: ScalarValue
@@ -13639,7 +13855,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedUMultiplier?: ScalarValue
+  speedMultiplierU?: ScalarValue
   /**
    * Vertical scroll speed for the model's texture.
    * 
@@ -13650,7 +13866,7 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
-   * - {@link speedVMultiplier}
+   * - {@link speedMultiplierV}
    * - {@link offsetV}
    */
   speedV?: ScalarValue
@@ -13661,7 +13877,7 @@ export interface ModelParams {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedVMultiplier?: ScalarValue
+  speedMultiplierV?: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -13719,7 +13935,7 @@ export interface ModelParams {
    */
   animation?: number
   /**
-   * Unknown.
+   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
    * 
    * **Default**: `0`
    */
@@ -13971,6 +14187,12 @@ export interface ModelParams {
    * 
    * **Default**: `-2`
    */
+  unk_sdt_f2_35?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36?: number
   /**
    * Unknown.
@@ -14135,10 +14357,6 @@ class Model extends DataAction {
    * - {@link minDistance}
    */
   maxDistance: number
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more information.
-   */
-  lighting: LightingMode
   /**
    * Model ID.
    * 
@@ -14339,7 +14557,7 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
-   * - {@link speedUMultiplier}
+   * - {@link speedMultiplierU}
    * - {@link offsetU}
    */
   speedU: ScalarValue
@@ -14348,7 +14566,7 @@ class Model extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedUMultiplier: ScalarValue
+  speedMultiplierU: ScalarValue
   /**
    * Vertical scroll speed for the model's texture.
    * 
@@ -14357,7 +14575,7 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    * 
    * See also:
-   * - {@link speedVMultiplier}
+   * - {@link speedMultiplierV}
    * - {@link offsetV}
    */
   speedV: ScalarValue
@@ -14366,7 +14584,7 @@ class Model extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
    */
-  speedVMultiplier: ScalarValue
+  speedMultiplierV: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -14392,6 +14610,9 @@ class Model extends DataAction {
    * - {@link animationSpeed}
    */
   animation: number
+  /**
+   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
+   */
   unk_ds3_f1_15: number
   /**
    * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
@@ -14446,6 +14667,7 @@ class Model extends DataAction {
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
+  unk_sdt_f2_35: number
   unk_sdt_f2_36: number
   unk_sdt_f2_37: number
   unk_er_f1_17: number
@@ -18463,6 +18685,1241 @@ class WaterInteraction extends DataAction {
   }
 }
 
+export interface RichModelParams {
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.LocalSouth}
+   */
+  orientation?: OrientationMode
+  /**
+   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationX?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationY?: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  scaleVariationZ?: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance?: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance?: number
+  /**
+   * Model ID.
+   * 
+   * **Default**: `80201`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  model?: ScalarValue
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   */
+  sizeX?: ScalarValue
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link sizeX}
+   * - {@link sizeZ}
+   */
+  sizeY?: ScalarValue
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationZ}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   */
+  sizeZ?: ScalarValue
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX?: ScalarValue
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY?: ScalarValue
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ?: ScalarValue
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX?: ScalarValue
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY?: ScalarValue
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link rotationSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   */
+  rotationSpeedMultiplierX?: ScalarValue
+  /**
+   * Multiplier for {@link rotationSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   */
+  rotationSpeedMultiplierY?: ScalarValue
+  /**
+   * Multiplier for {@link rotationSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   */
+  rotationSpeedMultiplierZ?: ScalarValue
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color1?: Vector4Value
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2?: Vector4Value
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color3?: Vector4Value
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier?: ScalarValue
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier?: ScalarValue
+  /**
+   * Animation ID.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  animation?: number
+  /**
+   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link animationSpeed}
+   */
+  loopAnimation?: boolean
+  /**
+   * Controls the speed at which the {@link animation} plays.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   */
+  animationSpeed?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_5?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_6?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f1_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f1_9?: number
+  /**
+   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_14?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_15?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_16?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_17?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_18?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_19?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_25?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `8`
+   */
+  unk_er_f2_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_9?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_10?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_11?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_12?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_13?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeClose0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeClose1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeFar0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unkDistFadeFar1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_20?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_21?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_22?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_23?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unkDepthBlend1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unkDepthBlend2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0.5`
+   */
+  unk_er_f2_34?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f2_35?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f2_36?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_37?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_16?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_17?: ScalarValue
+  /**
+   * Seemingly identical to {@link rgbMultiplier}?
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_19?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_20?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_3?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_4?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_5?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_6?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_24?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_25?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_26?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_27?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_28?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_30?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_31?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_32?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_33?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_34?: number
+  /**
+   * Offset for the UV coordinates of the model.
+   * 
+   * **Default**: `[0, 0]`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link uvSpeed}
+   */
+  uvOffset?: Vector2Value
+  /**
+   * Scroll speed for the model's texture.
+   * 
+   * **Default**: `[0, 0]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link uvSpeedMultiplier}
+   */
+  uvSpeed?: Vector2Value
+  /**
+   * Multiplier for {@link uvSpeed}
+   * 
+   * **Default**: `[1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  uvSpeedMultiplier?: Vector2Value
+}
+
+/**
+ * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+ */
+class RichModel extends DataAction {
+  declare type: ActionType.RichModel
+  /**
+   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   */
+  orientation: OrientationMode
+  /**
+   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationX: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationZ}
+   */
+  scaleVariationY: number
+  /**
+   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   */
+  scaleVariationZ: number
+  /**
+   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * See also:
+   * - {@link sizeX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   * - {@link scaleVariationX}
+   * - {@link scaleVariationY}
+   * - {@link scaleVariationZ}
+   */
+  uniformScale: boolean
+  /**
+   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * Controls the strength of the additional bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  /**
+   * Minimum view distance. If the particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
+  /**
+   * Model ID.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  model: ScalarValue
+  /**
+   * The width of the particle.
+   * 
+   * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationX}
+   * - {@link sizeY}
+   * - {@link sizeZ}
+   */
+  sizeX: ScalarValue
+  /**
+   * The height of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationY}
+   * - {@link sizeX}
+   * - {@link sizeZ}
+   */
+  sizeY: ScalarValue
+  /**
+   * The depth of the particle.
+   * 
+   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link scaleVariationZ}
+   * - {@link sizeX}
+   * - {@link sizeY}
+   */
+  sizeZ: ScalarValue
+  /**
+   * Rotation around the X-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationX: ScalarValue
+  /**
+   * Rotation around the Y-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationY: ScalarValue
+  /**
+   * Rotation around the Z-axis in degrees.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link rotationSpeedZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationZ: ScalarValue
+  /**
+   * Rotation speed around the X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   * - {@link rotationSpeedMultiplierX}
+   */
+  rotationSpeedX: ScalarValue
+  /**
+   * Rotation speed around the Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   * - {@link rotationSpeedMultiplierY}
+   */
+  rotationSpeedY: ScalarValue
+  /**
+   * Rotation speed around the Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   * - {@link rotationSpeedMultiplierZ}
+   */
+  rotationSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link rotationSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationX}
+   */
+  rotationSpeedMultiplierX: ScalarValue
+  /**
+   * Multiplier for {@link rotationSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationY}
+   */
+  rotationSpeedMultiplierY: ScalarValue
+  /**
+   * Multiplier for {@link rotationSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link rotationZ}
+   */
+  rotationSpeedMultiplierZ: ScalarValue
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color1: Vector4Value
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   */
+  color2: Vector4Value
+  /**
+   * Color multiplier for the particle.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  color3: Vector4Value
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier: ScalarValue
+  /**
+   * Alpha multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaMultiplier: ScalarValue
+  /**
+   * Animation ID.
+   * 
+   * See also:
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  animation: number
+  /**
+   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link animationSpeed}
+   */
+  loopAnimation: boolean
+  /**
+   * Controls the speed at which the {@link animation} plays.
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   */
+  animationSpeed: number
+  unk_er_f1_5: number
+  unk_er_f1_6: number
+  unk_er_f1_7: number
+  unk_er_f1_8: number
+  unk_er_f1_9: number
+  /**
+   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
+   */
+  unk_er_f1_11: number
+  unk_er_f1_14: number
+  unk_er_f1_15: number
+  unk_er_f1_16: number
+  unk_er_f1_17: number
+  unk_er_f1_18: number
+  unk_er_f1_19: number
+  unk_er_f1_20: number
+  unk_er_f1_21: number
+  unk_er_f1_22: number
+  unk_er_f1_23: number
+  unk_er_f1_24: number
+  unk_er_f1_25: number
+  unk_er_f2_0: number
+  unk_er_f2_1: number
+  unk_er_f2_2: number
+  unk_er_f2_3: number
+  unk_er_f2_8: number
+  unk_er_f2_9: number
+  unk_er_f2_10: number
+  unk_er_f2_11: number
+  unk_er_f2_12: number
+  unk_er_f2_13: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  unk_er_f2_20: number
+  unk_er_f2_21: number
+  unk_er_f2_22: number
+  unk_er_f2_23: number
+  unk_er_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_er_f2_27: number
+  unk_er_f2_28: number
+  unk_er_f2_29: number
+  unk_er_f2_30: number
+  unk_er_f2_31: number
+  unk_er_f2_32: number
+  unk_er_f2_33: number
+  unk_er_f2_34: number
+  unk_er_f2_35: number
+  unk_er_f2_36: number
+  unk_er_f2_37: number
+  unk_er_p1_16: ScalarValue
+  unk_er_p1_17: ScalarValue
+  /**
+   * Seemingly identical to {@link rgbMultiplier}?
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  rgbMultiplier2: ScalarValue
+  unk_er_p1_19: ScalarValue
+  unk_er_p1_20: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
+  unk_ac6_f1_24: number
+  unk_ac6_f1_25: number
+  unk_ac6_f1_26: number
+  unk_ac6_f1_27: number
+  unk_ac6_f1_28: number
+  unk_ac6_f1_29: number
+  unk_ac6_f1_30: number
+  unk_ac6_f1_31: number
+  unk_ac6_f1_32: number
+  unk_ac6_f1_33: number
+  unk_ac6_f1_34: number
+  /**
+   * Offset for the UV coordinates of the model.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   * 
+   * See also:
+   * - {@link uvSpeed}
+   */
+  uvOffset: Vector2Value
+  /**
+   * Scroll speed for the model's texture.
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   * 
+   * See also:
+   * - {@link uvSpeedMultiplier}
+   */
+  uvSpeed: Vector2Value
+  /**
+   * Multiplier for {@link uvSpeed}
+   * 
+   * **Argument**: {@link PropertyArgument.InstanceAge Instance age}
+   */
+  uvSpeedMultiplier: Vector2Value
+  constructor(props: RichModelParams = {}) {
+    super(ActionType.RichModel)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -19202,6 +20659,7 @@ const DataActions = {
   [ActionType.PointLight]: PointLight, PointLight,
   [ActionType.Tracer2]: Tracer2, Tracer2,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
+  [ActionType.RichModel]: RichModel, RichModel,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
   /*#ActionsList end*/
@@ -19222,8 +20680,8 @@ class Field {
    * @param field The field to copy.
    * @returns The copy.
    */
-  static copy(field: Field) {
-    return new Field(field.type, field.value)
+  static copy<T extends Field>(field: T): T {
+    return new Field(field.type, field.value) as T
   }
 
   static fromJSON({
@@ -19367,6 +20825,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract add(summand: number): this
   abstract valueAt(arg: number): ValueTypeMap[T]
   abstract clone(): Property<T, F>
+  abstract separateComponents(): Property<ValueType.Scalar, F>[]
 
 }
 
@@ -19488,6 +20947,17 @@ class ValueProperty<T extends ValueType>
 
   clone(): ValueProperty<T> {
     return new ValueProperty(this.valueType, this.value, this.modifiers.map(e => Modifier.copy(e)))
+  }
+
+  separateComponents(): ValueProperty<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [this.clone() as ValueProperty<ValueType.Scalar>]
+    } else {
+      const mods = this.modifiers.map(e => e.separateComponents())
+      return (this.value as Vector).map((e, i) => new ConstantProperty<ValueType.Scalar>(e).withModifiers(
+        ...mods.map(comps => comps[i])
+      ))
+    }
   }
 
 }
@@ -19769,6 +21239,27 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     )
   }
 
+  separateComponents(): SequenceProperty<ValueType.Scalar, F>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [this.clone() as SequenceProperty<ValueType.Scalar, F>]
+    } else {
+      const mods = this.modifiers.map(e => e.separateComponents())
+      return arrayOf(this.componentCount, i => new SequenceProperty(
+        ValueType.Scalar,
+        this.function,
+        this.loop,
+        this.keyframes.map(kf => new Keyframe<ValueType.Scalar>(
+          kf.position,
+          kf.value[i],
+          kf.unkTangent1?.[i],
+          kf.unkTangent2?.[i]
+        ))).withModifiers(
+          ...mods.map(comps => comps[i])
+        )
+      )
+    }
+  }
+
   get duration() { return Math.max(...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
@@ -19900,6 +21391,20 @@ class ComponentSequenceProperty<T extends ValueType>
       this.components.map(e => e.clone()),
       this.modifiers.map(e => Modifier.copy(e))
     )
+  }
+
+  separateComponents(): ComponentSequenceProperty<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [this.clone() as ComponentSequenceProperty<ValueType.Scalar>]
+    } else {
+      const mods = this.modifiers.map(e => e.separateComponents())
+      return arrayOf(this.componentCount, i => new ComponentSequenceProperty(
+        ValueType.Scalar,
+        this.loop,
+        [this.components[i]],
+        mods.map(comps => comps[i])
+      ))
+    }
   }
 
   /**
@@ -20228,6 +21733,33 @@ class Modifier {
     return o
   }
 
+  separateComponents(): Modifier[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [ Modifier.copy(this) ]
+    } else {
+      const cc = this.valueType + 1
+      const type = this.type
+      switch (type) {
+        case ModifierType.ExternalValue1:
+        case ModifierType.ExternalValue2:
+          const props = this.properties[0].separateComponents()
+          return arrayOf(cc, i => new Modifier(type, ValueType.Scalar, [Field.copy(this.fields[0])], [props[i]]))
+        case ModifierType.Randomizer1:
+        case ModifierType.Randomizer3:
+          return arrayOf(cc, i => new Modifier(type, ValueType.Scalar, [
+            Field.copy(this.fields[i]),
+            Field.copy(this.fields[cc + i]),
+          ]))
+        case ModifierType.Randomizer2:
+          return arrayOf(cc, i => new Modifier(type, ValueType.Scalar, [
+            Field.copy(this.fields[i]),
+            Field.copy(this.fields[cc + i]),
+            Field.copy(this.fields[2 * cc + i]),
+          ]))
+      }
+    }
+  }
+
 }
 
 /**
@@ -20482,6 +22014,7 @@ export {
   PointLight,
   Tracer2,
   WaterInteraction,
+  RichModel,
   Unk10500,
   SpotLight,
   /*#ActionsExport end*/
@@ -20503,6 +22036,8 @@ export {
   RandomProperty,
   RainbowProperty,
   anyValueMult,
+  combineComponents,
+  separateComponents,
 
   Modifier,
   ExternalValueModifier,
