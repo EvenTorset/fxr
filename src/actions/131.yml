@@ -1,0 +1,64 @@
+type: 131
+name: ParticleModifier
+desc: |
+  Modifies particles in various ways.
+
+  Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
+properties:
+  uniformScale:
+    field: bool
+    default: false
+    desc: |
+      Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+    see:
+      - scaleX
+      - scaleY
+      - scaleZ
+  speed:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the speed of the particles emitted from this node, but only if the effect has an action in slot 10 that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+  scaleX:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for the scale along the X-axis for the particles emitted from this node.
+
+      If {@link uniformScale} is enabled, this also affects the Y and Z axes.
+  scaleY:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for the scale along the Y-axis for the particles emitted from this node.
+
+      If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
+  scaleZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for the scale along the Z-axis for the particles emitted from this node.
+
+      If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
+  color:
+    type: Vector4Value
+    default: 1
+    argument: EffectAge
+    desc: |
+      Color multiplier for the particles emitted from this node.
+games:
+  DS3:
+    fields1:
+      - uniformScale
+    properties1:
+      - speed
+      - scaleX
+      - scaleY
+      - scaleZ
+      - color
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

@@ -256,12 +256,6 @@ enum ActionType {
   ParticleAttributes = 129,
   Unk130 = 130,
   /**
-   * Controls various multipliers as well as the acceleration of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMultiplier}
-   */
-  ParticleMultiplier = 131,
-  /**
    * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
    * manage the duration and thresholds for the
    * {@link NodeType.LevelOfDetail level of detail node}.
@@ -325,6 +319,14 @@ enum ActionType {
 
   // Data Actions
   /*#ActionType start*/
+  /**
+   * Modifies particles in various ways.
+   * 
+   * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
+   * 
+   * This action type has a specialized subclass: {@link ParticleModifier}
+   */
+  ParticleModifier = 131,
   /**
    * References another SFX by its ID.
    * 
@@ -1034,8 +1036,8 @@ enum DistortionShape {
 /**
  * A particle's initial direction is used for various things that require a
  * direction, but does not have a set one to follow.
- * - {@link ActionType.ParticleMultiplier ParticleMultiplier action}'s
- * {@link ParticleMultiplierParams.speed speed}.
+ * - {@link ActionType.ParticleModifier ParticleModifier action}'s
+ * {@link ParticleModifierParams.speed speed}.
  * - {@link ActionType.Line Line action}'s initial rotation.
  * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
  * 
@@ -1107,6 +1109,25 @@ const ActionData: {
   }
 } = {
   /*#ActionData start*/
+  [ActionType.ParticleModifier]: {
+    props: {
+      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      speed: { default: 0, paths: {} },
+      scaleX: { default: 1, paths: {} },
+      scaleY: { default: 1, paths: {} },
+      scaleZ: { default: 1, paths: {} },
+      color: { default: 1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['uniformScale'],
+        properties1: ['speed','scaleX','scaleY','scaleZ','color']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.SFXReference]: {
     props: {
       referenceID: { default: 0, paths: {}, field: FieldType.Integer },
@@ -2780,7 +2801,7 @@ const EffectActionSlots = {
       ActionType.RectangularParticleSpread
     ],
     [
-      ActionType.ParticleMultiplier
+      ActionType.ParticleModifier
     ],
     [
       ActionType.ParticleAttributes
@@ -6078,7 +6099,7 @@ class LevelOfDetailEffect extends Effect {
  * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
  * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
- * 7     | {@link ActionType.ParticleMultiplier ParticleMultiplier}
+ * 7     | {@link ActionType.ParticleModifier ParticleModifier}
  * 8     | {@link ActionType.ParticleAttributes ParticleAttributes}
  * 9     | {@link ActionType.None None}
  * 10    | {@link ActionType.None None}
@@ -6103,7 +6124,7 @@ class BasicEffect extends Effect {
       new OneTimeEmitter,
       new PointEmitterShape,
       new NoParticleSpread,
-      new ParticleMultiplier,
+      new ParticleModifier,
       new ParticleAttributes,
       new Action,
       new Action,
@@ -6353,7 +6374,7 @@ const ActionFieldTypes: { [index: string]: { Fields1: FieldType[], Fields2: Fiel
     ],
     Fields2: []
   },
-  [ActionType.ParticleMultiplier]: {
+  [ActionType.ParticleModifier]: {
     Fields1: [
       FieldType.Boolean
     ],
@@ -7955,143 +7976,6 @@ class ParticleAttributes extends Action {
 
 }
 
-export interface ParticleMultiplierParams {
-  /**
-   * Scales the model uniformly based on {@link scaleX}. The other scale
-   * properties in this action have no effect when this is enabled. Defaults to
-   * false.
-   */
-  uniformScale?: boolean
-  /**
-   * Controls the speed of the particles, but only if the effect has an action
-   * in slot 10 that enables acceleration of particles. The direction depends
-   * on the emitter shape. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  speed?: ScalarValue
-  /**
-   * Multiplier for the scale along the X-axis. If {@link uniformScale} is
-   * enabled, this scales the particles uniformly. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  scaleX?: ScalarValue
-  /**
-   * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
-   * enabled, this property is ignored. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  scaleY?: ScalarValue
-  /**
-   * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
-   * enabled, this property is ignored. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  scaleZ?: ScalarValue
-  /**
-   * Color multiplier. Defaults to [1, 1, 1, 1].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  color?: Vector4Value
-}
-/**
- * Controls various multipliers as well as the speed of particles.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | uniformScale
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | acceleration
- * 1     | scaleX
- * 2     | scaleY
- * 3     | scaleZ
- * 4     | color
- */
-class ParticleMultiplier extends Action {
-
-  declare fields1: [BoolField]
-
-  constructor({
-    uniformScale = false,
-    speed = 0,
-    scaleX = 1,
-    scaleY = 1,
-    scaleZ = 1,
-    color = [1, 1, 1, 1],
-  }: ParticleMultiplierParams = {}) {
-    super(ActionType.ParticleMultiplier, [
-      new BoolField(uniformScale),
-    ], [], [
-      scalarFromArg(speed),
-      scalarFromArg(scaleX),
-      scalarFromArg(scaleY),
-      scalarFromArg(scaleZ),
-      vectorFromArg(color),
-    ])
-  }
-
-  /**
-   * Scales the model uniformly based on {@link scaleX}. The other scale
-   * properties in this action have no effect when this is enabled.
-   */
-  get uniformScale() { return this.fields1[0].value }
-  set uniformScale(value) { this.fields1[0].value = value }
-
-  /**
-   * Controls the speed of the particles, but only if the effect has an action
-   * in slot 10 that enables acceleration of particles. The direction depends
-   * on the emitter shape.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get speed(): ScalarProperty { return this.properties1[0] }
-  set speed(value: ScalarValue) { setPropertyInList(this.properties1, 0, value) }
-
-  /**
-   * Multiplier for the scale along the X-axis. If {@link uniformScale} is
-   * enabled, this scales the particles uniformly.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get scaleX(): ScalarProperty { return this.properties1[1] }
-  set scaleX(value: ScalarValue) { setPropertyInList(this.properties1, 1, value) }
-
-  /**
-   * Multiplier for the scale along the Y-axis. If {@link uniformScale} is
-   * enabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get scaleY(): ScalarProperty { return this.properties1[2] }
-  set scaleY(value: ScalarValue) { setPropertyInList(this.properties1, 2, value) }
-
-  /**
-   * Multiplier for the scale along the Z-axis. If {@link uniformScale} is
-   * enabled, this property is ignored.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get scaleZ(): ScalarProperty { return this.properties1[3] }
-  set scaleZ(value: ScalarValue) { setPropertyInList(this.properties1, 3, value) }
-
-  /**
-   * Color multiplier.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  get color(): Vector4Property { return this.properties1[4] }
-  set color(value: Vector4Value) { setPropertyInList(this.properties1, 4, value) }
-
-}
-
 /**
  * References another SFX by its ID.
  */
@@ -8217,6 +8101,124 @@ class NoParticleSpread extends Action {
 }
 
 /*#ActionClasses start*/
+export interface ParticleModifierParams {
+  /**
+   * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link scaleX}
+   * - {@link scaleY}
+   * - {@link scaleZ}
+   */
+  uniformScale?: boolean
+  /**
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in slot 10 that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speed?: ScalarValue
+  /**
+   * Multiplier for the scale along the X-axis for the particles emitted from this node.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the Y and Z axes.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleX?: ScalarValue
+  /**
+   * Multiplier for the scale along the Y-axis for the particles emitted from this node.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleY?: ScalarValue
+  /**
+   * Multiplier for the scale along the Z-axis for the particles emitted from this node.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleZ?: ScalarValue
+  /**
+   * Color multiplier for the particles emitted from this node.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color?: Vector4Value
+}
+
+/**
+ * Modifies particles in various ways.
+   * 
+   * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
+ */
+class ParticleModifier extends DataAction {
+  declare type: ActionType.ParticleModifier
+  /**
+   * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+   * 
+   * See also:
+   * - {@link scaleX}
+   * - {@link scaleY}
+   * - {@link scaleZ}
+   */
+  uniformScale: boolean
+  /**
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in slot 10 that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speed: ScalarValue
+  /**
+   * Multiplier for the scale along the X-axis for the particles emitted from this node.
+   * 
+   * If {@link uniformScale} is enabled, this also affects the Y and Z axes.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleX: ScalarValue
+  /**
+   * Multiplier for the scale along the Y-axis for the particles emitted from this node.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleY: ScalarValue
+  /**
+   * Multiplier for the scale along the Z-axis for the particles emitted from this node.
+   * 
+   * If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  scaleZ: ScalarValue
+  /**
+   * Color multiplier for the particles emitted from this node.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  color: Vector4Value
+  constructor(props: ParticleModifierParams = {}) {
+    super(ActionType.ParticleModifier)
+    this.assign(props)
+  }
+}
+
 export interface PeriodicEmitterParams {
   /**
    * Time between emitting new particles in seconds.
@@ -20655,7 +20657,6 @@ const Actions = {
   [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
-  [ActionType.ParticleMultiplier]: ParticleMultiplier, ParticleMultiplier,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
@@ -20665,6 +20666,7 @@ const Actions = {
 
 const DataActions = {
   /*#ActionsList start*/
+  [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
@@ -22012,7 +22014,6 @@ export {
   ParticleMovement,
   NodeAttributes,
   ParticleAttributes,
-  ParticleMultiplier,
   LevelOfDetailThresholds,
   StateEffectMap,
   EmitAllParticles,
@@ -22020,6 +22021,7 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   /*#ActionsExport start*/
+  ParticleModifier,
   SFXReference,
   PeriodicEmitter,
   EqualDistanceEmitter,
