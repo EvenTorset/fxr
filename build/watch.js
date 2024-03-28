@@ -17,7 +17,12 @@ try {
   console.error(err)
 }
 
-const watcher = chokidar.watch(srcDir)
+const watcher = chokidar.watch(srcDir, {
+  awaitWriteFinish: {
+    stabilityThreshold: 600,
+    pollInterval: 100
+  }
+})
 
 watcher.on('ready', () => {
   watcher.on('all', async (event, filePath) => {
@@ -25,7 +30,7 @@ watcher.on('ready', () => {
       await fs.promises.copyFile(fxrTSPath, path.join(distDir, 'fxr.ts'))
     } else {
       try {
-        await build()
+        await build(false)
       } catch (err) {
         console.error(err)
       }

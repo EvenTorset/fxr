@@ -65,7 +65,7 @@ function naturalSorter(as, bs) {
   return b[i] ? -1 : 0
 }
 
-export default async function() {
+export default async function(writeToDist = true) {
 
   const actionTypes = []
   const actionDataEntries = []
@@ -237,7 +237,9 @@ export default async function() {
   replace('ActionsExport', '  '+actionsExport.join(',\n  ') + ',')
 
   await fs.promises.writeFile(path.join(srcDir, 'fxr.ts'), libSrc)
-  await fs.promises.mkdir(distDir, { recursive: true })
-  await fs.promises.writeFile(path.join(distDir, 'fxr.ts'), libSrc)
+  if (writeToDist) {
+    await fs.promises.mkdir(distDir, { recursive: true })
+    await fs.promises.writeFile(path.join(distDir, 'fxr.ts'), libSrc)
+  }
 
 }
