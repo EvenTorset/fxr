@@ -6440,11 +6440,11 @@ class Action implements IAction {
   }) {
     return new Action(
       type,
-      fields1,
-      fields2,
-      properties1,
-      properties2,
-      section10s
+      fields1.map(e => Field.fromJSON(e)),
+      fields2.map(e => Field.fromJSON(e)),
+      properties1.map(e => Property.fromJSON(e)),
+      properties2.map(e => Property.fromJSON(e)),
+      section10s.map(e => Section10.fromJSON(e))
     )
   }
 
@@ -19344,7 +19344,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   }
 
   static fromJSON(obj: any) {
-    if ('function' in obj) {
+    if (typeof obj === 'object' && 'function' in obj) {
       switch (PropertyFunction[obj.function as string]) {
         case PropertyFunction.Stepped:
         case PropertyFunction.Linear:
@@ -20203,12 +20203,14 @@ class Modifier {
     fields: []
     properties?: []
   }): Modifier {
-    return new Modifier(
-      typeEnumA,
-      typeEnumB,
+    const mod = new Modifier(
+      Modifier.typeEnumAToModifierType(typeEnumA),
+      typeEnumA & 0b11,
       fields.map(field => Field.fromJSON(field) as NumericalField),
       properties.map(prop => Property.fromJSON(prop))
     )
+    mod.typeEnumB = typeEnumB
+    return mod
   }
 
   toJSON() {
