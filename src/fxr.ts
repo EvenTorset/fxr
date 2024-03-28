@@ -1863,10 +1863,10 @@ const ActionData: {
       unk_ds3_f1_11: { default: true, paths: {}, field: FieldType.Boolean },
       unk_ds3_f1_12: { default: true, paths: {}, field: FieldType.Boolean },
       unk_ds3_f1_13: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_14: { default: 0, paths: {}, field: FieldType.Integer },
+      animation: { default: 0, paths: {}, field: FieldType.Integer },
       unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_16: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_17: { default: 1, paths: {}, field: FieldType.Float },
+      loopAnimation: { default: 1, paths: {}, field: FieldType.Boolean },
+      animationSpeed: { default: 1, paths: {}, field: FieldType.Float },
       unk_ds3_f1_18: { default: 0, paths: {}, field: FieldType.Integer },
       unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
       unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
@@ -1913,19 +1913,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18'],
+        fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28'],
         properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedUMultiplier','speedV','speedVMultiplier','unk_ds3_p1_24'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -13709,11 +13709,15 @@ export interface ModelParams {
    */
   unk_ds3_f1_13?: number
   /**
-   * Unknown.
+   * Animation ID.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
    */
-  unk_ds3_f1_14?: number
+  animation?: number
   /**
    * Unknown.
    * 
@@ -13721,17 +13725,25 @@ export interface ModelParams {
    */
   unk_ds3_f1_15?: number
   /**
-   * Unknown.
+   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link animationSpeed}
    */
-  unk_ds3_f1_16?: number
+  loopAnimation?: boolean
   /**
-   * Unknown.
+   * Controls the speed at which the {@link animation} plays.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
    */
-  unk_ds3_f1_17?: number
+  animationSpeed?: number
   /**
    * Unknown.
    * 
@@ -14372,10 +14384,31 @@ class Model extends DataAction {
   unk_ds3_f1_11: boolean
   unk_ds3_f1_12: boolean
   unk_ds3_f1_13: number
-  unk_ds3_f1_14: number
+  /**
+   * Animation ID.
+   * 
+   * See also:
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  animation: number
   unk_ds3_f1_15: number
-  unk_ds3_f1_16: number
-  unk_ds3_f1_17: number
+  /**
+   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link animationSpeed}
+   */
+  loopAnimation: boolean
+  /**
+   * Controls the speed at which the {@link animation} plays.
+   * 
+   * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   */
+  animationSpeed: number
   unk_ds3_f1_18: number
   unk_ds3_f2_0: number
   unk_ds3_f2_1: number

@@ -355,10 +355,10 @@ properties:
     argument: EffectAge
     desc: |
       Alpha multiplier.
-  unk_ds3_f1_9: # specular strength? from ds3 notes sheet
+  unk_ds3_f1_9:
     field: int
     default: -2
-  unk_ds3_f1_10: # roughness strength? from ds3 notes sheet
+  unk_ds3_f1_10:
     field: int
     default: -2
   unk_ds3_f1_11:
@@ -370,16 +370,31 @@ properties:
   unk_ds3_f1_13:
     field: int
     default: 1
-  unk_ds3_f1_14: # animation ID? from ds3 notes sheet
+  animation:
     field: int
+    desc: |
+      Animation ID.
+    see:
+      - loopAnimation
+      - animationSpeed
   unk_ds3_f1_15:
     field: int
-  unk_ds3_f1_16:
-    field: int
+  loopAnimation:
+    field: bool
     default: 1
-  unk_ds3_f1_17: # animation speed? from ds3 notes sheet
+    desc: |
+      If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+    see:
+      - animation
+      - animationSpeed
+  animationSpeed:
     field: float
     default: 1
+    desc: |
+      Controls the speed at which the {@link animation} plays.
+    see:
+      - animation
+      - loopAnimation
   unk_ds3_f1_18:
     field: int
   unk_ds3_f2_0:
@@ -498,10 +513,10 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
-      - unk_ds3_f1_14
+      - animation
       - unk_ds3_f1_15
-      - unk_ds3_f1_16
-      - unk_ds3_f1_17
+      - loopAnimation
+      - animationSpeed
       - unk_ds3_f1_18
     fields2:
       - unk_ds3_f2_0
@@ -581,10 +596,10 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
-      - unk_ds3_f1_14
+      - animation
       - unk_ds3_f1_15
-      - unk_ds3_f1_16
-      - unk_ds3_f1_17
+      - loopAnimation
+      - animationSpeed
       - unk_ds3_f1_18
     fields2:
       - unk_ds3_f2_0
@@ -668,10 +683,10 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
-      - unk_ds3_f1_14
+      - animation
       - unk_ds3_f1_15
-      - unk_ds3_f1_16
-      - unk_ds3_f1_17
+      - loopAnimation
+      - animationSpeed
       - unk_ds3_f1_18
       - unk_er_f1_17
       - unk_er_f1_18
