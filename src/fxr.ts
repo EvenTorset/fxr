@@ -181,12 +181,6 @@ enum ActionType {
    */
   ParticleSpeedPartialFollow = 65,
   /**
-   * Plays a sound effect.
-   * 
-   * This action type has a specialized subclass: {@link PlaySound}
-   */
-  PlaySound = 75,
-  /**
    * Controls the movement of the node.
    * 
    * This action type has a specialized subclass: {@link NodeMovement}
@@ -305,6 +299,12 @@ enum ActionType {
 
   // Data Actions
   /*#ActionType start*/
+  /**
+   * Plays a sound effect.
+   * 
+   * This action type has a specialized subclass: {@link PlaySound}
+   */
+  PlaySound = 75,
   /**
    * Controls various things about the node, like its duration, and how it is attached to the parent node.
    * 
@@ -578,7 +578,7 @@ enum PropertyFunction {
   CompCurve = 7
 }
 
-export type ValuePropertyFunction = 
+export type ValuePropertyFunction =
   PropertyFunction.Zero |
   PropertyFunction.One |
   PropertyFunction.Constant
@@ -1107,6 +1107,21 @@ const ActionData: {
   }
 } = {
   /*#ActionData start*/
+  [ActionType.PlaySound]: {
+    props: {
+      sound: { default: 0, paths: {}, field: FieldType.Integer },
+      repeat: { default: false, paths: {}, field: FieldType.Boolean },
+      volume: { default: 1, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['sound','volume','repeat']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.NodeAttributes]: {
     props: {
       attachment: { default: AttachMode.Parent, paths: {}, field: FieldType.Integer },
@@ -7631,52 +7646,6 @@ class NodeAttachToCamera extends Action {
 
 }
 
-/**
- * Plays a sound effect.
- */
-class PlaySound extends Action {
-
-  /**
-   * @param soundID The ID of the sound to play.
-   * @param repeat Controls whether the sound will repeat or not.
-   * 
-   * Does not seem to work in Elden Ring.
-   * @param volume Volume multiplier.
-   * 
-   * Does not seem to work in Elden Ring.
-   */
-  constructor(soundID: number, repeat: boolean = false, volume: number = 1) {
-    super(ActionType.PlaySound, [
-      new IntField(soundID),
-      new FloatField(volume),
-      new BoolField(repeat)
-    ])
-  }
-
-  /**
-   * The ID of the sound to play.
-   */
-  get soundID() { return this.fields1[0].value as number }
-  set soundID(value) { this.fields1[0].value = value }
-
-  /**
-   * Volume multiplier.
-   * 
-   * Does not seem to work in Elden Ring.
-   */
-  get volume() { return this.fields1[1].value as number }
-  set volume(value) { this.fields1[1].value = value }
-
-  /**
-   * Controls whether the sound will repeat or not.
-   * 
-   * Does not seem to work in Elden Ring.
-   */
-  get repeat() { return this.fields1[2].value as number }
-  set repeat(value) { this.fields1[2].value = value }
-
-}
-
 export interface ParticleMovementParams {
   /**
    * Downwards acceleration. This will always point towards global down, even
@@ -8029,6 +7998,58 @@ class NoParticleSpread extends Action {
 }
 
 /*#ActionClasses start*/
+export interface PlaySoundParams {
+  /**
+   * The ID of the sound to play.
+   * 
+   * **Default**: `0`
+   */
+  sound?: number
+  /**
+   * Controls whether the sound will repeat or not.
+   * 
+   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   * 
+   * **Default**: `false`
+   */
+  repeat?: boolean
+  /**
+   * Volume multiplier.
+   * 
+   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   * 
+   * **Default**: `1`
+   */
+  volume?: number
+}
+
+/**
+ * Plays a sound effect.
+ */
+class PlaySound extends DataAction {
+  declare type: ActionType.PlaySound
+  /**
+   * The ID of the sound to play.
+   */
+  sound: number
+  /**
+   * Controls whether the sound will repeat or not.
+   * 
+   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   */
+  repeat: boolean
+  /**
+   * Volume multiplier.
+   * 
+   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   */
+  volume: number
+  constructor(props: PlaySoundParams = {}) {
+    super(ActionType.PlaySound)
+    this.assign(props)
+  }
+}
+
 export interface NodeAttributesParams {
   /**
    * Controls how the node is attached to the parent node.
@@ -20682,7 +20703,6 @@ const Actions = {
 
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
-  [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
@@ -20692,6 +20712,7 @@ const Actions = {
 
 const DataActions = {
   /*#ActionsList start*/
+  [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
@@ -22038,7 +22059,6 @@ export {
   NodeTranslation,
   NodeTransform,
   NodeAttachToCamera,
-  PlaySound,
   ParticleMovement,
   LevelOfDetailThresholds,
   StateEffectMap,
@@ -22047,6 +22067,7 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   /*#ActionsExport start*/
+  PlaySound,
   NodeAttributes,
   ParticleAttributes,
   ParticleModifier,
