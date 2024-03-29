@@ -1,0 +1,20 @@
+type: 800
+name: Unk800
+desc: |
+  Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+properties:
+  unk_ac6_f1_0:
+    field: float
+    default: 1
+  unk_ac6_f1_1:
+    field: float
+    default: 0.2
+  unk_ac6_f1_2:
+    field: float
+    default: 0.25
+games:
+  AC6:
+    fields1:
+      - unk_ac6_f1_0
+      - unk_ac6_f1_1
+      - unk_ac6_f1_2

@@ -268,7 +268,6 @@ enum ActionType {
   Unk700 = 700, // Root node action
   Unk701 = 701, // Root node action
   Unk702 = 702, // Root node action
-  Unk800 = 800,
   Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
@@ -487,6 +486,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleWindAcceleration}
    */
   ParticleWindAcceleration = 734,
+  /**
+   * Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+   * 
+   * This action type has a specialized subclass: {@link Unk800}
+   */
+  Unk800 = 800,
   /**
    * Creates a trail behind moving effects.
    * 
@@ -2464,6 +2469,18 @@ const ActionData: {
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.Unk800]: {
+    props: {
+      unk_ac6_f1_0: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_1: { default: 0.2, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_2: { default: 0.25, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.ArmoredCore6]: {
+        fields1: ['unk_ac6_f1_0','unk_ac6_f1_1','unk_ac6_f1_2']
+      }
     }
   },
   [ActionType.Tracer2]: {
@@ -17826,6 +17843,41 @@ class ParticleWindAcceleration extends DataAction {
   }
 }
 
+export interface Unk800Params {
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0.2`
+   */
+  unk_ac6_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0.25`
+   */
+  unk_ac6_f1_2?: number
+}
+
+/**
+ * Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+ */
+class Unk800 extends DataAction {
+  declare type: ActionType.Unk800
+  unk_ac6_f1_0: number
+  unk_ac6_f1_1: number
+  unk_ac6_f1_2: number
+  constructor(props: Unk800Params = {}) {
+    super(ActionType.Unk800)
+    this.assign(props)
+  }
+}
+
 export interface Tracer2Params {
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
@@ -20770,6 +20822,7 @@ const DataActions = {
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
+  [ActionType.Unk800]: Unk800, Unk800,
   [ActionType.Tracer2]: Tracer2, Tracer2,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.RichModel]: RichModel, RichModel,
@@ -22125,6 +22178,7 @@ export {
   ParticleWindSpeed,
   NodeWindAcceleration,
   ParticleWindAcceleration,
+  Unk800,
   Tracer2,
   WaterInteraction,
   RichModel,
