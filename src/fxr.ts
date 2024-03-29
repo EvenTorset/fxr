@@ -223,15 +223,6 @@ enum ActionType {
    */
   NodeSpeedSpin = 123,
   /**
-   * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
-   * manage the duration and thresholds for the
-   * {@link NodeType.LevelOfDetail level of detail node}.
-   * 
-   * This action type has a specialized subclass:
-   * {@link LevelOfDetailThresholds}
-   */
-  LevelOfDetail = 133,
-  /**
    * Maps states to effects in the parent node.
    * 
    * This action type has a specialized subclass: {@link StateEffectMap}
@@ -334,6 +325,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link SFXReference}
    */
   SFXReference = 132,
+  /**
+   * Used in the {@link EffectType.LevelOfDetail level of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelOfDetail level of detail node}.
+   * 
+   * This action type has a specialized subclass: {@link LevelOfDetailThresholds}
+   */
+  LevelOfDetailThresholds = 133,
   /**
    * Emits particles periodically.
    * 
@@ -658,6 +655,15 @@ export interface IAction {
   minify(): typeof this
 }
 
+export interface IEffect {
+  readonly type: EffectType
+  getActionCount(game: Game): number
+  getActions(game: Game): IAction[]
+  toJSON(): any
+  minify(): typeof this
+  walkActions(): Generator<IAction>
+}
+
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
 export type Vector4 = [red: number, green: number, blue: number, alpha: number]
@@ -888,7 +894,7 @@ enum PropertyArgument {
    */
   InstanceAge,
   /**
-   * Time in seconds since the {@link Effect} became active.
+   * Time in seconds since the {@link IEffect Effect} became active.
    * 
    * An effect becoming active is for example the delay from
    * {@link ActionType.NodeAttributes NodeAttributes} being over, or the active
@@ -1257,6 +1263,25 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['referenceID']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.LevelOfDetailThresholds]: {
+    props: {
+      duration: { default: -1, paths: {} },
+      threshold0: { default: 1000, paths: {}, field: FieldType.Integer },
+      threshold1: { default: 1000, paths: {}, field: FieldType.Integer },
+      threshold2: { default: 1000, paths: {}, field: FieldType.Integer },
+      threshold3: { default: 1000, paths: {}, field: FieldType.Integer },
+      threshold4: { default: 1000, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['threshold0','threshold1','threshold2','threshold3','threshold4'],
+        properties1: ['duration']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -3219,7 +3244,7 @@ function readAction(br: BinaryReader, type: number, fieldCount1: number, propert
   }
 }
 
-function writeAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IAction[]) {
   const count = actions.length
   bw.writeInt16(this.type)
   bw.writeUint8(0) // Unk02
@@ -3242,7 +3267,7 @@ function writeAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
   actions.push(this)
 }
 
-function writeActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+function writeActionProperties(this: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of this.properties1) {
     writeProperty(property, bw, properties, false)
@@ -3252,23 +3277,23 @@ function writeActionProperties(bw: BinaryWriter, game: Game, index: number, prop
   }
 }
 
-function writeActionSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeActionSection10s(this: Action, bw: BinaryWriter, index: number, section10s: Section10[]) {
   bw.fill(`ActionSection10sOffset${index}`, bw.position)
-  for (const section10 of (this as Action).section10s) {
+  for (const section10 of this.section10s) {
     writeSection10.call(section10, bw, section10s)
   }
 }
 
-function writeActionFields(bw: BinaryWriter, game: Game, index: number): number {
+function writeActionFields(this: Action, bw: BinaryWriter, game: Game, index: number): number {
   const count: number = this.fields1.length + this.fields2.length
   if (count === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
   } else {
     bw.fill(`ActionFieldsOffset${index}`, bw.position)
-    for (const field of (this as Action).fields1) {
+    for (const field of this.fields1) {
       writeField.call(field, bw)
     }
-    for (const field of (this as Action).fields2) {
+    for (const field of this.fields2) {
       writeField.call(field, bw)
     }
   }
@@ -3336,7 +3361,7 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
   return new DataActions[type](params)
 }
 
-function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeDataAction(this: DataAction, bw: BinaryWriter, game: Game, actions: IAction[]) {
   if (game === Game.Generic) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
@@ -3368,7 +3393,7 @@ function writeDataAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
   actions.push(this)
 }
 
-function writeDataActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+function writeDataActionProperties(this: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   const conProps = bw.convertedDataActions.get(this)
   const properties1: AnyProperty[] = this.getProperties.call(conProps, game, 'properties1')
   const properties2: AnyProperty[] = this.getProperties.call(conProps, game, 'properties2')
@@ -3381,11 +3406,11 @@ function writeDataActionProperties(bw: BinaryWriter, game: Game, index: number, 
   }
 }
 
-function writeDataActionSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeDataActionSection10s(this: DataAction, bw: BinaryWriter, index: number, section10s: Section10[]) {
   bw.fill(`ActionSection10sOffset${index}`, bw.position)
 }
 
-function writeDataActionFields(bw: BinaryWriter, game: Game, index: number): number {
+function writeDataActionFields(this: DataAction, bw: BinaryWriter, game: Game, index: number): number {
   const conProps = bw.convertedDataActions.get(this)
   const fields1: Field[] = this.getFields.call(conProps, game, 'fields1')
   const fields2: Field[] = this.getFields.call(conProps, game, 'fields2')
@@ -3435,7 +3460,7 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
   }
 }
 
-function writeAnyAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeAnyAction(this: IAction, bw: BinaryWriter, game: Game, actions: IAction[]) {
   if (this instanceof DataAction) {
     if (ActionData[this.type].games[game] === -2) {
       writeAction.call(ActionDataConversion[this.type].fallback(this, game), bw, game, actions)
@@ -3447,15 +3472,15 @@ function writeAnyAction(bw: BinaryWriter, game: Game, actions: IAction[]) {
   }
 }
 
-function writeAnyActionProperties(bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+function writeAnyActionProperties(this: IAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   ;(this instanceof Action ? writeActionProperties : writeDataActionProperties).call(this, bw, game, index, properties)
 }
 
-function writeAnyActionSection10s(bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeAnyActionSection10s(this: IAction, bw: BinaryWriter, index: number, section10s: Section10[]) {
   ;(this instanceof Action ? writeActionSection10s : writeDataActionSection10s).call(this, bw, index, section10s)
 }
 
-function writeAnyActionFields(bw: BinaryWriter, game: Game, index: number): number {
+function writeAnyActionFields(this: IAction, bw: BinaryWriter, game: Game, index: number): number {
   return (this instanceof Action ? writeActionFields : writeDataActionFields).call(this, bw, game, index)
 }
 
@@ -3529,7 +3554,7 @@ function readNode(br: BinaryReader, game: Game): Node {
   return new GenericNode(type, actions, effects, nodes)
 }
 
-function writeNode(bw: BinaryWriter, game: Game, nodes: Node[]) {
+function writeNode(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   if (game === Game.Generic && !(this instanceof GenericNode)) {
     throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
   }
@@ -3568,7 +3593,7 @@ function writeNode(bw: BinaryWriter, game: Game, nodes: Node[]) {
   nodes.push(this)
 }
 
-function writeNodeChildren(bw: BinaryWriter, game: Game, nodes: Node[]) {
+function writeNodeChildren(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   const num = nodes.indexOf(this)
   let childCount = 0
   if (this instanceof GenericNode || this instanceof NodeWithEffects || this instanceof RootNode) {
@@ -3588,7 +3613,7 @@ function writeNodeChildren(bw: BinaryWriter, game: Game, nodes: Node[]) {
   }
 }
 
-function writeNodeEffects(bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
+function writeNodeEffects(this: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
   let effectCount = 0
   if (this instanceof GenericNode || this instanceof NodeWithEffects) {
     effectCount = this.effects.length
@@ -3597,18 +3622,18 @@ function writeNodeEffects(bw: BinaryWriter, game: Game, index: number, effectCou
     bw.fill(`NodeEffectsOffset${index}`, 0)
   } else {
     bw.fill(`NodeEffectsOffset${index}`, bw.position)
-    const nodeEffects = (this as Node).getEffects(game)
+    const nodeEffects = this.getEffects(game)
     for (let i = 0; i < nodeEffects.length; ++i) {
-      writeEffect.call(nodeEffects[i], bw, effectCounter.value + i)
+      writeEffect.call(nodeEffects[i], bw, game, effectCounter.value + i)
     }
     effectCounter.value += nodeEffects.length
   }
 }
 
-function writeNodeActions(bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
+function writeNodeActions(this: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
   bw.fill(`NodeActionsOffset${index}`, bw.position)
-  const nodeActions = (this as Node).getActions(game)
-  const nodeEffects = (this as Node).getEffects(game)
+  const nodeActions = this.getActions(game)
+  const nodeEffects = this.getEffects(game)
   for (const action of nodeActions) {
     writeAnyAction.call(action, bw, game, actions)
   }
@@ -3618,10 +3643,8 @@ function writeNodeActions(bw: BinaryWriter, game: Game, index: number, effectCou
   effectCounter.value += nodeEffects.length
 }
 
-function readEffect(br: BinaryReader, game: Game): Effect {
+function readEffect(br: BinaryReader, game: Game): IEffect {
   const type = br.readInt16()
-  const effect = new (type in Effects ? Effects[type] : Effect)
-  effect.type = type
   br.assertUint8(0)
   br.assertUint8(1)
   br.assertInt32(0)
@@ -3632,30 +3655,47 @@ function readEffect(br: BinaryReader, game: Game): Effect {
   const actionOffset = br.readInt32()
   br.assertInt32(0)
   br.stepIn(actionOffset)
-  effect.actions = []
+  const actions = []
   for (let i = 0; i < actionCount; ++i) {
-    effect.actions.push(readAnyAction(br, game))
+    actions.push(readAnyAction(br, game))
   }
   br.stepOut()
-  return effect
+  if (game === Game.Generic) {
+    return new Effect(type, actions)
+  } else if (type === EffectType.LevelOfDetail && actionCount === 1 && actions[0] instanceof LevelOfDetailThresholds) {
+    const lod = actions[0]
+    return new LevelOfDetailEffect(lod.duration, [
+      lod.threshold0,
+      lod.threshold1,
+      lod.threshold2,
+      lod.threshold3,
+      lod.threshold4,
+    ])
+  } else if (type === EffectType.Basic && actionCount <= 15) {
+    return new BasicEffect(actions)
+  } else if (type === EffectType.SharedEmitter && actionCount <= 10) {
+    return new SharedEmitterEffect(actions)
+  } else {
+    return new Effect(type, actions)
+  }
 }
 
-function writeEffect(bw: BinaryWriter, index: number) {
+function writeEffect(this: IEffect, bw: BinaryWriter, game: Game, index: number) {
   bw.writeInt16(this.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt32(this.actions.length)
+  bw.writeInt32(this.getActionCount(game))
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.reserveInt32(`EffectActionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeEffectActions(bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+function writeEffectActions(this: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
   bw.fill(`EffectActionsOffset${index}`, bw.position)
-  for (const action of this.actions) {
+  for (const action of this.getActions(game)) {
     writeAnyAction.call(action, bw, game, actions)
   }
 }
@@ -3690,7 +3730,7 @@ function readModifier(br: BinaryReader) {
   return mod
 }
 
-function writeModifier(bw: BinaryWriter, modifiers: Modifier[]) {
+function writeModifier(this: Modifier, bw: BinaryWriter, modifiers: Modifier[]) {
   const count = modifiers.length
   bw.writeInt16(this.typeEnumA)
   bw.writeUint8(0)
@@ -3705,14 +3745,14 @@ function writeModifier(bw: BinaryWriter, modifiers: Modifier[]) {
   modifiers.push(this)
 }
 
-function writeModifierProperties(bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
+function writeModifierProperties(this: Modifier, bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
   for (const property of this.properties) {
     writeProperty(property, bw, properties, true)
   }
 }
 
-function writeModifierFields(bw: BinaryWriter, index: number): number {
+function writeModifierFields(this: Modifier, bw: BinaryWriter, index: number): number {
   bw.fill(`Section8FieldsOffset${index}`, bw.position)
   for (const field of (this as Modifier).fields) {
     writeField.call(field, bw)
@@ -3728,7 +3768,7 @@ function readSection10(br: BinaryReader) {
   return new Section10(readFieldsAt(br, offset, count, this))
 }
 
-function writeSection10(bw: BinaryWriter, section10s: Section10[]) {
+function writeSection10(this: Section10, bw: BinaryWriter, section10s: Section10[]) {
   const count = section10s.length
   bw.reserveInt32(`Section10FieldsOffset${count}`)
   bw.writeInt32(0)
@@ -3737,7 +3777,7 @@ function writeSection10(bw: BinaryWriter, section10s: Section10[]) {
   section10s.push(this)
 }
 
-function writeSection10Fields(bw: BinaryWriter, index: number): number {
+function writeSection10Fields(this: Section10, bw: BinaryWriter, index: number): number {
   bw.fill(`Section10FieldsOffset${index}`, bw.position)
   for (const field of (this as Section10).fields) {
     writeField.call(field, bw)
@@ -3759,14 +3799,14 @@ function readState(br: BinaryReader) {
   return new State(conditions)
 }
 
-function writeState(bw: BinaryWriter, index: number) {
+function writeState(this: State, bw: BinaryWriter, index: number) {
   bw.writeInt32(0)
   bw.writeInt32(this.conditions.length)
   bw.reserveInt32(`StateConditionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeStateConditions(bw: BinaryWriter, index: number, conditions: StateCondition[]) {
+function writeStateConditions(this: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
   bw.fill(`StateConditionsOffset${index}`, bw.position)
   for (const condition of (this as State).conditions) {
     writeStateCondition.call(condition, bw, conditions)
@@ -3837,7 +3877,7 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
   }
 }
 
-function writeFormattedStateCondition(bw: BinaryWriter, conditions: StateCondition[]) {
+function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
   const count = conditions.length
   bw.writeInt16(this.operator | this.unk1 << 2)
   bw.writeUint8(0)
@@ -3872,11 +3912,11 @@ function writeFormattedStateCondition(bw: BinaryWriter, conditions: StateConditi
   conditions.push(this)
 }
 
-function writeStateCondition(bw: BinaryWriter, conditions: StateCondition[]) {
+function writeStateCondition(this: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
   writeFormattedStateCondition.call((this as StateCondition).formatCondition(), bw, conditions)
 }
 
-function writeStateConditionFields(bw: BinaryWriter, index: number): number {
+function writeStateConditionFields(this: StateCondition, bw: BinaryWriter, index: number): number {
   let count = 0
   if (this.leftOperandValue === null) {
     bw.fill(`ConditionLeftOffset${index}`, 0)
@@ -3974,7 +4014,7 @@ function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], cont
   })
 }
 
-function writeField(bw: BinaryWriter) {
+function writeField(this: Field, bw: BinaryWriter) {
   switch (this.type) {
     case FieldType.Boolean:
       return bw.writeInt32(+this.value)
@@ -5059,7 +5099,7 @@ class FXR {
   }
 
   /**
-   * Automatically updates {@link references}, {@link externalValues}, and
+   * Updates {@link references}, {@link externalValues}, and
    * {@link unkBloodEnabler} with the values used in the FXR.
    */
   updateReferences() {
@@ -5375,7 +5415,7 @@ abstract class Node {
   constructor(public readonly type: NodeType) {}
 
   abstract getActions(game: Game): IAction[]
-  getEffects(game: Game): Effect[] { return [] }
+  getEffects(game: Game): IEffect[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
@@ -5441,7 +5481,7 @@ abstract class Node {
       }
       if (node instanceof GenericNode || node instanceof NodeWithEffects) {
         for (const effect of node.effects) {
-          yield* effect.actions
+          yield* effect.walkActions()
         }
       }
     }
@@ -5475,9 +5515,9 @@ abstract class Node {
    */
   scale(factor: number) {
     for (const effect of this.walkEffects()) if (
-      effect.type === EffectType.Basic || effect.type === EffectType.SharedEmitter
+      effect instanceof BasicEffect || effect instanceof SharedEmitterEffect
     ) {
-      const slot1 = effect.actions[1] as ActionWithNumericalFields
+      const slot1 = effect.nodeTransform as ActionWithNumericalFields
       switch (slot1.type) {
         case ActionType.RandomNodeTransform:
           slot1.fields1[6] = new FloatField(slot1.fields1[6].value * factor)
@@ -5489,7 +5529,7 @@ abstract class Node {
           slot1.fields1[2] = new FloatField(slot1.fields1[2].value * factor)
           break
       }
-      const slot2 = effect.actions[2] as Action
+      const slot2 = effect.nodeMovement
       if (slot2 instanceof NodeTranslation) {
         slot2.translation = anyValueMult(factor, slot2.translation)
       } else switch (slot2.type) {
@@ -5509,11 +5549,11 @@ abstract class Node {
           slot2.properties1[2].scale(factor)
           break
       }
-      const slot4 = effect.actions[4]
+      const slot4 = effect.emitter
       if (slot4 instanceof EqualDistanceEmitter) {
         slot4.threshold = anyValueMult(factor, slot4.threshold)
       }
-      const slot5 = effect.actions[5]
+      const slot5 = effect.emitterShape
       if (slot5 instanceof DiskEmitterShape || slot5 instanceof SphereEmitterShape) {
         slot5.radius = anyValueMult(factor, slot5.radius)
       } else if (slot5 instanceof RectangleEmitterShape) {
@@ -5528,11 +5568,13 @@ abstract class Node {
         slot5.height = anyValueMult(factor, slot5.height)
       }
 
-      if (effect.type === EffectType.Basic) {
-        const slot7 = effect.actions[7] as Action
-        slot7.properties1[0].scale(factor)
+      if (effect instanceof BasicEffect) {
+        const slot7 = effect.particleModifier
+        if (slot7 instanceof ParticleModifier) {
+          slot7.speed = anyValueMult(factor, slot7.speed)
+        }
 
-        const slot9 = effect.actions[9] as ActionWithNumericalFields | DataAction
+        const slot9 = effect.appearance
         if (slot9 instanceof PointSprite) {
           slot9.size = anyValueMult(factor, slot9.size)
         } else if (slot9 instanceof Line) {
@@ -5618,7 +5660,8 @@ abstract class Node {
           }
           slot9.unkDepthBlend2 *= factor
         }
-        const slot10 = effect.actions[10] as Action
+
+        const slot10 = effect.particleMovement
         switch (slot10.type) {
           case ActionType.ParticleAcceleration:
           case ActionType.ParticleSpeed:
@@ -5630,20 +5673,22 @@ abstract class Node {
             slot10.properties1[1].scale(factor)
             break
         }
-        const slot13 = effect.actions[13] as Action
+
+        const slot13 = effect.nodeWind
         if (slot13 instanceof NodeWindAcceleration) {
           slot13.windAcceleration = anyValueMult(factor, slot13.windAcceleration)
         } else if (slot13 instanceof NodeWindSpeed) {
           slot13.windSpeed = anyValueMult(factor, slot13.windSpeed)
         }
-        const slot14 = effect.actions[14] as Action
+
+        const slot14 = effect.particleWind
         if (slot14 instanceof ParticleWindAcceleration) {
           slot14.windAcceleration = anyValueMult(factor, slot14.windAcceleration)
         } else if (slot14 instanceof ParticleWindSpeed) {
           slot14.windSpeed = anyValueMult(factor, slot14.windSpeed)
         }
       } else { // Shared emitter effect
-        const slot9 = effect.actions[9] as Action
+        const slot9 = effect.nodeWind
         if (slot9 instanceof NodeWindAcceleration) {
           slot9.windAcceleration = anyValueMult(factor, slot9.windAcceleration)
         } else if (slot9 instanceof NodeWindSpeed) {
@@ -5709,9 +5754,9 @@ abstract class Node {
         action[prop] = func(action[prop])
       }
     }
-    for (const effect of this.walkEffects()) if (effect.type === EffectType.Basic) {
-      procProp((effect.actions[7] as Action).properties1, 4)
-      const slot9 = effect.actions[9] as ActionWithNumericalFields | DataAction
+    for (const effect of this.walkEffects()) if (effect instanceof BasicEffect) {
+      procProp((effect.particleModifier as Action).properties1, 4)
+      const slot9 = effect.appearance as ActionWithNumericalFields | DataAction
       if (slot9 instanceof Action) {
         switch (slot9.type) {
           case ActionType.PointSprite:
@@ -5819,14 +5864,14 @@ class GenericNode extends Node {
   constructor(
     type: NodeType,
     public actions: IAction[],
-    public effects: Effect[],
+    public effects: IEffect[],
     public nodes: Node[]
   ) {
     super(type)
   }
 
   getActions(game: Game): IAction[] { return this.actions }
-  getEffects(game: Game): Effect[] { return this.effects }
+  getEffects(game: Game): IEffect[] { return this.effects }
   getNodes(game: Game): Node[] { return this.nodes }
 
   static fromJSON({
@@ -5873,14 +5918,19 @@ class GenericNode extends Node {
  */
 class RootNode extends Node {
 
+  unk70x: IAction = new Action(ActionType.Unk700)
+
   constructor(
     public nodes: Node[] = [],
-    public unk70x: IAction = new Action(ActionType.Unk700),
+    unk70x: IAction = null,
     public unk10100: IAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
     public unk10400: IAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
     public unk10500: IAction = new Unk10500
   ) {
     super(NodeType.Root)
+    if (unk70x !== null) {
+      this.unk70x = unk70x
+    }
   }
 
   getActions(game: Game): IAction[] {
@@ -5903,7 +5953,7 @@ class RootNode extends Node {
     }
   }
 
-  getEffects(game: Game): Effect[] { return [] }
+  getEffects(game: Game): IEffect[] { return [] }
   getNodes(game: Game): Node[] { return this.nodes }
 
   minify(): Node {
@@ -5989,7 +6039,7 @@ class NodeWithEffects extends Node {
 
   stateEffectMap: number[] = [0]
 
-  constructor(type: NodeType, public effects: Effect[], public nodes: Node[]) {
+  constructor(type: NodeType, public effects: IEffect[], public nodes: Node[]) {
     super(type)
   }
 
@@ -5997,7 +6047,7 @@ class NodeWithEffects extends Node {
     return [ new StateEffectMap(...this.stateEffectMap) ]
   }
 
-  getEffects(game: Game): Effect[] {
+  getEffects(game: Game): IEffect[] {
     return this.effects
   }
 
@@ -6036,7 +6086,7 @@ class LevelOfDetailNode extends NodeWithEffects {
    * Other effect types do not work in this node type.
    * @param nodes An array of child nodes.
    */
-  constructor(effects: Effect[] = [], nodes: Node[] = []) {
+  constructor(effects: IEffect[] = [], nodes: Node[] = []) {
     super(NodeType.LevelOfDetail, effects, nodes)
   }
 
@@ -6055,7 +6105,7 @@ class LevelOfDetailNode extends NodeWithEffects {
 
   static fromJSON(obj: any): Node {
     return new LevelOfDetailNode(
-      obj.effects.map((e: any) => LevelOfDetailEffect.fromJSON(e)),
+      obj.effects.map((e: any) => Effect.fromJSON(e)),
       obj.nodes.map((e: any) => Node.fromJSON(e))
     ).mapStates(...obj.stateEffectMap)
   }
@@ -6080,7 +6130,7 @@ class BasicNode extends NodeWithEffects {
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: Effect[] | IAction[] = [], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: IEffect[] | IAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
@@ -6091,7 +6141,7 @@ class BasicNode extends NodeWithEffects {
     } else {
       super(
         NodeType.Basic,
-        effectsOrEffectActions as Effect[],
+        effectsOrEffectActions as IEffect[],
         nodes
       )
     }
@@ -6119,7 +6169,7 @@ class BasicNode extends NodeWithEffects {
  */
 class SharedEmitterNode extends NodeWithEffects {
 
-  constructor(effectsOrEffectActions: Effect[] | Action[] = [], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to SharedEmitterNode.')
     }
@@ -6130,7 +6180,7 @@ class SharedEmitterNode extends NodeWithEffects {
     } else {
       super(
         NodeType.SharedEmitter,
-        effectsOrEffectActions as Effect[],
+        effectsOrEffectActions as IEffect[],
         nodes
       )
     }
@@ -6159,27 +6209,24 @@ const Nodes = {
   [NodeType.Basic]: BasicNode, BasicNode,
 }
 
-class Effect {
+/**
+ * Generic effect class that uses the same structure as the file format. Only
+ * for use with undocumented effect types. Use one of the other effect classes
+ * for effects that are known:
+ * - {@link LevelOfDetailEffect}
+ * - {@link BasicEffect}
+ * - {@link SharedEmitterEffect}
+ */
+class Effect implements IEffect {
 
-  type: EffectType
-  actions: IAction[]
+  constructor(public type: EffectType, public actions: IAction[]) {}
 
-  constructor(type: EffectType, actions: IAction[] = []) {
-    this.type = type
-    this.actions = actions
+  getActionCount(game: Game): number {
+    return this.actions.length
   }
 
-  static fromJSON({
-    type,
-    actions
-  }: {
-    type: number
-    actions: []
-  }) {
-    const effect = new (type in Effects ? Effects[type] : Effect)
-    effect.type = type
-    effect.actions = actions?.map(action => Action.fromJSON(action)) ?? []
-    return effect
+  getActions(game: Game): IAction[] {
+    return this.actions
   }
 
   toJSON() {
@@ -6190,30 +6237,153 @@ class Effect {
   }
 
   minify() {
-    return new Effect(this.type, this.actions.map(action => action.minify()))
+    this.actions = this.actions.map(action => action.minify())
+    return this
   }
 
+  *walkActions() {
+    yield* this.actions
+  }
+
+  static fromJSON(obj: any): IEffect {
+    if ('actions' in obj) {
+      return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
+    } else switch (obj.type) {
+      case EffectType.LevelOfDetail:
+        return new LevelOfDetailEffect(Property.fromJSON(obj.duration), [
+          obj.threshold0,
+          obj.threshold1,
+          obj.threshold2,
+          obj.threshold3,
+          obj.threshold4,
+        ])
+      case EffectType.Basic:
+        return new BasicEffect({
+          nodeAttributes: Action.fromJSON(obj.nodeAttributes),
+          nodeTransform: Action.fromJSON(obj.nodeTransform),
+          nodeMovement: Action.fromJSON(obj.nodeMovement),
+          audio: Action.fromJSON(obj.audio),
+          emitter: Action.fromJSON(obj.emitter),
+          emitterShape: Action.fromJSON(obj.emitterShape),
+          particleDirection: Action.fromJSON(obj.particleDirection),
+          particleModifier: Action.fromJSON(obj.particleModifier),
+          particleAttributes: Action.fromJSON(obj.particleAttributes),
+          appearance: Action.fromJSON(obj.appearance),
+          particleMovement: Action.fromJSON(obj.particleMovement),
+          slot11: Action.fromJSON(obj.slot11),
+          slot12: Action.fromJSON(obj.slot12),
+          nodeWind: Action.fromJSON(obj.nodeWind),
+          particleWind: Action.fromJSON(obj.particleWind),
+        })
+      case EffectType.SharedEmitter:
+        return new SharedEmitterEffect({
+          nodeAttributes: Action.fromJSON(obj.nodeAttributes),
+          nodeTransform: Action.fromJSON(obj.nodeTransform),
+          nodeMovement: Action.fromJSON(obj.nodeMovement),
+          audio: Action.fromJSON(obj.audio),
+          emitter: Action.fromJSON(obj.emitter),
+          emitterShape: Action.fromJSON(obj.emitterShape),
+          particleDirection: Action.fromJSON(obj.particleDirection),
+          behavior: Action.fromJSON(obj.behavior),
+          slot8: Action.fromJSON(obj.slot8),
+          nodeWind: Action.fromJSON(obj.nodeWind),
+        })
+    }
+    throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
+  }
 }
 
 /**
  * Manages the duration and thresholds for the
  * {@link NodeType.LevelOfDetail level of detail node}.
  */
-class LevelOfDetailEffect extends Effect {
+class LevelOfDetailEffect implements IEffect {
+  readonly type = EffectType.LevelOfDetail
 
   /**
    * @param duration The duration for the node to stay active. Once its time is
    * up, it will deactivate and none of the child nodes will be visible/audible
-   * anymore.
+   * anymore. Can be set to -1 to make the node last forever.
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
    */
-  constructor(duration: ScalarValue, thresholds: number[]) {
-    super(EffectType.LevelOfDetail, [
-      new LevelOfDetailThresholds(duration, thresholds)
-    ])
+  constructor(public duration: ScalarValue, public thresholds: number[]) {}
+
+  getActionCount(game: Game): number {
+    return 1
   }
 
+  getActions(game: Game): IAction[] {
+    return [
+      new LevelOfDetailThresholds({
+        duration: this.duration,
+        threshold0: this.thresholds[0],
+        threshold1: this.thresholds[1],
+        threshold2: this.thresholds[2],
+        threshold3: this.thresholds[3],
+        threshold4: this.thresholds[4],
+      })
+    ]
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      duration: this.duration instanceof Property ? this.duration.toJSON() : this.duration,
+      thresholds: this.thresholds
+    }
+  }
+
+  minify() {
+    return this
+  }
+
+  *walkActions() {}
+
+}
+
+export interface BasicEffectParams {
+  nodeAttributes?: Action | NodeAttributes
+  nodeTransform?: Action
+  nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
+  audio?: Action | PlaySound
+  emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
+  emitterShape?:
+    Action |
+    PointEmitterShape |
+    DiskEmitterShape |
+    RectangleEmitterShape |
+    SphereEmitterShape |
+    BoxEmitterShape |
+    CylinderEmitterShape
+  particleDirection?:
+    Action |
+    CircularParticleSpread |
+    EllipticalParticleSpread |
+    RectangularParticleSpread
+  particleModifier?: Action | ParticleModifier
+  particleAttributes?: Action | ParticleAttributes
+  appearance?:
+    Action |
+    PointSprite |
+    Line |
+    QuadLine |
+    BillboardEx |
+    MultiTextureBillboardEx |
+    Model |
+    Tracer |
+    Distortion |
+    RadialBlur |
+    PointLight |
+    Tracer2 |
+    WaterInteraction |
+    RichModel |
+    SpotLight
+  particleMovement?: Action
+  slot11?: Action
+  slot12?: Action | Unk130
+  nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
+  particleWind?: Action | ParticleWindAcceleration | ParticleWindSpeed | Unk800
 }
 
 /**
@@ -6239,60 +6409,208 @@ class LevelOfDetailEffect extends Effect {
  * 13    | {@link ActionType.None None}
  * 14    | {@link ActionType.None None}
  */
-class BasicEffect extends Effect {
+class BasicEffect implements IEffect {
+  readonly type = EffectType.Basic
 
-  /**
-   * @param actions Actions to use in the effect. The order does not matter,
-   * and it does not need to be a complete list. Actions will be placed in the
-   * slots they fit in.
-   */
-  constructor(actions: IAction[] = []) {
-    super(EffectType.Basic, [
-      new NodeAttributes,
-      new Action,
-      new Action,
-      new Action,
-      new OneTimeEmitter,
-      new PointEmitterShape,
-      new NoParticleSpread,
-      new ParticleModifier,
-      new ParticleAttributes,
-      new Action,
-      new Action,
-      new Action,
-      new Action(ActionType.Unk130, [
-        new IntField(1),
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-        new Field,
-      ], [], [
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-        new ConstantProperty(0),
-      ]),
-      new Action,
-      new Action,
-    ])
-    for (const action of actions) {
-      const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
-      if (index >= 0) {
-        this.actions[index] = action
-      } else {
-        throw new Error('No slot for action: ' + action.type)
+  nodeAttributes: Action | NodeAttributes = new NodeAttributes
+  nodeTransform: Action = new Action
+  nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
+  audio: Action | PlaySound = new Action
+  emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
+  emitterShape:
+    Action |
+    PointEmitterShape |
+    DiskEmitterShape |
+    RectangleEmitterShape |
+    SphereEmitterShape |
+    BoxEmitterShape |
+    CylinderEmitterShape
+    = new PointEmitterShape
+  particleDirection:
+    Action |
+    CircularParticleSpread |
+    EllipticalParticleSpread |
+    RectangularParticleSpread
+    = new NoParticleSpread
+  particleModifier: Action | ParticleModifier = new ParticleModifier
+  particleAttributes: Action | ParticleAttributes = new ParticleAttributes
+  appearance:
+    Action |
+    PointSprite |
+    Line |
+    QuadLine |
+    BillboardEx |
+    MultiTextureBillboardEx |
+    Model |
+    Tracer |
+    Distortion |
+    RadialBlur |
+    PointLight |
+    Tracer2 |
+    WaterInteraction |
+    RichModel |
+    SpotLight
+    = new Action
+  particleMovement: Action = new Action
+  slot11: Action = new Action
+  slot12: Action | Unk130 = new Unk130
+  nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
+  particleWind:
+    Action |
+    ParticleWindAcceleration |
+    ParticleWindSpeed |
+    Unk800
+    = new Action
+
+  constructor(params: BasicEffectParams | IAction[]) {
+    if (Array.isArray(params)) {
+      for (const action of params) {
+        const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
+        switch (index) {
+          case 0:  this.nodeAttributes     = action as Action; break;
+          case 1:  this.nodeTransform      = action as Action; break;
+          case 2:  this.nodeMovement       = action as Action; break;
+          case 3:  this.audio              = action as Action; break;
+          case 4:  this.emitter            = action as Action; break;
+          case 5:  this.emitterShape       = action as Action; break;
+          case 6:  this.particleDirection  = action as Action; break;
+          case 7:  this.particleModifier   = action as Action; break;
+          case 8:  this.particleAttributes = action as Action; break;
+          case 9:  this.appearance         = action as Action; break;
+          case 10: this.particleMovement   = action as Action; break;
+          case 11: this.slot11             = action as Action; break;
+          case 12: this.slot12             = action as Action; break;
+          case 13: this.nodeWind           = action as Action; break;
+          case 14: this.particleWind       = action as Action; break;
+        }
       }
+    } else {
+      if ('nodeAttributes' in params) this.nodeAttributes = params.nodeAttributes
+      if ('nodeTransform' in params) this.nodeTransform = params.nodeTransform
+      if ('nodeMovement' in params) this.nodeMovement = params.nodeMovement
+      if ('audio' in params) this.audio = params.audio
+      if ('emitter' in params) this.emitter = params.emitter
+      if ('emitterShape' in params) this.emitterShape = params.emitterShape
+      if ('particleDirection' in params) this.particleDirection = params.particleDirection
+      if ('particleModifier' in params) this.particleModifier = params.particleModifier
+      if ('particleAttributes' in params) this.particleAttributes = params.particleAttributes
+      if ('appearance' in params) this.appearance = params.appearance
+      if ('particleMovement' in params) this.particleMovement = params.particleMovement
+      if ('slot11' in params) this.slot11 = params.slot11
+      if ('slot12' in params) this.slot12 = params.slot12
+      if ('nodeWind' in params) this.nodeWind = params.nodeWind
+      if ('particleWind' in params) this.particleWind = params.particleWind
     }
   }
 
+  getActionCount(game: Game): number {
+    return game === Game.DarkSouls3 ? 13 : 15
+  }
+
+  getActions(game: Game): IAction[] {
+    return [
+      this.nodeAttributes,
+      this.nodeTransform,
+      this.nodeMovement,
+      this.audio,
+      this.emitter,
+      this.emitterShape,
+      this.particleDirection,
+      this.particleModifier,
+      this.particleAttributes,
+      this.appearance,
+      this.particleMovement,
+      this.slot11,
+      this.slot12,
+      game === Game.DarkSouls3 ? [] : [
+        this.nodeWind,
+        this.particleWind,
+      ]
+    ].flat()
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      nodeAttributes: this.nodeAttributes.toJSON(),
+      nodeTransform: this.nodeTransform.toJSON(),
+      nodeMovement: this.nodeMovement.toJSON(),
+      audio: this.audio.toJSON(),
+      emitter: this.emitter.toJSON(),
+      emitterShape: this.emitterShape.toJSON(),
+      particleDirection: this.particleDirection.toJSON(),
+      particleModifier: this.particleModifier.toJSON(),
+      particleAttributes: this.particleAttributes.toJSON(),
+      appearance: this.appearance.toJSON(),
+      particleMovement: this.particleMovement.toJSON(),
+      slot11: this.slot11.toJSON(),
+      slot12: this.slot12.toJSON(),
+      nodeWind: this.nodeWind.toJSON(),
+      particleWind: this.particleWind.toJSON(),
+    }
+  }
+
+  minify() {
+    this.nodeAttributes = this.nodeAttributes.minify()
+    this.nodeTransform = this.nodeTransform.minify()
+    this.nodeMovement = this.nodeMovement.minify()
+    this.audio = this.audio.minify()
+    this.emitter = this.emitter.minify()
+    this.emitterShape = this.emitterShape.minify()
+    this.particleDirection = this.particleDirection.minify()
+    this.particleModifier = this.particleModifier.minify()
+    this.particleAttributes = this.particleAttributes.minify()
+    this.appearance = this.appearance.minify()
+    this.particleMovement = this.particleMovement.minify()
+    this.slot11 = this.slot11.minify()
+    this.slot12 = this.slot12.minify()
+    this.nodeWind = this.nodeWind.minify()
+    this.particleWind = this.particleWind.minify()
+    return this
+  }
+
+  *walkActions() {
+    yield this.nodeAttributes
+    yield this.nodeTransform
+    yield this.nodeMovement
+    yield this.audio
+    yield this.emitter
+    yield this.emitterShape
+    yield this.particleDirection
+    yield this.particleModifier
+    yield this.particleAttributes
+    yield this.appearance
+    yield this.particleMovement
+    yield this.slot11
+    yield this.slot12
+    yield this.nodeWind
+    yield this.particleWind
+  }
+
+}
+
+export interface SharedEmitterEffectParams {
+  nodeAttributes?: Action | NodeAttributes
+  nodeTransform?: Action
+  nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
+  audio?: Action | PlaySound
+  emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
+  emitterShape?:
+    Action |
+    PointEmitterShape |
+    DiskEmitterShape |
+    RectangleEmitterShape |
+    SphereEmitterShape |
+    BoxEmitterShape |
+    CylinderEmitterShape
+  particleDirection?:
+    Action |
+    CircularParticleSpread |
+    EllipticalParticleSpread |
+    RectangularParticleSpread
+  behavior?: Action
+  slot8?: Action
+  nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
 }
 
 /**
@@ -6311,45 +6629,132 @@ class BasicEffect extends Effect {
  * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
  * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
  * 7     | {@link ActionType.EmitAllParticles AllChildNodes}
- * 13    | {@link ActionType.None None}
- * 14    | {@link ActionType.None None}
+ * 8     | {@link ActionType.None None}
+ * 9     | {@link ActionType.None None}
  */
-class SharedEmitterEffect extends Effect {
+class SharedEmitterEffect implements IEffect {
+  readonly type = EffectType.SharedEmitter
 
-  /**
-   * @param actions Actions to use in the effect. The order does not matter,
-   * and it does not need to be a complete list. Actions will be placed in the
-   * slots they fit in.
-   */
-  constructor(actions: IAction[] = []) {
-    super(EffectType.SharedEmitter, [
-      new NodeAttributes,
-      new Action,
-      new Action,
-      new Action,
-      new OneTimeEmitter,
-      new PointEmitterShape,
-      new NoParticleSpread,
-      new EmitAllParticles,
-      new Action,
-      new Action,
-    ])
-    for (const action of actions) {
-      const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
-      if (index >= 0) {
-        this.actions[index] = action
-      } else {
-        throw new Error('No slot for action: ' + action.type)
+  nodeAttributes: Action | NodeAttributes = new NodeAttributes
+  nodeTransform: Action = new Action
+  nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
+  audio: Action | PlaySound = new Action
+  emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
+  emitterShape:
+    Action |
+    PointEmitterShape |
+    DiskEmitterShape |
+    RectangleEmitterShape |
+    SphereEmitterShape |
+    BoxEmitterShape |
+    CylinderEmitterShape
+    = new PointEmitterShape
+  particleDirection:
+    Action |
+    CircularParticleSpread |
+    EllipticalParticleSpread |
+    RectangularParticleSpread
+    = new NoParticleSpread
+  behavior: Action = new EmitAllParticles
+  slot8: Action = new Action
+  nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
+
+  constructor(params: SharedEmitterEffectParams | IAction[]) {
+    if (Array.isArray(params)) {
+      for (const action of params) {
+        const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
+        switch (index) {
+          case 0: this.nodeAttributes    = action as Action; break;
+          case 1: this.nodeTransform     = action as Action; break;
+          case 2: this.nodeMovement      = action as Action; break;
+          case 3: this.audio             = action as Action; break;
+          case 4: this.emitter           = action as Action; break;
+          case 5: this.emitterShape      = action as Action; break;
+          case 6: this.particleDirection = action as Action; break;
+          case 7: this.behavior          = action as Action; break;
+          case 8: this.slot8             = action as Action; break;
+          case 9: this.nodeWind          = action as Action; break;
+        }
       }
+    } else {
+      if ('nodeAttributes' in params) this.nodeAttributes = params.nodeAttributes
+      if ('nodeTransform' in params) this.nodeTransform = params.nodeTransform
+      if ('nodeMovement' in params) this.nodeMovement = params.nodeMovement
+      if ('audio' in params) this.audio = params.audio
+      if ('emitter' in params) this.emitter = params.emitter
+      if ('emitterShape' in params) this.emitterShape = params.emitterShape
+      if ('particleDirection' in params) this.particleDirection = params.particleDirection
+      if ('behavior' in params) this.behavior = params.behavior
+      if ('slot8' in params) this.slot8 = params.slot8
+      if ('nodeWind' in params) this.nodeWind = params.nodeWind
     }
   }
 
-}
+  getActionCount(game: Game): number {
+    return 10
+  }
 
-const Effects = {
-  [EffectType.LevelOfDetail]: LevelOfDetailEffect, LevelOfDetailEffect,
-  [EffectType.Basic]: BasicEffect, BasicEffect,
-  [EffectType.SharedEmitter]: SharedEmitterEffect, SharedEmitterEffect,
+  getActions(game: Game): IAction[] {
+    if (game === Game.DarkSouls3) {
+      throw new Error('SharedEmitterEffect is not available in Dark Souls 3.')
+    }
+    return [
+      this.nodeAttributes,
+      this.nodeTransform,
+      this.nodeMovement,
+      this.audio,
+      this.emitter,
+      this.emitterShape,
+      this.particleDirection,
+      this.behavior,
+      this.slot8,
+      this.nodeWind
+    ]
+  }
+
+  toJSON() {
+    return {
+      type: this.type,
+      nodeAttributes: this.nodeAttributes.toJSON(),
+      nodeTransform: this.nodeTransform.toJSON(),
+      nodeMovement: this.nodeMovement.toJSON(),
+      audio: this.audio.toJSON(),
+      emitter: this.emitter.toJSON(),
+      emitterShape: this.emitterShape.toJSON(),
+      particleDirection: this.particleDirection.toJSON(),
+      behavior: this.behavior.toJSON(),
+      slot8: this.slot8.toJSON(),
+      nodeWind: this.nodeWind.toJSON(),
+    }
+  }
+
+  minify() {
+    this.nodeAttributes = this.nodeAttributes.minify()
+    this.nodeTransform = this.nodeTransform.minify()
+    this.nodeMovement = this.nodeMovement.minify()
+    this.audio = this.audio.minify()
+    this.emitter = this.emitter.minify()
+    this.emitterShape = this.emitterShape.minify()
+    this.particleDirection = this.particleDirection.minify()
+    this.behavior = this.behavior.minify()
+    this.slot8 = this.slot8.minify()
+    this.nodeWind = this.nodeWind.minify()
+    return this
+  }
+
+  *walkActions() {
+    yield this.nodeAttributes
+    yield this.nodeTransform
+    yield this.nodeMovement
+    yield this.audio
+    yield this.emitter
+    yield this.emitterShape
+    yield this.particleDirection
+    yield this.behavior
+    yield this.slot8
+    yield this.nodeWind
+  }
+
 }
 
 class Action implements IAction {
@@ -6516,7 +6921,7 @@ class DataAction implements IAction {
     return {
       type: this.type,
       ...Object.fromEntries(
-        Object.keys(ActionData[this.type].props).map(prop => {
+        Object.keys(ActionData[this.type].props).filter(prop => prop in this).map(prop => {
           const v = this[prop]
           if (v instanceof Property) {
             return [prop, v.toJSON()]
@@ -6527,7 +6932,7 @@ class DataAction implements IAction {
     }
   }
 
-  minify(): DataAction {
+  minify() {
     return this
   }
 
@@ -7460,34 +7865,6 @@ class SFXReference extends DataAction {
 }
 
 /**
- * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
- * manage the duration and thresholds for the
- * {@link NodeType.LevelOfDetail level of detail node}.
- */
-class LevelOfDetailThresholds extends Action {
-
-  declare fields1: IntField[]
-
-  /**
-   * @param duration The duration for the node to stay active. Once its time is
-   * up, it will deactivate and none of the child nodes will be visible/audible
-   * anymore.
-   * @param thresholds An array of distance thresholds. Each threshold is used
-   * for the child node of the same index.
-   */
-  constructor(duration: ScalarValue = -1, thresholds: number[] = []) {
-    thresholds = arrayOf(5, i => thresholds[i] ?? 1000)
-    super(
-      ActionType.LevelOfDetail,
-      thresholds.map(l => new IntField(l)), [], [
-        scalarFromArg(duration)
-      ]
-    )
-  }
-
-}
-
-/**
  * Maps states to effects in the parent node.
  * 
  * The index of each value represents the index of the state, and the value
@@ -8032,6 +8409,84 @@ class ParticleModifier extends DataAction {
   color: Vector4Value
   constructor(props: ParticleModifierParams = {}) {
     super(ActionType.ParticleModifier)
+    this.assign(props)
+  }
+}
+
+export interface LevelOfDetailThresholdsParams {
+  /**
+   * The node duration in seconds. Can be set to -1 to make the node last forever.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration?: ScalarValue
+  /**
+   * Distance threshold for child node 0.
+   * 
+   * **Default**: `1000`
+   */
+  threshold0?: number
+  /**
+   * Distance threshold for child node 1.
+   * 
+   * **Default**: `1000`
+   */
+  threshold1?: number
+  /**
+   * Distance threshold for child node 2.
+   * 
+   * **Default**: `1000`
+   */
+  threshold2?: number
+  /**
+   * Distance threshold for child node 3.
+   * 
+   * **Default**: `1000`
+   */
+  threshold3?: number
+  /**
+   * Distance threshold for child node 4.
+   * 
+   * **Default**: `1000`
+   */
+  threshold4?: number
+}
+
+/**
+ * Used in the {@link EffectType.LevelOfDetail level of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelOfDetail level of detail node}.
+ */
+class LevelOfDetailThresholds extends DataAction {
+  declare type: ActionType.LevelOfDetailThresholds
+  /**
+   * The node duration in seconds. Can be set to -1 to make the node last forever.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration: ScalarValue
+  /**
+   * Distance threshold for child node 0.
+   */
+  threshold0: number
+  /**
+   * Distance threshold for child node 1.
+   */
+  threshold1: number
+  /**
+   * Distance threshold for child node 2.
+   */
+  threshold2: number
+  /**
+   * Distance threshold for child node 3.
+   */
+  threshold3: number
+  /**
+   * Distance threshold for child node 4.
+   */
+  threshold4: number
+  constructor(props: LevelOfDetailThresholdsParams = {}) {
+    super(ActionType.LevelOfDetailThresholds)
     this.assign(props)
   }
 }
@@ -20542,6 +20997,7 @@ const DataActions = {
   [ActionType.Unk130]: Unk130, Unk130,
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
+  [ActionType.LevelOfDetailThresholds]: LevelOfDetailThresholds, LevelOfDetailThresholds,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
@@ -21855,7 +22311,6 @@ export {
   InitialDirection,
 
   Nodes,
-  Effects,
   EffectActionSlots,
   ActionData,
   Actions,
@@ -21885,7 +22340,6 @@ export {
   NodeMovement,
   NodeTransform,
   ParticleMovement,
-  LevelOfDetailThresholds,
   StateEffectMap,
   EmitAllParticles,
   EmitRandomParticles,
@@ -21900,6 +22354,7 @@ export {
   Unk130,
   ParticleModifier,
   SFXReference,
+  LevelOfDetailThresholds,
   PeriodicEmitter,
   EqualDistanceEmitter,
   PointEmitterShape,
