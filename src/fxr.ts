@@ -240,20 +240,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NodeMovement}
    */
   NodeSpeedSpin = 123,
-  /**
-   * Controls various things about the node, like its duration, and how
-   * it is attached to the parent node.
-   * 
-   * This action type has a specialized subclass: {@link NodeAttributes}
-   */
-  NodeAttributes = 128,
-  /**
-   * Controls various things about the particles emitted by the effect, like
-   * their duration, and how they are attached to the parent node.
-   * 
-   * This action type has a specialized subclass: {@link ParticleAttributes}
-   */
-  ParticleAttributes = 129,
   Unk130 = 130,
   /**
    * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
@@ -319,6 +305,18 @@ enum ActionType {
 
   // Data Actions
   /*#ActionType start*/
+  /**
+   * Controls various things about the node, like its duration, and how it is attached to the parent node.
+   * 
+   * This action type has a specialized subclass: {@link NodeAttributes}
+   */
+  NodeAttributes = 128,
+  /**
+   * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
+   * 
+   * This action type has a specialized subclass: {@link ParticleAttributes}
+   */
+  ParticleAttributes = 129,
   /**
    * Modifies particles in various ways.
    * 
@@ -1109,6 +1107,39 @@ const ActionData: {
   }
 } = {
   /*#ActionData start*/
+  [ActionType.NodeAttributes]: {
+    props: {
+      attachment: { default: AttachMode.Parent, paths: {}, field: FieldType.Integer },
+      duration: { default: -1, paths: {} },
+      delay: { default: 0, paths: {}, field: FieldType.Float },
+      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['delay','unk_ds3_f1_1','attachment','unk_ds3_f1_3'],
+        properties1: ['duration']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleAttributes]: {
+    props: {
+      attachment: { default: AttachMode.Parent, paths: {}, field: FieldType.Integer },
+      duration: { default: -1, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['attachment'],
+        properties1: ['duration']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.ParticleModifier]: {
     props: {
       uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
@@ -7874,109 +7905,6 @@ class ParticleMovement extends Action {
 }
 
 /**
- * Controls various things about the node, like its duration, and how
- * it is attached to the parent node.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | delay
- * 1     | unkField1
- * 2     | attachment
- * 3     | unkField3
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | duration
- */
-class NodeAttributes extends Action {
-
-  constructor({
-    duration = -1,
-    delay = 0,
-    attachment = AttachMode.Parent,
-    unkField1 = 1,
-    unkField3 = 0,
-  }: {
-    /**
-     * The node duration in seconds. Defaults to -1 (infinite).
-     * 
-     * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-     */
-    duration?: ScalarValue
-    /**
-     * The delay before the node becomes active. Defaults to 0.
-     */
-    delay?: number
-    /**
-     * Controls how the node is attached to its parent. Defaults to
-     * {@link AttachMode.Parent}.
-     */
-    attachment?: AttachMode
-    /**
-     * Unknown int. Fields1, index 1. Possibly a boolean field. Defaults to 1.
-     */
-    unkField1?: number
-    /**
-     * Unknown float. Fields1, index 3. Possibly a bit field. Defaults to 0.
-     */
-    unkField3?: number
-  } = {}) {
-    super(ActionType.NodeAttributes, [
-      new FloatField(delay),
-      new IntField(unkField1),
-      new IntField(attachment),
-      new FloatField(unkField3),
-    ], [], [
-      scalarFromArg(duration)
-    ])
-  }
-
-}
-
-/**
- * Controls various things about the particles emitted by the effect, like
- * their duration, and how they are attached to the parent node.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | attachment
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | duration
- */
-class ParticleAttributes extends Action {
-
-  constructor({
-    attachment = AttachMode.Parent,
-    duration = -1,
-  }: {
-    /**
-     * Controls how the particles are attached to its parent. Defaults to
-     * {@link AttachMode.Parent}.
-     */
-    attachment?: AttachMode
-    /**
-     * The particle duration in seconds. Defaults to -1 (infinite).
-     * 
-     * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-     */
-    duration?: ScalarValue
-  } = {}) {
-    super(ActionType.ParticleAttributes, [
-      new IntField(attachment)
-    ], [], [
-      scalarFromArg(duration)
-    ])
-  }
-
-}
-
-/**
  * References another SFX by its ID.
  */
 class SFXReference extends DataAction {
@@ -8101,6 +8029,106 @@ class NoParticleSpread extends Action {
 }
 
 /*#ActionClasses start*/
+export interface NodeAttributesParams {
+  /**
+   * Controls how the node is attached to the parent node.
+   * 
+   * **Default**: {@link AttachMode.Parent}
+   */
+  attachment?: AttachMode
+  /**
+   * The node duration in seconds. Can be set to -1 to make the node last forever.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration?: ScalarValue
+  /**
+   * The delay in seconds before the node becomes active.
+   * 
+   * **Default**: `0`
+   */
+  delay?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+}
+
+/**
+ * Controls various things about the node, like its duration, and how it is attached to the parent node.
+ */
+class NodeAttributes extends DataAction {
+  declare type: ActionType.NodeAttributes
+  /**
+   * Controls how the node is attached to the parent node.
+   */
+  attachment: AttachMode
+  /**
+   * The node duration in seconds. Can be set to -1 to make the node last forever.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration: ScalarValue
+  /**
+   * The delay in seconds before the node becomes active.
+   */
+  delay: number
+  unk_ds3_f1_1: number
+  unk_ds3_f1_3: number
+  constructor(props: NodeAttributesParams = {}) {
+    super(ActionType.NodeAttributes)
+    this.assign(props)
+  }
+}
+
+export interface ParticleAttributesParams {
+  /**
+   * Controls how the particles are attached to the node.
+   * 
+   * **Default**: {@link AttachMode.Parent}
+   */
+  attachment?: AttachMode
+  /**
+   * The particle duration in seconds. Can be set to -1 to make particles last forever.
+   * 
+   * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration?: ScalarValue
+}
+
+/**
+ * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
+ */
+class ParticleAttributes extends DataAction {
+  declare type: ActionType.ParticleAttributes
+  /**
+   * Controls how the particles are attached to the node.
+   */
+  attachment: AttachMode
+  /**
+   * The particle duration in seconds. Can be set to -1 to make particles last forever.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration: ScalarValue
+  constructor(props: ParticleAttributesParams = {}) {
+    super(ActionType.ParticleAttributes)
+    this.assign(props)
+  }
+}
+
 export interface ParticleModifierParams {
   /**
    * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
@@ -20655,8 +20683,6 @@ const Actions = {
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.PlaySound]: PlaySound, PlaySound,
-  [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
-  [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
@@ -20666,6 +20692,8 @@ const Actions = {
 
 const DataActions = {
   /*#ActionsList start*/
+  [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
+  [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -22012,8 +22040,6 @@ export {
   NodeAttachToCamera,
   PlaySound,
   ParticleMovement,
-  NodeAttributes,
-  ParticleAttributes,
   LevelOfDetailThresholds,
   StateEffectMap,
   EmitAllParticles,
@@ -22021,6 +22047,8 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   /*#ActionsExport start*/
+  NodeAttributes,
+  ParticleAttributes,
   ParticleModifier,
   SFXReference,
   PeriodicEmitter,
