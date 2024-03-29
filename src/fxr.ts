@@ -5490,10 +5490,9 @@ abstract class Node {
           break
       }
       const slot2 = effect.actions[2] as Action
-      switch (slot2.type) {
-        case ActionType.NodeTranslation:
-          slot2.properties1[0].scale(factor)
-          break
+      if (slot2 instanceof NodeTranslation) {
+        slot2.translation = anyValueMult(factor, slot2.translation)
+      } else switch (slot2.type) {
         case ActionType.NodeAcceleration:
         case ActionType.NodeAccelerationRandomTurns:
         case ActionType.NodeAccelerationPartialFollow:
@@ -5632,26 +5631,23 @@ abstract class Node {
             break
         }
         const slot13 = effect.actions[13] as Action
-        switch (slot13.type) {
-          case ActionType.NodeWindAcceleration:
-          case ActionType.NodeWindSpeed:
-            slot13.properties1[0].scale(factor)
-            break
+        if (slot13 instanceof NodeWindAcceleration) {
+          slot13.windAcceleration = anyValueMult(factor, slot13.windAcceleration)
+        } else if (slot13 instanceof NodeWindSpeed) {
+          slot13.windSpeed = anyValueMult(factor, slot13.windSpeed)
         }
         const slot14 = effect.actions[14] as Action
-        switch (slot14.type) {
-          case ActionType.ParticleWindAcceleration:
-          case ActionType.ParticleWindSpeed:
-            slot14.properties1[0].scale(factor)
-            break
+        if (slot14 instanceof ParticleWindAcceleration) {
+          slot14.windAcceleration = anyValueMult(factor, slot14.windAcceleration)
+        } else if (slot14 instanceof ParticleWindSpeed) {
+          slot14.windSpeed = anyValueMult(factor, slot14.windSpeed)
         }
       } else { // Shared emitter effect
         const slot9 = effect.actions[9] as Action
-        switch (slot9.type) {
-          case ActionType.NodeWindAcceleration:
-          case ActionType.NodeWindSpeed:
-            slot9.properties1[0].scale(factor)
-            break
+        if (slot9 instanceof NodeWindAcceleration) {
+          slot9.windAcceleration = anyValueMult(factor, slot9.windAcceleration)
+        } else if (slot9 instanceof NodeWindSpeed) {
+          slot9.windSpeed = anyValueMult(factor, slot9.windSpeed)
         }
       }
     }
