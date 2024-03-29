@@ -1,0 +1,64 @@
+type: 130
+name: Unk130
+desc: |
+  Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+properties:
+  unk_ds3_f1_0:
+    field: int
+    default: 1
+  unk_ds3_f1_1:
+    field: int
+  unk_ds3_f1_2:
+    field: int
+  unk_ds3_f1_3:
+    field: int
+  unk_ds3_f1_4:
+    field: int
+  unk_ds3_f1_5:
+    field: int
+  unk_ds3_f1_6:
+    field: int
+  unk_ds3_f1_7:
+    field: int
+  unk_ds3_f1_8:
+    field: int
+  unk_ds3_p1_0:
+    type: ScalarValue
+  unk_ds3_p1_1:
+    type: ScalarValue
+  unk_ds3_p1_2:
+    type: ScalarValue
+  unk_ds3_p1_3:
+    type: ScalarValue
+  unk_ds3_p1_4:
+    type: ScalarValue
+  unk_ds3_p1_5:
+    type: ScalarValue
+  unk_ds3_p1_6:
+    type: ScalarValue
+  unk_ds3_p1_7:
+    type: ScalarValue
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+    properties1:
+      - unk_ds3_p1_0
+      - unk_ds3_p1_1
+      - unk_ds3_p1_2
+      - unk_ds3_p1_3
+      - unk_ds3_p1_4
+      - unk_ds3_p1_5
+      - unk_ds3_p1_6
+      - unk_ds3_p1_7
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

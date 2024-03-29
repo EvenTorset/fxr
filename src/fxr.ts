@@ -222,7 +222,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NodeMovement}
    */
   NodeSpeedSpin = 123,
-  Unk130 = 130,
   /**
    * Used in the {@link EffectType.LevelOfDetail level of detail effect} to
    * manage the duration and thresholds for the
@@ -316,6 +315,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleAttributes}
    */
   ParticleAttributes = 129,
+  /**
+   * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+   * 
+   * This action type has a specialized subclass: {@link Unk130}
+   */
+  Unk130 = 130,
   /**
    * Modifies particles in various ways.
    * 
@@ -1185,6 +1190,36 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['attachment'],
         properties1: ['duration']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.Unk130]: {
+    props: {
+      unk_ds3_f1_0: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p1_0: { default: 0, paths: {} },
+      unk_ds3_p1_1: { default: 0, paths: {} },
+      unk_ds3_p1_2: { default: 0, paths: {} },
+      unk_ds3_p1_3: { default: 0, paths: {} },
+      unk_ds3_p1_4: { default: 0, paths: {} },
+      unk_ds3_p1_5: { default: 0, paths: {} },
+      unk_ds3_p1_6: { default: 0, paths: {} },
+      unk_ds3_p1_7: { default: 0, paths: {} },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8'],
+        properties1: ['unk_ds3_p1_0','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','unk_ds3_p1_4','unk_ds3_p1_5','unk_ds3_p1_6','unk_ds3_p1_7']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -8191,6 +8226,139 @@ class ParticleAttributes extends DataAction {
   duration: ScalarValue
   constructor(props: ParticleAttributesParams = {}) {
     super(ActionType.ParticleAttributes)
+    this.assign(props)
+  }
+}
+
+export interface Unk130Params {
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_4?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_6?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_8?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_0?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_3?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_4?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_5?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_6?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_7?: ScalarValue
+}
+
+/**
+ * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+ */
+class Unk130 extends DataAction {
+  declare type: ActionType.Unk130
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  unk_ds3_f1_2: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_6: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_p1_0: ScalarValue
+  unk_ds3_p1_1: ScalarValue
+  unk_ds3_p1_2: ScalarValue
+  unk_ds3_p1_3: ScalarValue
+  unk_ds3_p1_4: ScalarValue
+  unk_ds3_p1_5: ScalarValue
+  unk_ds3_p1_6: ScalarValue
+  unk_ds3_p1_7: ScalarValue
+  constructor(props: Unk130Params = {}) {
+    super(ActionType.Unk130)
     this.assign(props)
   }
 }
@@ -20795,6 +20963,7 @@ const DataActions = {
   [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
+  [ActionType.Unk130]: Unk130, Unk130,
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -22151,6 +22320,7 @@ export {
   PlaySound,
   NodeAttributes,
   ParticleAttributes,
+  Unk130,
   ParticleModifier,
   SFXReference,
   PeriodicEmitter,
