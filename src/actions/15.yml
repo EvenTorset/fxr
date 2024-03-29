@@ -1,0 +1,25 @@
+type: 15
+name: NodeTranslation
+desc: |
+  Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
+properties:
+  translation:
+    type: Vector3Value
+    default: [0, 0, 0]
+    argument: EffectAge
+    desc: |
+      An offset for the position of the node.
+  unk_er_f1_0:
+    field: int
+    desc: |
+      Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+games:
+  DS3:
+    properties1:
+      - translation
+  SDT: DS3
+  ER:
+    fields1:
+      - unk_er_f1_0
+    properties1: DS3
+  AC6: ER

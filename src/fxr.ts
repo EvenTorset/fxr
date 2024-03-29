@@ -127,12 +127,6 @@ enum ActionType {
    */
   NodeAcceleration = 1,
   /**
-   * Translates the node with a property, meaning the offset can be animated.
-   * 
-   * This action type has a specialized subclass: {@link NodeTranslation}
-   */
-  NodeTranslation = 15,
-  /**
    * Controls the rotation speed of the node.
    * 
    * This action type has a specialized subclass: {@link NodeMovement}
@@ -299,6 +293,12 @@ enum ActionType {
 
   // Data Actions
   /*#ActionType start*/
+  /**
+   * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
+   * 
+   * This action type has a specialized subclass: {@link NodeTranslation}
+   */
+  NodeTranslation = 15,
   /**
    * Plays a sound effect.
    * 
@@ -1107,6 +1107,23 @@ const ActionData: {
   }
 } = {
   /*#ActionData start*/
+  [ActionType.NodeTranslation]: {
+    props: {
+      translation: { default: [0, 0, 0], paths: {} },
+      unk_er_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        properties1: ['translation']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
+        fields1: ['unk_er_f1_0'],
+        properties1: Game.DarkSouls3
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
   [ActionType.PlaySound]: {
     props: {
       sound: { default: 0, paths: {}, field: FieldType.Integer },
@@ -2963,16 +2980,6 @@ function arrayOf<T>(size: number, func: (index: number) => T): T[] {
 
 function randomInt32() {
   return Math.random() * 2**32 | 0
-}
-
-function setPropertyInList(list: Property<any, any>[], index: number, value: Property<any, any> | PropertyValue) {
-  if (value instanceof Property) {
-    list[index] = value
-  } else if (typeof value === 'number') {
-    list[index] = new ConstantProperty(value)
-  } else {
-    list[index] = new ConstantProperty(...value)
-  }
 }
 
 function scalarFromArg(scalar: ScalarValue) {
@@ -7317,40 +7324,6 @@ class NodeMovement extends Action {
 
 }
 
-/**
- * Translates the node using a property, meaning it can be animated. This can
- * be useful if you need the node to follow a specific path.
- * 
- * Fields1:
- * Index | Value
- * ------|------
- * 0     | unkField
- * 
- * Properties1:
- * Index | Value
- * ------|------
- * 0     | translation
- */
-class NodeTranslation extends Action {
-
-  /**
-   * @param translation A 3D vector used as an offset for the position of the
-   * node. Defaults to [0, 0, 0].
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * @param unkField Unknown. Fields1, index 0. An integer that has at least
-   * three valid values: 0, 1, 2. Defaults to 0.
-   */
-  constructor(translation: Vector3Value = [0, 0, 0], unkField: number = 0) {
-    super(ActionType.NodeTranslation, [
-      new IntField(unkField)
-    ], [], [
-      vectorFromArg(translation)
-    ])
-  }
-
-}
-
 export interface NodeTransformParams {
   /**
    * Translates the node along the X-axis. Defaults to 0.
@@ -7998,6 +7971,44 @@ class NoParticleSpread extends Action {
 }
 
 /*#ActionClasses start*/
+export interface NodeTranslationParams {
+  /**
+   * An offset for the position of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  translation?: Vector3Value
+  /**
+   * Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_0?: number
+}
+
+/**
+ * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
+ */
+class NodeTranslation extends DataAction {
+  declare type: ActionType.NodeTranslation
+  /**
+   * An offset for the position of the node.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  translation: Vector3Value
+  /**
+   * Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+   */
+  unk_er_f1_0: number
+  constructor(props: NodeTranslationParams = {}) {
+    super(ActionType.NodeTranslation)
+    this.assign(props)
+  }
+}
+
 export interface PlaySoundParams {
   /**
    * The ID of the sound to play.
@@ -20701,7 +20712,6 @@ const Actions = {
   [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
   [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
 
-  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
@@ -20712,6 +20722,7 @@ const Actions = {
 
 const DataActions = {
   /*#ActionsList start*/
+  [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
@@ -22056,7 +22067,6 @@ export {
   Action,
   DataAction,
   NodeMovement,
-  NodeTranslation,
   NodeTransform,
   NodeAttachToCamera,
   ParticleMovement,
@@ -22067,6 +22077,7 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   /*#ActionsExport start*/
+  NodeTranslation,
   PlaySound,
   NodeAttributes,
   ParticleAttributes,
