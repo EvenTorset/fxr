@@ -21,6 +21,12 @@ const fieldMap = {
   bool: 'FieldType.Boolean'
 }
 
+const fieldTypeNameMap = {
+  int: 'integer',
+  float: 'float',
+  bool: 'boolean'
+}
+
 const gameMap = {
   DS3: 'Game.DarkSouls3',
   SDT: 'Game.Sekiro',
@@ -164,7 +170,7 @@ export default async function(writeToDist = true) {
             }
             return (`
                 /**
-                 * ${'desc' in v ? v.desc.trim().replace(/\n/g, '\n   * ') : 'Unknown.'}
+                 * ${'desc' in v ? v.desc.trim().replace(/\n/g, '\n   * ') : `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ''}.`}
                  * 
                  * **Default**: ${defValue}${
                   'argument' in v ? `

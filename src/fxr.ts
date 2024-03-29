@@ -8071,7 +8071,7 @@ export interface NodeAttachToCameraParams {
    */
   followRotation?: boolean
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -8168,13 +8168,13 @@ export interface NodeAttributesParams {
    */
   delay?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -8248,55 +8248,55 @@ class ParticleAttributes extends DataAction {
 
 export interface Unk130Params {
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_5?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_6?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -8531,7 +8531,7 @@ export interface PeriodicEmitterParams {
    */
   maxConcurrent?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -8592,13 +8592,13 @@ export interface EqualDistanceEmitterParams {
    */
   maxConcurrent?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -9355,163 +9355,163 @@ export interface PointSpriteParams {
    */
   maxDistance?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -9547,73 +9547,73 @@ export interface PointSpriteParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_33?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_34?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_sdt_f2_35?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_38?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -9952,151 +9952,151 @@ export interface LineParams {
    */
   maxDistance?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -10132,73 +10132,73 @@ export interface LineParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_33?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_34?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_35?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_38?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_39?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -10569,151 +10569,151 @@ export interface QuadLineParams {
    */
   maxDistance?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -10749,73 +10749,73 @@ export interface QuadLineParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_33?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_34?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_35?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_38?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_39?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -11465,187 +11465,187 @@ export interface BillboardExParams {
    */
   specularity?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_12?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_13?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_16?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: boolean
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `5`
    */
@@ -11693,79 +11693,79 @@ export interface BillboardExParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f1_16?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f1_17?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_39?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_40?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_41?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_42?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_43?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -12378,7 +12378,7 @@ export interface MultiTextureBillboardExParams {
    */
   lighting?: LightingMode
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -12727,169 +12727,169 @@ export interface MultiTextureBillboardExParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_6?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `5`
    */
@@ -12961,91 +12961,91 @@ export interface MultiTextureBillboardExParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_39?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_40?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_41?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_16?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_42?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_43?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_44?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_45?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -13979,31 +13979,31 @@ export interface ModelParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_10?: number
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `true`
    */
   unk_ds3_f1_11?: boolean
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `true`
    */
   unk_ds3_f1_12?: boolean
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -14045,145 +14045,145 @@ export interface ModelParams {
    */
   animationSpeed?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_18?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -14231,79 +14231,79 @@ export interface ModelParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_29?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_33?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_34?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_35?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_17?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_18?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_19?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -15065,181 +15065,181 @@ export interface TracerParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_8?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_13?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: boolean
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `5`
    */
@@ -15293,49 +15293,49 @@ export interface TracerParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_16?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -15959,157 +15959,157 @@ export interface DistortionParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_ds3_f1_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -16157,67 +16157,67 @@ export interface DistortionParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_33?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_34?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_sdt_f2_35?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_38?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -16762,151 +16762,151 @@ export interface RadialBlurParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0.5`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -16948,19 +16948,19 @@ export interface RadialBlurParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
@@ -17398,25 +17398,25 @@ export interface PointLightParams {
    */
   falloffExponent?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -17428,61 +17428,61 @@ export interface PointLightParams {
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `false`
    */
   unk_ds3_f2_15?: boolean
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `2`
    */
   unk_ds3_f2_16?: number
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `true`
    */
   unk_ds3_f2_17?: boolean
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_18?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_19?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `100`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -17542,7 +17542,7 @@ export interface PointLightParams {
    */
   unk_ds3_p2_1?: ScalarValue
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -17554,25 +17554,25 @@ export interface PointLightParams {
    */
   unk_sdt_p2_2?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f2_29?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_er_f2_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -18050,19 +18050,19 @@ class ParticleWindAcceleration extends DataAction {
 
 export interface Unk800Params {
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_ac6_f1_0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0.2`
    */
   unk_ac6_f1_1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0.25`
    */
@@ -18384,181 +18384,181 @@ export interface Tracer2Params {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_8?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_13?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-1`
    */
   unk_ds3_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_0?: number
   /**
-   * Unknown.
+   * Unknown boolean.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_1?: boolean
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `5`
    */
@@ -18612,85 +18612,85 @@ export interface Tracer2Params {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_sdt_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_18?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_19?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_39?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_er_f2_40?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_sdt_f1_14?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_sdt_f1_15?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_sdt_f1_16?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
@@ -19419,31 +19419,31 @@ export interface RichModelParams {
    */
   animationSpeed?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_5?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_6?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_er_f1_8?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
@@ -19455,265 +19455,265 @@ export interface RichModelParams {
    */
   unk_er_f1_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_14?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_15?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_16?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_17?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_18?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_19?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f1_24?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_25?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `8`
    */
   unk_er_f2_2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_8?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_9?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_10?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_11?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_12?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_13?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeClose1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_20?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_21?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_22?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_23?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unkDepthBlend1?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unkDepthBlend2?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_27?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f2_28?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_29?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_30?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_er_f2_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_er_f2_33?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0.5`
    */
   unk_er_f2_34?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_er_f2_35?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `-2`
    */
   unk_er_f2_36?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -19781,67 +19781,67 @@ export interface RichModelParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unk_ac6_f1_25?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unk_ac6_f1_26?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unk_ac6_f1_27?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
   unk_ac6_f1_28?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_29?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_30?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_31?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_32?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ac6_f1_33?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -20300,61 +20300,61 @@ export interface Unk10500Params {
    */
   rateOfTime?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_2?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_3?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_4?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_5?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_6?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_8?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -20627,37 +20627,37 @@ export interface SpotLightParams {
    */
   falloffExponent?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_0?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `2`
    */
   unk_ds3_f1_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_4?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_ds3_f1_5?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
@@ -20675,37 +20675,37 @@ export interface SpotLightParams {
    */
   unk_ds3_p1_7?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f1_0?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f1_3?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `100`
    */
   unk_sdt_f1_16?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
   unk_sdt_f1_17?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_sdt_f1_18?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -20717,25 +20717,25 @@ export interface SpotLightParams {
    */
   unk_sdt_p1_10?: ScalarValue
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_er_f1_24?: number
   /**
-   * Unknown.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
   unk_er_f1_25?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
   unk_ac6_f1_26?: number
   /**
-   * Unknown.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
