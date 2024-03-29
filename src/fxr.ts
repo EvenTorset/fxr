@@ -265,7 +265,6 @@ enum ActionType {
    */
   NoParticleSpread = 500,
   Unk700 = 700, // Root node action
-  Unk701 = 701, // Root node action
   Unk702 = 702, // Root node action
   Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
@@ -465,6 +464,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
+  /**
+   * Unknown root node action that was introduced in Elden Ring.
+   * 
+   * This action type has a specialized subclass: {@link Unk701}
+   */
+  Unk701 = 701,
   /**
    * Controls how effective the wind is at pushing the node.
    * 
@@ -2436,6 +2441,17 @@ const ActionData: {
         fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
         properties1: Game.DarkSouls3,
         properties2: Game.Sekiro
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.Unk701]: {
+    props: {
+      unk_er_p1_0: { default: 1, paths: {} },
+    },
+    games: {
+      [Game.EldenRing]: {
+        properties1: ['unk_er_p1_0']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -17781,6 +17797,27 @@ class PointLight extends DataAction {
   }
 }
 
+export interface Unk701Params {
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_p1_0?: ScalarValue
+}
+
+/**
+ * Unknown root node action that was introduced in Elden Ring.
+ */
+class Unk701 extends DataAction {
+  declare type: ActionType.Unk701
+  unk_er_p1_0: ScalarValue
+  constructor(props: Unk701Params = {}) {
+    super(ActionType.Unk701)
+    this.assign(props)
+  }
+}
+
 export interface NodeWindSpeedParams {
   /**
    * The speed in the direction of the wind.
@@ -20987,6 +21024,7 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.Unk701]: Unk701, Unk701,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
@@ -22344,6 +22382,7 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
+  Unk701,
   NodeWindSpeed,
   ParticleWindSpeed,
   NodeWindAcceleration,

@@ -1,0 +1,13 @@
+type: 701
+name: Unk701
+desc: |
+  Unknown root node action that was introduced in Elden Ring.
+properties:
+  unk_er_p1_0:
+    type: ScalarValue
+    default: 1
+games:
+  ER:
+    properties1:
+      - unk_er_p1_0
+  AC6: ER
