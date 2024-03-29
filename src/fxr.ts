@@ -145,12 +145,6 @@ enum ActionType {
    */
   RandomNodeTransform = 36,
   /**
-   * Attaches the node to the camera.
-   * 
-   * This action type has a specialized subclass: {@link NodeAttachToCamera}
-   */
-  NodeAttachToCamera = 46,
-  /**
    * Controls the movement of particles.
    * 
    * This action type has a specialized subclass: {@link ParticleMovement}
@@ -299,6 +293,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NodeTranslation}
    */
   NodeTranslation = 15,
+  /**
+   * Attaches the node to the camera.
+   * 
+   * This action type has a specialized subclass: {@link NodeAttachToCamera}
+   */
+  NodeAttachToCamera = 46,
   /**
    * Plays a sound effect.
    * 
@@ -1122,6 +1122,20 @@ const ActionData: {
         properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.NodeAttachToCamera]: {
+    props: {
+      followRotation: { default: true, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['followRotation','unk_ds3_f1_1']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.PlaySound]: {
@@ -7591,34 +7605,6 @@ class NodeTransform extends Action {
 
 }
 
-/**
- * Attaches the node to the camera.
- */
-class NodeAttachToCamera extends Action {
-
-  declare fields1: [BoolField, IntField]
-
-  /**
-   * @param followRotation Disable this to stop the node from following the
-   * rotation of the camera. Defaults to true.
-   * @param unkField1 Unknown. Fields1, index 1. Defaults to 1.
-   */
-  constructor(followRotation: boolean = true, unkField1: number = 1) {
-    super(ActionType.NodeAttachToCamera, [
-      new BoolField(followRotation),
-      new IntField(unkField1)
-    ])
-  }
-
-  /**
-   * Controls if the node should also follow the rotation of the camera or only
-   * the translation.
-   */
-  get followRotation() { return this.fields1[0].value }
-  set followRotation(value) { this.fields1[0].value = value }
-
-}
-
 export interface ParticleMovementParams {
   /**
    * Downwards acceleration. This will always point towards global down, even
@@ -8005,6 +7991,37 @@ class NodeTranslation extends DataAction {
   unk_er_f1_0: number
   constructor(props: NodeTranslationParams = {}) {
     super(ActionType.NodeTranslation)
+    this.assign(props)
+  }
+}
+
+export interface NodeAttachToCameraParams {
+  /**
+   * Disable this to stop the node from following the rotation of the camera.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_1?: number
+}
+
+/**
+ * Attaches the node to the camera.
+ */
+class NodeAttachToCamera extends DataAction {
+  declare type: ActionType.NodeAttachToCamera
+  /**
+   * Disable this to stop the node from following the rotation of the camera.
+   */
+  followRotation: boolean
+  unk_ds3_f1_1: number
+  constructor(props: NodeAttachToCameraParams = {}) {
+    super(ActionType.NodeAttachToCamera)
     this.assign(props)
   }
 }
@@ -20712,7 +20729,6 @@ const Actions = {
   [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
   [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
 
-  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
   [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
   [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
@@ -20723,6 +20739,7 @@ const Actions = {
 const DataActions = {
   /*#ActionsList start*/
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
+  [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.PlaySound]: PlaySound, PlaySound,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
@@ -22068,7 +22085,6 @@ export {
   DataAction,
   NodeMovement,
   NodeTransform,
-  NodeAttachToCamera,
   ParticleMovement,
   LevelOfDetailThresholds,
   StateEffectMap,
@@ -22078,6 +22094,7 @@ export {
   NoParticleSpread,
   /*#ActionsExport start*/
   NodeTranslation,
+  NodeAttachToCamera,
   PlaySound,
   NodeAttributes,
   ParticleAttributes,
