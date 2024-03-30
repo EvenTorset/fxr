@@ -4413,6 +4413,19 @@ const ActionDataConversion = {
   }
 }
 
+export type TypedArray =
+  | Int8Array
+  | Uint8Array
+  | Uint8ClampedArray
+  | Int16Array
+  | Uint16Array
+  | Int32Array
+  | Uint32Array
+  | Float32Array
+  | Float64Array
+  | BigInt64Array
+  | BigUint64Array
+
 class BinaryReader extends DataView {
 
   position: number = 0
@@ -4786,9 +4799,12 @@ class FXR {
 
   /**
    * Parses an FXR file.
-   * @param buffer ArrayBuffer containing the contents of the FXR file.
+   * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file.
    */
-  static read(buffer: ArrayBuffer, game: Game = Game.EldenRing) {
+  static read(buffer: ArrayBuffer | TypedArray, game: Game = Game.EldenRing) {
+    if (!(buffer instanceof ArrayBuffer)) {
+      buffer = buffer.buffer
+    }
     const br = new BinaryReader(buffer)
 
     br.assertASCII('FXR\0')
