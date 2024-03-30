@@ -5721,14 +5721,15 @@ abstract class Node {
     }
     const procProp = (container: IProperty<ValueType.Vector4, any>[] | DataAction, key: number | string) => {
       let prop = container[key]
+      if (prop instanceof ComponentSequenceProperty) {
+        prop = container[key] = prop.combineComponents()
+      }
       if (prop instanceof ValueProperty) {
         prop.value = func(prop.value)
       } else if (prop instanceof SequenceProperty) {
         for (const keyframe of prop.keyframes) {
           keyframe.value = func(keyframe.value as Vector4)
         }
-      } else if (prop instanceof ComponentSequenceProperty) {
-        prop = container[key] = prop.combineComponents()
       }
       if ('modifiers' in prop) {
         for (const mod of (prop as IModifiableProperty<ValueType.Vector4, any>).modifiers) {
@@ -5755,98 +5756,67 @@ abstract class Node {
       }
     }
     for (const effect of this.walkEffects()) if (effect instanceof BasicEffect) {
-      procProp((effect.particleModifier as Action).properties1, 4)
+      if (effect.particleModifier instanceof ParticleModifier) {
+        procDataProp(effect.particleModifier, 'color')
+      }
       const slot9 = effect.appearance as ActionWithNumericalFields | DataAction
-      if (slot9 instanceof Action) {
-        switch (slot9.type) {
-          case ActionType.PointSprite:
-            procProp(slot9.properties1, 3)
-            procProp(slot9.properties1, 4)
-            procProp(slot9.properties1, 5)
-            break
-          case ActionType.Line:
-            procProp(slot9.properties1, 2)
-            procProp(slot9.properties1, 3)
-            procProp(slot9.properties1, 4)
-            procProp(slot9.properties1, 5)
-            procProp(slot9.properties1, 7)
-            break
-          case ActionType.QuadLine:
-            procProp(slot9.properties1, 3)
-            procProp(slot9.properties1, 4)
-            procProp(slot9.properties1, 5)
-            procProp(slot9.properties1, 6)
-            procProp(slot9.properties1, 9)
-            break
-          case ActionType.MultiTextureBillboardEx:
-            procProp(slot9.properties1, 15)
-            procProp(slot9.properties1, 16)
-            procProp(slot9.properties1, 17)
-            procProp(slot9.properties1, 18)
-            procProp(slot9.properties1, 19)
-            procProp(slot9.properties1, 20)
-            break
-          case ActionType.Model:
-            procProp(slot9.properties1, 14)
-            procProp(slot9.properties1, 15)
-            procProp(slot9.properties1, 16)
-            break
-          case ActionType.Tracer:
-          case ActionType.Tracer2:
-            procProp(slot9.properties1, 6)
-            procProp(slot9.properties1, 7)
-            procProp(slot9.properties1, 8)
-            break
-          case ActionType.Distortion:
-          case ActionType.RadialBlur:
-            procProp(slot9.properties1, 7)
-            procProp(slot9.properties1, 8)
-            break
-          case ActionType.PointLight:
-          case ActionType.SpotLight:
-            procProp(slot9.properties1, 0)
-            procProp(slot9.properties1, 1)
-            break
-          case ActionType.Unk10000_StandardParticle:
-          case ActionType.Unk10001_StandardCorrectParticle:
-            procProp(slot9.properties1, 13)
-            procProp(slot9.properties2, 3)
-            procProp(slot9.properties2, 4)
-            procProp(slot9.properties2, 5)
-            break
-          case ActionType.Unk10014_LensFlare:
-            procProp(slot9.properties1, 2)
-            procProp(slot9.properties1, 5)
-            procProp(slot9.properties1, 8)
-            procProp(slot9.properties1, 11)
-            break
-          case ActionType.RichModel:
-            procProp(slot9.properties1, 13)
-            procProp(slot9.properties1, 14)
-            procProp(slot9.properties1, 15)
-        }
-        switch (slot9.type) {
-          case ActionType.PointSprite:
-          case ActionType.Line:
-          case ActionType.QuadLine:
-          case ActionType.BillboardEx:
-          case ActionType.MultiTextureBillboardEx:
-          case ActionType.Model:
-          case ActionType.Tracer:
-          case ActionType.Distortion:
-          case ActionType.RadialBlur:
-          case ActionType.Tracer2:
-          case ActionType.RichModel:
-            procProp(slot9.properties2, 3)
-            procProp(slot9.properties2, 4)
-            procProp(slot9.properties2, 5)
-            procFields(slot9.fields2, 5)
-            break
-        }
-      } else if (slot9.type === ActionType.BillboardEx) {
+      if (slot9 instanceof Action) switch (slot9.type) {
+        case ActionType.Unk10000_StandardParticle:
+        case ActionType.Unk10001_StandardCorrectParticle:
+          procProp(slot9.properties1, 13)
+          break
+        case ActionType.Unk10014_LensFlare:
+          procProp(slot9.properties1, 2)
+          procProp(slot9.properties1, 5)
+          procProp(slot9.properties1, 8)
+          procProp(slot9.properties1, 11)
+          break
+      } else if (
+        slot9 instanceof PointSprite ||
+        slot9 instanceof BillboardEx ||
+        slot9 instanceof Model ||
+        slot9 instanceof Tracer ||
+        slot9 instanceof Tracer2 ||
+        slot9 instanceof RichModel
+      ) {
         procDataProp(slot9, 'color1')
         procDataProp(slot9, 'color2')
         procDataProp(slot9, 'color3')
+      } else if (slot9 instanceof Line || slot9 instanceof QuadLine) {
+        procDataProp(slot9, 'color1')
+        procDataProp(slot9, 'color2')
+        procDataProp(slot9, 'startColor')
+        procDataProp(slot9, 'endColor')
+        procDataProp(slot9, 'color3')
+      } else if (slot9 instanceof MultiTextureBillboardEx) {
+        procDataProp(slot9, 'color1')
+        procDataProp(slot9, 'color2')
+        procDataProp(slot9, 'color3')
+        procDataProp(slot9, 'layersColor')
+        procDataProp(slot9, 'layer1Color')
+        procDataProp(slot9, 'layer2Color')
+      } else if (slot9 instanceof Distortion || slot9 instanceof RadialBlur) {
+        procDataProp(slot9, 'color')
+      } else if (slot9 instanceof PointLight || slot9 instanceof SpotLight) {
+        procDataProp(slot9, 'diffuseColor')
+        procDataProp(slot9, 'specularColor')
+      }
+      if (
+        slot9 instanceof PointSprite ||
+        slot9 instanceof Line ||
+        slot9 instanceof QuadLine ||
+        slot9 instanceof BillboardEx ||
+        slot9 instanceof MultiTextureBillboardEx ||
+        slot9 instanceof Model ||
+        slot9 instanceof Tracer ||
+        slot9 instanceof Distortion ||
+        slot9 instanceof RadialBlur ||
+        slot9 instanceof Tracer2 ||
+        slot9 instanceof RichModel
+      ) {
+        ;[slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength] = func(
+          [slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength]
+        )
       }
     }
   }
