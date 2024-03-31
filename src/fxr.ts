@@ -2485,15 +2485,15 @@ const ActionData: {
   },
   [ActionType.NodeWindSpeed]: {
     props: {
-      windSpeed: { default: 0, paths: {} },
-      windSpeedMultiplier: { default: 1, paths: {} },
+      speed: { default: 0, paths: {} },
+      speedMultiplier: { default: 1, paths: {} },
       enabled: { default: true, paths: {}, field: FieldType.Boolean },
     },
     games: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
         fields1: ['enabled'],
-        properties1: ['windSpeed','windSpeedMultiplier']
+        properties1: ['speed','speedMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -2501,8 +2501,8 @@ const ActionData: {
   },
   [ActionType.ParticleWindSpeed]: {
     props: {
-      windSpeed: { default: 0, paths: {} },
-      windSpeedMultiplier: { default: 1, paths: {} },
+      speed: { default: 0, paths: {} },
+      speedMultiplier: { default: 1, paths: {} },
       enabled: { default: true, paths: {}, field: FieldType.Boolean },
       unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
     },
@@ -2510,7 +2510,7 @@ const ActionData: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
         fields1: ['enabled','unk_sdt_f1_1'],
-        properties1: ['windSpeed','windSpeedMultiplier']
+        properties1: ['speed','speedMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -2518,15 +2518,15 @@ const ActionData: {
   },
   [ActionType.NodeWindAcceleration]: {
     props: {
-      windAcceleration: { default: 0, paths: {} },
-      windAccelerationMultiplier: { default: 1, paths: {} },
+      acceleration: { default: 0, paths: {} },
+      accelerationMultiplier: { default: 1, paths: {} },
       enabled: { default: true, paths: {}, field: FieldType.Boolean },
     },
     games: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
         fields1: ['enabled'],
-        properties1: ['windAcceleration','windAccelerationMultiplier']
+        properties1: ['acceleration','accelerationMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -2534,8 +2534,8 @@ const ActionData: {
   },
   [ActionType.ParticleWindAcceleration]: {
     props: {
-      windAcceleration: { default: 0, paths: {} },
-      windAccelerationMultiplier: { default: 1, paths: {} },
+      acceleration: { default: 0, paths: {} },
+      accelerationMultiplier: { default: 1, paths: {} },
       enabled: { default: true, paths: {}, field: FieldType.Boolean },
       unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
     },
@@ -2543,7 +2543,7 @@ const ActionData: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
         fields1: ['enabled','unk_sdt_f1_1'],
-        properties1: ['windAcceleration','windAccelerationMultiplier']
+        properties1: ['acceleration','accelerationMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -5777,23 +5777,23 @@ abstract class Node {
 
         const slot13 = effect.nodeWind
         if (slot13 instanceof NodeWindAcceleration) {
-          slot13.windAcceleration = anyValueMult(factor, slot13.windAcceleration)
+          slot13.acceleration = anyValueMult(factor, slot13.acceleration)
         } else if (slot13 instanceof NodeWindSpeed) {
-          slot13.windSpeed = anyValueMult(factor, slot13.windSpeed)
+          slot13.speed = anyValueMult(factor, slot13.speed)
         }
 
         const slot14 = effect.particleWind
         if (slot14 instanceof ParticleWindAcceleration) {
-          slot14.windAcceleration = anyValueMult(factor, slot14.windAcceleration)
+          slot14.acceleration = anyValueMult(factor, slot14.acceleration)
         } else if (slot14 instanceof ParticleWindSpeed) {
-          slot14.windSpeed = anyValueMult(factor, slot14.windSpeed)
+          slot14.speed = anyValueMult(factor, slot14.speed)
         }
       } else { // Shared emitter effect
         const slot9 = effect.nodeWind
         if (slot9 instanceof NodeWindAcceleration) {
-          slot9.windAcceleration = anyValueMult(factor, slot9.windAcceleration)
+          slot9.acceleration = anyValueMult(factor, slot9.acceleration)
         } else if (slot9 instanceof NodeWindSpeed) {
-          slot9.windSpeed = anyValueMult(factor, slot9.windSpeed)
+          slot9.speed = anyValueMult(factor, slot9.speed)
         }
       }
     }
@@ -17914,15 +17914,15 @@ export interface NodeWindSpeedParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeed?: ScalarValue
+  speed?: ScalarValue
   /**
-   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * A multiplier for {@link speed the speed in the direction of the wind}.
    * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeedMultiplier?: ScalarValue
+  speedMultiplier?: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    * 
@@ -17941,13 +17941,13 @@ class NodeWindSpeed extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeed: ScalarValue
+  speed: ScalarValue
   /**
-   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * A multiplier for {@link speed the speed in the direction of the wind}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeedMultiplier: ScalarValue
+  speedMultiplier: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    */
@@ -17966,15 +17966,15 @@ export interface ParticleWindSpeedParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeed?: ScalarValue
+  speed?: ScalarValue
   /**
-   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * A multiplier for {@link speed the speed in the direction of the wind}.
    * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeedMultiplier?: ScalarValue
+  speedMultiplier?: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    * 
@@ -17999,13 +17999,13 @@ class ParticleWindSpeed extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeed: ScalarValue
+  speed: ScalarValue
   /**
-   * A multiplier for {@link windSpeed the speed in the direction of the wind}.
+   * A multiplier for {@link speed the speed in the direction of the wind}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windSpeedMultiplier: ScalarValue
+  speedMultiplier: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    */
@@ -18028,15 +18028,15 @@ export interface NodeWindAccelerationParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAcceleration?: ScalarValue
+  acceleration?: ScalarValue
   /**
-   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
    * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAccelerationMultiplier?: ScalarValue
+  accelerationMultiplier?: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    * 
@@ -18055,13 +18055,13 @@ class NodeWindAcceleration extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAcceleration: ScalarValue
+  acceleration: ScalarValue
   /**
-   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAccelerationMultiplier: ScalarValue
+  accelerationMultiplier: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    */
@@ -18080,15 +18080,15 @@ export interface ParticleWindAccelerationParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAcceleration?: ScalarValue
+  acceleration?: ScalarValue
   /**
-   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
    * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAccelerationMultiplier?: ScalarValue
+  accelerationMultiplier?: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    * 
@@ -18115,13 +18115,13 @@ class ParticleWindAcceleration extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAcceleration: ScalarValue
+  acceleration: ScalarValue
   /**
-   * A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  windAccelerationMultiplier: ScalarValue
+  accelerationMultiplier: ScalarValue
   /**
    * Controls whether the wind should have any effect at all or not.
    */

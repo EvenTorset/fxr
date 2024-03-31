@@ -3,17 +3,17 @@ name: ParticleWindSpeed
 desc: |
   Controls how effective the wind is at pushing the particles emitted from the node.
 properties:
-  windSpeed:
+  speed:
     type: ScalarValue
     argument: EffectAge
     desc: |
       The speed in the direction of the wind.
-  windSpeedMultiplier:
+  speedMultiplier:
     type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
-      A multiplier for {@link windSpeed the speed in the direction of the wind}.
+      A multiplier for {@link speed the speed in the direction of the wind}.
   enabled:
     field: bool
     default: true
@@ -30,7 +30,7 @@ games:
       - enabled
       - unk_sdt_f1_1
     properties1:
-      - windSpeed
-      - windSpeedMultiplier
+      - speed
+      - speedMultiplier
   ER: SDT
   AC6: SDT

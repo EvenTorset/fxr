@@ -5,17 +5,17 @@ desc: |
 
   Acceleration requires slot 10 to have an action that enables acceleration of the particles.
 properties:
-  windAcceleration:
+  acceleration:
     type: ScalarValue
     argument: EffectAge
     desc: |
       The acceleration in the direction of the wind.
-  windAccelerationMultiplier:
+  accelerationMultiplier:
     type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
-      A multiplier for {@link windAcceleration the acceleration in the direction of the wind}.
+      A multiplier for {@link acceleration the acceleration in the direction of the wind}.
   enabled:
     field: bool
     default: true
@@ -32,7 +32,7 @@ games:
       - enabled
       - unk_sdt_f1_1
     properties1:
-      - windAcceleration
-      - windAccelerationMultiplier
+      - acceleration
+      - accelerationMultiplier
   ER: SDT
   AC6: SDT
