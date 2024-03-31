@@ -3,7 +3,7 @@ name: SphereEmitterShape
 desc: |
   Makes the emitter spherical.
 properties:
-  volume:
+  emitInside:
     field: bool
     default: true
     desc: |
@@ -17,7 +17,7 @@ properties:
 games:
   DS3:
     fields1:
-      - volume
+      - emitInside
     properties1:
       - radius
   SDT: DS3

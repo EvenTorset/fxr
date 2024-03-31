@@ -1377,12 +1377,12 @@ const ActionData: {
   },
   [ActionType.SphereEmitterShape]: {
     props: {
-      volume: { default: true, paths: {}, field: FieldType.Boolean },
+      emitInside: { default: true, paths: {}, field: FieldType.Boolean },
       radius: { default: 1, paths: {} },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['volume'],
+        fields1: ['emitInside'],
         properties1: ['radius']
       },
       [Game.Sekiro]: Game.DarkSouls3,
@@ -1393,14 +1393,14 @@ const ActionData: {
   [ActionType.BoxEmitterShape]: {
     props: {
       direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
-      volume: { default: true, paths: {}, field: FieldType.Boolean },
+      emitInside: { default: true, paths: {}, field: FieldType.Boolean },
       sizeX: { default: 1, paths: {} },
       sizeY: { default: 1, paths: {} },
       sizeZ: { default: 1, paths: {} },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['direction','volume'],
+        fields1: ['direction','emitInside'],
         properties1: ['sizeX','sizeY','sizeZ']
       },
       [Game.Sekiro]: Game.DarkSouls3,
@@ -1411,14 +1411,14 @@ const ActionData: {
   [ActionType.CylinderEmitterShape]: {
     props: {
       direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
-      volume: { default: true, paths: {}, field: FieldType.Boolean },
+      emitInside: { default: true, paths: {}, field: FieldType.Boolean },
       yAxis: { default: true, paths: {}, field: FieldType.Boolean },
       radius: { default: 1, paths: {} },
       height: { default: 1, paths: {} },
     },
     games: {
       [Game.Sekiro]: {
-        fields1: ['direction','volume','yAxis'],
+        fields1: ['direction','emitInside','yAxis'],
         properties1: ['radius','height']
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -8868,7 +8868,7 @@ export interface SphereEmitterShapeParams {
    * 
    * **Default**: `true`
    */
-  volume?: boolean
+  emitInside?: boolean
   /**
    * Radius of the sphere.
    * 
@@ -8887,7 +8887,7 @@ class SphereEmitterShape extends DataAction {
   /**
    * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
    */
-  volume: boolean
+  emitInside: boolean
   /**
    * Radius of the sphere.
    * 
@@ -8912,7 +8912,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `true`
    */
-  volume?: boolean
+  emitInside?: boolean
   /**
    * Width of the cuboid.
    * 
@@ -8951,7 +8951,7 @@ class BoxEmitterShape extends DataAction {
   /**
    * If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
    */
-  volume: boolean
+  emitInside: boolean
   /**
    * Width of the cuboid.
    * 
@@ -8988,7 +8988,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Default**: `true`
    */
-  volume?: boolean
+  emitInside?: boolean
   /**
    * If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
    * 
@@ -9025,7 +9025,7 @@ class CylinderEmitterShape extends DataAction {
   /**
    * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
    */
-  volume: boolean
+  emitInside: boolean
   /**
    * If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
    */

@@ -9,7 +9,7 @@ properties:
     default: InitialDirection.Emitter
     desc: |
       Controls the initial direction for particles. See {@link InitialDirection} for more information.
-  volume:
+  emitInside:
     field: bool
     default: true
     desc: |
@@ -36,7 +36,7 @@ games:
   DS3:
     fields1:
       - direction
-      - volume
+      - emitInside
     properties1:
       - sizeX
       - sizeY
