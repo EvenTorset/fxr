@@ -1,7 +1,9 @@
 type: 10012
-name: Tracer2
+name: DynamicTracer
 desc: |
   Creates a trail behind moving effects.
+
+  This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
 properties:
   orientation:
     type: TracerOrientationMode
@@ -14,6 +16,10 @@ properties:
     default: 0
     desc: |
       Normal map texture ID.
+
+      This is used to control the distortion effect of the trail.
+    see:
+      - distortionIntensity
   segmentInterval:
     field: float
     default: 0
@@ -316,8 +322,13 @@ properties:
   unk_ds3_p1_13:
     type: ScalarValue
     default: -1
-  unk_ds3_p2_2:
+  distortionIntensity:
     type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+    see:
+      - normalMap
   unk_ds3_p2_3:
     type: Vector4Value
     default: [1, 1, 1, 1]
@@ -434,7 +445,7 @@ games:
     properties2:
       - rgbMultiplier
       - alphaMultiplier
-      - unk_ds3_p2_2
+      - distortionIntensity
       - unk_ds3_p2_3
       - unk_ds3_p2_4
       - unk_ds3_p2_5

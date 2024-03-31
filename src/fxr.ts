@@ -502,9 +502,11 @@ enum ActionType {
   /**
    * Creates a trail behind moving effects.
    * 
-   * This action type has a specialized subclass: {@link Tracer2}
+   * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+   * 
+   * This action type has a specialized subclass: {@link DynamicTracer}
    */
-  Tracer2 = 10012,
+  DynamicTracer = 10012,
   /**
    * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
    * 
@@ -2176,7 +2178,7 @@ const ActionData: {
       unk_ds3_p1_2: { default: 0, paths: {} },
       unk_ds3_p1_3: { default: 0, paths: {} },
       unk_ds3_p1_13: { default: -1, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
+      distortionIntensity: { default: 0, paths: {} },
       unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
       unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
       unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
@@ -2195,7 +2197,7 @@ const ActionData: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
@@ -2559,7 +2561,7 @@ const ActionData: {
       }
     }
   },
-  [ActionType.Tracer2]: {
+  [ActionType.DynamicTracer]: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
       normalMap: { default: 0, paths: {}, field: FieldType.Integer },
@@ -2628,7 +2630,7 @@ const ActionData: {
       unk_ds3_p1_2: { default: 0, paths: {} },
       unk_ds3_p1_3: { default: 0, paths: {} },
       unk_ds3_p1_13: { default: -1, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
+      distortionIntensity: { default: 0, paths: {} },
       unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
       unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
       unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
@@ -2653,7 +2655,7 @@ const ActionData: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
@@ -2994,7 +2996,7 @@ const EffectActionSlots = {
       ActionType.Unk10008_SparkParticle,
       ActionType.Unk10009_SparkCorrectParticle,
       ActionType.Unk10010_Tracer,
-      ActionType.Tracer2,
+      ActionType.DynamicTracer,
       ActionType.WaterInteraction,
       ActionType.Unk10014_LensFlare,
       ActionType.RichModel,
@@ -5179,7 +5181,7 @@ class FXR {
       } else if (action instanceof Model || action instanceof RichModel) {
         list.push(action.model)
         list.push(action.animation)
-      } else if (action instanceof Tracer || action instanceof Tracer2) {
+      } else if (action instanceof Tracer || action instanceof DynamicTracer) {
         list.push(action.texture)
         list.push(action.normalMap)
       } else if (action instanceof Distortion) {
@@ -5698,7 +5700,7 @@ abstract class Node {
           slot9.sizeX = anyValueMult(factor, slot9.sizeX)
           slot9.sizeY = anyValueMult(factor, slot9.sizeY)
           slot9.sizeZ = anyValueMult(factor, slot9.sizeZ)
-        } else if (slot9 instanceof Tracer || slot9 instanceof Tracer2) {
+        } else if (slot9 instanceof Tracer || slot9 instanceof DynamicTracer) {
           slot9.width = anyValueMult(factor, slot9.width)
         } else if (slot9 instanceof Distortion) {
           slot9.offsetX = anyValueMult(factor, slot9.offsetX)
@@ -5744,7 +5746,7 @@ abstract class Node {
           slot9 instanceof Tracer ||
           slot9 instanceof Distortion ||
           slot9 instanceof RadialBlur ||
-          slot9 instanceof Tracer2 ||
+          slot9 instanceof DynamicTracer ||
           slot9 instanceof RichModel
         ) {
           for (const prop of [
@@ -5875,7 +5877,7 @@ abstract class Node {
         slot9 instanceof BillboardEx ||
         slot9 instanceof Model ||
         slot9 instanceof Tracer ||
-        slot9 instanceof Tracer2 ||
+        slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
         procDataProp(slot9, 'color1')
@@ -5910,7 +5912,7 @@ abstract class Node {
         slot9 instanceof Tracer ||
         slot9 instanceof Distortion ||
         slot9 instanceof RadialBlur ||
-        slot9 instanceof Tracer2 ||
+        slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
         ;[slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength] = func(
@@ -6444,7 +6446,7 @@ export interface BasicEffectParams {
     Distortion |
     RadialBlur |
     PointLight |
-    Tracer2 |
+    DynamicTracer |
     WaterInteraction |
     RichModel |
     SpotLight
@@ -6515,7 +6517,7 @@ class BasicEffect implements IEffect {
     Distortion |
     RadialBlur |
     PointLight |
-    Tracer2 |
+    DynamicTracer |
     WaterInteraction |
     RichModel |
     SpotLight
@@ -14837,7 +14839,12 @@ export interface TracerParams {
   /**
    * Normal map texture ID.
    * 
+   * This is used to control the distortion effect of the trail.
+   * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link distortionIntensity}
    */
   normalMap?: number
   /**
@@ -15326,11 +15333,16 @@ export interface TracerParams {
    */
   unk_ds3_p1_13?: ScalarValue
   /**
-   * Unknown.
+   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link normalMap}
    */
-  unk_ds3_p2_2?: ScalarValue
+  distortionIntensity?: ScalarValue
   /**
    * Unknown.
    * 
@@ -15416,6 +15428,11 @@ class Tracer extends DataAction {
   orientation: TracerOrientationMode
   /**
    * Normal map texture ID.
+   * 
+   * This is used to control the distortion effect of the trail.
+   * 
+   * See also:
+   * - {@link distortionIntensity}
    */
   normalMap: number
   /**
@@ -15674,7 +15691,15 @@ class Tracer extends DataAction {
   unk_ds3_p1_2: ScalarValue
   unk_ds3_p1_3: ScalarValue
   unk_ds3_p1_13: ScalarValue
-  unk_ds3_p2_2: ScalarValue
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link normalMap}
+   */
+  distortionIntensity: ScalarValue
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
@@ -18146,7 +18171,7 @@ class Unk800 extends DataAction {
   }
 }
 
-export interface Tracer2Params {
+export interface DynamicTracerParams {
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
    * 
@@ -18156,7 +18181,12 @@ export interface Tracer2Params {
   /**
    * Normal map texture ID.
    * 
+   * This is used to control the distortion effect of the trail.
+   * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link distortionIntensity}
    */
   normalMap?: number
   /**
@@ -18645,11 +18675,16 @@ export interface Tracer2Params {
    */
   unk_ds3_p1_13?: ScalarValue
   /**
-   * Unknown.
+   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link normalMap}
    */
-  unk_ds3_p2_2?: ScalarValue
+  distortionIntensity?: ScalarValue
   /**
    * Unknown.
    * 
@@ -18762,15 +18797,22 @@ export interface Tracer2Params {
 
 /**
  * Creates a trail behind moving effects.
+   * 
+   * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
  */
-class Tracer2 extends DataAction {
-  declare type: ActionType.Tracer2
+class DynamicTracer extends DataAction {
+  declare type: ActionType.DynamicTracer
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
    */
   orientation: TracerOrientationMode
   /**
    * Normal map texture ID.
+   * 
+   * This is used to control the distortion effect of the trail.
+   * 
+   * See also:
+   * - {@link distortionIntensity}
    */
   normalMap: number
   /**
@@ -19029,7 +19071,15 @@ class Tracer2 extends DataAction {
   unk_ds3_p1_2: ScalarValue
   unk_ds3_p1_3: ScalarValue
   unk_ds3_p1_13: ScalarValue
-  unk_ds3_p2_2: ScalarValue
+  /**
+   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link normalMap}
+   */
+  distortionIntensity: ScalarValue
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
@@ -19048,8 +19098,8 @@ class Tracer2 extends DataAction {
   unk_sdt_f1_15: number
   unk_sdt_f1_16: number
   unk_sdt_f1_17: number
-  constructor(props: Tracer2Params = {}) {
-    super(ActionType.Tracer2)
+  constructor(props: DynamicTracerParams = {}) {
+    super(ActionType.DynamicTracer)
     this.assign(props)
   }
 }
@@ -21094,7 +21144,7 @@ const DataActions = {
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.Unk800]: Unk800, Unk800,
-  [ActionType.Tracer2]: Tracer2, Tracer2,
+  [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.RichModel]: RichModel, RichModel,
   [ActionType.Unk10500]: Unk10500, Unk10500,
@@ -22451,7 +22501,7 @@ export {
   NodeWindAcceleration,
   ParticleWindAcceleration,
   Unk800,
-  Tracer2,
+  DynamicTracer,
   WaterInteraction,
   RichModel,
   Unk10500,
