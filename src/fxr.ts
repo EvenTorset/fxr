@@ -1260,11 +1260,11 @@ const ActionData: {
   },
   [ActionType.SFXReference]: {
     props: {
-      referenceID: { default: 0, paths: {}, field: FieldType.Integer },
+      sfx: { default: 0, paths: {}, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['referenceID']
+        fields1: ['sfx']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -3534,7 +3534,7 @@ function readNode(br: BinaryReader, game: Game): Node {
       break
     case NodeType.Proxy:
       if (effectCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
-        return new ProxyNode(actions[0].referenceID)
+        return new ProxyNode(actions[0].sfx)
       }
       break
     case NodeType.LevelOfDetail:
@@ -4335,6 +4335,11 @@ function separateComponents(value: VectorValue): ScalarValue[] {
 }
 
 const ActionDataConversion = {
+  [ActionType.SFXReference]: {
+    read(props: { sfx: number }, game: Game) {
+      return props.sfx
+    }
+  },
   [ActionType.PointLight]: {
     read(props: PointLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
@@ -5126,7 +5131,7 @@ class FXR {
     let unkBloodEnabler = false
     for (const node of this.root.walk()) {
       if (node instanceof ProxyNode) {
-        references.push(node.sfxID)
+        references.push(node.sfx)
       }
     }
     for (const prop of this.root.walkProperties()) {
@@ -5593,7 +5598,7 @@ abstract class Node {
    * modifiers and properties in the form of {@link PropertyValue}s in
    * {@link DataAction}s.
    */
-  *walkProperties() {
+  *walkProperties(): Generator<AnyProperty, void, undefined> {
     for (const action of this.walkActions()) {
       if (action instanceof Action) {
         yield* action.properties1
@@ -6086,18 +6091,18 @@ class RootNode extends Node {
 class ProxyNode extends Node {
 
   /**
-   * @param sfxID The ID of the SFX that this node should act as a proxy for.
+   * @param sfx The ID of the SFX that this node should act as a proxy for.
    */
-  constructor(public sfxID: number) { super(NodeType.Proxy) }
+  constructor(public sfx: number) { super(NodeType.Proxy) }
 
   getActions(game: Game): IAction[] {
-    return [ new SFXReference(this.sfxID) ]
+    return [ new SFXReference(this.sfx) ]
   }
 
   toJSON() {
     return {
       type: this.type,
-      sfxID: this.sfxID
+      sfxID: this.sfx
     }
   }
 
@@ -6244,7 +6249,7 @@ class SharedEmitterNode extends NodeWithEffects {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to SharedEmitterNode.')
     }
-    if (effectsOrEffectActions.every(e => e instanceof Action)) {
+    if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.SharedEmitter, [
         new SharedEmitterEffect(effectsOrEffectActions as Action[])
       ], nodes)
@@ -7923,14 +7928,14 @@ class SFXReference extends DataAction {
   /**
    * The ID of the referenced SFX.
    */
-  referenceID: number
+  sfx: number
 
   /**
-   * @param referenceID The ID of the referenced SFX.
+   * @param sfx The ID of the referenced SFX.
    */
-  constructor(referenceID: number) {
+  constructor(sfx: number) {
     super(ActionType.SFXReference)
-    this.assign({ referenceID })
+    this.assign({ sfx })
   }
 
 }
@@ -22255,30 +22260,28 @@ class Modifier {
  * 
  * The property value wil be multiplied by the values in this modifier.
  */
-class ExternalValueModifier extends Modifier {
+class ExternalValueModifier<T extends ValueType> extends Modifier {
 
   /**
    * @param extVal The ID of the external value to use.
    * @param loop Controls if the modifier property should loop or not.
-   * @param stops An array of objects with `position` and `value` properties
-   * representing the external value and the modifier value it maps to. For
-   * example, the value of {@link ExternalValue.DisplayBlood} is -1 when the
-   * "Display Blood" option is off, so the `position` for the modifier value
-   * should be -1 to change the property based on that.
+   * @param keyframes An array of keyframes with positions representing the
+   * external value and the keyframe value representing the modifier value it
+   * maps to.
    * @param type Controls what type of modifier to use. Defaults to
    * {@link ModifierType.ExternalValue1}.
    */
   constructor(
     extVal: ExternalValue,
     loop: boolean,
-    stops: { position: number, value: PropertyValue }[],
+    keyframes: IKeyframe<T>[],
     type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
-    const valueType = typeof stops[0].value === 'number' ? 0 : stops[0].value.length - 1
+    const valueType = typeof keyframes[0].value === 'number' ? 0 : keyframes[0].value.length - 1
     super(type, valueType, [
       new IntField(extVal)
     ], [
-      new LinearProperty(loop, stops)
+      new LinearProperty(loop, keyframes)
     ])
   }
 
@@ -22295,7 +22298,7 @@ class ExternalValueModifier extends Modifier {
  * 
  * The property value wil be multiplied by the values in this modifier.
  */
-class BloodVisibilityModifier extends ExternalValueModifier {
+class BloodVisibilityModifier<T extends ValueType> extends ExternalValueModifier<T> {
 
   declare properties: [SequenceProperty<any, any>]
 
@@ -22307,9 +22310,9 @@ class BloodVisibilityModifier extends ExternalValueModifier {
    * {@link ModifierType.ExternalValue1}.
    */
   constructor(
-    onValue: PropertyValue,
-    mildValue: PropertyValue,
-    offValue: PropertyValue,
+    onValue: ValueTypeMap[T],
+    mildValue: ValueTypeMap[T],
+    offValue: ValueTypeMap[T],
     type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
   ) {
     super(ExternalValue.DisplayBlood, false, [
@@ -22335,13 +22338,13 @@ class BloodVisibilityModifier extends ExternalValueModifier {
  * 
  * Only functional in Elden Ring.
  */
-class PrecipitationModifier extends ExternalValueModifier {
+class PrecipitationModifier<T extends ValueType> extends ExternalValueModifier<T> {
 
   /**
    * @param clear The value when it's not raining or snowing.
    * @param precip The value when it's raining or snowing.
    */
-  constructor(clear: PropertyValue, precip: PropertyValue) {
+  constructor(clear: ValueTypeMap[T], precip: ValueTypeMap[T]) {
     super(ExternalValue.Precipitation, false, [
       { position: 0, value: clear },
       { position: 1, value: precip },

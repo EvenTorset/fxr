@@ -35,8 +35,8 @@ fxr.root.nodes = [
       seconds, and it will pick a new type every time. It's shaped like a cube,
       with particles only emitting from the surface.
     */
-    new PeriodicEmitter(0.1, 10),
-    new BoxEmitterShape(false)
+    new PeriodicEmitter({ interval: 0.1, perInterval: 10 }),
+    new BoxEmitterShape({ emitInside: false })
   ], [
     new BasicNode([ // Child node 0 - red particles
       new ParticleAttributes({ duration: 1 }),

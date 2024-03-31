@@ -1,10 +1,10 @@
 type: 132
 name: SFXReference
-desc: >
+desc: |
   References another SFX by its ID.
 omitClass: true
 properties:
-  referenceID:
+  sfx:
     field: int
     default: 0
     desc: |
@@ -12,7 +12,7 @@ properties:
 games:
   DS3:
     fields1:
-      - referenceID
+      - sfx
   SDT: DS3
   ER: DS3
   AC6: DS3

@@ -10,7 +10,7 @@ import {
   ParticleAttributes,
   ParticleMovement,
   PeriodicEmitter,
-  Property,
+  RandomProperty,
 } from '@cccode/fxr'
 
 /*
@@ -32,8 +32,8 @@ const fxr = new FXR(402030)
   These are the two emitters we'll use:
 */
 const emitters = [
-  new PeriodicEmitter(0.05),
-  new EqualDistanceEmitter(0.1, 200)
+  new PeriodicEmitter({ interval: 0.05 }),
+  new EqualDistanceEmitter({ threshold: 0.1, maxConcurrent: 200 })
 ]
 
 /*
@@ -76,7 +76,7 @@ fxr.root.nodes = emitters.map(emitter => new BasicNode([
     mask: 10061,
     layer1: 26020,
     layer1SpeedV: 0.1,
-    layer1OffsetU: Property.random(0, 1),
+    layer1OffsetU: RandomProperty(0, 1),
     alphaThreshold: new LinearProperty(false, [
       new Keyframe(0, 255),
       new Keyframe(0.5, 0),
