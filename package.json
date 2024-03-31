@@ -21,7 +21,7 @@
     "watch:dist": "npx tsc --p tsconfig-esm.json --watch",
     "watch:src": "node build/watch.js",
     "watch": "npm-run-all --parallel watch:*",
-    "docs": "npm run build:yaml && npx typedoc --tsconfig tsconfig.json"
+    "docs": "npm run build:yaml && npx typedoc --tsconfig tsconfig.json && node build/docs.js"
   },
   "files": [
     "/dist"
