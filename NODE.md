@@ -8,6 +8,8 @@ Node.js is a program that lets you run JavaScript files locally. You can downloa
 
 This library has only been tested using version 21 of Node, so any version after that is recommended, but it should work fine on v20 and possibly older versions as well.
 
+When installing it, it will ask if you want to also install various tools for native modules (Python 2, VS Build Tools, Boxstarter, Chocolatey). If you don't know whether you should tick the checkbox or not: It depends on what you want to do with Node. This library does not require any of this, so feel free to leave it unticked if that's all you want to use it for. If you want to use it for other things, it might be a good idea to tick it just in case you'll need a package that requires it at some point.
+
 ## npm
 Node Package Manager (npm) is a separate program that is installed along with Node. It lets you easily install and manage dependencies for your project.
 
@@ -44,7 +46,7 @@ To test that you have done everything correctly, let's try to make a very simple
 Save this code in a file called `example.js` inside the project folder:
 ```js
 import fs from 'node:fs/promises'
-import { FXR, BasicNode, BillboardEx } from '@cccode/fxr'
+import { FXR, BasicNode, BillboardEx, Game } from '@cccode/fxr'
 
 const fxr = new FXR(300)
 
@@ -56,7 +58,7 @@ fxr.root.nodes = [
   ])
 ]
 
-await fs.writeFile('example.fxr', Buffer.from(fxr.toArrayBuffer()))
+await fs.writeFile('example.fxr', Buffer.from(fxr.toArrayBuffer(Game.EldenRing)))
 ```
 This creates a new FXR file with the ID 300 and sets up a single red square as the effect. It then uses the Node file system module to write the file to the folder as `example.fxr`.
 
@@ -128,7 +130,7 @@ If you get this warning when trying to run a JS file, you're running it as a Com
 ### "SyntaxError: Cannot use import statement outside a module"
 If you get this error when trying to run a JS file, you're running it as a CommonJS script instead of an ES module. To fix that, check out [the section about modules](#modules) above.
 
-### Tools for Native Modules / Python 2 / VS Build Tools / Boxstater / Chocolatey
+### Tools for Native Modules / Python 2 / VS Build Tools / Boxstarter / Chocolatey
 If you see a page in the Node installer mentioning this stuff and you don't know whether to tick the checkbox or not, it depends on what you are going to do with Node. If you are only going to use this library and nothing else, feel free to leave the checkbox unticked, the library doesn't require anything from it. If you plan to use other packages from NPM, it might be a good idea to tick it, since some of them might require it for compiling during installation.
 
 ### I have Node.js installed already, but I don't know what version it is

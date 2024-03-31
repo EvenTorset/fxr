@@ -1,46 +1,44 @@
 # FXR
-This is a JavaScript library for creating and editing FXR files for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6. It does not require any dependencies and works in both the browser and in Node.
+This is a JavaScript library for creating and editing FXR files (particle effects, lights, etc.) for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6. It does not require any dependencies, and works in both the browser and in Node.
 
-While it does support all of those games, its focus is on Elden Ring and some utility features may not work for the other games right now.
+It includes classes for most known structures in the file format that makes it relatively very easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in different ways: scaling, recoloring, converting between games, and more.
 
 ## Installation
-While the library does not have any dependencies, it *does* have some dev dependencies for compiling TypeScript and generating docs. To avoid installing those, include `--omit=dev` when running the installation command:
+The library is available on [npm](https://www.npmjs.com/package/@cccode/fxr), so you can use a package manager like npm, yarn or pnpm to install it.
+
+While the library does not have any dependencies, it *does* have some dev dependencies for compiling TypeScript and generating docs. To avoid installing those with npm, include `--omit=dev` when running the installation command:
 ```
 npm i @cccode/fxr --omit=dev
 ```
 
 If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](https://github.com/EvenTorset/fxr/blob/main/NODE.md).
 
-## WitchyBND
-While it has evolved quite a bit, this library started out as a JS port of [WitchyBND's C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/RSFXR.cs). Most of the code for reading and writing the format is based on that.
-
-## Unknowns & to-dos
-The FXR format is still being reverse-engineered, so there are a lot of unknown fields and properties everywhere, as well as some placeholder names (like Section10s) for things. This library does not hide anything that is still unknown, you are able to set any unknown value to whatever you want, allowing you to use it for your own research. If you discover something that is not documented by this library or the [ER FXR sheet](https://docs.google.com/spreadsheets/d/12hKQg5kBvOJ_M0Udoz5GqS_2RX-d8YtaBapwpSJ2Csg/edit#gid=1424830463), please make a comment on the sheet or a pull request to this repo.
-
-In addition to the unknowns, there are lots of known things that are not yet implemented in this library. The goal is to eventually have specialized subclasses for every action type, property function, and modifier type. That would make it much easier to work with FXR files. The actions that have specialized subclasses so far have been tested pretty thoroughly to make sure that everything is correct (in Elden Ring).
-
 ## Documentation
-Check out the auto-generated docs at https://fxr-docs.pages.dev/ to find more information about the specialized action classes and other things.
+Check out the auto-generated docs at https://fxr-docs.pages.dev/ to find more information about the specialized action classes and other things. Also check out the [example directory](https://github.com/EvenTorset/fxr/tree/main/examples) in the GitHub repo, it includes examples for creating new effects as well as editing existing effects in various ways.
 
 ## Editing FXR files
-To edit existing FXR files, all you need is an ArrayBuffer with the file's content. The example below is written for Node, but replacing how you get the ArrayBuffer and what you do with the output it should also work fine in the browser.
+To edit existing FXR files, all you need is an ArrayBuffer or typed array with the file's content. The example below is written for Node, but by replacing how you get the buffer and what you do with the output it should also work fine in the browser.
 ```js
 import fs from 'node:fs/promises'
-import { FXR } from '@cccode/fxr'
+import { FXR, Game } from '@cccode/fxr'
 
-// Get an ArrayBuffer of the file's content
-const { buffer } = await fs.readFile('f000450360.fxr')
+// Get an buffer of the original file's content
+const buffer = await fs.readFile('f000450360.fxr')
 
 // Parse file
-const fxr = FXR.read(buffer)
+const fxr = FXR.read(buffer, Game.EldenRing)
 
 // Make changes to the FXR, for example scaling it so it's half as big:
 fxr.root.scale(0.5)
 
-// Let's also recolor this effect. This function takes a function that remaps
-// colors passed to it. You can use any remapping method you like, but here is
-// one that works pretty well in most cases and only requires small tweaks
-// depending on the FXR it's used with and what your target color is.
+// Let's also recolor this effect. This is the color we want to change this to,
+// a red-ish orange.
+const targetColor = [1, 0.3, 0]
+
+// This function takes a function that remaps colors passed to it. You can use
+// any remapping method you like, but here is one that works pretty well in
+// most cases and only requires small tweaks depending on the FXR it's used
+// with and what your target color is.
 fxr.root.recolor(([r, g, b, a]) => {
   // Colors in FXRs are allowed to go above 1, and it usually just adds a bloom
   // effect to the particles. We need to scale it back down to the 0-1 range
@@ -50,20 +48,13 @@ fxr.root.recolor(([r, g, b, a]) => {
   g /= scale
   b /= scale
 
-  // Calculate saturation - It's better to use chroma from the Oklch space, but
-  // this is just an example, so using HSV "saturation" since it's simple.
+  // Calculate HSV value and saturation
   const min = Math.min(r, g, b)
   const max = Math.max(r, g, b)
   let s = max > 0 ? (max - min) / max : 0
 
-  // This FXR (450360) is a pretty pale purple, so double the saturation value
-  // here so we get some more color out of it. Must be capped at 1.
-  s = Math.min(s * 2, 1)
-
-  // The color we want to change this to, a red-ish orange.
-  const targetColor = [1, 0.3, 0]
-
-  // Linear interpolation between the HSV "value" (max) and the target color.
+  // Linear interpolation between the HSV "value" (max) and the target color
+  // based on the saturation of the original color.
   r = max * (1 - s) + targetColor[0] * s
   g = max * (1 - s) + targetColor[1] * s
   b = max * (1 - s) + targetColor[2] * s
@@ -77,8 +68,13 @@ fxr.root.recolor(([r, g, b, a]) => {
   return [r, g, b, a]
 })
 
+// Generate an ArrayBuffer of the modified file content. Note that you may
+// change the game to output this for to any of the four supported games, as
+// long as the game supports all of the features used in the effect.
+const output = fxr.toArrayBuffer(Game.EldenRing)
+
 // Write the modified file
-await fs.writeFile('f000450360_edit.fxr', Buffer.from(fxr.toArrayBuffer()))
+await fs.writeFile('f000450360_edit.fxr', Buffer.from(output))
 ```
 ## Creating new FXR files
 Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume
@@ -98,6 +94,7 @@ import {
   BlendMode,
   LinearProperty,
   Keyframe,
+  Game,
 } from '@cccode/fxr'
 
 // Let's make a replacement for the ghostflame torch effect in Elden Ring.
@@ -128,12 +125,11 @@ fxr.root.nodes = [
     // better for readability and they are a lot easier to create.
 
     // This is equivalent to the action created above:
-    new NodeTransform({
-      translateY: 0.5
-    }),
+    new NodeTransform({ translateY: 0.5 }),
 
-    new PeriodicEmitter(0.1, 10, -1), // Action 300, emitter
-    new CylinderEmitterShape(true, 0.2, 1, true), // Action 405, emitter shape
+
+    new PeriodicEmitter({ interval: 0.1, perInterval: 10 }), // Action 300
+    new CylinderEmitterShape({ radius: 0.2 }), // Action 405
     new ParticleAttributes({ duration: 1 }), // Action 129
     new BillboardEx({ // Action 603
       blendMode: BlendMode.Normal,
@@ -146,20 +142,23 @@ fxr.root.nodes = [
         new Keyframe(1,    [1, 0, 0, 1]),
       ]),
       color2: [1, 1, 1, 0.9],
-    }),
+    })
 
-    // All of the action slots here have defaults, so you don't need to fill
-    // every slot.
   ])
 ]
 
+// Generate an ArrayBuffer of the new effect's file content. Note that you may
+// change the game to output this for to any of the four supported games, as
+// long as the game supports all of the features used in the effect.
+const output = fxr.toArrayBuffer(Game.EldenRing)
+
 // Write the new file
-await fs.writeFile('f000402030.fxr', Buffer.from(fxr.toArrayBuffer()))
+await fs.writeFile('f000402030.fxr', Buffer.from(output))
 ```
 
 ## Thanks
-- ivi - WitchyBND, FXR research
-- The12thAvenger - Help with figuring out various unknowns
-- Rayan - Testing, feedback, FXR research
+- ivi - FXR research, and WitchyBND, whose [C# FXR class](https://github.com/ividyon/WitchyBND/blob/main/WitchyFormats/Formats/RSFXR.cs) formed the basis of this library's functions for reading and writing FXR files.
+- The12thAvenger - Help with figuring out various unknowns.
+- Rayan - Testing, feedback, FXR research.
 
 It's also worth mentioning everyone on [WitchyBND's contributors list](https://github.com/ividyon/WitchyBND?tab=readme-ov-file#contributors), especially anyone who has contributed to its FXR class.
