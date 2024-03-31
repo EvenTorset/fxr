@@ -1,0 +1,52 @@
+type: 300
+name: PeriodicEmitter
+desc: >
+  Emits particles periodically.
+properties:
+  interval:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: >
+      Time between emitting new particles in seconds.
+  perInterval:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: >
+      The number of particles to emit per interval. They all spawn at the same time per interval.
+  totalIntervals:
+    type: ScalarValue
+    default: -1
+    argument: EffectAge
+    desc: >
+      The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
+  maxConcurrent:
+    type: ScalarValue
+    field: int
+    default: -1
+    argument: EffectAge
+    desc: >
+      Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+  unk_ds3_f1_1:
+    field: int
+    default: 1
+games:
+  DS3:
+    fields1:
+      - maxConcurrent
+      - unk_ds3_f1_1
+    properties1:
+      - interval
+      - perInterval
+      - totalIntervals
+  SDT:
+    fields1:
+      - unk_ds3_f1_1
+    properties1:
+      - interval
+      - perInterval
+      - totalIntervals
+      - maxConcurrent
+  ER: SDT
+  AC6: SDT

@@ -1,0 +1,44 @@
+type: 405
+name: CylinderEmitterShape
+desc: |
+  Makes the emitter cylindrical.
+properties:
+  direction:
+    type: InitialDirection
+    field: int
+    default: InitialDirection.Emitter
+    desc: |
+      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+  emitInside:
+    field: bool
+    default: true
+    desc: |
+      If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
+  yAxis:
+    field: bool
+    default: true
+    desc: |
+      If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
+  radius:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      The radius of the cylinder.
+  height:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      The height of the cylinder.
+games:
+  SDT:
+    fields1:
+      - direction
+      - emitInside
+      - yAxis
+    properties1:
+      - radius
+      - height
+  ER: SDT
+  AC6: SDT

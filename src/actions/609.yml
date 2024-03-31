@@ -1,0 +1,379 @@
+type: 609
+name: PointLight
+desc: |
+  Point light source.
+properties:
+  diffuseColor:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    argument: EffectAge
+    desc: |
+      Controls the diffuse color of the light.
+
+      If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+    see:
+      - specularColor
+  specularColor:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    argument: EffectAge
+    desc: |
+      Controls the specular color of the light.
+
+      If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+  radius:
+    type: ScalarValue
+    default: 10
+    argument: EffectAge
+    desc: |
+      The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
+  diffuseMultiplier:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
+
+      If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+  specularMultiplier:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      A scalar multiplier for the {@link specularColor specular color}.
+
+      If {@link separateSpecular} is disabled, this property is ignored.
+  jitterAndFlicker:
+    field: bool
+    default: false
+    desc: |
+      Toggles the jitter and flicker animations for the light.
+    see:
+      - jitterAcceleration
+      - jitterX
+      - jitterY
+      - jitterZ
+      - flickerIntervalMin
+      - flickerIntervalMax
+      - flickerBrightness
+  jitterAcceleration:
+    field: float
+    default: 1
+    desc: |
+      Controls the acceleration of the jittering.
+    see:
+      - jitterAndFlicker
+      - jitterX
+      - jitterY
+      - jitterZ
+  jitterX:
+    field: float
+    desc: |
+      Controls how much the light should move around randomly on the X-axis.
+    see:
+      - jitterAndFlicker
+      - jitterAcceleration
+      - jitterY
+      - jitterZ
+  jitterY:
+    field: float
+    desc: |
+      Controls how much the light should move around randomly on the Y-axis.
+    see:
+      - jitterAndFlicker
+      - jitterAcceleration
+      - jitterX
+      - jitterZ
+  jitterZ:
+    field: float
+    desc: |
+      Controls how much the light should move around randomly on the Z-axis.
+    see:
+      - jitterAndFlicker
+      - jitterAcceleration
+      - jitterX
+      - jitterY
+  flickerIntervalMin:
+    field: float
+    desc: |
+      Controls the minimum interval for flickering.
+    see:
+      - jitterAndFlicker
+      - flickerIntervalMax
+      - flickerBrightness
+  flickerIntervalMax:
+    field: float
+    default: 1
+    desc: |
+      Controls the maximum interval for flickering.
+    see:
+      - jitterAndFlicker
+      - flickerIntervalMin
+      - flickerBrightness
+  flickerBrightness:
+    field: float
+    default: 0.5
+    desc: |
+      Brightness multiplier for the light when it flickers.
+    see:
+      - jitterAndFlicker
+      - flickerIntervalMin
+      - flickerIntervalMax
+  shadows:
+    field: bool
+    default: false
+    desc: |
+      Controls if the light should have shadows or not.
+
+      Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+  separateSpecular:
+    field: bool
+    default: false
+    desc: |
+      When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+    see:
+      - diffuseColor
+      - specularColor
+      - diffuseMultiplier
+      - specularMultiplier
+  fadeOutTime:
+    field: int
+    default: 0
+    desc: |
+      The number of seconds the light takes to fade to nothing after being destroyed.
+
+      Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+  shadowDarkness:
+    field: float
+    default: 1
+    desc: |
+      Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+  volumeDensity:
+    field: float
+    default: 0
+    desc: |
+      Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+    see:
+      - phaseFunction
+      - asymmetryParam
+  phaseFunction:
+    field: bool
+    default: true
+    desc: |
+      Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+  asymmetryParam:
+    field: float
+    default: 0.75
+    desc: |
+      Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
+
+      - At 0, the light is scattered equally in every direction.
+      - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
+      - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
+      - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+  falloffExponent:
+    field: float
+    default: 1
+    desc: |
+      Controls the falloff exponent of the light.
+
+      Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+  unk_ds3_f1_0:
+    field: int
+  unk_ds3_f1_1:
+    field: float
+  unk_ds3_f2_0:
+    field: int
+  unk_ds3_f2_3:
+    field: float
+  unk_ds3_f2_12:
+    field: float
+    default: 1
+    desc: |
+      Unknown. Only used in Dark Souls 3.
+  unk_ds3_f2_15:
+    field: bool
+    default: false
+  unk_ds3_f2_16:
+    field: int
+    default: 2
+  unk_ds3_f2_17:
+    field: bool
+    default: true
+  unk_ds3_f2_18:
+    field: float
+  unk_ds3_f2_19:
+    field: float
+  unk_ds3_f2_20:
+    field: float
+  unk_ds3_f2_21:
+    field: int
+  unk_ds3_f2_22:
+    field: int
+    default: 100
+  unk_ds3_f2_23:
+    field: int
+  unk_ds3_f2_24:
+    field: int
+  unk_ds3_p1_3:
+    type: ScalarValue
+  unk_ds3_p1_4:
+    type: ScalarValue
+  unk_ds3_p1_5:
+    type: ScalarValue
+  unk_ds3_p1_6:
+    type: ScalarValue
+  unk_ds3_p1_7:
+    type: ScalarValue
+    default: 10
+  unk_ds3_p1_8:
+    type: ScalarValue
+    default: 10
+  unk_ds3_p1_9:
+    type: ScalarValue
+    default: 10
+  unk_ds3_p2_0:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p2_1:
+    type: ScalarValue
+    default: 1
+  unk_sdt_f2_25:
+    field: float
+  unk_sdt_p2_2:
+    type: ScalarValue
+    default: 1
+  unk_er_f2_29:
+    field: int
+    default: 1
+  unk_er_f2_30:
+    field: float
+    default: 1
+  unk_er_f2_31:
+    field: int
+    default: 1
+  unk_er_f2_32:
+    field: int
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+    fields2:
+      - unk_ds3_f2_0
+      - jitterAndFlicker
+      - jitterAcceleration
+      - unk_ds3_f2_3
+      - jitterX
+      - jitterY
+      - jitterZ
+      - flickerIntervalMin
+      - flickerIntervalMax
+      - flickerBrightness
+      - shadows
+      - separateSpecular
+      - unk_ds3_f2_12
+      - fadeOutTime
+      - shadowDarkness
+      - unk_ds3_f2_15
+      - unk_ds3_f2_16
+      - unk_ds3_f2_17
+      - unk_ds3_f2_18
+      - unk_ds3_f2_19
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+    properties1:
+      - diffuseColor
+      - specularColor
+      - radius
+      - unk_ds3_p1_3
+      - unk_ds3_p1_4
+      - unk_ds3_p1_5
+      - unk_ds3_p1_6
+      - unk_ds3_p1_7
+      - unk_ds3_p1_8
+      - unk_ds3_p1_9
+    properties2:
+      - unk_ds3_p2_0
+      - unk_ds3_p2_1
+  SDT:
+    fields1: DS3
+    fields2:
+      - unk_ds3_f2_0
+      - jitterAndFlicker
+      - jitterAcceleration
+      - unk_ds3_f2_3
+      - jitterX
+      - jitterY
+      - jitterZ
+      - flickerIntervalMin
+      - flickerIntervalMax
+      - flickerBrightness
+      - shadows
+      - separateSpecular
+      - fadeOutTime
+      - shadowDarkness
+      - unk_ds3_f2_15
+      - unk_ds3_f2_16
+      - unk_ds3_f2_17
+      - unk_ds3_f2_18
+      - unk_ds3_f2_19
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - volumeDensity
+      - unk_sdt_f2_25
+      - phaseFunction
+      - asymmetryParam
+      - falloffExponent
+    properties1: DS3
+    properties2:
+      - unk_ds3_p2_0
+      - unk_ds3_p2_1
+      - unk_sdt_p2_2
+      - diffuseMultiplier
+      - specularMultiplier
+  ER:
+    fields1: DS3
+    fields2:
+      - unk_ds3_f2_0
+      - jitterAndFlicker
+      - jitterAcceleration
+      - unk_ds3_f2_3
+      - jitterX
+      - jitterY
+      - jitterZ
+      - flickerIntervalMin
+      - flickerIntervalMax
+      - flickerBrightness
+      - shadows
+      - separateSpecular
+      - fadeOutTime
+      - shadowDarkness
+      - unk_ds3_f2_15
+      - unk_ds3_f2_16
+      - unk_ds3_f2_17
+      - unk_ds3_f2_18
+      - unk_ds3_f2_19
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - volumeDensity
+      - unk_sdt_f2_25
+      - phaseFunction
+      - asymmetryParam
+      - falloffExponent
+      - unk_er_f2_29
+      - unk_er_f2_30
+      - unk_er_f2_31
+      - unk_er_f2_32
+    properties1: DS3
+    properties2: SDT
+  AC6: ER

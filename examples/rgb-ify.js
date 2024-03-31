@@ -1,5 +1,28 @@
 import fs from 'node:fs/promises'
-import { ActionType, EffectType, ExternalValue, ExternalValueModifier, FXR } from '@cccode/fxr'
+import {
+  ActionType,
+  BasicEffect,
+  BillboardEx,
+  ConstantProperty,
+  Distortion,
+  DynamicTracer,
+  ExternalValue,
+  ExternalValueModifier,
+  FXR,
+  Game,
+  Keyframe,
+  Line,
+  Model,
+  MultiTextureBillboardEx,
+  PointLight,
+  PointSprite,
+  Property,
+  QuadLine,
+  RadialBlur,
+  RichModel,
+  SpotLight,
+  Tracer
+} from '@cccode/fxr'
 
 // Input folder to grab the original files from
 const inputDir = 'sfx/sfxbnd_commoneffects-ffxbnd-dcx/effect'
@@ -30,17 +53,20 @@ const ids = [
   output color should be various shades of the colors in the modifier.
 */
 const rainbowDuration = 4
-const partDuration = rainbowDuration / 6
+const partDuration = rainbowDuration / 360
 function procProp(list, idx) {
+  if (!(list[idx] instanceof Property)) {
+    list[idx] = new ConstantProperty(...list[idx])
+  }
   list[idx].modifiers.push(
     new ExternalValueModifier(ExternalValue.TimeOfDay, true, [
-      { position: 0,                value: [1, 0, 0, 1] },
-      { position: partDuration,     value: [1, 0, 1, 1] },
-      { position: partDuration * 2, value: [0, 0, 1, 1] },
-      { position: partDuration * 3, value: [0, 1, 1, 1] },
-      { position: partDuration * 4, value: [0, 1, 0, 1] },
-      { position: partDuration * 5, value: [1, 1, 0, 1] },
-      { position: partDuration * 6, value: [1, 0, 0, 1] },
+      new Keyframe(0,                [1, 0, 0, 1]),
+      new Keyframe(partDuration,     [1, 0, 1, 1]),
+      new Keyframe(partDuration * 2, [0, 0, 1, 1]),
+      new Keyframe(partDuration * 3, [0, 1, 1, 1]),
+      new Keyframe(partDuration * 4, [0, 1, 0, 1]),
+      new Keyframe(partDuration * 5, [1, 1, 0, 1]),
+      new Keyframe(partDuration * 6, [1, 0, 0, 1]),
     ])
   )
 }
@@ -55,9 +81,10 @@ while (ids.length) {
   // Remove the first ID from the list and get the file name for that ID
   const id = ids.shift()
   const fileName = `f${id.toString().padStart(9, '0')}.fxr`
-
-  // Read the original FXR file
-  const fxr = FXR.read((await fs.readFile(`${inputDir}/${fileName}`)).buffer)
+  
+  // Read the original FXR file. These effects are from Elden Ring, so make
+  // sure to let it know to parse it as an ER FXR.
+  const fxr = FXR.read(await fs.readFile(`${inputDir}/${fileName}`), Game.EldenRing)
 
   // First make the effect grayscale by setting the RGB values to the
   // percieved brightness of the original color
@@ -70,46 +97,42 @@ while (ids.length) {
     Next, add the rainbow modifier to one of the color multipliers in the
     appearance action of all effects in the FXR.
 
-    Adding it to Action 131 (ParticleMultiplier) wouldn't work in all cases,
+    Adding it to Action 131 (ParticleModifier) wouldn't work in all cases,
     because not all appearance types are particles.
   */
   for (const effect of fxr.root.walkEffects()) {
-    if (effect.type !== EffectType.Basic) continue
+    if (!(effect instanceof BasicEffect)) continue
 
-    const slot9 = effect.actions[9]
-    switch (slot9.type) {
-      case ActionType.PointSprite:
-        case ActionType.QuadLine:
-        procProp(slot9.properties1, 3)
-        break
-      case ActionType.Line:
+    const action = effect.appearance
+    if (
+      action instanceof PointSprite ||
+      action instanceof Line ||
+      action instanceof QuadLine ||
+      action instanceof BillboardEx ||
+      action instanceof MultiTextureBillboardEx ||
+      action instanceof Model ||
+      action instanceof RichModel ||
+      action instanceof Tracer ||
+      action instanceof DynamicTracer
+    ) {
+      procProp(action, 'color1')
+    } else if (
+      action instanceof PointLight ||
+      action instanceof SpotLight
+    ) {
+      procProp(action, 'diffuseColor')
+    } else if (
+      action instanceof Distortion ||
+      action instanceof RadialBlur
+    ) {
+      procProp(action, 'color')
+    } else switch (action.type) {
       case ActionType.Unk10014_LensFlare:
-        procProp(slot9.properties1, 2)
-        break
-      case ActionType.BillboardEx:
-      case ActionType.Distortion:
-      case ActionType.RadialBlur:
-        procProp(slot9.properties1, 7)
-        break
-      case ActionType.MultiTextureBillboardEx:
-        procProp(slot9.properties1, 15)
-        break
-      case ActionType.Model:
-        procProp(slot9.properties1, 14)
-        break
-      case ActionType.Tracer:
-      case ActionType.Unk10012_Tracer:
-        procProp(slot9.properties1, 6)
-        break
-      case ActionType.PointLight:
-      case ActionType.SpotLight:
-        procProp(slot9.properties1, 0) // Diffuse
-        procProp(slot9.properties1, 1) // Specular
+        procProp(action.properties1, 2)
         break
       case ActionType.Unk10000_StandardParticle:
       case ActionType.Unk10001_StandardCorrectParticle:
-      case ActionType.Unk10015_RichModel:
-        procProp(slot9.properties1, 13)
+        procProp(action.properties1, 13)
         break
     }
   }
@@ -117,8 +140,8 @@ while (ids.length) {
   // Update reference lists, since we used an external value to do this
   fxr.updateReferences()
 
-  // Write the modified file
-  await fs.writeFile(`${outputDir}/${fileName}`, Buffer.from(fxr.toArrayBuffer()))
+  // Write the modified file back to ER's FXR format
+  await fs.writeFile(`${outputDir}/${fileName}`, Buffer.from(fxr.toArrayBuffer(Game.EldenRing)))
 
   // Add this ID to the "done" list so it won't be processed again if something
   // else references it

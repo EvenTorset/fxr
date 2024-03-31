@@ -1,0 +1,21 @@
+type: 46
+name: NodeAttachToCamera
+desc: |
+  Attaches the node to the camera.
+properties:
+  followRotation:
+    field: bool
+    default: true
+    desc: |
+      Disable this to stop the node from following the rotation of the camera.
+  unk_ds3_f1_1:
+    field: int
+    default: 1
+games:
+  DS3:
+    fields1:
+      - followRotation
+      - unk_ds3_f1_1
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

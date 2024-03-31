@@ -1,0 +1,49 @@
+type: 133
+name: LevelOfDetailThresholds
+desc: |
+  Used in the {@link EffectType.LevelOfDetail level of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelOfDetail level of detail node}.
+properties:
+  duration:
+    type: ScalarValue
+    default: -1
+    argument: Constant0
+    desc: |
+      The node duration in seconds. Can be set to -1 to make the node last forever.
+  threshold0:
+    field: int
+    default: 1000
+    desc: |
+      Distance threshold for child node 0.
+  threshold1:
+    field: int
+    default: 1000
+    desc: |
+      Distance threshold for child node 1.
+  threshold2:
+    field: int
+    default: 1000
+    desc: |
+      Distance threshold for child node 2.
+  threshold3:
+    field: int
+    default: 1000
+    desc: |
+      Distance threshold for child node 3.
+  threshold4:
+    field: int
+    default: 1000
+    desc: |
+      Distance threshold for child node 4.
+games:
+  DS3:
+    fields1:
+      - threshold0
+      - threshold1
+      - threshold2
+      - threshold3
+      - threshold4
+    properties1:
+      - duration
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

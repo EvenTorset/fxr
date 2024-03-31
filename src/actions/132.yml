@@ -1,0 +1,18 @@
+type: 132
+name: SFXReference
+desc: |
+  References another SFX by its ID.
+omitClass: true
+properties:
+  sfx:
+    field: int
+    default: 0
+    desc: |
+      The ID of the referenced SFX.
+games:
+  DS3:
+    fields1:
+      - sfx
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

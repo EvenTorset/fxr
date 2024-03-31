@@ -1,0 +1,39 @@
+type: 301
+name: EqualDistanceEmitter
+desc: >
+  Emits particles once it has moved a certain distance from where it last emitted particles.
+properties:
+  threshold:
+    type: ScalarValue
+    default: 0.1
+    argument: EffectAge
+    desc: >
+      How much the emitter must move to trigger emission.
+  maxConcurrent:
+    type: ScalarValue
+    default: -1
+    argument: EffectAge
+    desc: >
+      Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+  unk_ds3_f1_0:
+    field: int
+    default: 1
+  unk_ds3_f1_1:
+    field: int
+    default: 0
+  unk_ds3_p1_1:
+    type: ScalarValue
+    default: -1
+    argument: EffectAge
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+    properties1:
+      - threshold
+      - unk_ds3_p1_1
+      - maxConcurrent
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

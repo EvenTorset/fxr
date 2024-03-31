@@ -4,8 +4,5 @@
     "declaration": true,
     "sourceMap": true
   },
-  "typedocOptions": {
-    "out": "docs",
-    "entryPoints": ["fxr.ts"]
-  }
+  "files": ["dist/fxr.ts"]
 }

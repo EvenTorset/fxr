@@ -1,0 +1,37 @@
+type: 401
+name: DiskEmitterShape
+desc: |
+  Makes the emitter disk-shaped.
+properties:
+  direction:
+    type: InitialDirection
+    field: int
+    default: InitialDirection.Emitter
+    desc: |
+      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+  radius:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Radius of the disk.
+  distribution:
+    type: ScalarValue
+    default: 0
+    argument: EffectAge
+    desc: |
+      Controls how the random emission points are distributed within the disk.
+      - At 0, particles are equally likely to emit from anywhere inside the disk.
+      - At 1, particles have a 100% chance of being emitted from the center point.
+      - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
+      - Values between these smoothly blend between them.
+games:
+  DS3:
+    fields1:
+      - direction
+    properties1:
+      - radius
+      - distribution
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

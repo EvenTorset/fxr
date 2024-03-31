@@ -2,7 +2,11 @@
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ES2022",
-    "outDir": "js"
+    "module": "ES2022"
+  },
+  "files": ["src/fxr.ts"],
+  "typedocOptions": {
+    "out": "docs",
+    "entryPoints": ["src/fxr.ts"]
   }
 }

@@ -6,6 +6,7 @@ import {
   CylinderEmitterShape,
   ExternalValue,
   FXR,
+  InitialDirection,
   Keyframe,
   LinearProperty,
   MultiTextureBillboardEx,
@@ -15,8 +16,9 @@ import {
   ParticleMovement,
   ParticleWindAcceleration,
   PeriodicEmitter,
+  PointEmitterShape,
   PointLight,
-  Property,
+  RandomProperty,
   State,
   Tracer,
 } from '@cccode/fxr'
@@ -52,13 +54,16 @@ function crossguardSide(position) {
       translateY: 0.54,
       translateX: 0.135 * position
     }),
+    new PointEmitterShape({ direction: InitialDirection.LocalDown }),
     new MultiTextureBillboardEx({
-      orientation: OrientationMode.ParentYaw,
+      orientation: OrientationMode.LocalYaw,
       blendMode: BlendMode.Source,
       height: 0.0225,
       width: 0.15,
       rgbMultiplier: 7.5,
-      bloomColor: color,
+      bloomRed: color[0],
+      bloomGreen: color[1],
+      bloomBlue: color[2],
       bloomStrength: bloomMultiplier * 0.5,
       octagonal: true,
       depthBlend: false
@@ -77,13 +82,15 @@ function bladeCap(position) {
     }),
     new BillboardEx({
       texture: 10011,
-      orientation: OrientationMode.ParentNegativeZ,
+      orientation: OrientationMode.LocalSouth,
       blendMode: BlendMode.Add,
       width: 0.0425,
       uniformScale: true,
       rgbMultiplier: 1,
       alphaMultiplier: 100,
-      bloomColor: color,
+      bloomRed: color[0],
+      bloomGreen: color[1],
+      bloomBlue: color[2],
       bloomStrength: bloomMultiplier * 0.5,
       depthOffset: 0.04,
     })
@@ -100,16 +107,14 @@ fxr.root.nodes = [
   ], [
     // Steam during rain/snow
     new BasicNode([
-      new PeriodicEmitter(0.2, 1),
-      new CylinderEmitterShape(true, 0.1),
+      new PeriodicEmitter({ interval: 0.2 }),
+      new CylinderEmitterShape({ radius: 0.1 }),
       new ParticleAttributes({
         duration: 4,
         attachment: AttachMode.None
       }),
-      new ParticleMovement({
-        gravity: -0.1,
-      }),
-      new ParticleWindAcceleration(0.02),
+      new ParticleMovement({ gravity: -0.1 }),
+      new ParticleWindAcceleration({ acceleration: 0.02 }),
       new MultiTextureBillboardEx({
         mask: 31261,
         columns: 8,
@@ -122,7 +127,7 @@ fxr.root.nodes = [
           new Keyframe(4, [1, 1, 1, 0]),
         ]),
         frameIndex: LinearProperty.basic(true, 4, 0, 32),
-        frameIndexOffset: Property.random(0, 32),
+        frameIndexOffset: RandomProperty(0, 32),
         rgbMultiplier: 5,
         layer1: 34020,
         layer1SpeedV: 0.5,
@@ -148,12 +153,15 @@ fxr.root.nodes = [
 
     // Blade
     new BasicNode([
+      new PointEmitterShape({ direction: InitialDirection.LocalDown }),
       new BillboardEx({
-        orientation: OrientationMode.ParentYaw,
+        orientation: OrientationMode.LocalYaw,
         blendMode: BlendMode.Add,
         height: 0.03,
         rgbMultiplier: 10,
-        bloomColor: color,
+        bloomRed: color[0],
+        bloomGreen: color[1],
+        bloomBlue: color[2],
         bloomStrength: bloomMultiplier * 0.5,
       })
     ]).mapStates(0, 0),
@@ -162,20 +170,26 @@ fxr.root.nodes = [
 
     // Electric arcs
     new BasicNode([
-      new PeriodicEmitter(0.1, 2),
+      new PeriodicEmitter({ interval: 0.1, perInterval: 2 }),
+      new CylinderEmitterShape({
+        radius: 0.01,
+        height: 0.5,
+        direction: InitialDirection.LocalDown
+      }),
       new ParticleAttributes({ duration: 0.5 }),
-      new CylinderEmitterShape(true, 0.01, 0.5),
       new BillboardEx({
-        orientation: OrientationMode.ParentYaw,
+        orientation: OrientationMode.LocalYaw,
         blendMode: BlendMode.Add,
         texture: 33020,
         totalFrames: 16,
         frameIndex: LinearProperty.basic(true, 0.5, 0, 16),
-        frameIndexOffset: Property.random(0, 15),
+        frameIndexOffset: RandomProperty(0, 15),
         height: 0.08,
-        width: Property.random(0.2, 0.5),
+        width: RandomProperty(0.2, 0.5),
         rgbMultiplier: 7.5,
-        bloomColor: color,
+        bloomRed: color[0],
+        bloomGreen: color[1],
+        bloomBlue: color[2],
         bloomStrength: bloomMultiplier * 0.5,
         alphaThreshold: new LinearProperty(false, [
           new Keyframe(0, 255),
@@ -187,23 +201,23 @@ fxr.root.nodes = [
 
     // Trail
     new BasicNode([
-      new NodeTransform({
-        rotateX: 90
-      }),
+      new NodeTransform({ rotateX: 90 }),
       new Tracer({
         blendMode: BlendMode.Add,
-        length: 0.5,
+        width: 0.5,
         segmentDuration: 0.06,
         rgbMultiplier: 7.5,
-        bloomColor: color,
+        bloomRed: color[0],
+        bloomGreen: color[1],
+        bloomBlue: color[2],
         bloomStrength: bloomMultiplier * 1,
       }),
     ]).mapStates(0, 0),
 
     // Falling sparks
     new BasicNode([
-      new PeriodicEmitter(0.1, 1),
-      new CylinderEmitterShape(true, 0.01),
+      new PeriodicEmitter({ interval: 0.1 }),
+      new CylinderEmitterShape({ radius: 0.01 }),
       new ParticleAttributes({
         duration: 2,
         attachment: AttachMode.None
@@ -212,16 +226,18 @@ fxr.root.nodes = [
         gravity: 2,
         speed: 0.3,
       }),
-      new ParticleWindAcceleration(0.02),
+      new ParticleWindAcceleration({ acceleration: 0.02 }),
       new BillboardEx({
         texture: 10020,
         blendMode: BlendMode.Add,
-        width: Property.random(0.008, 0.04),
+        width: RandomProperty(0.008, 0.04),
         uniformScale: true,
         alphaThreshold: LinearProperty.basic(false, 2, 0, 255),
         alphaMultiplier: 2,
         rgbMultiplier: 20,
-        bloomColor: color,
+        bloomRed: color[0],
+        bloomGreen: color[1],
+        bloomBlue: color[2],
         bloomStrength: bloomMultiplier * 0.5,
       })
     ]).mapStates(0, 0),

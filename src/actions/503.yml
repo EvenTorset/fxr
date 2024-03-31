@@ -1,0 +1,41 @@
+type: 503
+name: RectangularParticleSpread
+desc: |
+  Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+properties:
+  angleX:
+    type: ScalarValue
+    default: 30
+    argument: EffectAge
+    desc: |
+      The maximum change in direction in degrees, one of the angles of the elliptical cone.
+    see:
+      - angleY
+  angleY:
+    type: ScalarValue
+    default: 30
+    argument: EffectAge
+    desc: |
+      The maximum change in direction in degrees, one of the angles of the elliptical cone.
+    see:
+      - angleX
+  distribution:
+    type: ScalarValue
+    default: 0
+    argument: EffectAge
+    desc: |
+      Controls the distribution of the random directions that can be chosen.
+      - At 0, all directions within the cone have an equal chance of being chosen.
+      - At 1, the default direction is guaranteed to be chosen.
+      - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
+      - Values between these values smoothly blend between them.
+      - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+games:
+  DS3:
+    properties1:
+      - angleX
+      - angleY
+      - distribution
+  SDT: DS3
+  ER: DS3
+  AC6: DS3
