@@ -1955,7 +1955,7 @@ const ActionData: {
       unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
       unk_er_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
       unk_er_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_44: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_44: { default: 0, paths: {}, field: FieldType.Float },
       unk_er_f2_45: { default: 0, paths: {}, field: FieldType.Integer },
       unk_ac6_f2_46: { default: 0, paths: {}, field: FieldType.Integer },
     },
@@ -2282,15 +2282,15 @@ const ActionData: {
       unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
       unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
       unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Float },
       unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
       unk_sdt_f2_35: { default: -1, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
       unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Float },
       unk_er_f1_12: { default: 1, paths: {}, field: FieldType.Integer },
       unk_er_f1_13: { default: 1, paths: {}, field: FieldType.Integer },
       unk_er_p2_7: { default: 1, paths: {} },
@@ -13103,7 +13103,7 @@ export interface MultiTextureBillboardExParams {
    */
   unk_er_f2_43?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -16250,7 +16250,7 @@ export interface DistortionParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -16274,7 +16274,7 @@ export interface DistortionParams {
    */
   unk_sdt_f2_33?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -16298,7 +16298,7 @@ export interface DistortionParams {
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */

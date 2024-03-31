@@ -532,7 +532,7 @@ properties:
   unk_er_f2_43:
     field: int
   unk_er_f2_44:
-    field: int
+    field: float
   unk_er_f2_45:
     field: int
   unk_ac6_f2_46:
