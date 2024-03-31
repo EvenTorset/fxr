@@ -5152,6 +5152,89 @@ class FXR {
     return this
   }
 
+  /**
+   * Lists all resources (textures, models, animations, sounds) used in the
+   * FXR. Useful for finding out what resources must exist for the effect to
+   * work correctly, which is often needed when converting from one game to
+   * another.
+   */
+  getResources() {
+    const list = []
+    for (const effect of this.root.walkEffects()) if (effect instanceof BasicEffect) {
+      if (effect.audio instanceof PlaySound) {
+        list.push(effect.audio.sound)
+      }
+      const action = effect.appearance
+      if (action instanceof PointSprite) {
+        list.push(action.texture)
+      } else if (action instanceof BillboardEx) {
+        list.push(action.texture)
+        list.push(action.normalMap)
+        list.push(action.specular)
+      } else if (action instanceof MultiTextureBillboardEx) {
+        list.push(action.mask)
+        list.push(action.layer1)
+        list.push(action.layer2)
+        list.push(action.specular)
+      } else if (action instanceof Model || action instanceof RichModel) {
+        list.push(action.model)
+        list.push(action.animation)
+      } else if (action instanceof Tracer || action instanceof Tracer2) {
+        list.push(action.texture)
+        list.push(action.normalMap)
+      } else if (action instanceof Distortion) {
+        list.push(action.texture)
+        list.push(action.normalMap)
+        list.push(action.mask)
+      } else if (action instanceof RadialBlur) {
+        list.push(action.mask)
+      } else if (action instanceof Action) switch (action.type) {
+        case ActionType.Unk10000_StandardParticle:
+        case ActionType.Unk10001_StandardCorrectParticle:
+          list.push(action.fields1[1].value)
+          list.push(action.fields1[2].value)
+          list.push(action.fields1[3].value)
+          break
+        case ActionType.Unk10014_LensFlare:
+          list.push(action.fields1[0].value)
+          list.push(action.fields1[1].value)
+          break
+      }
+    }
+    return uniqueArray(list.map(e => {
+      if (e instanceof Property) {
+        const obj = e.toJSON()
+        if (typeof obj === 'number') {
+          return obj
+        } else {
+          return JSON.stringify(obj)
+        }
+      } else {
+        return e
+      }
+    }).filter(e => e !== 0)).map(e => {
+      if (typeof e === 'string') {
+        return Property.fromJSON(JSON.parse(e))
+      } else {
+        return e
+      }
+    }).sort((a, b) => {
+      if (a instanceof Property) {
+        if (b instanceof Property) {
+          return a.valueAt(0) - b.valueAt(0)
+        } else {
+          return a.valueAt(0) - b
+        }
+      } else {
+        if (b instanceof Property) {
+          return a - b.valueAt(0)
+        } else {
+          return a - b
+        }
+      }
+    })
+  }
+
 }
 
 class State {
