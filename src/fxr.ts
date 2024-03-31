@@ -1077,7 +1077,7 @@ enum InitialDirection {
    * | {@link ActionType.DiskEmitterShape Disk} | Same as {@link LocalNorth}. |
    * | {@link ActionType.RectangleEmitterShape Rectangle} | Same as {@link LocalNorth}. |
    * | {@link ActionType.SphereEmitterShape Sphere} | The direction cannot be changed for this emitter shape. |
-   * | {@link ActionType.BoxEmitterShape Box} | If {@link BoxEmitterShape.volume volume} is true, it picks a direction parallel to a random local axis. If volume is false, the direction will be out from the box, perpendicular to the side where the particle was emitted. |
+   * | {@link ActionType.BoxEmitterShape Box} | If {@link BoxEmitterShape.emitInside emitInside} is true, it picks a direction parallel to a random local axis. If it is false, the direction will be out from the box, perpendicular to the side where the particle was emitted. |
    * | {@link ActionType.CylinderEmitterShape Cylinder} | Out from the cylinder's axis. |
    */
   Emitter = 0,
