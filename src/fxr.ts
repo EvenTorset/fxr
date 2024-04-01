@@ -2424,9 +2424,9 @@ const ActionData: {
       unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
       unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Float },
       unk_ds3_f2_12: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_15: { default: false, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_15: { default: 0, paths: {}, field: FieldType.Integer },
       unk_ds3_f2_16: { default: 2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_17: { default: true, paths: {}, field: FieldType.Boolean },
+      unk_ds3_f2_17: { default: 1, paths: {}, field: FieldType.Integer },
       unk_ds3_f2_18: { default: 0, paths: {}, field: FieldType.Float },
       unk_ds3_f2_19: { default: 0, paths: {}, field: FieldType.Float },
       unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Float },
@@ -3358,7 +3358,7 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
     })
   )
   if (type in ActionDataConversion && 'read' in ActionDataConversion[type]) {
-    params = ActionDataConversion[type].read(params)
+    params = ActionDataConversion[type].read(params, game)
   }
   return new DataActions[type](params)
 }
@@ -4104,6 +4104,16 @@ function modMultPropVal(mod: Modifier, v: PropertyValue) {
  * @returns 
  */
 function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
+  // If p2 is none of these, it's invalid, likely undefined or null, it must
+  // either return something or throw to avoid a recursive loop.
+  if (!(
+    typeof p2 === 'number' ||
+    Array.isArray(p2) ||
+    p2 instanceof Property
+  )) {
+    throw new Error('Invalid operand for anyValueMult: ' + p2)
+  }
+
   if (p1 instanceof ComponentSequenceProperty) {
     p1 = p1.combineComponents()
   }
@@ -4236,6 +4246,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
       ...p2Mods.map(mod => modMultPropVal(mod, p1.valueAt(0))),
     ) as unknown as T
   }
+
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
   return anyValueMult(p2, p1)
@@ -4295,35 +4306,47 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
       }
     }
   }
-  const keyframes = Array.from(positions).sort((a, b) => a - b)
-    .map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
-  const vt: ValueType = comps.length - 1
-  return new LinearProperty(this.loop, keyframes).withModifiers(...comps.flatMap((c, i) => {
-    if (typeof c === 'number') {
-      return []
-    }
-    return c.modifiers.map(mod => {
-      switch (mod.type) {
-        case ModifierType.ExternalValue1:
-        case ModifierType.ExternalValue2:
-          return new Modifier(mod.type, vt, mod.fields.map(e => Field.copy(e)), [
-            combineComponents(...arrayOf(comps.length, j => j === i ? mod.properties[0] as ScalarProperty : 1)) as VectorProperty
-          ])
-        case ModifierType.Randomizer1:
-        case ModifierType.Randomizer3:
-          return new Modifier(mod.type, vt, [
-            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
-            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
-          ])
-        case ModifierType.Randomizer2:
-          return new Modifier(mod.type, vt, [
-            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
-            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
-            ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[2]) : new FloatField),
-          ])
+  function combineModifiers() {
+    const vt: ValueType = comps.length - 1
+    return comps.flatMap((c, i) => {
+      if (typeof c === 'number') {
+        return []
       }
+      return c.modifiers.map(mod => {
+        switch (mod.type) {
+          case ModifierType.ExternalValue1:
+          case ModifierType.ExternalValue2:
+            return new Modifier(mod.type, vt, mod.fields.map(e => Field.copy(e)), [
+              combineComponents(...arrayOf(comps.length, j => j === i ? mod.properties[0] as ScalarProperty : 1)) as VectorProperty
+            ])
+          case ModifierType.Randomizer1:
+          case ModifierType.Randomizer3:
+            return new Modifier(mod.type, vt, [
+              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
+              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
+            ])
+          case ModifierType.Randomizer2:
+            return new Modifier(mod.type, vt, [
+              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
+              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
+              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[2]) : new FloatField),
+            ])
+        }
+      })
     })
-  })) as VectorProperty
+  }
+  if (positions.size >= 2) {
+    const keyframes = Array.from(positions).sort((a, b) => a - b)
+      .map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
+    return new LinearProperty(
+      comps.some(e => (e instanceof SequenceProperty || e instanceof ComponentSequenceProperty) && e.loop),
+      keyframes
+    ).withModifiers(...combineModifiers()) as VectorProperty
+  } else {
+    return new ConstantProperty(...comps.map(c => c instanceof Property ? c.valueAt(0) : c)).withModifiers(
+      ...combineModifiers()
+    ) as VectorProperty
+  }
 }
 
 function separateComponents(value: VectorValue): ScalarValue[] {
@@ -17521,11 +17544,11 @@ export interface PointLightParams {
    */
   unk_ds3_f2_12?: number
   /**
-   * Unknown boolean.
+   * Unknown integer.
    * 
-   * **Default**: `false`
+   * **Default**: `0`
    */
-  unk_ds3_f2_15?: boolean
+  unk_ds3_f2_15?: number
   /**
    * Unknown integer.
    * 
@@ -17533,11 +17556,11 @@ export interface PointLightParams {
    */
   unk_ds3_f2_16?: number
   /**
-   * Unknown boolean.
+   * Unknown integer.
    * 
-   * **Default**: `true`
+   * **Default**: `1`
    */
-  unk_ds3_f2_17?: boolean
+  unk_ds3_f2_17?: number
   /**
    * Unknown float.
    * 
@@ -17859,9 +17882,9 @@ class PointLight extends DataAction {
    * Unknown. Only used in Dark Souls 3.
    */
   unk_ds3_f2_12: number
-  unk_ds3_f2_15: boolean
+  unk_ds3_f2_15: number
   unk_ds3_f2_16: number
-  unk_ds3_f2_17: boolean
+  unk_ds3_f2_17: number
   unk_ds3_f2_18: number
   unk_ds3_f2_19: number
   unk_ds3_f2_20: number
