@@ -34,3 +34,14 @@ for await (const filePath of getFiles('docs')) {
     content.replace(/;base64,(.*)"/, ';base64,'+zlib.gzipSync(Buffer.from(JSON.stringify(list))).toString('base64')+'"')
   )
 }
+
+{
+  const content = await fs.readFile('docs/assets/search.js', 'utf-8')
+  const json = zlib.gunzipSync(Buffer.from(content.match(/;base64,(.*)"/)[1], 'base64'))
+    .toString('utf-8')
+    .replace(/"functions\//g, '"funcs/')
+  await fs.writeFile(
+    'docs/assets/search.js',
+    content.replace(/;base64,(.*)"/, ';base64,'+zlib.gzipSync(Buffer.from(json)).toString('base64')+'"')
+  )
+}
