@@ -6067,18 +6067,16 @@ class RootNode extends Node {
 
   static fromJSON(obj: any): Node {
     if (!(
-      'nodes' in obj ||
-      'unk70x' in obj ||
       'unk10100' in obj ||
       'unk10400' in obj ||
       'unk10500' in obj
     )) return GenericNode.fromJSON(obj)
     return new RootNode(
-      obj.nodes,
-      obj.unk70x,
-      obj.unk10100,
-      obj.unk10400,
-      obj.unk10500
+      (obj.nodes ?? []).map(node => Node.fromJSON(node)),
+      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : null,
+      Action.fromJSON(obj.unk10100),
+      Action.fromJSON(obj.unk10400),
+      Action.fromJSON(obj.unk10500)
     )
   }
 
