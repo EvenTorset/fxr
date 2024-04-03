@@ -626,12 +626,13 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fieldCount: number
   fields: NumericalField[]
   toJSON(): any
-  scale(factor: number): this
-  power(exponent: number): this
-  add(summand: number): this
+  scale(factor: PropertyValue): this
+  power(exponent: PropertyValue): this
+  add(summand: PropertyValue): this
   valueAt(arg: number): ValueTypeMap[T]
   clone(): IProperty<T, F>
   separateComponents(): IProperty<ValueType.Scalar, F>[]
+  for(game: Game): IProperty<T, F>
 }
 
 export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
@@ -3152,48 +3153,48 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   }
 }
 
-function writeProperty(prop: IProperty<any, any>, bw: BinaryWriter, properties: IProperty<any, any>[], modifierProp: boolean) {
+function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, properties: IProperty<any, any>[], modifierProp: boolean) {
   const count = properties.length
-  let func: PropertyFunction = prop instanceof ValueProperty ?
-    prop.isZero ? PropertyFunction.Zero :
-    prop.isOne ? PropertyFunction.One :
+  let func: PropertyFunction = this instanceof ValueProperty ?
+    this.isZero ? PropertyFunction.Zero :
+    this.isOne ? PropertyFunction.One :
     PropertyFunction.Constant :
-    prop.function
-  const loop = 'loop' in prop ? prop.loop as boolean : false
-  const typeEnumA = prop.valueType | func << 4 | +loop << 12
-  const typeEnumB = prop.valueType | func << 2 | +loop << 4
+    this.function
+  const loop = 'loop' in this ? this.loop as boolean : false
+  const typeEnumA = this.valueType | func << 4 | +loop << 12
+  const typeEnumB = this.valueType | func << 2 | +loop << 4
   bw.writeInt16(typeEnumA)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(typeEnumB)
-  bw.writeInt32(prop.fieldCount)
+  bw.writeInt32(this.fieldCount)
   bw.writeInt32(0)
   bw.reserveInt32(`${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
   bw.writeInt32(0)
   if (!modifierProp) {
     bw.reserveInt32(`PropertyModifiersOffset${count}`)
     bw.writeInt32(0)
-    bw.writeInt32((prop as IModifiableProperty<any, any>).modifiers.length)
+    bw.writeInt32((this as IModifiableProperty<any, any>).modifiers.length)
     bw.writeInt32(0)
   }
-  properties.push(prop)
+  properties.push(this)
 }
 
-function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: Modifier[]) {
+function writePropertyModifiers(this: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: Modifier[]) {
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
-  for (const modifier of prop.modifiers) {
+  for (const modifier of this.modifiers) {
     writeModifier.call(modifier, bw, modifiers)
   }
 }
 
-function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index: number, modifierProp: boolean): number {
+function writePropertyFields(this: IProperty<any, any>, bw: BinaryWriter, index: number, modifierProp: boolean): number {
   const offsetName = `${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${index}`
-  const fieldCount = prop.fieldCount
+  const fieldCount = this.fieldCount
   if (fieldCount === 0) {
     bw.fill(offsetName, 0)
   } else {
     bw.fill(offsetName, bw.position)
-    for (const field of prop.fields) {
+    for (const field of this.fields) {
       writeField.call(field, bw)
     }
   }
@@ -3272,10 +3273,10 @@ function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IActio
 function writeActionProperties(this: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of this.properties1) {
-    writeProperty(property, bw, properties, false)
+    writeProperty.call(property.for(game), bw, properties, false)
   }
   for (const property of this.properties2) {
-    writeProperty(property, bw, properties, false)
+    writeProperty.call(property.for(game), bw, properties, false)
   }
 }
 
@@ -3401,10 +3402,10 @@ function writeDataActionProperties(this: DataAction, bw: BinaryWriter, game: Gam
   const properties2: AnyProperty[] = this.getProperties.call(conProps, game, 'properties2')
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
-    writeProperty(property, bw, properties, false)
+    writeProperty.call(property, bw, properties, false)
   }
   for (const property of properties2) {
-    writeProperty(property, bw, properties, false)
+    writeProperty.call(property, bw, properties, false)
   }
 }
 
@@ -3750,7 +3751,8 @@ function writeModifier(this: Modifier, bw: BinaryWriter, modifiers: Modifier[]) 
 function writeModifierProperties(this: Modifier, bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
   for (const property of this.properties) {
-    writeProperty(property, bw, properties, true)
+    // Modifier props can't have modifiers, so it's safe to not use .for(game) here
+    writeProperty.call(property, bw, properties, true)
   }
 }
 
@@ -5022,7 +5024,8 @@ class FXR {
     bw.fill('Section8Offset', bw.position)
     const modifiers: Modifier[] = []
     for (let i = 0; i < properties.length; ++i) {
-      writePropertyModifiers(properties[i], bw, i, modifiers)
+      // The property has already gone through .for(game) here, so don't use it again
+      writePropertyModifiers.call(properties[i], bw, i, modifiers)
     }
     bw.fill('Section8Count', modifiers.length)
     bw.pad(16)
@@ -5049,13 +5052,13 @@ class FXR {
       fieldCount += writeAnyActionFields.call(actions[i], bw, game, i)
     }
     for (let i = 0; i < properties.length; ++i) {
-      fieldCount += writePropertyFields(properties[i], bw, i, false)
+      fieldCount += writePropertyFields.call(properties[i], bw, i, false)
     }
     for (let i = 0; i < modifiers.length; ++i) {
       fieldCount += writeModifierFields.call(modifiers[i], bw, i)
     }
     for (let i = 0; i < modProps.length; ++i) {
-      fieldCount += writePropertyFields(modProps[i], bw, i, true)
+      fieldCount += writePropertyFields.call(modProps[i], bw, i, true)
     }
     for (let i = 0; i < section10s.length; ++i) {
       fieldCount += writeSection10Fields.call(section10s[i], bw, i)
@@ -6067,18 +6070,16 @@ class RootNode extends Node {
 
   static fromJSON(obj: any): Node {
     if (!(
-      'nodes' in obj ||
-      'unk70x' in obj ||
       'unk10100' in obj ||
       'unk10400' in obj ||
       'unk10500' in obj
     )) return GenericNode.fromJSON(obj)
     return new RootNode(
-      obj.nodes,
-      obj.unk70x,
-      obj.unk10100,
-      obj.unk10400,
-      obj.unk10500
+      (obj.nodes ?? []).map(node => Node.fromJSON(node)),
+      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : null,
+      Action.fromJSON(obj.unk10100),
+      Action.fromJSON(obj.unk10400),
+      Action.fromJSON(obj.unk10500)
     )
   }
 
@@ -7047,9 +7048,9 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return (data[list] ?? []).map((name: string) => {
       const prop = ActionData[this.type].props[name]
-      return Array.isArray(prop.default) ?
-        vectorFromArg(this[name]) :
-        scalarFromArg(this[name])
+      return this[name] instanceof Property ? this[name].for(game) : Array.isArray(prop.default) ?
+        new ConstantProperty(...this[name]) :
+        new ConstantProperty(this[name])
     })
   }
 
@@ -21300,17 +21301,17 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  protected modifiersScale(factor: number) {
+  protected modifiersScale(factor: PropertyValue) {
     for (const mod of this.modifiers) {
       const cc = mod.valueType + 1
       switch (mod.type) {
         case ModifierType.Randomizer2:
           for (let i = cc * 3 - 1; i >= cc * 2; i--) {
-            mod.fields[i].value *= factor
+            mod.fields[i].value *= typeof factor === 'number' ? factor : factor[i - cc * 2]
           }
         case ModifierType.Randomizer1:
           for (let i = cc * 2 - 1; i >= cc; i--) {
-            mod.fields[i].value *= factor
+            mod.fields[i].value *= typeof factor === 'number' ? factor : factor[i - cc]
           }
       }
     }
@@ -21332,12 +21333,53 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     }
   }
 
+  /**
+   * Returns an equal property that works with the given game.
+   * 
+   * If the property has multiple modifiers, there is a chance that the output
+   * of this method will not be perfectly equal, but it should still be close.
+   * @param game The game to ensure that the property works with.
+   * @returns 
+   */
+  for(game: Game) {
+    if (
+      (game === Game.DarkSouls3 || game === Game.Sekiro) &&
+      this.modifiers.some(mod => mod.type === ModifierType.Randomizer2)
+    ) {
+      const summand = Array(this.componentCount).fill(0)
+      const mods = this.modifiers.map(mod => {
+        if (mod.type === ModifierType.Randomizer2) {
+          const vt = mod.valueType
+          const cc = vt + 1
+          const comps = []
+          for (let i = 0; i < cc; i++) {
+            const a = mod.fields[cc + i].value
+            const b = mod.fields[2 * cc + i].value
+            comps.push(a*0.5 + b*0.5)
+          }
+          for (const [i, v] of comps.entries()) {
+            summand[i] += v
+          }
+          return new Modifier(ModifierType.Randomizer1, vt, [
+            ...mod.fields.slice(0, cc),
+            ...comps.map(v => new FloatField(Math.abs(v)))
+          ])
+        }
+        return Modifier.copy(mod)
+      })
+      const clone = this.clone().add(summand.length === 1 ? summand[0] : summand)
+      clone.modifiers = mods
+      return clone
+    }
+    return this
+  }
+
   abstract fieldCount: number
   abstract fields: NumericalField[]
   abstract toJSON(): any
-  abstract scale(factor: number): this
-  abstract power(exponent: number): this
-  abstract add(summand: number): this
+  abstract scale(factor: PropertyValue): this
+  abstract power(exponent: PropertyValue): this
+  abstract add(summand: PropertyValue): this
   abstract valueAt(arg: number): ValueTypeMap[T]
   abstract clone(): Property<T, F>
   abstract separateComponents(): Property<ValueType.Scalar, F>[]
@@ -21428,30 +21470,42 @@ class ValueProperty<T extends ValueType>
     }
   }
 
-  scale(factor: number) {
+  scale(factor: PropertyValue) {
     if (this.valueType === ValueType.Scalar) {
-      (this.value as number) *= factor
+      (this.value as number) *= factor as number
     } else {
-      this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+      if (typeof factor === 'number') {
+        this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+      } else {
+        this.value = (this.value as Vector).map((e, i) => e * factor[i]) as ValueTypeMap[T]
+      }
     }
     this.modifiersScale(factor)
     return this
   }
 
-  power(exponent: number) {
+  power(exponent: PropertyValue) {
     if (this.valueType === ValueType.Scalar) {
-      (this.value as number) **= exponent
+      (this.value as number) **= exponent as number
     } else {
-      this.value = (this.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+      if (typeof exponent === 'number') {
+        this.value = (this.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+      } else {
+        this.value = (this.value as Vector).map((e, i) => e ** exponent[i]) as ValueTypeMap[T]
+      }
     }
     return this
   }
 
-  add(summand: number) {
+  add(summand: PropertyValue) {
     if (this.valueType === ValueType.Scalar) {
-      (this.value as number) += summand
+      (this.value as number) += summand as number
     } else {
-      this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+      if (typeof summand === 'number') {
+        this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+      } else {
+        this.value = (this.value as Vector).map((e, i) => e + summand[i]) as ValueTypeMap[T]
+      }
     }
     return this
   }
@@ -21671,35 +21725,47 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  scale(factor: number) {
+  scale(factor: PropertyValue) {
     for (const kf of this.keyframes) {
       if (this.valueType === ValueType.Scalar) {
-        (kf.value as number) *= factor
+        (kf.value as number) *= factor as number
       } else {
-        kf.value = (kf.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+        if (typeof factor === 'number') {
+          kf.value = (kf.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+        } else {
+          kf.value = (kf.value as Vector).map((e, i) => e * factor[i]) as ValueTypeMap[T]
+        }
       }
     }
     this.modifiersScale(factor)
     return this
   }
 
-  power(exponent: number) {
+  power(exponent: PropertyValue) {
     for (const kf of this.keyframes) {
       if (this.valueType === ValueType.Scalar) {
-        (kf.value as number) **= exponent
+        (kf.value as number) **= exponent as number
       } else {
-        kf.value = (kf.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+        if (typeof exponent === 'number') {
+          kf.value = (kf.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+        } else {
+          kf.value = (kf.value as Vector).map((e, i) => e ** exponent[i]) as ValueTypeMap[T]
+        }
       }
     }
     return this
   }
 
-  add(summand: number) {
+  add(summand: PropertyValue) {
     for (const kf of this.keyframes) {
       if (this.valueType === ValueType.Scalar) {
-        (kf.value as number) += summand
+        (kf.value as number) += summand as number
       } else {
-        kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+        if (typeof summand === 'number') {
+          kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+        } else {
+          kf.value = (kf.value as Vector).map((e, i) => e + summand[i]) as ValueTypeMap[T]
+        }
       }
     }
     return this
@@ -21869,24 +21935,24 @@ class ComponentSequenceProperty<T extends ValueType>
     return o
   }
 
-  scale(factor: number) {
-    for (const comp of this.components) {
-      comp.scale(factor)
+  scale(factor: PropertyValue) {
+    for (const [i, comp] of this.components.entries()) {
+      comp.scale(typeof factor === 'number' ? factor : factor[i])
     }
     this.modifiersScale(factor)
     return this
   }
 
-  power(exponent: number) {
-    for (const comp of this.components) {
-      comp.power(exponent)
+  power(exponent: PropertyValue) {
+    for (const [i, comp] of this.components.entries()) {
+      comp.power(typeof exponent === 'number' ? exponent : exponent[i])
     }
     return this
   }
 
-  add(summand: number) {
-    for (const comp of this.components) {
-      comp.add(summand)
+  add(summand: PropertyValue) {
+    for (const [i, comp] of this.components.entries()) {
+      comp.add(typeof summand === 'number' ? summand : summand[i])
     }
     return this
   }
