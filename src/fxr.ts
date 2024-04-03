@@ -6182,25 +6182,20 @@ class NodeWithEffects extends Node {
 class LevelOfDetailNode extends NodeWithEffects {
 
   /**
-   * @param effects An array of {@link EffectType.LevelOfDetail LOD effects}.
-   * Other effect types do not work in this node type.
+   * @param effectsOrThresholds An array of
+   * {@link EffectType.LevelOfDetail LOD effects} or an array of LOD
+   * thresholds. Use an array of LOD effects if you need multiple effects or a
+   * finite node duration.
    * @param nodes An array of child nodes.
    */
-  constructor(effects: IEffect[] = [], nodes: Node[] = []) {
-    super(NodeType.LevelOfDetail, effects, nodes)
-  }
-
-  /**
-   * Alternative method to construct the node. Use this if you don't need
-   * multiple effects or a finite duration.
-   * @param thresholds An array of distance thresholds. Each threshold is used
-   * for the child node of the same index.
-   * @param nodes An array of child nodes.
-   */
-  static withThresholds(thresholds: number[], nodes: Node[]) {
-    return new LevelOfDetailNode([
-      new LevelOfDetailEffect(-1, thresholds)
-    ], nodes)
+  constructor(effectsOrThresholds: IEffect[] | number[], nodes: Node[] = []) {
+    if (effectsOrThresholds.every(e => typeof e === 'number')) {
+      super(NodeType.LevelOfDetail, [
+        new LevelOfDetailEffect(-1, effectsOrThresholds as number[])
+      ], nodes)
+    } else {
+      super(NodeType.LevelOfDetail, effectsOrThresholds as IEffect[], nodes)
+    }
   }
 
   static fromJSON(obj: any): Node {
