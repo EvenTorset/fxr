@@ -20,13 +20,13 @@ properties:
   size:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Particle size.
   color1:
     type: Vector4Value
     default: [1, 1, 1, 1]
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Color multiplier.
   color2:
