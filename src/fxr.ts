@@ -592,99 +592,6 @@ enum PropertyFunction {
   CompCurve = 7
 }
 
-export type ValuePropertyFunction =
-  PropertyFunction.Zero |
-  PropertyFunction.One |
-  PropertyFunction.Constant
-
-export type SequencePropertyFunction =
-  PropertyFunction.Stepped |
-  PropertyFunction.Linear |
-  PropertyFunction.Curve1 |
-  PropertyFunction.Curve2
-
-export type ComponentSequencePropertyFunction = PropertyFunction.CompCurve
-
-export type ValueTypeMap = {
-  [ValueType.Scalar]: number
-  [ValueType.Vector2]: Vector2
-  [ValueType.Vector3]: Vector3
-  [ValueType.Vector4]: Vector4
-}
-
-export interface IKeyframe<T extends ValueType> {
-  position: number
-  value: ValueTypeMap[T]
-  unkTangent1?: ValueTypeMap[T]
-  unkTangent2?: ValueTypeMap[T]
-}
-
-export interface IProperty<T extends ValueType, F extends PropertyFunction> {
-  valueType: T
-  function: F
-  componentCount: number
-  fieldCount: number
-  fields: NumericalField[]
-  toJSON(): any
-  scale(factor: PropertyValue): this
-  power(exponent: PropertyValue): this
-  add(summand: PropertyValue): this
-  valueAt(arg: number): ValueTypeMap[T]
-  clone(): IProperty<T, F>
-  separateComponents(): IProperty<ValueType.Scalar, F>[]
-  for(game: Game): IProperty<T, F>
-}
-
-export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
-  value: ValueTypeMap[T]
-  clone(): IValueProperty<T>
-}
-
-export interface ISequenceProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
-  loop: boolean
-  keyframes: IKeyframe<T>[]
-  sortKeyframes(): void
-  clone(): ISequenceProperty<T, F>
-  duration: number
-}
-
-export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
-  modifiers: Modifier[]
-}
-
-export interface IAction {
-  readonly type: ActionType
-  toJSON(): any
-  minify(): typeof this
-}
-
-export interface IEffect {
-  readonly type: EffectType
-  getActionCount(game: Game): number
-  getActions(game: Game): IAction[]
-  toJSON(): any
-  minify(): typeof this
-  walkActions(): Generator<IAction>
-}
-
-export type Vector2 = [x: number, y: number]
-export type Vector3 = [x: number, y: number, z: number]
-export type Vector4 = [red: number, green: number, blue: number, alpha: number]
-export type Vector = Vector2 | Vector3 | Vector4
-export type PropertyValue = number | Vector
-export type AnyProperty = Property<any, any>
-export type ScalarProperty = Property<ValueType.Scalar, any>
-export type Vector2Property = Property<ValueType.Vector2, any>
-export type Vector3Property = Property<ValueType.Vector3, any>
-export type Vector4Property = Property<ValueType.Vector4, any>
-export type VectorProperty = Vector2Property | Vector3Property | Vector4Property
-export type AnyValue = AnyProperty | PropertyValue
-export type ScalarValue = number | ScalarProperty
-export type Vector2Value = Vector2 | Vector2Property
-export type Vector3Value = Vector3 | Vector3Property
-export type Vector4Value = Vector4 | Vector4Property
-export type VectorValue = Vector | VectorProperty
-
 enum ModifierType {
   /**
    * Adds a random value between `-x` and `x` to the property's value, where
@@ -1108,6 +1015,101 @@ enum InitialDirection {
   LocalNorth = 6,
 }
 
+//#region Types / Interfaces
+export type ValuePropertyFunction =
+  PropertyFunction.Zero |
+  PropertyFunction.One |
+  PropertyFunction.Constant
+
+export type SequencePropertyFunction =
+  PropertyFunction.Stepped |
+  PropertyFunction.Linear |
+  PropertyFunction.Curve1 |
+  PropertyFunction.Curve2
+
+export type ComponentSequencePropertyFunction = PropertyFunction.CompCurve
+
+export type ValueTypeMap = {
+  [ValueType.Scalar]: number
+  [ValueType.Vector2]: Vector2
+  [ValueType.Vector3]: Vector3
+  [ValueType.Vector4]: Vector4
+}
+
+export interface IKeyframe<T extends ValueType> {
+  position: number
+  value: ValueTypeMap[T]
+  unkTangent1?: ValueTypeMap[T]
+  unkTangent2?: ValueTypeMap[T]
+}
+
+export interface IProperty<T extends ValueType, F extends PropertyFunction> {
+  valueType: T
+  function: F
+  componentCount: number
+  fieldCount: number
+  fields: NumericalField[]
+  toJSON(): any
+  scale(factor: PropertyValue): this
+  power(exponent: PropertyValue): this
+  add(summand: PropertyValue): this
+  valueAt(arg: number): ValueTypeMap[T]
+  clone(): IProperty<T, F>
+  separateComponents(): IProperty<ValueType.Scalar, F>[]
+  for(game: Game): IProperty<T, F>
+}
+
+export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
+  value: ValueTypeMap[T]
+  clone(): IValueProperty<T>
+}
+
+export interface ISequenceProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+  loop: boolean
+  keyframes: IKeyframe<T>[]
+  sortKeyframes(): void
+  clone(): ISequenceProperty<T, F>
+  duration: number
+}
+
+export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+  modifiers: Modifier[]
+}
+
+export interface IAction {
+  readonly type: ActionType
+  toJSON(): any
+  minify(): typeof this
+}
+
+export interface IEffect {
+  readonly type: EffectType
+  getActionCount(game: Game): number
+  getActions(game: Game): IAction[]
+  toJSON(): any
+  minify(): typeof this
+  walkActions(): Generator<IAction>
+}
+
+export type Vector2 = [x: number, y: number]
+export type Vector3 = [x: number, y: number, z: number]
+export type Vector4 = [red: number, green: number, blue: number, alpha: number]
+export type Vector = Vector2 | Vector3 | Vector4
+export type PropertyValue = number | Vector
+export type AnyProperty = Property<any, any>
+export type ScalarProperty = Property<ValueType.Scalar, any>
+export type Vector2Property = Property<ValueType.Vector2, any>
+export type Vector3Property = Property<ValueType.Vector3, any>
+export type Vector4Property = Property<ValueType.Vector4, any>
+export type VectorProperty = Vector2Property | Vector3Property | Vector4Property
+export type AnyValue = AnyProperty | PropertyValue
+export type ScalarValue = number | ScalarProperty
+export type Vector2Value = Vector2 | Vector2Property
+export type Vector3Value = Vector3 | Vector3Property
+export type Vector4Value = Vector4 | Vector4Property
+export type VectorValue = Vector | VectorProperty
+
+//#region Action Data
 export type ActionGameDataEntry = {
   fields1?: string[] | Game
   fields2?: string[] | Game
@@ -3084,30 +3086,37 @@ const EffectActionSlots = {
   ]
 }
 
-function arrayOf<T>(size: number, func: (index: number) => T): T[] {
-  return Array(size).fill(null).map((e, i) => func(i))
+function getActionGameData(type: ActionType, game: Game) {
+  const adt = ActionData[type]
+  if (!(game in adt.games)) {
+    throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
+  }
+  const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
+  data.fields1 ??= []
+  data.fields2 ??= []
+  data.properties1 ??= []
+  data.properties2 ??= []
+  if (typeof data.fields1 === 'number') {
+    data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
+  }
+  if (typeof data.fields2 === 'number') {
+    data.fields2 = (adt.games[data.fields2] as ActionGameDataEntry).fields2
+  }
+  if (typeof data.properties1 === 'number') {
+    data.properties1 = (adt.games[data.properties1] as ActionGameDataEntry).properties1
+  }
+  if (typeof data.properties2 === 'number') {
+    data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
+  }
+  return data as {
+    fields1: string[]
+    fields2: string[]
+    properties1: string[]
+    properties2: string[]
+  }
 }
 
-function randomInt32() {
-  return Math.random() * 2**32 | 0
-}
-
-function scalarFromArg(scalar: ScalarValue) {
-  return scalar instanceof Property ? scalar : new ConstantProperty(scalar)
-}
-
-function vectorFromArg(vector: VectorValue) {
-  return vector instanceof Property ? vector : new ConstantProperty(...vector)
-}
-
-function uniqueArray<T>(a: T[]) {
-  return a.filter((e, i) => a.indexOf(e) === i)
-}
-
-function lerp(a: number, b: number, c: number) {
-  return a * (1 - c) + b * c
-}
-
+//#region Functions - Property
 function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, any>>(
   br: BinaryReader,
   modifierProp: T extends IModifiableProperty<any, any> ? false : true
@@ -3201,6 +3210,7 @@ function writePropertyFields(this: IProperty<any, any>, bw: BinaryWriter, index:
   return fieldCount
 }
 
+//#region Functions - Action
 function readAction(br: BinaryReader, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
@@ -3303,6 +3313,7 @@ function writeActionFields(this: Action, bw: BinaryWriter, game: Game, index: nu
   return count
 }
 
+//#region Functions - DataAction
 function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
@@ -3432,6 +3443,7 @@ function writeDataActionFields(this: DataAction, bw: BinaryWriter, game: Game, i
   return count
 }
 
+//#region Functions - AnyAction
 function readAnyAction(br: BinaryReader, game: Game): IAction {
   const type = br.readInt16()
   br.position += 6
@@ -3487,6 +3499,7 @@ function writeAnyActionFields(this: IAction, bw: BinaryWriter, game: Game, index
   return (this instanceof Action ? writeActionFields : writeDataActionFields).call(this, bw, game, index)
 }
 
+//#region Functions - Node
 function readNode(br: BinaryReader, game: Game): Node {
   const type = br.readInt16()
   br.assertUint8(0)
@@ -3646,6 +3659,7 @@ function writeNodeActions(this: Node, bw: BinaryWriter, game: Game, index: numbe
   effectCounter.value += nodeEffects.length
 }
 
+//#region Functions - Effect
 function readEffect(br: BinaryReader, game: Game): IEffect {
   const type = br.readInt16()
   br.assertUint8(0)
@@ -3703,6 +3717,7 @@ function writeEffectActions(this: IEffect, bw: BinaryWriter, game: Game, index: 
   }
 }
 
+//#region Functions - Modifier
 function readModifier(br: BinaryReader) {
   const typeEnumA = br.readUint16()
   const teA1 = typeEnumA >>> 12 & 0b11
@@ -3764,6 +3779,7 @@ function writeModifierFields(this: Modifier, bw: BinaryWriter, index: number): n
   return this.fields.length
 }
 
+//#region Functions - Section10
 function readSection10(br: BinaryReader) {
   const offset = br.readInt32()
   br.assertInt32(0)
@@ -3789,6 +3805,7 @@ function writeSection10Fields(this: Section10, bw: BinaryWriter, index: number):
   return this.fields.length
 }
 
+//#region Functions - State
 function readState(br: BinaryReader) {
   br.assertInt32(0)
   const count = br.readInt32()
@@ -3817,6 +3834,7 @@ function writeStateConditions(this: State, bw: BinaryWriter, index: number, cond
   }
 }
 
+//#region Functions - State Condition
 function readStateCondition(br: BinaryReader) {
   const bf1 = br.readInt16()
   const operator = bf1 & 0b11
@@ -3949,6 +3967,7 @@ function writeStateConditionFields(this: StateCondition, bw: BinaryWriter, index
   return count
 }
 
+//#region Functions - Field
 function readField(br: BinaryReader, context: any, index: number) {
   let ffxField: NumericalField = null
   let isInt = false
@@ -4029,6 +4048,31 @@ function writeField(this: Field, bw: BinaryWriter) {
     default:
       throw new Error('Invalid field type: ' + this.type)
   }
+}
+
+//#region Conversion / Utility
+function arrayOf<T>(size: number, func: (index: number) => T): T[] {
+  return Array(size).fill(null).map((e, i) => func(i))
+}
+
+function randomInt32() {
+  return Math.random() * 2**32 | 0
+}
+
+function scalarFromArg(scalar: ScalarValue) {
+  return scalar instanceof Property ? scalar : new ConstantProperty(scalar)
+}
+
+function vectorFromArg(vector: VectorValue) {
+  return vector instanceof Property ? vector : new ConstantProperty(...vector)
+}
+
+function uniqueArray<T>(a: T[]) {
+  return a.filter((e, i) => a.indexOf(e) === i)
+}
+
+function lerp(a: number, b: number, c: number) {
+  return a * (1 - c) + b * c
 }
 
 function modScalarToVec(mod: Modifier, vt: ValueType) {
@@ -4252,36 +4296,6 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
   return anyValueMult(p2, p1)
-}
-
-function getActionGameData(type: ActionType, game: Game) {
-  const adt = ActionData[type]
-  if (!(game in adt.games)) {
-    throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
-  }
-  const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
-  data.fields1 ??= []
-  data.fields2 ??= []
-  data.properties1 ??= []
-  data.properties2 ??= []
-  if (typeof data.fields1 === 'number') {
-    data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
-  }
-  if (typeof data.fields2 === 'number') {
-    data.fields2 = (adt.games[data.fields2] as ActionGameDataEntry).fields2
-  }
-  if (typeof data.properties1 === 'number') {
-    data.properties1 = (adt.games[data.properties1] as ActionGameDataEntry).properties1
-  }
-  if (typeof data.properties2 === 'number') {
-    data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
-  }
-  return data as {
-    fields1: string[]
-    fields2: string[]
-    properties1: string[]
-    properties2: string[]
-  }
 }
 
 function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
@@ -4796,6 +4810,7 @@ class BinaryWriter {
 
 }
 
+//#region FXR
 class FXR {
 
   id: number
@@ -5270,6 +5285,7 @@ class FXR {
 
 }
 
+//#region State
 class State {
 
   conditions: StateCondition[]
@@ -5309,6 +5325,7 @@ class State {
 
 }
 
+//#region StateCondition
 class StateCondition {
 
   /**
@@ -5536,6 +5553,7 @@ class StateCondition {
 
 }
 
+//#region Node
 /**
  * The base class for all nodes.
  * 
@@ -6304,6 +6322,7 @@ const Nodes = {
   [NodeType.Basic]: BasicNode, BasicNode,
 }
 
+//#region Effect
 /**
  * Generic effect class that uses the same structure as the file format. Only
  * for use with undocumented effect types. Use one of the other effect classes
@@ -6852,6 +6871,7 @@ class SharedEmitterEffect implements IEffect {
 
 }
 
+//#region Action
 class Action implements IAction {
 
   type: ActionType
@@ -21176,6 +21196,7 @@ const DataActions = {
   /*#ActionsList end*/
 }
 
+//#region Field
 class Field {
 
   type: FieldType
@@ -21248,6 +21269,7 @@ class FloatField extends Field implements NumericalField {
 
 }
 
+//#region Property
 class Keyframe<T extends ValueType> implements IKeyframe<T> {
 
   position: number
@@ -22190,6 +22212,7 @@ function RainbowProperty(duration: number = 4, loop: boolean = true) {
   ])
 }
 
+//#region Modifier
 class Modifier {
 
   static #typeEnumBValues = {
@@ -22475,6 +22498,7 @@ class RandomizerModifier extends Modifier {
 
 }
 
+//#region Section10
 class Section10 {
 
   fields: NumericalField[]
