@@ -3168,31 +3168,35 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   }
 }
 
-function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, properties: IProperty<any, any>[], modifierProp: boolean) {
+function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, properties: IProperty<any, any>[], modifierProp: boolean) {
+  let prop = this
+  if (game !== Game.ArmoredCore6 && prop instanceof ComponentSequenceProperty) {
+    prop = prop.combineComponents()
+  }
   const count = properties.length
-  let func: PropertyFunction = this instanceof ValueProperty ?
-    this.isZero ? PropertyFunction.Zero :
-    this.isOne ? PropertyFunction.One :
+  let func: PropertyFunction = prop instanceof ValueProperty ?
+    prop.isZero ? PropertyFunction.Zero :
+    prop.isOne ? PropertyFunction.One :
     PropertyFunction.Constant :
-    this.function
-  const loop = 'loop' in this ? this.loop as boolean : false
-  const typeEnumA = this.valueType | func << 4 | +loop << 12
-  const typeEnumB = this.valueType | func << 2 | +loop << 4
+    prop.function
+  const loop = 'loop' in prop ? prop.loop as boolean : false
+  const typeEnumA = prop.valueType | func << 4 | +loop << 12
+  const typeEnumB = prop.valueType | func << 2 | +loop << 4
   bw.writeInt16(typeEnumA)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(typeEnumB)
-  bw.writeInt32(this.fieldCount)
+  bw.writeInt32(prop.fieldCount)
   bw.writeInt32(0)
   bw.reserveInt32(`${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
   bw.writeInt32(0)
   if (!modifierProp) {
     bw.reserveInt32(`PropertyModifiersOffset${count}`)
     bw.writeInt32(0)
-    bw.writeInt32((this as IModifiableProperty<any, any>).modifiers.length)
+    bw.writeInt32((prop as IModifiableProperty<any, any>).modifiers.length)
     bw.writeInt32(0)
   }
-  properties.push(this)
+  properties.push(prop)
 }
 
 function writePropertyModifiers(this: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: Modifier[]) {
@@ -3289,10 +3293,10 @@ function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IActio
 function writeActionProperties(this: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of this.properties1) {
-    writeProperty.call(property.for(game), bw, properties, false)
+    writeProperty.call(property.for(game), bw, game, properties, false)
   }
   for (const property of this.properties2) {
-    writeProperty.call(property.for(game), bw, properties, false)
+    writeProperty.call(property.for(game), bw, game, properties, false)
   }
 }
 
@@ -3419,10 +3423,10 @@ function writeDataActionProperties(this: DataAction, bw: BinaryWriter, game: Gam
   const properties2: AnyProperty[] = this.getProperties.call(conProps, game, 'properties2')
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
-    writeProperty.call(property, bw, properties, false)
+    writeProperty.call(property, bw, game, properties, false)
   }
   for (const property of properties2) {
-    writeProperty.call(property, bw, properties, false)
+    writeProperty.call(property, bw, game, properties, false)
   }
 }
 
@@ -3769,11 +3773,11 @@ function writeModifier(this: Modifier, bw: BinaryWriter, modifiers: Modifier[]) 
   modifiers.push(this)
 }
 
-function writeModifierProperties(this: Modifier, bw: BinaryWriter, index: number, properties: IProperty<any, any>[]) {
+function writeModifierProperties(this: Modifier, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
   for (const property of this.properties) {
     // Modifier props can't have modifiers, so it's safe to not use .for(game) here
-    writeProperty.call(property, bw, properties, true)
+    writeProperty.call(property, bw, game, properties, true)
   }
 }
 
@@ -5053,7 +5057,7 @@ class FXR {
     bw.fill('Section9Offset', bw.position)
     const modProps: Property<any, any>[] = []
     for (let i = 0; i < modifiers.length; ++i) {
-      writeModifierProperties.call(modifiers[i], bw, i, modProps)
+      writeModifierProperties.call(modifiers[i], bw, game, i, modProps)
     }
     bw.fill('Section9Count', modProps.length)
     bw.pad(16)
