@@ -22,7 +22,7 @@ To edit existing FXR files, all you need is an ArrayBuffer or typed array with t
 import fs from 'node:fs/promises'
 import { FXR, Game } from '@cccode/fxr'
 
-// Get an buffer of the original file's content
+// Get a buffer of the original file's content
 const buffer = await fs.readFile('f000450360.fxr')
 
 // Parse file
