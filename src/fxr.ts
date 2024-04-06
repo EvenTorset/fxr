@@ -2652,6 +2652,7 @@ const ActionData: {
       unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Float },
       unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Float },
       unk_sdt_f1_17: { default: 1, paths: {}, field: FieldType.Float },
+      unk_ac6_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2672,7 +2673,12 @@ const ActionData: {
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: {
+        fields1: Game.EldenRing,
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40','unk_ac6_f2_41'],
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
+      }
     }
   },
   [ActionType.WaterInteraction]: {
@@ -18837,6 +18843,12 @@ export interface DynamicTracerParams {
    * **Default**: `1`
    */
   unk_sdt_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_41?: number
 }
 
 /**
@@ -19142,6 +19154,7 @@ class DynamicTracer extends DataAction {
   unk_sdt_f1_15: number
   unk_sdt_f1_16: number
   unk_sdt_f1_17: number
+  unk_ac6_f2_41: number
   constructor(props: DynamicTracerParams = {}) {
     super(ActionType.DynamicTracer)
     this.assign(props)
@@ -21939,6 +21952,7 @@ class ComponentSequenceProperty<T extends ValueType>
       modifiers?: any[]
     } = {
       function: 'CompCurve',
+      loop: this.loop,
       components: []
     }
     if (this.loop) o.loop = true
