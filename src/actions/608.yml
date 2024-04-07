@@ -99,7 +99,7 @@ properties:
       Mask texture ID. This texture is used to control the opacity of the particle.
   offsetX:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       X position offset.
     see:
@@ -107,7 +107,7 @@ properties:
       - offsetZ
   offsetY:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Y position offset.
     see:
@@ -115,7 +115,7 @@ properties:
       - offsetZ
   offsetZ:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Z position offset.
     see:
@@ -124,7 +124,7 @@ properties:
   width:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The width of the particle.
 
@@ -134,7 +134,7 @@ properties:
   height:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The height of the particle.
 
@@ -144,13 +144,13 @@ properties:
   color:
     type: Vector4Value
     default: [1, 1, 1, 1]
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Color multiplier.
   blurRadius:
     type: ScalarValue
     default: 0.5
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
   rgbMultiplier:

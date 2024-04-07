@@ -172,19 +172,19 @@ properties:
   width:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The width of the trail.
   widthMultiplier:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Multiplier for {@link width}.
   color1:
     type: Vector4Value
     default: [1, 1, 1, 1]
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Color multiplier.
   color2:
@@ -196,40 +196,40 @@ properties:
   color3:
     type: Vector4Value
     default: [1, 1, 1, 1]
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Color multiplier.
   alphaThreshold:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
   frameIndex:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
   frameIndexOffset:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
   textureFraction:
     type: ScalarValue
     default: 0.1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
   speedU:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Controls how fast the UV coordinates should move horizontally.
   varianceV:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Controls how much the UV coordinates should be randomly offset by per segment.
   rgbMultiplier:
@@ -377,6 +377,8 @@ properties:
   unk_sdt_f1_17:
     field: float
     default: 1
+  unk_ac6_f2_41:
+    field: int
 games:
   DS3:
     fields1:
@@ -596,4 +598,50 @@ games:
       - unk_er_f2_40
     properties1: SDT
     properties2: DS3
-  AC6: ER
+  AC6:
+    fields1: ER
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_ds3_f2_29
+      - shadowDarkness
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - specular
+      - glossiness
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+      - specularity
+      - unk_er_f2_39
+      - unk_er_f2_40
+      - unk_ac6_f2_41
+    properties1: SDT
+    properties2: DS3

@@ -158,23 +158,23 @@ properties:
       Blend mode.
   offsetX:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       X position offset.
   offsetY:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Y position offset.
   offsetZ:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Z position offset.
   sizeX:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The width of the particle.
 
@@ -186,7 +186,7 @@ properties:
   sizeY:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The height of the particle.
 
@@ -198,7 +198,7 @@ properties:
   sizeZ:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The depth of the particle.
 
@@ -212,25 +212,25 @@ properties:
   color:
     type: Vector4Value
     default: [1, 1, 1, 1]
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Color multiplier.
   intensity:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Controls the intensity of the distortion effect. At 0, there is no distortion at all.
   stirSpeed:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
   radius:
     type: ScalarValue
     default: 1
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
   normalMapOffsetU:
@@ -245,12 +245,12 @@ properties:
       Vertical offset for the {@link normalMap normal map}.
   normalMapSpeedU:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Horizontal offset speed for the {@link normalMap normal map}.
   normalMapSpeedV:
     type: ScalarValue
-    argument: InstanceAge
+    argument: ParticleAge
     desc: |
       Vertical offset speed for the {@link normalMap normal map}.
   rgbMultiplier:
