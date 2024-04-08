@@ -729,7 +729,6 @@ games:
       - unk_sdt_f2_35
       - unk_sdt_f2_36
       - unk_sdt_f2_37
-      - unk_ac6_f2_38
     properties1: SDT
     properties2: DS3
   AC6:
