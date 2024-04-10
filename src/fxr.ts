@@ -6158,6 +6158,10 @@ class ProxyNode extends Node {
     }
   }
 
+  static fromJSON({ sfx }: { type: NodeType.Proxy, sfx: number }) {
+    return new ProxyNode(sfx)
+  }
+
 }
 
 /**
@@ -6374,7 +6378,7 @@ class Effect implements IEffect {
       return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
       case EffectType.LevelOfDetail:
-        return new LevelOfDetailEffect(Property.fromJSON(obj.duration), [
+        return new LevelOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), [
           obj.threshold0,
           obj.threshold1,
           obj.threshold2,
@@ -21351,19 +21355,19 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     }
   }
 
-  static fromJSON(obj: any) {
+  static fromJSON<T extends ValueType>(obj: any) {
     if (typeof obj === 'object' && 'function' in obj) {
       switch (PropertyFunction[obj.function as string]) {
         case PropertyFunction.Stepped:
         case PropertyFunction.Linear:
         case PropertyFunction.Curve1:
         case PropertyFunction.Curve2:
-          return SequenceProperty.fromJSON(obj)
+          return SequenceProperty.fromJSON<T>(obj)
         case PropertyFunction.CompCurve:
-          return ComponentSequenceProperty.fromJSON(obj)
+          return ComponentSequenceProperty.fromJSON<T>(obj)
       }
     } else {
-      return ValueProperty.fromJSON(obj)
+      return ValueProperty.fromJSON<T>(obj)
     }
   }
 
@@ -21479,16 +21483,16 @@ class ValueProperty<T extends ValueType>
     }
   }
 
-  static fromJSON(obj: {
+  static fromJSON<T extends ValueType>(obj: {
     value: PropertyValue
     modifiers?: any[]
-  } | PropertyValue) {
+  } | PropertyValue): ConstantProperty<T> {
     if (Array.isArray(obj)) {
       return new ConstantProperty(...obj)
     } else if (typeof obj === 'number') {
       return new ConstantProperty(obj)
     }
-    return new ConstantProperty(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
+    return new ConstantProperty<T>(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
       ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e))
     )
   }
@@ -21702,17 +21706,18 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  static fromJSON(obj: {
+  static fromJSON<T extends ValueType>(obj: {
     function: string
     modifiers?: any[]
     keyframes?: IKeyframe<any>[]
     loop?: boolean
-  }) {
+  }): SequenceProperty<T, any> {
     return new SequenceProperty(
       Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar,
       PropertyFunction[obj.function],
       obj.loop ?? false,
-      obj.keyframes
+      obj.keyframes,
+      (obj.modifiers ?? []).map(mod => Modifier.fromJSON(mod))
     )
   }
 
@@ -21968,6 +21973,20 @@ class ComponentSequenceProperty<T extends ValueType>
     })))
     if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.toJSON())
     return o
+  }
+
+  static fromJSON<T extends ValueType>({
+    components,
+    loop = false,
+    modifiers = []
+  }: {
+    components: IKeyframe<ValueType.Scalar>[][]
+    loop: boolean
+    modifiers?: any[]
+  }): ComponentSequenceProperty<T> {
+    return new ComponentSequenceProperty(components.length - 1 as T, loop, components.map(comp => {
+      return new SequenceProperty(ValueType.Scalar, PropertyFunction.Curve2, false, comp)
+    }), (modifiers ?? []).map(mod => Modifier.fromJSON(mod)))
   }
 
   scale(factor: PropertyValue) {
