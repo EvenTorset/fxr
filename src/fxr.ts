@@ -5618,7 +5618,7 @@ abstract class Node {
    */
   *walkEffects() {
     for (const node of this.walk()) {
-      if (node instanceof NodeWithEffects) {
+      if (node instanceof NodeWithEffects || node instanceof GenericNode) {
         yield* node.effects
       }
     }
