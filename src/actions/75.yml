@@ -1,7 +1,7 @@
 type: 75
-name: PlaySound
+name: NodeSound
 desc: |
-  Plays a sound effect.
+  Plays a sound effect when the node activates that can repeat.
 properties:
   sound:
     field: int

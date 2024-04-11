@@ -288,11 +288,17 @@ enum ActionType {
    */
   NodeAttachToCamera = 46,
   /**
-   * Plays a sound effect.
+   * Plays a sound effect when the node activates that can repeat.
    * 
-   * This action type has a specialized subclass: {@link PlaySound}
+   * This action type has a specialized subclass: {@link NodeSound}
    */
-  PlaySound = 75,
+  NodeSound = 75,
+  /**
+   * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
+   * 
+   * This action type has a specialized subclass: {@link EmissionSound}
+   */
+  EmissionSound = 81,
   /**
    * Controls various things about the node, like its duration, and how it is attached to the parent node.
    * 
@@ -1164,7 +1170,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
-  [ActionType.PlaySound]: {
+  [ActionType.NodeSound]: {
     props: {
       sound: { default: 0, paths: {}, field: FieldType.Integer },
       repeat: { default: false, paths: {}, field: FieldType.Boolean },
@@ -1173,6 +1179,20 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['sound','volume','repeat']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.EmissionSound]: {
+    props: {
+      sound: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['sound','unk_ds3_f1_1']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -2960,7 +2980,7 @@ const EffectActionSlots = {
       ActionType.NodeSpeedSpin
     ],
     [
-      ActionType.PlaySound
+      ActionType.NodeSound
     ],
     [
       ActionType.PeriodicEmitter,
@@ -3024,7 +3044,9 @@ const EffectActionSlots = {
       ActionType.ParticleAccelerationRandomTurns,
       ActionType.ParticleAccelerationPartialFollow
     ],
-    [],
+    [
+      ActionType.EmissionSound
+    ],
     [
       ActionType.Unk130
     ],
@@ -3059,7 +3081,7 @@ const EffectActionSlots = {
       ActionType.NodeSpeedSpin
     ],
     [
-      ActionType.PlaySound
+      ActionType.NodeSound
     ],
     [
       ActionType.PeriodicEmitter,
@@ -3084,7 +3106,9 @@ const EffectActionSlots = {
       ActionType.EmitAllParticles,
       ActionType.EmitRandomParticles
     ],
-    [],
+    [
+      ActionType.EmissionSound
+    ],
     [
       ActionType.NodeWindSpeed,
       ActionType.NodeWindAcceleration
@@ -5219,8 +5243,11 @@ class FXR {
   getResources() {
     const list = []
     for (const effect of this.root.walkEffects()) if (effect instanceof BasicEffect) {
-      if (effect.audio instanceof PlaySound) {
-        list.push(effect.audio.sound)
+      if (effect.nodeAudio instanceof NodeSound) {
+        list.push(effect.nodeAudio.sound)
+      }
+      if (effect.emissionAudio instanceof EmissionSound) {
+        list.push(effect.emissionAudio.sound)
       }
       const action = effect.appearance
       if (action instanceof PointSprite) {
@@ -6390,7 +6417,7 @@ class Effect implements IEffect {
           nodeAttributes: Action.fromJSON(obj.nodeAttributes),
           nodeTransform: Action.fromJSON(obj.nodeTransform),
           nodeMovement: Action.fromJSON(obj.nodeMovement),
-          audio: Action.fromJSON(obj.audio),
+          nodeAudio: Action.fromJSON(obj.nodeAudio),
           emitter: Action.fromJSON(obj.emitter),
           emitterShape: Action.fromJSON(obj.emitterShape),
           particleDirection: Action.fromJSON(obj.particleDirection),
@@ -6398,7 +6425,7 @@ class Effect implements IEffect {
           particleAttributes: Action.fromJSON(obj.particleAttributes),
           appearance: Action.fromJSON(obj.appearance),
           particleMovement: Action.fromJSON(obj.particleMovement),
-          slot11: Action.fromJSON(obj.slot11),
+          emissionAudio: Action.fromJSON(obj.emissionAudio),
           slot12: Action.fromJSON(obj.slot12),
           nodeWind: Action.fromJSON(obj.nodeWind),
           particleWind: Action.fromJSON(obj.particleWind),
@@ -6408,12 +6435,12 @@ class Effect implements IEffect {
           nodeAttributes: Action.fromJSON(obj.nodeAttributes),
           nodeTransform: Action.fromJSON(obj.nodeTransform),
           nodeMovement: Action.fromJSON(obj.nodeMovement),
-          audio: Action.fromJSON(obj.audio),
+          nodeAudio: Action.fromJSON(obj.nodeAudio),
           emitter: Action.fromJSON(obj.emitter),
           emitterShape: Action.fromJSON(obj.emitterShape),
           particleDirection: Action.fromJSON(obj.particleDirection),
           behavior: Action.fromJSON(obj.behavior),
-          slot8: Action.fromJSON(obj.slot8),
+          emissionAudio: Action.fromJSON(obj.emissionAudio),
           nodeWind: Action.fromJSON(obj.nodeWind),
         })
     }
@@ -6474,7 +6501,7 @@ export interface BasicEffectParams {
   nodeAttributes?: Action | NodeAttributes
   nodeTransform?: Action
   nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
-  audio?: Action | PlaySound
+  nodeAudio?: Action | NodeSound
   emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
   emitterShape?:
     Action |
@@ -6508,7 +6535,7 @@ export interface BasicEffectParams {
     RichModel |
     SpotLight
   particleMovement?: Action
-  slot11?: Action
+  emissionAudio?: Action | EmissionSound
   slot12?: Action | Unk130
   nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
   particleWind?: Action | ParticleWindAcceleration | ParticleWindSpeed | Unk800
@@ -6543,7 +6570,7 @@ class BasicEffect implements IEffect {
   nodeAttributes: Action | NodeAttributes = new NodeAttributes
   nodeTransform: Action = new Action
   nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
-  audio: Action | PlaySound = new Action
+  nodeAudio: Action | NodeSound = new Action
   emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
   emitterShape:
     Action |
@@ -6580,7 +6607,7 @@ class BasicEffect implements IEffect {
     SpotLight
     = new Action
   particleMovement: Action = new Action
-  slot11: Action = new Action
+  emissionAudio: Action | EmissionSound = new Action
   slot12: Action | Unk130 = new Unk130
   nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
   particleWind:
@@ -6598,7 +6625,7 @@ class BasicEffect implements IEffect {
           case 0:  this.nodeAttributes     = action as Action; break;
           case 1:  this.nodeTransform      = action as Action; break;
           case 2:  this.nodeMovement       = action as Action; break;
-          case 3:  this.audio              = action as Action; break;
+          case 3:  this.nodeAudio          = action as Action; break;
           case 4:  this.emitter            = action as Action; break;
           case 5:  this.emitterShape       = action as Action; break;
           case 6:  this.particleDirection  = action as Action; break;
@@ -6606,7 +6633,7 @@ class BasicEffect implements IEffect {
           case 8:  this.particleAttributes = action as Action; break;
           case 9:  this.appearance         = action as Action; break;
           case 10: this.particleMovement   = action as Action; break;
-          case 11: this.slot11             = action as Action; break;
+          case 11: this.emissionAudio      = action as Action; break;
           case 12: this.slot12             = action as Action; break;
           case 13: this.nodeWind           = action as Action; break;
           case 14: this.particleWind       = action as Action; break;
@@ -6616,7 +6643,7 @@ class BasicEffect implements IEffect {
       if ('nodeAttributes' in params) this.nodeAttributes = params.nodeAttributes
       if ('nodeTransform' in params) this.nodeTransform = params.nodeTransform
       if ('nodeMovement' in params) this.nodeMovement = params.nodeMovement
-      if ('audio' in params) this.audio = params.audio
+      if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
       if ('emitter' in params) this.emitter = params.emitter
       if ('emitterShape' in params) this.emitterShape = params.emitterShape
       if ('particleDirection' in params) this.particleDirection = params.particleDirection
@@ -6624,7 +6651,7 @@ class BasicEffect implements IEffect {
       if ('particleAttributes' in params) this.particleAttributes = params.particleAttributes
       if ('appearance' in params) this.appearance = params.appearance
       if ('particleMovement' in params) this.particleMovement = params.particleMovement
-      if ('slot11' in params) this.slot11 = params.slot11
+      if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
       if ('slot12' in params) this.slot12 = params.slot12
       if ('nodeWind' in params) this.nodeWind = params.nodeWind
       if ('particleWind' in params) this.particleWind = params.particleWind
@@ -6640,7 +6667,7 @@ class BasicEffect implements IEffect {
       this.nodeAttributes,
       this.nodeTransform,
       this.nodeMovement,
-      this.audio,
+      this.nodeAudio,
       this.emitter,
       this.emitterShape,
       this.particleDirection,
@@ -6648,7 +6675,7 @@ class BasicEffect implements IEffect {
       this.particleAttributes,
       this.appearance,
       this.particleMovement,
-      this.slot11,
+      this.emissionAudio,
       this.slot12,
       game === Game.DarkSouls3 ? [] : [
         this.nodeWind,
@@ -6663,7 +6690,7 @@ class BasicEffect implements IEffect {
       nodeAttributes: this.nodeAttributes.toJSON(),
       nodeTransform: this.nodeTransform.toJSON(),
       nodeMovement: this.nodeMovement.toJSON(),
-      audio: this.audio.toJSON(),
+      nodeAudio: this.nodeAudio.toJSON(),
       emitter: this.emitter.toJSON(),
       emitterShape: this.emitterShape.toJSON(),
       particleDirection: this.particleDirection.toJSON(),
@@ -6671,7 +6698,7 @@ class BasicEffect implements IEffect {
       particleAttributes: this.particleAttributes.toJSON(),
       appearance: this.appearance.toJSON(),
       particleMovement: this.particleMovement.toJSON(),
-      slot11: this.slot11.toJSON(),
+      emissionAudio: this.emissionAudio.toJSON(),
       slot12: this.slot12.toJSON(),
       nodeWind: this.nodeWind.toJSON(),
       particleWind: this.particleWind.toJSON(),
@@ -6682,7 +6709,7 @@ class BasicEffect implements IEffect {
     this.nodeAttributes = this.nodeAttributes.minify()
     this.nodeTransform = this.nodeTransform.minify()
     this.nodeMovement = this.nodeMovement.minify()
-    this.audio = this.audio.minify()
+    this.nodeAudio = this.nodeAudio.minify()
     this.emitter = this.emitter.minify()
     this.emitterShape = this.emitterShape.minify()
     this.particleDirection = this.particleDirection.minify()
@@ -6690,7 +6717,7 @@ class BasicEffect implements IEffect {
     this.particleAttributes = this.particleAttributes.minify()
     this.appearance = this.appearance.minify()
     this.particleMovement = this.particleMovement.minify()
-    this.slot11 = this.slot11.minify()
+    this.emissionAudio = this.emissionAudio.minify()
     this.slot12 = this.slot12.minify()
     this.nodeWind = this.nodeWind.minify()
     this.particleWind = this.particleWind.minify()
@@ -6701,7 +6728,7 @@ class BasicEffect implements IEffect {
     yield this.nodeAttributes
     yield this.nodeTransform
     yield this.nodeMovement
-    yield this.audio
+    yield this.nodeAudio
     yield this.emitter
     yield this.emitterShape
     yield this.particleDirection
@@ -6709,7 +6736,7 @@ class BasicEffect implements IEffect {
     yield this.particleAttributes
     yield this.appearance
     yield this.particleMovement
-    yield this.slot11
+    yield this.emissionAudio
     yield this.slot12
     yield this.nodeWind
     yield this.particleWind
@@ -6721,7 +6748,7 @@ export interface SharedEmitterEffectParams {
   nodeAttributes?: Action | NodeAttributes
   nodeTransform?: Action
   nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
-  audio?: Action | PlaySound
+  nodeAudio?: Action | NodeSound
   emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
   emitterShape?:
     Action |
@@ -6737,7 +6764,7 @@ export interface SharedEmitterEffectParams {
     EllipticalParticleSpread |
     RectangularParticleSpread
   behavior?: Action
-  slot8?: Action
+  emissionAudio?: Action | EmissionSound
   nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
 }
 
@@ -6766,7 +6793,7 @@ class SharedEmitterEffect implements IEffect {
   nodeAttributes: Action | NodeAttributes = new NodeAttributes
   nodeTransform: Action = new Action
   nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
-  audio: Action | PlaySound = new Action
+  nodeAudio: Action | NodeSound = new Action
   emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
   emitterShape:
     Action |
@@ -6784,7 +6811,7 @@ class SharedEmitterEffect implements IEffect {
     RectangularParticleSpread
     = new NoParticleSpread
   behavior: Action = new EmitAllParticles
-  slot8: Action = new Action
+  emissionAudio: Action | EmissionSound = new Action
   nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
 
   constructor(params: SharedEmitterEffectParams | IAction[]) {
@@ -6795,12 +6822,12 @@ class SharedEmitterEffect implements IEffect {
           case 0: this.nodeAttributes    = action as Action; break;
           case 1: this.nodeTransform     = action as Action; break;
           case 2: this.nodeMovement      = action as Action; break;
-          case 3: this.audio             = action as Action; break;
+          case 3: this.nodeAudio         = action as Action; break;
           case 4: this.emitter           = action as Action; break;
           case 5: this.emitterShape      = action as Action; break;
           case 6: this.particleDirection = action as Action; break;
           case 7: this.behavior          = action as Action; break;
-          case 8: this.slot8             = action as Action; break;
+          case 8: this.emissionAudio     = action as Action; break;
           case 9: this.nodeWind          = action as Action; break;
         }
       }
@@ -6808,12 +6835,12 @@ class SharedEmitterEffect implements IEffect {
       if ('nodeAttributes' in params) this.nodeAttributes = params.nodeAttributes
       if ('nodeTransform' in params) this.nodeTransform = params.nodeTransform
       if ('nodeMovement' in params) this.nodeMovement = params.nodeMovement
-      if ('audio' in params) this.audio = params.audio
+      if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
       if ('emitter' in params) this.emitter = params.emitter
       if ('emitterShape' in params) this.emitterShape = params.emitterShape
       if ('particleDirection' in params) this.particleDirection = params.particleDirection
       if ('behavior' in params) this.behavior = params.behavior
-      if ('slot8' in params) this.slot8 = params.slot8
+      if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
       if ('nodeWind' in params) this.nodeWind = params.nodeWind
     }
   }
@@ -6830,12 +6857,12 @@ class SharedEmitterEffect implements IEffect {
       this.nodeAttributes,
       this.nodeTransform,
       this.nodeMovement,
-      this.audio,
+      this.nodeAudio,
       this.emitter,
       this.emitterShape,
       this.particleDirection,
       this.behavior,
-      this.slot8,
+      this.emissionAudio,
       this.nodeWind
     ]
   }
@@ -6846,12 +6873,12 @@ class SharedEmitterEffect implements IEffect {
       nodeAttributes: this.nodeAttributes.toJSON(),
       nodeTransform: this.nodeTransform.toJSON(),
       nodeMovement: this.nodeMovement.toJSON(),
-      audio: this.audio.toJSON(),
+      nodeAudio: this.nodeAudio.toJSON(),
       emitter: this.emitter.toJSON(),
       emitterShape: this.emitterShape.toJSON(),
       particleDirection: this.particleDirection.toJSON(),
       behavior: this.behavior.toJSON(),
-      slot8: this.slot8.toJSON(),
+      emissionAudio: this.emissionAudio.toJSON(),
       nodeWind: this.nodeWind.toJSON(),
     }
   }
@@ -6860,12 +6887,12 @@ class SharedEmitterEffect implements IEffect {
     this.nodeAttributes = this.nodeAttributes.minify()
     this.nodeTransform = this.nodeTransform.minify()
     this.nodeMovement = this.nodeMovement.minify()
-    this.audio = this.audio.minify()
+    this.nodeAudio = this.nodeAudio.minify()
     this.emitter = this.emitter.minify()
     this.emitterShape = this.emitterShape.minify()
     this.particleDirection = this.particleDirection.minify()
     this.behavior = this.behavior.minify()
-    this.slot8 = this.slot8.minify()
+    this.emissionAudio = this.emissionAudio.minify()
     this.nodeWind = this.nodeWind.minify()
     return this
   }
@@ -6874,12 +6901,12 @@ class SharedEmitterEffect implements IEffect {
     yield this.nodeAttributes
     yield this.nodeTransform
     yield this.nodeMovement
-    yield this.audio
+    yield this.nodeAudio
     yield this.emitter
     yield this.emitterShape
     yield this.particleDirection
     yield this.behavior
-    yield this.slot8
+    yield this.emissionAudio
     yield this.nodeWind
   }
 
@@ -8139,7 +8166,7 @@ class NodeAttachToCamera extends DataAction {
   }
 }
 
-export interface PlaySoundParams {
+export interface NodeSoundParams {
   /**
    * The ID of the sound to play.
    * 
@@ -8165,10 +8192,10 @@ export interface PlaySoundParams {
 }
 
 /**
- * Plays a sound effect.
+ * Plays a sound effect when the node activates that can repeat.
  */
-class PlaySound extends DataAction {
-  declare type: ActionType.PlaySound
+class NodeSound extends DataAction {
+  declare type: ActionType.NodeSound
   /**
    * The ID of the sound to play.
    */
@@ -8185,8 +8212,39 @@ class PlaySound extends DataAction {
    * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
    */
   volume: number
-  constructor(props: PlaySoundParams = {}) {
-    super(ActionType.PlaySound)
+  constructor(props: NodeSoundParams = {}) {
+    super(ActionType.NodeSound)
+    this.assign(props)
+  }
+}
+
+export interface EmissionSoundParams {
+  /**
+   * The ID of the sound to play.
+   * 
+   * **Default**: `0`
+   */
+  sound?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_1?: number
+}
+
+/**
+ * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
+ */
+class EmissionSound extends DataAction {
+  declare type: ActionType.EmissionSound
+  /**
+   * The ID of the sound to play.
+   */
+  sound: number
+  unk_ds3_f1_1: number
+  constructor(props: EmissionSoundParams = {}) {
+    super(ActionType.EmissionSound)
     this.assign(props)
   }
 }
@@ -21175,7 +21233,8 @@ const DataActions = {
   /*#ActionsList start*/
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
-  [ActionType.PlaySound]: PlaySound, PlaySound,
+  [ActionType.NodeSound]: NodeSound, NodeSound,
+  [ActionType.EmissionSound]: EmissionSound, EmissionSound,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.Unk130]: Unk130, Unk130,
@@ -22615,7 +22674,8 @@ export {
   /*#ActionsExport start*/
   NodeTranslation,
   NodeAttachToCamera,
-  PlaySound,
+  NodeSound,
+  EmissionSound,
   NodeAttributes,
   ParticleAttributes,
   Unk130,
