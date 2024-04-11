@@ -1297,11 +1297,12 @@ const ActionData: {
   [ActionType.LevelOfDetailThresholds]: {
     props: {
       duration: { default: -1, paths: {} },
-      threshold0: { default: 1000, paths: {}, field: FieldType.Integer },
-      threshold1: { default: 1000, paths: {}, field: FieldType.Integer },
-      threshold2: { default: 1000, paths: {}, field: FieldType.Integer },
-      threshold3: { default: 1000, paths: {}, field: FieldType.Integer },
-      threshold4: { default: 1000, paths: {}, field: FieldType.Integer },
+      threshold0: { default: 10000, paths: {}, field: FieldType.Integer },
+      threshold1: { default: 10000, paths: {}, field: FieldType.Integer },
+      threshold2: { default: 10000, paths: {}, field: FieldType.Integer },
+      threshold3: { default: 10000, paths: {}, field: FieldType.Integer },
+      threshold4: { default: 10000, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_5: { default: 0, paths: {}, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1310,7 +1311,10 @@ const ActionData: {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: {
+        fields1: ['threshold0','threshold1','threshold2','threshold3','threshold4','unk_ac6_f1_5'],
+        properties1: Game.DarkSouls3
+      }
     }
   },
   [ActionType.PeriodicEmitter]: {
@@ -6405,13 +6409,7 @@ class Effect implements IEffect {
       return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
       case EffectType.LevelOfDetail:
-        return new LevelOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), [
-          obj.threshold0,
-          obj.threshold1,
-          obj.threshold2,
-          obj.threshold3,
-          obj.threshold4,
-        ])
+        return new LevelOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
       case EffectType.Basic:
         return new BasicEffect({
           nodeAttributes: Action.fromJSON(obj.nodeAttributes),
@@ -6461,8 +6459,10 @@ class LevelOfDetailEffect implements IEffect {
    * anymore. Can be set to -1 to make the node last forever.
    * @param thresholds An array of distance thresholds. Each threshold is used
    * for the child node of the same index.
+   * @param unk_ac6_f1_5 An unknown integer field from AC6 that is always 0 or
+   * 1 in vanilla. Defaults to 0.
    */
-  constructor(public duration: ScalarValue, public thresholds: number[]) {}
+  constructor(public duration: ScalarValue, public thresholds: number[], public unk_ac6_f1_5: number = 0) {}
 
   getActionCount(game: Game): number {
     return 1
@@ -6477,6 +6477,7 @@ class LevelOfDetailEffect implements IEffect {
         threshold2: this.thresholds[2],
         threshold3: this.thresholds[3],
         threshold4: this.thresholds[4],
+        unk_ac6_f1_5: this.unk_ac6_f1_5
       })
     ]
   }
@@ -6485,7 +6486,8 @@ class LevelOfDetailEffect implements IEffect {
     return {
       type: this.type,
       duration: this.duration instanceof Property ? this.duration.toJSON() : this.duration,
-      thresholds: this.thresholds
+      thresholds: this.thresholds,
+      unk_ac6_f1_5: this.unk_ac6_f1_5
     }
   }
 
@@ -8612,33 +8614,39 @@ export interface LevelOfDetailThresholdsParams {
   /**
    * Distance threshold for child node 0.
    * 
-   * **Default**: `1000`
+   * **Default**: `10000`
    */
   threshold0?: number
   /**
    * Distance threshold for child node 1.
    * 
-   * **Default**: `1000`
+   * **Default**: `10000`
    */
   threshold1?: number
   /**
    * Distance threshold for child node 2.
    * 
-   * **Default**: `1000`
+   * **Default**: `10000`
    */
   threshold2?: number
   /**
    * Distance threshold for child node 3.
    * 
-   * **Default**: `1000`
+   * **Default**: `10000`
    */
   threshold3?: number
   /**
    * Distance threshold for child node 4.
    * 
-   * **Default**: `1000`
+   * **Default**: `10000`
    */
   threshold4?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_5?: number
 }
 
 /**
@@ -8672,6 +8680,7 @@ class LevelOfDetailThresholds extends DataAction {
    * Distance threshold for child node 4.
    */
   threshold4: number
+  unk_ac6_f1_5: number
   constructor(props: LevelOfDetailThresholdsParams = {}) {
     super(ActionType.LevelOfDetailThresholds)
     this.assign(props)
