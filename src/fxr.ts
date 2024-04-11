@@ -6154,7 +6154,7 @@ class ProxyNode extends Node {
   toJSON() {
     return {
       type: this.type,
-      sfxID: this.sfx
+      sfx: this.sfx
     }
   }
 
