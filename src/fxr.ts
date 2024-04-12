@@ -71,9 +71,9 @@ enum NodeType {
    * A node that only displays one of its child nodes at a time based on
    * distance thresholds for each.
    * 
-   * This node type has a specialized subclass: {@link LevelOfDetailNode}
+   * This node type has a specialized subclass: {@link LevelsOfDetailNode}
    */
-  LevelOfDetail = 2002,
+  LevelsOfDetail = 2002,
   /**
    * A basic node that can have transforms and child nodes, and emit particles.
    * 
@@ -92,11 +92,11 @@ enum NodeType {
 enum EffectType {
   /**
    * Manages the duration and thresholds for the
-   * {@link NodeType.LevelOfDetail level of detail node}.
+   * {@link NodeType.LevelsOfDetail level of detail node}.
    * 
-   * This effect type has a specialized subclass: {@link LevelOfDetailEffect}
+   * This effect type has a specialized subclass: {@link LevelsOfDetailEffect}
    */
-  LevelOfDetail = 1002,
+  LevelsOfDetail = 1002,
   /**
    * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
    * emit particles of many different types.
@@ -332,11 +332,11 @@ enum ActionType {
    */
   SFXReference = 132,
   /**
-   * Used in the {@link EffectType.LevelOfDetail level of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelOfDetail level of detail node}.
+   * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    * 
-   * This action type has a specialized subclass: {@link LevelOfDetailThresholds}
+   * This action type has a specialized subclass: {@link LevelsOfDetailThresholds}
    */
-  LevelOfDetailThresholds = 133,
+  LevelsOfDetailThresholds = 133,
   /**
    * Emits particles periodically.
    * 
@@ -1294,7 +1294,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
-  [ActionType.LevelOfDetailThresholds]: {
+  [ActionType.LevelsOfDetailThresholds]: {
     props: {
       duration: { default: -1, paths: {} },
       threshold0: { default: 10000, paths: {}, field: FieldType.Integer },
@@ -3589,9 +3589,9 @@ function readNode(br: BinaryReader, game: Game): Node {
         return new ProxyNode(actions[0].sfx)
       }
       break
-    case NodeType.LevelOfDetail:
+    case NodeType.LevelsOfDetail:
       if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new LevelOfDetailNode(effects, nodes).mapStates(...actions[0].effectIndices)
+        return new LevelsOfDetailNode(effects, nodes).mapStates(...actions[0].effectIndices)
       }
       break
     case NodeType.Basic:
@@ -3717,9 +3717,9 @@ function readEffect(br: BinaryReader, game: Game): IEffect {
   br.stepOut()
   if (game === Game.Generic) {
     return new Effect(type, actions)
-  } else if (type === EffectType.LevelOfDetail && actionCount === 1 && actions[0] instanceof LevelOfDetailThresholds) {
+  } else if (type === EffectType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
     const lod = actions[0]
-    return new LevelOfDetailEffect(lod.duration, [
+    return new LevelsOfDetailEffect(lod.duration, [
       lod.threshold0,
       lod.threshold1,
       lod.threshold2,
@@ -5617,8 +5617,8 @@ abstract class Node {
         return RootNode.fromJSON(obj)
       case NodeType.Proxy:
         return ProxyNode.fromJSON(obj)
-      case NodeType.LevelOfDetail:
-        return LevelOfDetailNode.fromJSON(obj)
+      case NodeType.LevelsOfDetail:
+        return LevelsOfDetailNode.fromJSON(obj)
       case NodeType.Basic:
         return BasicNode.fromJSON(obj)
       case NodeType.SharedEmitter:
@@ -6242,34 +6242,34 @@ class NodeWithEffects extends Node {
  * levels, you can put another LOD node as the fifth child of this node and set
  * higher thresholds in that.
  */
-class LevelOfDetailNode extends NodeWithEffects {
+class LevelsOfDetailNode extends NodeWithEffects {
 
   /**
    * @param effectsOrThresholds An array of
-   * {@link EffectType.LevelOfDetail LOD effects} or an array of LOD
+   * {@link EffectType.LevelsOfDetail LOD effects} or an array of LOD
    * thresholds. Use an array of LOD effects if you need multiple effects or a
    * finite node duration.
    * @param nodes An array of child nodes.
    */
   constructor(effectsOrThresholds: IEffect[] | number[], nodes: Node[] = []) {
     if (effectsOrThresholds.every(e => typeof e === 'number')) {
-      super(NodeType.LevelOfDetail, [
-        new LevelOfDetailEffect(-1, effectsOrThresholds as number[])
+      super(NodeType.LevelsOfDetail, [
+        new LevelsOfDetailEffect(-1, effectsOrThresholds as number[])
       ], nodes)
     } else {
-      super(NodeType.LevelOfDetail, effectsOrThresholds as IEffect[], nodes)
+      super(NodeType.LevelsOfDetail, effectsOrThresholds as IEffect[], nodes)
     }
   }
 
   static fromJSON(obj: any): Node {
-    return new LevelOfDetailNode(
+    return new LevelsOfDetailNode(
       obj.effects.map((e: any) => Effect.fromJSON(e)),
       obj.nodes.map((e: any) => Node.fromJSON(e))
     ).mapStates(...obj.stateEffectMap)
   }
 
   minify(): Node {
-    return new LevelOfDetailNode(
+    return new LevelsOfDetailNode(
       this.effects.map(e => e.minify()),
       this.nodes.map(e => e.minify())
     ).mapStates(...this.stateEffectMap)
@@ -6363,7 +6363,7 @@ class SharedEmitterNode extends NodeWithEffects {
 const Nodes = {
   [NodeType.Root]: RootNode, RootNode,
   [NodeType.Proxy]: ProxyNode, ProxyNode,
-  [NodeType.LevelOfDetail]: LevelOfDetailNode, LevelOfDetailNode,
+  [NodeType.LevelsOfDetail]: LevelsOfDetailNode, LevelsOfDetailNode,
   [NodeType.Basic]: BasicNode, BasicNode,
 }
 
@@ -6372,7 +6372,7 @@ const Nodes = {
  * Generic effect class that uses the same structure as the file format. Only
  * for use with undocumented effect types. Use one of the other effect classes
  * for effects that are known:
- * - {@link LevelOfDetailEffect}
+ * - {@link LevelsOfDetailEffect}
  * - {@link BasicEffect}
  * - {@link SharedEmitterEffect}
  */
@@ -6408,8 +6408,8 @@ class Effect implements IEffect {
     if ('actions' in obj) {
       return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
-      case EffectType.LevelOfDetail:
-        return new LevelOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
+      case EffectType.LevelsOfDetail:
+        return new LevelsOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
       case EffectType.Basic:
         return new BasicEffect({
           nodeAttributes: Action.fromJSON(obj.nodeAttributes),
@@ -6448,10 +6448,10 @@ class Effect implements IEffect {
 
 /**
  * Manages the duration and thresholds for the
- * {@link NodeType.LevelOfDetail level of detail node}.
+ * {@link NodeType.LevelsOfDetail level of detail node}.
  */
-class LevelOfDetailEffect implements IEffect {
-  readonly type = EffectType.LevelOfDetail
+class LevelsOfDetailEffect implements IEffect {
+  readonly type = EffectType.LevelsOfDetail
 
   /**
    * @param duration The duration for the node to stay active. Once its time is
@@ -6470,7 +6470,7 @@ class LevelOfDetailEffect implements IEffect {
 
   getActions(game: Game): IAction[] {
     return [
-      new LevelOfDetailThresholds({
+      new LevelsOfDetailThresholds({
         duration: this.duration,
         threshold0: this.thresholds[0],
         threshold1: this.thresholds[1],
@@ -8602,7 +8602,7 @@ class ParticleModifier extends DataAction {
   }
 }
 
-export interface LevelOfDetailThresholdsParams {
+export interface LevelsOfDetailThresholdsParams {
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
    * 
@@ -8650,10 +8650,10 @@ export interface LevelOfDetailThresholdsParams {
 }
 
 /**
- * Used in the {@link EffectType.LevelOfDetail level of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelOfDetail level of detail node}.
+ * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
-class LevelOfDetailThresholds extends DataAction {
-  declare type: ActionType.LevelOfDetailThresholds
+class LevelsOfDetailThresholds extends DataAction {
+  declare type: ActionType.LevelsOfDetailThresholds
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
    * 
@@ -8681,8 +8681,8 @@ class LevelOfDetailThresholds extends DataAction {
    */
   threshold4: number
   unk_ac6_f1_5: number
-  constructor(props: LevelOfDetailThresholdsParams = {}) {
-    super(ActionType.LevelOfDetailThresholds)
+  constructor(props: LevelsOfDetailThresholdsParams = {}) {
+    super(ActionType.LevelsOfDetailThresholds)
     this.assign(props)
   }
 }
@@ -21249,7 +21249,7 @@ const DataActions = {
   [ActionType.Unk130]: Unk130, Unk130,
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
-  [ActionType.LevelOfDetailThresholds]: LevelOfDetailThresholds, LevelOfDetailThresholds,
+  [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
@@ -22180,12 +22180,12 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param endValue The value of the second stop.
    * @returns The new linear property.
    */
-  static basic(
+  static basic<T extends ValueType>(
     loop: boolean,
     endPosition: number,
-    startValue: PropertyValue,
-    endValue: PropertyValue
-  ) {
+    startValue: ValueTypeMap[T],
+    endValue: ValueTypeMap[T]
+  ): LinearProperty<T> {
     return new LinearProperty(loop, [
       new Keyframe(0, startValue),
       new Keyframe(endPosition, endValue),
@@ -22207,26 +22207,26 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param endValue The value of the last stop.
    * @returns The new linear property.
    */
-  static power(
+  static power<T extends ValueType>(
     loop: boolean,
     exponent: number,
     stops: number,
     endPosition: number,
-    startValue: PropertyValue,
-    endValue: PropertyValue
-  ) {
+    startValue: ValueTypeMap[T],
+    endValue: ValueTypeMap[T]
+  ): LinearProperty<T> {
     if (stops < 2) {
       throw new Error('Property stop count must be greater than or equal to 2.')
     }
     if (Array.isArray(startValue) && Array.isArray(endValue)) {
       return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * endPosition,
-        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as Vector
+        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as ValueTypeMap[T]
       )))
     } else if (typeof startValue === 'number' && typeof endValue === 'number') {
       return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * endPosition,
-        lerp(startValue, endValue, (i / (stops - 1)) ** exponent)
+        lerp(startValue, endValue, (i / (stops - 1)) ** exponent) as ValueTypeMap[T]
       )))
     } else {
       throw new Error('startValue and endValue must be of the same type.')
@@ -22242,21 +22242,21 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * Higher values result in a smoother curve. Defaults to 21.
    * @returns The new linear property.
    */
-  static sine(
-    min: PropertyValue,
-    max: PropertyValue,
+  static sine<T extends ValueType>(
+    min: ValueTypeMap[T],
+    max: ValueTypeMap[T],
     period: number,
     stops: number = 21
-  ) {
+  ): LinearProperty<T> {
     if (Array.isArray(min) && Array.isArray(max)) {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
-        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as Vector
+        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as ValueTypeMap[T]
       )))
     } else if (typeof min === 'number' && typeof max === 'number') {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
-        (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)
+        (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2) as ValueTypeMap[T]
       )))
     } else {
       throw new Error('min and max must be of the same type.')
@@ -22661,12 +22661,12 @@ export {
   NodeWithEffects,
   RootNode,
   ProxyNode,
-  LevelOfDetailNode,
+  LevelsOfDetailNode,
   BasicNode,
   SharedEmitterNode,
 
   Effect,
-  LevelOfDetailEffect,
+  LevelsOfDetailEffect,
   BasicEffect,
   SharedEmitterEffect,
 
@@ -22690,7 +22690,7 @@ export {
   Unk130,
   ParticleModifier,
   SFXReference,
-  LevelOfDetailThresholds,
+  LevelsOfDetailThresholds,
   PeriodicEmitter,
   EqualDistanceEmitter,
   PointEmitterShape,

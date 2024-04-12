@@ -1,7 +1,7 @@
 type: 133
-name: LevelOfDetailThresholds
+name: LevelsOfDetailThresholds
 desc: |
-  Used in the {@link EffectType.LevelOfDetail level of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelOfDetail level of detail node}.
+  Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
 properties:
   duration:
     type: ScalarValue
