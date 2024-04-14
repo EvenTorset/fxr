@@ -5474,16 +5474,17 @@ class FXR {
         list.push(action.mask)
       } else if (action instanceof RadialBlur) {
         list.push(action.mask)
+      } else if (action instanceof LensFlare) {
+        list.push(action.layer1)
+        list.push(action.layer2)
+        list.push(action.layer3)
+        list.push(action.layer4)
       } else if (action instanceof Action) switch (action.type) {
         case ActionType.Unk10000_StandardParticle:
         case ActionType.Unk10001_StandardCorrectParticle:
           list.push(action.fields1[1].value)
           list.push(action.fields1[2].value)
           list.push(action.fields1[3].value)
-          break
-        case ActionType.LensFlare:
-          list.push(action.fields1[0].value)
-          list.push(action.fields1[1].value)
           break
       }
     }
@@ -6009,6 +6010,15 @@ abstract class Node {
           slot9.jitterX *= factor
           slot9.jitterY *= factor
           slot9.jitterZ *= factor
+        } else if (slot9 instanceof LensFlare) {
+          slot9.layer1Width = anyValueMult(factor, slot9.layer1Width)
+          slot9.layer1Height = anyValueMult(factor, slot9.layer1Height)
+          slot9.layer2Width = anyValueMult(factor, slot9.layer2Width)
+          slot9.layer2Height = anyValueMult(factor, slot9.layer2Height)
+          slot9.layer3Width = anyValueMult(factor, slot9.layer3Width)
+          slot9.layer3Height = anyValueMult(factor, slot9.layer3Height)
+          slot9.layer4Width = anyValueMult(factor, slot9.layer4Width)
+          slot9.layer4Height = anyValueMult(factor, slot9.layer4Height)
         } else if (slot9 instanceof RichModel) {
           slot9.sizeX = anyValueMult(factor, slot9.sizeX)
           slot9.sizeY = anyValueMult(factor, slot9.sizeY)
@@ -6135,12 +6145,6 @@ abstract class Node {
         case ActionType.Unk10001_StandardCorrectParticle:
           procProp(slot9.properties1, 13)
           break
-        case ActionType.LensFlare:
-          procProp(slot9.properties1, 2)
-          procProp(slot9.properties1, 5)
-          procProp(slot9.properties1, 8)
-          procProp(slot9.properties1, 11)
-          break
       } else if (
         slot9 instanceof PointSprite ||
         slot9 instanceof BillboardEx ||
@@ -6167,6 +6171,11 @@ abstract class Node {
         procVec4Value(slot9, 'layer2Color')
       } else if (slot9 instanceof Distortion || slot9 instanceof RadialBlur) {
         procVec4Value(slot9, 'color')
+      } else if (slot9 instanceof LensFlare) {
+        procVec4Value(slot9, 'layer1Color')
+        procVec4Value(slot9, 'layer2Color')
+        procVec4Value(slot9, 'layer3Color')
+        procVec4Value(slot9, 'layer4Color')
       } else if (slot9 instanceof PointLight || slot9 instanceof SpotLight) {
         procVec4Value(slot9, 'diffuseColor')
         procVec4Value(slot9, 'specularColor')
@@ -6784,6 +6793,7 @@ class BasicEffect implements IEffect {
     PointLight |
     DynamicTracer |
     WaterInteraction |
+    LensFlare |
     RichModel |
     SpotLight
     = new Action
