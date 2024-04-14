@@ -264,7 +264,6 @@ enum ActionType {
   Unk10008_SparkParticle = 10008,
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
-  Unk10014_LensFlare = 10014,
   Unk10100 = 10100, // Root node action
   Unk10200_ForceFieldCancelArea = 10200,
   Unk10300_ForceFieldWindArea = 10300,
@@ -519,6 +518,12 @@ enum ActionType {
    * This action type has a specialized subclass: {@link WaterInteraction}
    */
   WaterInteraction = 10013,
+  /**
+   * Creates lens flares with up to 4 textured layers with different colors and sizes.
+   * 
+   * This action type has a specialized subclass: {@link LensFlare}
+   */
+  LensFlare = 10014,
   /**
    * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
    * 
@@ -2763,6 +2768,152 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.LensFlare]: {
+    props: {
+      layer1: { default: 1, paths: {}, field: FieldType.Integer },
+      layer1Width: { default: 1, paths: {} },
+      layer1Height: { default: 1, paths: {} },
+      layer1Color: { default: [1, 1, 1, 1], paths: {} },
+      layer1Count: { default: 1, paths: {}, field: FieldType.Integer },
+      layer1ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      layer1ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      layer1UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      layer1RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer1GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer1BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer1AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer1BloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      layer1BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      layer1BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      layer1BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
+      layer2: { default: 0, paths: {}, field: FieldType.Integer },
+      layer2Width: { default: 1, paths: {} },
+      layer2Height: { default: 1, paths: {} },
+      layer2Color: { default: [1, 1, 1, 1], paths: {} },
+      layer2Count: { default: 1, paths: {}, field: FieldType.Integer },
+      layer2ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      layer2ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      layer2UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      layer2RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer2GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer2BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer2AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer2BloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      layer2BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      layer2BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      layer2BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
+      layer3: { default: 0, paths: {}, field: FieldType.Integer },
+      layer3Width: { default: 1, paths: {} },
+      layer3Height: { default: 1, paths: {} },
+      layer3Color: { default: [1, 1, 1, 1], paths: {} },
+      layer3Count: { default: 1, paths: {}, field: FieldType.Integer },
+      layer3ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      layer3ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      layer3UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      layer3RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer3GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer3BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer3AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer3BloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      layer3BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      layer3BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      layer3BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
+      layer4: { default: 0, paths: {}, field: FieldType.Integer },
+      layer4Width: { default: 1, paths: {} },
+      layer4Height: { default: 1, paths: {} },
+      layer4Color: { default: [1, 1, 1, 1], paths: {} },
+      layer4Count: { default: 1, paths: {}, field: FieldType.Integer },
+      layer4ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
+      layer4ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
+      layer4UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
+      layer4RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer4GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer4BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer4AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
+      layer4BloomRed: { default: 1, paths: {}, field: FieldType.Float },
+      layer4BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
+      layer4BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
+      layer4BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
+      blendMode: { default: BlendMode.Add, paths: {}, field: FieldType.Integer },
+      sourceSize: { default: 1, paths: {}, field: FieldType.Float },
+      opacityTransitionDuration: { default: 1, paths: {}, field: FieldType.Float },
+      bloom: { default: false, paths: {}, field: FieldType.Boolean },
+      unk_er_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_18: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_19: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f1_20: { default: -1, paths: {}, field: FieldType.Float },
+      unk_er_f1_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_30: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_31: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f1_32: { default: -1, paths: {}, field: FieldType.Float },
+      unk_er_f1_41: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_42: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_43: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f1_44: { default: -1, paths: {}, field: FieldType.Float },
+      unk_er_f1_53: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_54: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f1_55: { default: 1, paths: {}, field: FieldType.Float },
+      unk_er_f1_56: { default: -1, paths: {}, field: FieldType.Float },
+      unk_er_f1_57: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_2: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_4: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_5: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_6: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_7: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_8: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_14: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_15: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_16: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_17: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_18: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_19: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_25: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_26: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_34: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_35: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_er_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
+      unk_ac6_f1_75: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_76: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_77: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_78: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_79: { default: -1, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_80: { default: -1, paths: {}, field: FieldType.Float },
+    },
+    games: {
+      [Game.Sekiro]: Game.EldenRing,
+      [Game.EldenRing]: {
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1RedMultiplier','layer1GreenMultiplier','layer1BlueMultiplier','layer1AlphaMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2RedMultiplier','layer2GreenMultiplier','layer2BlueMultiplier','layer2AlphaMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3RedMultiplier','layer3GreenMultiplier','layer3BlueMultiplier','layer3AlphaMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4RedMultiplier','layer4GreenMultiplier','layer4BlueMultiplier','layer4AlphaMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomRed','layer1BloomGreen','layer1BloomBlue','layer1BloomAlpha','layer2BloomRed','layer2BloomGreen','layer2BloomBlue','layer2BloomAlpha','layer3BloomRed','layer3BloomGreen','layer3BloomBlue','layer3BloomAlpha','layer4BloomRed','layer4BloomGreen','layer4BloomBlue','layer4BloomAlpha'],
+        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36'],
+        properties1: ['layer1Width','layer1Height','layer1Color','layer2Width','layer2Height','layer2Color','layer3Width','layer3Height','layer3Color','layer4Width','layer4Height','layer4Color']
+      },
+      [Game.ArmoredCore6]: {
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1RedMultiplier','layer1GreenMultiplier','layer1BlueMultiplier','layer1AlphaMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2RedMultiplier','layer2GreenMultiplier','layer2BlueMultiplier','layer2AlphaMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3RedMultiplier','layer3GreenMultiplier','layer3BlueMultiplier','layer3AlphaMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4RedMultiplier','layer4GreenMultiplier','layer4BlueMultiplier','layer4AlphaMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomRed','layer1BloomGreen','layer1BloomBlue','layer1BloomAlpha','layer2BloomRed','layer2BloomGreen','layer2BloomBlue','layer2BloomAlpha','layer3BloomRed','layer3BloomGreen','layer3BloomBlue','layer3BloomAlpha','layer4BloomRed','layer4BloomGreen','layer4BloomBlue','layer4BloomAlpha','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
+        fields2: Game.EldenRing,
+        properties1: Game.EldenRing
+      }
+    }
+  },
   [ActionType.RichModel]: {
     props: {
       orientation: { default: OrientationMode.LocalSouth, paths: {}, field: FieldType.Integer },
@@ -3073,7 +3224,7 @@ const EffectActionSlots = {
       ActionType.Unk10010_Tracer,
       ActionType.DynamicTracer,
       ActionType.WaterInteraction,
-      ActionType.Unk10014_LensFlare,
+      ActionType.LensFlare,
       ActionType.RichModel,
       ActionType.Unk10200_ForceFieldCancelArea,
       ActionType.Unk10300_ForceFieldWindArea,
@@ -5330,7 +5481,7 @@ class FXR {
           list.push(action.fields1[2].value)
           list.push(action.fields1[3].value)
           break
-        case ActionType.Unk10014_LensFlare:
+        case ActionType.LensFlare:
           list.push(action.fields1[0].value)
           list.push(action.fields1[1].value)
           break
@@ -5984,7 +6135,7 @@ abstract class Node {
         case ActionType.Unk10001_StandardCorrectParticle:
           procProp(slot9.properties1, 13)
           break
-        case ActionType.Unk10014_LensFlare:
+        case ActionType.LensFlare:
           procProp(slot9.properties1, 2)
           procProp(slot9.properties1, 5)
           procProp(slot9.properties1, 8)
@@ -19327,6 +19478,1735 @@ class WaterInteraction extends DataAction {
   }
 }
 
+export interface LensFlareParams {
+  /**
+   * Layer 1 texture ID.
+   * 
+   * **Default**: `1`
+   */
+  layer1?: number
+  /**
+   * Layer 1 width.
+   * 
+   * **Default**: `1`
+   */
+  layer1Width?: ScalarValue
+  /**
+   * Layer 1 height.
+   * 
+   * **Default**: `1`
+   */
+  layer1Height?: ScalarValue
+  /**
+   * Layer 1 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  layer1Color?: Vector4Value
+  /**
+   * Number of copies of layer 1. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1ScaleVariationX}
+   * - {@link layer1ScaleVariationY}
+   */
+  layer1Count?: number
+  /**
+   * The {@link layer1Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Count}
+   * - {@link layer1UniformScale}
+   * - {@link layer1ScaleVariationY}
+   */
+  layer1ScaleVariationX?: number
+  /**
+   * The {@link layer1Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Count}
+   * - {@link layer1UniformScale}
+   * - {@link layer1ScaleVariationX}
+   */
+  layer1ScaleVariationY?: number
+  /**
+   * When enabled, the {@link layer1Width layer's width} also controls the {@link layer1Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link layer1Width}
+   * - {@link layer1Height}
+   * - {@link layer1ScaleVariationX}
+   * - {@link layer1ScaleVariationX}
+   */
+  layer1UniformScale?: boolean
+  /**
+   * Multiplier for the red value of the {@link layer1Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1GreenMultiplier}
+   * - {@link layer1BlueMultiplier}
+   * - {@link layer1AlphaMultiplier}
+   */
+  layer1RedMultiplier?: number
+  /**
+   * Multiplier for the green value of the {@link layer1Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1RedMultiplier}
+   * - {@link layer1BlueMultiplier}
+   * - {@link layer1AlphaMultiplier}
+   */
+  layer1GreenMultiplier?: number
+  /**
+   * Multiplier for the blue value of the {@link layer1Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1RedMultiplier}
+   * - {@link layer1GreenMultiplier}
+   * - {@link layer1AlphaMultiplier}
+   */
+  layer1BlueMultiplier?: number
+  /**
+   * Multiplier for the alpha value of the {@link layer1Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1RedMultiplier}
+   * - {@link layer1GreenMultiplier}
+   * - {@link layer1BlueMultiplier}
+   */
+  layer1AlphaMultiplier?: number
+  /**
+   * The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomBlue}
+   * - {@link layer1BloomAlpha}
+   */
+  layer1BloomRed?: number
+  /**
+   * The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomBlue}
+   * - {@link layer1BloomAlpha}
+   */
+  layer1BloomGreen?: number
+  /**
+   * The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomAlpha}
+   */
+  layer1BloomBlue?: number
+  /**
+   * The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomBlue}
+   */
+  layer1BloomAlpha?: number
+  /**
+   * Layer 2 texture ID.
+   * 
+   * **Default**: `0`
+   */
+  layer2?: number
+  /**
+   * Layer 2 width.
+   * 
+   * **Default**: `1`
+   */
+  layer2Width?: ScalarValue
+  /**
+   * Layer 2 height.
+   * 
+   * **Default**: `1`
+   */
+  layer2Height?: ScalarValue
+  /**
+   * Layer 2 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  layer2Color?: Vector4Value
+  /**
+   * Number of copies of layer 2. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2ScaleVariationX}
+   * - {@link layer2ScaleVariationY}
+   */
+  layer2Count?: number
+  /**
+   * The {@link layer2Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Count}
+   * - {@link layer2UniformScale}
+   * - {@link layer2ScaleVariationY}
+   */
+  layer2ScaleVariationX?: number
+  /**
+   * The {@link layer2Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Count}
+   * - {@link layer2UniformScale}
+   * - {@link layer2ScaleVariationX}
+   */
+  layer2ScaleVariationY?: number
+  /**
+   * When enabled, the {@link layer2Width layer's width} also controls the {@link layer2Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link layer2Width}
+   * - {@link layer2Height}
+   * - {@link layer2ScaleVariationX}
+   * - {@link layer2ScaleVariationX}
+   */
+  layer2UniformScale?: boolean
+  /**
+   * Multiplier for the red value of the {@link layer2Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2GreenMultiplier}
+   * - {@link layer2BlueMultiplier}
+   * - {@link layer2AlphaMultiplier}
+   */
+  layer2RedMultiplier?: number
+  /**
+   * Multiplier for the green value of the {@link layer2Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2RedMultiplier}
+   * - {@link layer2BlueMultiplier}
+   * - {@link layer2AlphaMultiplier}
+   */
+  layer2GreenMultiplier?: number
+  /**
+   * Multiplier for the blue value of the {@link layer2Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2RedMultiplier}
+   * - {@link layer2GreenMultiplier}
+   * - {@link layer2AlphaMultiplier}
+   */
+  layer2BlueMultiplier?: number
+  /**
+   * Multiplier for the alpha value of the {@link layer2Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2RedMultiplier}
+   * - {@link layer2GreenMultiplier}
+   * - {@link layer2BlueMultiplier}
+   */
+  layer2AlphaMultiplier?: number
+  /**
+   * The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomBlue}
+   * - {@link layer2BloomAlpha}
+   */
+  layer2BloomRed?: number
+  /**
+   * The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomBlue}
+   * - {@link layer2BloomAlpha}
+   */
+  layer2BloomGreen?: number
+  /**
+   * The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomAlpha}
+   */
+  layer2BloomBlue?: number
+  /**
+   * The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomBlue}
+   */
+  layer2BloomAlpha?: number
+  /**
+   * Layer 3 texture ID.
+   * 
+   * **Default**: `0`
+   */
+  layer3?: number
+  /**
+   * Layer 3 width.
+   * 
+   * **Default**: `1`
+   */
+  layer3Width?: ScalarValue
+  /**
+   * Layer 3 height.
+   * 
+   * **Default**: `1`
+   */
+  layer3Height?: ScalarValue
+  /**
+   * Layer 3 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  layer3Color?: Vector4Value
+  /**
+   * Number of copies of layer 3. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3ScaleVariationX}
+   * - {@link layer3ScaleVariationY}
+   */
+  layer3Count?: number
+  /**
+   * The {@link layer3Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Count}
+   * - {@link layer3UniformScale}
+   * - {@link layer3ScaleVariationY}
+   */
+  layer3ScaleVariationX?: number
+  /**
+   * The {@link layer3Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Count}
+   * - {@link layer3UniformScale}
+   * - {@link layer3ScaleVariationX}
+   */
+  layer3ScaleVariationY?: number
+  /**
+   * When enabled, the {@link layer3Width layer's width} also controls the {@link layer3Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link layer3Width}
+   * - {@link layer3Height}
+   * - {@link layer3ScaleVariationX}
+   * - {@link layer3ScaleVariationX}
+   */
+  layer3UniformScale?: boolean
+  /**
+   * Multiplier for the red value of the {@link layer3Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3GreenMultiplier}
+   * - {@link layer3BlueMultiplier}
+   * - {@link layer3AlphaMultiplier}
+   */
+  layer3RedMultiplier?: number
+  /**
+   * Multiplier for the green value of the {@link layer3Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3RedMultiplier}
+   * - {@link layer3BlueMultiplier}
+   * - {@link layer3AlphaMultiplier}
+   */
+  layer3GreenMultiplier?: number
+  /**
+   * Multiplier for the blue value of the {@link layer3Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3RedMultiplier}
+   * - {@link layer3GreenMultiplier}
+   * - {@link layer3AlphaMultiplier}
+   */
+  layer3BlueMultiplier?: number
+  /**
+   * Multiplier for the alpha value of the {@link layer3Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3RedMultiplier}
+   * - {@link layer3GreenMultiplier}
+   * - {@link layer3BlueMultiplier}
+   */
+  layer3AlphaMultiplier?: number
+  /**
+   * The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomBlue}
+   * - {@link layer3BloomAlpha}
+   */
+  layer3BloomRed?: number
+  /**
+   * The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomBlue}
+   * - {@link layer3BloomAlpha}
+   */
+  layer3BloomGreen?: number
+  /**
+   * The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomAlpha}
+   */
+  layer3BloomBlue?: number
+  /**
+   * The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomBlue}
+   */
+  layer3BloomAlpha?: number
+  /**
+   * Layer 4 texture ID.
+   * 
+   * This layer seems to work a bit differently from the others in Sekiro.
+   * 
+   * **Default**: `0`
+   */
+  layer4?: number
+  /**
+   * Layer 4 width.
+   * 
+   * **Default**: `1`
+   */
+  layer4Width?: ScalarValue
+  /**
+   * Layer 4 height.
+   * 
+   * **Default**: `1`
+   */
+  layer4Height?: ScalarValue
+  /**
+   * Layer 4 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  layer4Color?: Vector4Value
+  /**
+   * Number of copies of layer 4. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4ScaleVariationX}
+   * - {@link layer4ScaleVariationY}
+   */
+  layer4Count?: number
+  /**
+   * The {@link layer4Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Count}
+   * - {@link layer4UniformScale}
+   * - {@link layer4ScaleVariationY}
+   */
+  layer4ScaleVariationX?: number
+  /**
+   * The {@link layer4Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Count}
+   * - {@link layer4UniformScale}
+   * - {@link layer4ScaleVariationX}
+   */
+  layer4ScaleVariationY?: number
+  /**
+   * When enabled, the {@link layer4Width layer's width} also controls the {@link layer4Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link layer4Width}
+   * - {@link layer4Height}
+   * - {@link layer4ScaleVariationX}
+   * - {@link layer4ScaleVariationX}
+   */
+  layer4UniformScale?: boolean
+  /**
+   * Multiplier for the red value of the {@link layer4Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4GreenMultiplier}
+   * - {@link layer4BlueMultiplier}
+   * - {@link layer4AlphaMultiplier}
+   */
+  layer4RedMultiplier?: number
+  /**
+   * Multiplier for the green value of the {@link layer4Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4RedMultiplier}
+   * - {@link layer4BlueMultiplier}
+   * - {@link layer4AlphaMultiplier}
+   */
+  layer4GreenMultiplier?: number
+  /**
+   * Multiplier for the blue value of the {@link layer4Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4RedMultiplier}
+   * - {@link layer4GreenMultiplier}
+   * - {@link layer4AlphaMultiplier}
+   */
+  layer4BlueMultiplier?: number
+  /**
+   * Multiplier for the alpha value of the {@link layer4Color layer's color}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4RedMultiplier}
+   * - {@link layer4GreenMultiplier}
+   * - {@link layer4BlueMultiplier}
+   */
+  layer4AlphaMultiplier?: number
+  /**
+   * The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomBlue}
+   * - {@link layer4BloomAlpha}
+   */
+  layer4BloomRed?: number
+  /**
+   * The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomBlue}
+   * - {@link layer4BloomAlpha}
+   */
+  layer4BloomGreen?: number
+  /**
+   * The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomAlpha}
+   */
+  layer4BloomBlue?: number
+  /**
+   * The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomBlue}
+   */
+  layer4BloomAlpha?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Add}
+   */
+  blendMode?: BlendMode
+  /**
+   * Diameter of the lens flare source sphere.
+   * 
+   * The opacity of the lens flare depends on how much of the source is in view.
+   * 
+   * **Default**: `1`
+   */
+  sourceSize?: number
+  /**
+   * The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
+   * 
+   * **Default**: `1`
+   */
+  opacityTransitionDuration?: number
+  /**
+   * When enabled, this allows the lens flare to have a bloom effect.
+   * 
+   * Does not seem to work in Sekiro.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomBlue}
+   * - {@link layer1BloomAlpha}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomBlue}
+   * - {@link layer2BloomAlpha}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomBlue}
+   * - {@link layer3BloomAlpha}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomBlue}
+   * - {@link layer4BloomAlpha}
+   */
+  bloom?: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_4?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_18?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_19?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_29?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_30?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_31?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_41?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_42?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_43?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_44?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_53?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_54?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_55?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_56?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_57?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_1?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_3?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_4?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_5?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_6?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_7?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_24?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_25?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_26?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_29?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_33?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_34?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_35?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f2_36?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_75?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_76?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_77?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_78?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_79?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_80?: number
+}
+
+/**
+ * Creates lens flares with up to 4 textured layers with different colors and sizes.
+ */
+class LensFlare extends DataAction {
+  declare type: ActionType.LensFlare
+  /**
+   * Layer 1 texture ID.
+   */
+  layer1: number
+  /**
+   * Layer 1 width.
+   */
+  layer1Width: ScalarValue
+  /**
+   * Layer 1 height.
+   */
+  layer1Height: ScalarValue
+  /**
+   * Layer 1 color.
+   */
+  layer1Color: Vector4Value
+  /**
+   * Number of copies of layer 1. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * See also:
+   * - {@link layer1ScaleVariationX}
+   * - {@link layer1ScaleVariationY}
+   */
+  layer1Count: number
+  /**
+   * The {@link layer1Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer1Count}
+   * - {@link layer1UniformScale}
+   * - {@link layer1ScaleVariationY}
+   */
+  layer1ScaleVariationX: number
+  /**
+   * The {@link layer1Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer1Count}
+   * - {@link layer1UniformScale}
+   * - {@link layer1ScaleVariationX}
+   */
+  layer1ScaleVariationY: number
+  /**
+   * When enabled, the {@link layer1Width layer's width} also controls the {@link layer1Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * See also:
+   * - {@link layer1Width}
+   * - {@link layer1Height}
+   * - {@link layer1ScaleVariationX}
+   * - {@link layer1ScaleVariationX}
+   */
+  layer1UniformScale: boolean
+  /**
+   * Multiplier for the red value of the {@link layer1Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1GreenMultiplier}
+   * - {@link layer1BlueMultiplier}
+   * - {@link layer1AlphaMultiplier}
+   */
+  layer1RedMultiplier: number
+  /**
+   * Multiplier for the green value of the {@link layer1Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1RedMultiplier}
+   * - {@link layer1BlueMultiplier}
+   * - {@link layer1AlphaMultiplier}
+   */
+  layer1GreenMultiplier: number
+  /**
+   * Multiplier for the blue value of the {@link layer1Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1RedMultiplier}
+   * - {@link layer1GreenMultiplier}
+   * - {@link layer1AlphaMultiplier}
+   */
+  layer1BlueMultiplier: number
+  /**
+   * Multiplier for the alpha value of the {@link layer1Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1RedMultiplier}
+   * - {@link layer1GreenMultiplier}
+   * - {@link layer1BlueMultiplier}
+   */
+  layer1AlphaMultiplier: number
+  /**
+   * The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomBlue}
+   * - {@link layer1BloomAlpha}
+   */
+  layer1BloomRed: number
+  /**
+   * The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomBlue}
+   * - {@link layer1BloomAlpha}
+   */
+  layer1BloomGreen: number
+  /**
+   * The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomAlpha}
+   */
+  layer1BloomBlue: number
+  /**
+   * The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer1Color}
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomBlue}
+   */
+  layer1BloomAlpha: number
+  /**
+   * Layer 2 texture ID.
+   */
+  layer2: number
+  /**
+   * Layer 2 width.
+   */
+  layer2Width: ScalarValue
+  /**
+   * Layer 2 height.
+   */
+  layer2Height: ScalarValue
+  /**
+   * Layer 2 color.
+   */
+  layer2Color: Vector4Value
+  /**
+   * Number of copies of layer 2. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * See also:
+   * - {@link layer2ScaleVariationX}
+   * - {@link layer2ScaleVariationY}
+   */
+  layer2Count: number
+  /**
+   * The {@link layer2Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer2Count}
+   * - {@link layer2UniformScale}
+   * - {@link layer2ScaleVariationY}
+   */
+  layer2ScaleVariationX: number
+  /**
+   * The {@link layer2Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer2Count}
+   * - {@link layer2UniformScale}
+   * - {@link layer2ScaleVariationX}
+   */
+  layer2ScaleVariationY: number
+  /**
+   * When enabled, the {@link layer2Width layer's width} also controls the {@link layer2Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * See also:
+   * - {@link layer2Width}
+   * - {@link layer2Height}
+   * - {@link layer2ScaleVariationX}
+   * - {@link layer2ScaleVariationX}
+   */
+  layer2UniformScale: boolean
+  /**
+   * Multiplier for the red value of the {@link layer2Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2GreenMultiplier}
+   * - {@link layer2BlueMultiplier}
+   * - {@link layer2AlphaMultiplier}
+   */
+  layer2RedMultiplier: number
+  /**
+   * Multiplier for the green value of the {@link layer2Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2RedMultiplier}
+   * - {@link layer2BlueMultiplier}
+   * - {@link layer2AlphaMultiplier}
+   */
+  layer2GreenMultiplier: number
+  /**
+   * Multiplier for the blue value of the {@link layer2Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2RedMultiplier}
+   * - {@link layer2GreenMultiplier}
+   * - {@link layer2AlphaMultiplier}
+   */
+  layer2BlueMultiplier: number
+  /**
+   * Multiplier for the alpha value of the {@link layer2Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2RedMultiplier}
+   * - {@link layer2GreenMultiplier}
+   * - {@link layer2BlueMultiplier}
+   */
+  layer2AlphaMultiplier: number
+  /**
+   * The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomBlue}
+   * - {@link layer2BloomAlpha}
+   */
+  layer2BloomRed: number
+  /**
+   * The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomBlue}
+   * - {@link layer2BloomAlpha}
+   */
+  layer2BloomGreen: number
+  /**
+   * The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomAlpha}
+   */
+  layer2BloomBlue: number
+  /**
+   * The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer2Color}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomBlue}
+   */
+  layer2BloomAlpha: number
+  /**
+   * Layer 3 texture ID.
+   */
+  layer3: number
+  /**
+   * Layer 3 width.
+   */
+  layer3Width: ScalarValue
+  /**
+   * Layer 3 height.
+   */
+  layer3Height: ScalarValue
+  /**
+   * Layer 3 color.
+   */
+  layer3Color: Vector4Value
+  /**
+   * Number of copies of layer 3. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * See also:
+   * - {@link layer3ScaleVariationX}
+   * - {@link layer3ScaleVariationY}
+   */
+  layer3Count: number
+  /**
+   * The {@link layer3Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer3Count}
+   * - {@link layer3UniformScale}
+   * - {@link layer3ScaleVariationY}
+   */
+  layer3ScaleVariationX: number
+  /**
+   * The {@link layer3Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer3Count}
+   * - {@link layer3UniformScale}
+   * - {@link layer3ScaleVariationX}
+   */
+  layer3ScaleVariationY: number
+  /**
+   * When enabled, the {@link layer3Width layer's width} also controls the {@link layer3Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * See also:
+   * - {@link layer3Width}
+   * - {@link layer3Height}
+   * - {@link layer3ScaleVariationX}
+   * - {@link layer3ScaleVariationX}
+   */
+  layer3UniformScale: boolean
+  /**
+   * Multiplier for the red value of the {@link layer3Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3GreenMultiplier}
+   * - {@link layer3BlueMultiplier}
+   * - {@link layer3AlphaMultiplier}
+   */
+  layer3RedMultiplier: number
+  /**
+   * Multiplier for the green value of the {@link layer3Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3RedMultiplier}
+   * - {@link layer3BlueMultiplier}
+   * - {@link layer3AlphaMultiplier}
+   */
+  layer3GreenMultiplier: number
+  /**
+   * Multiplier for the blue value of the {@link layer3Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3RedMultiplier}
+   * - {@link layer3GreenMultiplier}
+   * - {@link layer3AlphaMultiplier}
+   */
+  layer3BlueMultiplier: number
+  /**
+   * Multiplier for the alpha value of the {@link layer3Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3RedMultiplier}
+   * - {@link layer3GreenMultiplier}
+   * - {@link layer3BlueMultiplier}
+   */
+  layer3AlphaMultiplier: number
+  /**
+   * The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomBlue}
+   * - {@link layer3BloomAlpha}
+   */
+  layer3BloomRed: number
+  /**
+   * The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomBlue}
+   * - {@link layer3BloomAlpha}
+   */
+  layer3BloomGreen: number
+  /**
+   * The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomAlpha}
+   */
+  layer3BloomBlue: number
+  /**
+   * The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer3Color}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomBlue}
+   */
+  layer3BloomAlpha: number
+  /**
+   * Layer 4 texture ID.
+   * 
+   * This layer seems to work a bit differently from the others in Sekiro.
+   */
+  layer4: number
+  /**
+   * Layer 4 width.
+   */
+  layer4Width: ScalarValue
+  /**
+   * Layer 4 height.
+   */
+  layer4Height: ScalarValue
+  /**
+   * Layer 4 color.
+   */
+  layer4Color: Vector4Value
+  /**
+   * Number of copies of layer 4. Why this exists is unknown, they all just stack on top of each other.
+   * 
+   * Each copy will pick its own random values for the scale variation.
+   * 
+   * See also:
+   * - {@link layer4ScaleVariationX}
+   * - {@link layer4ScaleVariationY}
+   */
+  layer4Count: number
+  /**
+   * The {@link layer4Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer4Count}
+   * - {@link layer4UniformScale}
+   * - {@link layer4ScaleVariationY}
+   */
+  layer4ScaleVariationX: number
+  /**
+   * The {@link layer4Height layer's height} is multiplied by a random value between this and 1.
+   * 
+   * See also:
+   * - {@link layer4Count}
+   * - {@link layer4UniformScale}
+   * - {@link layer4ScaleVariationX}
+   */
+  layer4ScaleVariationY: number
+  /**
+   * When enabled, the {@link layer4Width layer's width} also controls the {@link layer4Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * See also:
+   * - {@link layer4Width}
+   * - {@link layer4Height}
+   * - {@link layer4ScaleVariationX}
+   * - {@link layer4ScaleVariationX}
+   */
+  layer4UniformScale: boolean
+  /**
+   * Multiplier for the red value of the {@link layer4Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4GreenMultiplier}
+   * - {@link layer4BlueMultiplier}
+   * - {@link layer4AlphaMultiplier}
+   */
+  layer4RedMultiplier: number
+  /**
+   * Multiplier for the green value of the {@link layer4Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4RedMultiplier}
+   * - {@link layer4BlueMultiplier}
+   * - {@link layer4AlphaMultiplier}
+   */
+  layer4GreenMultiplier: number
+  /**
+   * Multiplier for the blue value of the {@link layer4Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4RedMultiplier}
+   * - {@link layer4GreenMultiplier}
+   * - {@link layer4AlphaMultiplier}
+   */
+  layer4BlueMultiplier: number
+  /**
+   * Multiplier for the alpha value of the {@link layer4Color layer's color}.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4RedMultiplier}
+   * - {@link layer4GreenMultiplier}
+   * - {@link layer4BlueMultiplier}
+   */
+  layer4AlphaMultiplier: number
+  /**
+   * The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomBlue}
+   * - {@link layer4BloomAlpha}
+   */
+  layer4BloomRed: number
+  /**
+   * The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomBlue}
+   * - {@link layer4BloomAlpha}
+   */
+  layer4BloomGreen: number
+  /**
+   * The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomAlpha}
+   */
+  layer4BloomBlue: number
+  /**
+   * The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+   * 
+   * See also:
+   * - {@link layer4Color}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomBlue}
+   */
+  layer4BloomAlpha: number
+  /**
+   * Blend mode.
+   */
+  blendMode: BlendMode
+  /**
+   * Diameter of the lens flare source sphere.
+   * 
+   * The opacity of the lens flare depends on how much of the source is in view.
+   */
+  sourceSize: number
+  /**
+   * The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
+   */
+  opacityTransitionDuration: number
+  /**
+   * When enabled, this allows the lens flare to have a bloom effect.
+   * 
+   * Does not seem to work in Sekiro.
+   * 
+   * See also:
+   * - {@link layer1BloomRed}
+   * - {@link layer1BloomGreen}
+   * - {@link layer1BloomBlue}
+   * - {@link layer1BloomAlpha}
+   * - {@link layer2BloomRed}
+   * - {@link layer2BloomGreen}
+   * - {@link layer2BloomBlue}
+   * - {@link layer2BloomAlpha}
+   * - {@link layer3BloomRed}
+   * - {@link layer3BloomGreen}
+   * - {@link layer3BloomBlue}
+   * - {@link layer3BloomAlpha}
+   * - {@link layer4BloomRed}
+   * - {@link layer4BloomGreen}
+   * - {@link layer4BloomBlue}
+   * - {@link layer4BloomAlpha}
+   */
+  bloom: boolean
+  unk_er_f1_4: number
+  unk_er_f1_8: number
+  unk_er_f1_17: number
+  unk_er_f1_18: number
+  unk_er_f1_19: number
+  unk_er_f1_20: number
+  unk_er_f1_29: number
+  unk_er_f1_30: number
+  unk_er_f1_31: number
+  unk_er_f1_32: number
+  unk_er_f1_41: number
+  unk_er_f1_42: number
+  unk_er_f1_43: number
+  unk_er_f1_44: number
+  unk_er_f1_53: number
+  unk_er_f1_54: number
+  unk_er_f1_55: number
+  unk_er_f1_56: number
+  unk_er_f1_57: number
+  unk_er_f2_0: number
+  unk_er_f2_1: number
+  unk_er_f2_2: number
+  unk_er_f2_3: number
+  unk_er_f2_4: number
+  unk_er_f2_5: number
+  unk_er_f2_6: number
+  unk_er_f2_7: number
+  unk_er_f2_8: number
+  unk_er_f2_9: number
+  unk_er_f2_10: number
+  unk_er_f2_11: number
+  unk_er_f2_12: number
+  unk_er_f2_13: number
+  unk_er_f2_14: number
+  unk_er_f2_15: number
+  unk_er_f2_16: number
+  unk_er_f2_17: number
+  unk_er_f2_18: number
+  unk_er_f2_19: number
+  unk_er_f2_20: number
+  unk_er_f2_21: number
+  unk_er_f2_22: number
+  unk_er_f2_23: number
+  unk_er_f2_24: number
+  unk_er_f2_25: number
+  unk_er_f2_26: number
+  unk_er_f2_27: number
+  unk_er_f2_28: number
+  unk_er_f2_29: number
+  unk_er_f2_31: number
+  unk_er_f2_32: number
+  unk_er_f2_33: number
+  unk_er_f2_34: number
+  unk_er_f2_35: number
+  unk_er_f2_36: number
+  unk_ac6_f1_75: number
+  unk_ac6_f1_76: number
+  unk_ac6_f1_77: number
+  unk_ac6_f1_78: number
+  unk_ac6_f1_79: number
+  unk_ac6_f1_80: number
+  constructor(props: LensFlareParams = {}) {
+    super(ActionType.LensFlare)
+    this.assign(props)
+  }
+}
+
 export interface RichModelParams {
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
@@ -21306,6 +23186,7 @@ const DataActions = {
   [ActionType.Unk800]: Unk800, Unk800,
   [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
+  [ActionType.LensFlare]: LensFlare, LensFlare,
   [ActionType.RichModel]: RichModel, RichModel,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
@@ -22316,7 +24197,7 @@ class Curve2Property<T extends ValueType> extends SequenceProperty<T, PropertyFu
  * to generate the random property values.
  * @returns 
  */
-function RandomProperty(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
+function RandomProperty(minValue: PropertyValue, maxValue: PropertyValue, seed?: PropertyValue) {
   return new ValueProperty(
     (Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar) as ValueType,
     Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0,
@@ -23055,6 +24936,7 @@ export {
   Unk800,
   DynamicTracer,
   WaterInteraction,
+  LensFlare,
   RichModel,
   Unk10500,
   SpotLight,
