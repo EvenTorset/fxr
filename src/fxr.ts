@@ -600,55 +600,43 @@ enum PropertyFunction {
 
 enum ModifierType {
   /**
-   * Adds a random value between `-x` and `x` to the property's value, where
-   * `x` is the "max change" value set in the modifier's fields.
+   * Makes a property's value randomly vary by up to a given maximum from the
+   * property's base value. In other words, if `p` is the property's base value
+   * and `max` is the {@link RandomDeltaModifier.max maximum difference}, the
+   * property's modified value will be between `p - max` and `p + max`.
    * 
-   * There is one RNG seed field for each component of the property value
-   * followed by one "max change" value per component.
+   * This modifier type has its own class: {@link RandomDeltaModifier}
    */
-  Randomizer1 = 21,
+  RandomDelta = 21,
   /**
-   * Adds a random value between `x` and `y` to the property's value, where
-   * `x` and `y` are the min/max change values set in the modifier's fields.
+   * Adds a random value in a given range to a property's value.
    * 
-   * There is one RNG seed field for each component of the property value
-   * followed by one "min change" value per component, and then one "max
-   * change" value per component.
+   * This modifier type has its own class: {@link RandomRangeModifier}
    */
-  Randomizer2 = 24,
+  RandomRange = 24,
   /**
-   * Multiplies the property's value based on some external value. The only 
-   * field in the modifier controls which external value to check. For example,
-   * if the field is set to 10000, the external value will be based on what the
-   * "Display Blood" option in the in-game settings is set to.
-   * 
-   * The factor is controlled by the modifier's only property. The external
-   * value is given as the property function's argument, so a linear property
-   * can be used to change the factor based on the external value.
-   * 
-   * This modifier type has two specialized subclasses:
-   * - {@link ExternalValueModifier}
-   * - {@link BloodVisibilityModifier}
+   * Modifies a property's value by multiplying it with different values
+   * depending on an {@link ExternalValue external value}.
    */
   ExternalValue1 = 38,
   /**
-   * Same as {@link ExternalValue1}, except this only updates if the effect is
-   * recreated instead of updating instantly when the external value changes.
+   * Similar to {@link ExternalValue1}, but it has some extra restrictions, and
+   * it does not update after the effect has been created. For this to update,
+   * the effect must be respawned.
    * 
-   * Note: This type seems to only work with the
-   * {@link ExternalValue.DisplayBlood DisplayBlood external value}.
+   * The restrictions may depend on the game. In Elden Ring, it seems to only
+   * work with the {@link ExternalValue.EldenRing.BloodVisibility DisplayBlood}
+   * external value, but Armored Core 6 uses it for external value 2000.
    */
   ExternalValue2 = 39,
   /**
-   * Adds a random fraction of the property's value to itself. The range of the
-   * fraction is controlled by the the latter half of the modifier's fields,
-   * where, if `x` is the value of the field, the possible range of the
-   * fraction will be `-x` to `x`.
-   * 
-   * There is one RNG seed field for each component of the property value
-   * followed by one "max change" value per component.
+   * Makes a property's value randomly vary by up to a given maximum fraction
+   * from the property's base value. In other words, if `p` is the property's
+   * base value and `max` is the
+   * {@link RandomFractionModifier.max maximum fraction}, the property's
+   * modified value will be between `p - p * max` and `p + p * max`.
    */
-  Randomizer3 = 53,
+  RandomFraction = 53,
 }
 
 enum FieldType {
@@ -668,73 +656,95 @@ enum BlendMode {
   Screen = 7,
 }
 
-enum ExternalValue {
-  /**
-   * This value will be set to 1 when the effect is meant to end due to the
-   * source of the effect going away, for example when a fire pot explodes and
-   * disappears. The value is otherwise 0.
-   */
-  Terminate = 0,
-  /**
-   * In Elden Ring, this value is 1 if it's raining or snowing, and 0 otherwise.
-   */
-  Precipitation = 1,
-  /**
-   * In Elden Ring, this represents the the time of day. At midnight, the value
-   * is 0, at noon it is 12, and then it goes up to 24 before wrapping back to
-   * 0, just like the hours on the clock.
-   */
-  TimeOfDay = 2,
-  /**
-   * Used in AC6.
-   */
-  Unk3 = 3,
-  /**
-   * This is based on the distance between the SFX and the camera.
-   * 
-   * The range is 0-1, the distance is converted in some unknown way.
-   * 
-   * It does not always work for all sources of effects. This is used by the
-   * beacon effect in Elden Ring, so it definitely works there.
-   */
-  SFXDistance = 1000,
-  /**
-   * This value is set through the Special Attribute param field on weapons.
-   */
-  HitEffectVariation = 2000,
-  Unk2100 = 2100, // Blood related?
-  Unk2200 = 2200, // Blood related?
-  /**
-   * Based on the "Display Blood" setting.
-   * - Off: `-1`
-   * - On: `0`
-   * - Mild: `1`
-   * 
-   * This external value has a specialized modifier subclass:
-   * {@link BloodVisibilityModifier}
-   */
-  DisplayBlood = 10000,
-  Unk20000 = 20000,
-  /**
-   * Used in AC6.
-   */
-  Unk40000 = 40000,
-  /**
-   * Used in AC6.
-   */
-  Unk70000 = 70000,
-  /**
-   * Used in AC6.
-   */
-  Unk70010 = 70010,
-  /**
-   * Used in AC6.
-   */
-  Unk70020 = 70020,
-  /**
-   * Used in AC6.
-   */
-  Unk70200 = 70200,
+namespace ExternalValue {
+  export enum DarkSouls3 {
+    /**
+     * This value will be set to 1 when the effect is meant to end due to the
+     * source of the effect going away, for example when a fire pot explodes and
+     * disappears. The value is otherwise 0.
+     */
+    Terminate = 0,
+    /**
+     * Based on the "Blood" setting.
+     * - Off: `-1`
+     * - On: `0`
+     * - Mild: `1`
+     */
+    BloodVisibility = 10000,
+  }
+  export enum Sekiro {
+    /**
+     * This value will be set to 1 when the effect is meant to end due to the
+     * source of the effect going away, for example when a fire pot explodes and
+     * disappears. The value is otherwise 0.
+     */
+    Terminate = 0,
+    /**
+     * Based on the "Blood" setting.
+     * - Off: `-1`
+     * - On: `0`
+     * - Mild: `1`
+     */
+    BloodVisibility = 10000,
+  }
+  export enum EldenRing {
+    /**
+     * This value will be set to 1 when the effect is meant to end due to the
+     * source of the effect going away, for example when a fire pot explodes and
+     * disappears. The value is otherwise 0.
+     */
+    Terminate = 0,
+    /**
+     * This value is 1 if it's raining or snowing, and 0 otherwise.
+     */
+    Precipitation = 1,
+    /**
+     * This represents the the time of day. At midnight, the value is 0, at
+     * noon it is 12, and then it goes up to 24 before wrapping back to 0, just
+     * like the hours on the clock.
+     */
+    TimeOfDay = 2,
+    /**
+     * This is based on the distance between the SFX and the camera.
+     * 
+     * The range is 0-1, the distance is converted in some unknown way.
+     * 
+     * It does not always work for all sources of effects. This is used by the
+     * beacon effect, so it definitely works there.
+     */
+    SFXDistance = 1000,
+    /**
+     * This value is set through the Special Attribute param field on weapons.
+     */
+    HitEffectVariation = 2000,
+    Unk2100 = 2100, // Blood related?
+    Unk2200 = 2200, // Blood related?
+    /**
+     * Based on the "Display Blood" setting.
+     * - Off: `-1`
+     * - On: `0`
+     * - Mild: `1`
+     */
+    BloodVisibility = 10000,
+  }
+  export enum ArmoredCore6 {
+    /**
+     * This value will be set to 1 when the effect is meant to end due to the
+     * source of the effect going away, for example when a fire pot explodes and
+     * disappears. The value is otherwise 0.
+     */
+    Terminate = 0,
+    Unk1 = 1,
+    Unk3 = 3,
+    Unk1000 = 1000,
+    Unk2000 = 2000,
+    Unk20000 = 20000,
+    Unk40000 = 40000,
+    Unk70000 = 70000,
+    Unk70010 = 70010,
+    Unk70020 = 70020,
+    Unk70200 = 70200,
+  }
 }
 
 enum Operator {
@@ -1022,6 +1032,12 @@ enum InitialDirection {
 }
 
 //#region Types / Interfaces
+export type AnyExternalValue =
+  ExternalValue.DarkSouls3 |
+  ExternalValue.Sekiro |
+  ExternalValue.EldenRing |
+  ExternalValue.ArmoredCore6
+
 export type ValuePropertyFunction =
   PropertyFunction.Zero |
   PropertyFunction.One |
@@ -1035,18 +1051,32 @@ export type SequencePropertyFunction =
 
 export type ComponentSequencePropertyFunction = PropertyFunction.CompCurve
 
-export type ValueTypeMap = {
-  [ValueType.Scalar]: number
-  [ValueType.Vector2]: Vector2
-  [ValueType.Vector3]: Vector3
-  [ValueType.Vector4]: Vector4
+export namespace TypeMap {
+  export type PropertyValue = {
+    [ValueType.Scalar]: number
+    [ValueType.Vector2]: Vector2
+    [ValueType.Vector3]: Vector3
+    [ValueType.Vector4]: Vector4
+  }
+  export type Value = {
+    [ValueType.Scalar]: ScalarValue
+    [ValueType.Vector2]: Vector2Value
+    [ValueType.Vector3]: Vector3Value
+    [ValueType.Vector4]: Vector4Value
+  }
+  export type Property = {
+    [ValueType.Scalar]: ScalarProperty
+    [ValueType.Vector2]: Vector2Property
+    [ValueType.Vector3]: Vector3Property
+    [ValueType.Vector4]: Vector4Property
+  }
 }
 
 export interface IKeyframe<T extends ValueType> {
   position: number
-  value: ValueTypeMap[T]
-  unkTangent1?: ValueTypeMap[T]
-  unkTangent2?: ValueTypeMap[T]
+  value: TypeMap.PropertyValue[T]
+  unkTangent1?: TypeMap.PropertyValue[T]
+  unkTangent2?: TypeMap.PropertyValue[T]
 }
 
 export interface IProperty<T extends ValueType, F extends PropertyFunction> {
@@ -1059,14 +1089,14 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   scale(factor: PropertyValue): this
   power(exponent: PropertyValue): this
   add(summand: PropertyValue): this
-  valueAt(arg: number): ValueTypeMap[T]
+  valueAt(arg: number): TypeMap.PropertyValue[T]
   clone(): IProperty<T, F>
   separateComponents(): IProperty<ValueType.Scalar, F>[]
   for(game: Game): IProperty<T, F>
 }
 
 export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
-  value: ValueTypeMap[T]
+  value: TypeMap.PropertyValue[T]
   clone(): IValueProperty<T>
 }
 
@@ -1079,7 +1109,7 @@ export interface ISequenceProperty<T extends ValueType, F extends PropertyFuncti
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
-  modifiers: Modifier[]
+  modifiers: IModifier<T>[]
 }
 
 export interface IAction {
@@ -1095,6 +1125,18 @@ export interface IEffect {
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<IAction>
+}
+
+export interface IModifier<T extends ValueType> {
+  readonly type: ModifierType
+  readonly valueType: T
+  getFieldCount(): number
+  getFields(): NumericalField[]
+  getPropertyCount(): number
+  getProperties(game: Game): AnyProperty[]
+  toJSON(): any
+  clone(): IModifier<T>
+  separateComponents(): IModifier<ValueType.Scalar>[]
 }
 
 export type Vector2 = [x: number, y: number]
@@ -3153,6 +3195,7 @@ function getActionGameData(type: ActionType, game: Game) {
 //#region Functions - Property
 function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, any>>(
   br: BinaryReader,
+  game: Game,
   modifierProp: T extends IModifiableProperty<any, any> ? false : true
 ): T {
   const typeEnumA = br.readInt16()
@@ -3166,7 +3209,7 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   br.assertInt32(0)
   const offset = br.readInt32()
   br.assertInt32(0)
-  const modifiers: Modifier[] = []
+  const modifiers: IModifier<any>[] = []
   if (!modifierProp) {
     const modOffset = br.readInt32()
     br.assertInt32(0)
@@ -3174,7 +3217,7 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     br.assertInt32(0)
     br.stepIn(modOffset)
     for (let i = 0; i < modCount; ++i) {
-      modifiers.push(readModifier(br))
+      modifiers.push(readModifier(br, game))
     }
     br.stepOut()
   }
@@ -3227,7 +3270,7 @@ function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, 
   properties.push(prop)
 }
 
-function writePropertyModifiers(this: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: Modifier[]) {
+function writePropertyModifiers(this: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: IModifier<any>[]) {
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
   for (const modifier of this.modifiers) {
     writeModifier.call(modifier, bw, modifiers)
@@ -3249,7 +3292,7 @@ function writePropertyFields(this: IProperty<any, any>, bw: BinaryWriter, index:
 }
 
 //#region Functions - Action
-function readAction(br: BinaryReader, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
+function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   const section10Offset = br.readInt32()
@@ -3263,10 +3306,10 @@ function readAction(br: BinaryReader, type: number, fieldCount1: number, propert
   const properties1: AnyProperty[] = []
   const properties2: AnyProperty[] = []
   for (let i = 0; i < propertyCount1; ++i) {
-    properties1.push(readProperty(br, false))
+    properties1.push(readProperty(br, game, false))
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    properties2.push(readProperty(br, false))
+    properties2.push(readProperty(br, game, false))
   }
   br.stepOut()
 
@@ -3376,10 +3419,10 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
 
   br.stepIn(propertyOffset)
   for (let i = 0; i < propertyCount1; ++i) {
-    c.properties1.push(readProperty(br, false))
+    c.properties1.push(readProperty(br, game, false))
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    c.properties2.push(readProperty(br, false))
+    c.properties2.push(readProperty(br, game, false))
   }
   br.stepOut()
 
@@ -3506,10 +3549,10 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
     ) {
       return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
     } else {
-      return readAction(br, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+      return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     }
   } else {
-    return readAction(br, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+    return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
   }
 }
 
@@ -3756,18 +3799,19 @@ function writeEffectActions(this: IEffect, bw: BinaryWriter, game: Game, index: 
 }
 
 //#region Functions - Modifier
-function readModifier(br: BinaryReader) {
+function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
   const typeEnumA = br.readUint16()
-  const teA1 = typeEnumA >>> 12 & 0b11
-  const teA2 = typeEnumA >>> 4 & 0b1111
-  const modifierType = teA1 << 4 | teA2
+  const modifierType: number = Modifier.enumAToType(typeEnumA)
+  if (!(modifierType in ModifierType)) {
+    throw new Error('Unrecognized modifier type: ' + typeEnumA)
+  }
   const valueType = typeEnumA & 0b11
   if (!(modifierType in ModifierType)) {
     throw new Error('Unknown property modifier type enum A: ' + typeEnumA)
   }
   br.assertUint8(0)
   br.assertUint8(1)
-  const typeEnumB = br.readUint32()
+  br.position += 4 // typeEnumB
   const fieldCount = br.readInt32()
   const propertyCount = br.readInt32()
   const fieldOffset = br.readInt32()
@@ -3777,23 +3821,72 @@ function readModifier(br: BinaryReader) {
   br.stepIn(propertyOffset)
   const properties = []
   for (let i = 0; i < propertyCount; ++i) {
-    properties.push(readProperty(br, true))
+    properties.push(readProperty(br, game, true))
   }
   br.stepOut()
-  const fields = readFieldsAt(br, fieldOffset, fieldCount, this)
-  const mod = new Modifier(modifierType, valueType, fields, properties)
-  mod.typeEnumB = typeEnumB
-  return mod
+  if (game === Game.Generic) {
+    const fields = readFieldsAt(br, fieldOffset, fieldCount, this)
+    return new GenericModifier(modifierType, valueType, fields, properties)
+  } else switch (modifierType) {
+    case ModifierType.RandomDelta: {
+      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [
+        ...arrayOf(valueType + 1, () => FieldType.Integer),
+        ...arrayOf(valueType + 1, () => FieldType.Float),
+      ], this) as NumericalField[]
+      if (valueType === ValueType.Scalar) {
+        return new RandomDeltaModifier(fields[1].value, fields[0].value)
+      }
+      return new RandomDeltaModifier(
+        fields.slice(valueType + 1).map(e => e.value) as Vector,
+        fields.slice(0, valueType + 1).map(e => e.value) as Vector,
+      )
+    }
+    case ModifierType.RandomRange: {
+      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [
+        ...arrayOf(valueType + 1, () => FieldType.Integer),
+        ...arrayOf((valueType + 1) * 2, () => FieldType.Float),
+      ], this) as NumericalField[]
+      if (valueType === ValueType.Scalar) {
+        return new RandomRangeModifier(fields[1].value, fields[2].value, fields[0].value)
+      }
+      return new RandomRangeModifier(
+        fields.slice(valueType + 1).map(e => e.value) as Vector,
+        fields.slice((valueType + 1) * 2).map(e => e.value) as Vector,
+        fields.slice(0, valueType + 1).map(e => e.value) as Vector,
+      )
+    }
+    case ModifierType.RandomFraction: {
+      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [
+        ...arrayOf(valueType + 1, () => FieldType.Integer),
+        ...arrayOf(valueType + 1, () => FieldType.Float),
+      ], this) as NumericalField[]
+      if (valueType === ValueType.Scalar) {
+        return new RandomFractionModifier(fields[1].value, fields[0].value)
+      }
+      return new RandomFractionModifier(
+        fields.slice(valueType + 1).map(e => e.value) as Vector,
+        fields.slice(0, valueType + 1).map(e => e.value) as Vector,
+      )
+    }
+    case ModifierType.ExternalValue1: {
+      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [FieldType.Integer], this) as NumericalField[]
+      return new ExternalValue1Modifier(fields[0].value, properties[0])
+    }
+    case ModifierType.ExternalValue2: {
+      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [FieldType.Integer], this) as NumericalField[]
+      return new ExternalValue2Modifier(fields[0].value, properties[0])
+    }
+  }
 }
 
-function writeModifier(this: Modifier, bw: BinaryWriter, modifiers: Modifier[]) {
+function writeModifier(this: IModifier<ValueType>, bw: BinaryWriter, modifiers: IModifier<ValueType>[]) {
   const count = modifiers.length
-  bw.writeInt16(this.typeEnumA)
+  bw.writeInt16(Modifier.typeToEnumA(this.type, this.valueType))
   bw.writeUint8(0)
   bw.writeUint8(1)
-  bw.writeInt32(this.typeEnumB)
-  bw.writeInt32(this.fields.length)
-  bw.writeInt32(this.properties.length)
+  bw.writeInt32(Modifier.enumBValues[this.type] | this.valueType)
+  bw.writeInt32(this.getFieldCount())
+  bw.writeInt32(this.getPropertyCount())
   bw.reserveInt32(`Section8FieldsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`Section8Section9sOffset${count}`)
@@ -3801,20 +3894,21 @@ function writeModifier(this: Modifier, bw: BinaryWriter, modifiers: Modifier[]) 
   modifiers.push(this)
 }
 
-function writeModifierProperties(this: Modifier, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
+function writeModifierProperties(this: IModifier<ValueType>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
-  for (const property of this.properties) {
+  for (const property of this.getProperties(game)) {
     // Modifier props can't have modifiers, so it's safe to not use .for(game) here
     writeProperty.call(property, bw, game, properties, true)
   }
 }
 
-function writeModifierFields(this: Modifier, bw: BinaryWriter, index: number): number {
+function writeModifierFields(this: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
   bw.fill(`Section8FieldsOffset${index}`, bw.position)
-  for (const field of (this as Modifier).fields) {
+  const fields = this.getFields()
+  for (const field of fields) {
     writeField.call(field, bw)
   }
-  return this.fields.length
+  return fields.length
 }
 
 //#region Functions - Section10
@@ -4007,7 +4101,7 @@ function writeStateConditionFields(this: StateCondition, bw: BinaryWriter, index
 
 //#region Functions - Field
 function readField(br: BinaryReader, context: any, index: number) {
-  let ffxField: NumericalField = null
+  let field: NumericalField = null
   let isInt = false
 
   if (context?.[0] in PropertyFunction) {
@@ -4027,37 +4121,37 @@ function readField(br: BinaryReader, context: any, index: number) {
     if (single >=  9.99999974737875E-05 && single <  1000000.0 ||
         single <= -9.99999974737875E-05 && single > -1000000.0
     ) {
-      ffxField = new FloatField(single)
+      field = new FloatField(single)
     } else {
       isInt = true
     }
   }
 
-  if (ffxField === null) {
+  if (field === null) {
     if (isInt) {
-      ffxField = new IntField(br.getInt32(br.position))
+      field = new IntField(br.getInt32(br.position))
     } else {
-      ffxField = new FloatField(br.getFloat32(br.position))
+      field = new FloatField(br.getFloat32(br.position))
     }
   }
 
   br.position += 4
-  return ffxField
+  return field
 }
 
 function readFields(br: BinaryReader, count: number, context: any) {
-  const ffxFieldList: NumericalField[] = []
+  const fields: NumericalField[] = []
   for (let i = 0; i < count; ++i) {
-    ffxFieldList.push(readField(br, context, i))
+    fields.push(readField(br, context, i))
   }
-  return ffxFieldList
+  return fields
 }
 
 function readFieldsAt(br: BinaryReader, offset: number, count: number, context: any) {
   br.stepIn(offset)
-  const ffxFieldList = readFields(br, count, context)
+  const fields = readFields(br, count, context)
   br.stepOut()
-  return ffxFieldList
+  return fields
 }
 
 function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], context: any): Field[] {
@@ -4073,6 +4167,13 @@ function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], cont
         return readField(br, context, 0)
     }
   })
+}
+
+function readFieldsWithTypesAt(br: BinaryReader, offset: number, count: number, types: any[], context: any): Field[] {
+  br.stepIn(offset)
+  const fields = readFieldsWithTypes(br, count, types, context)
+  br.stepOut()
+  return fields
 }
 
 function writeField(this: Field, bw: BinaryWriter) {
@@ -4113,70 +4214,6 @@ function lerp(a: number, b: number, c: number) {
   return a * (1 - c) + b * c
 }
 
-function modScalarToVec(mod: Modifier, vt: ValueType) {
-  const cc = vt + 1
-  switch (mod.type) {
-    case ModifierType.Randomizer1:
-    case ModifierType.Randomizer3:
-      return new Modifier(mod.type, vt, [
-        ...arrayOf(cc, () => new IntField(mod.fields[0].value)),
-        ...arrayOf(cc, () => new FloatField(mod.fields[1].value))
-      ])
-    case ModifierType.Randomizer2:
-      return new Modifier(mod.type, vt, [
-        ...arrayOf(cc, () => new IntField(mod.fields[0].value)),
-        ...arrayOf(cc, () => new FloatField(mod.fields[1].value)),
-        ...arrayOf(cc, () => new FloatField(mod.fields[2].value))
-      ])
-    case ModifierType.ExternalValue1:
-    case ModifierType.ExternalValue2:
-      let prop = mod.properties[0]
-      if (prop instanceof ValueProperty) {
-        prop = new ValueProperty(vt, arrayOf(cc,
-          () => (prop as ValueProperty<ValueType.Scalar>).value as number
-        ) as Vector)
-      } else if (prop instanceof SequenceProperty) {
-        prop = new SequenceProperty(vt, prop.function, prop.loop, prop.keyframes.map(kf =>
-          new Keyframe(kf.position, arrayOf(cc, () => kf.value) as Vector)
-        ))
-      } else if (prop instanceof ComponentSequenceProperty) {
-        prop = new ComponentSequenceProperty(vt, prop.loop,
-          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].clone())
-        )
-      }
-      return new Modifier(mod.type, vt, mod.fields, [ prop ])
-  }
-}
-
-function modMultPropVal(mod: Modifier, v: PropertyValue) {
-  mod = Modifier.copy(mod)
-  const cc = mod.valueType + 1
-  if (typeof v === 'number') {
-    switch (mod.type) {
-      case ModifierType.Randomizer2:
-        for (let i = cc - 1; i >= 0; i--) {
-          mod.fields[cc * 2 + i].value *= v
-        }
-      case ModifierType.Randomizer1:
-        for (let i = cc - 1; i >= 0; i--) {
-          mod.fields[cc + i].value *= v
-        }
-    }
-  } else {
-    switch (mod.type) {
-      case ModifierType.Randomizer2:
-        for (let i = cc - 1; i >= 0; i--) {
-          mod.fields[cc * 2 + i].value *= v[i]
-        }
-      case ModifierType.Randomizer1:
-        for (let i = cc - 1; i >= 0; i--) {
-          mod.fields[cc + i].value *= v[i]
-        }
-    }
-  }
-  return mod
-}
-
 /**
  * Multiplies one number, vector, or a property of either kind by another
  * number, vector, or property.
@@ -4213,7 +4250,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
       return new ValueProperty(
         p2.valueType,
         anyValueMult(p1, p2.value),
-        p2.modifiers.map(mod => modMultPropVal(mod, p1))
+        p2.modifiers.map(mod => Modifier.multPropertyValue(mod, p1))
       ) as unknown as T
     } else if (p2 instanceof SequenceProperty) {
       return new SequenceProperty(
@@ -4224,7 +4261,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
           kf.position,
           (Array.isArray(kf.value) ? kf.value.map(e => e * p1) : kf.value * p1) as PropertyValue
         )),
-        p2.modifiers.map(mod => modMultPropVal(mod, p1))
+        p2.modifiers.map(mod => Modifier.multPropertyValue(mod, p1))
       ) as unknown as T
     }
   } else if (Array.isArray(p1)) {
@@ -4233,17 +4270,17 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
     } else if (p2 instanceof ValueProperty) {
       let mods = p2.modifiers
       if (p2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => modScalarToVec(mod, p1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
       }
       return new ValueProperty(
         p1.length - 1,
         anyValueMult(p1, p2.value),
-        mods.map(mod => modMultPropVal(mod, p1))
+        mods.map(mod => Modifier.multPropertyValue(mod, p1))
       ) as unknown as T
     } else if (p2 instanceof SequenceProperty) {
       let mods = p2.modifiers
       if (p2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => modScalarToVec(mod, p1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
       }
       return new SequenceProperty(
         p1.length - 1,
@@ -4256,7 +4293,7 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
             p1.map(e => e * kf.value)
           ) as PropertyValue
         )),
-        mods.map(mod => modMultPropVal(mod, p1))
+        mods.map(mod => Modifier.multPropertyValue(mod, p1))
       ) as unknown as T
     }
   } else if (p1 instanceof ValueProperty) {
@@ -4265,24 +4302,24 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
       let p2Mods = p2.modifiers
       const vt = Math.max(p1.valueType, p2.valueType)
       if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-        p1Mods = p1Mods.map(mod => modScalarToVec(mod, vt))
+        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-        p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
+        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ValueProperty(vt, anyValueMult(p1.value, p2.value), [
-        ...p1Mods.map(mod => modMultPropVal(mod, p2.value)),
-        ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
+        ...p1Mods.map(mod => Modifier.multPropertyValue(mod, p2.value)),
+        ...p2Mods.map(mod => Modifier.multPropertyValue(mod, p1.value)),
       ]) as unknown as T
     } else if (p2 instanceof SequenceProperty) {
       let p1Mods = p1.modifiers
       let p2Mods = p2.modifiers
       const vt = Math.max(p1.valueType, p2.valueType)
       if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-        p1Mods = p1Mods.map(mod => modScalarToVec(mod, vt))
+        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-        p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
+        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
         p2.valueType,
@@ -4296,8 +4333,8 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
           ) as PropertyValue
         )),
         [
-          ...p1Mods.map(mod => modMultPropVal(mod, p2.valueAt(0))),
-          ...p2Mods.map(mod => modMultPropVal(mod, p1.value)),
+          ...p1Mods.map(mod => Modifier.multPropertyValue(mod, p2.valueAt(0))),
+          ...p2Mods.map(mod => Modifier.multPropertyValue(mod, p1.value)),
         ]
       ) as unknown as T
     }
@@ -4313,10 +4350,10 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
     let p2Mods = p2.modifiers
     const vt = Math.max(p1.valueType, p2.valueType)
     if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-      p1Mods = p1Mods.map(mod => modScalarToVec(mod, vt))
+      p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-      p2Mods = p2Mods.map(mod => modScalarToVec(mod, vt))
+      p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
       this.loop,
@@ -4326,8 +4363,8 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
           anyValueMult(p1.valueAt(e), p2.valueAt(e)) as PropertyValue
         ))
     ).withModifiers(
-      ...p1Mods.map(mod => modMultPropVal(mod, p2.valueAt(0))),
-      ...p2Mods.map(mod => modMultPropVal(mod, p1.valueAt(0))),
+      ...p1Mods.map(mod => Modifier.multPropertyValue(mod, p2.valueAt(0))),
+      ...p2Mods.map(mod => Modifier.multPropertyValue(mod, p1.valueAt(0))),
     ) as unknown as T
   }
 
@@ -4361,30 +4398,36 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
     }
   }
   function combineModifiers() {
-    const vt: ValueType = comps.length - 1
+    const cc = comps.length
     return comps.flatMap((c, i) => {
       if (typeof c === 'number') {
         return []
       }
       return c.modifiers.map(mod => {
-        switch (mod.type) {
-          case ModifierType.ExternalValue1:
-          case ModifierType.ExternalValue2:
-            return new Modifier(mod.type, vt, mod.fields.map(e => Field.copy(e)), [
-              combineComponents(...arrayOf(comps.length, j => j === i ? mod.properties[0] as ScalarProperty : 1)) as VectorProperty
-            ])
-          case ModifierType.Randomizer1:
-          case ModifierType.Randomizer3:
-            return new Modifier(mod.type, vt, [
-              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
-              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
-            ])
-          case ModifierType.Randomizer2:
-            return new Modifier(mod.type, vt, [
-              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[0]) : new IntField),
-              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[1]) : new FloatField),
-              ...arrayOf(comps.length, j => j === i ? Field.copy(mod.fields[2]) : new FloatField),
-            ])
+        if (mod instanceof RandomDeltaModifier) {
+          return new RandomDeltaModifier(
+            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+          )
+        } else if (mod instanceof RandomRangeModifier) {
+          return new RandomRangeModifier(
+            arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
+            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+          )
+        } else if (mod instanceof RandomFractionModifier) {
+          return new RandomFractionModifier(
+            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+          )
+        } else if (mod instanceof ExternalValue1Modifier) {
+          return new ExternalValue1Modifier(mod.externalValue,
+            combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
+          )
+        } else if (mod instanceof ExternalValue2Modifier) {
+          return new ExternalValue2Modifier(mod.externalValue,
+            combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
+          )
         }
       })
     })
@@ -4856,9 +4899,9 @@ class FXR {
   states: State[]
   root: RootNode | GenericNode
 
-  references: number[]
-  externalValues: number[]
-  unkBloodEnabler: number[]
+  sfxReferences: number[]
+  externalValues1: number[]
+  externalValues2: number[]
   // unkEmpty: number[]
 
   /**
@@ -4868,17 +4911,17 @@ class FXR {
     id: number,
     root: RootNode | GenericNode = new RootNode,
     states: State[] = [ new State ],
-    references: number[] = [],
-    externalValues: number[] = [],
-    unkBloodEnabler: number[] = [],
+    sfxReferences: number[] = [],
+    externalValues1: number[] = [],
+    externalValues2: number[] = [],
     // unkEmpty: number[] = [],
   ) {
     this.id = id
     this.root = root
     this.states = states
-    this.references = references
-    this.externalValues = externalValues
-    this.unkBloodEnabler = unkBloodEnabler
+    this.sfxReferences = sfxReferences
+    this.externalValues1 = externalValues1
+    this.externalValues2 = externalValues2
     // this.unkEmpty = unkEmpty
   }
 
@@ -4927,26 +4970,26 @@ class FXR {
     br.assertInt32(1)
     br.assertInt32(0)
 
-    let references: number[] = []
-    let externalValues: number[] = []
-    let unkBloodEnabler: number[] = []
+    let sfxReferences: number[] = []
+    let externalValues1: number[] = []
+    let externalValues2: number[] = []
     // let unkEmpty: number[] = []
 
     if (version === FXRVersion.Sekiro) {
-      const referencesOffset = br.readInt32()
-      const referencesCount  = br.readInt32()
-      const externalValuesOffset = br.readInt32()
-      const externalValuesCount  = br.readInt32()
-      const unkBloodEnablerOffset = br.readInt32()
-      const unkBloodEnablerCount  = br.readInt32()
+      const sfxReferencesOffset = br.readInt32()
+      const sfxReferencesCount  = br.readInt32()
+      const externalValues1Offset = br.readInt32()
+      const externalValues1Count  = br.readInt32()
+      const externalValues2Offset = br.readInt32()
+      const externalValues2Count  = br.readInt32()
       br.readInt32()
       br.assertInt32(0)
       // const unkEmptyOffset = br.readInt32()
       // const unkEmptyCount  = br.readInt32()
 
-      references = br.getInt32s(referencesOffset, referencesCount)
-      externalValues = br.getInt32s(externalValuesOffset, externalValuesCount)
-      unkBloodEnabler = br.getInt32s(unkBloodEnablerOffset, unkBloodEnablerCount)
+      sfxReferences = br.getInt32s(sfxReferencesOffset, sfxReferencesCount)
+      externalValues1 = br.getInt32s(externalValues1Offset, externalValues1Count)
+      externalValues2 = br.getInt32s(externalValues2Offset, externalValues2Count)
       // unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
     }
 
@@ -4969,9 +5012,9 @@ class FXR {
       id,
       rootNode,
       states,
-      references,
-      externalValues,
-      unkBloodEnabler,
+      sfxReferences,
+      externalValues1,
+      externalValues2,
       // unkEmpty,
     )
   }
@@ -5014,12 +5057,12 @@ class FXR {
     bw.writeInt32(0)
 
     if (version === FXRVersion.Sekiro) {
-      bw.reserveInt32('ReferencesOffset')
-      bw.writeInt32(this.references.length)
-      bw.reserveInt32('ExternalValuesOffset')
-      bw.writeInt32(this.externalValues.length)
-      bw.reserveInt32('UnkBloodEnablerOffset')
-      bw.writeInt32(this.unkBloodEnabler.length)
+      bw.reserveInt32('SFXReferencesOffset')
+      bw.writeInt32(this.sfxReferences.length)
+      bw.reserveInt32('ExternalValues1Offset')
+      bw.writeInt32(this.externalValues1.length)
+      bw.reserveInt32('ExternalValues2Offset')
+      bw.writeInt32(this.externalValues2.length)
       // bw.reserveInt32('UnkEmptyOffset')
       // bw.writeInt32(this.unkEmpty.length)
       bw.writeInt32(0)
@@ -5075,7 +5118,7 @@ class FXR {
     bw.fill('PropertyCount', properties.length)
     bw.pad(16)
     bw.fill('Section8Offset', bw.position)
-    const modifiers: Modifier[] = []
+    const modifiers: IModifier<ValueType>[] = []
     for (let i = 0; i < properties.length; ++i) {
       // The property has already gone through .for(game) here, so don't use it again
       writePropertyModifiers.call(properties[i], bw, i, modifiers)
@@ -5123,16 +5166,16 @@ class FXR {
       return bw.getArrayBuffer()
     }
 
-    bw.fill('ReferencesOffset', bw.position)
-    bw.writeInt32s(this.references)
+    bw.fill('SFXReferencesOffset', bw.position)
+    bw.writeInt32s(this.sfxReferences)
     bw.pad(16)
 
-    bw.fill('ExternalValuesOffset', bw.position)
-    bw.writeInt32s(this.externalValues)
+    bw.fill('ExternalValues1Offset', bw.position)
+    bw.writeInt32s(this.externalValues1)
     bw.pad(16)
 
-    bw.fill('UnkBloodEnablerOffset', bw.position)
-    bw.writeInt32s(this.unkBloodEnabler)
+    bw.fill('ExternalValues2Offset', bw.position)
+    bw.writeInt32s(this.externalValues2)
     bw.pad(16)
 
     // if (this.unkEmpty.length > 0) {
@@ -5150,25 +5193,25 @@ class FXR {
     id,
     states,
     root,
-    references,
-    externalValues,
-    unkBloodEnabler
+    sfxReferences,
+    externalValues1,
+    externalValues2
   }: {
     id: number
     states: string[]
     root: any
-    references: number[]
-    externalValues: number[]
-    unkBloodEnabler: number[]
+    sfxReferences: number[]
+    externalValues1: number[]
+    externalValues2: number[]
     unkEmpty: number[]
   }) {
     return new FXR(
       id,
       Node.fromJSON(root) as RootNode | GenericNode,
       states.map(state => State.from(state)),
-      references,
-      externalValues,
-      unkBloodEnabler
+      sfxReferences,
+      externalValues1,
+      externalValues2
     )
   }
 
@@ -5176,9 +5219,9 @@ class FXR {
     return {
       id: this.id,
       states: this.states.map(state => state.toString()),
-      references: this.references,
-      externalValues: this.externalValues,
-      unkBloodEnabler: this.unkBloodEnabler,
+      sfxReferences: this.sfxReferences,
+      externalValues1: this.externalValues1,
+      externalValues2: this.externalValues2,
       root: this.root.toJSON(),
     }
   }
@@ -5194,20 +5237,20 @@ class FXR {
       this.id,
       this.root.minify() as RootNode | GenericNode,
       this.states,
-      this.references,
-      this.externalValues,
-      this.unkBloodEnabler
+      this.sfxReferences,
+      this.externalValues1,
+      this.externalValues2
     )
   }
 
   /**
-   * Updates {@link references}, {@link externalValues}, and
-   * {@link unkBloodEnabler} with the values used in the FXR.
+   * Updates {@link references}, {@link externalValues1}, and
+   * {@link externalValues2} with the values used in the FXR.
    */
   updateReferences() {
     const references: number[] = []
-    const externalValues: number[] = []
-    let unkBloodEnabler = false
+    const externalValues1: number[] = []
+    const externalValues2: number[] = []
     for (const node of this.root.walk()) {
       if (node instanceof ProxyNode) {
         references.push(node.sfx)
@@ -5215,26 +5258,29 @@ class FXR {
     }
     for (const prop of this.root.walkProperties()) {
       for (const mod of prop.modifiers) {
-        if (mod.type === ModifierType.ExternalValue1) {
-          externalValues.push(mod.fields[0].value as number)
-        } else if (mod.type === ModifierType.ExternalValue2 && mod.fields[0].value === ExternalValue.DisplayBlood) {
-          unkBloodEnabler = true
+        if (mod instanceof ExternalValue1Modifier) {
+          externalValues1.push(mod.externalValue)
+        } else if (mod instanceof ExternalValue2Modifier) {
+          if (mod.externalValue !== ExternalValue.EldenRing.BloodVisibility) {
+            externalValues1.push(mod.externalValue)
+          }
+          externalValues2.push(mod.externalValue)
         }
       }
     }
     for (const state of this.states) {
       for (const condition of state.conditions) {
         if (condition.leftOperandType === OperandType.External) {
-          externalValues.push(condition.leftOperandValue as number)
+          externalValues1.push(condition.leftOperandValue as number)
         }
         if (condition.rightOperandType === OperandType.External) {
-          externalValues.push(condition.rightOperandValue as number)
+          externalValues1.push(condition.rightOperandValue as number)
         }
       }
     }
-    this.references = uniqueArray(references).sort((a, b) => a - b)
-    this.externalValues = uniqueArray(externalValues).sort((a, b) => a - b)
-    this.unkBloodEnabler = unkBloodEnabler ? [ExternalValue.DisplayBlood] : []
+    this.sfxReferences = uniqueArray(references).sort((a, b) => a - b)
+    this.externalValues1 = uniqueArray(externalValues1).sort((a, b) => a - b)
+    this.externalValues2 = uniqueArray(externalValues2).sort((a, b) => a - b)
     return this
   }
 
@@ -5896,21 +5942,7 @@ abstract class Node {
    * original color and should return the color to replace it with.
    */
   recolor(func: (color: Vector4) => Vector4) {
-    const procFields = (list: NumericalField[], i: number, alpha = false) => {
-      const [r, g, b, a] = func([
-        list[i  ].value,
-        list[i+1].value,
-        list[i+2].value,
-        alpha ? list[i+3].value : 1
-      ])
-      list[i  ] = new FloatField(r)
-      list[i+1] = new FloatField(g)
-      list[i+2] = new FloatField(b)
-      if (alpha) {
-        list[i+3] = new FloatField(a)
-      }
-    }
-    const procProp = (container: IProperty<ValueType.Vector4, any>[] | DataAction, key: number | string) => {
+    const procProp = (container: Property<ValueType.Vector4, any>[] | DataAction | IModifier<ValueType.Vector4>, key: number | string) => {
       let prop = container[key]
       if (prop instanceof ComponentSequenceProperty) {
         prop = container[key] = prop.combineComponents()
@@ -5923,23 +5955,19 @@ abstract class Node {
         }
       }
       if ('modifiers' in prop) {
-        for (const mod of (prop as IModifiableProperty<ValueType.Vector4, any>).modifiers) {
-          switch (mod.type) {
-            case ModifierType.Randomizer2:
-              procFields(mod.fields, 8, true)
-            case ModifierType.Randomizer1:
-            case ModifierType.Randomizer3:
-              procFields(mod.fields, 4, true)
-              break
-            case ModifierType.ExternalValue1:
-            case ModifierType.ExternalValue2:
-              procProp(mod.properties, 0)
-              break
+        for (const mod of (prop as Property<ValueType.Vector4, any>).modifiers) {
+          if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+            mod.max = func(mod.max)
+          } else if (mod instanceof RandomRangeModifier) {
+            mod.min = func(mod.min)
+            mod.max = func(mod.max)
+          } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+            procVec4Value(mod, 'factor')
           }
         }
       }
     }
-    const procDataProp = (action: DataAction, prop: string) => {
+    const procVec4Value = (action: DataAction | IModifier<ValueType.Vector4>, prop: string) => {
       if (action[prop] instanceof Property) {
         procProp(action, prop)
       } else if (Array.isArray(action[prop])) {
@@ -5948,7 +5976,7 @@ abstract class Node {
     }
     for (const effect of this.walkEffects()) if (effect instanceof BasicEffect) {
       if (effect.particleModifier instanceof ParticleModifier) {
-        procDataProp(effect.particleModifier, 'color')
+        procVec4Value(effect.particleModifier, 'color')
       }
       const slot9 = effect.appearance as ActionWithNumericalFields | DataAction
       if (slot9 instanceof Action) switch (slot9.type) {
@@ -5970,27 +5998,27 @@ abstract class Node {
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
-        procDataProp(slot9, 'color1')
-        procDataProp(slot9, 'color2')
-        procDataProp(slot9, 'color3')
+        procVec4Value(slot9, 'color1')
+        procVec4Value(slot9, 'color2')
+        procVec4Value(slot9, 'color3')
       } else if (slot9 instanceof Line || slot9 instanceof QuadLine) {
-        procDataProp(slot9, 'color1')
-        procDataProp(slot9, 'color2')
-        procDataProp(slot9, 'startColor')
-        procDataProp(slot9, 'endColor')
-        procDataProp(slot9, 'color3')
+        procVec4Value(slot9, 'color1')
+        procVec4Value(slot9, 'color2')
+        procVec4Value(slot9, 'startColor')
+        procVec4Value(slot9, 'endColor')
+        procVec4Value(slot9, 'color3')
       } else if (slot9 instanceof MultiTextureBillboardEx) {
-        procDataProp(slot9, 'color1')
-        procDataProp(slot9, 'color2')
-        procDataProp(slot9, 'color3')
-        procDataProp(slot9, 'layersColor')
-        procDataProp(slot9, 'layer1Color')
-        procDataProp(slot9, 'layer2Color')
+        procVec4Value(slot9, 'color1')
+        procVec4Value(slot9, 'color2')
+        procVec4Value(slot9, 'color3')
+        procVec4Value(slot9, 'layersColor')
+        procVec4Value(slot9, 'layer1Color')
+        procVec4Value(slot9, 'layer2Color')
       } else if (slot9 instanceof Distortion || slot9 instanceof RadialBlur) {
-        procDataProp(slot9, 'color')
+        procVec4Value(slot9, 'color')
       } else if (slot9 instanceof PointLight || slot9 instanceof SpotLight) {
-        procDataProp(slot9, 'diffuseColor')
-        procDataProp(slot9, 'specularColor')
+        procVec4Value(slot9, 'diffuseColor')
+        procVec4Value(slot9, 'specularColor')
       }
       if (
         slot9 instanceof PointSprite ||
@@ -6852,9 +6880,6 @@ class SharedEmitterEffect implements IEffect {
   }
 
   getActions(game: Game): IAction[] {
-    if (game === Game.DarkSouls3) {
-      throw new Error('SharedEmitterEffect is not available in Dark Souls 3.')
-    }
     return [
       this.nodeAttributes,
       this.nodeTransform,
@@ -6865,8 +6890,10 @@ class SharedEmitterEffect implements IEffect {
       this.particleDirection,
       this.behavior,
       this.emissionAudio,
-      this.nodeWind
-    ]
+      game === Game.DarkSouls3 ? [] : [
+        this.nodeWind,
+      ]
+    ].flat()
   }
 
   toJSON() {
@@ -7107,8 +7134,8 @@ class DataAction implements IAction {
     return (data[list] ?? []).map((name: string) => {
       const prop = ActionData[this.type].props[name]
       return this[name] instanceof Property ? this[name].for(game) : Array.isArray(prop.default) ?
-        new ConstantProperty(...this[name]) :
-        new ConstantProperty(this[name])
+        new ConstantProperty(...this[name]).for(game) :
+        new ConstantProperty(this[name]).for(game)
     })
   }
 
@@ -21362,15 +21389,15 @@ class FloatField extends Field implements NumericalField {
 class Keyframe<T extends ValueType> implements IKeyframe<T> {
 
   position: number
-  value: ValueTypeMap[T]
-  unkTangent1?: ValueTypeMap[T]
-  unkTangent2?: ValueTypeMap[T]
+  value: TypeMap.PropertyValue[T]
+  unkTangent1?: TypeMap.PropertyValue[T]
+  unkTangent2?: TypeMap.PropertyValue[T]
 
   constructor(
     position: number,
-    value: ValueTypeMap[T],
-    unkTangent1?: ValueTypeMap[T],
-    unkTangent2?: ValueTypeMap[T]
+    value: TypeMap.PropertyValue[T],
+    unkTangent1?: TypeMap.PropertyValue[T],
+    unkTangent2?: TypeMap.PropertyValue[T]
   ) {
     this.position = position
     this.value = value
@@ -21388,12 +21415,12 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
 
   valueType: T
   function: F
-  modifiers: Modifier[]
+  modifiers: IModifier<T>[]
 
   constructor(
     valueType: T,
     func: F,
-    modifiers: Modifier[] = []
+    modifiers: IModifier<T>[] = []
   ) {
     this.valueType = valueType
     this.function = func
@@ -21402,7 +21429,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
 
   get componentCount() { return this.valueType + 1 as 1 | 2 | 3 | 4 }
 
-  withModifiers(...modifiers: Modifier[]) {
+  withModifiers(...modifiers: IModifier<T>[]) {
     this.modifiers.push(...modifiers)
     return this
   }
@@ -21410,15 +21437,20 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   protected modifiersScale(factor: PropertyValue) {
     for (const mod of this.modifiers) {
       const cc = mod.valueType + 1
-      switch (mod.type) {
-        case ModifierType.Randomizer2:
-          for (let i = cc * 3 - 1; i >= cc * 2; i--) {
-            mod.fields[i].value *= typeof factor === 'number' ? factor : factor[i - cc * 2]
-          }
-        case ModifierType.Randomizer1:
-          for (let i = cc * 2 - 1; i >= cc; i--) {
-            mod.fields[i].value *= typeof factor === 'number' ? factor : factor[i - cc]
-          }
+      if (mod instanceof RandomDeltaModifier) {
+        if (this.valueType === ValueType.Scalar) {
+          mod.max *= factor as number
+        } else for (let i = this.valueType; i >= 0; i--) {
+          mod.max[i] *= typeof factor === 'number' ? factor : factor[i]
+        }
+      } else if (mod instanceof RandomRangeModifier) {
+        if (this.valueType === ValueType.Scalar) {
+          mod.min *= factor as number
+          mod.max *= factor as number
+        } else for (let i = this.valueType; i >= 0; i--) {
+          mod.min[i] *= typeof factor === 'number' ? factor : factor[i]
+          mod.max[i] *= typeof factor === 'number' ? factor : factor[i]
+        }
       }
     }
   }
@@ -21450,28 +21482,24 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   for(game: Game) {
     if (
       (game === Game.DarkSouls3 || game === Game.Sekiro) &&
-      this.modifiers.some(mod => mod.type === ModifierType.Randomizer2)
+      this.modifiers.some(mod => mod.type === ModifierType.RandomRange)
     ) {
       const summand = Array(this.componentCount).fill(0)
       const mods = this.modifiers.map(mod => {
-        if (mod.type === ModifierType.Randomizer2) {
+        if (mod instanceof RandomRangeModifier) {
           const vt = mod.valueType
-          const cc = vt + 1
           const comps = []
-          for (let i = 0; i < cc; i++) {
-            const a = mod.fields[cc + i].value
-            const b = mod.fields[2 * cc + i].value
-            comps.push(a*0.5 + b*0.5)
+          if (vt === ValueType.Scalar) {
+            comps.push(mod.min*0.5 + mod.max*0.5)
+          } else for (let i = 0; i <= vt; i++) {
+            comps.push(mod.min[i]*0.5 + mod.max[i]*0.5)
           }
           for (const [i, v] of comps.entries()) {
             summand[i] += v
           }
-          return new Modifier(ModifierType.Randomizer1, vt, [
-            ...mod.fields.slice(0, cc),
-            ...comps.map(v => new FloatField(Math.abs(v)))
-          ])
+          return new RandomDeltaModifier<any>(comps.length === 1 ? comps[0] : comps, mod.seed)
         }
-        return Modifier.copy(mod)
+        return mod.clone()
       })
       const clone = this.clone().add(summand.length === 1 ? summand[0] : summand)
       clone.modifiers = mods
@@ -21486,7 +21514,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract scale(factor: PropertyValue): this
   abstract power(exponent: PropertyValue): this
   abstract add(summand: PropertyValue): this
-  abstract valueAt(arg: number): ValueTypeMap[T]
+  abstract valueAt(arg: number): TypeMap.PropertyValue[T]
   abstract clone(): Property<T, F>
   abstract separateComponents(): Property<ValueType.Scalar, F>[]
 
@@ -21496,12 +21524,12 @@ class ValueProperty<T extends ValueType>
   extends Property<T, ValuePropertyFunction>
   implements IModifiableProperty<T, ValuePropertyFunction>, IValueProperty<T> {
 
-  value: ValueTypeMap[T]
+  value: TypeMap.PropertyValue[T]
 
   constructor(
     valueType: T,
-    value: ValueTypeMap[T],
-    modifiers: Modifier[] = []
+    value: TypeMap.PropertyValue[T],
+    modifiers: IModifier<T>[] = []
   ) {
     super(valueType, PropertyFunction.Constant, modifiers)
     this.value = value
@@ -21530,7 +21558,7 @@ class ValueProperty<T extends ValueType>
   static fromFields<T extends ValueType>(
     valueType: T,
     func: ValuePropertyFunction,
-    modifiers: Modifier[],
+    modifiers: IModifier<T>[],
     fieldValues: number[]
   ): ValueProperty<T> {
     switch (func) {
@@ -21561,7 +21589,7 @@ class ValueProperty<T extends ValueType>
       return new ConstantProperty(obj)
     }
     return new ConstantProperty<T>(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
-      ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e))
+      ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e) as IModifier<T>)
     )
   }
 
@@ -21581,9 +21609,9 @@ class ValueProperty<T extends ValueType>
       (this.value as number) *= factor as number
     } else {
       if (typeof factor === 'number') {
-        this.value = (this.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+        this.value = (this.value as Vector).map(e => e * factor) as TypeMap.PropertyValue[T]
       } else {
-        this.value = (this.value as Vector).map((e, i) => e * factor[i]) as ValueTypeMap[T]
+        this.value = (this.value as Vector).map((e, i) => e * factor[i]) as TypeMap.PropertyValue[T]
       }
     }
     this.modifiersScale(factor)
@@ -21595,9 +21623,9 @@ class ValueProperty<T extends ValueType>
       (this.value as number) **= exponent as number
     } else {
       if (typeof exponent === 'number') {
-        this.value = (this.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+        this.value = (this.value as Vector).map(e => e ** exponent) as TypeMap.PropertyValue[T]
       } else {
-        this.value = (this.value as Vector).map((e, i) => e ** exponent[i]) as ValueTypeMap[T]
+        this.value = (this.value as Vector).map((e, i) => e ** exponent[i]) as TypeMap.PropertyValue[T]
       }
     }
     return this
@@ -21608,20 +21636,20 @@ class ValueProperty<T extends ValueType>
       (this.value as number) += summand as number
     } else {
       if (typeof summand === 'number') {
-        this.value = (this.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+        this.value = (this.value as Vector).map(e => e + summand) as TypeMap.PropertyValue[T]
       } else {
-        this.value = (this.value as Vector).map((e, i) => e + summand[i]) as ValueTypeMap[T]
+        this.value = (this.value as Vector).map((e, i) => e + summand[i]) as TypeMap.PropertyValue[T]
       }
     }
     return this
   }
 
-  valueAt(arg: number): ValueTypeMap[T] {
+  valueAt(arg: number): TypeMap.PropertyValue[T] {
     return this.value
   }
 
   clone(): ValueProperty<T> {
-    return new ValueProperty(this.valueType, this.value, this.modifiers.map(e => Modifier.copy(e)))
+    return new ValueProperty(this.valueType, this.value, this.modifiers.map(e => e.clone()))
   }
 
   separateComponents(): ValueProperty<ValueType.Scalar>[] {
@@ -21649,7 +21677,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     func: F,
     loop: boolean = false,
     keyframes: IKeyframe<T>[] = [],
-    modifiers: Modifier[] = []
+    modifiers: IModifier<T>[] = []
   ) {
     super(valueType, func, modifiers)
     this.loop = loop
@@ -21733,7 +21761,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     valueType: T,
     func: F,
     loop: boolean,
-    modifiers: Modifier[],
+    modifiers: IModifier<T>[],
     fieldValues: number[]
   ): SequenceProperty<T, F> {
     switch (func) {
@@ -21746,7 +21774,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as ValueTypeMap[T]
+            ) as TypeMap.PropertyValue[T]
           )
         ), modifiers)
       case PropertyFunction.Curve1:
@@ -21758,15 +21786,15 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as ValueTypeMap[T],
+            ) as TypeMap.PropertyValue[T],
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as ValueTypeMap[T],
+            ) as TypeMap.PropertyValue[T],
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as ValueTypeMap[T],
+            ) as TypeMap.PropertyValue[T],
           )
         ), modifiers)
       default:
@@ -21838,9 +21866,9 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         (kf.value as number) *= factor as number
       } else {
         if (typeof factor === 'number') {
-          kf.value = (kf.value as Vector).map(e => e * factor) as ValueTypeMap[T]
+          kf.value = (kf.value as Vector).map(e => e * factor) as TypeMap.PropertyValue[T]
         } else {
-          kf.value = (kf.value as Vector).map((e, i) => e * factor[i]) as ValueTypeMap[T]
+          kf.value = (kf.value as Vector).map((e, i) => e * factor[i]) as TypeMap.PropertyValue[T]
         }
       }
     }
@@ -21854,9 +21882,9 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         (kf.value as number) **= exponent as number
       } else {
         if (typeof exponent === 'number') {
-          kf.value = (kf.value as Vector).map(e => e ** exponent) as ValueTypeMap[T]
+          kf.value = (kf.value as Vector).map(e => e ** exponent) as TypeMap.PropertyValue[T]
         } else {
-          kf.value = (kf.value as Vector).map((e, i) => e ** exponent[i]) as ValueTypeMap[T]
+          kf.value = (kf.value as Vector).map((e, i) => e ** exponent[i]) as TypeMap.PropertyValue[T]
         }
       }
     }
@@ -21869,16 +21897,16 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         (kf.value as number) += summand as number
       } else {
         if (typeof summand === 'number') {
-          kf.value = (kf.value as Vector).map(e => e + summand) as ValueTypeMap[T]
+          kf.value = (kf.value as Vector).map(e => e + summand) as TypeMap.PropertyValue[T]
         } else {
-          kf.value = (kf.value as Vector).map((e, i) => e + summand[i]) as ValueTypeMap[T]
+          kf.value = (kf.value as Vector).map((e, i) => e + summand[i]) as TypeMap.PropertyValue[T]
         }
       }
     }
     return this
   }
 
-  valueAt(arg: number): ValueTypeMap[T] {
+  valueAt(arg: number): TypeMap.PropertyValue[T] {
     switch (this.function) {
       case PropertyFunction.Stepped: {
         let i = 0
@@ -21910,7 +21938,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               this.keyframes[i+1].value[j],
               p
             ))
-          ) as ValueTypeMap[T]
+          ) as TypeMap.PropertyValue[T]
         }
         return this.keyframes[i].value
       }
@@ -21923,7 +21951,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       this.function,
       this.loop,
       this.keyframes.map(e => Keyframe.copy<T>(e)),
-      this.modifiers.map(e => Modifier.copy(e))
+      this.modifiers.map(e => e.clone())
     )
   }
 
@@ -21970,7 +21998,7 @@ class ComponentSequenceProperty<T extends ValueType>
     valueType: T,
     loop: boolean = false,
     components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[],
-    modifiers: Modifier[] = []
+    modifiers: IModifier<T>[] = []
   ) {
     super(valueType, PropertyFunction.CompCurve, modifiers)
     this.loop = loop
@@ -22009,7 +22037,7 @@ class ComponentSequenceProperty<T extends ValueType>
   static fromFields<T extends ValueType>(
     valueType: T,
     loop: boolean,
-    modifiers: Modifier[],
+    modifiers: IModifier<T>[],
     fieldValues: number[]
   ): ComponentSequenceProperty<T> {
     let offset = 1 + 3 * (valueType + 1)
@@ -22054,7 +22082,7 @@ class ComponentSequenceProperty<T extends ValueType>
   }): ComponentSequenceProperty<T> {
     return new ComponentSequenceProperty(components.length - 1 as T, loop, components.map(comp => {
       return new SequenceProperty(ValueType.Scalar, PropertyFunction.Curve2, false, comp)
-    }), (modifiers ?? []).map(mod => Modifier.fromJSON(mod)))
+    }), (modifiers ?? []).map(mod => Modifier.fromJSON(mod) as IModifier<T>))
   }
 
   scale(factor: PropertyValue) {
@@ -22079,12 +22107,12 @@ class ComponentSequenceProperty<T extends ValueType>
     return this
   }
 
-  valueAt(arg: number): ValueTypeMap[T] {
+  valueAt(arg: number): TypeMap.PropertyValue[T] {
     return (
       this.valueType === ValueType.Scalar ?
         this.components[0].valueAt(arg)
       : this.components.map(e => e.valueAt(arg))
-    ) as ValueTypeMap[T]
+    ) as TypeMap.PropertyValue[T]
   }
 
   clone(): ComponentSequenceProperty<T> {
@@ -22092,7 +22120,7 @@ class ComponentSequenceProperty<T extends ValueType>
       this.valueType,
       this.loop,
       this.components.map(e => e.clone()),
-      this.modifiers.map(e => Modifier.copy(e))
+      this.modifiers.map(e => e.clone())
     )
   }
 
@@ -22126,7 +22154,7 @@ class ComponentSequenceProperty<T extends ValueType>
       }
     }
     const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe(e, this.valueAt(e)))
-    return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => Modifier.copy(mod)))
+    return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
   }
 
   get duration() { return Math.max(...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
@@ -22145,7 +22173,7 @@ class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
   constructor(...args: number[]) {
     args = args.slice(0, 4)
-    super(args.length - 1 as T, (args.length === 1 ? args[0] : args) as ValueTypeMap[T])
+    super(args.length - 1 as T, (args.length === 1 ? args[0] : args) as TypeMap.PropertyValue[T])
   }
 
 }
@@ -22183,8 +22211,8 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
   static basic<T extends ValueType>(
     loop: boolean,
     endPosition: number,
-    startValue: ValueTypeMap[T],
-    endValue: ValueTypeMap[T]
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
   ): LinearProperty<T> {
     return new LinearProperty(loop, [
       new Keyframe(0, startValue),
@@ -22212,8 +22240,8 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
     exponent: number,
     stops: number,
     endPosition: number,
-    startValue: ValueTypeMap[T],
-    endValue: ValueTypeMap[T]
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
   ): LinearProperty<T> {
     if (stops < 2) {
       throw new Error('Property stop count must be greater than or equal to 2.')
@@ -22221,12 +22249,12 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
     if (Array.isArray(startValue) && Array.isArray(endValue)) {
       return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * endPosition,
-        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as ValueTypeMap[T]
+        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as TypeMap.PropertyValue[T]
       )))
     } else if (typeof startValue === 'number' && typeof endValue === 'number') {
       return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * endPosition,
-        lerp(startValue, endValue, (i / (stops - 1)) ** exponent) as ValueTypeMap[T]
+        lerp(startValue, endValue, (i / (stops - 1)) ** exponent) as TypeMap.PropertyValue[T]
       )))
     } else {
       throw new Error('startValue and endValue must be of the same type.')
@@ -22243,20 +22271,20 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @returns The new linear property.
    */
   static sine<T extends ValueType>(
-    min: ValueTypeMap[T],
-    max: ValueTypeMap[T],
+    min: TypeMap.PropertyValue[T],
+    max: TypeMap.PropertyValue[T],
     period: number,
     stops: number = 21
   ): LinearProperty<T> {
     if (Array.isArray(min) && Array.isArray(max)) {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
-        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as ValueTypeMap[T]
+        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as TypeMap.PropertyValue[T]
       )))
     } else if (typeof min === 'number' && typeof max === 'number') {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
-        (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2) as ValueTypeMap[T]
+        (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2) as TypeMap.PropertyValue[T]
       )))
     } else {
       throw new Error('min and max must be of the same type.')
@@ -22278,7 +22306,7 @@ class Curve2Property<T extends ValueType> extends SequenceProperty<T, PropertyFu
 }
 
 /**
- * Creates a property with a {@link RandomizerModifier} and no value,
+ * Creates a property with a {@link RandomRangeModifier} and no value,
  * effectively creating a property with a random value in a given range.
  * @param minValue The lower bound of the range of possible values for the
  * property.
@@ -22292,7 +22320,7 @@ function RandomProperty(minValue: PropertyValue, maxValue: PropertyValue, seed: 
   return new ValueProperty(
     (Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar) as ValueType,
     Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0,
-    [ new RandomizerModifier(minValue, maxValue, seed) ]
+    [ new RandomRangeModifier(minValue, maxValue, seed) ]
   )
 }
 
@@ -22317,290 +22345,597 @@ function RainbowProperty(duration: number = 4, loop: boolean = true) {
   ])
 }
 
-//#region Modifier
-class Modifier {
+/**
+ * Creates a property with different values depending on the "Display Blood"
+ * setting.
+ * @param onValue The value of the property when the "Display Blood" setting
+ * is set to "On".
+ * @param mildValue The value of the property when the "Display Blood" setting
+ * is set to "Mild".
+ * @param offValue The value of the property when the "Display Blood" setting
+ * is set to "Off".
+ * @returns 
+ */
+function BloodVisibilityProperty<T extends ValueType>(
+  onValue: TypeMap.PropertyValue[T],
+  mildValue: TypeMap.PropertyValue[T],
+  offValue: TypeMap.PropertyValue[T]
+): ConstantProperty<T> {
+  return new ConstantProperty<T>(...(typeof onValue === 'number' ? [1] : onValue.map(() => 1))).withModifiers(
+    BloodVisibilityModifier(onValue, mildValue, offValue)
+  )
+}
 
-  static #typeEnumBValues = {
-    [ModifierType.Randomizer1]: 0,
-    [ModifierType.Randomizer2]: 4,
+//#region Modifier
+namespace Modifier {
+
+  export function fromJSON(obj: any): IModifier<ValueType> {
+    if ('fields' in obj || 'properties' in obj || !(obj.type in ModifierType)) {
+      return new GenericModifier(
+        obj.type,
+        obj.valueType,
+        obj.fields.map((e: { type: string; value: number }) => Field.fromJSON(e)),
+        obj.properties.map((e: any) => Property.fromJSON(e)),
+      )
+    }
+    switch (ModifierType[obj.type as string]) {
+      case ModifierType.RandomDelta:
+        return new RandomDeltaModifier(obj.max, obj.seed)
+      case ModifierType.RandomRange:
+        return new RandomRangeModifier(obj.min, obj.max, obj.seed)
+      case ModifierType.RandomFraction:
+        return new RandomFractionModifier(obj.max, obj.seed)
+      case ModifierType.ExternalValue1:
+        return new ExternalValue1Modifier(obj.externalValue, Property.fromJSON(obj.factor) as any)
+      case ModifierType.ExternalValue2:
+        return new ExternalValue2Modifier(obj.externalValue, Property.fromJSON(obj.factor) as any)
+    }
+  }
+
+  export const enumBValues = {
+    [ModifierType.RandomDelta]: 0,
+    [ModifierType.RandomRange]: 4,
     [ModifierType.ExternalValue1]: 8,
     [ModifierType.ExternalValue2]: 12,
-    [ModifierType.Randomizer3]: 16,
+    [ModifierType.RandomFraction]: 16,
   }
 
-  typeEnumA: number
-  typeEnumB: number
-  fields: NumericalField[]
-  properties: IProperty<any, any>[]
-
-  constructor(
-    type: ModifierType,
-    valueType: ValueType,
-    fields: NumericalField[] = [],
-    properties: IProperty<any, any>[] = []
-  ) {
-    this.type = type
-    this.valueType = valueType
-    this.fields = fields
-    this.properties = properties
-  }
-
-  static typeEnumAToModifierType(typeEnumA: number): ModifierType {
+  export function enumAToType(typeEnumA: number): ModifierType {
     return (typeEnumA >>> 12 & 0b11) << 4 | typeEnumA >>> 4 & 0b1111
   }
 
-  static modifierTypeToTypeEnumA(type: ModifierType, valueType: ValueType = ValueType.Scalar) {
+  export function typeToEnumA(type: ModifierType, valueType: ValueType = ValueType.Scalar) {
     return (type >>> 4 | 0b1100) << 12 | (type & 0b1111) << 4 | valueType
   }
 
-  static copy(mod: Modifier) {
-    const copy = new Modifier(
-      mod.type,
-      mod.valueType,
-      mod.fields.map(f => Field.copy(f) as NumericalField),
-      mod.properties.map(p => p.clone())
-    )
-    copy.typeEnumB = mod.typeEnumB
-    return copy
+  export function vectorFromScalar<T extends ValueType>(mod: IModifier<ValueType.Scalar>, vt: T): IModifier<any> {
+    const cc = vt + 1
+    if (mod instanceof RandomDeltaModifier) {
+      return new RandomDeltaModifier(
+        arrayOf(cc, () => mod.max) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.seed) as TypeMap.PropertyValue[T],
+      )
+    } else if (mod instanceof RandomRangeModifier) {
+      return new RandomRangeModifier(
+        arrayOf(cc, () => mod.min) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.max) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.seed) as TypeMap.PropertyValue[T],
+      )
+    } else if (mod instanceof RandomFractionModifier) {
+      return new RandomFractionModifier(
+        arrayOf(cc, () => mod.max) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.seed) as TypeMap.PropertyValue[T],
+      )
+    } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+      let prop = mod.factor
+      if (prop instanceof ValueProperty) {
+        prop = new ValueProperty(vt, arrayOf(cc,
+          () => (prop as ValueProperty<ValueType.Scalar>).value as number
+        ) as TypeMap.PropertyValue[T])
+      } else if (prop instanceof SequenceProperty) {
+        prop = new SequenceProperty(vt, prop.function, prop.loop, prop.keyframes.map(kf =>
+          new Keyframe(kf.position, arrayOf(cc, () => kf.value) as TypeMap.PropertyValue[T])
+        ))
+      } else if (prop instanceof ComponentSequenceProperty) {
+        prop = new ComponentSequenceProperty(vt, prop.loop,
+          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].clone())
+        )
+      }
+      return new (mod.constructor as any)(mod.externalValue, prop)
+    }
   }
 
-  get type(): ModifierType {
-    return Modifier.typeEnumAToModifierType(this.typeEnumA)
-  }
-
-  set type(value) {
-    const valueType = this.valueType
-    this.typeEnumA = Modifier.modifierTypeToTypeEnumA(value, valueType)
-    this.typeEnumB = Modifier.#typeEnumBValues[value] | valueType
-  }
-
-  /**
-   * Sets the modifier type and returns the modifier.
-   * @param type The new type for the modifier.
-   */
-  withType(type: ModifierType) {
-    this.type = type
-    return this
-  }
-
-  get valueType(): ValueType {
-    return this.typeEnumA & 0b11
-  }
-
-  set valueType(value) {
-    this.typeEnumA = (this.typeEnumA & 0xfffc) | value
-    this.typeEnumB = (this.typeEnumB & 0xfffffffc) | value
-  }
-
-  /**
-   * Sets the value type and returns the modifier.
-   * @param type The new value type for the modifier.
-   */
-  withValueType(type: ValueType) {
-    this.valueType = type
-    return this
-  }
-
-  static fromJSON({
-    typeEnumA,
-    typeEnumB,
-    fields,
-    properties = [],
-  }: {
-    typeEnumA: number
-    typeEnumB: number
-    fields: []
-    properties?: []
-  }): Modifier {
-    const mod = new Modifier(
-      Modifier.typeEnumAToModifierType(typeEnumA),
-      typeEnumA & 0b11,
-      fields.map(field => Field.fromJSON(field) as NumericalField),
-      properties.map(prop => Property.fromJSON(prop))
-    )
-    mod.typeEnumB = typeEnumB
+  export function multPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T]): IModifier<T> {
+    mod = mod.clone()
+    if (typeof v === 'number') {
+      if (mod instanceof RandomDeltaModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.max *= v
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.max[i] *= v
+        }
+      } else if (mod instanceof RandomRangeModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.min *= v
+          mod.max *= v
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.min[i] *= v
+          mod.max[i] *= v
+        }
+      }
+    } else {
+      if (mod instanceof RandomDeltaModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.max *= v[0]
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.max[i] *= v[i]
+        }
+      } else if (mod instanceof RandomRangeModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.min *= v[0]
+          mod.max *= v[0]
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.min[i] *= v[i]
+          mod.max[i] *= v[i]
+        }
+      }
+    }
     return mod
+  }
+
+}
+
+/**
+ * This is a generic modifier class that has a similar structure to modifiers
+ * in the file format. It is only intended to be used as a fallback or for
+ * research, and usage of it will greatly limit various functions in the
+ * library. Do not use it unless you know what you're doing.
+ */
+class GenericModifier<T extends ValueType> implements IModifier<T> {
+
+  constructor(
+    public readonly type: ModifierType,
+    public readonly valueType: T,
+    public fields: NumericalField[],
+    public properties: IProperty<T, PropertyFunction>[],
+  ) {}
+
+  getFieldCount(): number {
+    return this.fields.length
+  }
+
+  getFields(): NumericalField[] {
+    return this.fields
+  }
+
+  getPropertyCount(): number {
+    return this.properties.length
+  }
+
+  getProperties(game: Game): AnyProperty[] {
+    return this.properties.map(prop => prop.for(game) as AnyProperty)
   }
 
   toJSON() {
     const o: {
-      typeEnumA: number
-      typeEnumB: number
-      fields: any[]
+      type: string
+      valueType: T
+      fields?: any[]
       properties?: any[]
     } = {
-      typeEnumA: this.typeEnumA,
-      typeEnumB: this.typeEnumB,
-      fields: this.fields.map(field => field.toJSON()),
+      type: ModifierType[this.type],
+      valueType: this.valueType
     }
-    if (this.properties.length > 0) o.properties = this.properties.map(prop => prop.toJSON())
+    if (this.fields.length !== 0) {
+      o.fields = this.fields.map(e => e.toJSON())
+    }
+    if (this.properties.length !== 0) {
+      o.properties = this.properties.map(e => e.toJSON())
+    }
     return o
   }
 
-  separateComponents(): Modifier[] {
-    if (this.valueType === ValueType.Scalar) {
-      return [ Modifier.copy(this) ]
+  clone(): GenericModifier<T> {
+    return new GenericModifier(
+      this.type,
+      this.valueType,
+      this.fields.map(e => Field.copy(e)),
+      this.properties.map(e => e.clone())
+    )
+  }
+
+  separateComponents(): IModifier<ValueType.Scalar>[] {
+    throw new Error('Generic modifiers cannot be split into component modifiers.')
+  }
+
+}
+
+/**
+ * Makes a property's value randomly vary by up to a given maximum from the
+ * property's base value. In other words, if `p` is the property's base value
+ * and `max` is the {@link max maximum difference}, the property's modified
+ * value will be between `p - max` and `p + max`.
+ */
+class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
+
+  readonly type: ModifierType = ModifierType.RandomDelta
+  readonly valueType: T
+
+  constructor(
+    public max: TypeMap.PropertyValue[T],
+    public seed: TypeMap.PropertyValue[T] = (
+      typeof max === 'number' ?
+        randomInt32() :
+        max.map(() => randomInt32())
+    ) as TypeMap.PropertyValue[T]
+  ) {
+    if (typeof max === 'number') {
+      this.valueType = ValueType.Scalar as T
     } else {
-      const cc = this.valueType + 1
-      const type = this.type
-      switch (type) {
-        case ModifierType.ExternalValue1:
-        case ModifierType.ExternalValue2:
-          const props = this.properties[0].separateComponents()
-          return arrayOf(cc, i => new Modifier(type, ValueType.Scalar, [Field.copy(this.fields[0])], [props[i]]))
-        case ModifierType.Randomizer1:
-        case ModifierType.Randomizer3:
-          return arrayOf(cc, i => new Modifier(type, ValueType.Scalar, [
-            Field.copy(this.fields[i]),
-            Field.copy(this.fields[cc + i]),
-          ]))
-        case ModifierType.Randomizer2:
-          return arrayOf(cc, i => new Modifier(type, ValueType.Scalar, [
-            Field.copy(this.fields[i]),
-            Field.copy(this.fields[cc + i]),
-            Field.copy(this.fields[2 * cc + i]),
-          ]))
-      }
+      this.valueType = (max.length - 1) as T
+    }
+  }
+
+  getFieldCount(): number {
+    return (this.valueType + 1) * 2
+  }
+
+  getFields(): NumericalField[] {
+    if (typeof this.max === 'number') {
+      return [
+        new IntField(this.seed as number),
+        new FloatField(this.max),
+      ]
+    } else {
+      return [
+        ...(this.seed as Vector).map(e => new IntField(e)),
+        ...this.max.map(e => new FloatField(e)),
+      ]
+    }
+  }
+
+  getPropertyCount(): number {
+    return 0
+  }
+
+  getProperties(game: Game): AnyProperty[] {
+    return []
+  }
+
+  toJSON() {
+    return {
+      type: ModifierType[this.type],
+      seed: this.seed,
+      max: this.max
+    }
+  }
+
+  clone(): RandomDeltaModifier<T> {
+    return new RandomDeltaModifier(
+      typeof this.max === 'number' ? this.max : this.max.slice() as TypeMap.PropertyValue[T],
+      typeof this.seed === 'number' ? this.seed : this.seed.slice() as TypeMap.PropertyValue[T]
+    )
+  }
+
+  separateComponents(): IModifier<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [ this.clone() as IModifier<ValueType.Scalar> ]
+    } else {
+      return (this.max as Vector).map((e, i) => new RandomDeltaModifier(e, (this.seed as Vector)[i]))
     }
   }
 
 }
 
 /**
- * A property modifier that changes the property value depending on an
- * {@link ExternalValue external value}.
- * 
- * The property value wil be multiplied by the values in this modifier.
+ * Adds a random value in a given range to a property's value.
  */
-class ExternalValueModifier<T extends ValueType> extends Modifier {
+class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
 
-  /**
-   * @param extVal The ID of the external value to use.
-   * @param loop Controls if the modifier property should loop or not.
-   * @param keyframes An array of keyframes with positions representing the
-   * external value and the keyframe value representing the modifier value it
-   * maps to.
-   * @param type Controls what type of modifier to use. Defaults to
-   * {@link ModifierType.ExternalValue1}.
-   */
+  readonly type: ModifierType = ModifierType.RandomRange
+  readonly valueType: T
+
   constructor(
-    extVal: ExternalValue,
-    loop: boolean,
-    keyframes: IKeyframe<T>[],
-    type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
+    public min: TypeMap.PropertyValue[T],
+    public max: TypeMap.PropertyValue[T],
+    public seed: TypeMap.PropertyValue[T] = (
+      typeof min === 'number' ?
+        randomInt32() :
+        min.map(() => randomInt32())
+    ) as TypeMap.PropertyValue[T]
   ) {
-    const valueType = typeof keyframes[0].value === 'number' ? 0 : keyframes[0].value.length - 1
-    super(type, valueType, [
-      new IntField(extVal)
-    ], [
-      new LinearProperty(loop, keyframes)
-    ])
+    if (typeof min === 'number') {
+      this.valueType = ValueType.Scalar as T
+    } else {
+      this.valueType = (min.length - 1) as T
+    }
   }
 
-  get externalValue() { return this.fields[0].value as number }
-  set externalValue(value) { this.fields[0].value = value }
+  getFieldCount(): number {
+    return (this.valueType + 1) * 3
+  }
 
-  valueAt(arg: number) { return this.properties[0].valueAt(arg) }
+  getFields(): NumericalField[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [
+        new IntField(this.seed as number),
+        new FloatField(this.min as number),
+        new FloatField(this.max as number),
+      ]
+    } else {
+      return [
+        ...(this.seed as Vector).map(e => new IntField(e)),
+        ...(this.min as Vector).map(e => new FloatField(e)),
+        ...(this.max as Vector).map(e => new FloatField(e)),
+      ]
+    }
+  }
+
+  getPropertyCount(): number {
+    return 0
+  }
+
+  getProperties(game: Game): AnyProperty[] {
+    return []
+  }
+
+  toJSON() {
+    return {
+      type: ModifierType[this.type],
+      seed: this.seed,
+      min: this.min,
+      max: this.max
+    }
+  }
+
+  clone(): RandomRangeModifier<T> {
+    return new RandomRangeModifier(
+      typeof this.min === 'number' ? this.min : this.min.slice() as TypeMap.PropertyValue[T],
+      typeof this.max === 'number' ? this.max : this.max.slice() as TypeMap.PropertyValue[T],
+      typeof this.seed === 'number' ? this.seed : this.seed.slice() as TypeMap.PropertyValue[T]
+    )
+  }
+
+  separateComponents(): IModifier<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [ this.clone() as IModifier<ValueType.Scalar> ]
+    } else {
+      return (this.min as Vector).map((e, i) => new RandomRangeModifier(e, (this.max as Vector)[i], (this.seed as Vector)[i]))
+    }
+  }
 
 }
 
 /**
- * A property modifier that changes the property value depending on the
- * "Display Blood" option.
- * 
- * The property value wil be multiplied by the values in this modifier.
+ * Makes a property's value randomly vary by up to a given maximum fraction
+ * from the property's base value. In other words, if `p` is the property's
+ * base value and `max` is the {@link max maximum fraction}, the property's
+ * modified value will be between `p - p * max` and `p + p * max`.
  */
-class BloodVisibilityModifier<T extends ValueType> extends ExternalValueModifier<T> {
+class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
 
-  declare properties: [SequenceProperty<any, any>]
+  readonly type: ModifierType = ModifierType.RandomFraction
+  readonly valueType: T
 
-  /**
-   * @param onValue The value when "Display Blood" is set to "On".
-   * @param mildValue The value when "Display Blood" is set to "Mild".
-   * @param offValue The value when "Display Blood" is set to "Off".
-   * @param type Controls what type of modifier to use. Defaults to
-   * {@link ModifierType.ExternalValue1}.
-   */
   constructor(
-    onValue: ValueTypeMap[T],
-    mildValue: ValueTypeMap[T],
-    offValue: ValueTypeMap[T],
-    type: ModifierType.ExternalValue1 | ModifierType.ExternalValue2 = ModifierType.ExternalValue1
+    public max: TypeMap.PropertyValue[T],
+    public seed: TypeMap.PropertyValue[T] = (
+      typeof max === 'number' ?
+        randomInt32() :
+        max.map(() => randomInt32())
+    ) as TypeMap.PropertyValue[T]
   ) {
-    super(ExternalValue.DisplayBlood, false, [
-      new Keyframe(-1, offValue),
-      new Keyframe(0, onValue),
-      new Keyframe(1, mildValue),
-    ], type)
+    if (typeof max === 'number') {
+      this.valueType = ValueType.Scalar as T
+    } else {
+      this.valueType = (max.length - 1) as T
+    }
   }
 
-  get offValue() { return this.properties[0].keyframes[0].value }
-  set offValue(value) { this.properties[0].keyframes[0].value = value }
+  getFieldCount(): number {
+    return (this.valueType + 1) * 2
+  }
 
-  get onValue() { return this.properties[0].keyframes[1].value }
-  set onValue(value) { this.properties[0].keyframes[1].value = value }
+  getFields(): NumericalField[] {
+    if (typeof this.max === 'number') {
+      return [
+        new IntField(this.seed as number),
+        new FloatField(this.max),
+      ]
+    } else {
+      return [
+        ...(this.seed as Vector).map(e => new IntField(e)),
+        ...this.max.map(e => new FloatField(e)),
+      ]
+    }
+  }
 
-  get mildValue() { return this.properties[0].keyframes[2].value }
-  set mildValue(value) { this.properties[0].keyframes[2].value = value }
+  getPropertyCount(): number {
+    return 0
+  }
+
+  getProperties(game: Game): AnyProperty[] {
+    return []
+  }
+
+  toJSON() {
+    return {
+      type: ModifierType[this.type],
+      seed: this.seed,
+      max: this.max
+    }
+  }
+
+  clone(): RandomFractionModifier<T> {
+    return new RandomFractionModifier(
+      typeof this.max === 'number' ? this.max : this.max.slice() as TypeMap.PropertyValue[T],
+      typeof this.seed === 'number' ? this.seed : this.seed.slice() as TypeMap.PropertyValue[T]
+    )
+  }
+
+  separateComponents(): IModifier<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [ this.clone() as IModifier<ValueType.Scalar> ]
+    }
+    return (this.max as Vector).map((e, i) => new RandomFractionModifier(e, (this.seed as Vector)[i]))
+  }
 
 }
 
 /**
- * A property modifier that changes the property's value based on the weather.
+ * Modifies a property's value by multiplying it with different values
+ * depending on an {@link ExternalValue external value}.
+ */
+class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
+
+  readonly type: ModifierType = ModifierType.ExternalValue1
+  readonly valueType: T
+
+  constructor(
+    public externalValue: AnyExternalValue,
+    public factor: TypeMap.Property[T]
+  ) {
+    this.valueType = factor.valueType as T
+  }
+
+  getFieldCount(): number {
+    return 1
+  }
+
+  getFields(): NumericalField[] {
+    return [
+      new IntField(this.externalValue)
+    ]
+  }
+
+  getPropertyCount(): number {
+    return 1
+  }
+
+  getProperties(game: Game): AnyProperty[] {
+    return [
+      this.factor.for(game)
+    ]
+  }
+
+  toJSON() {
+    return {
+      type: ModifierType[this.type],
+      externalValue: this.externalValue,
+      factor: this.factor.toJSON()
+    }
+  }
+
+  clone(): ExternalValue1Modifier<T> {
+    return new ExternalValue1Modifier(
+      this.externalValue,
+      this.factor.clone() as TypeMap.Property[T]
+    )
+  }
+
+  separateComponents(): IModifier<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [ this.clone() as IModifier<ValueType.Scalar> ]
+    }
+    return this.factor.separateComponents().map(e => new ExternalValue1Modifier(this.externalValue, e))
+  }
+
+}
+
+class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
+
+  readonly type: ModifierType = ModifierType.ExternalValue2
+  readonly valueType: T
+
+  constructor(
+    public externalValue: AnyExternalValue,
+    public factor: TypeMap.Property[T]
+  ) {
+    this.valueType = factor.valueType as T
+  }
+
+  getFieldCount(): number {
+    return 1
+  }
+
+  getFields(): NumericalField[] {
+    return [
+      new IntField(this.externalValue)
+    ]
+  }
+
+  getPropertyCount(): number {
+    return 1
+  }
+
+  getProperties(game: Game): AnyProperty[] {
+    return [
+      this.factor.for(game)
+    ]
+  }
+
+  toJSON() {
+    return {
+      type: ModifierType[this.type],
+      externalValue: this.externalValue,
+      factor: this.factor.toJSON()
+    }
+  }
+
+  clone(): ExternalValue2Modifier<T> {
+    return new ExternalValue2Modifier(
+      this.externalValue,
+      this.factor.clone() as TypeMap.Property[T]
+    )
+  }
+
+  separateComponents(): IModifier<ValueType.Scalar>[] {
+    if (this.valueType === ValueType.Scalar) {
+      return [ this.clone() as IModifier<ValueType.Scalar> ]
+    }
+    return this.factor.separateComponents().map(e => new ExternalValue2Modifier(this.externalValue, e))
+  }
+
+}
+
+/**
+ * Creates a modifier that modifies a property's value by mutliplying it with
+ * different values depending on the "Display Blood" setting.
+ * @param onValue 
+ * @param mildValue 
+ * @param offValue 
+ * @param modifierConstructor 
+ * @returns 
+ */
+function BloodVisibilityModifier<T extends ValueType>(
+  onValue: TypeMap.PropertyValue[T],
+  mildValue: TypeMap.PropertyValue[T],
+  offValue: TypeMap.PropertyValue[T],
+  modifierConstructor: typeof ExternalValue1Modifier<T> | typeof ExternalValue2Modifier<T> = ExternalValue2Modifier<T>
+): ExternalValue1Modifier<T> | ExternalValue2Modifier<T> {
+  return new modifierConstructor(ExternalValue.EldenRing.BloodVisibility, new SteppedProperty<T>(false, [
+    new Keyframe<T>(-1, offValue),
+    new Keyframe<T>(0, onValue),
+    new Keyframe<T>(1, mildValue),
+  ]) as unknown as TypeMap.Property[T])
+}
+
+/**
+ * Creates a property modifier that multiplies the property's value with
+ * different values depending on if it's raining/snowing or not.
  * 
  * Only functional in Elden Ring.
+ * @param clear The value when it's not raining or snowing.
+ * @param precip The value when it's raining or snowing.
  */
-class PrecipitationModifier<T extends ValueType> extends ExternalValueModifier<T> {
-
-  /**
-   * @param clear The value when it's not raining or snowing.
-   * @param precip The value when it's raining or snowing.
-   */
-  constructor(clear: ValueTypeMap[T], precip: ValueTypeMap[T]) {
-    super(ExternalValue.Precipitation, false, [
-      { position: 0, value: clear },
-      { position: 1, value: precip },
-    ])
-  }
-
-}
-
-/**
- * A property modifer that changes the property value by a random amount in a
- * given range.
- */
-class RandomizerModifier extends Modifier {
-
-  constructor(minValue: PropertyValue, maxValue: PropertyValue, seed: PropertyValue = randomInt32()) {
-    if (Array.isArray(minValue)) {
-      if (!Array.isArray(maxValue) || maxValue.length !== minValue.length) {
-        throw new Error(`Incompatible min and max values for randomizer modifier: Min: ${minValue.toString()}, Max: ${maxValue.toString()}`)
-      }
-      if (minValue.length < 1 || minValue.length > 4) {
-        throw new Error(`Invalid number of vector components: ${minValue.length}`)
-      }
-      const seedArray = Array.isArray(seed) ? seed : [seed]
-      const valueType = minValue.length - 1
-      super(ModifierType.Randomizer2, valueType, [
-        ...arrayOf(minValue.length, i => new IntField(seedArray[i % seedArray.length])),
-        ...minValue.map(e => new FloatField(e)),
-        ...maxValue.map(e => new FloatField(e)),
-      ])
-    } else {
-      if (Array.isArray(maxValue)) {
-        throw new Error(`Incompatible min and max values for randomizer modifier: Min: ${minValue}, Max: ${maxValue.toString()}`)
-      }
-      if (Array.isArray(seed)) {
-        throw new Error('Random scalar modifiers cannot use vector seeds.')
-      }
-      super(ModifierType.Randomizer2, ValueType.Scalar, [
-        new IntField(seed),
-        new FloatField(minValue),
-        new FloatField(maxValue),
-      ])
-    }
-  }
-
+function PrecipitationModifier<T extends ValueType>(
+  clear: TypeMap.PropertyValue[T],
+  precip: TypeMap.PropertyValue[T]
+): ExternalValue1Modifier<T> {
+  return new ExternalValue1Modifier(ExternalValue.EldenRing.Precipitation, new SteppedProperty<T>(false, [
+    new Keyframe<T>(0, clear),
+    new Keyframe<T>(1, precip),
+  ]) as unknown as TypeMap.Property[T])
 }
 
 //#region Section10
@@ -22741,15 +23076,20 @@ export {
   Curve2Property,
   RandomProperty,
   RainbowProperty,
+  BloodVisibilityProperty,
   anyValueMult,
   combineComponents,
   separateComponents,
 
   Modifier,
-  ExternalValueModifier,
+  GenericModifier,
+  RandomDeltaModifier,
+  RandomRangeModifier,
+  RandomFractionModifier,
+  ExternalValue1Modifier,
+  ExternalValue2Modifier,
   BloodVisibilityModifier,
   PrecipitationModifier,
-  RandomizerModifier,
 
   Section10
 }
