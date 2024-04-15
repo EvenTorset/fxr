@@ -1389,18 +1389,22 @@ const ActionData: {
     props: {
       threshold: { default: 0.1, paths: {} },
       maxConcurrent: { default: -1, paths: {} },
-      unk_ds3_f1_0: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_1: { default: -1, paths: {} },
+      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+      unk_ds3_p1_1: { default: 1, paths: {} },
+      unk_ds3_p1_2: { default: -1, paths: {} },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
-        properties1: ['threshold','unk_ds3_p1_1','maxConcurrent']
+        fields1: ['maxConcurrent','unk_ds3_f1_1'],
+        properties1: ['threshold','unk_ds3_p1_1','unk_ds3_p1_2']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_1','unk_sdt_f1_1'],
+        properties1: ['threshold','unk_ds3_p1_2','maxConcurrent']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
     }
   },
   [ActionType.PointEmitterShape]: {
@@ -8974,13 +8978,19 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Default**: `1`
    */
-  unk_ds3_f1_0?: number
+  unk_ds3_f1_1?: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_1?: number
+  unk_sdt_f1_1?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p1_1?: ScalarValue
   /**
    * Unknown.
    * 
@@ -8988,7 +8998,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p1_1?: ScalarValue
+  unk_ds3_p1_2?: ScalarValue
 }
 
 /**
@@ -9008,9 +9018,10 @@ class EqualDistanceEmitter extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   maxConcurrent: ScalarValue
-  unk_ds3_f1_0: number
   unk_ds3_f1_1: number
+  unk_sdt_f1_1: number
   unk_ds3_p1_1: ScalarValue
+  unk_ds3_p1_2: ScalarValue
   constructor(props: EqualDistanceEmitterParams = {}) {
     super(ActionType.EqualDistanceEmitter)
     this.assign(props)
