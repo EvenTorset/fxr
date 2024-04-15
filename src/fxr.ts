@@ -4625,26 +4625,6 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.NodeWindSpeed]: {
-    fallback(action: NodeWindSpeed, game: Game) {
-      return new Action
-    }
-  },
-  [ActionType.ParticleWindSpeed]: {
-    fallback(action: ParticleWindSpeed, game: Game) {
-      return new Action
-    }
-  },
-  [ActionType.NodeWindAcceleration]: {
-    fallback(action: NodeWindAcceleration, game: Game) {
-      return new Action
-    }
-  },
-  [ActionType.ParticleWindAcceleration]: {
-    fallback(action: ParticleWindAcceleration, game: Game) {
-      return new Action
-    }
-  },
   [ActionType.RichModel]: {
     read(props: any, game: Game) {
       if (game === Game.EldenRing) {
