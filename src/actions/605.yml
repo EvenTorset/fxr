@@ -442,9 +442,11 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
-  unk_ds3_f2_27:
+  unk_ds3_f2_26:
     field: int
     default: 1
+  unk_ds3_f2_27:
+    field: int
   unk_ds3_f2_28:
     field: int
   unk_ds3_p1_15:
@@ -544,9 +546,9 @@ games:
       - unk_ds3_f2_21
       - unk_ds3_f2_22
       - unk_ds3_f2_23
-      - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
+      - unk_ds3_f2_26
       - unk_ds3_f2_27
       - unk_ds3_f2_28
     properties1:
@@ -631,8 +633,8 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
+      - unk_ds3_f2_26
       - unk_ds3_f2_27
-      - unk_ds3_f2_28
       - unk_sdt_f2_29
       - unk_sdt_f2_30
       - unk_sdt_f2_31
@@ -733,8 +735,8 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
+      - unk_ds3_f2_26
       - unk_ds3_f2_27
-      - unk_ds3_f2_28
       - unk_sdt_f2_29
       - unk_sdt_f2_30
       - unk_sdt_f2_31
