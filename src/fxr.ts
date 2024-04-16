@@ -19216,145 +19216,169 @@ export interface ParticleSystemParams {
    */
   unk_er_f1_33?: number
   /**
-   * Unknown float.
+   * Particle position offset along the X-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetXMin}
+   * - {@link particleOffsetXMax}
    */
   particleOffsetX?: number
   /**
-   * Unknown float.
+   * Particle position offset along the Y-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetYMin}
+   * - {@link particleOffsetYMax}
    */
   particleOffsetY?: number
   /**
-   * Unknown float.
+   * Particle position offset along the Z-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetZMin}
+   * - {@link particleOffsetZMax}
    */
   particleOffsetZ?: number
   /**
-   * Unknown float.
+   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
    * 
    * **Default**: `0`
    */
   particleOffsetXMin?: number
   /**
-   * Unknown float.
+   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
    * 
    * **Default**: `0`
    */
   particleOffsetYMin?: number
   /**
-   * Unknown float.
+   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
    * 
    * **Default**: `0`
    */
   particleOffsetZMin?: number
   /**
-   * Unknown float.
+   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
    * 
    * **Default**: `0`
    */
   particleOffsetXMax?: number
   /**
-   * Unknown float.
+   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
    * 
    * **Default**: `0`
    */
   particleOffsetYMax?: number
   /**
-   * Unknown float.
+   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
    * 
    * **Default**: `0`
    */
   particleOffsetZMax?: number
   /**
-   * Unknown float.
+   * Particle speed along the X-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedXMax}
    */
   particleSpeedX?: number
   /**
-   * Unknown float.
+   * Particle speed along the Y-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedYMax}
    */
   particleSpeedY?: number
   /**
-   * Unknown float.
+   * Particle speed along the Z-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedZMax}
    */
   particleSpeedZ?: number
   /**
-   * Unknown float.
+   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
    * 
    * **Default**: `0`
    */
   particleSpeedXMin?: number
   /**
-   * Unknown float.
+   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
    * 
    * **Default**: `0`
    */
   particleSpeedYMin?: number
   /**
-   * Unknown float.
+   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
    * 
    * **Default**: `0`
    */
   particleSpeedZMin?: number
   /**
-   * Unknown float.
+   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
    * 
    * **Default**: `0`
    */
   particleSpeedXMax?: number
   /**
-   * Unknown float.
+   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
    * 
    * **Default**: `0`
    */
   particleSpeedYMax?: number
   /**
-   * Unknown float.
+   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
    * 
    * **Default**: `0`
    */
   particleSpeedZMax?: number
   /**
-   * Unknown float.
+   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
    * 
    * **Default**: `0`
    */
   particleAccelerationXMin?: number
   /**
-   * Unknown float.
+   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
    * 
    * **Default**: `0`
    */
   particleAccelerationYMin?: number
   /**
-   * Unknown float.
+   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
    * 
    * **Default**: `0`
    */
   particleAccelerationZMin?: number
   /**
-   * Unknown float.
+   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
    * 
    * **Default**: `0`
    */
   particleAccelerationXMax?: number
   /**
-   * Unknown float.
+   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
    * 
    * **Default**: `0`
    */
   particleAccelerationYMax?: number
   /**
-   * Unknown float.
+   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
    * 
    * **Default**: `0`
    */
@@ -20300,21 +20324,33 @@ export interface ParticleSystemParams {
    */
   unk_er_p1_3?: ScalarValue
   /**
-   * Unknown.
+   * Particle acceleration along the X-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAccelerationXMin}
+   * - {@link particleAccelerationXMax}
    */
   particleAccelerationX?: ScalarValue
   /**
-   * Unknown.
+   * Particle acceleration along the Y-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAccelerationYMin}
+   * - {@link particleAccelerationYMax}
    */
   particleAccelerationY?: ScalarValue
   /**
-   * Unknown.
+   * Particle acceleration along the Z-axis.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAccelerationZMin}
+   * - {@link particleAccelerationZMax}
    */
   particleAccelerationZ?: ScalarValue
   /**
@@ -20562,29 +20598,125 @@ class ParticleSystem extends DataAction {
   particleDuration: number
   unk_er_f1_32: number
   unk_er_f1_33: number
+  /**
+   * Particle position offset along the X-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetXMin}
+   * - {@link particleOffsetXMax}
+   */
   particleOffsetX: number
+  /**
+   * Particle position offset along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetYMin}
+   * - {@link particleOffsetYMax}
+   */
   particleOffsetY: number
+  /**
+   * Particle position offset along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetZMin}
+   * - {@link particleOffsetZMax}
+   */
   particleOffsetZ: number
+  /**
+   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   */
   particleOffsetXMin: number
+  /**
+   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   */
   particleOffsetYMin: number
+  /**
+   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   */
   particleOffsetZMin: number
+  /**
+   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
+   */
   particleOffsetXMax: number
+  /**
+   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
+   */
   particleOffsetYMax: number
+  /**
+   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
+   */
   particleOffsetZMax: number
+  /**
+   * Particle speed along the X-axis.
+   * 
+   * See also:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedXMax}
+   */
   particleSpeedX: number
+  /**
+   * Particle speed along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedYMax}
+   */
   particleSpeedY: number
+  /**
+   * Particle speed along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedZMax}
+   */
   particleSpeedZ: number
+  /**
+   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   */
   particleSpeedXMin: number
+  /**
+   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
+   */
   particleSpeedYMin: number
+  /**
+   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
+   */
   particleSpeedZMin: number
+  /**
+   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
+   */
   particleSpeedXMax: number
+  /**
+   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
+   */
   particleSpeedYMax: number
+  /**
+   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
+   */
   particleSpeedZMax: number
+  /**
+   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
+   */
   particleAccelerationXMin: number
+  /**
+   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
+   */
   particleAccelerationYMin: number
+  /**
+   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
+   */
   particleAccelerationZMin: number
+  /**
+   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
+   */
   particleAccelerationXMax: number
+  /**
+   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
+   */
   particleAccelerationYMax: number
+  /**
+   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
+   */
   particleAccelerationZMax: number
   particleRotationVarianceX: number
   particleRotationVarianceY: number
@@ -20762,8 +20894,29 @@ class ParticleSystem extends DataAction {
   unk_er_p1_1: ScalarValue
   unk_er_p1_2: ScalarValue
   unk_er_p1_3: ScalarValue
+  /**
+   * Particle acceleration along the X-axis.
+   * 
+   * See also:
+   * - {@link particleAccelerationXMin}
+   * - {@link particleAccelerationXMax}
+   */
   particleAccelerationX: ScalarValue
+  /**
+   * Particle acceleration along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleAccelerationYMin}
+   * - {@link particleAccelerationYMax}
+   */
   particleAccelerationY: ScalarValue
+  /**
+   * Particle acceleration along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleAccelerationZMin}
+   * - {@link particleAccelerationZMax}
+   */
   particleAccelerationZ: ScalarValue
   unk_er_p1_7: ScalarValue
   unk_er_p1_8: ScalarValue

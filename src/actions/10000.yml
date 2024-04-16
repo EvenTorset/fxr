@@ -146,52 +146,118 @@ properties:
     field: int
   particleOffsetX:
     field: float
+    desc: |
+      Particle position offset along the X-axis.
+    see:
+      - particleOffsetXMin
+      - particleOffsetXMax
   particleOffsetY:
     field: float
+    desc: |
+      Particle position offset along the Y-axis.
+    see:
+      - particleOffsetYMin
+      - particleOffsetYMax
   particleOffsetZ:
     field: float
+    desc: |
+      Particle position offset along the Z-axis.
+    see:
+      - particleOffsetZMin
+      - particleOffsetZMax
   particleOffsetXMin:
     field: float
+    desc: |
+      Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
   particleOffsetYMin:
     field: float
+    desc: |
+      Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
   particleOffsetZMin:
     field: float
+    desc: |
+      Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
   particleOffsetXMax:
     field: float
+    desc: |
+      Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
   particleOffsetYMax:
     field: float
+    desc: |
+      Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
   particleOffsetZMax:
     field: float
+    desc: |
+      Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
   particleSpeedX:
     field: float
+    desc: |
+      Particle speed along the X-axis.
+    see:
+      - particleSpeedXMin
+      - particleSpeedXMax
   particleSpeedY:
     field: float
+    desc: |
+      Particle speed along the Y-axis.
+    see:
+      - particleSpeedYMin
+      - particleSpeedYMax
   particleSpeedZ:
     field: float
+    desc: |
+      Particle speed along the Z-axis.
+    see:
+      - particleSpeedZMin
+      - particleSpeedZMax
   particleSpeedXMin:
     field: float
+    desc: |
+      Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
   particleSpeedYMin:
     field: float
+    desc: |
+      Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
   particleSpeedZMin:
     field: float
+    desc: |
+      Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
   particleSpeedXMax:
     field: float
+    desc: |
+      Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
   particleSpeedYMax:
     field: float
+    desc: |
+      Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
   particleSpeedZMax:
     field: float
+    desc: |
+      Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
   particleAccelerationXMin:
     field: float
+    desc: |
+      Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
   particleAccelerationYMin:
     field: float
+    desc: |
+      Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
   particleAccelerationZMin:
     field: float
+    desc: |
+      Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
   particleAccelerationXMax:
     field: float
+    desc: |
+      Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
   particleAccelerationYMax:
     field: float
+    desc: |
+      Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
   particleAccelerationZMax:
     field: float
+    desc: |
+      Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
   particleRotationVarianceX:
     field: float
   particleRotationVarianceY:
@@ -583,10 +649,25 @@ properties:
     type: ScalarValue
   particleAccelerationX:
     type: ScalarValue
+    desc: |
+      Particle acceleration along the X-axis.
+    see:
+      - particleAccelerationXMin
+      - particleAccelerationXMax
   particleAccelerationY:
     type: ScalarValue
+    desc: |
+      Particle acceleration along the Y-axis.
+    see:
+      - particleAccelerationYMin
+      - particleAccelerationYMax
   particleAccelerationZ:
     type: ScalarValue
+    desc: |
+      Particle acceleration along the Z-axis.
+    see:
+      - particleAccelerationZMin
+      - particleAccelerationZMax
   unk_er_p1_7:
     type: ScalarValue
   unk_er_p1_8:
