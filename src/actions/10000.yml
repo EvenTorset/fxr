@@ -1,0 +1,880 @@
+type: 10000
+name: ParticleSystem
+desc: |
+  An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
+
+  Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+properties:
+  unk_er_f1_0:
+    field: int
+    default: 1005
+  texture:
+    field: int
+    default: 1
+    desc: |
+      The ID of the texture of the particles.
+  unk_er_f1_2:
+    field: int
+  normalMap:
+    field: int
+  emitterShape:
+    type: EmitterShape
+    field: int
+    default: EmitterShape.Box
+    desc: |
+      Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+  unk_er_f1_5:
+    field: int
+  emitterSizeX:
+    field: float
+    default: 1
+    desc: |
+      The width of the emitter.
+  emitterSizeY:
+    field: float
+    default: 1
+    desc: |
+      The height of the emitter.
+  emitterSizeZ:
+    field: float
+    default: 1
+    desc: |
+      The depth of the emitter.
+  emitterRotationX:
+    field: float
+    desc: |
+      The rotation of the emitter around the X-axis.
+  emitterRotationY:
+    field: float
+    desc: |
+      The rotation of the emitter around the Y-axis.
+  emitterRotationZ:
+    field: float
+    desc: |
+      The rotation of the emitter around the Z-axis.
+  unk_er_f1_12:
+    field: float
+    default: 1
+  unk_er_f1_13:
+    field: float
+    default: 1
+  unk_er_f1_14:
+    field: float
+    default: 1
+  emitterDistribution:
+    field: float
+    desc: |
+      Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+      | Shape | Behavior |
+      |-|-|
+      | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+      | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+      | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+      | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+      | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+  unk_er_f1_16:
+    field: int
+  unk_er_f1_17:
+    field: int
+  unk_er_f1_18:
+    field: int
+    default: -1
+  unk_er_f1_19:
+    field: int
+  unk_er_f1_20:
+    field: int
+  unk_er_f1_21:
+    field: int
+    default: 100
+  emissionParticleCount:
+    field: int
+    default: 10
+    desc: |
+      The number of particles to emit per emission.
+    see:
+      - emissionParticleCountMin
+      - emissionParticleCountMax
+  emissionParticleCountMin:
+    field: int
+    desc: |
+      The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+    see:
+      - emissionParticleCount
+      - emissionParticleCountMax
+  emissionParticleCountMax:
+    field: int
+    desc: |
+      The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+    see:
+      - emissionParticleCount
+      - emissionParticleCountMin
+  unk_er_f1_25:
+    field: int
+  emissionIntervalMin:
+    field: int
+    default: 1
+    desc: |
+      The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+    see:
+      - emissionIntervalMax
+  emissionIntervalMax:
+    field: int
+    default: 1
+    desc: |
+      The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+    see:
+      - emissionIntervalMin
+  limitEmissionCount:
+    field: bool
+    default: false
+    desc: |
+      If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+  emissionCountLimit:
+    field: int
+    desc: |
+      The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+  unk_er_f1_30:
+    field: int
+  particleDuration:
+    field: int
+    default: 1
+    desc: |
+      The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+  unk_er_f1_32:
+    field: int
+  unk_er_f1_33:
+    field: int
+  particleOffsetX:
+    field: float
+  particleOffsetY:
+    field: float
+  particleOffsetZ:
+    field: float
+  particleOffsetXMin:
+    field: float
+  particleOffsetYMin:
+    field: float
+  particleOffsetZMin:
+    field: float
+  particleOffsetXMax:
+    field: float
+  particleOffsetYMax:
+    field: float
+  particleOffsetZMax:
+    field: float
+  particleSpeedX:
+    field: float
+  particleSpeedY:
+    field: float
+  particleSpeedZ:
+    field: float
+  particleSpeedXMin:
+    field: float
+  particleSpeedYMin:
+    field: float
+  particleSpeedZMin:
+    field: float
+  particleSpeedXMax:
+    field: float
+  particleSpeedYMax:
+    field: float
+  particleSpeedZMax:
+    field: float
+  particleAccelerationXMin:
+    field: float
+  particleAccelerationYMin:
+    field: float
+  particleAccelerationZMin:
+    field: float
+  particleAccelerationXMax:
+    field: float
+  particleAccelerationYMax:
+    field: float
+  particleAccelerationZMax:
+    field: float
+  particleRotationVarianceX:
+    field: float
+  particleRotationVarianceY:
+    field: float
+  particleRotationVarianceZ:
+    field: float
+  particleAngularSpeedVarianceX:
+    field: float
+  particleAngularSpeedVarianceY:
+    field: float
+  particleAngularSpeedVarianceZ:
+    field: float
+  particleAngularAccelerationXMin:
+    field: float
+  particleAngularAccelerationYMin:
+    field: float
+  particleAngularAccelerationZMin:
+    field: float
+  particleAngularAccelerationXMax:
+    field: float
+  particleAngularAccelerationYMax:
+    field: float
+  particleAngularAccelerationZMax:
+    field: float
+  particleUniformScale:
+    field: bool
+    default: false
+    desc: |
+      When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+    see:
+      - particleSizeX
+      - particleSizeY
+      - particleSizeXMin
+      - particleSizeYMin
+      - particleSizeXMax
+      - particleSizeYMax
+      - particleGrowthRateX
+      - particleGrowthRateY
+      - particleGrowthRateXStatic
+      - particleGrowthRateYStatic
+      - particleGrowthAccelerationXMin
+      - particleGrowthAccelerationYMin
+      - particleGrowthAccelerationXMax
+      - particleGrowthAccelerationYMax
+  particleSizeX:
+    field: float
+    default: 1
+  particleSizeY:
+    field: float
+    default: 1
+  unk_er_f1_73:
+    field: float
+    default: 1
+  particleSizeXMin:
+    field: float
+  particleSizeYMin:
+    field: float
+  unk_er_f1_76:
+    field: float
+  particleSizeXMax:
+    field: float
+  particleSizeYMax:
+    field: float
+  unk_er_f1_79:
+    field: float
+  particleGrowthRateXStatic:
+    field: float
+  particleGrowthRateYStatic:
+    field: float
+  unk_er_f1_82:
+    field: float
+  particleGrowthRateXMin:
+    field: float
+  particleGrowthRateYMin:
+    field: float
+  unk_er_f1_85:
+    field: float
+  particleGrowthRateXMax:
+    field: float
+  particleGrowthRateYMax:
+    field: float
+  unk_er_f1_88:
+    field: float
+  particleGrowthAccelerationXMin:
+    field: float
+  particleGrowthAccelerationYMin:
+    field: float
+  unk_er_f1_91:
+    field: float
+  particleGrowthAccelerationXMax:
+    field: float
+  particleGrowthAccelerationYMax:
+    field: float
+  unk_er_f1_94:
+    field: float
+  rgbMultiplier:
+    field: float
+    default: 1
+  alphaMultiplier:
+    field: float
+    default: 1
+  redVariationMin:
+    field: float
+  greenVariationMin:
+    field: float
+  blueVariationMin:
+    field: float
+  alphaVariationMin:
+    field: float
+  redVariationMax:
+    field: float
+  greenVariationMax:
+    field: float
+  blueVariationMax:
+    field: float
+  alphaVariationMax:
+    field: float
+  blendMode:
+    type: BlendMode
+    field: int
+    default: 2
+  columns:
+    field: int
+    default: 1
+  totalFrames:
+    field: int
+    default: 1
+  randomTextureFrame:
+    field: bool
+    default: false
+  unk_er_f1_109:
+    field: int
+  maxFrameIndex:
+    field: int
+  unk_er_f1_111:
+    field: int
+    default: -1
+  unk_er_f1_112:
+    field: int
+    default: -1
+  unk_er_f1_113:
+    field: int
+  unk_er_f1_114:
+    field: int
+    default: 1
+  unk_er_f1_115:
+    field: int
+  unk_er_f1_116:
+    field: int
+  unk_er_f1_117:
+    field: float
+    default: 1
+  unk_er_f1_118:
+    field: float
+    default: 1
+  particleDurationMultiplier:
+    field: float
+    default: 1
+  unk_er_f1_120:
+    field: float
+    default: 1
+  particleSizeMultiplier:
+    field: float
+    default: 1
+  unk_er_f1_122:
+    field: float
+    default: 1
+  unk_er_f1_123:
+    field: float
+    default: 1
+  unk_er_f1_124:
+    field: float
+    default: 1
+  unk_er_f1_125:
+    field: float
+    default: 1
+  unk_er_f1_126:
+    field: float
+    default: 1
+  unk_er_f1_127:
+    field: int
+  unk_er_f1_128:
+    field: float
+    default: 1
+  unk_er_f1_129:
+    field: float
+    default: 1
+  unk_er_f1_130:
+    field: float
+    default: 1
+  unk_er_f1_131:
+    field: float
+    default: 1
+  unk_er_f1_132:
+    field: int
+  unk_er_f1_133:
+    field: int
+  unk_er_f1_134:
+    field: int
+  unk_er_f1_135:
+    field: float
+  unk_er_f1_136:
+    field: float
+  unk_er_f1_137:
+    field: int
+  unk_er_f1_138:
+    field: int
+    default: 8
+  unk_er_f1_139:
+    field: int
+  unk_er_f1_140:
+    field: int
+  unk_er_f1_141:
+    field: int
+  unk_er_f1_142:
+    field: int
+  unk_er_f1_143:
+    field: int
+  unk_er_f1_144:
+    field: int
+  unk_er_f1_145:
+    field: int
+  unk_er_f1_146:
+    field: int
+    default: 1
+  unk_er_f1_147:
+    field: int
+    default: 12
+  unk_er_f1_148:
+    field: int
+  unk_er_f1_149:
+    field: float
+    default: 1
+  unk_er_f1_150:
+    field: float
+    default: 1
+  unk_er_f1_151:
+    field: int
+  unk_er_f1_152:
+    field: int
+  unk_er_f1_153:
+    field: int
+  unk_er_f1_154:
+    field: int
+  unk_er_f1_155:
+    field: int
+    default: 1
+  bloomRed:
+    field: float
+    default: 1
+  bloomGreen:
+    field: float
+    default: 1
+  bloomBlue:
+    field: float
+    default: 1
+  bloomStrength:
+    field: float
+  unk_er_f1_160:
+    field: float
+    default: 1
+  unk_er_f1_161:
+    field: int
+  unk_er_f1_162:
+    field: float
+    default: 1
+  unk_er_f1_163:
+    field: float
+    default: 1
+  unk_er_f1_164:
+    field: float
+    default: 1
+  unk_er_f1_165:
+    field: int
+  unk_er_f1_166:
+    field: float
+    default: 1
+  unk_er_f1_167:
+    field: float
+    default: 1
+  unk_er_f2_0:
+    field: int
+  unk_er_f2_1:
+    field: int
+  unk_er_f2_2:
+    field: int
+    default: 8
+  unk_er_f2_3:
+    field: int
+  unk_er_f2_4:
+    field: int
+  unk_er_f2_5:
+    field: float
+    default: 1
+  unk_er_f2_6:
+    field: float
+    default: 1
+  unk_er_f2_7:
+    field: float
+    default: 1
+  unk_er_f2_8:
+    field: float
+    default: 1
+  unk_er_f2_9:
+    field: int
+  unk_er_f2_10:
+    field: int
+  unk_er_f2_11:
+    field: int
+  unk_er_f2_12:
+    field: int
+  unk_er_f2_13:
+    field: int
+  unk_er_f2_14:
+    field: float
+    default: -1
+  unk_er_f2_15:
+    field: float
+    default: -1
+  unk_er_f2_16:
+    field: float
+    default: -1
+  unk_er_f2_17:
+    field: float
+    default: -1
+  unk_er_f2_18:
+    field: float
+    default: -1
+  unk_er_f2_19:
+    field: float
+    default: -1
+  unk_er_f2_20:
+    field: int
+  unk_er_f2_21:
+    field: int
+  unk_er_f2_22:
+    field: int
+  unk_er_f2_23:
+    field: int
+  unk_er_f2_24:
+    field: int
+  unk_er_f2_25:
+    field: float
+    default: 1
+  unk_er_f2_26:
+    field: int
+  unk_er_f2_27:
+    field: int
+    default: 1
+  unk_er_f2_28:
+    field: int
+  unk_er_f2_29:
+    field: int
+  unk_er_f2_30:
+    field: float
+    default: 1
+  unk_er_f2_31:
+    field: int
+  unk_er_f2_32:
+    field: int
+    default: 1
+  unk_er_f2_33:
+    field: int
+  unk_er_f2_34:
+    field: float
+    default: 0.5
+  unk_er_f2_35:
+    field: int
+    default: -2
+  unk_er_f2_36:
+    field: int
+    default: -2
+  unk_er_f2_37:
+    field: int
+  unk_er_f2_38:
+    field: int
+  unk_er_f2_39:
+    field: int
+  particleFollowFactor:
+    type: ScalarValue
+    default: 1
+    desc: |
+      Controls how well the particles follow the node if it moves.
+  unk_er_p1_1:
+    type: ScalarValue
+  unk_er_p1_2:
+    type: ScalarValue
+  unk_er_p1_3:
+    type: ScalarValue
+  particleAccelerationX:
+    type: ScalarValue
+  particleAccelerationY:
+    type: ScalarValue
+  particleAccelerationZ:
+    type: ScalarValue
+  unk_er_p1_7:
+    type: ScalarValue
+  unk_er_p1_8:
+    type: ScalarValue
+  particleAngularAccelerationZ:
+    type: ScalarValue
+  particleGrowthRateX:
+    type: ScalarValue
+  particleGrowthRateY:
+    type: ScalarValue
+  unk_er_p1_12:
+    type: ScalarValue
+  color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p1_14:
+    type: ScalarValue
+    default: 1
+  unk_er_p1_15:
+    type: ScalarValue
+  unkParticleAccelerationZ:
+    type: ScalarValue
+  unk_er_p1_17:
+    type: ScalarValue
+  particleGravity:
+    type: ScalarValue
+  particleRandomTurnAngle:
+    type: ScalarValue
+  unk_er_p1_20:
+    type: ScalarValue
+  unk_er_p2_0:
+    type: ScalarValue
+    default: 1
+  unk_er_p2_1:
+    type: ScalarValue
+    default: 1
+  unk_er_p2_2:
+    type: ScalarValue
+  unk_er_p2_3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p2_4:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p2_5:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p2_6:
+    type: ScalarValue
+games:
+  ER:
+    fields1:
+      - unk_er_f1_0
+      - texture
+      - unk_er_f1_2
+      - normalMap
+      - emitterShape
+      - unk_er_f1_5
+      - emitterSizeX
+      - emitterSizeY
+      - emitterSizeZ
+      - emitterRotationX
+      - emitterRotationY
+      - emitterRotationZ
+      - unk_er_f1_12
+      - unk_er_f1_13
+      - unk_er_f1_14
+      - emitterDistribution
+      - unk_er_f1_16
+      - unk_er_f1_17
+      - unk_er_f1_18
+      - unk_er_f1_19
+      - unk_er_f1_20
+      - unk_er_f1_21
+      - emissionParticleCount
+      - emissionParticleCountMin
+      - emissionParticleCountMax
+      - unk_er_f1_25
+      - emissionIntervalMin
+      - emissionIntervalMax
+      - limitEmissionCount
+      - emissionCountLimit
+      - unk_er_f1_30
+      - particleDuration
+      - unk_er_f1_32
+      - unk_er_f1_33
+      - particleOffsetX
+      - particleOffsetY
+      - particleOffsetZ
+      - particleOffsetXMin
+      - particleOffsetYMin
+      - particleOffsetZMin
+      - particleOffsetXMax
+      - particleOffsetYMax
+      - particleOffsetZMax
+      - particleSpeedX
+      - particleSpeedY
+      - particleSpeedZ
+      - particleSpeedXMin
+      - particleSpeedYMin
+      - particleSpeedZMin
+      - particleSpeedXMax
+      - particleSpeedYMax
+      - particleSpeedZMax
+      - particleAccelerationXMin
+      - particleAccelerationYMin
+      - particleAccelerationZMin
+      - particleAccelerationXMax
+      - particleAccelerationYMax
+      - particleAccelerationZMax
+      - particleRotationVarianceX
+      - particleRotationVarianceY
+      - particleRotationVarianceZ
+      - particleAngularSpeedVarianceX
+      - particleAngularSpeedVarianceY
+      - particleAngularSpeedVarianceZ
+      - particleAngularAccelerationXMin
+      - particleAngularAccelerationYMin
+      - particleAngularAccelerationZMin
+      - particleAngularAccelerationXMax
+      - particleAngularAccelerationYMax
+      - particleAngularAccelerationZMax
+      - particleUniformScale
+      - particleSizeX
+      - particleSizeY
+      - unk_er_f1_73
+      - particleSizeXMin
+      - particleSizeYMin
+      - unk_er_f1_76
+      - particleSizeXMax
+      - particleSizeYMax
+      - unk_er_f1_79
+      - particleGrowthRateXStatic
+      - particleGrowthRateYStatic
+      - unk_er_f1_82
+      - particleGrowthRateXMin
+      - particleGrowthRateYMin
+      - unk_er_f1_85
+      - particleGrowthRateXMax
+      - particleGrowthRateYMax
+      - unk_er_f1_88
+      - particleGrowthAccelerationXMin
+      - particleGrowthAccelerationYMin
+      - unk_er_f1_91
+      - particleGrowthAccelerationXMax
+      - particleGrowthAccelerationYMax
+      - unk_er_f1_94
+      - rgbMultiplier
+      - alphaMultiplier
+      - redVariationMin
+      - greenVariationMin
+      - blueVariationMin
+      - alphaVariationMin
+      - redVariationMax
+      - greenVariationMax
+      - blueVariationMax
+      - alphaVariationMax
+      - blendMode
+      - columns
+      - totalFrames
+      - randomTextureFrame
+      - unk_er_f1_109
+      - maxFrameIndex
+      - unk_er_f1_111
+      - unk_er_f1_112
+      - unk_er_f1_113
+      - unk_er_f1_114
+      - unk_er_f1_115
+      - unk_er_f1_116
+      - unk_er_f1_117
+      - unk_er_f1_118
+      - particleDurationMultiplier
+      - unk_er_f1_120
+      - particleSizeMultiplier
+      - unk_er_f1_122
+      - unk_er_f1_123
+      - unk_er_f1_124
+      - unk_er_f1_125
+      - unk_er_f1_126
+      - unk_er_f1_127
+      - unk_er_f1_128
+      - unk_er_f1_129
+      - unk_er_f1_130
+      - unk_er_f1_131
+      - unk_er_f1_132
+      - unk_er_f1_133
+      - unk_er_f1_134
+      - unk_er_f1_135
+      - unk_er_f1_136
+      - unk_er_f1_137
+      - unk_er_f1_138
+      - unk_er_f1_139
+      - unk_er_f1_140
+      - unk_er_f1_141
+      - unk_er_f1_142
+      - unk_er_f1_143
+      - unk_er_f1_144
+      - unk_er_f1_145
+      - unk_er_f1_146
+      - unk_er_f1_147
+      - unk_er_f1_148
+      - unk_er_f1_149
+      - unk_er_f1_150
+      - unk_er_f1_151
+      - unk_er_f1_152
+      - unk_er_f1_153
+      - unk_er_f1_154
+      - unk_er_f1_155
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_er_f1_160
+      - unk_er_f1_161
+      - unk_er_f1_162
+      - unk_er_f1_163
+      - unk_er_f1_164
+      - unk_er_f1_165
+      - unk_er_f1_166
+      - unk_er_f1_167
+    fields2:
+      - unk_er_f2_0
+      - unk_er_f2_1
+      - unk_er_f2_2
+      - unk_er_f2_3
+      - unk_er_f2_4
+      - unk_er_f2_5
+      - unk_er_f2_6
+      - unk_er_f2_7
+      - unk_er_f2_8
+      - unk_er_f2_9
+      - unk_er_f2_10
+      - unk_er_f2_11
+      - unk_er_f2_12
+      - unk_er_f2_13
+      - unk_er_f2_14
+      - unk_er_f2_15
+      - unk_er_f2_16
+      - unk_er_f2_17
+      - unk_er_f2_18
+      - unk_er_f2_19
+      - unk_er_f2_20
+      - unk_er_f2_21
+      - unk_er_f2_22
+      - unk_er_f2_23
+      - unk_er_f2_24
+      - unk_er_f2_25
+      - unk_er_f2_26
+      - unk_er_f2_27
+      - unk_er_f2_28
+      - unk_er_f2_29
+      - unk_er_f2_30
+      - unk_er_f2_31
+      - unk_er_f2_32
+      - unk_er_f2_33
+      - unk_er_f2_34
+      - unk_er_f2_35
+      - unk_er_f2_36
+      - unk_er_f2_37
+      - unk_er_f2_38
+      - unk_er_f2_39
+    properties1:
+      - particleFollowFactor
+      - unk_er_p1_1
+      - unk_er_p1_2
+      - unk_er_p1_3
+      - particleAccelerationX
+      - particleAccelerationY
+      - particleAccelerationZ
+      - unk_er_p1_7
+      - unk_er_p1_8
+      - particleAngularAccelerationZ
+      - particleGrowthRateX
+      - particleGrowthRateY
+      - unk_er_p1_12
+      - color
+      - unk_er_p1_14
+      - unk_er_p1_15
+      - unkParticleAccelerationZ
+      - unk_er_p1_17
+      - particleGravity
+      - particleRandomTurnAngle
+      - unk_er_p1_20
+    properties2:
+      - unk_er_p2_0
+      - unk_er_p2_1
+      - unk_er_p2_2
+      - unk_er_p2_3
+      - unk_er_p2_4
+      - unk_er_p2_5
+      - unk_er_p2_6

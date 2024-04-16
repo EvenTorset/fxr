@@ -464,6 +464,8 @@ properties:
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
     type: ScalarValue
+  unk_ds3_p2_7:
+    type: ScalarValue
   unk_sdt_f2_29:
     field: float
   unk_sdt_f2_30:
@@ -581,6 +583,7 @@ games:
       - unk_ds3_p2_4
       - unk_ds3_p2_5
       - unk_ds3_p2_6
+      - unk_ds3_p2_7
   SDT:
     fields1:
       - orientation
@@ -667,7 +670,14 @@ games:
       - speedV
       - speedMultiplierV
       - unk_ds3_p1_24
-    properties2: DS3
+    properties2:
+      - rgbMultiplier
+      - alphaMultiplier
+      - unk_ds3_p2_2
+      - unk_ds3_p2_3
+      - unk_ds3_p2_4
+      - unk_ds3_p2_5
+      - unk_ds3_p2_6
   ER:
     fields1:
       - orientation
@@ -730,7 +740,7 @@ games:
       - unk_sdt_f2_36
       - unk_sdt_f2_37
     properties1: SDT
-    properties2: DS3
+    properties2: SDT
   AC6:
     fields1: ER
     fields2:
@@ -774,4 +784,4 @@ games:
       - unk_sdt_f2_37
       - unk_ac6_f2_38
     properties1: SDT
-    properties2: DS3
+    properties2: SDT

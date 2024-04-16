@@ -257,7 +257,6 @@ enum ActionType {
   NoParticleSpread = 500,
   Unk700 = 700, // Root node action
   Unk702 = 702, // Root node action
-  Unk10000_StandardParticle = 10000,
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
   Unk10003_LightShaft = 10003,
@@ -504,6 +503,14 @@ enum ActionType {
    * This action type has a specialized subclass: {@link Unk800}
    */
   Unk800 = 800,
+  /**
+   * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
+   * 
+   * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleSystem}
+   */
+  ParticleSystem = 10000,
   /**
    * Creates a trail behind moving effects.
    * 
@@ -1036,6 +1043,39 @@ enum InitialDirection {
   LocalNorth = 6,
 }
 
+/**
+ * Emitter shapes for {@link ActionType.ParticleSystem ParticleSystem}. Not
+ * related to the emitter shape actions.
+ */
+enum EmitterShape {
+  /**
+   * A simple line.
+   */
+  Line = 0,
+  /**
+   * A cuboid.
+   * 
+   * The difference between this and {@link Box2} is how the
+   * {@link ParticleSystem.emitterDistribution distribution} field acts on it.
+   */
+  Box = 1,
+  /**
+   * A cuboid.
+   * 
+   * The difference between this and {@link Box} is how the
+   * {@link ParticleSystem.emitterDistribution distribution} field acts on it.
+   */
+  Box2 = 2,
+  /**
+   * Seemingly identical to {@link Line}?
+   */
+  Unk3 = 3,
+  /**
+   * A cylinder without the two end faces.
+   */
+  Cylinder = 4,
+}
+
 //#region Types / Interfaces
 export type AnyExternalValue =
   ExternalValue.DarkSouls3 |
@@ -1175,7 +1215,7 @@ const ActionData: {
       [name: string]: {
         default: any
         field?: FieldType
-        paths: {
+        paths?: {
           [game: string]: [string, number]
         }
       }
@@ -1188,8 +1228,8 @@ const ActionData: {
   /*#ActionData start*/
   [ActionType.NodeTranslation]: {
     props: {
-      translation: { default: [0, 0, 0], paths: {} },
-      unk_er_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
+      translation: { default: [0, 0, 0] },
+      unk_er_f1_0: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1205,8 +1245,8 @@ const ActionData: {
   },
   [ActionType.NodeAttachToCamera]: {
     props: {
-      followRotation: { default: true, paths: {}, field: FieldType.Boolean },
-      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1219,9 +1259,9 @@ const ActionData: {
   },
   [ActionType.NodeSound]: {
     props: {
-      sound: { default: 0, paths: {}, field: FieldType.Integer },
-      repeat: { default: false, paths: {}, field: FieldType.Boolean },
-      volume: { default: 1, paths: {}, field: FieldType.Float },
+      sound: { default: 0, field: FieldType.Integer },
+      repeat: { default: false, field: FieldType.Boolean },
+      volume: { default: 1, field: FieldType.Float },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1234,8 +1274,8 @@ const ActionData: {
   },
   [ActionType.EmissionSound]: {
     props: {
-      sound: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Float },
+      sound: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Float },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1248,11 +1288,11 @@ const ActionData: {
   },
   [ActionType.NodeAttributes]: {
     props: {
-      attachment: { default: AttachMode.Parent, paths: {}, field: FieldType.Integer },
-      duration: { default: -1, paths: {} },
-      delay: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Float },
+      attachment: { default: AttachMode.Parent, field: FieldType.Integer },
+      duration: { default: -1 },
+      delay: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Float },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1266,8 +1306,8 @@ const ActionData: {
   },
   [ActionType.ParticleAttributes]: {
     props: {
-      attachment: { default: AttachMode.Parent, paths: {}, field: FieldType.Integer },
-      duration: { default: -1, paths: {} },
+      attachment: { default: AttachMode.Parent, field: FieldType.Integer },
+      duration: { default: -1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1281,23 +1321,23 @@ const ActionData: {
   },
   [ActionType.Unk130]: {
     props: {
-      unk_ds3_f1_0: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_2: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_5: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_0: { default: 0, paths: {} },
-      unk_ds3_p1_1: { default: 0, paths: {} },
-      unk_ds3_p1_2: { default: 0, paths: {} },
-      unk_ds3_p1_3: { default: 0, paths: {} },
-      unk_ds3_p1_4: { default: 0, paths: {} },
-      unk_ds3_p1_5: { default: 0, paths: {} },
-      unk_ds3_p1_6: { default: 0, paths: {} },
-      unk_ds3_p1_7: { default: 0, paths: {} },
+      unk_ds3_f1_0: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_p1_0: { default: 0 },
+      unk_ds3_p1_1: { default: 0 },
+      unk_ds3_p1_2: { default: 0 },
+      unk_ds3_p1_3: { default: 0 },
+      unk_ds3_p1_4: { default: 0 },
+      unk_ds3_p1_5: { default: 0 },
+      unk_ds3_p1_6: { default: 0 },
+      unk_ds3_p1_7: { default: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1311,12 +1351,12 @@ const ActionData: {
   },
   [ActionType.ParticleModifier]: {
     props: {
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      speed: { default: 0, paths: {} },
-      scaleX: { default: 1, paths: {} },
-      scaleY: { default: 1, paths: {} },
-      scaleZ: { default: 1, paths: {} },
-      color: { default: 1, paths: {} },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      speed: { default: 0 },
+      scaleX: { default: 1 },
+      scaleY: { default: 1 },
+      scaleZ: { default: 1 },
+      color: { default: [1, 1, 1, 1] },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1330,7 +1370,7 @@ const ActionData: {
   },
   [ActionType.SFXReference]: {
     props: {
-      sfx: { default: 0, paths: {}, field: FieldType.Integer },
+      sfx: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1343,13 +1383,13 @@ const ActionData: {
   },
   [ActionType.LevelsOfDetailThresholds]: {
     props: {
-      duration: { default: -1, paths: {} },
-      threshold0: { default: 10000, paths: {}, field: FieldType.Integer },
-      threshold1: { default: 10000, paths: {}, field: FieldType.Integer },
-      threshold2: { default: 10000, paths: {}, field: FieldType.Integer },
-      threshold3: { default: 10000, paths: {}, field: FieldType.Integer },
-      threshold4: { default: 10000, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_5: { default: 0, paths: {}, field: FieldType.Integer },
+      duration: { default: -1 },
+      threshold0: { default: 10000, field: FieldType.Integer },
+      threshold1: { default: 10000, field: FieldType.Integer },
+      threshold2: { default: 10000, field: FieldType.Integer },
+      threshold3: { default: 10000, field: FieldType.Integer },
+      threshold4: { default: 10000, field: FieldType.Integer },
+      unk_ac6_f1_5: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1366,11 +1406,11 @@ const ActionData: {
   },
   [ActionType.PeriodicEmitter]: {
     props: {
-      interval: { default: 1, paths: {} },
-      perInterval: { default: 1, paths: {} },
-      totalIntervals: { default: -1, paths: {} },
-      maxConcurrent: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
+      interval: { default: 1 },
+      perInterval: { default: 1 },
+      totalIntervals: { default: -1 },
+      maxConcurrent: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1387,12 +1427,12 @@ const ActionData: {
   },
   [ActionType.EqualDistanceEmitter]: {
     props: {
-      threshold: { default: 0.1, paths: {} },
-      maxConcurrent: { default: -1, paths: {} },
-      unk_ds3_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_1: { default: 1, paths: {} },
-      unk_ds3_p1_2: { default: -1, paths: {} },
+      threshold: { default: 0.1 },
+      maxConcurrent: { default: -1 },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Integer },
+      unk_sdt_f1_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_p1_1: { default: 1 },
+      unk_ds3_p1_2: { default: -1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1409,7 +1449,7 @@ const ActionData: {
   },
   [ActionType.PointEmitterShape]: {
     props: {
-      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
+      direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1422,9 +1462,9 @@ const ActionData: {
   },
   [ActionType.DiskEmitterShape]: {
     props: {
-      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
-      radius: { default: 1, paths: {} },
-      distribution: { default: 0, paths: {} },
+      direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
+      radius: { default: 1 },
+      distribution: { default: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1438,10 +1478,10 @@ const ActionData: {
   },
   [ActionType.RectangleEmitterShape]: {
     props: {
-      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
-      sizeX: { default: 1, paths: {} },
-      sizeY: { default: 1, paths: {} },
-      distribution: { default: 0, paths: {} },
+      direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
+      sizeX: { default: 1 },
+      sizeY: { default: 1 },
+      distribution: { default: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1455,8 +1495,8 @@ const ActionData: {
   },
   [ActionType.SphereEmitterShape]: {
     props: {
-      emitInside: { default: true, paths: {}, field: FieldType.Boolean },
-      radius: { default: 1, paths: {} },
+      emitInside: { default: true, field: FieldType.Boolean },
+      radius: { default: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1470,11 +1510,11 @@ const ActionData: {
   },
   [ActionType.BoxEmitterShape]: {
     props: {
-      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
-      emitInside: { default: true, paths: {}, field: FieldType.Boolean },
-      sizeX: { default: 1, paths: {} },
-      sizeY: { default: 1, paths: {} },
-      sizeZ: { default: 1, paths: {} },
+      direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
+      emitInside: { default: true, field: FieldType.Boolean },
+      sizeX: { default: 1 },
+      sizeY: { default: 1 },
+      sizeZ: { default: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1488,11 +1528,11 @@ const ActionData: {
   },
   [ActionType.CylinderEmitterShape]: {
     props: {
-      direction: { default: InitialDirection.Emitter, paths: {}, field: FieldType.Integer },
-      emitInside: { default: true, paths: {}, field: FieldType.Boolean },
-      yAxis: { default: true, paths: {}, field: FieldType.Boolean },
-      radius: { default: 1, paths: {} },
-      height: { default: 1, paths: {} },
+      direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
+      emitInside: { default: true, field: FieldType.Boolean },
+      yAxis: { default: true, field: FieldType.Boolean },
+      radius: { default: 1 },
+      height: { default: 1 },
     },
     games: {
       [Game.Sekiro]: {
@@ -1505,9 +1545,9 @@ const ActionData: {
   },
   [ActionType.CircularParticleSpread]: {
     props: {
-      unk_er_f1_0: { default: false, paths: {}, field: FieldType.Boolean },
-      angle: { default: 30, paths: {} },
-      distribution: { default: 0, paths: {} },
+      unk_er_f1_0: { default: false, field: FieldType.Boolean },
+      angle: { default: 30 },
+      distribution: { default: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1523,10 +1563,10 @@ const ActionData: {
   },
   [ActionType.EllipticalParticleSpread]: {
     props: {
-      unk_er_f1_0: { default: false, paths: {}, field: FieldType.Boolean },
-      angleX: { default: 30, paths: {} },
-      angleY: { default: 30, paths: {} },
-      distribution: { default: 0, paths: {} },
+      unk_er_f1_0: { default: false, field: FieldType.Boolean },
+      angleX: { default: 30 },
+      angleY: { default: 30 },
+      distribution: { default: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1542,9 +1582,9 @@ const ActionData: {
   },
   [ActionType.RectangularParticleSpread]: {
     props: {
-      angleX: { default: 30, paths: {} },
-      angleY: { default: 30, paths: {} },
-      distribution: { default: 0, paths: {} },
+      angleX: { default: 30 },
+      angleY: { default: 30 },
+      distribution: { default: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1557,64 +1597,64 @@ const ActionData: {
   },
   [ActionType.PointSprite]: {
     props: {
-      texture: { default: 1, paths: {}, field: FieldType.Integer },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      size: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_2: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_3: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_35: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_3: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+      texture: { default: 1, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      size: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      unk_ds3_f1_2: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -1, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, field: FieldType.Integer },
+      unk_er_f1_3: { default: 1, field: FieldType.Integer },
+      unk_er_f1_4: { default: 1, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1640,64 +1680,64 @@ const ActionData: {
   },
   [ActionType.Line]: {
     props: {
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      length: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      startColor: { default: [1, 1, 1, 1], paths: {} },
-      endColor: { default: [1, 1, 1, 1], paths: {} },
-      lengthMultiplier: { default: 1, paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_1: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_2: { default: 1, paths: {}, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      length: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      startColor: { default: [1, 1, 1, 1] },
+      endColor: { default: [1, 1, 1, 1] },
+      lengthMultiplier: { default: 1 },
+      color3: { default: [1, 1, 1, 1] },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      unk_ds3_f1_1: { default: -1, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 0, field: FieldType.Integer },
+      unk_er_f1_1: { default: 1, field: FieldType.Integer },
+      unk_er_f1_2: { default: 1, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1723,66 +1763,66 @@ const ActionData: {
   },
   [ActionType.QuadLine]: {
     props: {
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      width: { default: 1, paths: {} },
-      length: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      startColor: { default: [1, 1, 1, 1], paths: {} },
-      endColor: { default: [1, 1, 1, 1], paths: {} },
-      widthMultiplier: { default: 1, paths: {} },
-      lengthMultiplier: { default: 1, paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_1: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_1: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_2: { default: 1, paths: {}, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      width: { default: 1 },
+      length: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      startColor: { default: [1, 1, 1, 1] },
+      endColor: { default: [1, 1, 1, 1] },
+      widthMultiplier: { default: 1 },
+      lengthMultiplier: { default: 1 },
+      color3: { default: [1, 1, 1, 1] },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      unk_ds3_f1_1: { default: -1, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 0, field: FieldType.Integer },
+      unk_er_f1_1: { default: 1, field: FieldType.Integer },
+      unk_er_f1_2: { default: 1, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1808,101 +1848,101 @@ const ActionData: {
   },
   [ActionType.BillboardEx]: {
     props: {
-      texture: { default: 1, paths: {}, field: FieldType.Integer },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      offsetX: { default: 0, paths: {} },
-      offsetY: { default: 0, paths: {} },
-      offsetZ: { default: 0, paths: {} },
-      width: { default: 1, paths: {} },
-      height: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      alphaThreshold: { default: 0, paths: {} },
-      rotationX: { default: 0, paths: {} },
-      rotationY: { default: 0, paths: {} },
-      rotationZ: { default: 0, paths: {} },
-      rotationSpeedX: { default: 0, paths: {} },
-      rotationSpeedY: { default: 0, paths: {} },
-      rotationSpeedZ: { default: 0, paths: {} },
-      rotationSpeedMultiplierX: { default: 1, paths: {} },
-      rotationSpeedMultiplierY: { default: 1, paths: {} },
-      rotationSpeedMultiplierZ: { default: 1, paths: {} },
-      depthOffset: { default: 0, paths: {} },
-      frameIndex: { default: 0, paths: {} },
-      frameIndexOffset: { default: 0, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
-      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
-      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      columns: { default: 1, paths: {}, field: FieldType.Integer },
-      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
-      interpolateFrames: { default: true, paths: {}, field: FieldType.Boolean },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
-      specular: { default: 0, paths: {}, field: FieldType.Integer },
-      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
-      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
-      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
-      unk_ds3_p1_21: { default: 0, paths: {} },
-      unk_ds3_p1_22: { default: 0, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_39: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_40: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_44: { default: 0, paths: {}, field: FieldType.Integer },
+      texture: { default: 1, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
+      width: { default: 1 },
+      height: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      alphaThreshold: { default: 0 },
+      rotationX: { default: 0 },
+      rotationY: { default: 0 },
+      rotationZ: { default: 0 },
+      rotationSpeedX: { default: 0 },
+      rotationSpeedY: { default: 0 },
+      rotationSpeedZ: { default: 0 },
+      rotationSpeedMultiplierX: { default: 1 },
+      rotationSpeedMultiplierY: { default: 1 },
+      rotationSpeedMultiplierZ: { default: 1 },
+      depthOffset: { default: 0 },
+      frameIndex: { default: 0 },
+      frameIndexOffset: { default: 0 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      orientation: { default: OrientationMode.CameraPlane, field: FieldType.Integer },
+      normalMap: { default: 0, field: FieldType.Integer },
+      scaleVariationX: { default: 1, field: FieldType.Float },
+      scaleVariationY: { default: 1, field: FieldType.Float },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      interpolateFrames: { default: true, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      shadowDarkness: { default: 0, field: FieldType.Float },
+      specular: { default: 0, field: FieldType.Integer },
+      glossiness: { default: 0.25, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, field: FieldType.Integer },
+      specularity: { default: 0.5, field: FieldType.Float },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_13: { default: -1, field: FieldType.Float },
+      unk_ds3_f1_14: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_16: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Boolean },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, field: FieldType.Float },
+      unk_ds3_p1_21: { default: 0 },
+      unk_ds3_p1_22: { default: 0 },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f1_15: { default: 1, field: FieldType.Integer },
+      unk_sdt_f1_16: { default: 1, field: FieldType.Integer },
+      unk_sdt_f1_17: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_40: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_41: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_42: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_43: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_44: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -1923,119 +1963,119 @@ const ActionData: {
   },
   [ActionType.MultiTextureBillboardEx]: {
     props: {
-      orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
-      mask: { default: 1, paths: {}, field: FieldType.Integer },
-      layer1: { default: 1, paths: {}, field: FieldType.Integer },
-      layer2: { default: 1, paths: {}, field: FieldType.Integer },
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      columns: { default: 1, paths: {}, field: FieldType.Integer },
-      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
-      interpolateFrames: { default: true, paths: {}, field: FieldType.Boolean },
-      depthBlend: { default: true, paths: {}, field: FieldType.Boolean },
-      octagonal: { default: false, paths: {}, field: FieldType.Boolean },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
-      specular: { default: 0, paths: {}, field: FieldType.Integer },
-      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
-      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 1, paths: {}, field: FieldType.Integer },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      offsetX: { default: 0, paths: {} },
-      offsetY: { default: 0, paths: {} },
-      offsetZ: { default: 0, paths: {} },
-      width: { default: 1, paths: {} },
-      height: { default: 1, paths: {} },
-      rotationX: { default: 0, paths: {} },
-      rotationY: { default: 0, paths: {} },
-      rotationZ: { default: 0, paths: {} },
-      rotationSpeedX: { default: 0, paths: {} },
-      rotationSpeedY: { default: 0, paths: {} },
-      rotationSpeedZ: { default: 0, paths: {} },
-      rotationSpeedMultiplierX: { default: 1, paths: {} },
-      rotationSpeedMultiplierY: { default: 1, paths: {} },
-      rotationSpeedMultiplierZ: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      layersColor: { default: [1, 1, 1, 1], paths: {} },
-      layer1Color: { default: [1, 1, 1, 1], paths: {} },
-      layer2Color: { default: [1, 1, 1, 1], paths: {} },
-      alphaThreshold: { default: 0, paths: {} },
-      frameIndex: { default: 0, paths: {} },
-      frameIndexOffset: { default: 0, paths: {} },
-      layer1SpeedU: { default: 0, paths: {} },
-      layer1SpeedV: { default: 0, paths: {} },
-      layer1OffsetU: { default: 0, paths: {} },
-      layer1OffsetV: { default: 0, paths: {} },
-      layer1ScaleU: { default: 1, paths: {} },
-      layer1ScaleV: { default: 1, paths: {} },
-      layer2SpeedU: { default: 0, paths: {} },
-      layer2SpeedV: { default: 0, paths: {} },
-      layer2OffsetU: { default: 0, paths: {} },
-      layer2OffsetV: { default: 0, paths: {} },
-      layer2ScaleU: { default: 1, paths: {} },
-      layer2ScaleV: { default: 1, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_10: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_11: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_14: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
-      unk_ds3_p1_23: { default: 0, paths: {} },
-      unk_ds3_p1_24: { default: 0, paths: {} },
-      unk_ds3_p1_25: { default: 0, paths: {} },
-      unk_ds3_p1_26: { default: 0, paths: {} },
-      unk_ds3_p1_27: { default: 1, paths: {} },
-      unk_ds3_p1_28: { default: 1, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_39: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_40: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_42: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_43: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_44: { default: 0, paths: {}, field: FieldType.Float },
-      unk_er_f2_45: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ac6_f2_46: { default: 0, paths: {}, field: FieldType.Integer },
+      orientation: { default: OrientationMode.CameraPlane, field: FieldType.Integer },
+      mask: { default: 1, field: FieldType.Integer },
+      layer1: { default: 1, field: FieldType.Integer },
+      layer2: { default: 1, field: FieldType.Integer },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      interpolateFrames: { default: true, field: FieldType.Boolean },
+      depthBlend: { default: true, field: FieldType.Boolean },
+      octagonal: { default: false, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      shadowDarkness: { default: 0, field: FieldType.Float },
+      specular: { default: 0, field: FieldType.Integer },
+      glossiness: { default: 0.25, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 1, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
+      width: { default: 1 },
+      height: { default: 1 },
+      rotationX: { default: 0 },
+      rotationY: { default: 0 },
+      rotationZ: { default: 0 },
+      rotationSpeedX: { default: 0 },
+      rotationSpeedY: { default: 0 },
+      rotationSpeedZ: { default: 0 },
+      rotationSpeedMultiplierX: { default: 1 },
+      rotationSpeedMultiplierY: { default: 1 },
+      rotationSpeedMultiplierZ: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      layersColor: { default: [1, 1, 1, 1] },
+      layer1Color: { default: [1, 1, 1, 1] },
+      layer2Color: { default: [1, 1, 1, 1] },
+      alphaThreshold: { default: 0 },
+      frameIndex: { default: 0 },
+      frameIndexOffset: { default: 0 },
+      layer1SpeedU: { default: 0 },
+      layer1SpeedV: { default: 0 },
+      layer1OffsetU: { default: 0 },
+      layer1OffsetV: { default: 0 },
+      layer1ScaleU: { default: 1 },
+      layer1ScaleV: { default: 1 },
+      layer2SpeedU: { default: 0 },
+      layer2SpeedV: { default: 0 },
+      layer2OffsetU: { default: 0 },
+      layer2OffsetV: { default: 0 },
+      layer2ScaleU: { default: 1 },
+      layer2ScaleV: { default: 1 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_10: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, field: FieldType.Float },
+      unk_ds3_p1_23: { default: 0 },
+      unk_ds3_p1_24: { default: 0 },
+      unk_ds3_p1_25: { default: 0 },
+      unk_ds3_p1_26: { default: 0 },
+      unk_ds3_p1_27: { default: 1 },
+      unk_ds3_p1_28: { default: 1 },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_39: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_40: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_41: { default: 0, field: FieldType.Integer },
+      unk_er_f1_14: { default: 1, field: FieldType.Integer },
+      unk_er_f1_15: { default: 1, field: FieldType.Integer },
+      unk_er_f1_16: { default: 0, field: FieldType.Integer },
+      unk_er_f2_42: { default: 0, field: FieldType.Integer },
+      unk_er_f2_43: { default: 0, field: FieldType.Integer },
+      unk_er_f2_44: { default: 0, field: FieldType.Float },
+      unk_er_f2_45: { default: 0, field: FieldType.Integer },
+      unk_ac6_f2_46: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2066,209 +2106,210 @@ const ActionData: {
   },
   [ActionType.Model]: {
     props: {
-      orientation: { default: OrientationMode.LocalSouth, paths: {}, field: FieldType.Integer },
-      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationZ: { default: 1, paths: {}, field: FieldType.Float },
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      columns: { default: 1, paths: {}, field: FieldType.Integer },
-      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      model: { default: 80201, paths: {}, field: FieldType.Integer },
-      sizeX: { default: 1, paths: {} },
-      sizeY: { default: 1, paths: {} },
-      sizeZ: { default: 1, paths: {} },
-      rotationX: { default: 0, paths: {} },
-      rotationY: { default: 0, paths: {} },
-      rotationZ: { default: 0, paths: {} },
-      rotationSpeedX: { default: 0, paths: {} },
-      rotationSpeedY: { default: 0, paths: {} },
-      rotationSpeedZ: { default: 0, paths: {} },
-      rotationSpeedMultiplierX: { default: 1, paths: {} },
-      rotationSpeedMultiplierY: { default: 1, paths: {} },
-      rotationSpeedMultiplierZ: { default: 1, paths: {} },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      frameIndex: { default: 0, paths: {} },
-      frameIndexOffset: { default: 0, paths: {} },
-      offsetU: { default: 0, paths: {} },
-      offsetV: { default: 0, paths: {} },
-      speedU: { default: 0, paths: {} },
-      speedMultiplierU: { default: 0, paths: {} },
-      speedV: { default: 0, paths: {} },
-      speedMultiplierV: { default: 0, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      unk_ds3_f1_9: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_10: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_11: { default: true, paths: {}, field: FieldType.Boolean },
-      unk_ds3_f1_12: { default: true, paths: {}, field: FieldType.Boolean },
-      unk_ds3_f1_13: { default: 1, paths: {}, field: FieldType.Integer },
-      animation: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-      loopAnimation: { default: 1, paths: {}, field: FieldType.Boolean },
-      animationSpeed: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_18: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Float },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_15: { default: 0, paths: {} },
-      unk_ds3_p1_24: { default: 0, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_29: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_17: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_18: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_19: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ac6_f2_38: { default: 0, paths: {}, field: FieldType.Integer },
+      orientation: { default: OrientationMode.LocalSouth, field: FieldType.Integer },
+      scaleVariationX: { default: 1, field: FieldType.Float },
+      scaleVariationY: { default: 1, field: FieldType.Float },
+      scaleVariationZ: { default: 1, field: FieldType.Float },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      model: { default: 80201, field: FieldType.Integer },
+      sizeX: { default: 1 },
+      sizeY: { default: 1 },
+      sizeZ: { default: 1 },
+      rotationX: { default: 0 },
+      rotationY: { default: 0 },
+      rotationZ: { default: 0 },
+      rotationSpeedX: { default: 0 },
+      rotationSpeedY: { default: 0 },
+      rotationSpeedZ: { default: 0 },
+      rotationSpeedMultiplierX: { default: 1 },
+      rotationSpeedMultiplierY: { default: 1 },
+      rotationSpeedMultiplierZ: { default: 1 },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      frameIndex: { default: 0 },
+      frameIndexOffset: { default: 0 },
+      offsetU: { default: 0 },
+      offsetV: { default: 0 },
+      speedU: { default: 0 },
+      speedMultiplierU: { default: 0 },
+      speedV: { default: 0 },
+      speedMultiplierV: { default: 0 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      unk_ds3_f1_9: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_10: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: true, field: FieldType.Boolean },
+      unk_ds3_f1_12: { default: true, field: FieldType.Boolean },
+      unk_ds3_f1_13: { default: 1, field: FieldType.Integer },
+      animation: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      loopAnimation: { default: 1, field: FieldType.Boolean },
+      animationSpeed: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_18: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Float },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_p1_15: { default: 0 },
+      unk_ds3_p1_24: { default: 0 },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_ds3_p2_7: { default: 0 },
+      unk_sdt_f2_29: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_er_f1_17: { default: 1, field: FieldType.Integer },
+      unk_er_f1_18: { default: 1, field: FieldType.Integer },
+      unk_er_f1_19: { default: 0, field: FieldType.Integer },
+      unk_ac6_f2_38: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28'],
         properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_ds3_p2_7']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
-        properties2: Game.DarkSouls3
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: Game.Sekiro,
-        properties2: Game.DarkSouls3
+        properties2: Game.Sekiro
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
-        properties2: Game.DarkSouls3
+        properties2: Game.Sekiro
       }
     }
   },
   [ActionType.Tracer]: {
     props: {
-      orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
-      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
-      segmentInterval: { default: 0, paths: {}, field: FieldType.Float },
-      segmentDuration: { default: 1, paths: {}, field: FieldType.Float },
-      concurrentSegments: { default: 100, paths: {}, field: FieldType.Integer },
-      columns: { default: 1, paths: {}, field: FieldType.Integer },
-      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
-      attachedUV: { default: 1, paths: {}, field: FieldType.Boolean },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
-      specular: { default: 0, paths: {}, field: FieldType.Integer },
-      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
-      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
-      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
-      texture: { default: 1, paths: {}, field: FieldType.Integer },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      width: { default: 1, paths: {} },
-      widthMultiplier: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      alphaThreshold: { default: 0, paths: {} },
-      frameIndex: { default: 0, paths: {} },
-      frameIndexOffset: { default: 0, paths: {} },
-      textureFraction: { default: 0.1, paths: {} },
-      speedU: { default: 0, paths: {} },
-      varianceV: { default: 0, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_9: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_14: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
-      unk_ds3_p1_2: { default: 0, paths: {} },
-      unk_ds3_p1_3: { default: 0, paths: {} },
-      unk_ds3_p1_13: { default: -1, paths: {} },
-      distortionIntensity: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_15: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
+      orientation: { default: TracerOrientationMode.LocalZ, field: FieldType.Integer },
+      normalMap: { default: 0, field: FieldType.Integer },
+      segmentInterval: { default: 0, field: FieldType.Float },
+      segmentDuration: { default: 1, field: FieldType.Float },
+      concurrentSegments: { default: 100, field: FieldType.Integer },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      attachedUV: { default: 1, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      shadowDarkness: { default: 0, field: FieldType.Float },
+      specular: { default: 0, field: FieldType.Integer },
+      glossiness: { default: 0.25, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, field: FieldType.Integer },
+      specularity: { default: 0.5, field: FieldType.Float },
+      texture: { default: 1, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      width: { default: 1 },
+      widthMultiplier: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      alphaThreshold: { default: 0 },
+      frameIndex: { default: 0 },
+      frameIndexOffset: { default: 0 },
+      textureFraction: { default: 0.1 },
+      speedU: { default: 0 },
+      varianceV: { default: 0 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_9: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_13: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Boolean },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, field: FieldType.Float },
+      unk_ds3_p1_2: { default: 0 },
+      unk_ds3_p1_3: { default: 0 },
+      unk_ds3_p1_13: { default: -1 },
+      distortionIntensity: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_er_f1_14: { default: 1, field: FieldType.Integer },
+      unk_er_f1_15: { default: 1, field: FieldType.Integer },
+      unk_er_f1_16: { default: 0, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2294,85 +2335,85 @@ const ActionData: {
   },
   [ActionType.Distortion]: {
     props: {
-      mode: { default: DistortionMode.NormalMap, paths: {}, field: FieldType.Integer },
-      shape: { default: DistortionShape.Rectangle, paths: {}, field: FieldType.Integer },
-      orientation: { default: OrientationMode.CameraPlane, paths: {}, field: FieldType.Integer },
-      texture: { default: 0, paths: {}, field: FieldType.Integer },
-      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
-      mask: { default: 0, paths: {}, field: FieldType.Integer },
-      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationZ: { default: 1, paths: {}, field: FieldType.Float },
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      offsetX: { default: 0, paths: {} },
-      offsetY: { default: 0, paths: {} },
-      offsetZ: { default: 0, paths: {} },
-      sizeX: { default: 1, paths: {} },
-      sizeY: { default: 1, paths: {} },
-      sizeZ: { default: 1, paths: {} },
-      color: { default: [1, 1, 1, 1], paths: {} },
-      intensity: { default: 1, paths: {} },
-      stirSpeed: { default: 1, paths: {} },
-      radius: { default: 1, paths: {} },
-      normalMapOffsetU: { default: 0, paths: {} },
-      normalMapOffsetV: { default: 0, paths: {} },
-      normalMapSpeedU: { default: 0, paths: {} },
-      normalMapSpeedV: { default: 0, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      unk_ds3_f1_11: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_7: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p1_9: { default: 0, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f2_35: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 0, paths: {}, field: FieldType.Float },
-      unk_er_f1_12: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_13: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_p2_7: { default: 1, paths: {} },
-      unk_er_p2_8: { default: 1, paths: {} },
+      mode: { default: DistortionMode.NormalMap, field: FieldType.Integer },
+      shape: { default: DistortionShape.Rectangle, field: FieldType.Integer },
+      orientation: { default: OrientationMode.CameraPlane, field: FieldType.Integer },
+      texture: { default: 0, field: FieldType.Integer },
+      normalMap: { default: 0, field: FieldType.Integer },
+      mask: { default: 0, field: FieldType.Integer },
+      scaleVariationX: { default: 1, field: FieldType.Float },
+      scaleVariationY: { default: 1, field: FieldType.Float },
+      scaleVariationZ: { default: 1, field: FieldType.Float },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
+      sizeX: { default: 1 },
+      sizeY: { default: 1 },
+      sizeZ: { default: 1 },
+      color: { default: [1, 1, 1, 1] },
+      intensity: { default: 1 },
+      stirSpeed: { default: 1 },
+      radius: { default: 1 },
+      normalMapOffsetU: { default: 0 },
+      normalMapOffsetV: { default: 0 },
+      normalMapSpeedU: { default: 0 },
+      normalMapSpeedV: { default: 0 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      unk_ds3_f1_11: { default: -2, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_p1_7: { default: [1, 1, 1, 1] },
+      unk_ds3_p1_9: { default: 0 },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_34: { default: 0, field: FieldType.Float },
+      unk_sdt_f2_35: { default: -1, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_38: { default: 0, field: FieldType.Float },
+      unk_er_f1_12: { default: 1, field: FieldType.Integer },
+      unk_er_f1_13: { default: 1, field: FieldType.Integer },
+      unk_er_p2_7: { default: 1 },
+      unk_er_p2_8: { default: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2398,59 +2439,59 @@ const ActionData: {
   },
   [ActionType.RadialBlur]: {
     props: {
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      iterations: { default: 1, paths: {}, field: FieldType.Integer },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      mask: { default: 1, paths: {}, field: FieldType.Integer },
-      offsetX: { default: 0, paths: {} },
-      offsetY: { default: 0, paths: {} },
-      offsetZ: { default: 0, paths: {} },
-      width: { default: 1, paths: {} },
-      height: { default: 1, paths: {} },
-      color: { default: [1, 1, 1, 1], paths: {} },
-      blurRadius: { default: 0.5, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0.5, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_21: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_p1_6: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_30: { default: 0, paths: {}, field: FieldType.Float },
-      unk_er_f1_3: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_4: { default: 1, paths: {}, field: FieldType.Integer },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      iterations: { default: 1, field: FieldType.Integer },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      mask: { default: 1, field: FieldType.Integer },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
+      width: { default: 1 },
+      height: { default: 1 },
+      color: { default: [1, 1, 1, 1] },
+      blurRadius: { default: 0.5 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      unk_ds3_f1_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0.5, field: FieldType.Float },
+      unk_ds3_f2_21: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Float },
+      unk_ds3_p1_6: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Float },
+      unk_er_f1_3: { default: 1, field: FieldType.Integer },
+      unk_er_f1_4: { default: 1, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2476,57 +2517,57 @@ const ActionData: {
   },
   [ActionType.PointLight]: {
     props: {
-      diffuseColor: { default: [1, 1, 1, 1], paths: {} },
-      specularColor: { default: [1, 1, 1, 1], paths: {} },
-      radius: { default: 10, paths: {} },
-      diffuseMultiplier: { default: 1, paths: {} },
-      specularMultiplier: { default: 1, paths: {} },
-      jitterAndFlicker: { default: false, paths: {}, field: FieldType.Boolean },
-      jitterAcceleration: { default: 1, paths: {}, field: FieldType.Float },
-      jitterX: { default: 0, paths: {}, field: FieldType.Float },
-      jitterY: { default: 0, paths: {}, field: FieldType.Float },
-      jitterZ: { default: 0, paths: {}, field: FieldType.Float },
-      flickerIntervalMin: { default: 0, paths: {}, field: FieldType.Float },
-      flickerIntervalMax: { default: 1, paths: {}, field: FieldType.Float },
-      flickerBrightness: { default: 0.5, paths: {}, field: FieldType.Float },
-      shadows: { default: false, paths: {}, field: FieldType.Boolean },
-      separateSpecular: { default: false, paths: {}, field: FieldType.Boolean },
-      fadeOutTime: { default: 0, paths: {}, field: FieldType.Integer },
-      shadowDarkness: { default: 1, paths: {}, field: FieldType.Float },
-      volumeDensity: { default: 0, paths: {}, field: FieldType.Float },
-      phaseFunction: { default: true, paths: {}, field: FieldType.Boolean },
-      asymmetryParam: { default: 0.75, paths: {}, field: FieldType.Float },
-      falloffExponent: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_12: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_16: { default: 2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_17: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_18: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_19: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 100, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_3: { default: 0, paths: {} },
-      unk_ds3_p1_4: { default: 0, paths: {} },
-      unk_ds3_p1_5: { default: 0, paths: {} },
-      unk_ds3_p1_6: { default: 0, paths: {} },
-      unk_ds3_p1_7: { default: 10, paths: {} },
-      unk_ds3_p1_8: { default: 10, paths: {} },
-      unk_ds3_p1_9: { default: 10, paths: {} },
-      unk_ds3_p2_0: { default: 1, paths: {} },
-      unk_ds3_p2_1: { default: 1, paths: {} },
-      unk_sdt_f2_25: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_p2_2: { default: 1, paths: {} },
-      unk_er_f2_29: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f2_30: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f2_31: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
+      diffuseColor: { default: [1, 1, 1, 1] },
+      specularColor: { default: [1, 1, 1, 1] },
+      radius: { default: 10 },
+      diffuseMultiplier: { default: 1 },
+      specularMultiplier: { default: 1 },
+      jitterAndFlicker: { default: false, field: FieldType.Boolean },
+      jitterAcceleration: { default: 1, field: FieldType.Float },
+      jitterX: { default: 0, field: FieldType.Float },
+      jitterY: { default: 0, field: FieldType.Float },
+      jitterZ: { default: 0, field: FieldType.Float },
+      flickerIntervalMin: { default: 0, field: FieldType.Float },
+      flickerIntervalMax: { default: 1, field: FieldType.Float },
+      flickerBrightness: { default: 0.5, field: FieldType.Float },
+      shadows: { default: false, field: FieldType.Boolean },
+      separateSpecular: { default: false, field: FieldType.Boolean },
+      fadeOutTime: { default: 0, field: FieldType.Integer },
+      shadowDarkness: { default: 1, field: FieldType.Float },
+      volumeDensity: { default: 0, field: FieldType.Float },
+      phaseFunction: { default: true, field: FieldType.Boolean },
+      asymmetryParam: { default: 0.75, field: FieldType.Float },
+      falloffExponent: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_12: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_15: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_16: { default: 2, field: FieldType.Integer },
+      unk_ds3_f2_17: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_18: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_19: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 100, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unk_ds3_p1_3: { default: 0 },
+      unk_ds3_p1_4: { default: 0 },
+      unk_ds3_p1_5: { default: 0 },
+      unk_ds3_p1_6: { default: 0 },
+      unk_ds3_p1_7: { default: 10 },
+      unk_ds3_p1_8: { default: 10 },
+      unk_ds3_p1_9: { default: 10 },
+      unk_ds3_p2_0: { default: 1 },
+      unk_ds3_p2_1: { default: 1 },
+      unk_sdt_f2_25: { default: 0, field: FieldType.Float },
+      unk_sdt_p2_2: { default: 1 },
+      unk_er_f2_29: { default: 1, field: FieldType.Integer },
+      unk_er_f2_30: { default: 1, field: FieldType.Float },
+      unk_er_f2_31: { default: 1, field: FieldType.Integer },
+      unk_er_f2_32: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2552,7 +2593,7 @@ const ActionData: {
   },
   [ActionType.Unk701]: {
     props: {
-      unk_er_p1_0: { default: 1, paths: {} },
+      unk_er_p1_0: { default: 1 },
     },
     games: {
       [Game.EldenRing]: {
@@ -2563,9 +2604,9 @@ const ActionData: {
   },
   [ActionType.NodeWindSpeed]: {
     props: {
-      speed: { default: 0, paths: {} },
-      speedMultiplier: { default: 1, paths: {} },
-      enabled: { default: true, paths: {}, field: FieldType.Boolean },
+      speed: { default: 0 },
+      speedMultiplier: { default: 1 },
+      enabled: { default: true, field: FieldType.Boolean },
     },
     games: {
       [Game.DarkSouls3]: -2,
@@ -2579,10 +2620,10 @@ const ActionData: {
   },
   [ActionType.ParticleWindSpeed]: {
     props: {
-      speed: { default: 0, paths: {} },
-      speedMultiplier: { default: 1, paths: {} },
-      enabled: { default: true, paths: {}, field: FieldType.Boolean },
-      unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+      speed: { default: 0 },
+      speedMultiplier: { default: 1 },
+      enabled: { default: true, field: FieldType.Boolean },
+      unk_sdt_f1_1: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: -2,
@@ -2596,9 +2637,9 @@ const ActionData: {
   },
   [ActionType.NodeWindAcceleration]: {
     props: {
-      acceleration: { default: 0, paths: {} },
-      accelerationMultiplier: { default: 1, paths: {} },
-      enabled: { default: true, paths: {}, field: FieldType.Boolean },
+      acceleration: { default: 0 },
+      accelerationMultiplier: { default: 1 },
+      enabled: { default: true, field: FieldType.Boolean },
     },
     games: {
       [Game.DarkSouls3]: -2,
@@ -2612,10 +2653,10 @@ const ActionData: {
   },
   [ActionType.ParticleWindAcceleration]: {
     props: {
-      acceleration: { default: 0, paths: {} },
-      accelerationMultiplier: { default: 1, paths: {} },
-      enabled: { default: true, paths: {}, field: FieldType.Boolean },
-      unk_sdt_f1_1: { default: 0, paths: {}, field: FieldType.Integer },
+      acceleration: { default: 0 },
+      accelerationMultiplier: { default: 1 },
+      enabled: { default: true, field: FieldType.Boolean },
+      unk_sdt_f1_1: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: -2,
@@ -2629,9 +2670,9 @@ const ActionData: {
   },
   [ActionType.Unk800]: {
     props: {
-      unk_ac6_f1_0: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_1: { default: 0.2, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_2: { default: 0.25, paths: {}, field: FieldType.Float },
+      unk_ac6_f1_0: { default: 1, field: FieldType.Float },
+      unk_ac6_f1_1: { default: 0.2, field: FieldType.Float },
+      unk_ac6_f1_2: { default: 0.25, field: FieldType.Float },
     },
     games: {
       [Game.ArmoredCore6]: {
@@ -2639,95 +2680,343 @@ const ActionData: {
       }
     }
   },
+  [ActionType.ParticleSystem]: {
+    props: {
+      unk_er_f1_0: { default: 1005, field: FieldType.Integer },
+      texture: { default: 1, field: FieldType.Integer },
+      unk_er_f1_2: { default: 0, field: FieldType.Integer },
+      normalMap: { default: 0, field: FieldType.Integer },
+      emitterShape: { default: EmitterShape.Box, field: FieldType.Integer },
+      unk_er_f1_5: { default: 0, field: FieldType.Integer },
+      emitterSizeX: { default: 1, field: FieldType.Float },
+      emitterSizeY: { default: 1, field: FieldType.Float },
+      emitterSizeZ: { default: 1, field: FieldType.Float },
+      emitterRotationX: { default: 0, field: FieldType.Float },
+      emitterRotationY: { default: 0, field: FieldType.Float },
+      emitterRotationZ: { default: 0, field: FieldType.Float },
+      unk_er_f1_12: { default: 1, field: FieldType.Float },
+      unk_er_f1_13: { default: 1, field: FieldType.Float },
+      unk_er_f1_14: { default: 1, field: FieldType.Float },
+      emitterDistribution: { default: 0, field: FieldType.Float },
+      unk_er_f1_16: { default: 0, field: FieldType.Integer },
+      unk_er_f1_17: { default: 0, field: FieldType.Integer },
+      unk_er_f1_18: { default: -1, field: FieldType.Integer },
+      unk_er_f1_19: { default: 0, field: FieldType.Integer },
+      unk_er_f1_20: { default: 0, field: FieldType.Integer },
+      unk_er_f1_21: { default: 100, field: FieldType.Integer },
+      emissionParticleCount: { default: 10, field: FieldType.Integer },
+      emissionParticleCountMin: { default: 0, field: FieldType.Integer },
+      emissionParticleCountMax: { default: 0, field: FieldType.Integer },
+      unk_er_f1_25: { default: 0, field: FieldType.Integer },
+      emissionIntervalMin: { default: 1, field: FieldType.Integer },
+      emissionIntervalMax: { default: 1, field: FieldType.Integer },
+      limitEmissionCount: { default: false, field: FieldType.Boolean },
+      emissionCountLimit: { default: 0, field: FieldType.Integer },
+      unk_er_f1_30: { default: 0, field: FieldType.Integer },
+      particleDuration: { default: 1, field: FieldType.Integer },
+      unk_er_f1_32: { default: 0, field: FieldType.Integer },
+      unk_er_f1_33: { default: 0, field: FieldType.Integer },
+      particleOffsetX: { default: 0, field: FieldType.Float },
+      particleOffsetY: { default: 0, field: FieldType.Float },
+      particleOffsetZ: { default: 0, field: FieldType.Float },
+      particleOffsetXMin: { default: 0, field: FieldType.Float },
+      particleOffsetYMin: { default: 0, field: FieldType.Float },
+      particleOffsetZMin: { default: 0, field: FieldType.Float },
+      particleOffsetXMax: { default: 0, field: FieldType.Float },
+      particleOffsetYMax: { default: 0, field: FieldType.Float },
+      particleOffsetZMax: { default: 0, field: FieldType.Float },
+      particleSpeedX: { default: 0, field: FieldType.Float },
+      particleSpeedY: { default: 0, field: FieldType.Float },
+      particleSpeedZ: { default: 0, field: FieldType.Float },
+      particleSpeedXMin: { default: 0, field: FieldType.Float },
+      particleSpeedYMin: { default: 0, field: FieldType.Float },
+      particleSpeedZMin: { default: 0, field: FieldType.Float },
+      particleSpeedXMax: { default: 0, field: FieldType.Float },
+      particleSpeedYMax: { default: 0, field: FieldType.Float },
+      particleSpeedZMax: { default: 0, field: FieldType.Float },
+      particleAccelerationXMin: { default: 0, field: FieldType.Float },
+      particleAccelerationYMin: { default: 0, field: FieldType.Float },
+      particleAccelerationZMin: { default: 0, field: FieldType.Float },
+      particleAccelerationXMax: { default: 0, field: FieldType.Float },
+      particleAccelerationYMax: { default: 0, field: FieldType.Float },
+      particleAccelerationZMax: { default: 0, field: FieldType.Float },
+      particleRotationVarianceX: { default: 0, field: FieldType.Float },
+      particleRotationVarianceY: { default: 0, field: FieldType.Float },
+      particleRotationVarianceZ: { default: 0, field: FieldType.Float },
+      particleAngularSpeedVarianceX: { default: 0, field: FieldType.Float },
+      particleAngularSpeedVarianceY: { default: 0, field: FieldType.Float },
+      particleAngularSpeedVarianceZ: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationXMin: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationYMin: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationZMin: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationXMax: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationYMax: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationZMax: { default: 0, field: FieldType.Float },
+      particleUniformScale: { default: false, field: FieldType.Boolean },
+      particleSizeX: { default: 1, field: FieldType.Float },
+      particleSizeY: { default: 1, field: FieldType.Float },
+      unk_er_f1_73: { default: 1, field: FieldType.Float },
+      particleSizeXMin: { default: 0, field: FieldType.Float },
+      particleSizeYMin: { default: 0, field: FieldType.Float },
+      unk_er_f1_76: { default: 0, field: FieldType.Float },
+      particleSizeXMax: { default: 0, field: FieldType.Float },
+      particleSizeYMax: { default: 0, field: FieldType.Float },
+      unk_er_f1_79: { default: 0, field: FieldType.Float },
+      particleGrowthRateXStatic: { default: 0, field: FieldType.Float },
+      particleGrowthRateYStatic: { default: 0, field: FieldType.Float },
+      unk_er_f1_82: { default: 0, field: FieldType.Float },
+      particleGrowthRateXMin: { default: 0, field: FieldType.Float },
+      particleGrowthRateYMin: { default: 0, field: FieldType.Float },
+      unk_er_f1_85: { default: 0, field: FieldType.Float },
+      particleGrowthRateXMax: { default: 0, field: FieldType.Float },
+      particleGrowthRateYMax: { default: 0, field: FieldType.Float },
+      unk_er_f1_88: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationXMin: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationYMin: { default: 0, field: FieldType.Float },
+      unk_er_f1_91: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationXMax: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationYMax: { default: 0, field: FieldType.Float },
+      unk_er_f1_94: { default: 0, field: FieldType.Float },
+      rgbMultiplier: { default: 1, field: FieldType.Float },
+      alphaMultiplier: { default: 1, field: FieldType.Float },
+      redVariationMin: { default: 0, field: FieldType.Float },
+      greenVariationMin: { default: 0, field: FieldType.Float },
+      blueVariationMin: { default: 0, field: FieldType.Float },
+      alphaVariationMin: { default: 0, field: FieldType.Float },
+      redVariationMax: { default: 0, field: FieldType.Float },
+      greenVariationMax: { default: 0, field: FieldType.Float },
+      blueVariationMax: { default: 0, field: FieldType.Float },
+      alphaVariationMax: { default: 0, field: FieldType.Float },
+      blendMode: { default: 2, field: FieldType.Integer },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      randomTextureFrame: { default: false, field: FieldType.Boolean },
+      unk_er_f1_109: { default: 0, field: FieldType.Integer },
+      maxFrameIndex: { default: 0, field: FieldType.Integer },
+      unk_er_f1_111: { default: -1, field: FieldType.Integer },
+      unk_er_f1_112: { default: -1, field: FieldType.Integer },
+      unk_er_f1_113: { default: 0, field: FieldType.Integer },
+      unk_er_f1_114: { default: 1, field: FieldType.Integer },
+      unk_er_f1_115: { default: 0, field: FieldType.Integer },
+      unk_er_f1_116: { default: 0, field: FieldType.Integer },
+      unk_er_f1_117: { default: 1, field: FieldType.Float },
+      unk_er_f1_118: { default: 1, field: FieldType.Float },
+      particleDurationMultiplier: { default: 1, field: FieldType.Float },
+      unk_er_f1_120: { default: 1, field: FieldType.Float },
+      particleSizeMultiplier: { default: 1, field: FieldType.Float },
+      unk_er_f1_122: { default: 1, field: FieldType.Float },
+      unk_er_f1_123: { default: 1, field: FieldType.Float },
+      unk_er_f1_124: { default: 1, field: FieldType.Float },
+      unk_er_f1_125: { default: 1, field: FieldType.Float },
+      unk_er_f1_126: { default: 1, field: FieldType.Float },
+      unk_er_f1_127: { default: 0, field: FieldType.Integer },
+      unk_er_f1_128: { default: 1, field: FieldType.Float },
+      unk_er_f1_129: { default: 1, field: FieldType.Float },
+      unk_er_f1_130: { default: 1, field: FieldType.Float },
+      unk_er_f1_131: { default: 1, field: FieldType.Float },
+      unk_er_f1_132: { default: 0, field: FieldType.Integer },
+      unk_er_f1_133: { default: 0, field: FieldType.Integer },
+      unk_er_f1_134: { default: 0, field: FieldType.Integer },
+      unk_er_f1_135: { default: 0, field: FieldType.Float },
+      unk_er_f1_136: { default: 0, field: FieldType.Float },
+      unk_er_f1_137: { default: 0, field: FieldType.Integer },
+      unk_er_f1_138: { default: 8, field: FieldType.Integer },
+      unk_er_f1_139: { default: 0, field: FieldType.Integer },
+      unk_er_f1_140: { default: 0, field: FieldType.Integer },
+      unk_er_f1_141: { default: 0, field: FieldType.Integer },
+      unk_er_f1_142: { default: 0, field: FieldType.Integer },
+      unk_er_f1_143: { default: 0, field: FieldType.Integer },
+      unk_er_f1_144: { default: 0, field: FieldType.Integer },
+      unk_er_f1_145: { default: 0, field: FieldType.Integer },
+      unk_er_f1_146: { default: 1, field: FieldType.Integer },
+      unk_er_f1_147: { default: 12, field: FieldType.Integer },
+      unk_er_f1_148: { default: 0, field: FieldType.Integer },
+      unk_er_f1_149: { default: 1, field: FieldType.Float },
+      unk_er_f1_150: { default: 1, field: FieldType.Float },
+      unk_er_f1_151: { default: 0, field: FieldType.Integer },
+      unk_er_f1_152: { default: 0, field: FieldType.Integer },
+      unk_er_f1_153: { default: 0, field: FieldType.Integer },
+      unk_er_f1_154: { default: 0, field: FieldType.Integer },
+      unk_er_f1_155: { default: 1, field: FieldType.Integer },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      unk_er_f1_160: { default: 1, field: FieldType.Float },
+      unk_er_f1_161: { default: 0, field: FieldType.Integer },
+      unk_er_f1_162: { default: 1, field: FieldType.Float },
+      unk_er_f1_163: { default: 1, field: FieldType.Float },
+      unk_er_f1_164: { default: 1, field: FieldType.Float },
+      unk_er_f1_165: { default: 0, field: FieldType.Integer },
+      unk_er_f1_166: { default: 1, field: FieldType.Float },
+      unk_er_f1_167: { default: 1, field: FieldType.Float },
+      unk_er_f2_0: { default: 0, field: FieldType.Integer },
+      unk_er_f2_1: { default: 0, field: FieldType.Integer },
+      unk_er_f2_2: { default: 8, field: FieldType.Integer },
+      unk_er_f2_3: { default: 0, field: FieldType.Integer },
+      unk_er_f2_4: { default: 0, field: FieldType.Integer },
+      unk_er_f2_5: { default: 1, field: FieldType.Float },
+      unk_er_f2_6: { default: 1, field: FieldType.Float },
+      unk_er_f2_7: { default: 1, field: FieldType.Float },
+      unk_er_f2_8: { default: 1, field: FieldType.Float },
+      unk_er_f2_9: { default: 0, field: FieldType.Integer },
+      unk_er_f2_10: { default: 0, field: FieldType.Integer },
+      unk_er_f2_11: { default: 0, field: FieldType.Integer },
+      unk_er_f2_12: { default: 0, field: FieldType.Integer },
+      unk_er_f2_13: { default: 0, field: FieldType.Integer },
+      unk_er_f2_14: { default: -1, field: FieldType.Float },
+      unk_er_f2_15: { default: -1, field: FieldType.Float },
+      unk_er_f2_16: { default: -1, field: FieldType.Float },
+      unk_er_f2_17: { default: -1, field: FieldType.Float },
+      unk_er_f2_18: { default: -1, field: FieldType.Float },
+      unk_er_f2_19: { default: -1, field: FieldType.Float },
+      unk_er_f2_20: { default: 0, field: FieldType.Integer },
+      unk_er_f2_21: { default: 0, field: FieldType.Integer },
+      unk_er_f2_22: { default: 0, field: FieldType.Integer },
+      unk_er_f2_23: { default: 0, field: FieldType.Integer },
+      unk_er_f2_24: { default: 0, field: FieldType.Integer },
+      unk_er_f2_25: { default: 1, field: FieldType.Float },
+      unk_er_f2_26: { default: 0, field: FieldType.Integer },
+      unk_er_f2_27: { default: 1, field: FieldType.Integer },
+      unk_er_f2_28: { default: 0, field: FieldType.Integer },
+      unk_er_f2_29: { default: 0, field: FieldType.Integer },
+      unk_er_f2_30: { default: 1, field: FieldType.Float },
+      unk_er_f2_31: { default: 0, field: FieldType.Integer },
+      unk_er_f2_32: { default: 1, field: FieldType.Integer },
+      unk_er_f2_33: { default: 0, field: FieldType.Integer },
+      unk_er_f2_34: { default: 0.5, field: FieldType.Float },
+      unk_er_f2_35: { default: -2, field: FieldType.Integer },
+      unk_er_f2_36: { default: -2, field: FieldType.Integer },
+      unk_er_f2_37: { default: 0, field: FieldType.Integer },
+      unk_er_f2_38: { default: 0, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, field: FieldType.Integer },
+      particleFollowFactor: { default: 1 },
+      unk_er_p1_1: { default: 0 },
+      unk_er_p1_2: { default: 0 },
+      unk_er_p1_3: { default: 0 },
+      particleAccelerationX: { default: 0 },
+      particleAccelerationY: { default: 0 },
+      particleAccelerationZ: { default: 0 },
+      unk_er_p1_7: { default: 0 },
+      unk_er_p1_8: { default: 0 },
+      particleAngularAccelerationZ: { default: 0 },
+      particleGrowthRateX: { default: 0 },
+      particleGrowthRateY: { default: 0 },
+      unk_er_p1_12: { default: 0 },
+      color: { default: [1, 1, 1, 1] },
+      unk_er_p1_14: { default: 1 },
+      unk_er_p1_15: { default: 0 },
+      unkParticleAccelerationZ: { default: 0 },
+      unk_er_p1_17: { default: 0 },
+      particleGravity: { default: 0 },
+      particleRandomTurnAngle: { default: 0 },
+      unk_er_p1_20: { default: 0 },
+      unk_er_p2_0: { default: 1 },
+      unk_er_p2_1: { default: 1 },
+      unk_er_p2_2: { default: 0 },
+      unk_er_p2_3: { default: [1, 1, 1, 1] },
+      unk_er_p2_4: { default: [1, 1, 1, 1] },
+      unk_er_p2_5: { default: [1, 1, 1, 1] },
+      unk_er_p2_6: { default: 0 },
+    },
+    games: {
+      [Game.EldenRing]: {
+        fields1: ['unk_er_f1_0','texture','unk_er_f1_2','normalMap','emitterShape','unk_er_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_er_f1_12','unk_er_f1_13','unk_er_f1_14','emitterDistribution','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_er_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_er_f1_30','particleDuration','unk_er_f1_32','unk_er_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_er_f1_73','particleSizeXMin','particleSizeYMin','unk_er_f1_76','particleSizeXMax','particleSizeYMax','unk_er_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_er_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_er_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_er_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_er_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_er_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_er_f1_109','maxFrameIndex','unk_er_f1_111','unk_er_f1_112','unk_er_f1_113','unk_er_f1_114','unk_er_f1_115','unk_er_f1_116','unk_er_f1_117','unk_er_f1_118','particleDurationMultiplier','unk_er_f1_120','particleSizeMultiplier','unk_er_f1_122','unk_er_f1_123','unk_er_f1_124','unk_er_f1_125','unk_er_f1_126','unk_er_f1_127','unk_er_f1_128','unk_er_f1_129','unk_er_f1_130','unk_er_f1_131','unk_er_f1_132','unk_er_f1_133','unk_er_f1_134','unk_er_f1_135','unk_er_f1_136','unk_er_f1_137','unk_er_f1_138','unk_er_f1_139','unk_er_f1_140','unk_er_f1_141','unk_er_f1_142','unk_er_f1_143','unk_er_f1_144','unk_er_f1_145','unk_er_f1_146','unk_er_f1_147','unk_er_f1_148','unk_er_f1_149','unk_er_f1_150','unk_er_f1_151','unk_er_f1_152','unk_er_f1_153','unk_er_f1_154','unk_er_f1_155','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f1_160','unk_er_f1_161','unk_er_f1_162','unk_er_f1_163','unk_er_f1_164','unk_er_f1_165','unk_er_f1_166','unk_er_f1_167'],
+        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37','unk_er_f2_38','unk_er_f2_39'],
+        properties1: ['particleFollowFactor','unk_er_p1_1','unk_er_p1_2','unk_er_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_er_p1_7','unk_er_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_er_p1_12','color','unk_er_p1_14','unk_er_p1_15','unkParticleAccelerationZ','unk_er_p1_17','particleGravity','particleRandomTurnAngle','unk_er_p1_20'],
+        properties2: ['unk_er_p2_0','unk_er_p2_1','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
+      }
+    }
+  },
   [ActionType.DynamicTracer]: {
     props: {
-      orientation: { default: TracerOrientationMode.LocalZ, paths: {}, field: FieldType.Integer },
-      normalMap: { default: 0, paths: {}, field: FieldType.Integer },
-      segmentInterval: { default: 0, paths: {}, field: FieldType.Float },
-      segmentDuration: { default: 1, paths: {}, field: FieldType.Float },
-      concurrentSegments: { default: 100, paths: {}, field: FieldType.Integer },
-      columns: { default: 1, paths: {}, field: FieldType.Integer },
-      totalFrames: { default: 1, paths: {}, field: FieldType.Integer },
-      attachedUV: { default: 1, paths: {}, field: FieldType.Boolean },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      shadowDarkness: { default: 0, paths: {}, field: FieldType.Float },
-      specular: { default: 0, paths: {}, field: FieldType.Integer },
-      glossiness: { default: 0.25, paths: {}, field: FieldType.Float },
-      lighting: { default: LightingMode.Unlit, paths: {}, field: FieldType.Integer },
-      specularity: { default: 0.5, paths: {}, field: FieldType.Float },
-      texture: { default: 1, paths: {}, field: FieldType.Integer },
-      blendMode: { default: BlendMode.Normal, paths: {}, field: FieldType.Integer },
-      width: { default: 1, paths: {} },
-      widthMultiplier: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      alphaThreshold: { default: 0, paths: {} },
-      frameIndex: { default: 0, paths: {} },
-      frameIndexOffset: { default: 0, paths: {} },
-      textureFraction: { default: 0.1, paths: {} },
-      speedU: { default: 0, paths: {} },
-      varianceV: { default: 0, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_9: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_13: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_14: { default: -1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_1: { default: 0, paths: {}, field: FieldType.Boolean },
-      unk_ds3_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f2_27: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 5, paths: {}, field: FieldType.Float },
-      unk_ds3_p1_2: { default: 0, paths: {} },
-      unk_ds3_p1_3: { default: 0, paths: {} },
-      unk_ds3_p1_13: { default: -1, paths: {} },
-      distortionIntensity: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_sdt_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_32: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_sdt_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_18: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_19: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_39: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_40: { default: 1, paths: {}, field: FieldType.Float },
-      unk_sdt_f1_14: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_15: { default: 1, paths: {}, field: FieldType.Float },
-      unk_sdt_f1_16: { default: 1, paths: {}, field: FieldType.Float },
-      unk_sdt_f1_17: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ac6_f2_41: { default: 0, paths: {}, field: FieldType.Integer },
+      orientation: { default: TracerOrientationMode.LocalZ, field: FieldType.Integer },
+      normalMap: { default: 0, field: FieldType.Integer },
+      segmentInterval: { default: 0, field: FieldType.Float },
+      segmentDuration: { default: 1, field: FieldType.Float },
+      concurrentSegments: { default: 100, field: FieldType.Integer },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      attachedUV: { default: 1, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      shadowDarkness: { default: 0, field: FieldType.Float },
+      specular: { default: 0, field: FieldType.Integer },
+      glossiness: { default: 0.25, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, field: FieldType.Integer },
+      specularity: { default: 0.5, field: FieldType.Float },
+      texture: { default: 1, field: FieldType.Integer },
+      blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
+      width: { default: 1 },
+      widthMultiplier: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      alphaThreshold: { default: 0 },
+      frameIndex: { default: 0 },
+      frameIndexOffset: { default: 0 },
+      textureFraction: { default: 0.1 },
+      speedU: { default: 0 },
+      varianceV: { default: 0 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_9: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_13: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Boolean },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 5, field: FieldType.Float },
+      unk_ds3_p1_2: { default: 0 },
+      unk_ds3_p1_3: { default: 0 },
+      unk_ds3_p1_13: { default: -1 },
+      distortionIntensity: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      unk_er_f1_18: { default: 1, field: FieldType.Integer },
+      unk_er_f1_19: { default: 1, field: FieldType.Integer },
+      unk_er_f1_20: { default: 0, field: FieldType.Integer },
+      unk_er_f1_21: { default: 0, field: FieldType.Integer },
+      unk_er_f2_39: { default: 0, field: FieldType.Integer },
+      unk_er_f2_40: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_14: { default: 1, field: FieldType.Integer },
+      unk_sdt_f1_15: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_16: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_17: { default: 1, field: FieldType.Float },
+      unk_ac6_f2_41: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2758,11 +3047,11 @@ const ActionData: {
   },
   [ActionType.WaterInteraction]: {
     props: {
-      texture: { default: 50004, paths: {}, field: FieldType.Integer },
-      depth: { default: 1, paths: {}, field: FieldType.Float },
-      scale: { default: 1, paths: {}, field: FieldType.Float },
-      descent: { default: 0.15, paths: {}, field: FieldType.Float },
-      duration: { default: 0.15, paths: {}, field: FieldType.Float },
+      texture: { default: 50004, field: FieldType.Integer },
+      depth: { default: 1, field: FieldType.Float },
+      scale: { default: 1, field: FieldType.Float },
+      descent: { default: 0.15, field: FieldType.Float },
+      duration: { default: 0.15, field: FieldType.Float },
     },
     games: {
       [Game.Sekiro]: {
@@ -2774,135 +3063,135 @@ const ActionData: {
   },
   [ActionType.LensFlare]: {
     props: {
-      layer1: { default: 1, paths: {}, field: FieldType.Integer },
-      layer1Width: { default: 1, paths: {} },
-      layer1Height: { default: 1, paths: {} },
-      layer1Color: { default: [1, 1, 1, 1], paths: {} },
-      layer1Count: { default: 1, paths: {}, field: FieldType.Integer },
-      layer1ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      layer1ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      layer1UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      layer1RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer1GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer1BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer1AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer1BloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      layer1BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      layer1BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      layer1BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
-      layer2: { default: 0, paths: {}, field: FieldType.Integer },
-      layer2Width: { default: 1, paths: {} },
-      layer2Height: { default: 1, paths: {} },
-      layer2Color: { default: [1, 1, 1, 1], paths: {} },
-      layer2Count: { default: 1, paths: {}, field: FieldType.Integer },
-      layer2ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      layer2ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      layer2UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      layer2RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer2GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer2BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer2AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer2BloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      layer2BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      layer2BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      layer2BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
-      layer3: { default: 0, paths: {}, field: FieldType.Integer },
-      layer3Width: { default: 1, paths: {} },
-      layer3Height: { default: 1, paths: {} },
-      layer3Color: { default: [1, 1, 1, 1], paths: {} },
-      layer3Count: { default: 1, paths: {}, field: FieldType.Integer },
-      layer3ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      layer3ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      layer3UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      layer3RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer3GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer3BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer3AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer3BloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      layer3BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      layer3BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      layer3BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
-      layer4: { default: 0, paths: {}, field: FieldType.Integer },
-      layer4Width: { default: 1, paths: {} },
-      layer4Height: { default: 1, paths: {} },
-      layer4Color: { default: [1, 1, 1, 1], paths: {} },
-      layer4Count: { default: 1, paths: {}, field: FieldType.Integer },
-      layer4ScaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      layer4ScaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      layer4UniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      layer4RedMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer4GreenMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer4BlueMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer4AlphaMultiplier: { default: 1, paths: {}, field: FieldType.Float },
-      layer4BloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      layer4BloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      layer4BloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      layer4BloomAlpha: { default: 1, paths: {}, field: FieldType.Float },
-      blendMode: { default: BlendMode.Add, paths: {}, field: FieldType.Integer },
-      sourceSize: { default: 1, paths: {}, field: FieldType.Float },
-      opacityTransitionDuration: { default: 1, paths: {}, field: FieldType.Float },
-      bloom: { default: false, paths: {}, field: FieldType.Boolean },
-      unk_er_f1_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_18: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_19: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f1_20: { default: -1, paths: {}, field: FieldType.Float },
-      unk_er_f1_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_30: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_31: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f1_32: { default: -1, paths: {}, field: FieldType.Float },
-      unk_er_f1_41: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_42: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_43: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f1_44: { default: -1, paths: {}, field: FieldType.Float },
-      unk_er_f1_53: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_54: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_55: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f1_56: { default: -1, paths: {}, field: FieldType.Float },
-      unk_er_f1_57: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_2: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_4: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_5: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_6: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_14: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_16: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_17: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_18: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_19: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_25: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_26: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_28: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_34: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_35: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_75: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_76: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_77: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_78: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_79: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_80: { default: -1, paths: {}, field: FieldType.Float },
+      layer1: { default: 1, field: FieldType.Integer },
+      layer1Width: { default: 1 },
+      layer1Height: { default: 1 },
+      layer1Color: { default: [1, 1, 1, 1] },
+      layer1Count: { default: 1, field: FieldType.Integer },
+      layer1ScaleVariationX: { default: 1, field: FieldType.Float },
+      layer1ScaleVariationY: { default: 1, field: FieldType.Float },
+      layer1UniformScale: { default: false, field: FieldType.Boolean },
+      layer1RedMultiplier: { default: 1, field: FieldType.Float },
+      layer1GreenMultiplier: { default: 1, field: FieldType.Float },
+      layer1BlueMultiplier: { default: 1, field: FieldType.Float },
+      layer1AlphaMultiplier: { default: 1, field: FieldType.Float },
+      layer1BloomRed: { default: 1, field: FieldType.Float },
+      layer1BloomGreen: { default: 1, field: FieldType.Float },
+      layer1BloomBlue: { default: 1, field: FieldType.Float },
+      layer1BloomAlpha: { default: 1, field: FieldType.Float },
+      layer2: { default: 0, field: FieldType.Integer },
+      layer2Width: { default: 1 },
+      layer2Height: { default: 1 },
+      layer2Color: { default: [1, 1, 1, 1] },
+      layer2Count: { default: 1, field: FieldType.Integer },
+      layer2ScaleVariationX: { default: 1, field: FieldType.Float },
+      layer2ScaleVariationY: { default: 1, field: FieldType.Float },
+      layer2UniformScale: { default: false, field: FieldType.Boolean },
+      layer2RedMultiplier: { default: 1, field: FieldType.Float },
+      layer2GreenMultiplier: { default: 1, field: FieldType.Float },
+      layer2BlueMultiplier: { default: 1, field: FieldType.Float },
+      layer2AlphaMultiplier: { default: 1, field: FieldType.Float },
+      layer2BloomRed: { default: 1, field: FieldType.Float },
+      layer2BloomGreen: { default: 1, field: FieldType.Float },
+      layer2BloomBlue: { default: 1, field: FieldType.Float },
+      layer2BloomAlpha: { default: 1, field: FieldType.Float },
+      layer3: { default: 0, field: FieldType.Integer },
+      layer3Width: { default: 1 },
+      layer3Height: { default: 1 },
+      layer3Color: { default: [1, 1, 1, 1] },
+      layer3Count: { default: 1, field: FieldType.Integer },
+      layer3ScaleVariationX: { default: 1, field: FieldType.Float },
+      layer3ScaleVariationY: { default: 1, field: FieldType.Float },
+      layer3UniformScale: { default: false, field: FieldType.Boolean },
+      layer3RedMultiplier: { default: 1, field: FieldType.Float },
+      layer3GreenMultiplier: { default: 1, field: FieldType.Float },
+      layer3BlueMultiplier: { default: 1, field: FieldType.Float },
+      layer3AlphaMultiplier: { default: 1, field: FieldType.Float },
+      layer3BloomRed: { default: 1, field: FieldType.Float },
+      layer3BloomGreen: { default: 1, field: FieldType.Float },
+      layer3BloomBlue: { default: 1, field: FieldType.Float },
+      layer3BloomAlpha: { default: 1, field: FieldType.Float },
+      layer4: { default: 0, field: FieldType.Integer },
+      layer4Width: { default: 1 },
+      layer4Height: { default: 1 },
+      layer4Color: { default: [1, 1, 1, 1] },
+      layer4Count: { default: 1, field: FieldType.Integer },
+      layer4ScaleVariationX: { default: 1, field: FieldType.Float },
+      layer4ScaleVariationY: { default: 1, field: FieldType.Float },
+      layer4UniformScale: { default: false, field: FieldType.Boolean },
+      layer4RedMultiplier: { default: 1, field: FieldType.Float },
+      layer4GreenMultiplier: { default: 1, field: FieldType.Float },
+      layer4BlueMultiplier: { default: 1, field: FieldType.Float },
+      layer4AlphaMultiplier: { default: 1, field: FieldType.Float },
+      layer4BloomRed: { default: 1, field: FieldType.Float },
+      layer4BloomGreen: { default: 1, field: FieldType.Float },
+      layer4BloomBlue: { default: 1, field: FieldType.Float },
+      layer4BloomAlpha: { default: 1, field: FieldType.Float },
+      blendMode: { default: BlendMode.Add, field: FieldType.Integer },
+      sourceSize: { default: 1, field: FieldType.Float },
+      opacityTransitionDuration: { default: 1, field: FieldType.Float },
+      bloom: { default: false, field: FieldType.Boolean },
+      unk_er_f1_4: { default: 0, field: FieldType.Integer },
+      unk_er_f1_8: { default: 0, field: FieldType.Integer },
+      unk_er_f1_17: { default: 0, field: FieldType.Integer },
+      unk_er_f1_18: { default: 0, field: FieldType.Integer },
+      unk_er_f1_19: { default: 1, field: FieldType.Float },
+      unk_er_f1_20: { default: -1, field: FieldType.Float },
+      unk_er_f1_29: { default: 0, field: FieldType.Integer },
+      unk_er_f1_30: { default: 0, field: FieldType.Integer },
+      unk_er_f1_31: { default: 1, field: FieldType.Float },
+      unk_er_f1_32: { default: -1, field: FieldType.Float },
+      unk_er_f1_41: { default: 0, field: FieldType.Integer },
+      unk_er_f1_42: { default: 0, field: FieldType.Integer },
+      unk_er_f1_43: { default: 1, field: FieldType.Float },
+      unk_er_f1_44: { default: -1, field: FieldType.Float },
+      unk_er_f1_53: { default: 0, field: FieldType.Integer },
+      unk_er_f1_54: { default: 0, field: FieldType.Integer },
+      unk_er_f1_55: { default: 1, field: FieldType.Float },
+      unk_er_f1_56: { default: -1, field: FieldType.Float },
+      unk_er_f1_57: { default: 0, field: FieldType.Integer },
+      unk_er_f2_0: { default: 0, field: FieldType.Integer },
+      unk_er_f2_1: { default: 0, field: FieldType.Integer },
+      unk_er_f2_2: { default: 0, field: FieldType.Integer },
+      unk_er_f2_3: { default: 0, field: FieldType.Integer },
+      unk_er_f2_4: { default: 0, field: FieldType.Integer },
+      unk_er_f2_5: { default: 0, field: FieldType.Integer },
+      unk_er_f2_6: { default: 0, field: FieldType.Integer },
+      unk_er_f2_7: { default: 0, field: FieldType.Integer },
+      unk_er_f2_8: { default: 0, field: FieldType.Integer },
+      unk_er_f2_9: { default: 0, field: FieldType.Integer },
+      unk_er_f2_10: { default: 0, field: FieldType.Integer },
+      unk_er_f2_11: { default: 0, field: FieldType.Integer },
+      unk_er_f2_12: { default: 0, field: FieldType.Integer },
+      unk_er_f2_13: { default: 0, field: FieldType.Integer },
+      unk_er_f2_14: { default: 0, field: FieldType.Integer },
+      unk_er_f2_15: { default: 0, field: FieldType.Integer },
+      unk_er_f2_16: { default: 0, field: FieldType.Integer },
+      unk_er_f2_17: { default: 0, field: FieldType.Integer },
+      unk_er_f2_18: { default: 0, field: FieldType.Integer },
+      unk_er_f2_19: { default: 0, field: FieldType.Integer },
+      unk_er_f2_20: { default: 0, field: FieldType.Integer },
+      unk_er_f2_21: { default: 0, field: FieldType.Integer },
+      unk_er_f2_22: { default: 0, field: FieldType.Integer },
+      unk_er_f2_23: { default: 0, field: FieldType.Integer },
+      unk_er_f2_24: { default: 0, field: FieldType.Integer },
+      unk_er_f2_25: { default: 0, field: FieldType.Integer },
+      unk_er_f2_26: { default: 0, field: FieldType.Integer },
+      unk_er_f2_27: { default: 0, field: FieldType.Integer },
+      unk_er_f2_28: { default: 0, field: FieldType.Integer },
+      unk_er_f2_29: { default: 0, field: FieldType.Integer },
+      unk_er_f2_31: { default: 0, field: FieldType.Integer },
+      unk_er_f2_32: { default: 0, field: FieldType.Integer },
+      unk_er_f2_33: { default: 0, field: FieldType.Integer },
+      unk_er_f2_34: { default: 0, field: FieldType.Integer },
+      unk_er_f2_35: { default: 0, field: FieldType.Integer },
+      unk_er_f2_36: { default: -2, field: FieldType.Integer },
+      unk_ac6_f1_75: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_76: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_77: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_78: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_79: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_80: { default: -1, field: FieldType.Float },
     },
     games: {
       [Game.Sekiro]: Game.EldenRing,
@@ -2920,118 +3209,118 @@ const ActionData: {
   },
   [ActionType.RichModel]: {
     props: {
-      orientation: { default: OrientationMode.LocalSouth, paths: {}, field: FieldType.Integer },
-      scaleVariationX: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationY: { default: 1, paths: {}, field: FieldType.Float },
-      scaleVariationZ: { default: 1, paths: {}, field: FieldType.Float },
-      uniformScale: { default: false, paths: {}, field: FieldType.Boolean },
-      bloomRed: { default: 1, paths: {}, field: FieldType.Float },
-      bloomGreen: { default: 1, paths: {}, field: FieldType.Float },
-      bloomBlue: { default: 1, paths: {}, field: FieldType.Float },
-      bloomStrength: { default: 0, paths: {}, field: FieldType.Float },
-      minDistance: { default: -1, paths: {}, field: FieldType.Float },
-      maxDistance: { default: -1, paths: {}, field: FieldType.Float },
-      model: { default: 80201, paths: {}, field: FieldType.Integer },
-      sizeX: { default: 1, paths: {} },
-      sizeY: { default: 1, paths: {} },
-      sizeZ: { default: 1, paths: {} },
-      rotationX: { default: 0, paths: {} },
-      rotationY: { default: 0, paths: {} },
-      rotationZ: { default: 0, paths: {} },
-      rotationSpeedX: { default: 0, paths: {} },
-      rotationSpeedY: { default: 0, paths: {} },
-      rotationSpeedZ: { default: 0, paths: {} },
-      rotationSpeedMultiplierX: { default: 1, paths: {} },
-      rotationSpeedMultiplierY: { default: 1, paths: {} },
-      rotationSpeedMultiplierZ: { default: 1, paths: {} },
-      color1: { default: [1, 1, 1, 1], paths: {} },
-      color2: { default: [1, 1, 1, 1], paths: {} },
-      color3: { default: [1, 1, 1, 1], paths: {} },
-      uOffset: { default: 0, paths: {} },
-      vOffset: { default: 0, paths: {} },
-      uSpeed: { default: 0, paths: {} },
-      uSpeedMultiplier: { default: 0, paths: {} },
-      vSpeed: { default: 0, paths: {} },
-      vSpeedMultiplier: { default: 0, paths: {} },
-      rgbMultiplier: { default: 1, paths: {} },
-      alphaMultiplier: { default: 1, paths: {} },
-      animation: { default: 0, paths: {}, field: FieldType.Integer },
-      loopAnimation: { default: 1, paths: {}, field: FieldType.Boolean },
-      animationSpeed: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f1_5: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_6: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_8: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_er_f1_9: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_er_f1_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_14: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_15: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_16: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_18: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_19: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f1_25: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f2_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_1: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_2: { default: 8, paths: {}, field: FieldType.Integer },
-      unk_er_f2_3: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_9: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_10: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_11: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_12: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_13: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDistFadeClose0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeClose1: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar0: { default: -1, paths: {}, field: FieldType.Float },
-      unkDistFadeFar1: { default: -1, paths: {}, field: FieldType.Float },
-      unk_er_f2_20: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_21: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_22: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_23: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_24: { default: 0, paths: {}, field: FieldType.Integer },
-      unkDepthBlend1: { default: 1, paths: {}, field: FieldType.Float },
-      unkDepthBlend2: { default: 0, paths: {}, field: FieldType.Float },
-      unk_er_f2_27: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_28: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f2_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_30: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_31: { default: 1, paths: {}, field: FieldType.Float },
-      unk_er_f2_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_33: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_f2_34: { default: 0.5, paths: {}, field: FieldType.Float },
-      unk_er_f2_35: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_er_f2_36: { default: -2, paths: {}, field: FieldType.Integer },
-      unk_er_f2_37: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_er_p1_16: { default: 0, paths: {} },
-      unk_er_p1_17: { default: 0, paths: {} },
-      rgbMultiplier2: { default: 1, paths: {} },
-      unk_er_p1_19: { default: 0, paths: {} },
-      unk_er_p1_20: { default: 0, paths: {} },
-      unk_ds3_p2_2: { default: 0, paths: {} },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1], paths: {} },
-      unk_ds3_p2_6: { default: 0, paths: {} },
-      unk_ac6_f1_24: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_25: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_26: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_27: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_28: { default: -1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_29: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_30: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_31: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_32: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_33: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_34: { default: 0, paths: {}, field: FieldType.Integer },
-      uvOffset: { default: [0, 0], paths: {} },
-      uvSpeed: { default: [0, 0], paths: {} },
-      uvSpeedMultiplier: { default: [1, 1], paths: {} },
+      orientation: { default: OrientationMode.LocalSouth, field: FieldType.Integer },
+      scaleVariationX: { default: 1, field: FieldType.Float },
+      scaleVariationY: { default: 1, field: FieldType.Float },
+      scaleVariationZ: { default: 1, field: FieldType.Float },
+      uniformScale: { default: false, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 0, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      model: { default: 80201, field: FieldType.Integer },
+      sizeX: { default: 1 },
+      sizeY: { default: 1 },
+      sizeZ: { default: 1 },
+      rotationX: { default: 0 },
+      rotationY: { default: 0 },
+      rotationZ: { default: 0 },
+      rotationSpeedX: { default: 0 },
+      rotationSpeedY: { default: 0 },
+      rotationSpeedZ: { default: 0 },
+      rotationSpeedMultiplierX: { default: 1 },
+      rotationSpeedMultiplierY: { default: 1 },
+      rotationSpeedMultiplierZ: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      uOffset: { default: 0 },
+      vOffset: { default: 0 },
+      uSpeed: { default: 0 },
+      uSpeedMultiplier: { default: 0 },
+      vSpeed: { default: 0 },
+      vSpeedMultiplier: { default: 0 },
+      rgbMultiplier: { default: 1 },
+      alphaMultiplier: { default: 1 },
+      animation: { default: 0, field: FieldType.Integer },
+      loopAnimation: { default: 1, field: FieldType.Boolean },
+      animationSpeed: { default: 1, field: FieldType.Float },
+      unk_er_f1_5: { default: 1, field: FieldType.Integer },
+      unk_er_f1_6: { default: 1, field: FieldType.Integer },
+      unk_er_f1_7: { default: 0, field: FieldType.Integer },
+      unk_er_f1_8: { default: -2, field: FieldType.Integer },
+      unk_er_f1_9: { default: -2, field: FieldType.Integer },
+      unk_er_f1_11: { default: 0, field: FieldType.Integer },
+      unk_er_f1_14: { default: 0, field: FieldType.Integer },
+      unk_er_f1_15: { default: 0, field: FieldType.Integer },
+      unk_er_f1_16: { default: 0, field: FieldType.Integer },
+      unk_er_f1_17: { default: 0, field: FieldType.Integer },
+      unk_er_f1_18: { default: 0, field: FieldType.Integer },
+      unk_er_f1_19: { default: 0, field: FieldType.Integer },
+      unk_er_f1_20: { default: 0, field: FieldType.Integer },
+      unk_er_f1_21: { default: 0, field: FieldType.Integer },
+      unk_er_f1_22: { default: 0, field: FieldType.Integer },
+      unk_er_f1_23: { default: 0, field: FieldType.Integer },
+      unk_er_f1_24: { default: 0, field: FieldType.Integer },
+      unk_er_f1_25: { default: 1, field: FieldType.Integer },
+      unk_er_f2_0: { default: 0, field: FieldType.Integer },
+      unk_er_f2_1: { default: 0, field: FieldType.Integer },
+      unk_er_f2_2: { default: 8, field: FieldType.Integer },
+      unk_er_f2_3: { default: 0, field: FieldType.Integer },
+      unk_er_f2_8: { default: 0, field: FieldType.Integer },
+      unk_er_f2_9: { default: 0, field: FieldType.Integer },
+      unk_er_f2_10: { default: 0, field: FieldType.Integer },
+      unk_er_f2_11: { default: 0, field: FieldType.Integer },
+      unk_er_f2_12: { default: 0, field: FieldType.Integer },
+      unk_er_f2_13: { default: 0, field: FieldType.Integer },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      unk_er_f2_20: { default: 0, field: FieldType.Integer },
+      unk_er_f2_21: { default: 0, field: FieldType.Integer },
+      unk_er_f2_22: { default: 0, field: FieldType.Integer },
+      unk_er_f2_23: { default: 0, field: FieldType.Integer },
+      unk_er_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_er_f2_27: { default: 0, field: FieldType.Integer },
+      unk_er_f2_28: { default: 1, field: FieldType.Integer },
+      unk_er_f2_29: { default: 0, field: FieldType.Integer },
+      unk_er_f2_30: { default: 0, field: FieldType.Integer },
+      unk_er_f2_31: { default: 1, field: FieldType.Float },
+      unk_er_f2_32: { default: 0, field: FieldType.Integer },
+      unk_er_f2_33: { default: 0, field: FieldType.Integer },
+      unk_er_f2_34: { default: 0.5, field: FieldType.Float },
+      unk_er_f2_35: { default: -2, field: FieldType.Integer },
+      unk_er_f2_36: { default: -2, field: FieldType.Integer },
+      unk_er_f2_37: { default: 0, field: FieldType.Integer },
+      unk_er_p1_16: { default: 0 },
+      unk_er_p1_17: { default: 0 },
+      rgbMultiplier2: { default: 1 },
+      unk_er_p1_19: { default: 0 },
+      unk_er_p1_20: { default: 0 },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+      unk_ac6_f1_24: { default: 0, field: FieldType.Float },
+      unk_ac6_f1_25: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_26: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_27: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_28: { default: -1, field: FieldType.Float },
+      unk_ac6_f1_29: { default: 0, field: FieldType.Integer },
+      unk_ac6_f1_30: { default: 0, field: FieldType.Integer },
+      unk_ac6_f1_31: { default: 0, field: FieldType.Integer },
+      unk_ac6_f1_32: { default: 0, field: FieldType.Integer },
+      unk_ac6_f1_33: { default: 1, field: FieldType.Integer },
+      unk_ac6_f1_34: { default: 0, field: FieldType.Integer },
+      uvOffset: { default: [0, 0] },
+      uvSpeed: { default: [0, 0] },
+      uvSpeedMultiplier: { default: [1, 1] },
     },
     games: {
       [Game.EldenRing]: {
@@ -3050,17 +3339,17 @@ const ActionData: {
   },
   [ActionType.Unk10500]: {
     props: {
-      rateOfTime: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_2: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_3: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_4: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_5: { default: 0, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_6: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_9: { default: 0, paths: {}, field: FieldType.Integer },
+      rateOfTime: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_4: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_5: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_sdt_f1_9: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -3078,49 +3367,49 @@ const ActionData: {
   },
   [ActionType.SpotLight]: {
     props: {
-      diffuseColor: { default: [1, 1, 1, 1], paths: {} },
-      specularColor: { default: [1, 1, 1, 1], paths: {} },
-      diffuseMultiplier: { default: 1, paths: {} },
-      specularMultiplier: { default: 1, paths: {} },
-      near: { default: 0.01, paths: {} },
-      far: { default: 50, paths: {} },
-      radiusX: { default: 50, paths: {} },
-      radiusY: { default: 50, paths: {} },
-      jitterAndFlicker: { default: false, paths: {}, field: FieldType.Boolean },
-      jitterAcceleration: { default: 1, paths: {}, field: FieldType.Float },
-      jitterX: { default: 0, paths: {}, field: FieldType.Float },
-      jitterY: { default: 0, paths: {}, field: FieldType.Float },
-      jitterZ: { default: 0, paths: {}, field: FieldType.Float },
-      flickerIntervalMin: { default: 0, paths: {}, field: FieldType.Float },
-      flickerIntervalMax: { default: 1, paths: {}, field: FieldType.Float },
-      flickerBrightness: { default: 0.5, paths: {}, field: FieldType.Float },
-      shadows: { default: false, paths: {}, field: FieldType.Boolean },
-      separateSpecular: { default: false, paths: {}, field: FieldType.Boolean },
-      fadeOutTime: { default: 0, paths: {}, field: FieldType.Integer },
-      shadowDarkness: { default: 1, paths: {}, field: FieldType.Float },
-      volumeDensity: { default: 0, paths: {}, field: FieldType.Float },
-      phaseFunction: { default: true, paths: {}, field: FieldType.Boolean },
-      asymmetryParam: { default: 0.75, paths: {}, field: FieldType.Float },
-      falloffExponent: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_0: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_3: { default: 2, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_4: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_5: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ds3_f1_7: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_ds3_p1_6: { default: 1, paths: {} },
-      unk_ds3_p1_7: { default: 1, paths: {} },
-      unk_sdt_f1_0: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_3: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f1_16: { default: 100, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_17: { default: 0, paths: {}, field: FieldType.Integer },
-      unk_sdt_f1_18: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_f1_20: { default: 0, paths: {}, field: FieldType.Float },
-      unk_sdt_p1_10: { default: 1, paths: {} },
-      unk_er_f1_24: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_er_f1_25: { default: 1, paths: {}, field: FieldType.Float },
-      unk_ac6_f1_26: { default: 1, paths: {}, field: FieldType.Integer },
-      unk_ac6_f1_27: { default: 0, paths: {}, field: FieldType.Integer },
+      diffuseColor: { default: [1, 1, 1, 1] },
+      specularColor: { default: [1, 1, 1, 1] },
+      diffuseMultiplier: { default: 1 },
+      specularMultiplier: { default: 1 },
+      near: { default: 0.01 },
+      far: { default: 50 },
+      radiusX: { default: 50 },
+      radiusY: { default: 50 },
+      jitterAndFlicker: { default: false, field: FieldType.Boolean },
+      jitterAcceleration: { default: 1, field: FieldType.Float },
+      jitterX: { default: 0, field: FieldType.Float },
+      jitterY: { default: 0, field: FieldType.Float },
+      jitterZ: { default: 0, field: FieldType.Float },
+      flickerIntervalMin: { default: 0, field: FieldType.Float },
+      flickerIntervalMax: { default: 1, field: FieldType.Float },
+      flickerBrightness: { default: 0.5, field: FieldType.Float },
+      shadows: { default: false, field: FieldType.Boolean },
+      separateSpecular: { default: false, field: FieldType.Boolean },
+      fadeOutTime: { default: 0, field: FieldType.Integer },
+      shadowDarkness: { default: 1, field: FieldType.Float },
+      volumeDensity: { default: 0, field: FieldType.Float },
+      phaseFunction: { default: true, field: FieldType.Boolean },
+      asymmetryParam: { default: 0.75, field: FieldType.Float },
+      falloffExponent: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_0: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 2, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_p1_6: { default: 1 },
+      unk_ds3_p1_7: { default: 1 },
+      unk_sdt_f1_0: { default: 0, field: FieldType.Integer },
+      unk_sdt_f1_3: { default: 0, field: FieldType.Float },
+      unk_sdt_f1_16: { default: 100, field: FieldType.Integer },
+      unk_sdt_f1_17: { default: 0, field: FieldType.Integer },
+      unk_sdt_f1_18: { default: 0, field: FieldType.Float },
+      unk_sdt_f1_20: { default: 0, field: FieldType.Float },
+      unk_sdt_p1_10: { default: 1 },
+      unk_er_f1_24: { default: 1, field: FieldType.Integer },
+      unk_er_f1_25: { default: 1, field: FieldType.Float },
+      unk_ac6_f1_26: { default: 1, field: FieldType.Integer },
+      unk_ac6_f1_27: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -3147,6 +3436,7 @@ for (const [type, action] of Object.entries(ActionData)) {
   for (const game of Object.keys(action.games)) {
     const gameData = getActionGameData(type as unknown as ActionType, game as unknown as Game)
     for (const [name, prop] of Object.entries(action.props)) {
+      prop.paths ??= {}
       for (const [k, list] of Object.entries(gameData)) {
         const i = list.indexOf(name)
         if (i >= 0) {
@@ -3219,7 +3509,7 @@ const EffectActionSlots = {
       ActionType.Distortion,
       ActionType.RadialBlur,
       ActionType.PointLight,
-      ActionType.Unk10000_StandardParticle,
+      ActionType.ParticleSystem,
       ActionType.Unk10001_StandardCorrectParticle,
       ActionType.Unk10002_Fluid,
       ActionType.Unk10003_LightShaft,
@@ -4528,6 +4818,165 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
   return anyValueMult(p2, p1)
 }
 
+/**
+ * Adds one number, vector, or a property of either kind to another number,
+ * vector, or property.
+ * 
+ * Adding two vectors of different dimensionalities is not supported, but
+ * a vector and a scalar will work.
+ * @param p1 
+ * @param p2 
+ * @returns 
+ */
+function anyValueSum<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
+  // If p2 is none of these, it's invalid, likely undefined or null, it must
+  // either return something or throw to avoid a recursive loop.
+  if (!(
+    typeof p2 === 'number' ||
+    Array.isArray(p2) ||
+    p2 instanceof Property
+  )) {
+    throw new Error('Invalid operand for anyValueMult: ' + p2)
+  }
+
+  if (p1 instanceof ComponentSequenceProperty) {
+    p1 = p1.combineComponents()
+  }
+  if (p2 instanceof ComponentSequenceProperty) {
+    p2 = p2.combineComponents()
+  }
+  if (typeof p1 === 'number') {
+    if (typeof p2 === 'number') {
+      return p1 + p2 as T
+    } else if (Array.isArray(p2)) {
+      return p2.map(e => e + p1) as unknown as T
+    } else if (p2 instanceof ValueProperty) {
+      return new ValueProperty(
+        p2.valueType,
+        anyValueSum(p1, p2.value),
+        p2.modifiers.map(mod => Modifier.sumPropertyValue(mod, p1))
+      ) as unknown as T
+    } else if (p2 instanceof SequenceProperty) {
+      return new SequenceProperty(
+        p2.valueType,
+        p2.function,
+        p2.loop,
+        p2.keyframes.map(kf => new Keyframe(
+          kf.position,
+          (Array.isArray(kf.value) ? kf.value.map(e => e + p1) : kf.value + p1) as PropertyValue
+        )),
+        p2.modifiers.map(mod => Modifier.sumPropertyValue(mod, p1))
+      ) as unknown as T
+    }
+  } else if (Array.isArray(p1)) {
+    if (Array.isArray(p2)) {
+      return p2.map((e, i) => e + p1[i]) as unknown as T
+    } else if (p2 instanceof ValueProperty) {
+      let mods = p2.modifiers
+      if (p2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
+      }
+      return new ValueProperty(
+        p1.length - 1,
+        anyValueSum(p1, p2.value),
+        mods.map(mod => Modifier.sumPropertyValue(mod, p1))
+      ) as unknown as T
+    } else if (p2 instanceof SequenceProperty) {
+      let mods = p2.modifiers
+      if (p2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
+      }
+      return new SequenceProperty(
+        p1.length - 1,
+        p2.function,
+        p2.loop,
+        p2.keyframes.map(kf => new Keyframe(
+          kf.position,
+          (Array.isArray(kf.value) ?
+            kf.value.map((e, i) => e + p1[i]) :
+            p1.map(e => e + kf.value)
+          ) as PropertyValue
+        )),
+        mods.map(mod => Modifier.sumPropertyValue(mod, p1))
+      ) as unknown as T
+    }
+  } else if (p1 instanceof ValueProperty) {
+    if (p2 instanceof ValueProperty) {
+      let p1Mods = p1.modifiers
+      let p2Mods = p2.modifiers
+      const vt = Math.max(p1.valueType, p2.valueType)
+      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
+        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
+        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      return new ValueProperty(vt, anyValueSum(p1.value, p2.value), [
+        ...p1Mods.map(mod => Modifier.sumPropertyValue(mod, p2.value)),
+        ...p2Mods.map(mod => Modifier.sumPropertyValue(mod, p1.value)),
+      ]) as unknown as T
+    } else if (p2 instanceof SequenceProperty) {
+      let p1Mods = p1.modifiers
+      let p2Mods = p2.modifiers
+      const vt = Math.max(p1.valueType, p2.valueType)
+      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
+        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
+        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      return new SequenceProperty(
+        p2.valueType,
+        p2.function,
+        p2.loop,
+        p2.keyframes.map(kf => new Keyframe(
+          kf.position,
+          (Array.isArray(kf.value) ?
+            kf.value.map((e, i) => e + p1.value[i]) :
+            p1.value.map(e => e + kf.value)
+          ) as PropertyValue
+        )),
+        [
+          ...p1Mods.map(mod => Modifier.sumPropertyValue(mod, p2.valueAt(0))),
+          ...p2Mods.map(mod => Modifier.sumPropertyValue(mod, p1.value)),
+        ]
+      ) as unknown as T
+    }
+  } else if (p1 instanceof SequenceProperty && p2 instanceof SequenceProperty) {
+    const positions = new Set<number>
+    for (const keyframe of p1.keyframes) {
+      positions.add(keyframe.position)
+    }
+    for (const keyframe of p2.keyframes) {
+      positions.add(keyframe.position)
+    }
+    let p1Mods = p1.modifiers
+    let p2Mods = p2.modifiers
+    const vt = Math.max(p1.valueType, p2.valueType)
+    if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
+      p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    }
+    if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
+      p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    }
+    return new LinearProperty(
+      this.loop,
+      Array.from(positions)
+        .sort((a, b) => a - b)
+        .map(e => new Keyframe(e,
+          anyValueSum(p1.valueAt(e), p2.valueAt(e)) as PropertyValue
+        ))
+    ).withModifiers(
+      ...p1Mods.map(mod => Modifier.sumPropertyValue(mod, p2.valueAt(0))),
+      ...p2Mods.map(mod => Modifier.sumPropertyValue(mod, p1.valueAt(0))),
+    ) as unknown as T
+  }
+
+  // If none of the stuff above returned, p1 is more complex than p2, so just
+  // swap them and return the result of that instead.
+  return anyValueSum(p2, p1)
+}
+
 function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
   return new LinearProperty(prop.loop, prop.keyframes.flatMap((kf, i, a) => [
     new Keyframe(i === 0 ? 0 : a[i].position - 0.001, kf.value),
@@ -4640,6 +5089,52 @@ const ActionDataConversion = {
         ;[props.uSpeed, props.vSpeed] = separateComponents(props.uvSpeed)
         ;[props.uSpeedMultiplier, props.vSpeedMultiplier] = separateComponents(props.uvSpeedMultiplier)
       }
+      return props
+    }
+  },
+  [ActionType.ParticleSystem]: {
+    read(props: ParticleSystemParams, game: Game) {
+      if (props.particleUniformScale) {
+        /*
+          This action's uniform scale field acts differently from every other
+          action that has it. Instead of just ignoring the Y size-related
+          fields and properties, the X and Y size are added together. So, to
+          make this class work more consistently with the other ones, this
+          adds the Y value to the X value and sets the Y value to 0.
+        */
+        props.particleSizeX += props.particleSizeY
+        props.particleSizeY = 0
+        props.particleSizeXMin += props.particleSizeYMin
+        props.particleSizeYMin = 0
+        props.particleSizeXMax += props.particleSizeYMax
+        props.particleSizeYMax = 0
+        props.particleGrowthAccelerationXMin += props.particleGrowthAccelerationYMin
+        props.particleGrowthAccelerationYMin = 0
+        props.particleGrowthAccelerationXMax += props.particleGrowthAccelerationYMax
+        props.particleGrowthAccelerationYMax = 0
+        props.particleGrowthRateX = anyValueSum(props.particleGrowthRateX, props.particleGrowthRateY)
+        props.particleGrowthRateY = 0
+        props.particleGrowthRateXStatic += props.particleGrowthRateYStatic
+        props.particleGrowthRateYStatic = 0
+      }
+      props.emissionIntervalMin /= 30
+      props.emissionIntervalMax /= 30
+      props.particleDuration /= 30
+      return props
+    },
+    write(props: ParticleSystemParams, game: Game) {
+      if (props.particleUniformScale) {
+        props.particleSizeY = 0
+        props.particleSizeYMin = 0
+        props.particleSizeYMax = 0
+        props.particleGrowthAccelerationYMin = 0
+        props.particleGrowthAccelerationYMax = 0
+        props.particleGrowthRateY = 0
+        props.particleGrowthRateYStatic = 0
+      }
+      props.emissionIntervalMin = Math.round(props.emissionIntervalMin * 30)
+      props.emissionIntervalMax = Math.round(props.emissionIntervalMax * 30)
+      props.particleDuration = Math.round(props.particleDuration * 30)
       return props
     }
   },
@@ -5464,7 +5959,7 @@ class FXR {
         list.push(action.layer3)
         list.push(action.layer4)
       } else if (action instanceof Action) switch (action.type) {
-        case ActionType.Unk10000_StandardParticle:
+        case ActionType.ParticleSystem:
         case ActionType.Unk10001_StandardCorrectParticle:
           list.push(action.fields1[1].value)
           list.push(action.fields1[2].value)
@@ -6125,7 +6620,7 @@ abstract class Node {
       }
       const slot9 = effect.appearance as ActionWithNumericalFields | DataAction
       if (slot9 instanceof Action) switch (slot9.type) {
-        case ActionType.Unk10000_StandardParticle:
+        case ActionType.ParticleSystem:
         case ActionType.Unk10001_StandardCorrectParticle:
           procProp(slot9.properties1, 13)
           break
@@ -8709,7 +9204,7 @@ export interface ParticleModifierParams {
   /**
    * Color multiplier for the particles emitted from this node.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
@@ -14600,6 +15095,12 @@ export interface ModelParams {
    */
   unk_ds3_p2_6?: ScalarValue
   /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_7?: ScalarValue
+  /**
    * Unknown float.
    * 
    * **Default**: `0`
@@ -15114,6 +15615,7 @@ class Model extends DataAction {
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
+  unk_ds3_p2_7: ScalarValue
   unk_sdt_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
@@ -18471,6 +18973,1813 @@ class Unk800 extends DataAction {
   unk_ac6_f1_2: number
   constructor(props: Unk800Params = {}) {
     super(ActionType.Unk800)
+    this.assign(props)
+  }
+}
+
+export interface ParticleSystemParams {
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1005`
+   */
+  unk_er_f1_0?: number
+  /**
+   * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
+   */
+  texture?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  normalMap?: number
+  /**
+   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
+   */
+  emitterShape?: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_5?: number
+  /**
+   * The width of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeX?: number
+  /**
+   * The height of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeY?: number
+  /**
+   * The depth of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeZ?: number
+  /**
+   * The rotation of the emitter around the X-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationX?: number
+  /**
+   * The rotation of the emitter around the Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationY?: number
+  /**
+   * The rotation of the emitter around the Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_12?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_13?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_14?: number
+  /**
+   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+   * | Shape | Behavior |
+   * |-|-|
+   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
+   */
+  emitterDistribution?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `100`
+   */
+  unk_er_f1_21?: number
+  /**
+   * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link emissionParticleCountMin}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCount?: number
+  /**
+   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCountMin?: number
+  /**
+   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMin}
+   */
+  emissionParticleCountMax?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_25?: number
+  /**
+   * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link emissionIntervalMax}
+   */
+  emissionIntervalMin?: number
+  /**
+   * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link emissionIntervalMin}
+   */
+  emissionIntervalMax?: number
+  /**
+   * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+   * 
+   * **Default**: `false`
+   */
+  limitEmissionCount?: boolean
+  /**
+   * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+   * 
+   * **Default**: `0`
+   */
+  emissionCountLimit?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_30?: number
+  /**
+   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   */
+  particleDuration?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_33?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetX?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetY?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedX?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedY?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedZMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedZMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationZMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationZMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleRotationVarianceX?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleRotationVarianceY?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleRotationVarianceZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularSpeedVarianceX?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularSpeedVarianceY?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularSpeedVarianceZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationZMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationZMax?: number
+  /**
+   * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleSizeX}
+   * - {@link particleSizeY}
+   * - {@link particleSizeXMin}
+   * - {@link particleSizeYMin}
+   * - {@link particleSizeXMax}
+   * - {@link particleSizeYMax}
+   * - {@link particleGrowthRateX}
+   * - {@link particleGrowthRateY}
+   * - {@link particleGrowthRateXStatic}
+   * - {@link particleGrowthRateYStatic}
+   * - {@link particleGrowthAccelerationXMin}
+   * - {@link particleGrowthAccelerationYMin}
+   * - {@link particleGrowthAccelerationXMax}
+   * - {@link particleGrowthAccelerationYMax}
+   */
+  particleUniformScale?: boolean
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  particleSizeX?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  particleSizeY?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_73?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_76?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_79?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateXStatic?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateYStatic?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_82?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_85?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_88?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationXMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_91?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationXMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_94?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  rgbMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  alphaMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  redVariationMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  greenVariationMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  blueVariationMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  alphaVariationMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  redVariationMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  greenVariationMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  blueVariationMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  alphaVariationMax?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `2`
+   */
+  blendMode?: BlendMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  columns?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  totalFrames?: number
+  /**
+   * Unknown boolean.
+   * 
+   * **Default**: `false`
+   */
+  randomTextureFrame?: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_109?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  maxFrameIndex?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_111?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f1_112?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_113?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_114?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_115?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_116?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_117?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_118?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  particleDurationMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_120?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  particleSizeMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_122?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_123?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_124?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_125?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_126?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_127?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_128?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_129?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_130?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_131?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_132?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_133?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_134?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_135?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_136?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_137?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
+  unk_er_f1_138?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_139?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_140?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_141?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_142?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_143?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_144?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_145?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_146?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `12`
+   */
+  unk_er_f1_147?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_148?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_149?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_150?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_151?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_152?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_153?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_154?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_155?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  bloomRed?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  bloomGreen?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  bloomBlue?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  bloomStrength?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_160?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_161?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_162?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_163?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_164?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f1_165?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_166?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_167?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_1?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
+  unk_er_f2_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_3?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_4?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_5?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_6?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_7?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_13?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f2_14?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f2_15?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f2_16?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f2_17?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f2_18?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_er_f2_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_24?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_25?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_26?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_29?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_30?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f2_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_33?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.5`
+   */
+  unk_er_f2_34?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f2_35?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_er_f2_36?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_37?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_38?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_39?: number
+  /**
+   * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `1`
+   */
+  particleFollowFactor?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_3?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationX?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationY?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationZ?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_7?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_8?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularAccelerationZ?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateX?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateY?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_12?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  color?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_p1_14?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_15?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unkParticleAccelerationZ?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_17?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleGravity?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  particleRandomTurnAngle?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p1_20?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_p2_0?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_p2_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p2_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_er_p2_3?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_er_p2_4?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_er_p2_5?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_p2_6?: ScalarValue
+}
+
+/**
+ * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
+   * 
+   * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+ */
+class ParticleSystem extends DataAction {
+  declare type: ActionType.ParticleSystem
+  unk_er_f1_0: number
+  /**
+   * The ID of the texture of the particles.
+   */
+  texture: number
+  unk_er_f1_2: number
+  normalMap: number
+  /**
+   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   */
+  emitterShape: EmitterShape
+  unk_er_f1_5: number
+  /**
+   * The width of the emitter.
+   */
+  emitterSizeX: number
+  /**
+   * The height of the emitter.
+   */
+  emitterSizeY: number
+  /**
+   * The depth of the emitter.
+   */
+  emitterSizeZ: number
+  /**
+   * The rotation of the emitter around the X-axis.
+   */
+  emitterRotationX: number
+  /**
+   * The rotation of the emitter around the Y-axis.
+   */
+  emitterRotationY: number
+  /**
+   * The rotation of the emitter around the Z-axis.
+   */
+  emitterRotationZ: number
+  unk_er_f1_12: number
+  unk_er_f1_13: number
+  unk_er_f1_14: number
+  /**
+   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+   * | Shape | Behavior |
+   * |-|-|
+   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   */
+  emitterDistribution: number
+  unk_er_f1_16: number
+  unk_er_f1_17: number
+  unk_er_f1_18: number
+  unk_er_f1_19: number
+  unk_er_f1_20: number
+  unk_er_f1_21: number
+  /**
+   * The number of particles to emit per emission.
+   * 
+   * See also:
+   * - {@link emissionParticleCountMin}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCount: number
+  /**
+   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCountMin: number
+  /**
+   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMin}
+   */
+  emissionParticleCountMax: number
+  unk_er_f1_25: number
+  /**
+   * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionIntervalMax}
+   */
+  emissionIntervalMin: number
+  /**
+   * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionIntervalMin}
+   */
+  emissionIntervalMax: number
+  /**
+   * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+   */
+  limitEmissionCount: boolean
+  /**
+   * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+   */
+  emissionCountLimit: number
+  unk_er_f1_30: number
+  /**
+   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   */
+  particleDuration: number
+  unk_er_f1_32: number
+  unk_er_f1_33: number
+  particleOffsetX: number
+  particleOffsetY: number
+  particleOffsetZ: number
+  particleOffsetXMin: number
+  particleOffsetYMin: number
+  particleOffsetZMin: number
+  particleOffsetXMax: number
+  particleOffsetYMax: number
+  particleOffsetZMax: number
+  particleSpeedX: number
+  particleSpeedY: number
+  particleSpeedZ: number
+  particleSpeedXMin: number
+  particleSpeedYMin: number
+  particleSpeedZMin: number
+  particleSpeedXMax: number
+  particleSpeedYMax: number
+  particleSpeedZMax: number
+  particleAccelerationXMin: number
+  particleAccelerationYMin: number
+  particleAccelerationZMin: number
+  particleAccelerationXMax: number
+  particleAccelerationYMax: number
+  particleAccelerationZMax: number
+  particleRotationVarianceX: number
+  particleRotationVarianceY: number
+  particleRotationVarianceZ: number
+  particleAngularSpeedVarianceX: number
+  particleAngularSpeedVarianceY: number
+  particleAngularSpeedVarianceZ: number
+  particleAngularAccelerationXMin: number
+  particleAngularAccelerationYMin: number
+  particleAngularAccelerationZMin: number
+  particleAngularAccelerationXMax: number
+  particleAngularAccelerationYMax: number
+  particleAngularAccelerationZMax: number
+  /**
+   * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+   * 
+   * See also:
+   * - {@link particleSizeX}
+   * - {@link particleSizeY}
+   * - {@link particleSizeXMin}
+   * - {@link particleSizeYMin}
+   * - {@link particleSizeXMax}
+   * - {@link particleSizeYMax}
+   * - {@link particleGrowthRateX}
+   * - {@link particleGrowthRateY}
+   * - {@link particleGrowthRateXStatic}
+   * - {@link particleGrowthRateYStatic}
+   * - {@link particleGrowthAccelerationXMin}
+   * - {@link particleGrowthAccelerationYMin}
+   * - {@link particleGrowthAccelerationXMax}
+   * - {@link particleGrowthAccelerationYMax}
+   */
+  particleUniformScale: boolean
+  particleSizeX: number
+  particleSizeY: number
+  unk_er_f1_73: number
+  particleSizeXMin: number
+  particleSizeYMin: number
+  unk_er_f1_76: number
+  particleSizeXMax: number
+  particleSizeYMax: number
+  unk_er_f1_79: number
+  particleGrowthRateXStatic: number
+  particleGrowthRateYStatic: number
+  unk_er_f1_82: number
+  particleGrowthRateXMin: number
+  particleGrowthRateYMin: number
+  unk_er_f1_85: number
+  particleGrowthRateXMax: number
+  particleGrowthRateYMax: number
+  unk_er_f1_88: number
+  particleGrowthAccelerationXMin: number
+  particleGrowthAccelerationYMin: number
+  unk_er_f1_91: number
+  particleGrowthAccelerationXMax: number
+  particleGrowthAccelerationYMax: number
+  unk_er_f1_94: number
+  rgbMultiplier: number
+  alphaMultiplier: number
+  redVariationMin: number
+  greenVariationMin: number
+  blueVariationMin: number
+  alphaVariationMin: number
+  redVariationMax: number
+  greenVariationMax: number
+  blueVariationMax: number
+  alphaVariationMax: number
+  blendMode: BlendMode
+  columns: number
+  totalFrames: number
+  randomTextureFrame: boolean
+  unk_er_f1_109: number
+  maxFrameIndex: number
+  unk_er_f1_111: number
+  unk_er_f1_112: number
+  unk_er_f1_113: number
+  unk_er_f1_114: number
+  unk_er_f1_115: number
+  unk_er_f1_116: number
+  unk_er_f1_117: number
+  unk_er_f1_118: number
+  particleDurationMultiplier: number
+  unk_er_f1_120: number
+  particleSizeMultiplier: number
+  unk_er_f1_122: number
+  unk_er_f1_123: number
+  unk_er_f1_124: number
+  unk_er_f1_125: number
+  unk_er_f1_126: number
+  unk_er_f1_127: number
+  unk_er_f1_128: number
+  unk_er_f1_129: number
+  unk_er_f1_130: number
+  unk_er_f1_131: number
+  unk_er_f1_132: number
+  unk_er_f1_133: number
+  unk_er_f1_134: number
+  unk_er_f1_135: number
+  unk_er_f1_136: number
+  unk_er_f1_137: number
+  unk_er_f1_138: number
+  unk_er_f1_139: number
+  unk_er_f1_140: number
+  unk_er_f1_141: number
+  unk_er_f1_142: number
+  unk_er_f1_143: number
+  unk_er_f1_144: number
+  unk_er_f1_145: number
+  unk_er_f1_146: number
+  unk_er_f1_147: number
+  unk_er_f1_148: number
+  unk_er_f1_149: number
+  unk_er_f1_150: number
+  unk_er_f1_151: number
+  unk_er_f1_152: number
+  unk_er_f1_153: number
+  unk_er_f1_154: number
+  unk_er_f1_155: number
+  bloomRed: number
+  bloomGreen: number
+  bloomBlue: number
+  bloomStrength: number
+  unk_er_f1_160: number
+  unk_er_f1_161: number
+  unk_er_f1_162: number
+  unk_er_f1_163: number
+  unk_er_f1_164: number
+  unk_er_f1_165: number
+  unk_er_f1_166: number
+  unk_er_f1_167: number
+  unk_er_f2_0: number
+  unk_er_f2_1: number
+  unk_er_f2_2: number
+  unk_er_f2_3: number
+  unk_er_f2_4: number
+  unk_er_f2_5: number
+  unk_er_f2_6: number
+  unk_er_f2_7: number
+  unk_er_f2_8: number
+  unk_er_f2_9: number
+  unk_er_f2_10: number
+  unk_er_f2_11: number
+  unk_er_f2_12: number
+  unk_er_f2_13: number
+  unk_er_f2_14: number
+  unk_er_f2_15: number
+  unk_er_f2_16: number
+  unk_er_f2_17: number
+  unk_er_f2_18: number
+  unk_er_f2_19: number
+  unk_er_f2_20: number
+  unk_er_f2_21: number
+  unk_er_f2_22: number
+  unk_er_f2_23: number
+  unk_er_f2_24: number
+  unk_er_f2_25: number
+  unk_er_f2_26: number
+  unk_er_f2_27: number
+  unk_er_f2_28: number
+  unk_er_f2_29: number
+  unk_er_f2_30: number
+  unk_er_f2_31: number
+  unk_er_f2_32: number
+  unk_er_f2_33: number
+  unk_er_f2_34: number
+  unk_er_f2_35: number
+  unk_er_f2_36: number
+  unk_er_f2_37: number
+  unk_er_f2_38: number
+  unk_er_f2_39: number
+  /**
+   * Controls how well the particles follow the node if it moves.
+   */
+  particleFollowFactor: ScalarValue
+  unk_er_p1_1: ScalarValue
+  unk_er_p1_2: ScalarValue
+  unk_er_p1_3: ScalarValue
+  particleAccelerationX: ScalarValue
+  particleAccelerationY: ScalarValue
+  particleAccelerationZ: ScalarValue
+  unk_er_p1_7: ScalarValue
+  unk_er_p1_8: ScalarValue
+  particleAngularAccelerationZ: ScalarValue
+  particleGrowthRateX: ScalarValue
+  particleGrowthRateY: ScalarValue
+  unk_er_p1_12: ScalarValue
+  color: Vector4Value
+  unk_er_p1_14: ScalarValue
+  unk_er_p1_15: ScalarValue
+  unkParticleAccelerationZ: ScalarValue
+  unk_er_p1_17: ScalarValue
+  particleGravity: ScalarValue
+  particleRandomTurnAngle: ScalarValue
+  unk_er_p1_20: ScalarValue
+  unk_er_p2_0: ScalarValue
+  unk_er_p2_1: ScalarValue
+  unk_er_p2_2: ScalarValue
+  unk_er_p2_3: Vector4Value
+  unk_er_p2_4: Vector4Value
+  unk_er_p2_5: Vector4Value
+  unk_er_p2_6: ScalarValue
+  constructor(props: ParticleSystemParams = {}) {
+    super(ActionType.ParticleSystem)
     this.assign(props)
   }
 }
@@ -23185,6 +25494,7 @@ const DataActions = {
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.Unk800]: Unk800, Unk800,
+  [ActionType.ParticleSystem]: ParticleSystem, ParticleSystem,
   [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
@@ -24365,6 +26675,44 @@ namespace Modifier {
     return mod
   }
 
+  export function sumPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T]): IModifier<T> {
+    mod = mod.clone()
+    if (typeof v === 'number') {
+      if (mod instanceof RandomDeltaModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.max += v
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.max[i] += v
+        }
+      } else if (mod instanceof RandomRangeModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.min += v
+          mod.max += v
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.min[i] += v
+          mod.max[i] += v
+        }
+      }
+    } else {
+      if (mod instanceof RandomDeltaModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.max += v[0]
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.max[i] += v[i]
+        }
+      } else if (mod instanceof RandomRangeModifier) {
+        if (mod.valueType === ValueType.Scalar) {
+          mod.min += v[0]
+          mod.max += v[0]
+        } else for (let i = mod.valueType; i >= 0; i--) {
+          mod.min[i] += v[i]
+          mod.max[i] += v[i]
+        }
+      }
+    }
+    return mod
+  }
+
 }
 
 /**
@@ -24861,6 +27209,7 @@ export {
   DistortionMode,
   DistortionShape,
   InitialDirection,
+  EmitterShape,
 
   Nodes,
   EffectActionSlots,
@@ -24935,6 +27284,7 @@ export {
   NodeWindAcceleration,
   ParticleWindAcceleration,
   Unk800,
+  ParticleSystem,
   DynamicTracer,
   WaterInteraction,
   LensFlare,
@@ -24961,6 +27311,7 @@ export {
   RainbowProperty,
   BloodVisibilityProperty,
   anyValueMult,
+  anyValueSum,
   combineComponents,
   separateComponents,
 

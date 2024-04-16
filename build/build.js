@@ -126,7 +126,7 @@ export default async function(writeToDist = true) {
             if (Array.isArray(defValue)) {
               defValue = `[${defValue.join(', ')}]`
             }
-            return `${k}: { default: ${defValue}, paths: {}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
+            return `${k}: { default: ${defValue}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
           }).join('\n          ')}
         },
         games: {
