@@ -1,3 +1,6 @@
+import type { PathLike } from 'node:fs'
+import type { FileHandle } from 'node:fs/promises'
+
 enum Game {
   /**
    * Does not represent any specific game.
@@ -5577,13 +5580,32 @@ class FXR {
 
   /**
    * Parses an FXR file.
-   * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file.
+   * 
+   * This uses the fs module from Node.js to read the file. If you are
+   * targeting browers, pass an {@link ArrayBuffer} or
+   * {@link TypedArray typed array} with the contents of the file instead.
+   * @param filePath A path to the FXR file to parse.
    */
-  static read(buffer: ArrayBuffer | TypedArray, game: Game = Game.EldenRing) {
-    if (!(buffer instanceof ArrayBuffer)) {
-      buffer = buffer.buffer
+  static read(filePath: string, game: Game): Promise<FXR>
+
+  /**
+   * Parses an FXR file.
+   * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file to parse.
+   */
+  static read(buffer: ArrayBuffer | TypedArray, game: Game): FXR
+
+  /**
+   * Parses an FXR file.
+   * @param input A path to the FXR file to parse, or an ArrayBuffer or TypedArray containing the contents of the FXR file.
+   */
+  static read(input: string | ArrayBuffer | TypedArray, game: Game = Game.EldenRing): Promise<FXR> | FXR {
+    if (typeof input === 'string') {
+      return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game))
     }
-    const br = new BinaryReader(buffer)
+    if (!(input instanceof ArrayBuffer)) {
+      input = input.buffer
+    }
+    const br = new BinaryReader(input)
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
@@ -5671,6 +5693,7 @@ class FXR {
 
   /**
    * Serialize to the FXR file format.
+   * @param game The game to write this FXR for.
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
   toArrayBuffer(game: Game = Game.EldenRing) {
@@ -5839,6 +5862,16 @@ class FXR {
     return bw.getArrayBuffer()
   }
 
+  /**
+   * Saves the FXR to a file using the fs module from Node.js.
+   * @param path The path to the file.
+   * @param game The game to write this FXR for.
+   */
+  async saveAs(path: PathLike | FileHandle, game: Game) {
+    const fs = await import('node:fs/promises')
+    await fs.writeFile(path, Buffer.from(this.toArrayBuffer(game)))
+  }
+
   static fromJSON({
     id,
     states,
@@ -5894,7 +5927,7 @@ class FXR {
   }
 
   /**
-   * Updates {@link references}, {@link externalValues1}, and
+   * Updates {@link sfxReferences}, {@link externalValues1}, and
    * {@link externalValues2} with the values used in the FXR.
    */
   updateReferences() {
