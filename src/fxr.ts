@@ -2702,8 +2702,8 @@ const ActionData: {
       unk_ds3_f1_13: { default: 1, field: FieldType.Float },
       unk_ds3_f1_14: { default: 1, field: FieldType.Float },
       emitterDistribution: { default: 0, field: FieldType.Float },
-      unk_ds3_f1_16: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_17: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_16: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_17: { default: 0, field: FieldType.Float },
       unk_ds3_f1_18: { default: -1, field: FieldType.Integer },
       unk_ds3_f1_19: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_20: { default: 0, field: FieldType.Integer },
@@ -2829,7 +2829,7 @@ const ActionData: {
       unk_ds3_f1_140: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_141: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_142: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_143: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_143: { default: 0, field: FieldType.Float },
       unk_ds3_f1_144: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_145: { default: 0, field: FieldType.Integer },
       particleRandomTurns: { default: false, field: FieldType.Boolean },
@@ -19142,13 +19142,13 @@ export interface ParticleSystemParams {
    */
   emitterDistribution?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_16?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -20000,7 +20000,7 @@ export interface ParticleSystemParams {
    */
   unk_ds3_f1_142?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
