@@ -6006,16 +6006,17 @@ class FXR {
         list.push(action.mask)
       } else if (action instanceof RadialBlur) {
         list.push(action.mask)
+      } else if (action instanceof ParticleSystem) {
+        list.push(action.texture)
+        list.push(action.normalMap)
       } else if (action instanceof LensFlare) {
         list.push(action.layer1)
         list.push(action.layer2)
         list.push(action.layer3)
         list.push(action.layer4)
       } else if (action instanceof Action) switch (action.type) {
-        case ActionType.ParticleSystem:
         case ActionType.Unk10001_StandardCorrectParticle:
           list.push(action.fields1[1].value)
-          list.push(action.fields1[2].value)
           list.push(action.fields1[3].value)
           break
       }
