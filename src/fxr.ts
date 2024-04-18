@@ -6768,12 +6768,12 @@ class GenericNode extends Node {
     effects: []
     nodes: []
   }) {
-    const node = new (type in Nodes ? Nodes[type] : Node)
-    node.type = type
-    node.actions = actions?.map(action => Action.fromJSON(action)) ?? []
-    node.effects = effects?.map(effect => Effect.fromJSON(effect)) ?? []
-    node.nodes = nodes?.map(node => Node.fromJSON(node)) ?? []
-    return node
+    return new GenericNode(
+      type,
+      actions.map(action => Action.fromJSON(action)),
+      effects.map(effect => Effect.fromJSON(effect)),
+      nodes.map(node => Node.fromJSON(node))
+    )
   }
 
   toJSON() {
@@ -6850,11 +6850,9 @@ class RootNode extends Node {
   }
 
   static fromJSON(obj: any): Node {
-    if (!(
-      'unk10100' in obj ||
-      'unk10400' in obj ||
-      'unk10500' in obj
-    )) return GenericNode.fromJSON(obj)
+    if ('actions' in obj) {
+      return GenericNode.fromJSON(obj)
+    }
     return new RootNode(
       (obj.nodes ?? []).map(node => Node.fromJSON(node)),
       'unk70x' in obj ? Action.fromJSON(obj.unk70x) : null,
@@ -6911,8 +6909,12 @@ class ProxyNode extends Node {
     }
   }
 
-  static fromJSON({ sfx }: { type: NodeType.Proxy, sfx: number }) {
-    return new ProxyNode(sfx)
+  static fromJSON(obj: any) {
+    if ('sfx' in obj) {
+      return new ProxyNode(obj.sfx)
+    } else {
+      return GenericNode.fromJSON(obj)
+    }
   }
 
 }
@@ -6944,8 +6946,8 @@ class NodeWithEffects extends Node {
     return {
       type: this.type,
       stateEffectMap: this.stateEffectMap,
-      effects: this.effects,
-      nodes: this.nodes
+      effects: this.effects.map(e => e.toJSON()),
+      nodes: this.nodes.map(e => e.toJSON())
     }
   }
 
@@ -6984,6 +6986,9 @@ class LevelsOfDetailNode extends NodeWithEffects {
   }
 
   static fromJSON(obj: any): Node {
+    if ('actions' in obj) {
+      return GenericNode.fromJSON(obj)
+    }
     return new LevelsOfDetailNode(
       obj.effects.map((e: any) => Effect.fromJSON(e)),
       obj.nodes.map((e: any) => Node.fromJSON(e))
@@ -7028,6 +7033,9 @@ class BasicNode extends NodeWithEffects {
   }
 
   static fromJSON(obj: any): Node {
+    if ('actions' in obj) {
+      return GenericNode.fromJSON(obj)
+    }
     return new BasicNode(
       obj.effects.map((e: any) => Effect.fromJSON(e)),
       obj.nodes.map((e: any) => Node.fromJSON(e))
@@ -7067,6 +7075,9 @@ class SharedEmitterNode extends NodeWithEffects {
   }
 
   static fromJSON(obj: any): Node {
+    if ('actions' in obj) {
+      return GenericNode.fromJSON(obj)
+    }
     return new SharedEmitterNode(
       obj.effects.map((e: any) => Effect.fromJSON(e)),
       obj.nodes.map((e: any) => Node.fromJSON(e))
@@ -7714,28 +7725,34 @@ class Action implements IAction {
     return this
   }
 
-  static fromJSON({
-    type,
-    fields1 = [],
-    fields2 = [],
-    properties1 = [],
-    properties2 = [],
-    section10s = [],
-  }: {
-    type: ActionType
-    fields1?: []
-    fields2?: []
-    properties1?: []
-    properties2?: []
-    section10s?: []
-  }) {
-    return new Action(
-      type,
-      fields1.map(e => Field.fromJSON(e)),
-      fields2.map(e => Field.fromJSON(e)),
-      properties1.map(e => Property.fromJSON(e)),
-      properties2.map(e => Property.fromJSON(e)),
-      section10s.map(e => Section10.fromJSON(e))
+  static fromJSON(obj: any) {
+    if (
+      obj.type in ActionData &&
+      !('fields1' in obj) &&
+      !('fields2' in obj) &&
+      !('properties1' in obj) &&
+      !('properties2' in obj) &&
+      !('section10s' in obj)
+    ) {
+      return new DataActions[obj.type](Object.fromEntries(Object.entries(obj).map(([k, v]) => {
+        return [k, typeof v === 'object' && !Array.isArray(v) ? Property.fromJSON(v) : v]
+      }).filter(e => e[0] !== 'type')))
+    } else if (obj.type in Actions) {
+      const action: Action = new Actions[obj.type]
+      action.type = obj.type
+      action.fields1 = (obj.fields1 ?? []).map(e => Field.fromJSON(e))
+      action.fields2 = (obj.fields2 ?? []).map(e => Field.fromJSON(e))
+      action.properties1 = (obj.properties1 ?? []).map(e => Property.fromJSON(e))
+      action.properties2 = (obj.properties2 ?? []).map(e => Property.fromJSON(e))
+      action.section10s = (obj.section10s ?? []).map(e => Section10.fromJSON(e))
+      return action
+    } else return new Action(
+      obj.type,
+      (obj.fields1 ?? []).map(e => Field.fromJSON(e)),
+      (obj.fields2 ?? []).map(e => Field.fromJSON(e)),
+      (obj.properties1 ?? []).map(e => Property.fromJSON(e)),
+      (obj.properties2 ?? []).map(e => Property.fromJSON(e)),
+      (obj.section10s ?? []).map(e => Section10.fromJSON(e))
     )
   }
 
