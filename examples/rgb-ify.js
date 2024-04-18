@@ -1,4 +1,3 @@
-import fs from 'node:fs/promises'
 import {
   ActionType,
   BasicEffect,
@@ -19,6 +18,8 @@ import {
   Property,
   QuadLine,
   RadialBlur,
+  ParticleSystem,
+  LensFlare,
   RichModel,
   SpotLight,
   Tracer
@@ -59,7 +60,7 @@ function procProp(list, idx) {
     list[idx] = new ConstantProperty(...list[idx])
   }
   list[idx].modifiers.push(
-    new ExternalValueModifier(ExternalValue.TimeOfDay, true, [
+    new ExternalValueModifier(ExternalValue.EldenRing.TimeOfDay, true, [
       new Keyframe(0,                [1, 0, 0, 1]),
       new Keyframe(partDuration,     [1, 0, 1, 1]),
       new Keyframe(partDuration * 2, [0, 0, 1, 1]),
@@ -84,7 +85,7 @@ while (ids.length) {
   
   // Read the original FXR file. These effects are from Elden Ring, so make
   // sure to let it know to parse it as an ER FXR.
-  const fxr = FXR.read(await fs.readFile(`${inputDir}/${fileName}`), Game.EldenRing)
+  const fxr = await FXR.read(`${inputDir}/${fileName}`, Game.EldenRing)
 
   // First make the effect grayscale by setting the RGB values to the
   // percieved brightness of the original color
@@ -123,14 +124,16 @@ while (ids.length) {
       procProp(action, 'diffuseColor')
     } else if (
       action instanceof Distortion ||
-      action instanceof RadialBlur
+      action instanceof RadialBlur ||
+      action instanceof ParticleSystem
     ) {
       procProp(action, 'color')
+    } else if (action instanceof LensFlare) {
+      procProp(action, 'layer1Color')
+      procProp(action, 'layer2Color')
+      procProp(action, 'layer3Color')
+      procProp(action, 'layer4Color')
     } else switch (action.type) {
-      case ActionType.Unk10014_LensFlare:
-        procProp(action.properties1, 2)
-        break
-      case ActionType.Unk10000_StandardParticle:
       case ActionType.Unk10001_StandardCorrectParticle:
         procProp(action.properties1, 13)
         break
@@ -141,15 +144,15 @@ while (ids.length) {
   fxr.updateReferences()
 
   // Write the modified file back to ER's FXR format
-  await fs.writeFile(`${outputDir}/${fileName}`, Buffer.from(fxr.toArrayBuffer(Game.EldenRing)))
+  await fxr.saveAs(`${outputDir}/${fileName}`, Game.EldenRing)
 
   // Add this ID to the "done" list so it won't be processed again if something
   // else references it
   done.push(id)
 
-  // Add all of the FXR references to the list of IDs to process, but only if
+  // Add all of the sfx references to the list of IDs to process, but only if
   // they're not already in the list and they haven't already been processed
-  for (const ref of fxr.references) if (!done.includes(ref) && !ids.includes(ref)) {
+  for (const ref of fxr.sfxReferences) if (!done.includes(ref) && !ids.includes(ref)) {
     ids.push(ref)
   }
 

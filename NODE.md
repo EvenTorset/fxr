@@ -45,7 +45,6 @@ To test that you have done everything correctly, let's try to make a very simple
 
 Save this code in a file called `example.js` inside the project folder:
 ```js
-import fs from 'node:fs/promises'
 import { FXR, BasicNode, BillboardEx, Game } from '@cccode/fxr'
 
 const fxr = new FXR(300)
@@ -58,7 +57,7 @@ fxr.root.nodes = [
   ])
 ]
 
-await fs.writeFile('example.fxr', Buffer.from(fxr.toArrayBuffer(Game.EldenRing)))
+await fxr.saveAs('example.fxr', Game.EldenRing)
 ```
 This creates a new FXR file with the ID 300 and sets up a single red square as the effect. It then uses the Node file system module to write the file to the folder as `example.fxr`.
 

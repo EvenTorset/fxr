@@ -442,9 +442,11 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
-  unk_ds3_f2_27:
+  unk_ds3_f2_26:
     field: int
     default: 1
+  unk_ds3_f2_27:
+    field: int
   unk_ds3_f2_28:
     field: int
   unk_ds3_p1_15:
@@ -463,6 +465,8 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
   unk_ds3_p2_6:
+    type: ScalarValue
+  unk_ds3_p2_7:
     type: ScalarValue
   unk_sdt_f2_29:
     field: float
@@ -542,9 +546,9 @@ games:
       - unk_ds3_f2_21
       - unk_ds3_f2_22
       - unk_ds3_f2_23
-      - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
+      - unk_ds3_f2_26
       - unk_ds3_f2_27
       - unk_ds3_f2_28
     properties1:
@@ -581,6 +585,7 @@ games:
       - unk_ds3_p2_4
       - unk_ds3_p2_5
       - unk_ds3_p2_6
+      - unk_ds3_p2_7
   SDT:
     fields1:
       - orientation
@@ -628,8 +633,8 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
+      - unk_ds3_f2_26
       - unk_ds3_f2_27
-      - unk_ds3_f2_28
       - unk_sdt_f2_29
       - unk_sdt_f2_30
       - unk_sdt_f2_31
@@ -667,7 +672,14 @@ games:
       - speedV
       - speedMultiplierV
       - unk_ds3_p1_24
-    properties2: DS3
+    properties2:
+      - rgbMultiplier
+      - alphaMultiplier
+      - unk_ds3_p2_2
+      - unk_ds3_p2_3
+      - unk_ds3_p2_4
+      - unk_ds3_p2_5
+      - unk_ds3_p2_6
   ER:
     fields1:
       - orientation
@@ -690,48 +702,9 @@ games:
       - unk_er_f1_17
       - unk_er_f1_18
       - unk_er_f1_19
-    fields2:
-      - unk_ds3_f2_0
-      - unk_ds3_f2_1
-      - unk_ds3_f2_2
-      - unk_ds3_f2_3
-      - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
-      - unk_ds3_f2_9
-      - unk_ds3_f2_10
-      - unk_ds3_f2_11
-      - unk_ds3_f2_12
-      - unk_ds3_f2_13
-      - unkDistFadeClose0
-      - unkDistFadeClose1
-      - unkDistFadeFar0
-      - unkDistFadeFar1
-      - minDistance
-      - maxDistance
-      - unk_ds3_f2_20
-      - unk_ds3_f2_21
-      - unk_ds3_f2_22
-      - unk_ds3_f2_23
-      - unk_ds3_f2_24
-      - unkDepthBlend1
-      - unkDepthBlend2
-      - unk_ds3_f2_27
-      - unk_ds3_f2_28
-      - unk_sdt_f2_29
-      - unk_sdt_f2_30
-      - unk_sdt_f2_31
-      - unk_sdt_f2_32
-      - unk_sdt_f2_33
-      - unk_sdt_f2_34
-      - unk_sdt_f2_35
-      - unk_sdt_f2_36
-      - unk_sdt_f2_37
-      - unk_ac6_f2_38
+    fields2: SDT
     properties1: SDT
-    properties2: DS3
+    properties2: SDT
   AC6:
     fields1: ER
     fields2:
@@ -762,8 +735,8 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
+      - unk_ds3_f2_26
       - unk_ds3_f2_27
-      - unk_ds3_f2_28
       - unk_sdt_f2_29
       - unk_sdt_f2_30
       - unk_sdt_f2_31
@@ -775,4 +748,4 @@ games:
       - unk_sdt_f2_37
       - unk_ac6_f2_38
     properties1: SDT
-    properties2: DS3
+    properties2: SDT

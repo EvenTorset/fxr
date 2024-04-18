@@ -39,10 +39,10 @@ const bloomMultiplier = 1
 // This effect uses states to enable the steam when it's raining or snowing
 fxr.states = [
   // State 0, no rain/snow
-  State.from(`ext(${ExternalValue.Precipitation}) == 0 else 1`),
+  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 0 else 1`),
 
   // State 1, rain/snow
-  State.from(`ext(${ExternalValue.Precipitation}) == 1 else 0`),
+  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 1 else 0`),
 ]
 
 // The crossguard is made of two identical pieces with different offsets, so
