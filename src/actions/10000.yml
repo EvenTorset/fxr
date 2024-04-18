@@ -588,10 +588,14 @@ properties:
     field: int
   unk_ds3_f1_141:
     field: int
-  unk_ds3_f1_142:
-    field: int
-  unk_ds3_f1_143:
+  limitUpdateDistance:
+    field: bool
+    desc: |
+      If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+  updateDistance:
     field: float
+    desc: |
+      Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
   unk_ds3_f1_144:
     field: int
   unk_ds3_f1_145:
@@ -692,7 +696,11 @@ properties:
       - bloomRed
       - bloomGreen
       - bloomBlue
-  unk_ds3_f1_160:
+  desaturate:
+    field: float
+    desc: |
+      Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
+  unk_sdt_f1_160:
     field: float
     default: 1
   unk_sdt_f1_161:
@@ -1062,8 +1070,8 @@ games:
       - unk_ds3_f1_139
       - unk_ds3_f1_140
       - unk_ds3_f1_141
-      - unk_ds3_f1_142
-      - unk_ds3_f1_143
+      - limitUpdateDistance
+      - updateDistance
       - unk_ds3_f1_144
       - unk_ds3_f1_145
       - particleRandomTurns
@@ -1080,7 +1088,7 @@ games:
       - bloomGreen
       - bloomBlue
       - bloomStrength
-      - unk_ds3_f1_160
+      - desaturate
     fields2:
       - unk_ds3_f2_0
       - unk_ds3_f2_1
@@ -1286,8 +1294,8 @@ games:
       - unk_ds3_f1_139
       - unk_ds3_f1_140
       - unk_ds3_f1_141
-      - unk_ds3_f1_142
-      - unk_ds3_f1_143
+      - limitUpdateDistance
+      - updateDistance
       - unk_ds3_f1_144
       - unk_ds3_f1_145
       - particleRandomTurns
@@ -1304,7 +1312,7 @@ games:
       - bloomGreen
       - bloomBlue
       - bloomStrength
-      - unk_ds3_f1_160
+      - unk_sdt_f1_160
       - unk_sdt_f1_161
       - unk_sdt_f1_162
       - unk_sdt_f1_163
@@ -1497,8 +1505,8 @@ games:
       - unk_ds3_f1_139
       - unk_ds3_f1_140
       - unk_ds3_f1_141
-      - unk_ds3_f1_142
-      - unk_ds3_f1_143
+      - limitUpdateDistance
+      - updateDistance
       - unk_ds3_f1_144
       - unk_ds3_f1_145
       - particleRandomTurns
@@ -1515,7 +1523,7 @@ games:
       - bloomGreen
       - bloomBlue
       - bloomStrength
-      - unk_ds3_f1_160
+      - unk_sdt_f1_160
       - unk_sdt_f1_161
       - unk_sdt_f1_162
       - unk_sdt_f1_163
