@@ -60,7 +60,7 @@ function procProp(list, idx) {
     list[idx] = new ConstantProperty(...list[idx])
   }
   list[idx].modifiers.push(
-    new ExternalValueModifier(ExternalValue.TimeOfDay, true, [
+    new ExternalValueModifier(ExternalValue.EldenRing.TimeOfDay, true, [
       new Keyframe(0,                [1, 0, 0, 1]),
       new Keyframe(partDuration,     [1, 0, 1, 1]),
       new Keyframe(partDuration * 2, [0, 0, 1, 1]),
