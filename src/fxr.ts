@@ -5587,13 +5587,13 @@ class FXR {
    * {@link TypedArray typed array} with the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
    */
-  static read(filePath: string, game: Game): Promise<FXR>
+  static read(filePath: string, game?: Game): Promise<FXR>
 
   /**
    * Parses an FXR file.
    * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file to parse.
    */
-  static read(buffer: ArrayBuffer | TypedArray, game: Game): FXR
+  static read(buffer: ArrayBuffer | TypedArray, game?: Game): FXR
 
   /**
    * Parses an FXR file.
