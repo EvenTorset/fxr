@@ -6728,7 +6728,6 @@ abstract class Node {
       }
       const slot9 = effect.appearance as ActionWithNumericalFields | DataAction
       if (slot9 instanceof Action) switch (slot9.type) {
-        case ActionType.ParticleSystem:
         case ActionType.Unk10001_StandardCorrectParticle:
           procProp(slot9.properties1, 13)
           break
