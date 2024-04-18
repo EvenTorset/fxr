@@ -2869,12 +2869,12 @@ const ActionData: {
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
-      unk_ds3_f2_14: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_15: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_16: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_17: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_18: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_19: { default: -1, field: FieldType.Float },
+      unkDistFadeClose0: { default: -1, field: FieldType.Float },
+      unkDistFadeClose1: { default: -1, field: FieldType.Float },
+      unkDistFadeFar0: { default: -1, field: FieldType.Float },
+      unkDistFadeFar1: { default: -1, field: FieldType.Float },
+      minDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
       unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
@@ -2927,19 +2927,19 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','desaturate'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unk_ds3_f2_14','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAccelerationZ','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unk_ds3_f2_14','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unk_ds3_f2_14','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
@@ -6544,6 +6544,58 @@ abstract class Node {
           slot9.jitterX *= factor
           slot9.jitterY *= factor
           slot9.jitterZ *= factor
+        } else if (slot9 instanceof ParticleSystem) {
+          slot9.emitterSizeX = anyValueMult(factor, slot9.emitterSizeX)
+          slot9.emitterSizeY = anyValueMult(factor, slot9.emitterSizeY)
+          slot9.emitterSizeZ = anyValueMult(factor, slot9.emitterSizeZ)
+          slot9.particleSizeX = anyValueMult(factor, slot9.particleSizeX)
+          slot9.particleSizeY = anyValueMult(factor, slot9.particleSizeY)
+          slot9.particleSizeXMin = anyValueMult(factor, slot9.particleSizeXMin)
+          slot9.particleSizeYMin = anyValueMult(factor, slot9.particleSizeYMin)
+          slot9.particleSizeXMax = anyValueMult(factor, slot9.particleSizeXMax)
+          slot9.particleGrowthRateX = anyValueMult(factor, slot9.particleGrowthRateX)
+          slot9.particleGrowthRateY = anyValueMult(factor, slot9.particleGrowthRateY)
+          slot9.particleGrowthRateXStatic = anyValueMult(factor, slot9.particleGrowthRateXStatic)
+          slot9.particleGrowthRateYStatic = anyValueMult(factor, slot9.particleGrowthRateYStatic)
+          slot9.particleGrowthRateXMin = anyValueMult(factor, slot9.particleGrowthRateXMin)
+          slot9.particleGrowthRateYMin = anyValueMult(factor, slot9.particleGrowthRateYMin)
+          slot9.particleGrowthRateXMax = anyValueMult(factor, slot9.particleGrowthRateXMax)
+          slot9.particleGrowthRateYMax = anyValueMult(factor, slot9.particleGrowthRateYMax)
+          slot9.particleGrowthAccelerationXMin = anyValueMult(factor, slot9.particleGrowthAccelerationXMin)
+          slot9.particleGrowthAccelerationYMin = anyValueMult(factor, slot9.particleGrowthAccelerationYMin)
+          slot9.particleGrowthAccelerationXMax = anyValueMult(factor, slot9.particleGrowthAccelerationXMax)
+          slot9.particleGrowthAccelerationYMax = anyValueMult(factor, slot9.particleGrowthAccelerationYMax)
+          slot9.particleSpeedX = anyValueMult(factor, slot9.particleSpeedX)
+          slot9.particleSpeedY = anyValueMult(factor, slot9.particleSpeedY)
+          slot9.particleSpeedZ = anyValueMult(factor, slot9.particleSpeedZ)
+          slot9.particleSpeedXMin = anyValueMult(factor, slot9.particleSpeedXMin)
+          slot9.particleSpeedYMin = anyValueMult(factor, slot9.particleSpeedYMin)
+          slot9.particleSpeedZMin = anyValueMult(factor, slot9.particleSpeedZMin)
+          slot9.particleSpeedXMax = anyValueMult(factor, slot9.particleSpeedXMax)
+          slot9.particleSpeedYMax = anyValueMult(factor, slot9.particleSpeedYMax)
+          slot9.particleSpeedZMax = anyValueMult(factor, slot9.particleSpeedZMax)
+          slot9.particleAccelerationX = anyValueMult(factor, slot9.particleAccelerationX)
+          slot9.particleAccelerationY = anyValueMult(factor, slot9.particleAccelerationY)
+          slot9.particleAccelerationZ = anyValueMult(factor, slot9.particleAccelerationZ)
+          slot9.particleAccelerationXMin = anyValueMult(factor, slot9.particleAccelerationXMin)
+          slot9.particleAccelerationYMin = anyValueMult(factor, slot9.particleAccelerationYMin)
+          slot9.particleAccelerationZMin = anyValueMult(factor, slot9.particleAccelerationZMin)
+          slot9.particleAccelerationXMax = anyValueMult(factor, slot9.particleAccelerationXMax)
+          slot9.particleAccelerationYMax = anyValueMult(factor, slot9.particleAccelerationYMax)
+          slot9.particleAccelerationZMax = anyValueMult(factor, slot9.particleAccelerationZMax)
+          slot9.unkParticleAccelerationZ = anyValueMult(factor, slot9.unkParticleAccelerationZ)
+          slot9.particleTraceLength = anyValueMult(factor, slot9.particleTraceLength)
+          slot9.particleGravity = anyValueMult(factor, slot9.particleGravity)
+          slot9.updateDistance = anyValueMult(factor, slot9.updateDistance)
+          slot9.particleOffsetX = anyValueMult(factor, slot9.particleOffsetX)
+          slot9.particleOffsetY = anyValueMult(factor, slot9.particleOffsetY)
+          slot9.particleOffsetZ = anyValueMult(factor, slot9.particleOffsetZ)
+          slot9.particleOffsetXMin = anyValueMult(factor, slot9.particleOffsetXMin)
+          slot9.particleOffsetYMin = anyValueMult(factor, slot9.particleOffsetYMin)
+          slot9.particleOffsetZMin = anyValueMult(factor, slot9.particleOffsetZMin)
+          slot9.particleOffsetXMax = anyValueMult(factor, slot9.particleOffsetXMax)
+          slot9.particleOffsetYMax = anyValueMult(factor, slot9.particleOffsetYMax)
+          slot9.particleOffsetZMax = anyValueMult(factor, slot9.particleOffsetZMax)
         } else if (slot9 instanceof LensFlare) {
           slot9.layer1Width = anyValueMult(factor, slot9.layer1Width)
           slot9.layer1Height = anyValueMult(factor, slot9.layer1Height)
@@ -6577,6 +6629,7 @@ abstract class Node {
           slot9 instanceof Tracer ||
           slot9 instanceof Distortion ||
           slot9 instanceof RadialBlur ||
+          slot9 instanceof ParticleSystem ||
           slot9 instanceof DynamicTracer ||
           slot9 instanceof RichModel
         ) {
@@ -6703,7 +6756,7 @@ abstract class Node {
         procVec4Value(slot9, 'layersColor')
         procVec4Value(slot9, 'layer1Color')
         procVec4Value(slot9, 'layer2Color')
-      } else if (slot9 instanceof Distortion || slot9 instanceof RadialBlur) {
+      } else if (slot9 instanceof Distortion || slot9 instanceof RadialBlur || slot9 instanceof ParticleSystem) {
         procVec4Value(slot9, 'color')
       } else if (slot9 instanceof LensFlare) {
         procVec4Value(slot9, 'layer1Color')
@@ -6724,6 +6777,7 @@ abstract class Node {
         slot9 instanceof Tracer ||
         slot9 instanceof Distortion ||
         slot9 instanceof RadialBlur ||
+        slot9 instanceof ParticleSystem ||
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
@@ -20307,37 +20361,43 @@ export interface ParticleSystemParams {
    * 
    * **Default**: `-1`
    */
-  unk_ds3_f2_14?: number
+  unkDistFadeClose0?: number
   /**
    * Unknown float.
    * 
    * **Default**: `-1`
    */
-  unk_ds3_f2_15?: number
+  unkDistFadeClose1?: number
   /**
    * Unknown float.
    * 
    * **Default**: `-1`
    */
-  unk_ds3_f2_16?: number
+  unkDistFadeFar0?: number
   /**
    * Unknown float.
    * 
    * **Default**: `-1`
    */
-  unk_ds3_f2_17?: number
+  unkDistFadeFar1?: number
   /**
-   * Unknown float.
+   * Minimum view distance. If the particle system is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link maxDistance}
    */
-  unk_ds3_f2_18?: number
+  minDistance?: number
   /**
-   * Unknown float.
+   * Maximum view distance. If the particle system is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
    */
-  unk_ds3_f2_19?: number
+  maxDistance?: number
   /**
    * Unknown integer.
    * 
@@ -21294,12 +21354,24 @@ class ParticleSystem extends DataAction {
   unk_ds3_f2_11: number
   unk_ds3_f2_12: number
   unk_ds3_f2_13: number
-  unk_ds3_f2_14: number
-  unk_ds3_f2_15: number
-  unk_ds3_f2_16: number
-  unk_ds3_f2_17: number
-  unk_ds3_f2_18: number
-  unk_ds3_f2_19: number
+  unkDistFadeClose0: number
+  unkDistFadeClose1: number
+  unkDistFadeFar0: number
+  unkDistFadeFar1: number
+  /**
+   * Minimum view distance. If the particle system is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link maxDistance}
+   */
+  minDistance: number
+  /**
+   * Maximum view distance. If the particle system is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minDistance}
+   */
+  maxDistance: number
   unk_ds3_f2_20: number
   unk_ds3_f2_21: number
   unk_ds3_f2_22: number

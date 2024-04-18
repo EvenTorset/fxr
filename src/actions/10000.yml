@@ -755,24 +755,32 @@ properties:
     field: int
   unk_ds3_f2_13:
     field: int
-  unk_ds3_f2_14:
+  unkDistFadeClose0:
     field: float
     default: -1
-  unk_ds3_f2_15:
+  unkDistFadeClose1:
     field: float
     default: -1
-  unk_ds3_f2_16:
+  unkDistFadeFar0:
     field: float
     default: -1
-  unk_ds3_f2_17:
+  unkDistFadeFar1:
     field: float
     default: -1
-  unk_ds3_f2_18:
+  minDistance:
     field: float
     default: -1
-  unk_ds3_f2_19:
+    desc: |
+      Minimum view distance. If the particle system is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    see:
+      - maxDistance
+  maxDistance:
     field: float
     default: -1
+    desc: |
+      Maximum view distance. If the particle system is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    see:
+      - minDistance
   unk_ds3_f2_20:
     field: int
   unk_ds3_f2_21:
@@ -1104,12 +1112,12 @@ games:
       - unk_ds3_f2_11
       - unk_ds3_f2_12
       - unk_ds3_f2_13
-      - unk_ds3_f2_14
-      - unk_ds3_f2_15
-      - unk_ds3_f2_16
-      - unk_ds3_f2_17
-      - unk_ds3_f2_18
-      - unk_ds3_f2_19
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
       - unk_ds3_f2_20
       - unk_ds3_f2_21
       - unk_ds3_f2_22
@@ -1334,12 +1342,12 @@ games:
       - unk_ds3_f2_11
       - unk_ds3_f2_12
       - unk_ds3_f2_13
-      - unk_ds3_f2_14
-      - unk_ds3_f2_15
-      - unk_ds3_f2_16
-      - unk_ds3_f2_17
-      - unk_ds3_f2_18
-      - unk_ds3_f2_19
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
       - unk_ds3_f2_20
       - unk_ds3_f2_21
       - unk_ds3_f2_22
@@ -1546,12 +1554,12 @@ games:
       - unk_ds3_f2_11
       - unk_ds3_f2_12
       - unk_ds3_f2_13
-      - unk_ds3_f2_14
-      - unk_ds3_f2_15
-      - unk_ds3_f2_16
-      - unk_ds3_f2_17
-      - unk_ds3_f2_18
-      - unk_ds3_f2_19
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
       - unk_ds3_f2_20
       - unk_ds3_f2_21
       - unk_ds3_f2_22
