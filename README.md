@@ -19,14 +19,10 @@ Check out the auto-generated docs at https://fxr-docs.pages.dev/ to find more in
 ## Editing FXR files
 To edit existing FXR files, all you need is an ArrayBuffer or typed array with the file's content. The example below is written for Node, but by replacing how you get the buffer and what you do with the output it should also work fine in the browser.
 ```js
-import fs from 'node:fs/promises'
 import { FXR, Game } from '@cccode/fxr'
 
-// Get a buffer of the original file's content
-const buffer = await fs.readFile('f000450360.fxr')
-
 // Parse file
-const fxr = FXR.read(buffer, Game.EldenRing)
+const fxr = FXR.read('f000450360.fxr', Game.EldenRing)
 
 // Make changes to the FXR, for example scaling it so it's half as big:
 fxr.root.scale(0.5)
@@ -68,19 +64,14 @@ fxr.root.recolor(([r, g, b, a]) => {
   return [r, g, b, a]
 })
 
-// Generate an ArrayBuffer of the modified file content. Note that you may
-// change the game to output this for to any of the four supported games, as
-// long as the game supports all of the features used in the effect.
-const output = fxr.toArrayBuffer(Game.EldenRing)
-
-// Write the modified file
-await fs.writeFile('f000450360_edit.fxr', Buffer.from(output))
+// Write the modified file. Note that you may change the game to output this
+// for to any of the four supported games, as long as the game supports all
+// of the features used in the effect.
+await fxr.saveAs('f000450360_edit.fxr', Game.EldenRing)
 ```
 ## Creating new FXR files
 Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume
 ```js
-import fs from 'node:fs/promises'
-
 import {
   FXR,
   BasicNode,
@@ -147,13 +138,10 @@ fxr.root.nodes = [
   ])
 ]
 
-// Generate an ArrayBuffer of the new effect's file content. Note that you may
-// change the game to output this for to any of the four supported games, as
-// long as the game supports all of the features used in the effect.
-const output = fxr.toArrayBuffer(Game.EldenRing)
-
-// Write the new file
-await fs.writeFile('f000402030.fxr', Buffer.from(output))
+// Write the new file. Note that you may change the game to output this for to
+// any of the four supported games, as long as the game supports all of the
+// features used in the effect.
+await fxr.saveAs('f000402030.fxr', Game.EldenRing)
 ```
 
 ## Thanks
