@@ -4670,7 +4670,7 @@ function vectorFromArg(vector: VectorValue) {
 }
 
 function uniqueArray<T>(a: T[]) {
-  return a.filter((e, i) => a.indexOf(e) === i)
+  return Array.from(new Set(a))
 }
 
 function lerp(a: number, b: number, c: number) {
