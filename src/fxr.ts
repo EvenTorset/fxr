@@ -5610,10 +5610,10 @@ class FXR {
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    const version = br.assertInt16(
+    const version = game === Game.Generic ? br.assertInt16(
       FXRVersion.DarkSouls3,
       FXRVersion.Sekiro
-    )
+    ) :  br.assertInt16(GameVersionMap[game])
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
