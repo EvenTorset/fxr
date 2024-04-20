@@ -4677,6 +4677,47 @@ function lerp(a: number, b: number, c: number) {
   return a + (b - a) * c
 }
 
+function stepKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  let nearestKeyframe: IKeyframe<T>
+
+  for (const kf of keyframes) {
+    if (kf.position <= position) {
+      nearestKeyframe = kf
+    } else {
+      break
+    }
+  }
+
+  return nearestKeyframe.value
+}
+
+function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  let prevKeyframe: IKeyframe<T>, nextKeyframe: IKeyframe<T>
+
+  for (const kf of keyframes) {
+    if (kf.position <= position) {
+      prevKeyframe = kf
+    } else {
+      nextKeyframe = kf
+      break
+    }
+  }
+
+  if (!prevKeyframe) {
+    return nextKeyframe.value
+  } else if (!nextKeyframe) {
+    return prevKeyframe.value
+  }
+
+  const t = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
+
+  if (typeof prevKeyframe.value === 'number') {
+    return lerp(prevKeyframe.value, nextKeyframe.value as number, t) as TypeMap.PropertyValue[T]
+  } else {
+    return prevKeyframe.value.map((e, i) => lerp(e, nextKeyframe.value[i], t)) as TypeMap.PropertyValue[T]
+  }
+}
+
 /**
  * Multiplies one number, vector, or a property of either kind by another
  * number, vector, or property.
@@ -26800,39 +26841,13 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   valueAt(arg: number): TypeMap.PropertyValue[T] {
     switch (this.function) {
-      case PropertyFunction.Stepped: {
-        let i = 0
-        while (
-          i < this.keyframes.length - 1 && this.keyframes[i].position > arg
-        ) i++
-        return this.keyframes[i].value
-      }
+      case PropertyFunction.Stepped:
+        return stepKeyframes(this.keyframes, arg)
       case PropertyFunction.Linear:
       case PropertyFunction.Curve1:
       case PropertyFunction.Curve2: {
         //TODO: Implement better approximations for Curve1 and Curve2 prop values
-        let i = 0
-        while (
-          i < this.keyframes.length - 1 && this.keyframes[i].position > arg
-        ) i++
-        if (i < this.keyframes.length - 1) {
-          const d = this.keyframes[i+1].position - this.keyframes[i].position
-          if (d === 0) return this.keyframes[i].value
-          const p = (arg - this.keyframes[i].position) / d
-          return (this.valueType === ValueType.Scalar ?
-            lerp(
-              this.keyframes[i].value as number,
-              this.keyframes[i+1].value as number,
-              p
-            )
-          : arrayOf(this.componentCount, j => lerp(
-              this.keyframes[i].value[j],
-              this.keyframes[i+1].value[j],
-              p
-            ))
-          ) as TypeMap.PropertyValue[T]
-        }
-        return this.keyframes[i].value
+        return lerpKeyframes(this.keyframes, arg)
       }
     }
   }
