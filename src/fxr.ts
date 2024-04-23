@@ -8868,14 +8868,28 @@ class StateEffectMap extends Action {
     if (effectIndices.length === 0) {
       effectIndices.push(0)
     }
-    super(ActionType.StateEffectMap, [], [], [], [], [
-      new Section10(effectIndices.map(i => new IntField(i)))
-    ])
+    if (effectIndices.every(e => e === 0)) {
+      /*
+        If every index is 0, it is equivalent to just having a single field
+        with 0, so this automatically minifies the action.
+      */
+      super(ActionType.StateEffectMap, [], [], [], [], [
+        new Section10([new IntField])
+      ])
+    } else {
+      super(ActionType.StateEffectMap, [], [], [], [], [
+        new Section10(effectIndices.map(i => new IntField(i)))
+      ])
+    }
   }
 
   get effectIndices() { return this.section10s[0].fields.map(e => e.value) }
   set effectIndices(value: number[]) {
-    this.section10s[0].fields = value.map(e => new IntField(e))
+    if (value.every(e => e === 0)) {
+      this.section10s[0].fields = [new IntField]
+    } else {
+      this.section10s[0].fields = value.map(e => new IntField(e))
+    }
   }
 
 }
