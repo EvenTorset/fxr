@@ -3902,6 +3902,9 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
   } else {
     c.fields2 = readFields(br, fieldCount2, this)
   }
+  if (type in ActionDataConversion && 'preprocessFields2' in ActionDataConversion[type]) {
+    c.fields2 = ActionDataConversion[type].preprocessFields2(c.fields2)
+  }
   br.stepOut()
   let params = Object.fromEntries(
     Object.entries(adt.props).filter(([name, prop]) => game in prop.paths).map(([name, prop]) => {
@@ -4003,10 +4006,11 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
 
   if (game !== Game.Generic && type in ActionData) {
     const data = getActionGameData(type, game)
+    const fieldCount2Modified = ActionDataConversion[type]?.preprocessFields2Count?.(fieldCount2, game) ?? fieldCount2
     if (
       section10Count === 0 &&
       fieldCount1 <= data.fields1.length &&
-      fieldCount2 <= data.fields2.length &&
+      fieldCount2Modified <= data.fields2.length &&
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
@@ -5131,6 +5135,20 @@ const ActionDataConversion = {
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
+    }
+  },
+  [ActionType.DynamicTracer]: {
+    preprocessFields2Count(count: number, game: Game) {
+      if (game === Game.DarkSouls3 && count === 31) {
+        return 30
+      }
+      return count
+    },
+    preprocessFields2(fields: Field[], game: Game) {
+      if (game === Game.DarkSouls3 && fields.length === 31) {
+        return fields.slice(1)
+      }
+      return fields
     }
   },
   [ActionType.RichModel]: {
