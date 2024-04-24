@@ -3902,6 +3902,9 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
   } else {
     c.fields2 = readFields(br, fieldCount2, this)
   }
+  if (type in ActionDataConversion && 'preprocessFields2' in ActionDataConversion[type]) {
+    c.fields2 = ActionDataConversion[type].preprocessFields2(c.fields2)
+  }
   br.stepOut()
   let params = Object.fromEntries(
     Object.entries(adt.props).filter(([name, prop]) => game in prop.paths).map(([name, prop]) => {
@@ -4003,10 +4006,11 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
 
   if (game !== Game.Generic && type in ActionData) {
     const data = getActionGameData(type, game)
+    const fieldCount2Modified = ActionDataConversion[type]?.preprocessFields2Count?.(fieldCount2, game) ?? fieldCount2
     if (
       section10Count === 0 &&
       fieldCount1 <= data.fields1.length &&
-      fieldCount2 <= data.fields2.length &&
+      fieldCount2Modified <= data.fields2.length &&
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
@@ -4670,11 +4674,52 @@ function vectorFromArg(vector: VectorValue) {
 }
 
 function uniqueArray<T>(a: T[]) {
-  return a.filter((e, i) => a.indexOf(e) === i)
+  return Array.from(new Set(a))
 }
 
 function lerp(a: number, b: number, c: number) {
   return a + (b - a) * c
+}
+
+function stepKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  let nearestKeyframe: IKeyframe<T>
+
+  for (const kf of keyframes) {
+    if (kf.position <= position) {
+      nearestKeyframe = kf
+    } else {
+      break
+    }
+  }
+
+  return nearestKeyframe.value
+}
+
+function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  let prevKeyframe: IKeyframe<T>, nextKeyframe: IKeyframe<T>
+
+  for (const kf of keyframes) {
+    if (kf.position <= position) {
+      prevKeyframe = kf
+    } else {
+      nextKeyframe = kf
+      break
+    }
+  }
+
+  if (!prevKeyframe) {
+    return nextKeyframe.value
+  } else if (!nextKeyframe) {
+    return prevKeyframe.value
+  }
+
+  const t = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
+
+  if (typeof prevKeyframe.value === 'number') {
+    return lerp(prevKeyframe.value, nextKeyframe.value as number, t) as TypeMap.PropertyValue[T]
+  } else {
+    return prevKeyframe.value.map((e, i) => lerp(e, nextKeyframe.value[i], t)) as TypeMap.PropertyValue[T]
+  }
 }
 
 /**
@@ -5090,6 +5135,20 @@ const ActionDataConversion = {
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
+    }
+  },
+  [ActionType.DynamicTracer]: {
+    preprocessFields2Count(count: number, game: Game) {
+      if (game === Game.DarkSouls3 && count === 31) {
+        return 30
+      }
+      return count
+    },
+    preprocessFields2(fields: Field[], game: Game) {
+      if (game === Game.DarkSouls3 && fields.length === 31) {
+        return fields.slice(1)
+      }
+      return fields
     }
   },
   [ActionType.RichModel]: {
@@ -5587,13 +5646,13 @@ class FXR {
    * {@link TypedArray typed array} with the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
    */
-  static read(filePath: string, game: Game): Promise<FXR>
+  static read(filePath: string, game?: Game): Promise<FXR>
 
   /**
    * Parses an FXR file.
    * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file to parse.
    */
-  static read(buffer: ArrayBuffer | TypedArray, game: Game): FXR
+  static read(buffer: ArrayBuffer | TypedArray, game?: Game): FXR
 
   /**
    * Parses an FXR file.
@@ -5610,10 +5669,10 @@ class FXR {
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    const version = br.assertInt16(
+    const version = game === Game.Generic ? br.assertInt16(
       FXRVersion.DarkSouls3,
       FXRVersion.Sekiro
-    )
+    ) :  br.assertInt16(GameVersionMap[game])
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
@@ -8827,14 +8886,28 @@ class StateEffectMap extends Action {
     if (effectIndices.length === 0) {
       effectIndices.push(0)
     }
-    super(ActionType.StateEffectMap, [], [], [], [], [
-      new Section10(effectIndices.map(i => new IntField(i)))
-    ])
+    if (effectIndices.every(e => e === 0)) {
+      /*
+        If every index is 0, it is equivalent to just having a single field
+        with 0, so this automatically minifies the action.
+      */
+      super(ActionType.StateEffectMap, [], [], [], [], [
+        new Section10([new IntField])
+      ])
+    } else {
+      super(ActionType.StateEffectMap, [], [], [], [], [
+        new Section10(effectIndices.map(i => new IntField(i)))
+      ])
+    }
   }
 
   get effectIndices() { return this.section10s[0].fields.map(e => e.value) }
   set effectIndices(value: number[]) {
-    this.section10s[0].fields = value.map(e => new IntField(e))
+    if (value.every(e => e === 0)) {
+      this.section10s[0].fields = [new IntField]
+    } else {
+      this.section10s[0].fields = value.map(e => new IntField(e))
+    }
   }
 
 }
@@ -26800,39 +26873,13 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   valueAt(arg: number): TypeMap.PropertyValue[T] {
     switch (this.function) {
-      case PropertyFunction.Stepped: {
-        let i = 0
-        while (
-          i < this.keyframes.length - 1 && this.keyframes[i].position > arg
-        ) i++
-        return this.keyframes[i].value
-      }
+      case PropertyFunction.Stepped:
+        return stepKeyframes(this.keyframes, arg)
       case PropertyFunction.Linear:
       case PropertyFunction.Curve1:
       case PropertyFunction.Curve2: {
         //TODO: Implement better approximations for Curve1 and Curve2 prop values
-        let i = 0
-        while (
-          i < this.keyframes.length - 1 && this.keyframes[i].position > arg
-        ) i++
-        if (i < this.keyframes.length - 1) {
-          const d = this.keyframes[i+1].position - this.keyframes[i].position
-          if (d === 0) return this.keyframes[i].value
-          const p = (arg - this.keyframes[i].position) / d
-          return (this.valueType === ValueType.Scalar ?
-            lerp(
-              this.keyframes[i].value as number,
-              this.keyframes[i+1].value as number,
-              p
-            )
-          : arrayOf(this.componentCount, j => lerp(
-              this.keyframes[i].value[j],
-              this.keyframes[i+1].value[j],
-              p
-            ))
-          ) as TypeMap.PropertyValue[T]
-        }
-        return this.keyframes[i].value
+        return lerpKeyframes(this.keyframes, arg)
       }
     }
   }
