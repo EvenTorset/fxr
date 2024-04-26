@@ -7080,6 +7080,8 @@ class NodeWithEffects extends Node {
  */
 class LevelsOfDetailNode extends NodeWithEffects {
 
+  declare effects: LevelsOfDetailEffect[]
+
   /**
    * @param effectsOrThresholds An array of
    * {@link EffectType.LevelsOfDetail LOD effects} or an array of LOD
@@ -7120,6 +7122,8 @@ class LevelsOfDetailNode extends NodeWithEffects {
  * A basic node that can have transforms and child nodes, and emit particles.
  */
 class BasicNode extends NodeWithEffects {
+
+  declare effects: BasicEffect[]
 
   /**
    * @param effectsOrEffectActions This is either the list of effects to add
@@ -7168,6 +7172,8 @@ class BasicNode extends NodeWithEffects {
  * a single emitter to emit multiple types of particles.
  */
 class SharedEmitterNode extends NodeWithEffects {
+
+  declare effects: SharedEmitterEffect[]
 
   constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
