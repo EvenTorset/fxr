@@ -312,19 +312,29 @@ properties:
     argument: EffectAge
     desc: |
       Alpha multiplier.
+  anibnd:
+    field: int
+    desc: |
+      Anibnd ID.
+    see:
+      - animation
+      - loopAnimation
+      - animationSpeed
   animation:
     field: int
     desc: |
-      Animation ID.
+      Controls which animation in the {@link anibnd} to play.
     see:
+      - anibnd
       - loopAnimation
       - animationSpeed
   loopAnimation:
     field: bool
-    default: 1
+    default: true
     desc: |
-      If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+      If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
     see:
+      - anibnd
       - animation
       - animationSpeed
   animationSpeed:
@@ -333,6 +343,7 @@ properties:
     desc: |
       Controls the speed at which the {@link animation} plays.
     see:
+      - anibnd
       - animation
       - loopAnimation
   unk_er_f1_5:
@@ -349,10 +360,6 @@ properties:
   unk_er_f1_9:
     field: int
     default: -2
-  unk_er_f1_11:
-    field: int
-    desc: |
-      Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
   unk_er_f1_14:
     field: int
   unk_er_f1_15:
@@ -467,18 +474,18 @@ properties:
     type: ScalarValue
   unk_er_p1_20:
     type: ScalarValue
-  unk_ds3_p2_2:
+  unk_er_p2_2:
     type: ScalarValue
-  unk_ds3_p2_3:
+  unk_er_p2_3:
     type: Vector4Value
     default: [1, 1, 1, 1]
-  unk_ds3_p2_4:
+  unk_er_p2_4:
     type: Vector4Value
     default: [1, 1, 1, 1]
-  unk_ds3_p2_5:
+  unk_er_p2_5:
     type: Vector4Value
     default: [1, 1, 1, 1]
-  unk_ds3_p2_6:
+  unk_er_p2_6:
     type: ScalarValue
   unk_ac6_f1_24:
     field: float
@@ -542,8 +549,8 @@ games:
       - unk_er_f1_7
       - unk_er_f1_8
       - unk_er_f1_9
+      - anibnd
       - animation
-      - unk_er_f1_11
       - loopAnimation
       - animationSpeed
       - unk_er_f1_14
@@ -628,11 +635,11 @@ games:
     properties2:
       - rgbMultiplier
       - alphaMultiplier
-      - unk_ds3_p2_2
-      - unk_ds3_p2_3
-      - unk_ds3_p2_4
-      - unk_ds3_p2_5
-      - unk_ds3_p2_6
+      - unk_er_p2_2
+      - unk_er_p2_3
+      - unk_er_p2_4
+      - unk_er_p2_5
+      - unk_er_p2_6
   AC6:
     fields1:
       - orientation
@@ -645,8 +652,8 @@ games:
       - unk_er_f1_7
       - unk_er_f1_8
       - unk_er_f1_9
+      - anibnd
       - animation
-      - unk_er_f1_11
       - loopAnimation
       - animationSpeed
       - unk_er_f1_14
@@ -696,11 +703,4 @@ games:
       - uvOffset
       - uvSpeed
       - uvSpeedMultiplier
-    properties2:
-      - rgbMultiplier
-      - alphaMultiplier
-      - unk_ds3_p2_2
-      - unk_ds3_p2_3
-      - unk_ds3_p2_4
-      - unk_ds3_p2_5
-      - unk_ds3_p2_6
+    properties2: ER

@@ -2154,9 +2154,9 @@ const ActionData: {
       unk_ds3_f1_11: { default: true, field: FieldType.Boolean },
       unk_ds3_f1_12: { default: true, field: FieldType.Boolean },
       unk_ds3_f1_13: { default: 1, field: FieldType.Integer },
+      anibnd: { default: 0, field: FieldType.Integer },
       animation: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
-      loopAnimation: { default: 1, field: FieldType.Boolean },
+      loopAnimation: { default: true, field: FieldType.Boolean },
       animationSpeed: { default: 1, field: FieldType.Float },
       unk_ds3_f1_18: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
@@ -2207,19 +2207,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
+        fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
         properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_ds3_p2_7']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','animation','unk_ds3_f1_15','loopAnimation','animationSpeed','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19'],
         fields2: Game.Sekiro,
         properties1: Game.Sekiro,
         properties2: Game.Sekiro
@@ -3262,15 +3262,15 @@ const ActionData: {
       vSpeedMultiplier: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
+      anibnd: { default: 0, field: FieldType.Integer },
       animation: { default: 0, field: FieldType.Integer },
-      loopAnimation: { default: 1, field: FieldType.Boolean },
+      loopAnimation: { default: true, field: FieldType.Boolean },
       animationSpeed: { default: 1, field: FieldType.Float },
       unk_er_f1_5: { default: 1, field: FieldType.Integer },
       unk_er_f1_6: { default: 1, field: FieldType.Integer },
       unk_er_f1_7: { default: 0, field: FieldType.Integer },
       unk_er_f1_8: { default: -2, field: FieldType.Integer },
       unk_er_f1_9: { default: -2, field: FieldType.Integer },
-      unk_er_f1_11: { default: 0, field: FieldType.Integer },
       unk_er_f1_14: { default: 0, field: FieldType.Integer },
       unk_er_f1_15: { default: 0, field: FieldType.Integer },
       unk_er_f1_16: { default: 0, field: FieldType.Integer },
@@ -3320,11 +3320,11 @@ const ActionData: {
       rgbMultiplier2: { default: 1 },
       unk_er_p1_19: { default: 0 },
       unk_er_p1_20: { default: 0 },
-      unk_ds3_p2_2: { default: 0 },
-      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      unk_er_p2_2: { default: 0 },
+      unk_er_p2_3: { default: [1, 1, 1, 1] },
+      unk_er_p2_4: { default: [1, 1, 1, 1] },
+      unk_er_p2_5: { default: [1, 1, 1, 1] },
+      unk_er_p2_6: { default: 0 },
       unk_ac6_f1_24: { default: 0, field: FieldType.Float },
       unk_ac6_f1_25: { default: -1, field: FieldType.Float },
       unk_ac6_f1_26: { default: -1, field: FieldType.Float },
@@ -3342,16 +3342,16 @@ const ActionData: {
     },
     games: {
       [Game.EldenRing]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','animation','unk_er_f1_11','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','animation','unk_er_f1_11','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
         fields2: Game.EldenRing,
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: Game.EldenRing
       }
     }
   },
@@ -3858,7 +3858,7 @@ function writeActionFields(this: Action, bw: BinaryWriter, game: Game, index: nu
 }
 
 //#region Functions - DataAction
-function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
+function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   br.position += 4 // Section10 offset
@@ -3893,17 +3893,30 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
   const adt = ActionData[type]
   const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
-    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), this)
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), null)
   } else {
-    c.fields1 = readFields(br, fieldCount1, this)
+    c.fields1 = readFields(br, fieldCount1, null)
   }
   if ('fields2' in gameData) {
-    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), this)
+
+    /*
+      DS3's action 10012 randomly has an int of -2 at the start of the fields2
+      list, which shifts all of the other indices. This checks for that value
+      and just skips past it if it's there.
+    */
+    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer) {
+      const beforeF2Pos = br.position
+      const field = readField(br, null, 0)
+      if (field.type === FieldType.Integer && field.value === -2) {
+        fieldCount2--
+      } else {
+        br.position = beforeF2Pos
+      }
+    }
+
+    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), null)
   } else {
-    c.fields2 = readFields(br, fieldCount2, this)
-  }
-  if (type in ActionDataConversion && 'preprocessFields2' in ActionDataConversion[type]) {
-    c.fields2 = ActionDataConversion[type].preprocessFields2(c.fields2)
+    c.fields2 = readFields(br, fieldCount2, null)
   }
   br.stepOut()
   let params = Object.fromEntries(
@@ -4006,11 +4019,15 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
 
   if (game !== Game.Generic && type in ActionData) {
     const data = getActionGameData(type, game)
-    const fieldCount2Modified = ActionDataConversion[type]?.preprocessFields2Count?.(fieldCount2, game) ?? fieldCount2
     if (
       section10Count === 0 &&
       fieldCount1 <= data.fields1.length &&
-      fieldCount2Modified <= data.fields2.length &&
+      ( // Deal with DS3's action 10012 special case where it has 1 extra field
+        // that is skipped while reading
+        game === Game.DarkSouls3 && type === ActionType.DynamicTracer ?
+        fieldCount2 - 1 :
+        fieldCount2
+      ) <= data.fields2.length &&
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
@@ -5137,20 +5154,6 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.DynamicTracer]: {
-    preprocessFields2Count(count: number, game: Game) {
-      if (game === Game.DarkSouls3 && count === 31) {
-        return 30
-      }
-      return count
-    },
-    preprocessFields2(fields: Field[], game: Game) {
-      if (game === Game.DarkSouls3 && fields.length === 31) {
-        return fields.slice(1)
-      }
-      return fields
-    }
-  },
   [ActionType.RichModel]: {
     read(props: any, game: Game) {
       if (game === Game.EldenRing) {
@@ -6056,7 +6059,7 @@ class FXR {
         list.push(action.specular)
       } else if (action instanceof Model || action instanceof RichModel) {
         list.push(action.model)
-        list.push(action.animation)
+        list.push(action.anibnd)
       } else if (action instanceof Tracer || action instanceof DynamicTracer) {
         list.push(action.texture)
         list.push(action.normalMap)
@@ -7080,6 +7083,8 @@ class NodeWithEffects extends Node {
  */
 class LevelsOfDetailNode extends NodeWithEffects {
 
+  declare effects: LevelsOfDetailEffect[]
+
   /**
    * @param effectsOrThresholds An array of
    * {@link EffectType.LevelsOfDetail LOD effects} or an array of LOD
@@ -7120,6 +7125,8 @@ class LevelsOfDetailNode extends NodeWithEffects {
  * A basic node that can have transforms and child nodes, and emit particles.
  */
 class BasicNode extends NodeWithEffects {
+
+  declare effects: BasicEffect[]
 
   /**
    * @param effectsOrEffectActions This is either the list of effects to add
@@ -7168,6 +7175,8 @@ class BasicNode extends NodeWithEffects {
  * a single emitter to emit multiple types of particles.
  */
 class SharedEmitterNode extends NodeWithEffects {
+
+  declare effects: SharedEmitterEffect[]
 
   constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
@@ -15071,27 +15080,34 @@ export interface ModelParams {
    */
   unk_ds3_f1_13?: number
   /**
-   * Animation ID.
+   * Anibnd ID.
    * 
    * **Default**: `0`
    * 
    * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  anibnd?: number
+  /**
+   * Controls which animation in the {@link anibnd} to play.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link anibnd}
    * - {@link loopAnimation}
    * - {@link animationSpeed}
    */
   animation?: number
   /**
-   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
+   * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
    * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
-   * 
-   * **Default**: `1`
+   * **Default**: `true`
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link animationSpeed}
    */
@@ -15102,6 +15118,7 @@ export interface ModelParams {
    * **Default**: `1`
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link loopAnimation}
    */
@@ -15761,21 +15778,28 @@ class Model extends DataAction {
   unk_ds3_f1_12: boolean
   unk_ds3_f1_13: number
   /**
-   * Animation ID.
+   * Anibnd ID.
    * 
    * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  anibnd: number
+  /**
+   * Controls which animation in the {@link anibnd} to play.
+   * 
+   * See also:
+   * - {@link anibnd}
    * - {@link loopAnimation}
    * - {@link animationSpeed}
    */
   animation: number
   /**
-   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
-   */
-  unk_ds3_f1_15: number
-  /**
-   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link animationSpeed}
    */
@@ -15784,6 +15808,7 @@ class Model extends DataAction {
    * Controls the speed at which the {@link animation} plays.
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link loopAnimation}
    */
@@ -24624,21 +24649,34 @@ export interface RichModelParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Animation ID.
+   * Anibnd ID.
    * 
    * **Default**: `0`
    * 
    * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  anibnd?: number
+  /**
+   * Controls which animation in the {@link anibnd} to play.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link anibnd}
    * - {@link loopAnimation}
    * - {@link animationSpeed}
    */
   animation?: number
   /**
-   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
    * 
-   * **Default**: `1`
+   * **Default**: `true`
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link animationSpeed}
    */
@@ -24649,6 +24687,7 @@ export interface RichModelParams {
    * **Default**: `1`
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link loopAnimation}
    */
@@ -24683,12 +24722,6 @@ export interface RichModelParams {
    * **Default**: `-2`
    */
   unk_er_f1_9?: number
-  /**
-   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_11?: number
   /**
    * Unknown integer.
    * 
@@ -24990,31 +25023,31 @@ export interface RichModelParams {
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_2?: ScalarValue
+  unk_er_p2_2?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_3?: Vector4Value
+  unk_er_p2_3?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_4?: Vector4Value
+  unk_er_p2_4?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `[1, 1, 1, 1]`
    */
-  unk_ds3_p2_5?: Vector4Value
+  unk_er_p2_5?: Vector4Value
   /**
    * Unknown.
    * 
    * **Default**: `0`
    */
-  unk_ds3_p2_6?: ScalarValue
+  unk_er_p2_6?: ScalarValue
   /**
    * Unknown float.
    * 
@@ -25393,17 +25426,28 @@ class RichModel extends DataAction {
    */
   alphaMultiplier: ScalarValue
   /**
-   * Animation ID.
+   * Anibnd ID.
    * 
    * See also:
+   * - {@link animation}
+   * - {@link loopAnimation}
+   * - {@link animationSpeed}
+   */
+  anibnd: number
+  /**
+   * Controls which animation in the {@link anibnd} to play.
+   * 
+   * See also:
+   * - {@link anibnd}
    * - {@link loopAnimation}
    * - {@link animationSpeed}
    */
   animation: number
   /**
-   * If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link animationSpeed}
    */
@@ -25412,6 +25456,7 @@ class RichModel extends DataAction {
    * Controls the speed at which the {@link animation} plays.
    * 
    * See also:
+   * - {@link anibnd}
    * - {@link animation}
    * - {@link loopAnimation}
    */
@@ -25421,10 +25466,6 @@ class RichModel extends DataAction {
   unk_er_f1_7: number
   unk_er_f1_8: number
   unk_er_f1_9: number
-  /**
-   * Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
-   */
-  unk_er_f1_11: number
   unk_er_f1_14: number
   unk_er_f1_15: number
   unk_er_f1_16: number
@@ -25479,11 +25520,11 @@ class RichModel extends DataAction {
   rgbMultiplier2: ScalarValue
   unk_er_p1_19: ScalarValue
   unk_er_p1_20: ScalarValue
-  unk_ds3_p2_2: ScalarValue
-  unk_ds3_p2_3: Vector4Value
-  unk_ds3_p2_4: Vector4Value
-  unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  unk_er_p2_2: ScalarValue
+  unk_er_p2_3: Vector4Value
+  unk_er_p2_4: Vector4Value
+  unk_er_p2_5: Vector4Value
+  unk_er_p2_6: ScalarValue
   unk_ac6_f1_24: number
   unk_ac6_f1_25: number
   unk_ac6_f1_26: number

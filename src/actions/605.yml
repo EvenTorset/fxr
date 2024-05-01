@@ -364,23 +364,29 @@ properties:
   unk_ds3_f1_13:
     field: int
     default: 1
+  anibnd:
+    field: int
+    desc: |
+      Anibnd ID.
+    see:
+      - animation
+      - loopAnimation
+      - animationSpeed
   animation:
     field: int
     desc: |
-      Animation ID.
+      Controls which animation in the {@link anibnd} to play.
     see:
+      - anibnd
       - loopAnimation
       - animationSpeed
-  unk_ds3_f1_15:
-    field: int
-    desc: |
-      Unknown. Probably a boolean. Seems to just disable the {@link animation} if set to anything but 0.
   loopAnimation:
     field: bool
-    default: 1
+    default: true
     desc: |
-      If disabled, the animation will only play once and then freeze on the last frame. If enabled, the animation will loop.
+      If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
     see:
+      - anibnd
       - animation
       - animationSpeed
   animationSpeed:
@@ -389,6 +395,7 @@ properties:
     desc: |
       Controls the speed at which the {@link animation} plays.
     see:
+      - anibnd
       - animation
       - loopAnimation
   unk_ds3_f1_18:
@@ -516,8 +523,8 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
+      - anibnd
       - animation
-      - unk_ds3_f1_15
       - loopAnimation
       - animationSpeed
       - unk_ds3_f1_18
@@ -600,8 +607,8 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
+      - anibnd
       - animation
-      - unk_ds3_f1_15
       - loopAnimation
       - animationSpeed
       - unk_ds3_f1_18
@@ -694,8 +701,8 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
+      - anibnd
       - animation
-      - unk_ds3_f1_15
       - loopAnimation
       - animationSpeed
       - unk_ds3_f1_18
