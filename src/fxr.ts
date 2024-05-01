@@ -6056,7 +6056,7 @@ class FXR {
         list.push(action.specular)
       } else if (action instanceof Model || action instanceof RichModel) {
         list.push(action.model)
-        list.push(action.animation)
+        list.push(action.anibnd)
       } else if (action instanceof Tracer || action instanceof DynamicTracer) {
         list.push(action.texture)
         list.push(action.normalMap)
