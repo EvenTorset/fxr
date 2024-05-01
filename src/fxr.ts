@@ -3858,7 +3858,7 @@ function writeActionFields(this: Action, bw: BinaryWriter, game: Game, index: nu
 }
 
 //#region Functions - DataAction
-function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
+function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   br.position += 4 // Section10 offset
@@ -3893,17 +3893,30 @@ function readDataAction(br: BinaryReader, game: Game, type: number, fieldCount1:
   const adt = ActionData[type]
   const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
-    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), this)
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), null)
   } else {
-    c.fields1 = readFields(br, fieldCount1, this)
+    c.fields1 = readFields(br, fieldCount1, null)
   }
   if ('fields2' in gameData) {
-    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), this)
+
+    /*
+      DS3's action 10012 randomly has an int of -2 at the start of the fields2
+      list, which shifts all of the other indices. This checks for that value
+      and just skips past it if it's there.
+    */
+    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer) {
+      const beforeF2Pos = br.position
+      const field = readField(br, null, 0)
+      if (field.type === FieldType.Integer && field.value === -2) {
+        fieldCount2--
+      } else {
+        br.position = beforeF2Pos
+      }
+    }
+
+    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), null)
   } else {
-    c.fields2 = readFields(br, fieldCount2, this)
-  }
-  if (type in ActionDataConversion && 'preprocessFields2' in ActionDataConversion[type]) {
-    c.fields2 = ActionDataConversion[type].preprocessFields2(c.fields2)
+    c.fields2 = readFields(br, fieldCount2, null)
   }
   br.stepOut()
   let params = Object.fromEntries(
@@ -4006,11 +4019,15 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
 
   if (game !== Game.Generic && type in ActionData) {
     const data = getActionGameData(type, game)
-    const fieldCount2Modified = ActionDataConversion[type]?.preprocessFields2Count?.(fieldCount2, game) ?? fieldCount2
     if (
       section10Count === 0 &&
       fieldCount1 <= data.fields1.length &&
-      fieldCount2Modified <= data.fields2.length &&
+      ( // Deal with DS3's action 10012 special case where it has 1 extra field
+        // that is skipped while reading
+        game === Game.DarkSouls3 && type === ActionType.DynamicTracer ?
+        fieldCount2 - 1 :
+        fieldCount2
+      ) <= data.fields2.length &&
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
@@ -5135,20 +5152,6 @@ const ActionDataConversion = {
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
-    }
-  },
-  [ActionType.DynamicTracer]: {
-    preprocessFields2Count(count: number, game: Game) {
-      if (game === Game.DarkSouls3 && count === 31) {
-        return 30
-      }
-      return count
-    },
-    preprocessFields2(fields: Field[], game: Game) {
-      if (game === Game.DarkSouls3 && fields.length === 31) {
-        return fields.slice(1)
-      }
-      return fields
     }
   },
   [ActionType.RichModel]: {
