@@ -6046,7 +6046,7 @@ class FXR {
         list.push(effect.emissionAudio.sound)
       }
       const action = effect.appearance
-      if (action instanceof PointSprite) {
+      if (action instanceof PointSprite || action instanceof WaterInteraction) {
         list.push(action.texture)
       } else if (action instanceof BillboardEx) {
         list.push(action.texture)
