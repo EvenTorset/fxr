@@ -4334,7 +4334,7 @@ function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
         return new RandomRangeModifier(fields[1].value, fields[2].value, fields[0].value)
       }
       return new RandomRangeModifier(
-        fields.slice(valueType + 1).map(e => e.value) as Vector,
+        fields.slice(valueType + 1, (valueType + 1) * 2).map(e => e.value) as Vector,
         fields.slice((valueType + 1) * 2).map(e => e.value) as Vector,
         fields.slice(0, valueType + 1).map(e => e.value) as Vector,
       )
