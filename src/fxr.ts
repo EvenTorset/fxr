@@ -4712,7 +4712,7 @@ function stepKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position:
   return nearestKeyframe.value
 }
 
-function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+function surroundingKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number) {
   let prevKeyframe: IKeyframe<T>, nextKeyframe: IKeyframe<T>
 
   for (const kf of keyframes) {
@@ -4723,6 +4723,12 @@ function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position:
       break
     }
   }
+
+  return { prevKeyframe, nextKeyframe }
+}
+
+function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
   if (!prevKeyframe) {
     return nextKeyframe.value
@@ -4738,6 +4744,149 @@ function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position:
     return prevKeyframe.value.map((e, i) => lerp(e, nextKeyframe.value[i], t)) as TypeMap.PropertyValue[T]
   }
 }
+
+const hermiteKeyframes = (() => {
+  /*
+    This approximates the interpolation done in Curve2 properties. An exact
+    calculation would be better and probably faster, but as of writing this the
+    formula has not been discovered.
+
+    Hermite interpolation requires each point to have a tangent vector, but
+    these properties only have a tangent angle, so the magnitude is missing.
+    This probably means it's either fixed or calculated in some way based on
+    the property values and/or the angles.
+
+    This approximation uses 9 cubic Bezier curves that closely match 9
+    configurations of tangent angles. The two angles are the two axes of a 3x3
+    grid of these 9 curves, and so the 4 nearest curves are found and bilinear
+    interpolation is used to blend their values. The approximation is pretty
+    accurate, even for values outside of its range ([0,π/2]), but it is not
+    perfect. The 9 cubic Bezier curves can be tweaked to improve accuracy a
+    bit, but even if those are perfect, the approximation may still not be.
+  */
+
+  const calcBezier = (a: number, b: number, t: number) => t * ((t + 3 * (a - b) * t + (3 * b - 6 * a)) * t + (3 * a))
+  const getSlope = (a: number, b: number, t: number) => 3 * (t * (t + 3 * (a - b) * t + 2 * (b - 2 * a)) + a)
+
+  function binarySubdivide(x: number, a: number, b: number, x1: number, x2: number) {
+    let currentX: number, t: number, i = 0
+    do {
+      t = a + (b - a) / 2
+      currentX = calcBezier(x1, x2, t) - x
+      if (currentX > 0) {
+        b = t
+      } else {
+        a = t
+      }
+    } while (Math.abs(currentX) > 1e-7 && ++i < 10)
+    return t
+  }
+
+  function newtonRaphson(x: number, t: number, x1: number, x2: number) {
+    for (let i = 4; i > 0; i--) {
+      const currentSlope = getSlope(x1, x2, t)
+      if (currentSlope === 0) {
+        return t
+      }
+      t -= (calcBezier(x1, x2, t) - x) / currentSlope
+    }
+    return t
+  }
+
+  const samplesCount = 11
+  const sampleStepSize = 1 / (samplesCount - 1)
+  const samplesLastIndex = samplesCount - 1
+
+  function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
+    if (x1 === y1 && x2 === y2) {
+      return (x: number) => x
+    }
+
+    const samples = new Float32Array(samplesCount)
+    for (var i = samplesLastIndex; i >= 0; i--) {
+      samples[i] = calcBezier(x1, x2, i * sampleStepSize)
+    }
+
+    const getTForX = (x: number) => {
+      let intervalStart = 0
+      let i = 1
+
+      for (; i !== samplesLastIndex && samples[i] <= x; i++) {
+        intervalStart += sampleStepSize
+      }
+      i--
+
+      const t = intervalStart + (x - samples[i]) * sampleStepSize / (samples[i + 1] - samples[i])
+
+      const slope = getSlope(x1, x2, t)
+      if (slope === 0) {
+        return t
+      } else if (slope >= 1e-3) {
+        return newtonRaphson(x, t, x1, x2)
+      } else {
+        return binarySubdivide(x, intervalStart, intervalStart + sampleStepSize, x1, x2)
+      }
+    }
+
+    return (x: number) => {
+      if (x === 0 || x === 1) {
+        return x
+      }
+      return calcBezier(y1, y2, getTForX(x))
+    }
+  }
+
+  const hermiteApproxFuncs = [
+    cubicBezier(0.3, 0.1, 0.7, 0.9),     cubicBezier(0.135, 0.135, 0.525, 1),    cubicBezier(0.015, 0.675, 0.33, 1),
+    cubicBezier(0.475, 0, 0.865, 0.865), (x: number) => x,                       cubicBezier(0.015, 0.9, 0.5, 0.5),
+    cubicBezier(0.71, 0, 0.985, 0.37),   cubicBezier(0.525, 0.525, 0.965, 0.07), cubicBezier(0.065, 1.4, 0.935, -0.4),
+  ]
+  function approxHermite(t1: number, t2: number, x: number) {
+    const t1x2 = t1 * 2
+    const t2x2 = t2 * 2
+    const ix = Math.max(0, Math.min(1, Math.floor(t1x2)))
+    const iy = Math.max(0, Math.min(1, Math.floor(t2x2)))
+    const i = ix + 3 * iy
+    const t1x2f = t1x2 - ix
+    return lerp(
+      lerp(hermiteApproxFuncs[i](x), hermiteApproxFuncs[i+1](x), t1x2f),
+      lerp(hermiteApproxFuncs[i+3](x), hermiteApproxFuncs[i+4](x), t1x2f),
+      t2x2 - iy
+    )
+  }
+
+  return function hermiteKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+    const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
+
+    if (!prevKeyframe) {
+      return nextKeyframe.value
+    } else if (!nextKeyframe) {
+      return prevKeyframe.value
+    }
+
+    const x = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
+
+    if (Array.isArray(prevKeyframe.value)) {
+      return prevKeyframe.value.map((_, i) => {
+        const t1 = prevKeyframe.unkTangent1[i] / Math.PI * 2
+        const t2 = prevKeyframe.unkTangent2[i] / Math.PI * 2
+        return lerp(
+          prevKeyframe.value[i],
+          nextKeyframe.value[i],
+          approxHermite(t1, t2, x)
+        )
+      }) as TypeMap.PropertyValue[T]
+    } else {
+      const t1 = (prevKeyframe.unkTangent1 as number) / Math.PI * 2
+      const t2 = (prevKeyframe.unkTangent2 as number) / Math.PI * 2
+      return lerp(
+        prevKeyframe.value as number,
+        nextKeyframe.value as number,
+        approxHermite(t1, t2, x)
+      ) as TypeMap.PropertyValue[T]
+    }
+  }
+})()
 
 /**
  * Multiplies one number, vector, or a property of either kind by another
@@ -26415,6 +26564,20 @@ class Keyframe<T extends ValueType> implements IKeyframe<T> {
     return new Keyframe(orig.position, orig.value, orig.unkTangent1, orig.unkTangent2)
   }
 
+  static component<T extends ValueType>(kf: IKeyframe<T>, i: number): Keyframe<ValueType.Scalar> {
+    if (Array.isArray(kf.value)) {
+      if (i < 0 || i >= kf.value.length) {
+        throw new Error('Index of keyframe component out of range.')
+      }
+      return new Keyframe(kf.position, kf.value[i], kf.unkTangent1?.[i], kf.unkTangent2?.[i]) as Keyframe<ValueType.Scalar>
+    } else {
+      if (i !== 0) {
+        throw new Error('Index of keyframe component out of range.')
+      }
+      return kf as Keyframe<ValueType.Scalar>
+    }
+  }
+
 }
 
 abstract class Property<T extends ValueType, F extends PropertyFunction> implements IModifiableProperty<T, F> {
@@ -26913,15 +27076,29 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   }
 
   valueAt(arg: number): TypeMap.PropertyValue[T] {
+    if (this.loop) {
+      const duration = this.duration
+      if (duration === 0) {
+        // Return NaN when the property loops and the duration is 0.
+        // This matches what the games do in the same case.
+        return (
+          this.valueType === ValueType.Scalar ?
+            NaN :
+            arrayOf(this.componentCount, _ => NaN)
+        ) as TypeMap.PropertyValue[T]
+      }
+      arg %= duration
+    }
     switch (this.function) {
       case PropertyFunction.Stepped:
         return stepKeyframes(this.keyframes, arg)
       case PropertyFunction.Linear:
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2: {
-        //TODO: Implement better approximations for Curve1 and Curve2 prop values
+      case PropertyFunction.Curve1: {
+        //TODO: Implement better approximations for Curve1 prop values
         return lerpKeyframes(this.keyframes, arg)
       }
+      case PropertyFunction.Curve2:
+        return hermiteKeyframes(this.keyframes, arg)
     }
   }
 
@@ -26956,7 +27133,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  get duration() { return Math.max(...this.keyframes.map(kf => kf.position)) }
+  get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
     for (const kf of this.keyframes) {
