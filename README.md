@@ -22,7 +22,7 @@ To edit existing FXR files, all you need is an ArrayBuffer or typed array with t
 import { FXR, Game } from '@cccode/fxr'
 
 // Parse file
-const fxr = FXR.read('f000450360.fxr', Game.EldenRing)
+const fxr = await FXR.read('f000450360.fxr', Game.EldenRing)
 
 // Make changes to the FXR, for example scaling it so it's half as big:
 fxr.root.scale(0.5)
