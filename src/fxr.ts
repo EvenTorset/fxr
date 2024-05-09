@@ -591,26 +591,24 @@ enum PropertyFunction {
    */
   Linear = 4,
   /**
-   * Uses a custom curve to interpolate the property's values.
+   * Uses a cubic Bezier spline to interpolate the property's values.
    * 
-   * The difference between this and {@link Curve2} is currently unknown.
+   * This property function has a specialized subclass: {@link BezierProperty}
    */
-  Curve1 = 5,
+  Bezier = 5,
   /**
-   * Uses a custom curve to interpolate the property's values.
+   * Uses a cubic Hermite spline to interpolate the property's values.
    * 
-   * The difference between this and {@link Curve1} is currently unknown.
-   * 
-   * This property function has a specialized subclass: {@link Curve2Property}
+   * This property function has a specialized subclass: {@link HermiteProperty}
    */
-  Curve2 = 6,
+  Hermite = 6,
   /**
-   * Same as {@link Curve1} or {@link Curve2} (not sure which), but allows each
-   * component of the value to have a different number of stops.
+   * Same as {@link Hermite}, but allows each component to have a different
+   * number of keyframes.
    * 
    * Only available in Armored Core 6.
    */
-  CompCurve = 7
+  ComponentHermite = 7
 }
 
 enum ModifierType {
@@ -1081,23 +1079,23 @@ enum EmitterShape {
 
 //#region Types / Interfaces
 export type AnyExternalValue =
-  ExternalValue.DarkSouls3 |
-  ExternalValue.Sekiro |
-  ExternalValue.EldenRing |
-  ExternalValue.ArmoredCore6
+  | ExternalValue.DarkSouls3
+  | ExternalValue.Sekiro
+  | ExternalValue.EldenRing
+  | ExternalValue.ArmoredCore6
 
 export type ValuePropertyFunction =
-  PropertyFunction.Zero |
-  PropertyFunction.One |
-  PropertyFunction.Constant
+  | PropertyFunction.Zero
+  | PropertyFunction.One
+  | PropertyFunction.Constant
 
 export type SequencePropertyFunction =
-  PropertyFunction.Stepped |
-  PropertyFunction.Linear |
-  PropertyFunction.Curve1 |
-  PropertyFunction.Curve2
+  | PropertyFunction.Stepped
+  | PropertyFunction.Linear
+  | PropertyFunction.Bezier
+  | PropertyFunction.Hermite
 
-export type ComponentSequencePropertyFunction = PropertyFunction.CompCurve
+export type ComponentSequencePropertyFunction = PropertyFunction.ComponentHermite
 
 export namespace TypeMap {
   export type PropertyValue = {
@@ -1118,14 +1116,38 @@ export namespace TypeMap {
     [ValueType.Vector3]: Vector3Property
     [ValueType.Vector4]: Vector4Property
   }
+  export type Keyframe<T extends ValueType> = {
+    [PropertyFunction.Stepped]: IBasicKeyframe<T>
+    [PropertyFunction.Linear]: IBasicKeyframe<T>
+    [PropertyFunction.Bezier]: IBezierKeyframe<T>
+    [PropertyFunction.Hermite]: IHermiteKeyframe<T>
+  }
 }
 
-export interface IKeyframe<T extends ValueType> {
+export interface IBasicKeyframe<T extends ValueType> {
   position: number
   value: TypeMap.PropertyValue[T]
-  unkTangent1?: TypeMap.PropertyValue[T]
-  unkTangent2?: TypeMap.PropertyValue[T]
 }
+
+export interface IBezierKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
+  p1: TypeMap.PropertyValue[T]
+  p2: TypeMap.PropertyValue[T]
+}
+
+export interface IHermiteKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
+  tangent1: TypeMap.PropertyValue[T]
+  tangent2: TypeMap.PropertyValue[T]
+}
+
+export type AnyKeyframe<T extends ValueType> =
+  | IBasicKeyframe<T>
+  | IBezierKeyframe<T>
+  | IHermiteKeyframe<T>
+
+export type ScalarKeyframeFromAny<K extends AnyKeyframe<T>, T extends ValueType> =
+  K extends IBezierKeyframe<T> ? IBezierKeyframe<ValueType.Scalar> :
+  K extends IHermiteKeyframe<T> ? IHermiteKeyframe<ValueType.Scalar> :
+  IBasicKeyframe<ValueType.Scalar>
 
 export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   valueType: T
@@ -1148,9 +1170,9 @@ export interface IValueProperty<T extends ValueType> extends IProperty<T, ValueP
   clone(): IValueProperty<T>
 }
 
-export interface ISequenceProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+export interface ISequenceProperty<T extends ValueType, F extends SequencePropertyFunction> extends IProperty<T, F> {
   loop: boolean
-  keyframes: IKeyframe<T>[]
+  keyframes: TypeMap.Keyframe<T>[F][]
   sortKeyframes(): void
   clone(): ISequenceProperty<T, F>
   duration: number
@@ -3692,10 +3714,10 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
       return ValueProperty.fromFields(type, func, modifiers, fields) as unknown as T
     case PropertyFunction.Stepped:
     case PropertyFunction.Linear:
-    case PropertyFunction.Curve1:
-    case PropertyFunction.Curve2:
+    case PropertyFunction.Bezier:
+    case PropertyFunction.Hermite:
       return SequenceProperty.fromFields(type, func, loop, modifiers, fields) as unknown as T
-    case PropertyFunction.CompCurve:
+    case PropertyFunction.ComponentHermite:
       return ComponentSequenceProperty.fromFields(type, loop, modifiers, fields) as unknown as T
     default:
       throw new Error('Unknown property function: ' + func)
@@ -4589,7 +4611,7 @@ function readField(br: BinaryReader, context: any, index: number) {
   let isInt = false
 
   if (context?.[0] in PropertyFunction) {
-    if (context[0] === PropertyFunction.CompCurve) {
+    if (context[0] === PropertyFunction.ComponentHermite) {
       isInt = index > 0 && index <= context[1] + 1
     } else if (context[0] !== PropertyFunction.Constant) {
       isInt = !index
@@ -4698,22 +4720,13 @@ function lerp(a: number, b: number, c: number) {
   return a + (b - a) * c
 }
 
-function stepKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
-  let nearestKeyframe: IKeyframe<T>
-
-  for (const kf of keyframes) {
-    if (kf.position <= position) {
-      nearestKeyframe = kf
-    } else {
-      break
-    }
-  }
-
-  return nearestKeyframe.value
+function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number) {
+  const k = 1 - t
+  return k * (k * k * p0 + 3 * t * (k * p1 + t * p2)) + t * t * t * p3
 }
 
-function surroundingKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number) {
-  let prevKeyframe: IKeyframe<T>, nextKeyframe: IKeyframe<T>
+function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(keyframes: K[], position: number) {
+  let prevKeyframe: K, nextKeyframe: K
 
   for (const kf of keyframes) {
     if (kf.position <= position) {
@@ -4727,7 +4740,21 @@ function surroundingKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], po
   return { prevKeyframe, nextKeyframe }
 }
 
-function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+function stepKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  let nearestKeyframe: IBasicKeyframe<T>
+
+  for (const kf of keyframes) {
+    if (kf.position <= position) {
+      nearestKeyframe = kf
+    } else {
+      break
+    }
+  }
+
+  return nearestKeyframe.value
+}
+
+function lerpKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
   const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
   if (!prevKeyframe) {
@@ -4745,7 +4772,35 @@ function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position:
   }
 }
 
-const hermiteKeyframes = (() => {
+function bezierInterpKeyframes<T extends ValueType>(keyframes: IBezierKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
+
+  if (!prevKeyframe) {
+    return nextKeyframe.value
+  } else if (!nextKeyframe) {
+    return prevKeyframe.value
+  }
+
+  const x = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
+
+  if (Array.isArray(prevKeyframe.value)) {
+    return prevKeyframe.value.map((_, i) => {
+      const v1 = prevKeyframe.value[i]
+      const v2 = nextKeyframe.value[i]
+      const t1 = prevKeyframe.p1[i]
+      const t2 = nextKeyframe.p2[i]
+      return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x)
+    }) as TypeMap.PropertyValue[T]
+  } else {
+    const v1 = prevKeyframe.value as number
+    const v2 = nextKeyframe.value as number
+    const t1 = prevKeyframe.p1 as number
+    const t2 = nextKeyframe.p2 as number
+    return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x) as TypeMap.PropertyValue[T]
+  }
+}
+
+const hermiteInterpKeyframes = (() => {
   /*
     This approximates the interpolation done in Curve2 properties. An exact
     calculation would be better and probably faster, but as of writing this the
@@ -4797,7 +4852,7 @@ const hermiteKeyframes = (() => {
   const sampleStepSize = 1 / (samplesCount - 1)
   const samplesLastIndex = samplesCount - 1
 
-  function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
+  function cssCubicBezier(x1: number, y1: number, x2: number, y2: number) {
     if (x1 === y1 && x2 === y2) {
       return (x: number) => x
     }
@@ -4837,9 +4892,9 @@ const hermiteKeyframes = (() => {
   }
 
   const hermiteApproxFuncs = [
-    cubicBezier(0.3, 0.1, 0.7, 0.9),     cubicBezier(0.135, 0.135, 0.525, 1),    cubicBezier(0.015, 0.675, 0.33, 1),
-    cubicBezier(0.475, 0, 0.865, 0.865), (x: number) => x,                       cubicBezier(0.015, 0.9, 0.5, 0.5),
-    cubicBezier(0.71, 0, 0.985, 0.37),   cubicBezier(0.525, 0.525, 0.965, 0.07), cubicBezier(0.065, 1.4, 0.935, -0.4),
+    cssCubicBezier(0.3, 0.1, 0.7, 0.9),     cssCubicBezier(0.135, 0.135, 0.525, 1),    cssCubicBezier(0.015, 0.675, 0.33, 1),
+    cssCubicBezier(0.475, 0, 0.865, 0.865), (x: number) => x,                          cssCubicBezier(0.015, 0.9, 0.5, 0.5),
+    cssCubicBezier(0.71, 0, 0.985, 0.37),   cssCubicBezier(0.525, 0.525, 0.965, 0.07), cssCubicBezier(0.065, 1.4, 0.935, -0.4),
   ]
   function approxHermite(t1: number, t2: number, x: number) {
     const t1x2 = t1 * 2
@@ -4855,7 +4910,7 @@ const hermiteKeyframes = (() => {
     )
   }
 
-  return function hermiteKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  return function hermiteInterpKeyframes<T extends ValueType>(keyframes: IHermiteKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
     const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
     if (!prevKeyframe) {
@@ -4868,8 +4923,8 @@ const hermiteKeyframes = (() => {
 
     if (Array.isArray(prevKeyframe.value)) {
       return prevKeyframe.value.map((_, i) => {
-        const t1 = prevKeyframe.unkTangent1[i] / Math.PI * 2
-        const t2 = prevKeyframe.unkTangent2[i] / Math.PI * 2
+        const t1 = prevKeyframe.tangent1[i] / Math.PI * 2
+        const t2 = prevKeyframe.tangent2[i] / Math.PI * 2
         return lerp(
           prevKeyframe.value[i],
           nextKeyframe.value[i],
@@ -4877,8 +4932,8 @@ const hermiteKeyframes = (() => {
         )
       }) as TypeMap.PropertyValue[T]
     } else {
-      const t1 = (prevKeyframe.unkTangent1 as number) / Math.PI * 2
-      const t2 = (prevKeyframe.unkTangent2 as number) / Math.PI * 2
+      const t1 = (prevKeyframe.tangent1 as number) / Math.PI * 2
+      const t2 = (prevKeyframe.tangent2 as number) / Math.PI * 2
       return lerp(
         prevKeyframe.value as number,
         nextKeyframe.value as number,
@@ -26540,46 +26595,71 @@ class FloatField extends Field implements NumericalField {
 
 }
 
-//#region Property
-class Keyframe<T extends ValueType> implements IKeyframe<T> {
-
-  position: number
-  value: TypeMap.PropertyValue[T]
-  unkTangent1?: TypeMap.PropertyValue[T]
-  unkTangent2?: TypeMap.PropertyValue[T]
+//#region Keyframe
+class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
 
   constructor(
-    position: number,
-    value: TypeMap.PropertyValue[T],
-    unkTangent1?: TypeMap.PropertyValue[T],
-    unkTangent2?: TypeMap.PropertyValue[T]
-  ) {
-    this.position = position
-    this.value = value
-    this.unkTangent1 = unkTangent1
-    this.unkTangent2 = unkTangent2
+    public position: number,
+    public value: TypeMap.PropertyValue[T]
+  ) {}
+
+  static copy<T extends ValueType, K extends AnyKeyframe<T>>(orig: K): K {
+    if ('p1' in orig) {
+      return new BezierKeyframe(orig.position, orig.value, orig.p1, orig.p2) as K
+    } else if ('tangent1' in orig) {
+      return new HermiteKeyframe(orig.position, orig.value, orig.tangent1, orig.tangent2) as K
+    }
+    return new Keyframe(orig.position, orig.value) as K
   }
 
-  static copy<T extends ValueType>(orig: IKeyframe<T>) {
-    return new Keyframe(orig.position, orig.value, orig.unkTangent1, orig.unkTangent2)
-  }
-
-  static component<T extends ValueType>(kf: IKeyframe<T>, i: number): Keyframe<ValueType.Scalar> {
+  static component<T extends ValueType, K extends AnyKeyframe<T>>(kf: K, i: number): ScalarKeyframeFromAny<K, T> {
     if (Array.isArray(kf.value)) {
       if (i < 0 || i >= kf.value.length) {
         throw new Error('Index of keyframe component out of range.')
       }
-      return new Keyframe(kf.position, kf.value[i], kf.unkTangent1?.[i], kf.unkTangent2?.[i]) as Keyframe<ValueType.Scalar>
+      if ('p1' in kf) {
+        return new BezierKeyframe(kf.position, kf.value[i], kf.p1[i], kf.p2[i]) as ScalarKeyframeFromAny<K, T>
+      } else if ('tangent1' in kf) {
+        return new HermiteKeyframe(kf.position, kf.value[i], kf.tangent1[i], kf.tangent2[i]) as ScalarKeyframeFromAny<K, T>
+      }
+      return new Keyframe(kf.position, kf.value[i]) as ScalarKeyframeFromAny<K, T>
     } else {
       if (i !== 0) {
         throw new Error('Index of keyframe component out of range.')
       }
-      return kf as Keyframe<ValueType.Scalar>
+      return kf as unknown as ScalarKeyframeFromAny<K, T>
     }
   }
 
 }
 
+class BezierKeyframe<T extends ValueType> extends Keyframe<T> implements IBezierKeyframe<T> {
+
+  constructor(
+    position: number,
+    value: TypeMap.PropertyValue[T],
+    public p1: TypeMap.PropertyValue[T],
+    public p2: TypeMap.PropertyValue[T],
+  ) {
+    super(position, value)
+  }
+
+}
+
+class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermiteKeyframe<T> {
+
+  constructor(
+    position: number,
+    value: TypeMap.PropertyValue[T],
+    public tangent1: TypeMap.PropertyValue[T],
+    public tangent2: TypeMap.PropertyValue[T],
+  ) {
+    super(position, value)
+  }
+
+}
+
+//#region Property
 abstract class Property<T extends ValueType, F extends PropertyFunction> implements IModifiableProperty<T, F> {
 
   valueType: T
@@ -26629,10 +26709,10 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
       switch (PropertyFunction[obj.function as string]) {
         case PropertyFunction.Stepped:
         case PropertyFunction.Linear:
-        case PropertyFunction.Curve1:
-        case PropertyFunction.Curve2:
+        case PropertyFunction.Bezier:
+        case PropertyFunction.Hermite:
           return SequenceProperty.fromJSON<T>(obj)
-        case PropertyFunction.CompCurve:
+        case PropertyFunction.ComponentHermite:
           return ComponentSequenceProperty.fromJSON<T>(obj)
       }
     } else {
@@ -26838,19 +26918,14 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   extends Property<T, F>
   implements IModifiableProperty<T, F>, ISequenceProperty<T, F> {
 
-  loop: boolean
-  keyframes: IKeyframe<T>[]
-
   constructor(
     valueType: T,
     func: F,
-    loop: boolean = false,
-    keyframes: IKeyframe<T>[] = [],
+    public loop: boolean = false,
+    public keyframes: TypeMap.Keyframe<T>[F][] = [],
     modifiers: IModifier<T>[] = []
   ) {
     super(valueType, func, modifiers)
-    this.loop = loop
-    this.keyframes = keyframes
   }
 
   sortKeyframes() {
@@ -26862,18 +26937,18 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
         return 1 + 2 * this.componentCount + (1 + this.componentCount) * this.keyframes.length
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
+      case PropertyFunction.Bezier:
+      case PropertyFunction.Hermite:
         return 1 + 2 * this.componentCount + (1 + 3 * this.componentCount) * this.keyframes.length
     }
   }
 
   get fields(): NumericalField[] {
     const cc = this.componentCount
+    this.sortKeyframes()
     switch (this.function) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
-        this.sortKeyframes()
         return [
           new IntField(this.keyframes.length),
           ...(cc === 1 ?
@@ -26891,9 +26966,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               e => (e.value as Vector).map(e => new FloatField(e))
           )
         ]
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
-        this.sortKeyframes()
+      case PropertyFunction.Bezier:
         return [
           new IntField(this.keyframes.length),
           ...(cc === 1 ?
@@ -26912,13 +26985,41 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField(e.unkTangent1 as number) ] :
-              e => (e.unkTangent1 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IBezierKeyframe<T>).p1 as number) ] :
+              e => ((e as IBezierKeyframe<T>).p1 as Vector).map(e => new FloatField(e))
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField(e.unkTangent2 as number) ] :
-              e => (e.unkTangent2 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IBezierKeyframe<T>).p2 as number) ] :
+              e => ((e as IBezierKeyframe<T>).p2 as Vector).map(e => new FloatField(e))
+          ),
+        ]
+      case PropertyFunction.Hermite:
+        return [
+          new IntField(this.keyframes.length),
+          ...(cc === 1 ?
+            [Math.min(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
+          ...(cc === 1 ?
+            [Math.max(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
+          ...this.keyframes.map(e => new FloatField(e.position)),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField(e.value as number) ] :
+              e => (e.value as Vector).map(e => new FloatField(e))
+          ),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent1 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).tangent1 as Vector).map(e => new FloatField(e))
+          ),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent2 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).tangent2 as Vector).map(e => new FloatField(e))
           ),
         ]
       default:
@@ -26944,13 +27045,13 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
             ) as TypeMap.PropertyValue[T]
-          )
+          ) as TypeMap.Keyframe<T>[F]
         ), modifiers)
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
+      case PropertyFunction.Bezier:
+      case PropertyFunction.Hermite:
         return new SequenceProperty(valueType, func, loop, arrayOf(
           fieldValues[0],
-          i => new Keyframe(
+          i => new (func === PropertyFunction.Bezier ? BezierKeyframe : HermiteKeyframe)(
             fieldValues[1 + 2 * (valueType + 1) + i],
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
@@ -26964,7 +27065,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               fieldValues[1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
             ) as TypeMap.PropertyValue[T],
-          )
+          ) as TypeMap.Keyframe<T>[F]
         ), modifiers)
       default:
         throw new Error('Incompatible or unknown function in property: ' + func)
@@ -26974,11 +27075,11 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   static fromJSON<T extends ValueType>(obj: {
     function: string
     modifiers?: any[]
-    keyframes?: IKeyframe<any>[]
+    keyframes?: AnyKeyframe<T>[]
     loop?: boolean
   }): SequenceProperty<T, any> {
     return new SequenceProperty(
-      Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar,
+      (Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar) as T,
       PropertyFunction[obj.function],
       obj.loop ?? false,
       obj.keyframes,
@@ -26992,37 +27093,55 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Linear: {
         const o: {
           function: string
-          loop?: boolean
-          keyframes?: any[]
+          loop: boolean
+          keyframes: any[]
           modifiers?: any[]
         } = {
           function: PropertyFunction[this.function],
+          loop: this.loop,
+          keyframes: this.keyframes.map(e => ({
+            position: e.position,
+            value: e.value
+          }))
         }
-        if (this.function > PropertyFunction.Constant) o.loop = this.loop
-        o.keyframes = this.keyframes.map(e => ({
-          position: e.position,
-          value: e.value
-        }))
         if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
         return o
       }
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2: {
+      case PropertyFunction.Bezier: {
         const o: {
           function: string
-          loop?: boolean
-          keyframes?: any[]
+          loop: boolean
+          keyframes: any[]
           modifiers?: any[]
         } = {
           function: PropertyFunction[this.function],
+          loop: this.loop,
+          keyframes: this.keyframes.map(e => ({
+            position: e.position,
+            value: e.value,
+            p1: (e as IBezierKeyframe<T>).p1,
+            p2: (e as IBezierKeyframe<T>).p2,
+          }))
         }
-        if (this.function > PropertyFunction.Constant) o.loop = this.loop
-        o.keyframes = this.keyframes.map(e => ({
-          position: e.position,
-          value: e.value,
-          unkTangent1: e.unkTangent1,
-          unkTangent2: e.unkTangent2,
-        }))
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        return o
+      }
+      case PropertyFunction.Hermite: {
+        const o: {
+          function: string
+          loop: boolean
+          keyframes: any[]
+          modifiers?: any[]
+        } = {
+          function: PropertyFunction[this.function],
+          loop: this.loop,
+          keyframes: this.keyframes.map(e => ({
+            position: e.position,
+            value: e.value,
+            tangent1: (e as IHermiteKeyframe<T>).tangent1,
+            tangent2: (e as IHermiteKeyframe<T>).tangent2,
+          }))
+        }
         if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
         return o
       }
@@ -27093,12 +27212,11 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Stepped:
         return stepKeyframes(this.keyframes, arg)
       case PropertyFunction.Linear:
-      case PropertyFunction.Curve1: {
-        //TODO: Implement better approximations for Curve1 prop values
         return lerpKeyframes(this.keyframes, arg)
-      }
-      case PropertyFunction.Curve2:
-        return hermiteKeyframes(this.keyframes, arg)
+      case PropertyFunction.Bezier:
+        return bezierInterpKeyframes((this.keyframes as IBezierKeyframe<T>[]), arg)
+      case PropertyFunction.Hermite:
+        return hermiteInterpKeyframes((this.keyframes as IHermiteKeyframe<T>[]), arg)
     }
   }
 
@@ -27107,7 +27225,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       this.valueType,
       this.function,
       this.loop,
-      this.keyframes.map(e => Keyframe.copy<T>(e)),
+      this.keyframes.map(e => Keyframe.copy(e)),
       this.modifiers.map(e => e.clone())
     )
   }
@@ -27121,12 +27239,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         ValueType.Scalar,
         this.function,
         this.loop,
-        this.keyframes.map(kf => new Keyframe<ValueType.Scalar>(
-          kf.position,
-          kf.value[i],
-          kf.unkTangent1?.[i],
-          kf.unkTangent2?.[i]
-        ))).withModifiers(
+        this.keyframes.map(kf => Keyframe.component(kf, i) as TypeMap.Keyframe<ValueType.Scalar>[F])
+      ).withModifiers(
           ...mods.map(comps => comps[i])
         )
       )
@@ -27144,22 +27258,18 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 }
 
 class ComponentSequenceProperty<T extends ValueType>
-  extends Property<T, PropertyFunction.CompCurve>
-  implements IModifiableProperty<T, PropertyFunction.CompCurve> {
+  extends Property<T, PropertyFunction.ComponentHermite>
+  implements IModifiableProperty<T, PropertyFunction.ComponentHermite> {
 
-  declare function: PropertyFunction.CompCurve
-  loop: boolean
-  components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[]
+  declare function: PropertyFunction.ComponentHermite
 
   constructor(
     valueType: T,
-    loop: boolean = false,
-    components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[],
+    public loop: boolean = false,
+    public components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Hermite>[],
     modifiers: IModifier<T>[] = []
   ) {
-    super(valueType, PropertyFunction.CompCurve, modifiers)
-    this.loop = loop
-    this.components = components
+    super(valueType, PropertyFunction.ComponentHermite, modifiers)
   }
 
   sortComponentKeyframes() {
@@ -27185,8 +27295,8 @@ class ComponentSequenceProperty<T extends ValueType>
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
-        ...comp.keyframes.map(e => new FloatField(e.unkTangent1)),
-        ...comp.keyframes.map(e => new FloatField(e.unkTangent2)),
+        ...comp.keyframes.map(e => new FloatField(e.tangent1)),
+        ...comp.keyframes.map(e => new FloatField(e.tangent2)),
       ])
     ]
   }
@@ -27199,7 +27309,7 @@ class ComponentSequenceProperty<T extends ValueType>
   ): ComponentSequenceProperty<T> {
     let offset = 1 + 3 * (valueType + 1)
     return new ComponentSequenceProperty(valueType, loop, arrayOf(valueType + 1, i => {
-      return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Curve2, false, [], [
+      return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Hermite, false, [], [
         fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
       ])
@@ -27208,22 +27318,20 @@ class ComponentSequenceProperty<T extends ValueType>
 
   toJSON() {
     const o: {
-      function: 'CompCurve'
-      components: IKeyframe<ValueType.Scalar>[][]
-      loop?: boolean
+      function: 'ComponentHermite'
+      loop: boolean
+      components: IHermiteKeyframe<ValueType.Scalar>[][]
       modifiers?: any[]
     } = {
-      function: 'CompCurve',
+      function: PropertyFunction[this.function] as 'ComponentHermite',
       loop: this.loop,
-      components: []
+      components: this.components.map(e => e.keyframes.map(f => ({
+        position: f.position,
+        value: f.value,
+        tangent1: f.tangent1,
+        tangent2: f.tangent2,
+      })))
     }
-    if (this.loop) o.loop = true
-    o.components = this.components.map(e => e.keyframes.map(f => ({
-      position: f.position,
-      value: f.value,
-      unkTangent1: f.unkTangent1,
-      unkTangent2: f.unkTangent2,
-    })))
     if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.toJSON())
     return o
   }
@@ -27233,12 +27341,12 @@ class ComponentSequenceProperty<T extends ValueType>
     loop = false,
     modifiers = []
   }: {
-    components: IKeyframe<ValueType.Scalar>[][]
+    components: IHermiteKeyframe<ValueType.Scalar>[][]
     loop: boolean
     modifiers?: any[]
   }): ComponentSequenceProperty<T> {
     return new ComponentSequenceProperty(components.length - 1 as T, loop, components.map(comp => {
-      return new SequenceProperty(ValueType.Scalar, PropertyFunction.Curve2, false, comp)
+      return new SequenceProperty(ValueType.Scalar, PropertyFunction.Hermite, false, comp)
     }), (modifiers ?? []).map(mod => Modifier.fromJSON(mod) as IModifier<T>))
   }
 
@@ -27337,9 +27445,9 @@ class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
 class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Stepped> {
 
-  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
+  constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
     if (keyframes.length < 2) {
-      throw new Error ('Properties with a stepped function must have at least 2 stops.')
+      throw new Error ('Sequence properties must have at least 2 keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
@@ -27349,9 +27457,9 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 
 class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {
 
-  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
+  constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
     if (keyframes.length < 2) {
-      throw new Error ('Properties with a linear function must have at least 2 stops.')
+      throw new Error ('Sequence properties must have at least 2 keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Linear, loop, keyframes)
@@ -27450,14 +27558,26 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
 }
 
-class Curve2Property<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Curve2> {
+class BezierProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Bezier> {
 
-  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
+  constructor(loop: boolean, keyframes: IBezierKeyframe<T>[]) {
     if (keyframes.length < 2) {
-      throw new Error ('Properties with a curve function must have at least 2 stops.')
+      throw new Error ('Sequence properties must have at least 2 keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
-    super(comps - 1 as T, PropertyFunction.Curve2, loop, keyframes)
+    super(comps - 1 as T, PropertyFunction.Bezier, loop, keyframes)
+  }
+
+}
+
+class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Hermite> {
+
+  constructor(loop: boolean, keyframes: IHermiteKeyframe<T>[]) {
+    if (keyframes.length < 2) {
+      throw new Error ('Sequence properties must have at least 2 keyframes.')
+    }
+    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
+    super(comps - 1 as T, PropertyFunction.Hermite, loop, keyframes)
   }
 
 }
@@ -27526,7 +27646,7 @@ function BloodVisibilityProperty<T extends ValueType>(
 //#region Modifier
 namespace Modifier {
 
-  export function fromJSON(obj: any): IModifier<ValueType> {
+  export function fromJSON<T extends ValueType>(obj: any): IModifier<T> {
     if ('fields' in obj || 'properties' in obj || !(obj.type in ModifierType)) {
       return new GenericModifier(
         obj.type,
@@ -28264,6 +28384,9 @@ export {
   FloatField,
 
   Keyframe,
+  BezierKeyframe,
+  HermiteKeyframe,
+
   Property,
   ValueProperty,
   SequenceProperty,
@@ -28271,7 +28394,8 @@ export {
   ConstantProperty,
   SteppedProperty,
   LinearProperty,
-  Curve2Property,
+  BezierProperty,
+  HermiteProperty,
   RandomProperty,
   RainbowProperty,
   BloodVisibilityProperty,
