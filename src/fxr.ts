@@ -4706,6 +4706,24 @@ function lerp(a: number, b: number, c: number) {
   return a + (b - a) * c
 }
 
+function interpolateSegments(arr: number[], targetS: number, maxSegments: number): number[] {
+  const totalDuration = arr[arr.length - 1] - arr[0]
+  const s = totalDuration / Math.min(Math.ceil(totalDuration / targetS), maxSegments)
+  const result: number[] = []
+  for (let i = 0; i < arr.length - 1; i++) {
+    const start = arr[i]
+    const len = arr[i + 1] - start
+    const subdivs = Math.ceil(len / s)
+    const step = len / subdivs
+    result.push(start)
+    for (let j = 1; j < subdivs; j++) {
+      result.push(start + j * step)
+    }
+  }
+  result.push(arr[arr.length - 1])
+  return result
+}
+
 function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number) {
   const k = 1 - t
   return k * (k * k * p0 + 3 * t * (k * p1 + t * p2)) + t * t * t * p3
@@ -5045,13 +5063,7 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     }
     return new LinearProperty(
       this.loop,
-      Array.from(positions)
-        .sort((a, b) => a - b)
-        .flatMap((e, i, a) =>
-          i === 0 ? arrayOf(5, j => j === 0 ? e : lerp(e, a[i+1], j/5*0.5)) :
-          i < a.length - 1 ? arrayOf(5, j => j === 4 ? e : lerp(a[i-1], e, j/4*0.5)) :
-          arrayOf(9, j => j === 4 ? e : lerp(a[i-(j<4?1:0)], a[i+(j<4?0:1)], (j<4?j/4:(j-4)/5)*0.5))
-        )
+      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
         .map(e => new Keyframe(e,
           anyValueMult(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
         ))
@@ -5194,13 +5206,7 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     }
     return new LinearProperty(
       this.loop,
-      Array.from(positions)
-        .sort((a, b) => a - b)
-        .flatMap((e, i, a) =>
-          i === 0 ? arrayOf(5, j => j === 0 ? e : lerp(e, a[i+1], j/5*0.5)) :
-          i < a.length - 1 ? arrayOf(5, j => j === 4 ? e : lerp(a[i-1], e, j/4*0.5)) :
-          arrayOf(9, j => j === 4 ? e : lerp(a[i-(j<4?1:0)], a[i+(j<4?0:1)], (j<4?j/4:(j-4)/5)*0.5))
-        )
+      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
         .map(e => new Keyframe(e,
           anyValueSum(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
         ))
@@ -5227,7 +5233,14 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
   if (!comps.some(c => c instanceof Property)) {
     return comps as Vector
   }
-  const positions = new Set<number>
+  const hasCurveComp = comps.some(e =>
+    e instanceof SequenceProperty && (
+      e.function === PropertyFunction.Bezier ||
+      e.function === PropertyFunction.Hermite
+    ) ||
+    e instanceof ComponentSequenceProperty
+  )
+  const positions = new Set<number>()
   for (const comp of comps) {
     if (comp instanceof SequenceProperty) {
       for (const keyframe of comp.keyframes) {
@@ -5275,8 +5288,10 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
     })
   }
   if (positions.size >= 2) {
-    const keyframes = Array.from(positions).sort((a, b) => a - b)
-      .map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
+    const keyframes = (hasCurveComp ?
+      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40) :
+      Array.from(positions).sort((a, b) => a - b)
+    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
     return new LinearProperty(
       comps.some(e => (e instanceof SequenceProperty || e instanceof ComponentSequenceProperty) && e.loop),
       keyframes
@@ -27383,7 +27398,8 @@ class ComponentSequenceProperty<T extends ValueType>
         positions.add(keyframe.position)
       }
     }
-    const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe(e, this.valueAt(e)))
+    const keyframes = interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+      .map(e => new Keyframe(e, this.valueAt(e)))
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
   }
 
