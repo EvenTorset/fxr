@@ -4745,6 +4745,10 @@ function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(key
 }
 
 function stepKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  if (keyframes.length === 1) {
+    return keyframes[0].value
+  }
+
   let nearestKeyframe: IBasicKeyframe<T>
 
   for (const kf of keyframes) {
@@ -4759,6 +4763,10 @@ function stepKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], posi
 }
 
 function lerpKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  if (keyframes.length === 1) {
+    return keyframes[0].value
+  }
+
   const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
   if (!prevKeyframe) {
@@ -4777,6 +4785,10 @@ function lerpKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], posi
 }
 
 function bezierInterpKeyframes<T extends ValueType>(keyframes: IBezierKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  if (keyframes.length === 1) {
+    return keyframes[0].value
+  }
+
   const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
   if (!prevKeyframe) {
@@ -4915,6 +4927,10 @@ const hermiteInterpKeyframes = (() => {
   }
 
   return function hermiteInterpKeyframes<T extends ValueType>(keyframes: IHermiteKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+    if (keyframes.length === 1) {
+      return keyframes[0].value
+    }
+
     const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
     if (!prevKeyframe) {
@@ -27256,10 +27272,7 @@ class ComponentSequenceProperty<T extends ValueType>
   get fields(): NumericalField[] {
     this.sortComponentKeyframes()
     return [
-      new FloatField(this.components.reduce(
-        (a, e) => Math.max(a, e.keyframes[e.keyframes.length - 1].position),
-        0
-      )),
+      new FloatField(this.duration),
       ...this.components.map(e => new IntField(e.keyframes.length)),
       ...this.components.map(comp => new FloatField(Math.min(...comp.keyframes.map(e => e.value)))),
       ...this.components.map(comp => new FloatField(Math.max(...comp.keyframes.map(e => e.value)))),
@@ -27427,8 +27440,8 @@ class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Stepped> {
 
   constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Sequence properties must have at least 2 keyframes.')
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
@@ -27439,8 +27452,8 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {
 
   constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Sequence properties must have at least 2 keyframes.')
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Linear, loop, keyframes)
@@ -27542,8 +27555,8 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 class BezierProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Bezier> {
 
   constructor(loop: boolean, keyframes: IBezierKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Sequence properties must have at least 2 keyframes.')
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Bezier, loop, keyframes)
@@ -27554,8 +27567,8 @@ class BezierProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Hermite> {
 
   constructor(loop: boolean, keyframes: IHermiteKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Sequence properties must have at least 2 keyframes.')
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Hermite, loop, keyframes)
