@@ -5062,7 +5062,7 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      this.loop,
+      av1.loop && av2.loop,
       interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
         .map(e => new Keyframe(e,
           anyValueMult(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
@@ -5205,7 +5205,7 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      this.loop,
+      av1.loop && av2.loop,
       interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
         .map(e => new Keyframe(e,
           anyValueSum(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
