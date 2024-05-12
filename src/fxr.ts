@@ -8036,6 +8036,9 @@ class Action implements IAction {
   }
 
   static fromJSON(obj: any) {
+    if (obj === null) {
+      return new Action
+    }
     if (
       obj.type in ActionData &&
       !('fields1' in obj) &&
@@ -8067,6 +8070,9 @@ class Action implements IAction {
   }
 
   toJSON() {
+    if (this.type === 0) {
+      return null
+    }
     const o: {
       type: ActionType
       fields1?: any[]
