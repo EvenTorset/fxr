@@ -2329,12 +2329,12 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       depthOffset: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
@@ -2415,13 +2415,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
-        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -2460,12 +2460,12 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
@@ -2548,13 +2548,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -2593,12 +2593,12 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
@@ -2673,13 +2673,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
-        properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
+        properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_ds3_p2_7']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.EldenRing]: {
@@ -3709,12 +3709,12 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
@@ -3808,13 +3808,13 @@ const ActionData: {
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
       [Game.ArmoredCore6]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
         fields2: Game.EldenRing,
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
         properties2: Game.EldenRing
       }
     }
@@ -13758,8 +13758,8 @@ export interface BillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -13770,8 +13770,8 @@ export interface BillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -13782,12 +13782,12 @@ export interface BillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -13795,11 +13795,11 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -13807,11 +13807,11 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -13819,11 +13819,11 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -13832,9 +13832,9 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -13843,9 +13843,9 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -13854,7 +13854,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
@@ -14494,8 +14494,8 @@ class BillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -14504,8 +14504,8 @@ class BillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -14514,67 +14514,67 @@ class BillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
@@ -15078,8 +15078,8 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -15090,8 +15090,8 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -15102,12 +15102,12 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -15115,11 +15115,11 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -15127,11 +15127,11 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -15139,11 +15139,11 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -15152,9 +15152,9 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -15163,9 +15163,9 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -15174,7 +15174,7 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -15888,8 +15888,8 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -15898,8 +15898,8 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -15908,67 +15908,67 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -16383,8 +16383,8 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -16395,8 +16395,8 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -16407,12 +16407,12 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -16420,11 +16420,11 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -16432,11 +16432,11 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -16444,11 +16444,11 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -16457,9 +16457,9 @@ export interface ModelParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -16468,9 +16468,9 @@ export interface ModelParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -16479,7 +16479,7 @@ export interface ModelParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Blend mode.
    * 
@@ -17153,8 +17153,8 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -17163,8 +17163,8 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -17173,67 +17173,67 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Blend mode.
    * 
@@ -26122,8 +26122,8 @@ export interface RichModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -26134,8 +26134,8 @@ export interface RichModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -26146,12 +26146,12 @@ export interface RichModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -26159,11 +26159,11 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -26171,11 +26171,11 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -26183,11 +26183,11 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -26196,9 +26196,9 @@ export interface RichModelParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -26207,9 +26207,9 @@ export interface RichModelParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -26218,7 +26218,7 @@ export interface RichModelParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -26928,8 +26928,8 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -26938,8 +26938,8 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -26948,67 +26948,67 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
