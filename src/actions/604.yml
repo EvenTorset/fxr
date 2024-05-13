@@ -1,5 +1,6 @@
 type: 604
 name: MultiTextureBillboardEx
+slot: Appearance
 desc: |
   Particle with multiple textures that can scroll.
 properties:

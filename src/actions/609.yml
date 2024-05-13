@@ -1,5 +1,6 @@
 type: 609
 name: PointLight
+slot: Appearance
 desc: |
   Point light source.
 properties:

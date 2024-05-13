@@ -1,5 +1,6 @@
 type: 501
 name: CircularParticleSpread
+slot: ParticleDirection
 desc: |
   Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
 properties:

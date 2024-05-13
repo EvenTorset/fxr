@@ -1,5 +1,6 @@
 type: 131
 name: ParticleModifier
+slot: ParticleModifier
 desc: |
   Modifies particles in various ways.
 

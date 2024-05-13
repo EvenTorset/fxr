@@ -1,5 +1,6 @@
 type: 10015
 name: RichModel
+slot: Appearance
 desc: |
   Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
 properties:

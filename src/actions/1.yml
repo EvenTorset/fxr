@@ -1,0 +1,49 @@
+type: 1
+name: NodeAcceleration
+slot: NodeMovement
+desc: |
+  Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
+properties:
+  speedZ:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Controls the speed of the node along its Z-axis.
+  accelerationZ:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+  accelerationMultiplierZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link accelerationZ}.
+  accelerationY:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the acceleration of the node along its Y-axis.
+  unk_ds3_f1_0:
+    field: int
+  alignWithMotion:
+    field: int
+    desc: |
+      When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+  unk_ds3_f1_2:
+    field: float
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - alignWithMotion
+      - unk_ds3_f1_2
+    properties1:
+      - speedZ
+      - accelerationZ
+      - accelerationMultiplierZ
+      - accelerationY
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

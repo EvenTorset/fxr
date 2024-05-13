@@ -1,5 +1,6 @@
 type: 607
 name: Distortion
+slot: Appearance
 desc: |
   A particle that distorts anything seen through it.
 

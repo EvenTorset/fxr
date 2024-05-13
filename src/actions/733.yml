@@ -1,5 +1,6 @@
 type: 733
 name: NodeWindAcceleration
+slot: NodeWind
 desc: |
   Controls how effective the wind is at accelerating the node.
 properties:

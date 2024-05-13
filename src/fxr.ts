@@ -124,18 +124,6 @@ enum ActionType {
    */
   None = 0,
   /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAcceleration = 1,
-  /**
-   * Controls the rotation speed of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpin = 34,
-  /**
    * Sets the translation and rotation of the node.
    * 
    * This action type has a specialized subclass: {@link NodeTransform}
@@ -172,12 +160,6 @@ enum ActionType {
    */
   ParticleSpeedPartialFollow = 65,
   /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAccelerationRandomTurns = 83,
-  /**
    * Controls the movement of particles.
    * 
    * This action type has a specialized subclass: {@link ParticleMovement}
@@ -189,42 +171,6 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleMovement}
    */
   ParticleAccelerationPartialFollow = 105,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAccelerationPartialFollow = 106,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAccelerationSpin = 113,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeed = 120,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeedRandomTurns = 121,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeedPartialFollow = 122,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeedSpin = 123,
   /**
    * Maps states to effects in the parent node.
    * 
@@ -277,48 +223,153 @@ enum ActionType {
   // Data Actions
   /*#ActionType start*/
   /**
+   * ### Action 1 - NodeAcceleration
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
+   * 
+   * This action type has a specialized subclass: {@link NodeAcceleration}
+   */
+  NodeAcceleration = 1,
+  /**
+   * ### Action 15 - NodeTranslation
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
    * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
    * 
    * This action type has a specialized subclass: {@link NodeTranslation}
    */
   NodeTranslation = 15,
   /**
+   * ### Action 34 - NodeSpin
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the angular speed of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpin}
+   */
+  NodeSpin = 34,
+  /**
+   * ### Action 46 - NodeAttachToCamera
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
    * Attaches the node to the camera.
    * 
    * This action type has a specialized subclass: {@link NodeAttachToCamera}
    */
   NodeAttachToCamera = 46,
   /**
+   * ### Action 75 - NodeSound
+   * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+   * 
    * Plays a sound effect when the node activates that can repeat.
    * 
    * This action type has a specialized subclass: {@link NodeSound}
    */
   NodeSound = 75,
   /**
+   * ### Action 81 - EmissionSound
+   * **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+   * 
    * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
    * 
    * This action type has a specialized subclass: {@link EmissionSound}
    */
   EmissionSound = 81,
   /**
+   * ### Action 83 - NodeAccelerationRandomTurns
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+   * 
+   * This action type has a specialized subclass: {@link NodeAccelerationRandomTurns}
+   */
+  NodeAccelerationRandomTurns = 83,
+  /**
+   * ### Action 106 - NodeAccelerationPartialFollow
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+   * 
+   * This action type has a specialized subclass: {@link NodeAccelerationPartialFollow}
+   */
+  NodeAccelerationPartialFollow = 106,
+  /**
+   * ### Action 113 - NodeAccelerationSpin
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
+   * 
+   * This action type has a specialized subclass: {@link NodeAccelerationSpin}
+   */
+  NodeAccelerationSpin = 113,
+  /**
+   * ### Action 120 - NodeSpeed
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeed}
+   */
+  NodeSpeed = 120,
+  /**
+   * ### Action 121 - NodeSpeedRandomTurns
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeedRandomTurns}
+   */
+  NodeSpeedRandomTurns = 121,
+  /**
+   * ### Action 122 - NodeSpeedPartialFollow
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeedPartialFollow}
+   */
+  NodeSpeedPartialFollow = 122,
+  /**
+   * ### Action 123 - NodeSpeedSpin
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeedSpin}
+   */
+  NodeSpeedSpin = 123,
+  /**
+   * ### Action 128 - NodeAttributes
+   * **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+   * 
    * Controls various things about the node, like its duration, and how it is attached to the parent node.
    * 
    * This action type has a specialized subclass: {@link NodeAttributes}
    */
   NodeAttributes = 128,
   /**
+   * ### Action 129 - ParticleAttributes
+   * **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+   * 
    * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
    * 
    * This action type has a specialized subclass: {@link ParticleAttributes}
    */
   ParticleAttributes = 129,
   /**
+   * ### Action 130 - Unk130
+   * **Slot**: {@link ActionSlots.UnknownAction Unknown}
+   * 
    * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
    * 
    * This action type has a specialized subclass: {@link Unk130}
    */
   Unk130 = 130,
   /**
+   * ### Action 131 - ParticleModifier
+   * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+   * 
    * Modifies particles in various ways.
    * 
    * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
@@ -327,126 +378,187 @@ enum ActionType {
    */
   ParticleModifier = 131,
   /**
+   * ### Action 132 - SFXReference
+   * 
    * References another SFX by its ID.
    * 
    * This action type has a specialized subclass: {@link SFXReference}
    */
   SFXReference = 132,
   /**
+   * ### Action 133 - LevelsOfDetailThresholds
+   * 
    * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    * 
    * This action type has a specialized subclass: {@link LevelsOfDetailThresholds}
    */
   LevelsOfDetailThresholds = 133,
   /**
+   * ### Action 300 - PeriodicEmitter
+   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * 
    * Emits particles periodically.
    * 
    * This action type has a specialized subclass: {@link PeriodicEmitter}
    */
   PeriodicEmitter = 300,
   /**
+   * ### Action 301 - EqualDistanceEmitter
+   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * 
    * Emits particles once it has moved a certain distance from where it last emitted particles.
    * 
    * This action type has a specialized subclass: {@link EqualDistanceEmitter}
    */
   EqualDistanceEmitter = 301,
   /**
+   * ### Action 400 - PointEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter a single point.
    * 
    * This action type has a specialized subclass: {@link PointEmitterShape}
    */
   PointEmitterShape = 400,
   /**
+   * ### Action 401 - DiskEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter disk-shaped.
    * 
    * This action type has a specialized subclass: {@link DiskEmitterShape}
    */
   DiskEmitterShape = 401,
   /**
+   * ### Action 402 - RectangleEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter rectangular.
    * 
    * This action type has a specialized subclass: {@link RectangleEmitterShape}
    */
   RectangleEmitterShape = 402,
   /**
+   * ### Action 403 - SphereEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter spherical.
    * 
    * This action type has a specialized subclass: {@link SphereEmitterShape}
    */
   SphereEmitterShape = 403,
   /**
+   * ### Action 404 - BoxEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter cuboidal.
    * 
    * This action type has a specialized subclass: {@link BoxEmitterShape}
    */
   BoxEmitterShape = 404,
   /**
+   * ### Action 405 - CylinderEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter cylindrical.
    * 
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
   /**
+   * ### Action 501 - CircularParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
    * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link CircularParticleSpread}
    */
   CircularParticleSpread = 501,
   /**
+   * ### Action 502 - EllipticalParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
    * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link EllipticalParticleSpread}
    */
   EllipticalParticleSpread = 502,
   /**
+   * ### Action 503 - RectangularParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
    * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link RectangularParticleSpread}
    */
   RectangularParticleSpread = 503,
   /**
+   * ### Action 600 - PointSprite
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
    * 
    * This action type has a specialized subclass: {@link PointSprite}
    */
   PointSprite = 600,
   /**
+   * ### Action 601 - Line
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Simple line particle. It automatically rotates to match the direction it's moving.
    * 
    * This action type has a specialized subclass: {@link Line}
    */
   Line = 601,
   /**
+   * ### Action 602 - QuadLine
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
    * 
    * This action type has a specialized subclass: {@link QuadLine}
    */
   QuadLine = 602,
   /**
+   * ### Action 603 - BillboardEx
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
    * 
    * This action type has a specialized subclass: {@link BillboardEx}
    */
   BillboardEx = 603,
   /**
+   * ### Action 604 - MultiTextureBillboardEx
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with multiple textures that can scroll.
    * 
    * This action type has a specialized subclass: {@link MultiTextureBillboardEx}
    */
   MultiTextureBillboardEx = 604,
   /**
+   * ### Action 605 - Model
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with a 3D model.
    * 
    * This action type has a specialized subclass: {@link Model}
    */
   Model = 605,
   /**
+   * ### Action 606 - Tracer
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Creates a trail behind moving effects.
    * 
    * This action type has a specialized subclass: {@link Tracer}
    */
   Tracer = 606,
   /**
+   * ### Action 607 - Distortion
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * A particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -455,6 +567,9 @@ enum ActionType {
    */
   Distortion = 607,
   /**
+   * ### Action 608 - RadialBlur
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * A particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -463,36 +578,53 @@ enum ActionType {
    */
   RadialBlur = 608,
   /**
+   * ### Action 609 - PointLight
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Point light source.
    * 
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
   /**
+   * ### Action 701 - Unk701
+   * 
    * Unknown root node action that was introduced in Elden Ring.
    * 
    * This action type has a specialized subclass: {@link Unk701}
    */
   Unk701 = 701,
   /**
+   * ### Action 731 - NodeWindSpeed
+   * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+   * 
    * Controls how effective the wind is at pushing the node.
    * 
    * This action type has a specialized subclass: {@link NodeWindSpeed}
    */
   NodeWindSpeed = 731,
   /**
+   * ### Action 732 - ParticleWindSpeed
+   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * 
    * Controls how effective the wind is at pushing the particles emitted from the node.
    * 
    * This action type has a specialized subclass: {@link ParticleWindSpeed}
    */
   ParticleWindSpeed = 732,
   /**
+   * ### Action 733 - NodeWindAcceleration
+   * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+   * 
    * Controls how effective the wind is at accelerating the node.
    * 
    * This action type has a specialized subclass: {@link NodeWindAcceleration}
    */
   NodeWindAcceleration = 733,
   /**
+   * ### Action 734 - ParticleWindAcceleration
+   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * 
    * Controls how effective the wind is at accelerating the particles emitted from the node.
    * 
    * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
@@ -501,12 +633,18 @@ enum ActionType {
    */
   ParticleWindAcceleration = 734,
   /**
-   * Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+   * ### Action 800 - Unk800
+   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * 
+   * Unknown action that was added in Armored Core 6.
    * 
    * This action type has a specialized subclass: {@link Unk800}
    */
   Unk800 = 800,
   /**
+   * ### Action 10000 - ParticleSystem
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
@@ -515,6 +653,9 @@ enum ActionType {
    */
   ParticleSystem = 10000,
   /**
+   * ### Action 10012 - DynamicTracer
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Creates a trail behind moving effects.
    * 
    * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
@@ -523,30 +664,44 @@ enum ActionType {
    */
   DynamicTracer = 10012,
   /**
+   * ### Action 10013 - WaterInteraction
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
    * 
    * This action type has a specialized subclass: {@link WaterInteraction}
    */
   WaterInteraction = 10013,
   /**
+   * ### Action 10014 - LensFlare
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Creates lens flares with up to 4 textured layers with different colors and sizes.
    * 
    * This action type has a specialized subclass: {@link LensFlare}
    */
   LensFlare = 10014,
   /**
+   * ### Action 10015 - RichModel
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
    * 
    * This action type has a specialized subclass: {@link RichModel}
    */
   RichModel = 10015,
   /**
+   * ### Action 10500 - Unk10500
+   * 
    * Unknown root node action.
    * 
    * This action type has a specialized subclass: {@link Unk10500}
    */
   Unk10500 = 10500,
   /**
+   * ### Action 11000 - SpotLight
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Light source with an elliptic cone shape, a spot light.
    * 
    * This action type has a specialized subclass: {@link SpotLight}
@@ -1213,6 +1368,109 @@ export type Vector3Value = Vector3 | Vector3Property
 export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 
+export type NodeMovementParams =
+  | NodeSpinParams
+  | NodeAccelerationParams
+  | NodeAccelerationRandomTurnsParams
+  | NodeAccelerationPartialFollowParams
+  | NodeAccelerationSpinParams
+  | NodeSpeedParams
+  | NodeSpeedRandomTurnsParams
+  | NodeSpeedPartialFollowParams
+  | NodeSpeedSpinParams
+
+export namespace ActionSlots {
+/*#ActionSlotTypes start*/
+  export type AppearanceAction =
+    | PointSprite
+    | Line
+    | QuadLine
+    | BillboardEx
+    | MultiTextureBillboardEx
+    | Model
+    | Tracer
+    | Distortion
+    | RadialBlur
+    | PointLight
+    | ParticleSystem
+    | DynamicTracer
+    | WaterInteraction
+    | LensFlare
+    | RichModel
+    | SpotLight
+    | Action
+
+  export type EmissionAudioAction =
+    | EmissionSound
+    | Action
+
+  export type EmitterAction =
+    | PeriodicEmitter
+    | EqualDistanceEmitter
+    | Action
+
+  export type EmitterShapeAction =
+    | PointEmitterShape
+    | DiskEmitterShape
+    | RectangleEmitterShape
+    | SphereEmitterShape
+    | BoxEmitterShape
+    | CylinderEmitterShape
+    | Action
+
+  export type NodeAttributesAction =
+    | NodeAttributes
+    | Action
+
+  export type NodeAudioAction =
+    | NodeSound
+    | Action
+
+  export type NodeMovementAction =
+    | NodeAcceleration
+    | NodeTranslation
+    | NodeSpin
+    | NodeAttachToCamera
+    | NodeAccelerationRandomTurns
+    | NodeAccelerationPartialFollow
+    | NodeAccelerationSpin
+    | NodeSpeed
+    | NodeSpeedRandomTurns
+    | NodeSpeedPartialFollow
+    | NodeSpeedSpin
+    | Action
+
+  export type NodeWindAction =
+    | NodeWindSpeed
+    | NodeWindAcceleration
+    | Action
+
+  export type ParticleAttributesAction =
+    | ParticleAttributes
+    | Action
+
+  export type ParticleDirectionAction =
+    | CircularParticleSpread
+    | EllipticalParticleSpread
+    | RectangularParticleSpread
+    | Action
+
+  export type ParticleModifierAction =
+    | ParticleModifier
+    | Action
+
+  export type ParticleWindAction =
+    | ParticleWindSpeed
+    | ParticleWindAcceleration
+    | Unk800
+    | Action
+
+  export type UnknownAction =
+    | Unk130
+    | Action
+/*#ActionSlotTypes end*/
+}
+
 //#region Action Data
 export type ActionGameDataEntry = {
   fields1?: string[] | Game
@@ -1237,6 +1495,26 @@ const ActionData: {
   }
 } = {
   /*#ActionData start*/
+  [ActionType.NodeAcceleration]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','alignWithMotion','unk_ds3_f1_2'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.NodeTranslation]: {
     props: {
       translation: { default: [0, 0, 0] },
@@ -1252,6 +1530,26 @@ const ActionData: {
         properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.NodeSpin]: {
+    props: {
+      angularSpeedX: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedY: { default: 0 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierZ: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0'],
+        properties1: ['angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.NodeAttachToCamera]: {
@@ -1291,6 +1589,164 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['sound','unk_ds3_f1_1']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeAccelerationRandomTurns]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeAccelerationPartialFollow]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      followFactor: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle','followFactor']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeAccelerationSpin]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      angularSpeedX: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedY: { default: 0 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierZ: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','alignWithMotion','unk_ds3_f1_3'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeed]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','alignWithMotion','unk_ds3_f1_2'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeedRandomTurns]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeedPartialFollow]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      followFactor: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle','followFactor']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeedSpin]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      angularSpeedX: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedY: { default: 0 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierZ: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','alignWithMotion','unk_ds3_f1_3'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5328,6 +5784,50 @@ function separateComponents(value: VectorValue): ScalarValue[] {
 }
 
 const ActionDataConversion = {
+  [ActionType.NodeAccelerationRandomTurns]: {
+    read(props: NodeAccelerationRandomTurnsParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      return props
+    },
+    write(props: NodeAccelerationRandomTurnsParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      return props
+    }
+  },
+  [ActionType.NodeAccelerationPartialFollow]: {
+    read(props: NodeAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      props.followRotation = !props.followRotation
+      return props
+    },
+    write(props: NodeAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      props.followRotation = !props.followRotation
+      return props
+    }
+  },
+  [ActionType.NodeSpeedRandomTurns]: {
+    read(props: NodeSpeedRandomTurnsParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      return props
+    },
+    write(props: NodeSpeedRandomTurnsParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      return props
+    }
+  },
+  [ActionType.NodeSpeedPartialFollow]: {
+    read(props: NodeSpeedPartialFollowParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      props.followRotation = !props.followRotation
+      return props
+    },
+    write(props: NodeAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      props.followRotation = !props.followRotation
+      return props
+    }
+  },
   [ActionType.SFXReference]: {
     read(props: { sfx: number }, game: Game) {
       return props.sfx
@@ -6704,24 +7204,25 @@ abstract class Node {
           break
       }
       const slot2 = effect.nodeMovement
-      if (slot2 instanceof NodeTranslation) {
+      if (
+        slot2 instanceof NodeAcceleration ||
+        slot2 instanceof NodeAccelerationRandomTurns ||
+        slot2 instanceof NodeAccelerationPartialFollow ||
+        slot2 instanceof NodeAccelerationSpin
+      ) {
+        slot2.speedZ = anyValueMult(factor, slot2.speedZ)
+        slot2.accelerationZ = anyValueMult(factor, slot2.accelerationZ)
+        slot2.accelerationY = anyValueMult(factor, slot2.accelerationY)
+      } else if (
+        slot2 instanceof NodeSpeed ||
+        slot2 instanceof NodeSpeedRandomTurns ||
+        slot2 instanceof NodeSpeedPartialFollow ||
+        slot2 instanceof NodeSpeedSpin
+      ) {
+        slot2.speedZ = anyValueMult(factor, slot2.speedZ)
+        slot2.accelerationY = anyValueMult(factor, slot2.accelerationY)
+      } else if (slot2 instanceof NodeTranslation) {
         slot2.translation = anyValueMult(factor, slot2.translation)
-      } else switch (slot2.type) {
-        case ActionType.NodeAcceleration:
-        case ActionType.NodeAccelerationRandomTurns:
-        case ActionType.NodeAccelerationPartialFollow:
-        case ActionType.NodeAccelerationSpin:
-          slot2.properties1[0].scale(factor)
-          slot2.properties1[1].scale(factor)
-          slot2.properties1[3].scale(factor)
-          break
-        case ActionType.NodeSpeed:
-        case ActionType.NodeSpeedRandomTurns:
-        case ActionType.NodeSpeedPartialFollow:
-        case ActionType.NodeSpeedSpin:
-          slot2.properties1[0].scale(factor)
-          slot2.properties1[2].scale(factor)
-          break
       }
       const slot4 = effect.emitter
       if (slot4 instanceof EqualDistanceEmitter) {
@@ -7543,47 +8044,21 @@ class LevelsOfDetailEffect implements IEffect {
 }
 
 export interface BasicEffectParams {
-  nodeAttributes?: Action | NodeAttributes
+  nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: Action
-  nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
-  nodeAudio?: Action | NodeSound
-  emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
-  emitterShape?:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-  particleDirection?:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-  particleModifier?: Action | ParticleModifier
-  particleAttributes?: Action | ParticleAttributes
-  appearance?:
-    Action |
-    PointSprite |
-    Line |
-    QuadLine |
-    BillboardEx |
-    MultiTextureBillboardEx |
-    Model |
-    Tracer |
-    Distortion |
-    RadialBlur |
-    PointLight |
-    DynamicTracer |
-    WaterInteraction |
-    RichModel |
-    SpotLight
+  nodeMovement?: ActionSlots.NodeMovementAction
+  nodeAudio?: ActionSlots.NodeAudioAction
+  emitter?: ActionSlots.EmitterAction
+  emitterShape?:ActionSlots.EmitterShapeAction
+  particleDirection?:ActionSlots.ParticleDirectionAction
+  particleModifier?: ActionSlots.ParticleModifierAction
+  particleAttributes?: ActionSlots.ParticleAttributesAction
+  appearance?:ActionSlots.AppearanceAction
   particleMovement?: Action
-  emissionAudio?: Action | EmissionSound
-  slot12?: Action | Unk130
-  nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
-  particleWind?: Action | ParticleWindAcceleration | ParticleWindSpeed | Unk800
+  emissionAudio?: ActionSlots.EmissionAudioAction
+  slot12?: ActionSlots.UnknownAction
+  nodeWind?: ActionSlots.NodeWindAction
+  particleWind?: ActionSlots.ParticleWindAction
 }
 
 /**
@@ -7612,56 +8087,21 @@ export interface BasicEffectParams {
 class BasicEffect implements IEffect {
   readonly type = EffectType.Basic
 
-  nodeAttributes: Action | NodeAttributes = new NodeAttributes
+  nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: Action = new Action
-  nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
-  nodeAudio: Action | NodeSound = new Action
-  emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
-  emitterShape:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-    = new PointEmitterShape
-  particleDirection:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-    = new NoParticleSpread
-  particleModifier: Action | ParticleModifier = new ParticleModifier
-  particleAttributes: Action | ParticleAttributes = new ParticleAttributes
-  appearance:
-    Action |
-    PointSprite |
-    Line |
-    QuadLine |
-    BillboardEx |
-    MultiTextureBillboardEx |
-    Model |
-    Tracer |
-    Distortion |
-    RadialBlur |
-    PointLight |
-    DynamicTracer |
-    WaterInteraction |
-    LensFlare |
-    RichModel |
-    SpotLight
-    = new Action
+  nodeMovement: ActionSlots.NodeMovementAction = new Action
+  nodeAudio: ActionSlots.NodeAudioAction = new Action
+  emitter: ActionSlots.EmitterAction = new OneTimeEmitter
+  emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
+  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
+  particleModifier: ActionSlots.ParticleModifierAction = new ParticleModifier
+  particleAttributes: ActionSlots.ParticleAttributesAction = new ParticleAttributes
+  appearance: ActionSlots.AppearanceAction = new Action
   particleMovement: Action = new Action
-  emissionAudio: Action | EmissionSound = new Action
-  slot12: Action | Unk130 = new Unk130
-  nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
-  particleWind:
-    Action |
-    ParticleWindAcceleration |
-    ParticleWindSpeed |
-    Unk800
-    = new Action
+  emissionAudio: ActionSlots.EmissionAudioAction = new Action
+  slot12: ActionSlots.UnknownAction = new Unk130
+  nodeWind: ActionSlots.NodeWindAction = new Action
+  particleWind: ActionSlots.ParticleWindAction = new Action
 
   constructor(params: BasicEffectParams | IAction[]) {
     if (Array.isArray(params)) {
@@ -7791,27 +8231,16 @@ class BasicEffect implements IEffect {
 }
 
 export interface SharedEmitterEffectParams {
-  nodeAttributes?: Action | NodeAttributes
+  nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: Action
-  nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
-  nodeAudio?: Action | NodeSound
-  emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
-  emitterShape?:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-  particleDirection?:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
+  nodeMovement?: ActionSlots.NodeMovementAction
+  nodeAudio?: ActionSlots.NodeAudioAction
+  emitter?: ActionSlots.EmitterAction
+  emitterShape?: ActionSlots.EmitterShapeAction
+  particleDirection?: ActionSlots.ParticleDirectionAction
   behavior?: Action
-  emissionAudio?: Action | EmissionSound
-  nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
+  emissionAudio?: ActionSlots.EmissionAudioAction
+  nodeWind?: ActionSlots.NodeWindAction
 }
 
 /**
@@ -7836,29 +8265,16 @@ export interface SharedEmitterEffectParams {
 class SharedEmitterEffect implements IEffect {
   readonly type = EffectType.SharedEmitter
 
-  nodeAttributes: Action | NodeAttributes = new NodeAttributes
+  nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: Action = new Action
-  nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
-  nodeAudio: Action | NodeSound = new Action
-  emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
-  emitterShape:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-    = new PointEmitterShape
-  particleDirection:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-    = new NoParticleSpread
+  nodeMovement: ActionSlots.NodeMovementAction = new Action
+  nodeAudio: ActionSlots.NodeAudioAction = new Action
+  emitter: ActionSlots.EmitterAction = new OneTimeEmitter
+  emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
+  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
   behavior: Action = new EmitAllParticles
-  emissionAudio: Action | EmissionSound = new Action
-  nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
+  emissionAudio: ActionSlots.EmissionAudioAction = new Action
+  nodeWind: ActionSlots.NodeWindAction = new Action
 
   constructor(params: SharedEmitterEffectParams | IAction[]) {
     if (Array.isArray(params)) {
@@ -8179,214 +8595,8 @@ class DataAction implements IAction {
 
 }
 
-export interface NodeMovementParams {
-  /**
-   * Controls how fast the node should spin around its X-axis in degrees per
-   * second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   * 
-   * See also:
-   * - {@link spinXMultiplier}
-   */
-  spinX?: ScalarValue
-  /**
-   * Multiplier for {@link spinX}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   */
-  spinXMultiplier?: ScalarValue
-  /**
-   * Controls how fast the node should spin around its Y-axis in degrees per
-   * second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   * 
-   * See also:
-   * - {@link spinYMultiplier}
-   */
-  spinY?: ScalarValue
-  /**
-   * Multiplier for {@link spinY}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   */
-  spinYMultiplier?: ScalarValue
-  /**
-   * Controls how fast the node should spin around its Z-axis in degrees per
-   * second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   * 
-   * See also:
-   * - {@link spinZMultiplier}
-   */
-  spinZ?: ScalarValue
-  /**
-   * Multiplier for {@link spinZ}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   */
-  spinZMultiplier?: ScalarValue
-  /**
-   * Controls the speed of the node along its Z-axis. Defaults to 0.
-   * 
-   * **Argument**:
-   * - If {@link speedZMultiplier} is set:
-   * {@link PropertyArgument.EffectAge Effect age}
-   * - If {@link speedZMultiplier} is **not** set:
-   * {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link speedZMultiplier}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Multiplier for {@link speedZ}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link accelerationZ}
-   * - {@link accelerationZMultiplier}
-   */
-  speedZMultiplier?: ScalarValue
-  /**
-   * Controls the acceleration of the node in the +Z direction. This value
-   * cannot be negative. Defaults to 0.
-   * 
-   * Incompatible with the following parameters:
-   * - {@link speedZMultiplier}
-   * 
-   * See also:
-   * - {@link accelerationZMultiplier}
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  accelerationZ?: ScalarValue
-  /**
-   * Multiplier for {@link accelerationZ}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link speedZMultiplier}
-   */
-  accelerationZMultiplier?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * The node will turn a random amount based on this value at intervals
-   * defined by {@link turnInterval}. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at
-   * this interval. The units are seconds, but due to how the field that stores
-   * this value works, the value will be rounded to the nearest 0.02 seconds.
-   * Defaults to 0.
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   */
-  turnInterval?: number
-  /**
-   * Controls how well the node should follow the parent node if it is not
-   * attached. At 0, the node will not follow at all. At 1, the node will
-   * follow perfectly, as if attached to the parent node. Negative values will
-   * make the node move in the opposite direction compared to the parent node.
-   * Values greater than 1 will make the node exaggerate the parent node's
-   * movement. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and
-   * not rotation. Defaults to true.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   */
-  followRotation?: boolean
-}
 /**
- * Controls the movement of the node.
- * 
- * This class covers most of the Node Movement action types:
+ * Constructs one of the following {@link ActionSlots.NodeMovementAction Node Movement} classes:
  * - {@link ActionType.NodeSpin NodeSpin}
  * - {@link ActionType.NodeAcceleration NodeAcceleration}
  * - {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns}
@@ -8397,170 +8607,68 @@ export interface NodeMovementParams {
  * - {@link ActionType.NodeSpeedPartialFollow NodeSpeedPartialFollow}
  * - {@link ActionType.NodeSpeedSpin NodeSpeedSpin}
  * 
- * Which one is produced by the constructor depends on what arguments are set.
- * By default, the basic acceleration action is created.
+ * Which one is produced depends on what arguments are set.
+ * 
+ * If you are trying to figure out what some of the unknown fields in these
+ * actions do, use the actual classes themselves instead of relying on this
+ * shortcut. It only exists to make things easier, not to control exactly what
+ * happens.
  */
-class NodeMovement extends Action {
-
-  constructor({
-    spinX = null,
-    spinXMultiplier = null,
-    spinY = null,
-    spinYMultiplier = null,
-    spinZ = null,
-    spinZMultiplier = null,
-    speedZ = null,
-    speedZMultiplier = null,
-    accelerationZ = null,
-    accelerationZMultiplier = null,
-    accelerationY = null,
-    maxTurnAngle = null,
-    turnInterval = null,
-    followFactor = null,
-    followRotation = null,
-  }: NodeMovementParams = {}) {
-    const speed = +(speedZMultiplier !== null)
-    const acceleration = +(accelerationZ !== null || accelerationZMultiplier !== null) << 1
-    const spin = +[spinX, spinXMultiplier, spinY, spinYMultiplier, spinZ, spinZMultiplier].some(e => e !== null) << 2
-    const randomTurns = +(maxTurnAngle !== null || turnInterval !== null) << 3
-    const partialFollow = +(followFactor !== null || followRotation !== null) << 4
-    const aos = +(speed || acceleration || speedZ !== null || accelerationY !== null) << 5
-    spinX ??= 0
-    spinXMultiplier ??= 1
-    spinY ??= 0
-    spinYMultiplier ??= 1
-    spinZ ??= 0
-    spinZMultiplier ??= 1
-    speedZ ??= 0
-    speedZMultiplier ??= 1
-    accelerationZ ??= 0
-    accelerationZMultiplier ??= 1
-    accelerationY ??= 0
-    maxTurnAngle ??= 0
-    turnInterval ??= 0
-    followFactor ??= 0
-    followRotation ??= true
-    switch (speed | acceleration | spin | randomTurns | partialFollow | aos) {
-      case acceleration | aos: super(ActionType.NodeAcceleration, [
-        new IntField,
-        new IntField,
-        new FloatField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-      ]); break;
-      case spin: super(ActionType.NodeSpin, [
-        new IntField(1),
-      ], [], [
-        scalarFromArg(spinX),
-        scalarFromArg(spinXMultiplier),
-        scalarFromArg(spinY),
-        scalarFromArg(spinYMultiplier),
-        scalarFromArg(spinZ),
-        scalarFromArg(spinZMultiplier),
-      ]); break;
-      case acceleration | randomTurns | aos: super(ActionType.NodeAccelerationRandomTurns, [
-        new IntField,
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-      ]); break;
-      case acceleration | partialFollow | aos:
-      case acceleration | partialFollow | randomTurns | aos: super(ActionType.NodeAccelerationPartialFollow, [
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-        new BoolField(followRotation),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-        scalarFromArg(followFactor),
-      ]); break;
-      case acceleration | spin | aos: super(ActionType.NodeAccelerationSpin, [
-        new IntField,
-        new IntField,
-        new IntField,
-        new IntField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(spinX),
-        scalarFromArg(spinXMultiplier),
-        scalarFromArg(spinY),
-        scalarFromArg(spinYMultiplier),
-        scalarFromArg(spinZ),
-        scalarFromArg(spinZMultiplier),
-      ]); break;
-      case speed | aos: super(ActionType.NodeSpeed, [
-        new IntField,
-        new IntField,
-        new IntField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-      ]); break;
-      case speed | randomTurns | aos: super(ActionType.NodeSpeedRandomTurns, [
-        new IntField,
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-      ]); break;
-      case speed | partialFollow | aos:
-      case speed | partialFollow | randomTurns | aos: super(ActionType.NodeSpeedPartialFollow, [
-        new IntField,
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-        new BoolField(followRotation),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-        scalarFromArg(followFactor),
-      ]); break;
-      case speed | spin | aos: super(ActionType.NodeSpeedSpin, [
-        new IntField,
-        new IntField,
-        new IntField,
-        new IntField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(spinX),
-        scalarFromArg(spinXMultiplier),
-        scalarFromArg(spinY),
-        scalarFromArg(spinYMultiplier),
-        scalarFromArg(spinZ),
-        scalarFromArg(spinZMultiplier),
-      ]); break;
-      default:
-        if (speed && acceleration) {
-          throw new Error('Speed Z multiplier is not compatible with acceleration node movement actions.')
-        }
-        if (spin && (randomTurns || partialFollow)) {
-          throw new Error('Spin cannot be used together with random turns or partial follow in node movement actions.')
-        }
-        throw new Error('Incompatible arguments given to NodeMovement constructor.')
-    }
+function NodeMovement(params: NodeMovementParams = {}) {
+  const acceleration = 'accelerationZ' in params || 'accelerationMultiplierZ' in params,
+        speed = 'speedMultiplierZ' in params,
+        randomTurns = 'maxTurnAngle' in params || 'turnInterval' in params,
+        partialFollow = 'followFactor' in params || 'followRotation' in params,
+        spin = (
+          'angularSpeedX' in params ||
+          'angularSpeedMultiplierX' in params ||
+          'angularSpeedY' in params ||
+          'angularSpeedMultiplierY' in params ||
+          'angularSpeedZ' in params ||
+          'angularSpeedMultiplierZ' in params
+        ),
+        speedOrAccel = (
+          'accelerationZ' in params ||
+          'accelerationMultiplierZ' in params ||
+          'speedZ' in params ||
+          'speedMultiplierZ' in params ||
+          'accelerationY' in params ||
+          'alignWithMotion' in params
+        )
+  if ((randomTurns || partialFollow) && spin) {
+    throw new Error('Angular speed is not compatible with random turns properties or partial follow properties in Node Movement actions.')
   }
-
+  if (acceleration && speed) {
+    throw new Error('Speed and acceleration properties are not compatible in Node Movement actions.')
+  }
+  if (spin && !speedOrAccel) {
+    return new NodeSpin(params)
+  }
+  if (speed) {
+    if (spin) {
+      return new NodeSpeedSpin(params)
+    }
+    if (partialFollow) {
+      return new NodeSpeedPartialFollow(params)
+    }
+    if (randomTurns) {
+      return new NodeSpeedRandomTurns(params)
+    }
+    return new NodeSpeed(params)
+  }
+  if (spin) {
+    return new NodeAccelerationSpin(params)
+  }
+  if (partialFollow) {
+    return new NodeAccelerationPartialFollow(params)
+  }
+  if (randomTurns) {
+    return new NodeAccelerationRandomTurns(params)
+  }
+  if (speedOrAccel) {
+    return new NodeAcceleration(params)
+  }
+  return new Action
 }
 
 export interface NodeTransformParams {
@@ -9168,6 +9276,103 @@ class NoParticleSpread extends Action {
 }
 
 /*#ActionClasses start*/
+export interface NodeAccelerationParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+}
+
+/**
+ * ### {@link ActionType.NodeAcceleration Action 1 - NodeAcceleration}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
+ */
+class NodeAcceleration extends DataAction {
+  declare type: ActionType.NodeAcceleration
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_2: number
+  constructor(props: NodeAccelerationParams = {}) {
+    super(ActionType.NodeAcceleration)
+    this.assign(props)
+  }
+}
+
 export interface NodeTranslationParams {
   /**
    * An offset for the position of the node.
@@ -9186,6 +9391,9 @@ export interface NodeTranslationParams {
 }
 
 /**
+ * ### {@link ActionType.NodeTranslation Action 15 - NodeTranslation}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
  * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
  */
 class NodeTranslation extends DataAction {
@@ -9206,6 +9414,132 @@ class NodeTranslation extends DataAction {
   }
 }
 
+export interface NodeSpinParams {
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX?: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY?: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpin Action 34 - NodeSpin}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the angular speed of the node.
+ */
+class NodeSpin extends DataAction {
+  declare type: ActionType.NodeSpin
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ: ScalarValue
+  unk_ds3_f1_0: number
+  constructor(props: NodeSpinParams = {}) {
+    super(ActionType.NodeSpin)
+    this.assign(props)
+  }
+}
+
 export interface NodeAttachToCameraParams {
   /**
    * Disable this to stop the node from following the rotation of the camera.
@@ -9222,6 +9556,9 @@ export interface NodeAttachToCameraParams {
 }
 
 /**
+ * ### {@link ActionType.NodeAttachToCamera Action 46 - NodeAttachToCamera}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
  * Attaches the node to the camera.
  */
 class NodeAttachToCamera extends DataAction {
@@ -9263,6 +9600,9 @@ export interface NodeSoundParams {
 }
 
 /**
+ * ### {@link ActionType.NodeSound Action 75 - NodeSound}
+ * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+ * 
  * Plays a sound effect when the node activates that can repeat.
  */
 class NodeSound extends DataAction {
@@ -9305,6 +9645,9 @@ export interface EmissionSoundParams {
 }
 
 /**
+ * ### {@link ActionType.EmissionSound Action 81 - EmissionSound}
+ * **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+ * 
  * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
  */
 class EmissionSound extends DataAction {
@@ -9316,6 +9659,973 @@ class EmissionSound extends DataAction {
   unk_ds3_f1_1: number
   constructor(props: EmissionSoundParams = {}) {
     super(ActionType.EmissionSound)
+    this.assign(props)
+  }
+}
+
+export interface NodeAccelerationRandomTurnsParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+}
+
+/**
+ * ### {@link ActionType.NodeAccelerationRandomTurns Action 83 - NodeAccelerationRandomTurns}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+ */
+class NodeAccelerationRandomTurns extends DataAction {
+  declare type: ActionType.NodeAccelerationRandomTurns
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  constructor(props: NodeAccelerationRandomTurnsParams = {}) {
+    super(ActionType.NodeAccelerationRandomTurns)
+    this.assign(props)
+  }
+}
+
+export interface NodeAccelerationPartialFollowParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link accelerationY}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along the global Y-axis. When set to anything that isn't 0, this overrides the direction of {@link accelerationZ}.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  followFactor?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+}
+
+/**
+ * ### {@link ActionType.NodeAccelerationPartialFollow Action 106 - NodeAccelerationPartialFollow}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+ */
+class NodeAccelerationPartialFollow extends DataAction {
+  declare type: ActionType.NodeAccelerationPartialFollow
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link accelerationY}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along the global Y-axis. When set to anything that isn't 0, this overrides the direction of {@link accelerationZ}.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  followFactor: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   */
+  followRotation: boolean
+  constructor(props: NodeAccelerationPartialFollowParams = {}) {
+    super(ActionType.NodeAccelerationPartialFollow)
+    this.assign(props)
+  }
+}
+
+export interface NodeAccelerationSpinParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX?: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY?: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+}
+
+/**
+ * ### {@link ActionType.NodeAccelerationSpin Action 113 - NodeAccelerationSpin}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
+ */
+class NodeAccelerationSpin extends DataAction {
+  declare type: ActionType.NodeAccelerationSpin
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ: ScalarValue
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_3: number
+  constructor(props: NodeAccelerationSpinParams = {}) {
+    super(ActionType.NodeAccelerationSpin)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpeed Action 120 - NodeSpeed}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
+ */
+class NodeSpeed extends DataAction {
+  declare type: ActionType.NodeSpeed
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_2: number
+  constructor(props: NodeSpeedParams = {}) {
+    super(ActionType.NodeSpeed)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedRandomTurnsParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpeedRandomTurns Action 121 - NodeSpeedRandomTurns}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
+ */
+class NodeSpeedRandomTurns extends DataAction {
+  declare type: ActionType.NodeSpeedRandomTurns
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  constructor(props: NodeSpeedRandomTurnsParams = {}) {
+    super(ActionType.NodeSpeedRandomTurns)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedPartialFollowParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  followFactor?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+}
+
+/**
+ * ### {@link ActionType.NodeSpeedPartialFollow Action 122 - NodeSpeedPartialFollow}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+ */
+class NodeSpeedPartialFollow extends DataAction {
+  declare type: ActionType.NodeSpeedPartialFollow
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  followFactor: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   */
+  followRotation: boolean
+  constructor(props: NodeSpeedPartialFollowParams = {}) {
+    super(ActionType.NodeSpeedPartialFollow)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedSpinParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX?: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY?: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpeedSpin Action 123 - NodeSpeedSpin}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
+ */
+class NodeSpeedSpin extends DataAction {
+  declare type: ActionType.NodeSpeedSpin
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ: ScalarValue
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_3: number
+  constructor(props: NodeSpeedSpinParams = {}) {
+    super(ActionType.NodeSpeedSpin)
     this.assign(props)
   }
 }
@@ -9356,6 +10666,9 @@ export interface NodeAttributesParams {
 }
 
 /**
+ * ### {@link ActionType.NodeAttributes Action 128 - NodeAttributes}
+ * **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+ * 
  * Controls various things about the node, like its duration, and how it is attached to the parent node.
  */
 class NodeAttributes extends DataAction {
@@ -9400,6 +10713,9 @@ export interface ParticleAttributesParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleAttributes Action 129 - ParticleAttributes}
+ * **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+ * 
  * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
  */
 class ParticleAttributes extends DataAction {
@@ -9526,6 +10842,9 @@ export interface Unk130Params {
 }
 
 /**
+ * ### {@link ActionType.Unk130 Action 130 - Unk130}
+ * **Slot**: {@link ActionSlots.UnknownAction Unknown}
+ * 
  * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
@@ -9614,6 +10933,9 @@ export interface ParticleModifierParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleModifier Action 131 - ParticleModifier}
+ * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+ * 
  * Modifies particles in various ways.
    * 
    * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
@@ -9719,6 +11041,8 @@ export interface LevelsOfDetailThresholdsParams {
 }
 
 /**
+ * ### {@link ActionType.LevelsOfDetailThresholds Action 133 - LevelsOfDetailThresholds}
+ * 
  * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
@@ -9798,6 +11122,9 @@ export interface PeriodicEmitterParams {
 }
 
 /**
+ * ### {@link ActionType.PeriodicEmitter Action 300 - PeriodicEmitter}
+ * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+ * 
  * Emits particles periodically.
  */
 class PeriodicEmitter extends DataAction {
@@ -9879,6 +11206,9 @@ export interface EqualDistanceEmitterParams {
 }
 
 /**
+ * ### {@link ActionType.EqualDistanceEmitter Action 301 - EqualDistanceEmitter}
+ * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+ * 
  * Emits particles once it has moved a certain distance from where it last emitted particles.
  */
 class EqualDistanceEmitter extends DataAction {
@@ -9915,6 +11245,9 @@ export interface PointEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.PointEmitterShape Action 400 - PointEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter a single point.
  */
 class PointEmitterShape extends DataAction {
@@ -9959,6 +11292,9 @@ export interface DiskEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.DiskEmitterShape Action 401 - DiskEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter disk-shaped.
  */
 class DiskEmitterShape extends DataAction {
@@ -10027,6 +11363,9 @@ export interface RectangleEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.RectangleEmitterShape Action 402 - RectangleEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter rectangular.
  */
 class RectangleEmitterShape extends DataAction {
@@ -10081,6 +11420,9 @@ export interface SphereEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.SphereEmitterShape Action 403 - SphereEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter spherical.
  */
 class SphereEmitterShape extends DataAction {
@@ -10141,6 +11483,9 @@ export interface BoxEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.BoxEmitterShape Action 404 - BoxEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter cuboidal.
  */
 class BoxEmitterShape extends DataAction {
@@ -10215,6 +11560,9 @@ export interface CylinderEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.CylinderEmitterShape Action 405 - CylinderEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter cylindrical.
  */
 class CylinderEmitterShape extends DataAction {
@@ -10280,6 +11628,9 @@ export interface CircularParticleSpreadParams {
 }
 
 /**
+ * ### {@link ActionType.CircularParticleSpread Action 501 - CircularParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
  * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
  */
 class CircularParticleSpread extends DataAction {
@@ -10356,6 +11707,9 @@ export interface EllipticalParticleSpreadParams {
 }
 
 /**
+ * ### {@link ActionType.EllipticalParticleSpread Action 502 - EllipticalParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
  * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
  */
 class EllipticalParticleSpread extends DataAction {
@@ -10438,6 +11792,9 @@ export interface RectangularParticleSpreadParams {
 }
 
 /**
+ * ### {@link ActionType.RectangularParticleSpread Action 503 - RectangularParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
  * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
  */
 class RectangularParticleSpread extends DataAction {
@@ -10887,6 +12244,9 @@ export interface PointSpriteParams {
 }
 
 /**
+ * ### {@link ActionType.PointSprite Action 600 - PointSprite}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
  */
 class PointSprite extends DataAction {
@@ -11472,6 +12832,9 @@ export interface LineParams {
 }
 
 /**
+ * ### {@link ActionType.Line Action 601 - Line}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Simple line particle. It automatically rotates to match the direction it's moving.
  */
 class Line extends DataAction {
@@ -12089,6 +13452,9 @@ export interface QuadLineParams {
 }
 
 /**
+ * ### {@link ActionType.QuadLine Action 602 - QuadLine}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
  */
 class QuadLine extends DataAction {
@@ -13039,6 +14405,9 @@ export interface BillboardExParams {
 }
 
 /**
+ * ### {@link ActionType.BillboardEx Action 603 - BillboardEx}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
  */
 class BillboardEx extends DataAction {
@@ -14319,6 +15688,9 @@ export interface MultiTextureBillboardExParams {
 }
 
 /**
+ * ### {@link ActionType.MultiTextureBillboardEx Action 604 - MultiTextureBillboardEx}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with multiple textures that can scroll.
  */
 class MultiTextureBillboardEx extends DataAction {
@@ -15597,6 +16969,9 @@ export interface ModelParams {
 }
 
 /**
+ * ### {@link ActionType.Model Action 605 - Model}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with a 3D model.
  */
 class Model extends DataAction {
@@ -16649,6 +18024,9 @@ export interface TracerParams {
 }
 
 /**
+ * ### {@link ActionType.Tracer Action 606 - Tracer}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Creates a trail behind moving effects.
  */
 class Tracer extends DataAction {
@@ -17556,6 +18934,9 @@ export interface DistortionParams {
 }
 
 /**
+ * ### {@link ActionType.Distortion Action 607 - Distortion}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * A particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -18287,6 +19668,9 @@ export interface RadialBlurParams {
 }
 
 /**
+ * ### {@link ActionType.RadialBlur Action 608 - RadialBlur}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * A particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -18899,6 +20283,9 @@ export interface PointLightParams {
 }
 
 /**
+ * ### {@link ActionType.PointLight Action 609 - PointLight}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Point light source.
  */
 class PointLight extends DataAction {
@@ -19126,6 +20513,8 @@ export interface Unk701Params {
 }
 
 /**
+ * ### {@link ActionType.Unk701 Action 701 - Unk701}
+ * 
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk701 extends DataAction {
@@ -19163,6 +20552,9 @@ export interface NodeWindSpeedParams {
 }
 
 /**
+ * ### {@link ActionType.NodeWindSpeed Action 731 - NodeWindSpeed}
+ * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+ * 
  * Controls how effective the wind is at pushing the node.
  */
 class NodeWindSpeed extends DataAction {
@@ -19221,6 +20613,9 @@ export interface ParticleWindSpeedParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleWindSpeed Action 732 - ParticleWindSpeed}
+ * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * 
  * Controls how effective the wind is at pushing the particles emitted from the node.
  */
 class ParticleWindSpeed extends DataAction {
@@ -19277,6 +20672,9 @@ export interface NodeWindAccelerationParams {
 }
 
 /**
+ * ### {@link ActionType.NodeWindAcceleration Action 733 - NodeWindAcceleration}
+ * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+ * 
  * Controls how effective the wind is at accelerating the node.
  */
 class NodeWindAcceleration extends DataAction {
@@ -19335,6 +20733,9 @@ export interface ParticleWindAccelerationParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleWindAcceleration Action 734 - ParticleWindAcceleration}
+ * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * 
  * Controls how effective the wind is at accelerating the particles emitted from the node.
    * 
    * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
@@ -19389,7 +20790,10 @@ export interface Unk800Params {
 }
 
 /**
- * Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+ * ### {@link ActionType.Unk800 Action 800 - Unk800}
+ * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * 
+ * Unknown action that was added in Armored Core 6.
  */
 class Unk800 extends DataAction {
   declare type: ActionType.Unk800
@@ -21007,6 +22411,9 @@ export interface ParticleSystemParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleSystem Action 10000 - ParticleSystem}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
@@ -22408,6 +23815,9 @@ export interface DynamicTracerParams {
 }
 
 /**
+ * ### {@link ActionType.DynamicTracer Action 10012 - DynamicTracer}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Creates a trail behind moving effects.
    * 
    * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
@@ -22751,6 +24161,9 @@ export interface WaterInteractionParams {
 }
 
 /**
+ * ### {@link ActionType.WaterInteraction Action 10013 - WaterInteraction}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
  */
 class WaterInteraction extends DataAction {
@@ -23863,6 +25276,9 @@ export interface LensFlareParams {
 }
 
 /**
+ * ### {@link ActionType.LensFlare Action 10014 - LensFlare}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Creates lens flares with up to 4 textured layers with different colors and sizes.
  */
 class LensFlare extends DataAction {
@@ -25342,6 +26758,9 @@ export interface RichModelParams {
 }
 
 /**
+ * ### {@link ActionType.RichModel Action 10015 - RichModel}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
  */
 class RichModel extends DataAction {
@@ -25833,6 +27252,8 @@ export interface Unk10500Params {
 }
 
 /**
+ * ### {@link ActionType.Unk10500 Action 10500 - Unk10500}
+ * 
  * Unknown root node action.
  */
 class Unk10500 extends DataAction {
@@ -26214,6 +27635,9 @@ export interface SpotLightParams {
 }
 
 /**
+ * ### {@link ActionType.SpotLight Action 11000 - SpotLight}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Light source with an elliptic cone shape, a spot light.
  */
 class SpotLight extends DataAction {
@@ -26434,17 +27858,6 @@ class SpotLight extends DataAction {
 /*#ActionClasses end*/
 
 const Actions = {
-  NodeMovement,
-  [ActionType.NodeAcceleration]: NodeMovement, NodeAcceleration: NodeMovement,
-  [ActionType.NodeSpin]: NodeMovement, NodeSpin: NodeMovement,
-  [ActionType.NodeAccelerationRandomTurns]: NodeMovement, NodeAccelerationRandomTurns: NodeMovement,
-  [ActionType.NodeAccelerationPartialFollow]: NodeMovement, NodeAccelerationPartialFollow: NodeMovement,
-  [ActionType.NodeAccelerationSpin]: NodeMovement, NodeAccelerationSpin: NodeMovement,
-  [ActionType.NodeSpeed]: NodeMovement, NodeSpeed: NodeMovement,
-  [ActionType.NodeSpeedRandomTurns]: NodeMovement, NodeSpeedRandomTurns: NodeMovement,
-  [ActionType.NodeSpeedPartialFollow]: NodeMovement, NodeSpeedPartialFollow: NodeMovement,
-  [ActionType.NodeSpeedSpin]: NodeMovement, NodeSpeedSpin: NodeMovement,
-
   NodeTransform,
   [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
   [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
@@ -26466,10 +27879,19 @@ const Actions = {
 
 const DataActions = {
   /*#ActionsList start*/
+  [ActionType.NodeAcceleration]: NodeAcceleration, NodeAcceleration,
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
+  [ActionType.NodeSpin]: NodeSpin, NodeSpin,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.NodeSound]: NodeSound, NodeSound,
   [ActionType.EmissionSound]: EmissionSound, EmissionSound,
+  [ActionType.NodeAccelerationRandomTurns]: NodeAccelerationRandomTurns, NodeAccelerationRandomTurns,
+  [ActionType.NodeAccelerationPartialFollow]: NodeAccelerationPartialFollow, NodeAccelerationPartialFollow,
+  [ActionType.NodeAccelerationSpin]: NodeAccelerationSpin, NodeAccelerationSpin,
+  [ActionType.NodeSpeed]: NodeSpeed, NodeSpeed,
+  [ActionType.NodeSpeedRandomTurns]: NodeSpeedRandomTurns, NodeSpeedRandomTurns,
+  [ActionType.NodeSpeedPartialFollow]: NodeSpeedPartialFollow, NodeSpeedPartialFollow,
+  [ActionType.NodeSpeedSpin]: NodeSpeedSpin, NodeSpeedSpin,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.Unk130]: Unk130, Unk130,
@@ -28332,10 +29754,19 @@ export {
   OneTimeEmitter,
   NoParticleSpread,
   /*#ActionsExport start*/
+  NodeAcceleration,
   NodeTranslation,
+  NodeSpin,
   NodeAttachToCamera,
   NodeSound,
   EmissionSound,
+  NodeAccelerationRandomTurns,
+  NodeAccelerationPartialFollow,
+  NodeAccelerationSpin,
+  NodeSpeed,
+  NodeSpeedRandomTurns,
+  NodeSpeedPartialFollow,
+  NodeSpeedSpin,
   NodeAttributes,
   ParticleAttributes,
   Unk130,

@@ -78,9 +78,17 @@ export default async function(writeToDist = true) {
   const classes = []
   const actionsListEntries = []
   const actionsExport = []
+  const actionSlots = new Map
 
   for (const fn of fs.readdirSync(actionsDir).sort(naturalSorter)) {
     const data = yaml.parse(await fs.promises.readFile(path.join(actionsDir, fn), 'utf-8'))
+
+    if ('slot' in data) {
+      if (!actionSlots.has(data.slot)) {
+        actionSlots.set(data.slot, [])
+      }
+      actionSlots.get(data.slot).push(data.name)
+    }
 
     for (const prop of Object.keys(data.properties)) {
       let found = false
@@ -111,6 +119,9 @@ export default async function(writeToDist = true) {
 
     actionTypes.push(`
       /**
+       * ### Action ${data.type} - ${data.name}${'slot' in data ? `
+       * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+       * 
        * ${data.desc.trim().replace(/\n/g, '\n   * ')}
        * 
        * This action type has a specialized subclass: {@link ${data.name}}
@@ -195,6 +206,9 @@ export default async function(writeToDist = true) {
       )
       classes.push(`
         /**
+         * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
+         * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+         * 
          * ${data.desc.trim().replace(/\n/g, '\n   * ')}
          */
         class ${data.name} extends DataAction {
@@ -244,6 +258,9 @@ export default async function(writeToDist = true) {
   replace('ActionClasses', classes.join('\n\n'))
   replace('ActionsList', '  '+actionsListEntries.join('\n  '))
   replace('ActionsExport', '  '+actionsExport.join(',\n  ') + ',')
+  replace('ActionSlotTypes', Array.from(actionSlots).sort((a, b) => naturalSorter(a[0], b[0])).map(([name, actions]) => {
+    return `  export type ${name}Action =\n${actions.map(e => `    | ${e}`).join('\n')}\n    | Action`
+  }).join('\n\n'))
 
   await fs.promises.writeFile(path.join(srcDir, 'fxr.ts'), libSrc)
   if (writeToDist) {

@@ -1,5 +1,6 @@
 type: 128
 name: NodeAttributes
+slot: NodeAttributes
 desc: |
   Controls various things about the node, like its duration, and how it is attached to the parent node.
 properties:

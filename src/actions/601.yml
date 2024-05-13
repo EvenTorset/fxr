@@ -1,5 +1,6 @@
 type: 601
 name: Line
+slot: Appearance
 desc: |
   Simple line particle. It automatically rotates to match the direction it's moving.
 properties:

@@ -1,5 +1,6 @@
 type: 404
 name: BoxEmitterShape
+slot: EmitterShape
 desc: |
   Makes the emitter cuboidal.
 properties:

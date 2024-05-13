@@ -1,5 +1,6 @@
 type: 10012
 name: DynamicTracer
+slot: Appearance
 desc: |
   Creates a trail behind moving effects.
 

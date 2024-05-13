@@ -1,5 +1,6 @@
 type: 11000
 name: SpotLight
+slot: Appearance
 desc: |
   Light source with an elliptic cone shape, a spot light.
 properties:

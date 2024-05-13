@@ -1,5 +1,6 @@
 type: 300
 name: PeriodicEmitter
+slot: Emitter
 desc: >
   Emits particles periodically.
 properties:

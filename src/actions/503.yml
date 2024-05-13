@@ -1,5 +1,6 @@
 type: 503
 name: RectangularParticleSpread
+slot: ParticleDirection
 desc: |
   Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
 properties:

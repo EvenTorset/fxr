@@ -1,5 +1,6 @@
 type: 401
 name: DiskEmitterShape
+slot: EmitterShape
 desc: |
   Makes the emitter disk-shaped.
 properties:

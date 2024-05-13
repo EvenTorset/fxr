@@ -1,5 +1,6 @@
 type: 606
 name: Tracer
+slot: Appearance
 desc: |
   Creates a trail behind moving effects.
 properties:
