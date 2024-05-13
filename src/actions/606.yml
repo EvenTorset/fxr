@@ -198,11 +198,13 @@ properties:
     argument: ParticleAge
     desc: |
       Color multiplier.
-  alphaThreshold:
+  alphaFadeThreshold:
     type: ScalarValue
     argument: ParticleAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
   frameIndex:
     type: ScalarValue
     argument: ParticleAge
@@ -337,8 +339,13 @@ properties:
   unk_ds3_p2_5:
     type: Vector4Value
     default: [1, 1, 1, 1]
-  unk_ds3_p2_6:
+  alphaThreshold:
     type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
   unk_sdt_f2_31:
     field: int
   unk_sdt_f2_32:
@@ -417,7 +424,7 @@ games:
       - color1
       - color2
       - color3
-      - alphaThreshold
+      - alphaFadeThreshold
       - frameIndex
       - frameIndexOffset
       - textureFraction
@@ -431,7 +438,7 @@ games:
       - unk_ds3_p2_3
       - unk_ds3_p2_4
       - unk_ds3_p2_5
-      - unk_ds3_p2_6
+      - alphaThreshold
   SDT:
     fields1:
       - orientation
@@ -498,7 +505,7 @@ games:
       - color1
       - color2
       - color3
-      - alphaThreshold
+      - alphaFadeThreshold
       - frameIndex
       - frameIndexOffset
       - textureFraction

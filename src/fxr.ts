@@ -2109,7 +2109,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -2128,7 +2128,7 @@ const ActionData: {
         fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['size','color1','color2','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
@@ -2192,7 +2192,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -2211,7 +2211,7 @@ const ActionData: {
         fields1: ['blendMode','unk_ds3_f1_1'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
@@ -2277,7 +2277,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -2296,7 +2296,7 @@ const ActionData: {
         fields1: ['blendMode','unk_ds3_f1_1'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
@@ -2325,7 +2325,7 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -2396,7 +2396,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f1_15: { default: 1, field: FieldType.Integer },
       unk_sdt_f1_16: { default: 1, field: FieldType.Integer },
       unk_sdt_f1_17: { default: 0, field: FieldType.Integer },
@@ -2415,13 +2415,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
-        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -2472,7 +2472,7 @@ const ActionData: {
       layersColor: { default: [1, 1, 1, 1] },
       layer1Color: { default: [1, 1, 1, 1] },
       layer2Color: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       layer1SpeedU: { default: 0 },
@@ -2527,7 +2527,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
@@ -2548,13 +2548,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -2724,7 +2724,7 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
@@ -2769,7 +2769,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
@@ -2783,13 +2783,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -2868,7 +2868,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Float },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -2888,7 +2888,7 @@ const ActionData: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','blendMode','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
@@ -2900,7 +2900,7 @@ const ActionData: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12','unk_er_f1_12','unk_er_f1_13'],
         fields2: Game.Sekiro,
         properties1: Game.Sekiro,
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_er_p2_7','unk_er_p2_8']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold','unk_er_p2_7','unk_er_p2_8']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -2956,7 +2956,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Float },
       unk_er_f1_3: { default: 1, field: FieldType.Integer },
       unk_er_f1_4: { default: 1, field: FieldType.Integer },
@@ -2966,7 +2966,7 @@ const ActionData: {
         fields1: ['blendMode','mask','uniformScale','iterations','unk_ds3_f1_4'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['uniformScale','iterations','unk_ds3_f1_4'],
@@ -3438,7 +3438,7 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
@@ -3483,7 +3483,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
@@ -3504,13 +3504,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -12164,11 +12164,15 @@ export interface PointSpriteParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -12396,7 +12400,14 @@ class PointSprite extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -12752,11 +12763,15 @@ export interface LineParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -12997,7 +13012,14 @@ class Line extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -13372,11 +13394,15 @@ export interface QuadLineParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -13632,7 +13658,14 @@ class QuadLine extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -13745,11 +13778,13 @@ export interface BillboardExParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -14319,11 +14354,15 @@ export interface BillboardExParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -14485,9 +14524,11 @@ class BillboardEx extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -14805,7 +14846,14 @@ class BillboardEx extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f1_15: number
   unk_sdt_f1_16: number
   unk_sdt_f1_17: number
@@ -15226,11 +15274,13 @@ export interface MultiTextureBillboardExParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -15590,11 +15640,15 @@ export interface MultiTextureBillboardExParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -16008,9 +16062,11 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -16147,7 +16203,14 @@ class MultiTextureBillboardEx extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -17677,11 +17740,13 @@ export interface TracerParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -17968,11 +18033,15 @@ export interface TracerParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -18220,9 +18289,11 @@ class Tracer extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -18312,7 +18383,14 @@ class Tracer extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -18848,11 +18926,15 @@ export interface DistortionParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown float.
    * 
@@ -19236,7 +19318,14 @@ class Distortion extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -19642,11 +19731,15 @@ export interface RadialBlurParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown float.
    * 
@@ -19873,7 +19966,14 @@ class RadialBlur extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_er_f1_3: number
   unk_er_f1_4: number
@@ -23426,11 +23526,13 @@ export interface DynamicTracerParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -23717,11 +23819,15 @@ export interface DynamicTracerParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -24013,9 +24119,11 @@ class DynamicTracer extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -24105,7 +24213,14 @@ class DynamicTracer extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
