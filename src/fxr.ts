@@ -10424,6 +10424,8 @@ export interface NodeSpeedPartialFollowParams {
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -10493,6 +10495,8 @@ class NodeSpeedPartialFollow extends DataAction {
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
