@@ -28067,10 +28067,6 @@ class SpotLight extends DataAction {
 /*#ActionClasses end*/
 
 const Actions = {
-  NodeTransform,
-  [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
-  [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
-
   ParticleMovement,
   [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
   [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
