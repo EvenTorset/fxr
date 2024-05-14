@@ -1,0 +1,42 @@
+type: 35
+name: StaticNodeTransform
+slot: NodeTransform
+desc: |
+  Controls the translation and rotation of a node.
+properties:
+  offsetX:
+    field: float
+    desc: |
+      Translation of the node along the local X-axis.
+  offsetY:
+    field: float
+    desc: |
+      Translation of the node along the local Y-axis.
+  offsetZ:
+    field: float
+    desc: |
+      Translation of the node along the local Z-axis.
+  rotationX:
+    field: float
+    desc: |
+      The rotation of the node around the local X-axis in degrees.
+  rotationY:
+    field: float
+    desc: |
+      The rotation of the node around the local Y-axis in degrees.
+  rotationZ:
+    field: float
+    desc: |
+      The rotation of the node around the local Z-axis in degrees.
+games:
+  DS3:
+    fields1:
+      - offsetX
+      - offsetY
+      - offsetZ
+      - rotationX
+      - rotationY
+      - rotationZ
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

@@ -124,18 +124,6 @@ enum ActionType {
    */
   None = 0,
   /**
-   * Sets the translation and rotation of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeTransform}
-   */
-  StaticNodeTransform = 35,
-  /**
-   * Sets and randomizes the translation and rotation of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeTransform}
-   */
-  RandomNodeTransform = 36,
-  /**
    * Controls the movement of particles.
    * 
    * This action type has a specialized subclass: {@link ParticleMovement}
@@ -249,6 +237,24 @@ enum ActionType {
    * This action type has a specialized subclass: {@link NodeSpin}
    */
   NodeSpin = 34,
+  /**
+   * ### Action 35 - StaticNodeTransform
+   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * 
+   * Controls the translation and rotation of a node.
+   * 
+   * This action type has a specialized subclass: {@link StaticNodeTransform}
+   */
+  StaticNodeTransform = 35,
+  /**
+   * ### Action 36 - RandomNodeTransform
+   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * 
+   * Controls the translation and rotation of a node, and can also randomize them.
+   * 
+   * This action type has a specialized subclass: {@link RandomNodeTransform}
+   */
+  RandomNodeTransform = 36,
   /**
    * ### Action 46 - NodeAttachToCamera
    * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
@@ -1326,7 +1332,7 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 export interface IAction {
   readonly type: ActionType
   toJSON(): any
-  minify(): typeof this
+  minify(): IAction
 }
 
 export interface IEffect {
@@ -1378,6 +1384,10 @@ export type NodeMovementParams =
   | NodeSpeedRandomTurnsParams
   | NodeSpeedPartialFollowParams
   | NodeSpeedSpinParams
+
+export type NodeTransformParams =
+  | StaticNodeTransformParams
+  | RandomNodeTransformParams
 
 export namespace ActionSlots {
 /*#ActionSlotTypes start*/
@@ -1438,6 +1448,11 @@ export namespace ActionSlots {
     | NodeSpeedRandomTurns
     | NodeSpeedPartialFollow
     | NodeSpeedSpin
+    | Action
+
+  export type NodeTransformAction =
+    | StaticNodeTransform
+    | RandomNodeTransform
     | Action
 
   export type NodeWindAction =
@@ -1546,6 +1561,48 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['unk_ds3_f1_0'],
         properties1: ['angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.StaticNodeTransform]: {
+    props: {
+      offsetX: { default: 0, field: FieldType.Float },
+      offsetY: { default: 0, field: FieldType.Float },
+      offsetZ: { default: 0, field: FieldType.Float },
+      rotationX: { default: 0, field: FieldType.Float },
+      rotationY: { default: 0, field: FieldType.Float },
+      rotationZ: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.RandomNodeTransform]: {
+    props: {
+      offsetX: { default: 0, field: FieldType.Float },
+      offsetY: { default: 0, field: FieldType.Float },
+      offsetZ: { default: 0, field: FieldType.Float },
+      rotationX: { default: 0, field: FieldType.Float },
+      rotationY: { default: 0, field: FieldType.Float },
+      rotationZ: { default: 0, field: FieldType.Float },
+      offsetVarianceX: { default: 0, field: FieldType.Float },
+      offsetVarianceY: { default: 0, field: FieldType.Float },
+      offsetVarianceZ: { default: 0, field: FieldType.Float },
+      rotationVarianceX: { default: 0, field: FieldType.Float },
+      rotationVarianceY: { default: 0, field: FieldType.Float },
+      rotationVarianceZ: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ','offsetVarianceX','offsetVarianceY','offsetVarianceZ','rotationVarianceX','rotationVarianceY','rotationVarianceZ']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5784,6 +5841,60 @@ function separateComponents(value: VectorValue): ScalarValue[] {
 }
 
 const ActionDataConversion = {
+  [ActionType.StaticNodeTransform]: {
+    read(props: StaticNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      props.rotationX *= -1
+      return props
+    },
+    write(props: StaticNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      props.rotationX *= -1
+      return props
+    },
+    minify(this: StaticNodeTransform): IAction {
+      if (
+        this.offsetX === 0 &&
+        this.offsetY === 0 &&
+        this.offsetZ === 0 &&
+        this.rotationX === 0 &&
+        this.rotationY === 0 &&
+        this.rotationZ === 0
+      ) {
+        return new Action
+      }
+      return this
+    }
+  },
+  [ActionType.RandomNodeTransform]: {
+    read(props: RandomNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      return props
+    },
+    write(props: RandomNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      return props
+    },
+    minify(this: RandomNodeTransform): IAction {
+      if (
+        this.offsetVarianceX === 0 &&
+        this.offsetVarianceY === 0 &&
+        this.offsetVarianceZ === 0 &&
+        this.rotationVarianceX === 0 &&
+        this.rotationVarianceY === 0 &&
+        this.rotationVarianceZ === 0
+      ) {
+        return ActionDataConversion[ActionType.StaticNodeTransform].minify.call(
+          new StaticNodeTransform(this).assign({
+            // For some reason, StaticNodeTransform flips the X rotation, but
+            // this one doesn't, even though the X offset is flipped in both.
+            rotationX: -this.rotationX
+          })
+        )
+      }
+      return this
+    }
+  },
   [ActionType.NodeAccelerationRandomTurns]: {
     read(props: NodeAccelerationRandomTurnsParams, game: Game) {
       props.turnInterval = props.turnInterval / 50
@@ -8045,7 +8156,7 @@ class LevelsOfDetailEffect implements IEffect {
 
 export interface BasicEffectParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
-  nodeTransform?: Action
+  nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
   nodeAudio?: ActionSlots.NodeAudioAction
   emitter?: ActionSlots.EmitterAction
@@ -8088,7 +8199,7 @@ class BasicEffect implements IEffect {
   readonly type = EffectType.Basic
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
-  nodeTransform: Action = new Action
+  nodeTransform: ActionSlots.NodeTransformAction = new Action
   nodeMovement: ActionSlots.NodeMovementAction = new Action
   nodeAudio: ActionSlots.NodeAudioAction = new Action
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
@@ -8232,7 +8343,7 @@ class BasicEffect implements IEffect {
 
 export interface SharedEmitterEffectParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
-  nodeTransform?: Action
+  nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
   nodeAudio?: ActionSlots.NodeAudioAction
   emitter?: ActionSlots.EmitterAction
@@ -8266,7 +8377,7 @@ class SharedEmitterEffect implements IEffect {
   readonly type = EffectType.SharedEmitter
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
-  nodeTransform: Action = new Action
+  nodeTransform: ActionSlots.NodeTransformAction = new Action
   nodeMovement: ActionSlots.NodeMovementAction = new Action
   nodeAudio: ActionSlots.NodeAudioAction = new Action
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
@@ -8562,6 +8673,9 @@ class DataAction implements IAction {
   }
 
   minify() {
+    if (this.type in ActionDataConversion && 'minify' in ActionDataConversion[this.type]) {
+      return ActionDataConversion[this.type].minify.call(this)
+    }
     return this
   }
 
@@ -8671,271 +8785,33 @@ function NodeMovement(params: NodeMovementParams = {}) {
   return new Action
 }
 
-export interface NodeTransformParams {
-  /**
-   * Translates the node along the X-axis. Defaults to 0.
-   */
-  translateX?: number
-  /**
-   * Translates the node along the Y-axis. Defaults to 0.
-   */
-  translateY?: number
-  /**
-   * Translates the node along the Z-axis. Defaults to 0.
-   */
-  translateZ?: number
-  /**
-   * Node rotation around the X-axis in degrees. Defaults to 0.
-   */
-  rotateX?: number
-  /**
-   * Node rotation around the Y-axis in degrees. Defaults to 0.
-   */
-  rotateY?: number
-  /**
-   * Node rotation around the Z-axis in degrees. Defaults to 0.
-   */
-  rotateZ?: number
-  /**
-   * The maximum change in translation along the X-axis from
-   * {@link translateX the base value} caused by randomization. When the
-   * node is created, its translation along this axis will be a random
-   * number between the base value minus this value and the base value plus
-   * this value. Defaults to 0.
-   */
-  randomTranslationX?: number
-  /**
-   * The maximum change in translation along the Y-axis from
-   * {@link translateY the base value} caused by randomization. When the
-   * node is created, its translation along this axis will be a random
-   * number between the base value minus this value and the base value plus
-   * this value. Defaults to 0.
-   */
-  randomTranslationY?: number
-  /**
-   * The maximum change in translation along the Z-axis from
-   * {@link translateZ the base value} caused by randomization. When the
-   * node is created, its translation along this axis will be a random
-   * number between the base value minus this value and the base value plus
-   * this value. Defaults to 0.
-   */
-  randomTranslationZ?: number
-  /**
-   * The maximum change in rotation around the X-axis from
-   * {@link rotateX the base value} caused by randomization. When the node
-   * is created, its rotation around this axis will be a random number between
-   * the base value minus this value and the base value plus this value.
-   * Defaults to 0.
-   */
-  randomRotationX?: number
-  /**
-   * The maximum change in rotation around the Y-axis from
-   * {@link rotateY the base value} caused by randomization. When the node
-   * is created, its rotation around this axis will be a random number between
-   * the base value minus this value and the base value plus this value.
-   * Defaults to 0.
-   */
-  randomRotationY?: number
-  /**
-   * The maximum change in rotation around the Z-axis from
-   * {@link rotateZ the base value} caused by randomization. When the node
-   * is created, its rotation around this axis will be a random number between
-   * the base value minus this value and the base value plus this value.
-   * Defaults to 0.
-   */
-  randomRotationZ?: number
-}
 /**
- * Sets the translation and rotation of the node. Optionally randomizes
- * the translation and rotation.
- * 
- * If any of the randomization parameters are not 0, it will create a
- * {@link ActionType.RandomNodeTransform RandomNodeTransform action} instead of
- * a {@link ActionType.StaticNodeTransform StaticNodeTransform action}, which
- * have different numbers of fields.
- * 
- * **Note about the X-axis**:  
- * Both of the action types represented by this class have the X-axis reversed.
- * RandomNodeTransform only has it reversed for translation, not rotation. This
- * class will automatically handle these strange inconsitencies and correct
- * them when using its accessors or contructor parameters, but it is important
- * to keep in mind if you are manually editing the fields of the action.
+ * Constructs one of the
+ * {@link ActionSlots.NodeTransformAction Node Transform} classes. Which one
+ * depends on the arguments given, which means that if any of the randomization
+ * arguments are used, it will produce a {@link RandomNodeTransform}.
  */
-class NodeTransform extends Action {
-
-  declare fields1: FloatField[]
-
-  constructor({
-    translateX = 0,
-    translateY = 0,
-    translateZ = 0,
-    rotateX = 0,
-    rotateY = 0,
-    rotateZ = 0,
-    randomTranslationX = 0,
-    randomTranslationY = 0,
-    randomTranslationZ = 0,
-    randomRotationX = 0,
-    randomRotationY = 0,
-    randomRotationZ = 0,
-  }: NodeTransformParams = {}) {
-    if (
-      randomTranslationX === 0 &&
-      randomTranslationY === 0 &&
-      randomTranslationZ === 0 &&
-      randomRotationX === 0 &&
-      randomRotationY === 0 &&
-      randomRotationZ === 0
-    ) {
-      super(ActionType.StaticNodeTransform, [
-        // These two actions have their X-axis reversed for some reason
-        new FloatField(-translateX),
-        new FloatField(translateY),
-        new FloatField(translateZ),
-        new FloatField(-rotateX),
-        new FloatField(rotateY),
-        new FloatField(rotateZ),
-      ])
-    } else {
-      super(ActionType.RandomNodeTransform, [
-        new FloatField(-translateX),
-        new FloatField(translateY),
-        new FloatField(translateZ),
-        // While action 35 has the X-axis reversed for both translation and
-        // rotation, action 36 only has it reversed for translation
-        new FloatField(rotateX),
-        new FloatField(rotateY),
-        new FloatField(rotateZ),
-        new FloatField(randomTranslationX),
-        new FloatField(randomTranslationY),
-        new FloatField(randomTranslationZ),
-        new FloatField(randomRotationX),
-        new FloatField(randomRotationY),
-        new FloatField(randomRotationZ),
-      ])
-    }
+function NodeTransform(params: NodeTransformParams = {}) {
+  if (
+    'offsetVarianceX' in params ||
+    'offsetVarianceY' in params ||
+    'offsetVarianceZ' in params ||
+    'rotationVarianceX' in params ||
+    'rotationVarianceY' in params ||
+    'rotationVarianceZ' in params
+  ) {
+    return new RandomNodeTransform(params)
+  } else if (
+    'offsetX' in params ||
+    'offsetY' in params ||
+    'offsetZ' in params ||
+    'rotationX' in params ||
+    'rotationY' in params ||
+    'rotationZ' in params
+  ) {
+    return new StaticNodeTransform(params)
   }
-
-  get translateX() { return -this.fields1[0].value }
-  set translateX(value) { this.fields1[0].value = -value }
-
-  get translateY() { return this.fields1[1].value }
-  set translateY(value) { this.fields1[1].value = value }
-
-  get translateZ() { return this.fields1[2].value }
-  set translateZ(value) { this.fields1[2].value = value }
-
-  get rotateX() {
-    switch (this.type) {
-      case ActionType.StaticNodeTransform: return -this.fields1[3].value
-      case ActionType.RandomNodeTransform: return this.fields1[3].value
-    }
-  }
-  set rotateX(value) {
-    switch (this.type) {
-      case ActionType.StaticNodeTransform: this.fields1[3].value = -value; break
-      case ActionType.RandomNodeTransform: this.fields1[3].value = value; break
-    }
-  }
-
-  get rotateY() { return this.fields1[4].value }
-  set rotateY(value) { this.fields1[4].value = value }
-
-  get rotateZ() { return this.fields1[5].value }
-  set rotateZ(value) { this.fields1[5].value = value }
-
-  #setRandomizationField(index: number, value: number) {
-    if (value !== 0 && this.type === ActionType.StaticNodeTransform) {
-      this.type = ActionType.RandomNodeTransform
-      // The X rotation field needs to swap sign because it rotates the
-      // opposite direction in action 35 for some reason.
-      this.fields1[3].value *= -1
-      this.fields1.push(
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-      )
-    }
-    this.fields1[index].value = value
-  }
-
-  get randomTranslationX() { return this.fields1[6]?.value ?? 0 }
-  set randomTranslationX(value) { this.#setRandomizationField(6, value) }
-
-  get randomTranslationY() { return this.fields1[7]?.value ?? 0 }
-  set randomTranslationY(value) { this.#setRandomizationField(7, value) }
-
-  get randomTranslationZ() { return this.fields1[8]?.value ?? 0 }
-  set randomTranslationZ(value) { this.#setRandomizationField(8, value) }
-
-  get randomRotationX() { return this.fields1[9]?.value ?? 0 }
-  set randomRotationX(value) { this.#setRandomizationField(9, value) }
-
-  get randomRotationY() { return this.fields1[10]?.value ?? 0 }
-  set randomRotationY(value) { this.#setRandomizationField(10, value) }
-
-  get randomRotationZ() { return this.fields1[11]?.value ?? 0 }
-  set randomRotationZ(value) { this.#setRandomizationField(11, value) }
-
-  minify() {
-    if (this.type === ActionType.RandomNodeTransform) {
-      if (
-        this.fields1[6].value === 0 &&
-        this.fields1[7].value === 0 &&
-        this.fields1[8].value === 0 &&
-        this.fields1[9].value === 0 &&
-        this.fields1[10].value === 0 &&
-        this.fields1[11].value === 0
-      ) {
-        if (
-          this.fields1[0].value === 0 &&
-          this.fields1[1].value === 0 &&
-          this.fields1[2].value === 0 &&
-          this.fields1[3].value === 0 &&
-          this.fields1[4].value === 0 &&
-          this.fields1[5].value === 0
-        ) {
-          // This transform doesn't do anything, return a None action.
-          return new Action
-        } else {
-          // This doesn't use the randomization fields, return a static
-          // transform action instead
-          return new Action(ActionType.StaticNodeTransform, [
-            this.fields1[0],
-            this.fields1[1],
-            this.fields1[2],
-            new FloatField(-this.fields1[3].value),
-            this.fields1[4],
-            this.fields1[5],
-          ])
-        }
-      } else {
-        // This action can't be minified more without losing functionality,
-        // return it without any changes
-        return this
-      }
-    } else {
-      if (
-        this.fields1[0].value === 0 &&
-        this.fields1[1].value === 0 &&
-        this.fields1[2].value === 0 &&
-        this.fields1[3].value === 0 &&
-        this.fields1[4].value === 0 &&
-        this.fields1[5].value === 0
-      ) {
-        // This transform doesn't do anything, return a None action.
-        return new Action
-      } else {
-        // This action can't be minified more without losing functionality,
-        // return it without any changes
-        return this
-      }
-    }
-  }
-
+  return new Action
 }
 
 export interface ParticleMovementParams {
@@ -9536,6 +9412,220 @@ class NodeSpin extends DataAction {
   unk_ds3_f1_0: number
   constructor(props: NodeSpinParams = {}) {
     super(ActionType.NodeSpin)
+    this.assign(props)
+  }
+}
+
+export interface StaticNodeTransformParams {
+  /**
+   * Translation of the node along the local X-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetX?: number
+  /**
+   * Translation of the node along the local Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetY?: number
+  /**
+   * Translation of the node along the local Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetZ?: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationX?: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationY?: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationZ?: number
+}
+
+/**
+ * ### {@link ActionType.StaticNodeTransform Action 35 - StaticNodeTransform}
+ * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+ * 
+ * Controls the translation and rotation of a node.
+ */
+class StaticNodeTransform extends DataAction {
+  declare type: ActionType.StaticNodeTransform
+  /**
+   * Translation of the node along the local X-axis.
+   */
+  offsetX: number
+  /**
+   * Translation of the node along the local Y-axis.
+   */
+  offsetY: number
+  /**
+   * Translation of the node along the local Z-axis.
+   */
+  offsetZ: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   */
+  rotationX: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   */
+  rotationY: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   */
+  rotationZ: number
+  constructor(props: StaticNodeTransformParams = {}) {
+    super(ActionType.StaticNodeTransform)
+    this.assign(props)
+  }
+}
+
+export interface RandomNodeTransformParams {
+  /**
+   * Translation of the node along the local X-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetX?: number
+  /**
+   * Translation of the node along the local Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetY?: number
+  /**
+   * Translation of the node along the local Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetZ?: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationX?: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationY?: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationZ?: number
+  /**
+   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `0`
+   */
+  offsetVarianceX?: number
+  /**
+   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `0`
+   */
+  offsetVarianceY?: number
+  /**
+   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `0`
+   */
+  offsetVarianceZ?: number
+  /**
+   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `0`
+   */
+  rotationVarianceX?: number
+  /**
+   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `0`
+   */
+  rotationVarianceY?: number
+  /**
+   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `0`
+   */
+  rotationVarianceZ?: number
+}
+
+/**
+ * ### {@link ActionType.RandomNodeTransform Action 36 - RandomNodeTransform}
+ * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+ * 
+ * Controls the translation and rotation of a node, and can also randomize them.
+ */
+class RandomNodeTransform extends DataAction {
+  declare type: ActionType.RandomNodeTransform
+  /**
+   * Translation of the node along the local X-axis.
+   */
+  offsetX: number
+  /**
+   * Translation of the node along the local Y-axis.
+   */
+  offsetY: number
+  /**
+   * Translation of the node along the local Z-axis.
+   */
+  offsetZ: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   */
+  rotationX: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   */
+  rotationY: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   */
+  rotationZ: number
+  /**
+   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
+   */
+  offsetVarianceX: number
+  /**
+   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
+   */
+  offsetVarianceY: number
+  /**
+   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
+   */
+  offsetVarianceZ: number
+  /**
+   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
+   */
+  rotationVarianceX: number
+  /**
+   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
+   */
+  rotationVarianceY: number
+  /**
+   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
+   */
+  rotationVarianceZ: number
+  constructor(props: RandomNodeTransformParams = {}) {
+    super(ActionType.RandomNodeTransform)
     this.assign(props)
   }
 }
@@ -27997,6 +28087,8 @@ const DataActions = {
   [ActionType.NodeAcceleration]: NodeAcceleration, NodeAcceleration,
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeSpin]: NodeSpin, NodeSpin,
+  [ActionType.StaticNodeTransform]: StaticNodeTransform, StaticNodeTransform,
+  [ActionType.RandomNodeTransform]: RandomNodeTransform, RandomNodeTransform,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
   [ActionType.NodeSound]: NodeSound, NodeSound,
   [ActionType.EmissionSound]: EmissionSound, EmissionSound,
@@ -29872,6 +29964,8 @@ export {
   NodeAcceleration,
   NodeTranslation,
   NodeSpin,
+  StaticNodeTransform,
+  RandomNodeTransform,
   NodeAttachToCamera,
   NodeSound,
   EmissionSound,

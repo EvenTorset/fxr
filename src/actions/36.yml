@@ -1,0 +1,72 @@
+type: 36
+name: RandomNodeTransform
+slot: NodeTransform
+desc: |
+  Controls the translation and rotation of a node, and can also randomize them.
+properties:
+  offsetX:
+    field: float
+    desc: |
+      Translation of the node along the local X-axis.
+  offsetY:
+    field: float
+    desc: |
+      Translation of the node along the local Y-axis.
+  offsetZ:
+    field: float
+    desc: |
+      Translation of the node along the local Z-axis.
+  rotationX:
+    field: float
+    desc: |
+      The rotation of the node around the local X-axis in degrees.
+  rotationY:
+    field: float
+    desc: |
+      The rotation of the node around the local Y-axis in degrees.
+  rotationZ:
+    field: float
+    desc: |
+      The rotation of the node around the local Z-axis in degrees.
+  offsetVarianceX:
+    field: float
+    desc: |
+      The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
+  offsetVarianceY:
+    field: float
+    desc: |
+      The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
+  offsetVarianceZ:
+    field: float
+    desc: |
+      The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
+  rotationVarianceX:
+    field: float
+    desc: |
+      The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
+  rotationVarianceY:
+    field: float
+    desc: |
+      The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
+  rotationVarianceZ:
+    field: float
+    desc: |
+      The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
+games:
+  DS3:
+    fields1:
+      - offsetX
+      - offsetY
+      - offsetZ
+      - rotationX
+      - rotationY
+      - rotationZ
+      - offsetVarianceX
+      - offsetVarianceY
+      - offsetVarianceZ
+      - rotationVarianceX
+      - rotationVarianceY
+      - rotationVarianceZ
+  SDT: DS3
+  ER: DS3
+  AC6: DS3
