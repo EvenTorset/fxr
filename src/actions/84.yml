@@ -1,0 +1,52 @@
+type: 84
+name: ParticleAccelerationRandomTurns
+slot: ParticleMovement
+desc: |
+  Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
+properties:
+  gravity:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+
+      Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+  acceleration:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+  accelerationMultiplier:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link acceleration}.
+  maxTurnAngle:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+
+      This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+  unk_ds3_f1_0:
+    field: float
+  turnInterval:
+    field: int
+    desc: |
+      The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+
+      This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - turnInterval
+    properties1:
+      - gravity
+      - acceleration
+      - accelerationMultiplier
+      - maxTurnAngle
+  SDT: DS3
+  ER: DS3
+  AC6: DS3
