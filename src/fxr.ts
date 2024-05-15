@@ -623,7 +623,7 @@ enum ActionType {
    * ### Action 700 - Unk700
    * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
    * 
-   * Unknown root node.
+   * Unknown root node action that was introduced in Elden Ring.
    * 
    * This action type has a specialized subclass: {@link Unk700}
    */
@@ -21539,7 +21539,7 @@ class PointLight extends DataAction {
  * ### {@link ActionType.Unk700 Action 700 - Unk700}
  * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
  * 
- * Unknown root node.
+ * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk700 extends DataAction {
   declare type: ActionType.Unk700
