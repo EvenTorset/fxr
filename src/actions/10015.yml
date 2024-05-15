@@ -2,14 +2,16 @@ type: 10015
 name: RichModel
 slot: Appearance
 desc: |
-  Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+  Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+
+  Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
 properties:
   orientation:
-    type: OrientationMode
+    type: RichModelOrientationMode
     field: int
-    default: OrientationMode.LocalSouth
+    default: RichModelOrientationMode.ParticleDirection
     desc: |
-      Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+      Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
   scaleVariationX:
     field: float
     default: 1

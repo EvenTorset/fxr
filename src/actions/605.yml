@@ -3,13 +3,15 @@ name: Model
 slot: Appearance
 desc: |
   Particle with a 3D model.
+
+  Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
 properties:
   orientation:
-    type: OrientationMode
+    type: ModelOrientationMode
     field: int
-    default: OrientationMode.LocalSouth
+    default: ModelOrientationMode.ParticleDirection
     desc: |
-      Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+      Model orientation mode. See {@link ModelOrientationMode} for more information.
   scaleVariationX:
     field: float
     default: 1

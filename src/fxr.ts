@@ -576,6 +576,8 @@ enum ActionType {
    * 
    * Particle with a 3D model.
    * 
+   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+   * 
    * This action type has a specialized subclass: {@link Model}
    */
   Model = 605,
@@ -737,7 +739,9 @@ enum ActionType {
    * ### Action 10015 - RichModel
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * 
-   * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+   * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+   * 
+   * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
    * 
    * This action type has a specialized subclass: {@link RichModel}
    */
@@ -1084,7 +1088,7 @@ enum OrientationMode {
   UnkSouth = 3,
   /**
    * Tries to face the camera, but is limited to rotation around the vertical
-   * axis.
+   * global Y-axis.
    */
   GlobalYaw = 4,
   /**
@@ -1103,6 +1107,43 @@ enum OrientationMode {
    * the parent node.
    */
   LocalYaw = 7,
+}
+
+enum ModelOrientationMode {
+  /**
+   * Faces global north.
+   */
+  North = 0,
+  /**
+   * Faces away from the camera plane, the same direction as the camera itself.
+   */
+  CameraPlane = 1,
+  /**
+   * Faces in the direction the particle is moving. This direction can be
+   * modified by
+   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * is initially the particle's {@link InitialDirection}.
+   */
+  ParticleDirection = 2,
+  /**
+   * Tries to face the camera, but is limited to rotation around the global
+   * X-axis.
+   * 
+   * Seemingly identical to {@link UnkGlobalPitch}?
+   */
+  GlobalPitch = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical
+   * global Y-axis.
+   */
+  GlobalYaw = 4,
+  /**
+   * Tries to face the camera, but is limited to rotation around the global
+   * X-axis.
+   * 
+   * Seemingly identical to {@link GlobalPitch}?
+   */
+  UnkGlobalPitch = 5,
 }
 
 enum TracerOrientationMode {
@@ -1133,6 +1174,37 @@ enum TracerOrientationMode {
    * The tracer source is parallel to the global diagonal (1, 1, 1).
    */
   Diagonal = 5,
+}
+
+enum RichModelOrientationMode {
+  /**
+   * Faces global north.
+   * 
+   * Seemingly identical to {@link UnkNorth}?
+   */
+  North = 0,
+  /**
+   * Faces away from the camera plane, the same direction as the camera itself.
+   */
+  CameraPlane = 1,
+  /**
+   * Faces in the direction the particle is moving. This direction can be
+   * modified by
+   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * is initially the particle's {@link InitialDirection}.
+   */
+  ParticleDirection = 2,
+  /**
+   * Faces global north.
+   * 
+   * Seemingly identical to {@link North}?
+   */
+  UnkNorth = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical
+   * global Y-axis.
+   */
+  GlobalYaw = 4,
 }
 
 enum LightingMode {
@@ -2877,7 +2949,7 @@ const ActionData: {
   },
   [ActionType.Model]: {
     props: {
-      orientation: { default: OrientationMode.LocalSouth, field: FieldType.Integer },
+      orientation: { default: ModelOrientationMode.ParticleDirection, field: FieldType.Integer },
       scaleVariationX: { default: 1, field: FieldType.Float },
       scaleVariationY: { default: 1, field: FieldType.Float },
       scaleVariationZ: { default: 1, field: FieldType.Float },
@@ -3997,7 +4069,7 @@ const ActionData: {
   },
   [ActionType.RichModel]: {
     props: {
-      orientation: { default: OrientationMode.LocalSouth, field: FieldType.Integer },
+      orientation: { default: RichModelOrientationMode.ParticleDirection, field: FieldType.Integer },
       scaleVariationX: { default: 1, field: FieldType.Float },
       scaleVariationY: { default: 1, field: FieldType.Float },
       scaleVariationZ: { default: 1, field: FieldType.Float },
@@ -17166,11 +17238,11 @@ class MultiTextureBillboardEx extends DataAction {
 
 export interface ModelParams {
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Model orientation mode. See {@link ModelOrientationMode} for more information.
    * 
-   * **Default**: {@link OrientationMode.LocalSouth}
+   * **Default**: {@link ModelOrientationMode.ParticleDirection}
    */
-  orientation?: OrientationMode
+  orientation?: ModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -17968,13 +18040,15 @@ export interface ModelParams {
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Particle with a 3D model.
+   * 
+   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
  */
 class Model extends DataAction {
   declare type: ActionType.Model
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Model orientation mode. See {@link ModelOrientationMode} for more information.
    */
-  orientation: OrientationMode
+  orientation: ModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -27000,11 +27074,11 @@ class LensFlare extends DataAction {
 
 export interface RichModelParams {
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
    * 
-   * **Default**: {@link OrientationMode.LocalSouth}
+   * **Default**: {@link RichModelOrientationMode.ParticleDirection}
    */
-  orientation?: OrientationMode
+  orientation?: RichModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -27833,14 +27907,16 @@ export interface RichModelParams {
  * ### {@link ActionType.RichModel Action 10015 - RichModel}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+ * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+   * 
+   * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  */
 class RichModel extends DataAction {
   declare type: ActionType.RichModel
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
    */
-  orientation: OrientationMode
+  orientation: RichModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -30760,7 +30836,9 @@ export {
   AttachMode,
   PropertyArgument,
   OrientationMode,
+  ModelOrientationMode,
   TracerOrientationMode,
+  RichModelOrientationMode,
   LightingMode,
   DistortionMode,
   DistortionShape,
