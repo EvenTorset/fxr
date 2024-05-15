@@ -11769,7 +11769,7 @@ export interface ParticleModifierParams {
    */
   uniformScale?: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovement ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
    * 
    * **Default**: `0`
    * 
@@ -11836,7 +11836,7 @@ class ParticleModifier extends DataAction {
    */
   uniformScale: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovement ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
