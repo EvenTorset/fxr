@@ -49,10 +49,10 @@ fxr.states = [
 // this function was made to generate them without duping code
 function crossguardSide(position) {
   return new BasicNode([
-    new NodeTransform({
-      rotateZ: 90,
-      translateY: 0.54,
-      translateX: 0.135 * position
+    NodeTransform({
+      rotationZ: 90,
+      offsetY: 0.54,
+      offsetX: 0.135 * position
     }),
     new PointEmitterShape({ direction: InitialDirection.LocalDown }),
     new MultiTextureBillboardEx({
@@ -75,10 +75,10 @@ function crossguardSide(position) {
 // function for the same reason
 function bladeCap(position) {
   return new BasicNode([
-    new NodeTransform({
-      rotateX: 90,
-      rotateZ: 90,
-      translateY: 0.5 * position,
+    NodeTransform({
+      rotationX: 90,
+      rotationZ: 90,
+      offsetY: 0.5 * position,
     }),
     new BillboardEx({
       texture: 10011,
@@ -100,9 +100,9 @@ function bladeCap(position) {
 fxr.root.nodes = [
   new BasicNode([
     // This is used to position the entire effect
-    new NodeTransform({
-      rotateX: -90,
-      translateZ: 0.55
+    NodeTransform({
+      rotationX: -90,
+      offsetZ: 0.55
     })
   ], [
     // Steam during rain/snow
@@ -113,7 +113,7 @@ fxr.root.nodes = [
         duration: 4,
         attachment: AttachMode.None
       }),
-      new ParticleMovement({ gravity: -0.1 }),
+      ParticleMovement({ gravity: -0.1 }),
       new ParticleWindAcceleration({ acceleration: 0.02 }),
       new MultiTextureBillboardEx({
         mask: 31261,
@@ -191,7 +191,7 @@ fxr.root.nodes = [
         bloomGreen: color[1],
         bloomBlue: color[2],
         bloomStrength: bloomMultiplier * 0.5,
-        alphaThreshold: new LinearProperty(false, [
+        alphaFadeThreshold: new LinearProperty(false, [
           new Keyframe(0, 255),
           new Keyframe(0.25, 0),
           new Keyframe(0.5, 255),
@@ -201,7 +201,7 @@ fxr.root.nodes = [
 
     // Trail
     new BasicNode([
-      new NodeTransform({ rotateX: 90 }),
+      NodeTransform({ rotationX: 90 }),
       new Tracer({
         blendMode: BlendMode.Add,
         width: 0.5,
@@ -222,7 +222,7 @@ fxr.root.nodes = [
         duration: 2,
         attachment: AttachMode.None
       }),
-      new ParticleMovement({
+      ParticleMovement({
         gravity: 2,
         speed: 0.3,
       }),
@@ -232,7 +232,7 @@ fxr.root.nodes = [
         blendMode: BlendMode.Add,
         width: RandomProperty(0.008, 0.04),
         uniformScale: true,
-        alphaThreshold: LinearProperty.basic(false, 2, 0, 255),
+        alphaFadeThreshold: LinearProperty.basic(false, 2, 0, 255),
         alphaMultiplier: 2,
         rgbMultiplier: 20,
         bloomRed: color[0],
@@ -243,7 +243,3 @@ fxr.root.nodes = [
     ]).mapStates(0, 0),
   ]).mapStates(0, 0)
 ]
-
-// This effect uses an external value, which must be added to the external
-// values list. The updateReferences method automatically handles this for you.
-fxr.updateReferences()

@@ -27,7 +27,7 @@ fxr.root.nodes = [
       duration: 1,
       attachment: AttachMode.None
     }),
-    new ParticleMovement({
+    ParticleMovement({
       gravity: -0.1,
       followFactor: LinearProperty.basic(false, 1, 1, 0),
     }),
@@ -42,7 +42,7 @@ fxr.root.nodes = [
       height: 0.6,
       color1: [1, 0.36, 0.16, 1],
       layer1Color: [1, 1, 1, 0.75],
-      alphaThreshold: new LinearProperty(false, [
+      alphaFadeThreshold: new LinearProperty(false, [
         new Keyframe(0, 255),
         new Keyframe(0.25, 0),
         new Keyframe(1, 255),
@@ -60,14 +60,14 @@ fxr.root.nodes = [
     }),
   ]),
   new BasicNode([
-    new NodeTransform({ rotateX: 90 }),
+    NodeTransform({ rotationX: 90 }),
     new PeriodicEmitter({ interval: 0.1, perInterval: 2 }),
     new SphereEmitterShape({ radius: 0.075 }),
     new ParticleAttributes({
       duration: 2,
       attachment: AttachMode.None
     }),
-    new ParticleMovement({
+    ParticleMovement({
       gravity: -1,
       maxTurnAngle: LinearProperty.basic(false, 0.7, 0, 15),
       followFactor: LinearProperty.basic(false, 0.75, 1, 0),
@@ -93,7 +93,7 @@ fxr.root.nodes = [
     })
   ]),
   new BasicNode([
-    new NodeTransform({ translateY: 0.15 }),
+    NodeTransform({ offsetY: 0.15 }),
     new PointLight({
       diffuseColor: [1, 0.65, 0.475, 1],
       radius: 20,

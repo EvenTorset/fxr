@@ -77,7 +77,7 @@ import {
   BasicNode,
   Action,
   FloatField,
-  NodeTransform,
+  StaticNodeTransform,
   PeriodicEmitter,
   CylinderEmitterShape,
   ParticleAttributes,
@@ -116,7 +116,7 @@ fxr.root.nodes = [
     // better for readability and they are a lot easier to create.
 
     // This is equivalent to the action created above:
-    new NodeTransform({ translateY: 0.5 }),
+    new StaticNodeTransform({ offsetY: 0.5 }),
 
 
     new PeriodicEmitter({ interval: 0.1, perInterval: 10 }), // Action 300
