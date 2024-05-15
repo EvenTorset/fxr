@@ -5344,7 +5344,15 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
     }
     case OperandType.UnkMinus2:
     case OperandType.StateTime:
-      throw new Error('Unexpected value for operand without value: ' + OperandType[type])
+      br.stepIn(offset)
+      const value = br.readInt32()
+      br.stepOut()
+      console.warn(
+        `Warning: Unexpected value for operand: ${OperandType[type]} - ${value}`,
+        'This operand type should not have a value, so the value will be ignored.',
+        'In most cases, this is caused by other (outdated) tools being used to modify the FXR file.'
+      )
+      return null
   }
 }
 
