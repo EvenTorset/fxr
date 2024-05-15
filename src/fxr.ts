@@ -6761,9 +6761,9 @@ class FXR {
   states: State[]
   root: RootNode | GenericNode
 
-  sfxReferences: number[]
-  externalValues1: number[]
-  externalValues2: number[]
+  // sfxReferences: number[]
+  // externalValues1: number[]
+  // externalValues2: number[]
   // unkEmpty: number[]
 
   /**
@@ -6773,17 +6773,17 @@ class FXR {
     id: number,
     root: RootNode | GenericNode = new RootNode,
     states: State[] = [ new State ],
-    sfxReferences: number[] = [],
-    externalValues1: number[] = [],
-    externalValues2: number[] = [],
+    // sfxReferences: number[] = [],
+    // externalValues1: number[] = [],
+    // externalValues2: number[] = [],
     // unkEmpty: number[] = [],
   ) {
     this.id = id
     this.root = root
     this.states = states
-    this.sfxReferences = sfxReferences
-    this.externalValues1 = externalValues1
-    this.externalValues2 = externalValues2
+    // this.sfxReferences = sfxReferences
+    // this.externalValues1 = externalValues1
+    // this.externalValues2 = externalValues2
     // this.unkEmpty = unkEmpty
   }
 
@@ -6818,10 +6818,14 @@ class FXR {
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    const version = game === Game.Generic ? br.assertInt16(
-      FXRVersion.DarkSouls3,
-      FXRVersion.Sekiro
-    ) :  br.assertInt16(GameVersionMap[game])
+    if (game === Game.Generic) {
+      br.assertInt16(
+        FXRVersion.DarkSouls3,
+        FXRVersion.Sekiro
+      )
+    } else {
+      br.assertInt16(GameVersionMap[game])
+    }
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
@@ -6851,28 +6855,28 @@ class FXR {
     br.assertInt32(1)
     br.assertInt32(0)
 
-    let sfxReferences: number[] = []
-    let externalValues1: number[] = []
-    let externalValues2: number[] = []
+    // let sfxReferences: number[] = []
+    // let externalValues1: number[] = []
+    // let externalValues2: number[] = []
     // let unkEmpty: number[] = []
 
-    if (version === FXRVersion.Sekiro) {
-      const sfxReferencesOffset = br.readInt32()
-      const sfxReferencesCount  = br.readInt32()
-      const externalValues1Offset = br.readInt32()
-      const externalValues1Count  = br.readInt32()
-      const externalValues2Offset = br.readInt32()
-      const externalValues2Count  = br.readInt32()
-      br.readInt32()
-      br.assertInt32(0)
-      // const unkEmptyOffset = br.readInt32()
-      // const unkEmptyCount  = br.readInt32()
+    // if (version === FXRVersion.Sekiro) {
+    //   const sfxReferencesOffset = br.readInt32()
+    //   const sfxReferencesCount  = br.readInt32()
+    //   const externalValues1Offset = br.readInt32()
+    //   const externalValues1Count  = br.readInt32()
+    //   const externalValues2Offset = br.readInt32()
+    //   const externalValues2Count  = br.readInt32()
+    //   br.readInt32()
+    //   br.assertInt32(0)
+    //   // const unkEmptyOffset = br.readInt32()
+    //   // const unkEmptyCount  = br.readInt32()
 
-      sfxReferences = br.getInt32s(sfxReferencesOffset, sfxReferencesCount)
-      externalValues1 = br.getInt32s(externalValues1Offset, externalValues1Count)
-      externalValues2 = br.getInt32s(externalValues2Offset, externalValues2Count)
-      // unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
-    }
+    //   sfxReferences = br.getInt32s(sfxReferencesOffset, sfxReferencesCount)
+    //   externalValues1 = br.getInt32s(externalValues1Offset, externalValues1Count)
+    //   externalValues2 = br.getInt32s(externalValues2Offset, externalValues2Count)
+    //   // unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
+    // }
 
     br.position = stateListOffset
     br.assertInt32(0)
@@ -6893,9 +6897,9 @@ class FXR {
       id,
       rootNode,
       states,
-      sfxReferences,
-      externalValues1,
-      externalValues2,
+      // sfxReferences,
+      // externalValues1,
+      // externalValues2,
       // unkEmpty,
     )
   }
@@ -6938,13 +6942,18 @@ class FXR {
     bw.writeInt32(1)
     bw.writeInt32(0)
 
+    const refs = version === FXRVersion.Sekiro ? this.getReferences() : {
+      sfx: [],
+      externalValues1: [],
+      externalValues2: [],
+    }
     if (version === FXRVersion.Sekiro) {
       bw.reserveInt32('SFXReferencesOffset')
-      bw.writeInt32(this.sfxReferences.length)
+      bw.writeInt32(refs.sfx.length)
       bw.reserveInt32('ExternalValues1Offset')
-      bw.writeInt32(this.externalValues1.length)
+      bw.writeInt32(refs.externalValues1.length)
       bw.reserveInt32('ExternalValues2Offset')
-      bw.writeInt32(this.externalValues2.length)
+      bw.writeInt32(refs.externalValues2.length)
       // bw.reserveInt32('UnkEmptyOffset')
       // bw.writeInt32(this.unkEmpty.length)
       bw.writeInt32(0)
@@ -7049,15 +7058,15 @@ class FXR {
     }
 
     bw.fill('SFXReferencesOffset', bw.position)
-    bw.writeInt32s(this.sfxReferences)
+    bw.writeInt32s(refs.sfx)
     bw.pad(16)
 
     bw.fill('ExternalValues1Offset', bw.position)
-    bw.writeInt32s(this.externalValues1)
+    bw.writeInt32s(refs.externalValues1)
     bw.pad(16)
 
     bw.fill('ExternalValues2Offset', bw.position)
-    bw.writeInt32s(this.externalValues2)
+    bw.writeInt32s(refs.externalValues2)
     bw.pad(16)
 
     // if (this.unkEmpty.length > 0) {
@@ -7085,25 +7094,15 @@ class FXR {
     id,
     states,
     root,
-    sfxReferences,
-    externalValues1,
-    externalValues2
   }: {
     id: number
     states: string[]
     root: any
-    sfxReferences: number[]
-    externalValues1: number[]
-    externalValues2: number[]
-    unkEmpty: number[]
   }) {
     return new FXR(
       id,
       Node.fromJSON(root) as RootNode | GenericNode,
       states.map(state => State.from(state)),
-      sfxReferences,
-      externalValues1,
-      externalValues2
     )
   }
 
@@ -7111,9 +7110,6 @@ class FXR {
     return {
       id: this.id,
       states: this.states.map(state => state.toString()),
-      sfxReferences: this.sfxReferences,
-      externalValues1: this.externalValues1,
-      externalValues2: this.externalValues2,
       root: this.root.toJSON(),
     }
   }
@@ -7129,23 +7125,32 @@ class FXR {
       this.id,
       this.root.minify() as RootNode | GenericNode,
       this.states,
-      this.sfxReferences,
-      this.externalValues1,
-      this.externalValues2
     )
   }
 
   /**
-   * Updates {@link sfxReferences}, {@link externalValues1}, and
-   * {@link externalValues2} with the values used in the FXR.
+   * Gets lists of various types of references in the FXR.
    */
-  updateReferences() {
-    const references: number[] = []
+  getReferences(): {
+    sfx: number[]
+    externalValues1: number[]
+    externalValues2: number[]
+  } {
+    const sfx: number[] = []
     const externalValues1: number[] = []
     const externalValues2: number[] = []
     for (const node of this.root.walk()) {
       if (node instanceof ProxyNode) {
-        references.push(node.sfx)
+        sfx.push(node.sfx)
+      } else if (node instanceof GenericNode && node.type === NodeType.Proxy) {
+        if (node.actions.length === 0) {
+          throw new Error('Missing action 132 in Proxy node!')
+        }
+        if (node.actions[0] instanceof Action) {
+          sfx.push(node.actions[0].fields1[0].value as number)
+        } else if (node.actions[0] instanceof SFXReference) {
+          sfx.push(node.actions[0].sfx)
+        }
       }
     }
     for (const prop of this.root.walkProperties()) {
@@ -7170,10 +7175,11 @@ class FXR {
         }
       }
     }
-    this.sfxReferences = uniqueArray(references).sort((a, b) => a - b)
-    this.externalValues1 = uniqueArray(externalValues1).sort((a, b) => a - b)
-    this.externalValues2 = uniqueArray(externalValues2).sort((a, b) => a - b)
-    return this
+    return {
+      sfx: uniqueArray(sfx).sort((a, b) => a - b),
+      externalValues1: uniqueArray(externalValues1).sort((a, b) => a - b),
+      externalValues2: uniqueArray(externalValues2).sort((a, b) => a - b),
+    }
   }
 
   /**
