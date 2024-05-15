@@ -384,7 +384,6 @@ enum ActionType {
   LevelsOfDetailThresholds = 133,
   /**
    * ### Action 199 - StateEffectMap
-   * **Slot**: {@link ActionSlots.StateEffectMapAction StateEffectMap}
    * 
    * Maps states to effects in the parent node.
    * 
@@ -1566,10 +1565,6 @@ export namespace ActionSlots {
     | Unk800
     | Action
 
-  export type StateEffectMapAction =
-    | StateEffectMap
-    | Action
-
   export type Unknown70xAction =
     | Unk700
     | Unk701
@@ -2713,6 +2708,7 @@ const ActionData: {
       unk_sdt_f2_42: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_43: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_44: { default: 0, field: FieldType.Integer },
+      unk_ac6_f2_45: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2728,7 +2724,12 @@ const ActionData: {
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: {
+        fields1: Game.Sekiro,
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
+      }
     }
   },
   [ActionType.MultiTextureBillboardEx]: {
@@ -11901,7 +11902,6 @@ class LevelsOfDetailThresholds extends DataAction {
 
 /**
  * ### {@link ActionType.StateEffectMap Action 199 - StateEffectMap}
- * **Slot**: {@link ActionSlots.StateEffectMapAction StateEffectMap}
  * 
  * Maps states to effects in the parent node.
  */
@@ -15352,6 +15352,12 @@ export interface BillboardExParams {
    * **Default**: `0`
    */
   unk_sdt_f2_44?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_45?: number
 }
 
 /**
@@ -15778,6 +15784,7 @@ class BillboardEx extends DataAction {
   unk_sdt_f2_42: number
   unk_sdt_f2_43: number
   unk_sdt_f2_44: number
+  unk_ac6_f2_45: number
   constructor(props: BillboardExParams = {}) {
     super(ActionType.BillboardEx)
     this.assign(props)
