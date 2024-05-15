@@ -1,6 +1,7 @@
 type: 10500
 name: Unk10500
-desc: >
+slot: Unknown10500
+desc: |
   Unknown root node action.
 properties:
   rateOfTime:
@@ -8,7 +9,7 @@ properties:
     field: float
     default: 1
     argument: EffectAge
-    desc: >
+    desc: |
       Controls how fast time passes for the entire effect.
   unk_ds3_f1_0:
     field: int

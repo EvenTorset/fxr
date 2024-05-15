@@ -1,0 +1,5 @@
+type: 399
+name: OneTimeEmitter
+slot: Emitter
+desc: |
+  Emits one particle once.

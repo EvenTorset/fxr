@@ -1,5 +1,6 @@
 type: 701
 name: Unk701
+slot: Unknown70x
 desc: |
   Unknown root node action that was introduced in Elden Ring.
 properties:

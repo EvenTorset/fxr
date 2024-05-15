@@ -1,0 +1,5 @@
+type: 500
+name: NoParticleSpread
+slot: ParticleDirection
+desc: |
+  Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.

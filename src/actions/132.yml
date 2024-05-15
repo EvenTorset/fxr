@@ -2,7 +2,6 @@ type: 132
 name: SFXReference
 desc: |
   References another SFX by its ID.
-omitClass: true
 properties:
   sfx:
     field: int

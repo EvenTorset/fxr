@@ -1,0 +1,20 @@
+type: 201
+name: EmitRandomParticles
+slot: Behavior
+desc: |
+  Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+properties:
+  weights:
+    type: number[]
+    default: [1]
+    desc: |
+      Probability weights for each child node to be picked when emitting.
+
+      The weights are stored as integers, so non-integer values in this list will be truncated.
+games:
+  DS3:
+    section10s:
+      - weights
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

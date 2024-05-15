@@ -123,41 +123,6 @@ enum ActionType {
    * to disable the effects of the other actions that go in those slots.
    */
   None = 0,
-  /**
-   * Maps states to effects in the parent node.
-   * 
-   * This action type has a specialized subclass: {@link StateEffectMap}
-   */
-  StateEffectMap = 199,
-  /**
-   * Used in {@link EffectType.SharedEmitter} to emit all particles from child
-   * nodes every time the shared emitter emits something.
-   * 
-   * This action type has a specialized subclass: {@link EmitAllParticles}
-   */
-  EmitAllParticles = 200,
-  /**
-   * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
-   * child node every time the shared emitter emits something.
-   * 
-   * This action type has a specialized subclass: {@link EmitRandomParticles}
-   */
-  EmitRandomParticles = 201,
-  /**
-   * Emits one particle once.
-   * 
-   * This action type has a specialized subclass: {@link OneTimeEmitter}
-   */
-  OneTimeEmitter = 399,
-  /**
-   * Makes all particles use the default initial direction from the emitter.
-   * See {@link InitialDirection} for more information.
-   * 
-   * This action type has a specialized subclass: {@link NoParticleSpread}
-   */
-  NoParticleSpread = 500,
-  Unk700 = 700, // Root node action
-  Unk702 = 702, // Root node action
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
   Unk10003_LightShaft = 10003,
@@ -383,7 +348,7 @@ enum ActionType {
   ParticleAttributes = 129,
   /**
    * ### Action 130 - Unk130
-   * **Slot**: {@link ActionSlots.UnknownAction Unknown}
+   * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
    * 
    * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
    * 
@@ -418,6 +383,33 @@ enum ActionType {
    */
   LevelsOfDetailThresholds = 133,
   /**
+   * ### Action 199 - StateEffectMap
+   * **Slot**: {@link ActionSlots.StateEffectMapAction StateEffectMap}
+   * 
+   * Maps states to effects in the parent node.
+   * 
+   * This action type has a specialized subclass: {@link StateEffectMap}
+   */
+  StateEffectMap = 199,
+  /**
+   * ### Action 200 - EmitAllParticles
+   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * 
+   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+   * 
+   * This action type has a specialized subclass: {@link EmitAllParticles}
+   */
+  EmitAllParticles = 200,
+  /**
+   * ### Action 201 - EmitRandomParticles
+   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * 
+   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+   * 
+   * This action type has a specialized subclass: {@link EmitRandomParticles}
+   */
+  EmitRandomParticles = 201,
+  /**
    * ### Action 300 - PeriodicEmitter
    * **Slot**: {@link ActionSlots.EmitterAction Emitter}
    * 
@@ -435,6 +427,15 @@ enum ActionType {
    * This action type has a specialized subclass: {@link EqualDistanceEmitter}
    */
   EqualDistanceEmitter = 301,
+  /**
+   * ### Action 399 - OneTimeEmitter
+   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * 
+   * Emits one particle once.
+   * 
+   * This action type has a specialized subclass: {@link OneTimeEmitter}
+   */
+  OneTimeEmitter = 399,
   /**
    * ### Action 400 - PointEmitterShape
    * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
@@ -489,6 +490,15 @@ enum ActionType {
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
+  /**
+   * ### Action 500 - NoParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
+   * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+   * 
+   * This action type has a specialized subclass: {@link NoParticleSpread}
+   */
+  NoParticleSpread = 500,
   /**
    * ### Action 501 - CircularParticleSpread
    * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
@@ -611,13 +621,32 @@ enum ActionType {
    */
   PointLight = 609,
   /**
+   * ### Action 700 - Unk700
+   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * 
+   * Unknown root node.
+   * 
+   * This action type has a specialized subclass: {@link Unk700}
+   */
+  Unk700 = 700,
+  /**
    * ### Action 701 - Unk701
+   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
    * 
    * Unknown root node action that was introduced in Elden Ring.
    * 
    * This action type has a specialized subclass: {@link Unk701}
    */
   Unk701 = 701,
+  /**
+   * ### Action 702 - Unk702
+   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * 
+   * Unknown root node action that was introduced in Elden Ring.
+   * 
+   * This action type has a specialized subclass: {@link Unk702}
+   */
+  Unk702 = 702,
   /**
    * ### Action 731 - NodeWindSpeed
    * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
@@ -716,6 +745,7 @@ enum ActionType {
   RichModel = 10015,
   /**
    * ### Action 10500 - Unk10500
+   * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
    * 
    * Unknown root node action.
    * 
@@ -1350,16 +1380,16 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 export interface IAction {
   readonly type: ActionType
   toJSON(): any
-  minify(): IAction
+  minify(): AnyAction
 }
 
 export interface IEffect {
   readonly type: EffectType
   getActionCount(game: Game): number
-  getActions(game: Game): IAction[]
+  getActions(game: Game): AnyAction[]
   toJSON(): any
   minify(): typeof this
-  walkActions(): Generator<IAction>
+  walkActions(): Generator<AnyAction>
 }
 
 export interface IModifier<T extends ValueType> {
@@ -1374,6 +1404,7 @@ export interface IModifier<T extends ValueType> {
   separateComponents(): IModifier<ValueType.Scalar>[]
 }
 
+export type AnyAction = Action | DataAction
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
 export type Vector4 = [red: number, green: number, blue: number, alpha: number]
@@ -1449,6 +1480,11 @@ export namespace ActionSlots {
     | SpotLight
     | Action
 
+  export type BehaviorAction =
+    | EmitAllParticles
+    | EmitRandomParticles
+    | Action
+
   export type EmissionAudioAction =
     | EmissionSound
     | Action
@@ -1456,6 +1492,7 @@ export namespace ActionSlots {
   export type EmitterAction =
     | PeriodicEmitter
     | EqualDistanceEmitter
+    | OneTimeEmitter
     | Action
 
   export type EmitterShapeAction =
@@ -1504,6 +1541,7 @@ export namespace ActionSlots {
     | Action
 
   export type ParticleDirectionAction =
+    | NoParticleSpread
     | CircularParticleSpread
     | EllipticalParticleSpread
     | RectangularParticleSpread
@@ -1528,8 +1566,22 @@ export namespace ActionSlots {
     | Unk800
     | Action
 
-  export type UnknownAction =
+  export type StateEffectMapAction =
+    | StateEffectMap
+    | Action
+
+  export type Unknown70xAction =
+    | Unk700
+    | Unk701
+    | Unk702
+    | Action
+
+  export type Unknown130Action =
     | Unk130
+    | Action
+
+  export type Unknown10500Action =
+    | Unk10500
     | Action
 /*#ActionSlotTypes end*/
 }
@@ -1540,10 +1592,11 @@ export type ActionGameDataEntry = {
   fields2?: string[] | Game
   properties1?: string[] | Game
   properties2?: string[] | Game
+  section10s?: string[] | Game
 }
 const ActionData: {
   [x: string]: {
-    props: {
+    props?: {
       [name: string]: {
         default: any
         field?: FieldType
@@ -1552,7 +1605,7 @@ const ActionData: {
         }
       }
     }
-    games: {
+    games?: {
       [game: string]: ActionGameDataEntry | Game | -2
     }
   }
@@ -2092,6 +2145,33 @@ const ActionData: {
       }
     }
   },
+  [ActionType.StateEffectMap]: {
+    props: {
+      effectIndices: { default: [0] },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        section10s: ['effectIndices']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.EmitAllParticles]: {},
+  [ActionType.EmitRandomParticles]: {
+    props: {
+      weights: { default: [1] },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        section10s: ['weights']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.PeriodicEmitter]: {
     props: {
       interval: { default: 1 },
@@ -2135,6 +2215,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.OneTimeEmitter]: {},
   [ActionType.PointEmitterShape]: {
     props: {
       direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
@@ -2231,6 +2312,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.NoParticleSpread]: {},
   [ActionType.CircularParticleSpread]: {
     props: {
       unk_er_f1_0: { default: false, field: FieldType.Boolean },
@@ -3280,6 +3362,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.Unk700]: {},
   [ActionType.Unk701]: {
     props: {
       unk_er_p1_0: { default: 1 },
@@ -3291,6 +3374,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.Unk702]: {},
   [ActionType.NodeWindSpeed]: {
     props: {
       speed: { default: 0 },
@@ -4136,6 +4220,7 @@ const ActionData: {
   /*#ActionData end*/
 }
 for (const [type, action] of Object.entries(ActionData)) {
+  if (!('props' in action)) continue;
   for (const game of Object.keys(action.games)) {
     const gameData = getActionGameData(type as unknown as ActionType, game as unknown as Game)
     for (const [name, prop] of Object.entries(action.props)) {
@@ -4312,6 +4397,15 @@ const EffectActionSlots = {
 
 function getActionGameData(type: ActionType, game: Game) {
   const adt = ActionData[type]
+  if (!('props' in adt)) {
+    return {
+      fields1: [],
+      fields2: [],
+      properties1: [],
+      properties2: [],
+      section10s: [],
+    }
+  }
   if (!(game in adt.games)) {
     throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
   }
@@ -4320,6 +4414,7 @@ function getActionGameData(type: ActionType, game: Game) {
   data.fields2 ??= []
   data.properties1 ??= []
   data.properties2 ??= []
+  data.section10s ??= []
   if (typeof data.fields1 === 'number') {
     data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
   }
@@ -4332,11 +4427,15 @@ function getActionGameData(type: ActionType, game: Game) {
   if (typeof data.properties2 === 'number') {
     data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
   }
+  if (typeof data.section10s === 'number') {
+    data.section10s = (adt.games[data.section10s] as ActionGameDataEntry).section10s
+  }
   return data as {
     fields1: string[]
     fields2: string[]
     properties1: string[]
     properties2: string[]
+    section10s: string[]
   }
 }
 
@@ -4387,8 +4486,13 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   }
 }
 
-function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, properties: IProperty<any, any>[], modifierProp: boolean) {
-  let prop = this
+function writeProperty(
+  prop: IProperty<any, any>,
+  bw: BinaryWriter,
+  game: Game,
+  properties: IProperty<any, any>[],
+  isModifierProp: boolean
+) {
   if (game !== Game.ArmoredCore6 && prop instanceof ComponentSequenceProperty) {
     prop = prop.combineComponents()
   }
@@ -4407,9 +4511,9 @@ function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, 
   bw.writeInt32(typeEnumB)
   bw.writeInt32(prop.fieldCount)
   bw.writeInt32(0)
-  bw.reserveInt32(`${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
+  bw.reserveInt32(`${isModifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
   bw.writeInt32(0)
-  if (!modifierProp) {
+  if (!isModifierProp) {
     bw.reserveInt32(`PropertyModifiersOffset${count}`)
     bw.writeInt32(0)
     bw.writeInt32((prop as IModifiableProperty<any, any>).modifiers.length)
@@ -4418,29 +4522,38 @@ function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, 
   properties.push(prop)
 }
 
-function writePropertyModifiers(this: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: IModifier<any>[]) {
+function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: IModifier<any>[]) {
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
-  for (const modifier of this.modifiers) {
-    writeModifier.call(modifier, bw, modifiers)
+  for (const modifier of prop.modifiers) {
+    writeModifier(modifier, bw, modifiers)
   }
 }
 
-function writePropertyFields(this: IProperty<any, any>, bw: BinaryWriter, index: number, modifierProp: boolean): number {
-  const offsetName = `${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${index}`
-  const fieldCount = this.fieldCount
+function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index: number, isModifierProp: boolean): number {
+  const offsetName = `${isModifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${index}`
+  const fieldCount = prop.fieldCount
   if (fieldCount === 0) {
     bw.fill(offsetName, 0)
   } else {
     bw.fill(offsetName, bw.position)
-    for (const field of this.fields) {
-      writeField.call(field, bw)
+    for (const field of prop.fields) {
+      writeField(field, bw)
     }
   }
   return fieldCount
 }
 
 //#region Functions - Action
-function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
+function readAction(
+  br: BinaryReader,
+  game: Game,
+  type: number,
+  fieldCount1: number,
+  propertyCount1: number,
+  fieldCount2: number,
+  propertyCount2: number,
+  section10Count: number
+): Action {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   const section10Offset = br.readInt32()
@@ -4462,7 +4575,7 @@ function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: num
   br.stepOut()
 
   br.stepIn(section10Offset)
-  const section10s: Section10[] = []
+  const section10s: number[][] = []
   for (let i = 0; i < section10Count; ++i) {
     section10s.push(readSection10(br))
   }
@@ -4472,32 +4585,21 @@ function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: num
   const fields1 = readFields(br, fieldCount1, Action)
   const fields2 = readFields(br, fieldCount2, Action)
   br.stepOut()
-  if (type in Actions) {
-    const action = new Actions[type]()
-    action.type = type
-    action.fields1 = fields1
-    action.fields2 = fields2
-    action.properties1 = properties1
-    action.properties2 = properties2
-    action.section10s = section10s
-    return action
-  } else {
-    return new Action(type, fields1, fields2, properties1, properties2, section10s)
-  }
+  return new Action(type, fields1, fields2, properties1, properties2, section10s)
 }
 
-function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeAction(action: Action, bw: BinaryWriter, actions: AnyAction[]) {
   const count = actions.length
-  bw.writeInt16(this.type)
+  bw.writeInt16(action.type)
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
-  bw.writeInt32(this.fields1.length)
-  bw.writeInt32(this.section10s.length)
-  bw.writeInt32(this.properties1.length)
-  bw.writeInt32(this.fields2.length)
+  bw.writeInt32(action.fields1.length)
+  bw.writeInt32(action.section10s.length)
+  bw.writeInt32(action.properties1.length)
+  bw.writeInt32(action.fields2.length)
   bw.writeInt32(0)
-  bw.writeInt32(this.properties2.length)
+  bw.writeInt32(action.properties2.length)
   bw.reserveInt32(`ActionFieldsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`ActionSection10sOffset${count}`)
@@ -4506,63 +4608,79 @@ function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IActio
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  actions.push(this)
+  actions.push(action)
 }
 
-function writeActionProperties(this: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+function writeActionProperties(action: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
-  for (const property of this.properties1) {
-    writeProperty.call(property.for(game), bw, game, properties, false)
+  for (const property of action.properties1) {
+    writeProperty(property.for(game), bw, game, properties, false)
   }
-  for (const property of this.properties2) {
-    writeProperty.call(property.for(game), bw, game, properties, false)
+  for (const property of action.properties2) {
+    writeProperty(property.for(game), bw, game, properties, false)
   }
 }
 
-function writeActionSection10s(this: Action, bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeActionSection10s(action: Action, bw: BinaryWriter, index: number, section10s: number[][]) {
   bw.fill(`ActionSection10sOffset${index}`, bw.position)
-  for (const section10 of this.section10s) {
-    writeSection10.call(section10, bw, section10s)
+  for (const section10 of action.section10s) {
+    writeSection10(section10, bw, section10s)
   }
 }
 
-function writeActionFields(this: Action, bw: BinaryWriter, game: Game, index: number): number {
-  const count: number = this.fields1.length + this.fields2.length
+function writeActionFields(action: Action, bw: BinaryWriter, index: number): number {
+  const count: number = action.fields1.length + action.fields2.length
   if (count === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
   } else {
     bw.fill(`ActionFieldsOffset${index}`, bw.position)
-    for (const field of this.fields1) {
-      writeField.call(field, bw)
+    for (const field of action.fields1) {
+      writeField(field, bw)
     }
-    for (const field of this.fields2) {
-      writeField.call(field, bw)
+    for (const field of action.fields2) {
+      writeField(field, bw)
     }
   }
   return count
 }
 
 //#region Functions - DataAction
-function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
+function readDataAction(
+  br: BinaryReader,
+  game: Game,
+  type: ActionType,
+  fieldCount1: number,
+  propertyCount1: number,
+  fieldCount2: number,
+  propertyCount2: number,
+  section10Count: number
+): DataAction {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
-  br.position += 4 // Section10 offset
+  const section10Offset = br.readInt32()
   br.assertInt32(0)
   const propertyOffset = br.readInt32()
   br.assertInt32(0)
   br.assertInt32(0)
   br.assertInt32(0)
 
+  const adt = ActionData[type]
+  if (!('props' in adt)) {
+    return new DataActions[type]
+  }
+
   const c: {
     fields1: Field[]
     fields2: Field[]
     properties1: AnyProperty[]
     properties2: AnyProperty[]
+    section10s: number[][]
   } = {
     fields1: [],
     fields2: [],
     properties1: [],
     properties2: [],
+    section10s: [],
   }
 
   br.stepIn(propertyOffset)
@@ -4574,8 +4692,13 @@ function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCou
   }
   br.stepOut()
 
+  br.stepIn(section10Offset)
+  for (let i = 0; i < section10Count; ++i) {
+    c.section10s.push(readSection10(br))
+  }
+  br.stepOut()
+
   br.stepIn(fieldOffset)
-  const adt = ActionData[type]
   const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
     c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), null)
@@ -4605,7 +4728,7 @@ function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCou
   }
   br.stepOut()
   let params = Object.fromEntries(
-    Object.entries(adt.props).filter(([name, prop]) => game in prop.paths).map(([name, prop]) => {
+    Object.entries(adt.props).filter(([_, prop]) => game in prop.paths).map(([name, prop]) => {
       const v = c[prop.paths[game][0]][prop.paths[game][1]]
       if (v instanceof Field) {
         return [name, v.value]
@@ -4617,26 +4740,29 @@ function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCou
   if (type in ActionDataConversion && 'read' in ActionDataConversion[type]) {
     params = ActionDataConversion[type].read(params, game)
   }
+  if (Object.keys(adt.props).length === 1) {
+    return new DataActions[type](Object.values(params)[0])
+  }
   return new DataActions[type](params)
 }
 
-function writeDataAction(this: DataAction, bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actions: AnyAction[]) {
   if (game === Game.Generic) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
-  bw.convertedDataActions.set(this,
-    this.type in ActionDataConversion && 'write' in ActionDataConversion[this.type] ?
-    ActionDataConversion[this.type].write(Object.assign(Object.create(null), this), game) :
-    this
+  bw.convertedDataActions.set(action,
+    action.type in ActionDataConversion && 'write' in ActionDataConversion[action.type] ?
+    ActionDataConversion[action.type].write(Object.assign(Object.create(null), action), game) :
+    action
   )
-  const data = getActionGameData(this.type, game)
+  const data = getActionGameData(action.type, game)
   const count = actions.length
-  bw.writeInt16(this.type)
+  bw.writeInt16(action.type)
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
   bw.writeInt32(data.fields1.length)
-  bw.writeInt32(0) // Section10 count
+  bw.writeInt32(data.section10s.length)
   bw.writeInt32(data.properties1.length)
   bw.writeInt32(data.fields2.length)
   bw.writeInt32(0)
@@ -4649,47 +4775,50 @@ function writeDataAction(this: DataAction, bw: BinaryWriter, game: Game, actions
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  actions.push(this)
+  actions.push(action)
 }
 
-function writeDataActionProperties(this: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
-  const conProps = bw.convertedDataActions.get(this)
-  const properties1: AnyProperty[] = this.getProperties.call(conProps, game, 'properties1')
-  const properties2: AnyProperty[] = this.getProperties.call(conProps, game, 'properties2')
+function writeDataActionProperties(action: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  const conProps = bw.convertedDataActions.get(action)
+  const properties1: AnyProperty[] = action.getProperties.call(conProps, game, 'properties1')
+  const properties2: AnyProperty[] = action.getProperties.call(conProps, game, 'properties2')
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
-    writeProperty.call(property, bw, game, properties, false)
+    writeProperty(property, bw, game, properties, false)
   }
   for (const property of properties2) {
-    writeProperty.call(property, bw, game, properties, false)
+    writeProperty(property, bw, game, properties, false)
   }
 }
 
-function writeDataActionSection10s(this: DataAction, bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeDataActionSection10s(action: DataAction, bw: BinaryWriter, game: Game, index: number, section10s: number[][]) {
   bw.fill(`ActionSection10sOffset${index}`, bw.position)
+  for (const section10 of action.getSection10s(game)) {
+    writeSection10(section10, bw, section10s)
+  }
 }
 
-function writeDataActionFields(this: DataAction, bw: BinaryWriter, game: Game, index: number): number {
-  const conProps = bw.convertedDataActions.get(this)
-  const fields1: Field[] = this.getFields.call(conProps, game, 'fields1')
-  const fields2: Field[] = this.getFields.call(conProps, game, 'fields2')
+function writeDataActionFields(action: DataAction, bw: BinaryWriter, game: Game, index: number): number {
+  const conProps = bw.convertedDataActions.get(action)
+  const fields1: Field[] = action.getFields.call(conProps, game, 'fields1')
+  const fields2: Field[] = action.getFields.call(conProps, game, 'fields2')
   const count = fields1.length + fields2.length
   if (count === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
   } else {
     bw.fill(`ActionFieldsOffset${index}`, bw.position)
     for (const field of fields1) {
-      writeField.call(field, bw)
+      writeField(field, bw)
     }
     for (const field of fields2) {
-      writeField.call(field, bw)
+      writeField(field, bw)
     }
   }
   return count
 }
 
 //#region Functions - AnyAction
-function readAnyAction(br: BinaryReader, game: Game): IAction {
+function readAnyAction(br: BinaryReader, game: Game): AnyAction {
   const type = br.readInt16()
   br.position += 6
   // br.readUint8() // Unk02
@@ -4705,7 +4834,7 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
   if (game !== Game.Generic && type in ActionData) {
     const data = getActionGameData(type, game)
     if (
-      section10Count === 0 &&
+      section10Count <= data.section10s.length &&
       fieldCount1 <= data.fields1.length &&
       ( // Deal with DS3's action 10012 special case where it has 1 extra field
         // that is skipped while reading
@@ -4716,7 +4845,7 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
-      return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
+      return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     } else {
       return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     }
@@ -4725,28 +4854,40 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
   }
 }
 
-function writeAnyAction(this: IAction, bw: BinaryWriter, game: Game, actions: IAction[]) {
-  if (this instanceof DataAction) {
-    if (ActionData[this.type].games[game] === -2) {
-      writeAction.call(ActionDataConversion[this.type].fallback(this, game), bw, game, actions)
+function writeAnyAction(action: AnyAction, bw: BinaryWriter, game: Game, actions: AnyAction[]) {
+  if (action instanceof DataAction) {
+    if ('props' in ActionData[action.type] && ActionData[action.type].games[game] === -2) {
+      writeAction(ActionDataConversion[action.type].fallback(action, game), bw, actions)
     } else {
-      writeDataAction.call(this, bw, game, actions)
+      writeDataAction(action, bw, game, actions)
     }
   } else {
-    writeAction.call(this, bw, game, actions)
+    writeAction(action, bw, actions)
   }
 }
 
-function writeAnyActionProperties(this: IAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
-  ;(this instanceof Action ? writeActionProperties : writeDataActionProperties).call(this, bw, game, index, properties)
+function writeAnyActionProperties(action: AnyAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  if (action instanceof DataAction) {
+    writeDataActionProperties(action, bw, game, index, properties)
+  } else {
+    writeActionProperties(action, bw, game, index, properties)
+  }
 }
 
-function writeAnyActionSection10s(this: IAction, bw: BinaryWriter, index: number, section10s: Section10[]) {
-  ;(this instanceof Action ? writeActionSection10s : writeDataActionSection10s).call(this, bw, index, section10s)
+function writeAnyActionSection10s(action: AnyAction, bw: BinaryWriter, game: Game, index: number, section10s: number[][]) {
+  if (action instanceof DataAction) {
+    writeDataActionSection10s(action, bw, game, index, section10s)
+  } else {
+    writeActionSection10s(action, bw, index, section10s)
+  }
 }
 
-function writeAnyActionFields(this: IAction, bw: BinaryWriter, game: Game, index: number): number {
-  return (this instanceof Action ? writeActionFields : writeDataActionFields).call(this, bw, game, index)
+function writeAnyActionFields(action: AnyAction, bw: BinaryWriter, game: Game, index: number): number {
+  if (action instanceof DataAction) {
+    return writeDataActionFields(action, bw, game, index)
+  } else {
+    return writeActionFields(action, bw, index)
+  }
 }
 
 //#region Functions - Node
@@ -4820,29 +4961,29 @@ function readNode(br: BinaryReader, game: Game): Node {
   return new GenericNode(type, actions, effects, nodes)
 }
 
-function writeNode(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
-  if (game === Game.Generic && !(this instanceof GenericNode)) {
+function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
+  if (game === Game.Generic && !(node instanceof GenericNode)) {
     throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
   }
   const count = nodes.length
   let effectCount = 0
   let actionCount = 0
   let childCount = 0
-  if (this instanceof GenericNode) {
-    effectCount = this.effects.length
-    actionCount = this.actions.length
-    childCount = this.nodes.length
-  } else if (this instanceof NodeWithEffects) {
-    effectCount = this.effects.length
+  if (node instanceof GenericNode) {
+    effectCount = node.effects.length
+    actionCount = node.actions.length
+    childCount = node.nodes.length
+  } else if (node instanceof NodeWithEffects) {
+    effectCount = node.effects.length
     actionCount = 1
-    childCount = this.nodes.length
-  } else if (this instanceof RootNode) {
+    childCount = node.nodes.length
+  } else if (node instanceof RootNode) {
     actionCount = game === Game.DarkSouls3 || game === Game.Sekiro ? 3 : 4
-    childCount = this.nodes.length
-  } else if (this instanceof ProxyNode) {
+    childCount = node.nodes.length
+  } else if (node instanceof ProxyNode) {
     actionCount = 1
   }
-  bw.writeInt16(this.type)
+  bw.writeInt16(node.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
@@ -4856,55 +4997,55 @@ function writeNode(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   bw.writeInt32(0)
   bw.reserveInt32(`NodeChildNodesOffset${count}`)
   bw.writeInt32(0)
-  nodes.push(this)
+  nodes.push(node)
 }
 
-function writeNodeChildren(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
-  const num = nodes.indexOf(this)
+function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
+  const num = nodes.indexOf(node)
   let childCount = 0
-  if (this instanceof GenericNode || this instanceof NodeWithEffects || this instanceof RootNode) {
-    childCount = this.nodes.length
+  if (node instanceof GenericNode || node instanceof NodeWithEffects || node instanceof RootNode) {
+    childCount = node.nodes.length
   }
   if (childCount === 0) {
     bw.fill(`NodeChildNodesOffset${num}`, 0)
   } else {
     bw.fill(`NodeChildNodesOffset${num}`, bw.position)
-    const children = (this as Node).getNodes(game)
+    const children = node.getNodes(game)
     for (const node of children) {
-      writeNode.call(node, bw, game, nodes)
+      writeNode(node, bw, game, nodes)
     }
     for (const node of children) {
-      writeNodeChildren.call(node, bw, game, nodes)
+      writeNodeChildren(node, bw, game, nodes)
     }
   }
 }
 
-function writeNodeEffects(this: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
+function writeNodeEffects(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
   let effectCount = 0
-  if (this instanceof GenericNode || this instanceof NodeWithEffects) {
-    effectCount = this.effects.length
+  if (node instanceof GenericNode || node instanceof NodeWithEffects) {
+    effectCount = node.effects.length
   }
   if (effectCount === 0) {
     bw.fill(`NodeEffectsOffset${index}`, 0)
   } else {
     bw.fill(`NodeEffectsOffset${index}`, bw.position)
-    const nodeEffects = this.getEffects(game)
+    const nodeEffects = node.getEffects(game)
     for (let i = 0; i < nodeEffects.length; ++i) {
-      writeEffect.call(nodeEffects[i], bw, game, effectCounter.value + i)
+      writeEffect(nodeEffects[i], bw, game, effectCounter.value + i)
     }
     effectCounter.value += nodeEffects.length
   }
 }
 
-function writeNodeActions(this: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
+function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
   bw.fill(`NodeActionsOffset${index}`, bw.position)
-  const nodeActions = this.getActions(game)
-  const nodeEffects = this.getEffects(game)
+  const nodeActions = node.getActions(game)
+  const nodeEffects = node.getEffects(game)
   for (const action of nodeActions) {
-    writeAnyAction.call(action, bw, game, actions)
+    writeAnyAction(action, bw, game, actions)
   }
   for (let i = 0; i < nodeEffects.length; ++i) {
-    writeEffectActions.call(nodeEffects[i], bw, game, effectCounter.value + i, actions)
+    writeEffectActions(nodeEffects[i], bw, game, effectCounter.value + i, actions)
   }
   effectCounter.value += nodeEffects.length
 }
@@ -4947,23 +5088,23 @@ function readEffect(br: BinaryReader, game: Game): IEffect {
   }
 }
 
-function writeEffect(this: IEffect, bw: BinaryWriter, game: Game, index: number) {
-  bw.writeInt16(this.type)
+function writeEffect(effect: IEffect, bw: BinaryWriter, game: Game, index: number) {
+  bw.writeInt16(effect.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt32(this.getActionCount(game))
+  bw.writeInt32(effect.getActionCount(game))
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.reserveInt32(`EffectActionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeEffectActions(this: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+function writeEffectActions(effect: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
   bw.fill(`EffectActionsOffset${index}`, bw.position)
-  for (const action of this.getActions(game)) {
-    writeAnyAction.call(action, bw, game, actions)
+  for (const action of effect.getActions(game)) {
+    writeAnyAction(action, bw, game, actions)
   }
 }
 
@@ -5048,34 +5189,34 @@ function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
   }
 }
 
-function writeModifier(this: IModifier<ValueType>, bw: BinaryWriter, modifiers: IModifier<ValueType>[]) {
+function writeModifier(modifier: IModifier<ValueType>, bw: BinaryWriter, modifiers: IModifier<ValueType>[]) {
   const count = modifiers.length
-  bw.writeInt16(Modifier.typeToEnumA(this.type, this.valueType))
+  bw.writeInt16(Modifier.typeToEnumA(modifier.type, modifier.valueType))
   bw.writeUint8(0)
   bw.writeUint8(1)
-  bw.writeInt32(Modifier.enumBValues[this.type] | this.valueType)
-  bw.writeInt32(this.getFieldCount())
-  bw.writeInt32(this.getPropertyCount())
+  bw.writeInt32(Modifier.enumBValues[modifier.type] | modifier.valueType)
+  bw.writeInt32(modifier.getFieldCount())
+  bw.writeInt32(modifier.getPropertyCount())
   bw.reserveInt32(`Section8FieldsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`Section8Section9sOffset${count}`)
   bw.writeInt32(0)
-  modifiers.push(this)
+  modifiers.push(modifier)
 }
 
-function writeModifierProperties(this: IModifier<ValueType>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
+function writeModifierProperties(modifier: IModifier<ValueType>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
-  for (const property of this.getProperties(game)) {
+  for (const property of modifier.getProperties(game)) {
     // Modifier props can't have modifiers, so it's safe to not use .for(game) here
-    writeProperty.call(property, bw, game, properties, true)
+    writeProperty(property, bw, game, properties, true)
   }
 }
 
-function writeModifierFields(this: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
+function writeModifierFields(modifier: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
   bw.fill(`Section8FieldsOffset${index}`, bw.position)
-  const fields = this.getFields()
+  const fields = modifier.getFields()
   for (const field of fields) {
-    writeField.call(field, bw)
+    writeField(field, bw)
   }
   return fields.length
 }
@@ -5086,24 +5227,30 @@ function readSection10(br: BinaryReader) {
   br.assertInt32(0)
   const count = br.readInt32()
   br.assertInt32(0)
-  return new Section10(readFieldsAt(br, offset, count, this))
+  const values: number[] = []
+  br.stepIn(offset)
+  for (let i = count; i > 0; i--) {
+    values.push(br.readInt32())
+  }
+  br.stepOut()
+  return values
 }
 
-function writeSection10(this: Section10, bw: BinaryWriter, section10s: Section10[]) {
+function writeSection10(s10: number[], bw: BinaryWriter, section10s: number[][]) {
   const count = section10s.length
   bw.reserveInt32(`Section10FieldsOffset${count}`)
   bw.writeInt32(0)
-  bw.writeInt32(this.fields.length)
+  bw.writeInt32(s10.length)
   bw.writeInt32(0)
-  section10s.push(this)
+  section10s.push(s10)
 }
 
-function writeSection10Fields(this: Section10, bw: BinaryWriter, index: number): number {
+function writeSection10Fields(s10: number[], bw: BinaryWriter, index: number): number {
   bw.fill(`Section10FieldsOffset${index}`, bw.position)
-  for (const field of (this as Section10).fields) {
-    writeField.call(field, bw)
+  for (const value of s10) {
+    bw.writeInt32(value)
   }
-  return this.fields.length
+  return s10.length
 }
 
 //#region Functions - State
@@ -5121,17 +5268,17 @@ function readState(br: BinaryReader) {
   return new State(conditions)
 }
 
-function writeState(this: State, bw: BinaryWriter, index: number) {
+function writeState(state: State, bw: BinaryWriter, index: number) {
   bw.writeInt32(0)
-  bw.writeInt32(this.conditions.length)
+  bw.writeInt32(state.conditions.length)
   bw.reserveInt32(`StateConditionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeStateConditions(this: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
+function writeStateConditions(state: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
   bw.fill(`StateConditionsOffset${index}`, bw.position)
-  for (const condition of (this as State).conditions) {
-    writeStateCondition.call(condition, bw, conditions)
+  for (const condition of (state as State).conditions) {
+    writeStateCondition(condition, bw, conditions)
   }
 }
 
@@ -5200,19 +5347,19 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
   }
 }
 
-function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
+function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
   const count = conditions.length
-  bw.writeInt16(this.operator | this.unk1 << 2)
+  bw.writeInt16(con.operator | con.unk1 << 2)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
-  bw.writeInt32(this.nextState)
+  bw.writeInt32(con.nextState)
   bw.writeInt32(0)
-  bw.writeInt16(this.leftOperandType)
+  bw.writeInt16(con.leftOperandType)
   bw.writeInt8(0)
   bw.writeInt8(1)
   bw.writeInt32(0)
-  bw.writeInt32(+(this.leftOperandValue !== null))
+  bw.writeInt32(+(con.leftOperandValue !== null))
   bw.writeInt32(0)
   bw.reserveInt32(`ConditionLeftOffset${count}`)
   bw.writeInt32(0)
@@ -5220,11 +5367,11 @@ function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, co
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt16(this.rightOperandType)
+  bw.writeInt16(con.rightOperandType)
   bw.writeInt8(0)
   bw.writeInt8(1)
   bw.writeInt32(0)
-  bw.writeInt32(+(this.rightOperandValue !== null))
+  bw.writeInt32(+(con.rightOperandValue !== null))
   bw.writeInt32(0)
   bw.reserveInt32(`ConditionRightOffset${count}`)
   bw.writeInt32(0)
@@ -5232,36 +5379,36 @@ function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, co
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  conditions.push(this)
+  conditions.push(con)
 }
 
-function writeStateCondition(this: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
-  writeFormattedStateCondition.call((this as StateCondition).formatCondition(), bw, conditions)
+function writeStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
+  writeFormattedStateCondition((con as StateCondition).formatCondition(), bw, conditions)
 }
 
-function writeStateConditionFields(this: StateCondition, bw: BinaryWriter, index: number): number {
+function writeStateConditionFields(con: StateCondition, bw: BinaryWriter, index: number): number {
   let count = 0
-  if (this.leftOperandValue === null) {
+  if (con.leftOperandValue === null) {
     bw.fill(`ConditionLeftOffset${index}`, 0)
   } else {
-    if (this.leftOperandType === OperandType.Literal) {
+    if (con.leftOperandType === OperandType.Literal) {
       bw.fill(`ConditionLeftOffset${index}`, bw.position)
-      bw.writeFloat32(this.leftOperandValue)
+      bw.writeFloat32(con.leftOperandValue)
     } else {
       bw.fill(`ConditionLeftOffset${index}`, bw.position)
-      bw.writeInt32(this.leftOperandValue)
+      bw.writeInt32(con.leftOperandValue)
     }
     count++
   }
-  if (this.rightOperandValue === null) {
+  if (con.rightOperandValue === null) {
     bw.fill(`ConditionRightOffset${index}`, 0)
   } else {
-    if (this.rightOperandType === OperandType.Literal) {
+    if (con.rightOperandType === OperandType.Literal) {
       bw.fill(`ConditionRightOffset${index}`, bw.position)
-      bw.writeFloat32(this.rightOperandValue)
+      bw.writeFloat32(con.rightOperandValue)
     } else {
       bw.fill(`ConditionRightOffset${index}`, bw.position)
-      bw.writeInt32(this.rightOperandValue)
+      bw.writeInt32(con.rightOperandValue)
     }
     count++
   }
@@ -5323,7 +5470,7 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
   return fields
 }
 
-function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], context: any): Field[] {
+function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field[] {
   return arrayOf(count, i => {
     switch (types[i]) {
       case FieldType.Boolean:
@@ -5338,23 +5485,23 @@ function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], cont
   })
 }
 
-function readFieldsWithTypesAt(br: BinaryReader, offset: number, count: number, types: any[], context: any): Field[] {
+function readFieldsWithTypesAt(br: BinaryReader, offset: number, count: number, types: FieldType[], context: any): Field[] {
   br.stepIn(offset)
   const fields = readFieldsWithTypes(br, count, types, context)
   br.stepOut()
   return fields
 }
 
-function writeField(this: Field, bw: BinaryWriter) {
-  switch (this.type) {
+function writeField(field: Field, bw: BinaryWriter) {
+  switch (field.type) {
     case FieldType.Boolean:
-      return bw.writeInt32(+this.value)
+      return bw.writeInt32(+field.value)
     case FieldType.Integer:
-      return bw.writeInt32(this.value as number)
+      return bw.writeInt32(field.value as number)
     case FieldType.Float:
-      return bw.writeFloat32(this.value as number)
+      return bw.writeFloat32(field.value as number)
     default:
-      throw new Error('Invalid field type: ' + this.type)
+      throw new Error('Invalid field type: ' + field.type)
   }
 }
 
@@ -6008,7 +6155,7 @@ const ActionDataConversion = {
       props.rotationX *= -1
       return props
     },
-    minify(this: StaticNodeTransform): IAction {
+    minify(this: StaticNodeTransform): AnyAction {
       if (
         this.offsetX === 0 &&
         this.offsetY === 0 &&
@@ -6031,7 +6178,7 @@ const ActionDataConversion = {
       props.offsetX *= -1
       return props
     },
-    minify(this: RandomNodeTransform): IAction {
+    minify(this: RandomNodeTransform): AnyAction {
       if (
         this.offsetVarianceX === 0 &&
         this.offsetVarianceY === 0 &&
@@ -6139,9 +6286,12 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.SFXReference]: {
-    read(props: { sfx: number }, game: Game) {
-      return props.sfx
+  [ActionType.StateEffectMap]: {
+    minify(this: StateEffectMap): StateEffectMap {
+      if (this.effectIndices.length > 1 && this.effectIndices.every(e => e === 0)) {
+        return new StateEffectMap
+      }
+      return this
     }
   },
   [ActionType.PointLight]: {
@@ -6801,27 +6951,27 @@ class FXR {
     bw.fill('StatesOffset1', bw.position)
     bw.fill('StatesOffset2', bw.position)
     for (let i = 0; i < this.states.length; ++i) {
-      writeState.call(this.states[i], bw, i)
+      writeState(this.states[i], bw, i)
     }
 
     bw.pad(16)
     bw.fill('ConditionOffset', bw.position)
     const conditions: StateCondition[] = []
     for (let i = 0; i < this.states.length; ++i) {
-      writeStateConditions.call(this.states[i], bw, i, conditions)
+      writeStateConditions(this.states[i], bw, i, conditions)
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    writeNode.call(this.root, bw, game, nodes)
-    writeNodeChildren.call(this.root, bw, game, nodes)
+    writeNode(this.root, bw, game, nodes)
+    writeNodeChildren(this.root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
     let counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeEffects.call(nodes[i], bw, game, i, counter)
+      writeNodeEffects(nodes[i], bw, game, i, counter)
     }
     bw.fill('EffectCount', counter.value)
     bw.pad(16)
@@ -6829,14 +6979,14 @@ class FXR {
     counter.value = 0
     const actions: Action[] = []
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeActions.call(nodes[i], bw, game, i, counter, actions)
+      writeNodeActions(nodes[i], bw, game, i, counter, actions)
     }
     bw.fill('ActionCount', actions.length)
     bw.pad(16)
     bw.fill('PropertyOffset', bw.position)
     const properties: IModifiableProperty<any, any>[] = []
     for (let i = 0; i < actions.length; ++i) {
-      writeAnyActionProperties.call(actions[i], bw, game, i, properties)
+      writeAnyActionProperties(actions[i], bw, game, i, properties)
     }
     bw.fill('PropertyCount', properties.length)
     bw.pad(16)
@@ -6844,43 +6994,43 @@ class FXR {
     const modifiers: IModifier<ValueType>[] = []
     for (let i = 0; i < properties.length; ++i) {
       // The property has already gone through .for(game) here, so don't use it again
-      writePropertyModifiers.call(properties[i], bw, i, modifiers)
+      writePropertyModifiers(properties[i], bw, i, modifiers)
     }
     bw.fill('Section8Count', modifiers.length)
     bw.pad(16)
     bw.fill('Section9Offset', bw.position)
     const modProps: Property<any, any>[] = []
     for (let i = 0; i < modifiers.length; ++i) {
-      writeModifierProperties.call(modifiers[i], bw, game, i, modProps)
+      writeModifierProperties(modifiers[i], bw, game, i, modProps)
     }
     bw.fill('Section9Count', modProps.length)
     bw.pad(16)
     bw.fill('Section10Offset', bw.position)
-    const section10s: Section10[] = []
+    const section10s: number[][] = []
     for (let i = 0; i < actions.length; ++i) {
-      writeAnyActionSection10s.call(actions[i], bw, i, section10s)
+      writeAnyActionSection10s(actions[i], bw, game, i, section10s)
     }
     bw.fill('Section10Count', section10s.length)
     bw.pad(16)
     bw.fill('FieldOffset', bw.position)
     let fieldCount = 0
     for (let i = 0; i < conditions.length; ++i) {
-      fieldCount += writeStateConditionFields.call(conditions[i], bw, i)
+      fieldCount += writeStateConditionFields(conditions[i], bw, i)
     }
     for (let i = 0; i < actions.length; ++i) {
-      fieldCount += writeAnyActionFields.call(actions[i], bw, game, i)
+      fieldCount += writeAnyActionFields(actions[i], bw, game, i)
     }
     for (let i = 0; i < properties.length; ++i) {
-      fieldCount += writePropertyFields.call(properties[i], bw, i, false)
+      fieldCount += writePropertyFields(properties[i], bw, i, false)
     }
     for (let i = 0; i < modifiers.length; ++i) {
-      fieldCount += writeModifierFields.call(modifiers[i], bw, i)
+      fieldCount += writeModifierFields(modifiers[i], bw, i)
     }
     for (let i = 0; i < modProps.length; ++i) {
-      fieldCount += writePropertyFields.call(modProps[i], bw, i, true)
+      fieldCount += writePropertyFields(modProps[i], bw, i, true)
     }
     for (let i = 0; i < section10s.length; ++i) {
-      fieldCount += writeSection10Fields.call(section10s[i], bw, i)
+      fieldCount += writeSection10Fields(section10s[i], bw, i)
     }
     bw.fill('FieldCount', fieldCount)
     bw.pad(16)
@@ -7386,7 +7536,7 @@ abstract class Node {
 
   constructor(public readonly type: NodeType) {}
 
-  abstract getActions(game: Game): IAction[]
+  abstract getActions(game: Game): AnyAction[]
   getEffects(game: Game): IEffect[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
@@ -7470,9 +7620,11 @@ abstract class Node {
         yield* action.properties1
         yield* action.properties2
       } else {
-        for (const prop of Object.keys(ActionData[action.type].props)) {
-          if (action[prop] instanceof Property) {
-            yield action[prop]
+        if ('props' in ActionData[action.type]) {
+          for (const prop of Object.keys(ActionData[action.type].props)) {
+            if (action[prop] instanceof Property) {
+              yield action[prop]
+            }
           }
         }
       }
@@ -7857,14 +8009,14 @@ class GenericNode extends Node {
 
   constructor(
     type: NodeType,
-    public actions: IAction[],
+    public actions: AnyAction[],
     public effects: IEffect[],
     public nodes: Node[]
   ) {
     super(type)
   }
 
-  getActions(game: Game): IAction[] { return this.actions }
+  getActions(game: Game): AnyAction[] { return this.actions }
   getEffects(game: Game): IEffect[] { return this.effects }
   getNodes(game: Game): Node[] { return this.nodes }
 
@@ -7912,14 +8064,14 @@ class GenericNode extends Node {
  */
 class RootNode extends Node {
 
-  unk70x: IAction = new Action(ActionType.Unk700)
+  unk70x: ActionSlots.Unknown70xAction = new Action(ActionType.Unk700)
 
   constructor(
     public nodes: Node[] = [],
-    unk70x: IAction = null,
-    public unk10100: IAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
-    public unk10400: IAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
-    public unk10500: IAction = new Unk10500
+    unk70x: ActionSlots.Unknown70xAction = null,
+    public unk10100: AnyAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
+    public unk10400: AnyAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
+    public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
     if (unk70x !== null) {
@@ -7927,7 +8079,7 @@ class RootNode extends Node {
     }
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     switch (game) {
       case Game.DarkSouls3:
       case Game.Sekiro:
@@ -8009,7 +8161,7 @@ class ProxyNode extends Node {
    */
   constructor(public sfx: number) { super(NodeType.Proxy) }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [ new SFXReference(this.sfx) ]
   }
 
@@ -8041,8 +8193,8 @@ class NodeWithEffects extends Node {
     super(type)
   }
 
-  getActions(game: Game): IAction[] {
-    return [ new StateEffectMap(...this.stateEffectMap) ]
+  getActions(game: Game): AnyAction[] {
+    return [ new StateEffectMap(this.stateEffectMap) ]
   }
 
   getEffects(game: Game): IEffect[] {
@@ -8130,13 +8282,13 @@ class BasicNode extends NodeWithEffects {
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: IEffect[] | IAction[] = [], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: IEffect[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
     if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicEffect(effectsOrEffectActions as IAction[])
+        new BasicEffect(effectsOrEffectActions as AnyAction[])
       ], nodes)
     } else {
       super(
@@ -8228,13 +8380,13 @@ const Nodes = {
  */
 class Effect implements IEffect {
 
-  constructor(public type: EffectType, public actions: IAction[]) {}
+  constructor(public type: EffectType, public actions: AnyAction[]) {}
 
   getActionCount(game: Game): number {
     return this.actions.length
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return this.actions
   }
 
@@ -8318,7 +8470,7 @@ class LevelsOfDetailEffect implements IEffect {
     return 1
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [
       new LevelsOfDetailThresholds({
         duration: this.duration,
@@ -8362,7 +8514,7 @@ export interface BasicEffectParams {
   appearance?:ActionSlots.AppearanceAction
   particleMovement?: ActionSlots.ParticleMovementAction
   emissionAudio?: ActionSlots.EmissionAudioAction
-  slot12?: ActionSlots.UnknownAction
+  slot12?: ActionSlots.Unknown130Action
   nodeWind?: ActionSlots.NodeWindAction
   particleWind?: ActionSlots.ParticleWindAction
 }
@@ -8386,7 +8538,7 @@ export interface BasicEffectParams {
  * 9     | {@link ActionSlots.AppearanceAction Appearance} | {@link ActionType.None None}
  * 10    | {@link ActionSlots.ParticleMovementAction ParticleMovement} | {@link ActionType.None None}
  * 11    | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
- * 12    | {@link ActionSlots.UnknownAction Unknown} | {@link ActionType.Unk130 Unk130}
+ * 12    | {@link ActionSlots.Unknown130Action Unknown130} | {@link ActionType.Unk130 Unk130}
  * 13    | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
  * 14    | {@link ActionSlots.ParticleWindAction ParticleWind} | {@link ActionType.None None}
  */
@@ -8405,11 +8557,11 @@ class BasicEffect implements IEffect {
   appearance: ActionSlots.AppearanceAction = new Action
   particleMovement: ActionSlots.ParticleMovementAction = new Action
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
-  slot12: ActionSlots.UnknownAction = new Unk130
+  slot12: ActionSlots.Unknown130Action = new Unk130
   nodeWind: ActionSlots.NodeWindAction = new Action
   particleWind: ActionSlots.ParticleWindAction = new Action
 
-  constructor(params: BasicEffectParams | IAction[]) {
+  constructor(params: BasicEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
@@ -8454,7 +8606,7 @@ class BasicEffect implements IEffect {
     return game === Game.DarkSouls3 ? 13 : 15
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [
       this.nodeAttributes,
       this.nodeTransform,
@@ -8544,7 +8696,7 @@ export interface SharedEmitterEffectParams {
   emitter?: ActionSlots.EmitterAction
   emitterShape?: ActionSlots.EmitterShapeAction
   particleDirection?: ActionSlots.ParticleDirectionAction
-  behavior?: Action
+  behavior?: ActionSlots.BehaviorAction
   emissionAudio?: ActionSlots.EmissionAudioAction
   nodeWind?: ActionSlots.NodeWindAction
 }
@@ -8564,7 +8716,7 @@ export interface SharedEmitterEffectParams {
  * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
  * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
- * 7     | n/a | {@link ActionType.EmitAllParticles AllChildNodes}
+ * 7     | {@link ActionSlots.BehaviorAction Behavior} | {@link ActionType.EmitAllParticles EmitAllParticles}
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 9     | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
  */
@@ -8578,11 +8730,11 @@ class SharedEmitterEffect implements IEffect {
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
   emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
   particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
-  behavior: Action = new EmitAllParticles
+  behavior: ActionSlots.BehaviorAction = new EmitAllParticles
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeWind: ActionSlots.NodeWindAction = new Action
 
-  constructor(params: SharedEmitterEffectParams | IAction[]) {
+  constructor(params: SharedEmitterEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
@@ -8617,7 +8769,7 @@ class SharedEmitterEffect implements IEffect {
     return 10
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [
       this.nodeAttributes,
       this.nodeTransform,
@@ -8687,7 +8839,7 @@ class Action implements IAction {
   fields2: Field[]
   properties1: AnyProperty[]
   properties2: AnyProperty[]
-  section10s: Section10[]
+  section10s: number[][]
 
   constructor(
     type: number = ActionType.None,
@@ -8695,7 +8847,7 @@ class Action implements IAction {
     fields2: Field[] = [],
     properties1: AnyProperty[] = [],
     properties2: AnyProperty[] = [],
-    section10s: Section10[] = [],
+    section10s: number[][] = [],
   ) {
     this.type = type
     this.fields1 = fields1
@@ -8769,25 +8921,24 @@ class Action implements IAction {
       !('properties2' in obj) &&
       !('section10s' in obj)
     ) {
-      return new DataActions[obj.type](Object.fromEntries(Object.entries(obj).map(([k, v]) => {
-        return [k, typeof v === 'object' && !Array.isArray(v) ? Property.fromJSON(v) : v]
-      }).filter(e => e[0] !== 'type')))
-    } else if (obj.type in Actions) {
-      const action: Action = new Actions[obj.type]
-      action.type = obj.type
-      action.fields1 = (obj.fields1 ?? []).map(e => Field.fromJSON(e))
-      action.fields2 = (obj.fields2 ?? []).map(e => Field.fromJSON(e))
-      action.properties1 = (obj.properties1 ?? []).map(e => Property.fromJSON(e))
-      action.properties2 = (obj.properties2 ?? []).map(e => Property.fromJSON(e))
-      action.section10s = (obj.section10s ?? []).map(e => Section10.fromJSON(e))
-      return action
+      if ('props' in ActionData[obj.type]) {
+        const propKeys = Object.keys(ActionData[obj.type].props)
+        if (propKeys.length === 1) {
+          return new DataActions[obj.type](obj[propKeys[0]])
+        }
+        return new DataActions[obj.type](Object.fromEntries(Object.entries(obj).map(([k, v]) => {
+          return [k, typeof v === 'object' && !Array.isArray(v) ? Property.fromJSON(v) : v]
+        }).filter(e => e[0] !== 'type')))
+      } else {
+        return new DataActions[obj.type]
+      }
     } else return new Action(
       obj.type,
       (obj.fields1 ?? []).map(e => Field.fromJSON(e)),
       (obj.fields2 ?? []).map(e => Field.fromJSON(e)),
       (obj.properties1 ?? []).map(e => Property.fromJSON(e)),
       (obj.properties2 ?? []).map(e => Property.fromJSON(e)),
-      (obj.section10s ?? []).map(e => Section10.fromJSON(e))
+      obj.section10s
     )
   }
 
@@ -8807,7 +8958,7 @@ class Action implements IAction {
     if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
     if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
     if (this.properties2.length > 0) o.properties2 = this.properties2.map(prop => prop.toJSON())
-    if (this.section10s.length > 0) o.section10s = this.section10s.map(s10 => s10.toJSON())
+    if (this.section10s.length > 0) o.section10s = this.section10s
     return o
   }
 
@@ -8848,6 +8999,9 @@ class DataAction implements IAction {
   }
 
   toJSON() {
+    if (!('props' in ActionData[this.type])) {
+      return { type: this.type }
+    }
     return {
       type: this.type,
       ...Object.fromEntries(
@@ -8887,13 +9041,19 @@ class DataAction implements IAction {
     })
   }
 
+  getSection10s(game: Game): number[][] {
+    const data = getActionGameData(this.type, game)
+    return (data.section10s ?? []).map((name: string) => this[name])
+  }
+
   toAction(game: Game) {
     return new Action(
       this.type,
       this.getFields(game, 'fields1'),
       this.getFields(game, 'fields2'),
       this.getProperties(game, 'properties1'),
-      this.getProperties(game, 'properties2')
+      this.getProperties(game, 'properties2'),
+      this.getSection10s(game)
     )
   }
 
@@ -9058,116 +9218,6 @@ function ParticleMovement(params: ParticleMovementParams = {}) {
     return new ParticleAccelerationRandomTurns(params)
   }
   return new ParticleAcceleration(params)
-}
-
-/**
- * References another SFX by its ID.
- */
-class SFXReference extends DataAction {
-
-  /**
-   * The ID of the referenced SFX.
-   */
-  sfx: number
-
-  /**
-   * @param sfx The ID of the referenced SFX.
-   */
-  constructor(sfx: number) {
-    super(ActionType.SFXReference)
-    this.assign({ sfx })
-  }
-
-}
-
-/**
- * Maps states to effects in the parent node.
- * 
- * The index of each value represents the index of the state, and the value
- * represents the index of the effect that should be active when the state is
- * active.
- */
-class StateEffectMap extends Action {
-
-  constructor(...effectIndices: number[]) {
-    if (effectIndices.length === 0) {
-      effectIndices.push(0)
-    }
-    if (effectIndices.every(e => e === 0)) {
-      /*
-        If every index is 0, it is equivalent to just having a single field
-        with 0, so this automatically minifies the action.
-      */
-      super(ActionType.StateEffectMap, [], [], [], [], [
-        new Section10([new IntField])
-      ])
-    } else {
-      super(ActionType.StateEffectMap, [], [], [], [], [
-        new Section10(effectIndices.map(i => new IntField(i)))
-      ])
-    }
-  }
-
-  get effectIndices() { return this.section10s[0].fields.map(e => e.value) }
-  set effectIndices(value: number[]) {
-    if (value.every(e => e === 0)) {
-      this.section10s[0].fields = [new IntField]
-    } else {
-      this.section10s[0].fields = value.map(e => new IntField(e))
-    }
-  }
-
-}
-
-/**
- * Used in {@link EffectType.SharedEmitter} to emit all particles from child
- * nodes every time the shared emitter emits something.
- */
-class EmitAllParticles extends Action {
-
-  constructor() {
-    super(ActionType.EmitAllParticles)
-  }
-
-}
-
-/**
- * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
- * child node every time the shared emitter emits something.
- */
-class EmitRandomParticles extends Action {
-
-  constructor(...weights: number[]) {
-    super(ActionType.EmitRandomParticles, [], [], [], [], [
-      new Section10(weights.map(w => new IntField(w)))
-    ])
-  }
-
-}
-
-/**
- * Emits one particle once.
- * 
- * Contains no fields or properties.
- */
-class OneTimeEmitter extends Action {
-
-  constructor() {
-    super(ActionType.OneTimeEmitter)
-  }
-
-}
-
-/**
- * Makes all particles use the default initial direction from the emitter. See
- * {@link InitialDirection} for more information.
- */
-class NoParticleSpread extends Action {
-
-  constructor() {
-    super(ActionType.NoParticleSpread)
-  }
-
 }
 
 /*#ActionClasses start*/
@@ -11590,7 +11640,7 @@ export interface Unk130Params {
 
 /**
  * ### {@link ActionType.Unk130 Action 130 - Unk130}
- * **Slot**: {@link ActionSlots.UnknownAction Unknown}
+ * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
  * 
  * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
  */
@@ -11740,6 +11790,28 @@ class ParticleModifier extends DataAction {
   }
 }
 
+/**
+ * ### {@link ActionType.SFXReference Action 132 - SFXReference}
+ * 
+ * References another SFX by its ID.
+ */
+class SFXReference extends DataAction {
+  declare type: ActionType.SFXReference
+  /**
+   * The ID of the referenced SFX.
+   */
+  sfx: number
+  /**
+   * @param sfx The ID of the referenced SFX.
+   *
+   * **Default**: `0`
+   */
+  constructor(sfx: number = 0) {
+    super(ActionType.SFXReference)
+    this.assign({ sfx })
+  }
+}
+
 export interface LevelsOfDetailThresholdsParams {
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
@@ -11824,6 +11896,74 @@ class LevelsOfDetailThresholds extends DataAction {
   constructor(props: LevelsOfDetailThresholdsParams = {}) {
     super(ActionType.LevelsOfDetailThresholds)
     this.assign(props)
+  }
+}
+
+/**
+ * ### {@link ActionType.StateEffectMap Action 199 - StateEffectMap}
+ * **Slot**: {@link ActionSlots.StateEffectMapAction StateEffectMap}
+ * 
+ * Maps states to effects in the parent node.
+ */
+class StateEffectMap extends DataAction {
+  declare type: ActionType.StateEffectMap
+  /**
+   * A list of effect indices.
+   * 
+   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   */
+  effectIndices: number[]
+  /**
+   * @param effectIndices A list of effect indices.
+   * 
+   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   *
+   * **Default**: `[0]`
+   */
+  constructor(effectIndices: number[] = [0]) {
+    super(ActionType.StateEffectMap)
+    this.assign({ effectIndices })
+  }
+}
+
+/**
+ * ### {@link ActionType.EmitAllParticles Action 200 - EmitAllParticles}
+ * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * 
+ * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+ */
+class EmitAllParticles extends DataAction {
+  declare type: ActionType.EmitAllParticles
+  
+  constructor() {
+    super(ActionType.EmitAllParticles)
+  }
+}
+
+/**
+ * ### {@link ActionType.EmitRandomParticles Action 201 - EmitRandomParticles}
+ * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * 
+ * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+ */
+class EmitRandomParticles extends DataAction {
+  declare type: ActionType.EmitRandomParticles
+  /**
+   * Probability weights for each child node to be picked when emitting.
+   * 
+   * The weights are stored as integers, so non-integer values in this list will be truncated.
+   */
+  weights: number[]
+  /**
+   * @param weights Probability weights for each child node to be picked when emitting.
+   * 
+   * The weights are stored as integers, so non-integer values in this list will be truncated.
+   *
+   * **Default**: `[1]`
+   */
+  constructor(weights: number[] = [1]) {
+    super(ActionType.EmitRandomParticles)
+    this.assign({ weights })
   }
 }
 
@@ -11982,13 +12122,18 @@ class EqualDistanceEmitter extends DataAction {
   }
 }
 
-export interface PointEmitterShapeParams {
-  /**
-   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
-   * 
-   * **Default**: {@link InitialDirection.Emitter}
-   */
-  direction?: InitialDirection
+/**
+ * ### {@link ActionType.OneTimeEmitter Action 399 - OneTimeEmitter}
+ * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+ * 
+ * Emits one particle once.
+ */
+class OneTimeEmitter extends DataAction {
+  declare type: ActionType.OneTimeEmitter
+  
+  constructor() {
+    super(ActionType.OneTimeEmitter)
+  }
 }
 
 /**
@@ -12003,9 +12148,14 @@ class PointEmitterShape extends DataAction {
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
   direction: InitialDirection
-  constructor(props: PointEmitterShapeParams = {}) {
+  /**
+   * @param direction Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   *
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  constructor(direction: InitialDirection = InitialDirection.Emitter) {
     super(ActionType.PointEmitterShape)
-    this.assign(props)
+    this.assign({ direction })
   }
 }
 
@@ -12341,6 +12491,20 @@ class CylinderEmitterShape extends DataAction {
   constructor(props: CylinderEmitterShapeParams = {}) {
     super(ActionType.CylinderEmitterShape)
     this.assign(props)
+  }
+}
+
+/**
+ * ### {@link ActionType.NoParticleSpread Action 500 - NoParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
+ * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+ */
+class NoParticleSpread extends DataAction {
+  declare type: ActionType.NoParticleSpread
+  
+  constructor() {
+    super(ActionType.NoParticleSpread)
   }
 }
 
@@ -21350,26 +21514,51 @@ class PointLight extends DataAction {
   }
 }
 
-export interface Unk701Params {
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_p1_0?: ScalarValue
+/**
+ * ### {@link ActionType.Unk700 Action 700 - Unk700}
+ * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * 
+ * Unknown root node.
+ */
+class Unk700 extends DataAction {
+  declare type: ActionType.Unk700
+  
+  constructor() {
+    super(ActionType.Unk700)
+  }
 }
 
 /**
  * ### {@link ActionType.Unk701 Action 701 - Unk701}
+ * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
  * 
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk701 extends DataAction {
   declare type: ActionType.Unk701
   unk_er_p1_0: ScalarValue
-  constructor(props: Unk701Params = {}) {
+  /**
+   * @param unk_er_p1_0 Unknown.
+   *
+   * **Default**: `1`
+   */
+  constructor(unk_er_p1_0: ScalarValue = 1) {
     super(ActionType.Unk701)
-    this.assign(props)
+    this.assign({ unk_er_p1_0 })
+  }
+}
+
+/**
+ * ### {@link ActionType.Unk702 Action 702 - Unk702}
+ * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * 
+ * Unknown root node action that was introduced in Elden Ring.
+ */
+class Unk702 extends DataAction {
+  declare type: ActionType.Unk702
+  
+  constructor() {
+    super(ActionType.Unk702)
   }
 }
 
@@ -28115,6 +28304,7 @@ export interface Unk10500Params {
 
 /**
  * ### {@link ActionType.Unk10500 Action 10500 - Unk10500}
+ * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
  * 
  * Unknown root node action.
  */
@@ -28719,14 +28909,6 @@ class SpotLight extends DataAction {
 }
 /*#ActionClasses end*/
 
-const Actions = {
-  [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
-  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
-  [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
-  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-}
-
 const DataActions = {
   /*#ActionsList start*/
   [ActionType.NodeAcceleration]: NodeAcceleration, NodeAcceleration,
@@ -28756,14 +28938,19 @@ const DataActions = {
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
+  [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
+  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
+  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
+  [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
   [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
   [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
   [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
   [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
@@ -28777,7 +28964,9 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.Unk700]: Unk700, Unk700,
   [ActionType.Unk701]: Unk701, Unk701,
+  [ActionType.Unk702]: Unk702, Unk702,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
@@ -30533,25 +30722,6 @@ function PrecipitationModifier<T extends ValueType>(
   ]) as unknown as TypeMap.Property[T])
 }
 
-//#region Section10
-class Section10 {
-
-  fields: NumericalField[]
-
-  constructor(fields: NumericalField[]) {
-    this.fields = fields
-  }
-
-  static fromJSON(fields: []) {
-    return new Section10(fields.map(field => Field.fromJSON(field) as NumericalField))
-  }
-
-  toJSON() {
-    return this.fields.map(field => field.toJSON())
-  }
-
-}
-
 export {
   Game,
   FXRVersion,
@@ -30579,7 +30749,6 @@ export {
   Nodes,
   EffectActionSlots,
   ActionData,
-  Actions,
   DataActions,
 
   FXR,
@@ -30606,11 +30775,6 @@ export {
   NodeMovement,
   NodeTransform,
   ParticleMovement,
-  StateEffectMap,
-  EmitAllParticles,
-  EmitRandomParticles,
-  OneTimeEmitter,
-  NoParticleSpread,
   /*#ActionsExport start*/
   NodeAcceleration,
   NodeTranslation,
@@ -30639,14 +30803,19 @@ export {
   ParticleModifier,
   SFXReference,
   LevelsOfDetailThresholds,
+  StateEffectMap,
+  EmitAllParticles,
+  EmitRandomParticles,
   PeriodicEmitter,
   EqualDistanceEmitter,
+  OneTimeEmitter,
   PointEmitterShape,
   DiskEmitterShape,
   RectangleEmitterShape,
   SphereEmitterShape,
   BoxEmitterShape,
   CylinderEmitterShape,
+  NoParticleSpread,
   CircularParticleSpread,
   EllipticalParticleSpread,
   RectangularParticleSpread,
@@ -30660,7 +30829,9 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
+  Unk700,
   Unk701,
+  Unk702,
   NodeWindSpeed,
   ParticleWindSpeed,
   NodeWindAcceleration,
@@ -30710,6 +30881,4 @@ export {
   ExternalValue2Modifier,
   BloodVisibilityModifier,
   PrecipitationModifier,
-
-  Section10
 }

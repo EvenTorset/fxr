@@ -1,0 +1,19 @@
+type: 199
+name: StateEffectMap
+desc: |
+  Maps states to effects in the parent node.
+properties:
+  effectIndices:
+    type: number[]
+    default: [0]
+    desc: |
+      A list of effect indices.
+
+      The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+games:
+  DS3:
+    section10s:
+      - effectIndices
+  SDT: DS3
+  ER: DS3
+  AC6: DS3
