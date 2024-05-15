@@ -1,5 +1,6 @@
 type: 405
 name: CylinderEmitterShape
+slot: EmitterShape
 desc: |
   Makes the emitter cylindrical.
 properties:

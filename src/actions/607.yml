@@ -1,5 +1,6 @@
 type: 607
 name: Distortion
+slot: Appearance
 desc: |
   A particle that distorts anything seen through it.
 
@@ -343,8 +344,13 @@ properties:
   unk_ds3_p2_5:
     type: Vector4Value
     default: [1, 1, 1, 1]
-  unk_ds3_p2_6:
+  alphaThreshold:
     type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
   unk_sdt_f2_30:
     field: float
   unk_sdt_f2_31:
@@ -448,7 +454,7 @@ games:
       - unk_ds3_p2_3
       - unk_ds3_p2_4
       - unk_ds3_p2_5
-      - unk_ds3_p2_6
+      - alphaThreshold
   SDT:
     fields1:
       - mode
@@ -547,7 +553,7 @@ games:
       - unk_ds3_p2_3
       - unk_ds3_p2_4
       - unk_ds3_p2_5
-      - unk_ds3_p2_6
+      - alphaThreshold
       - unk_er_p2_7
       - unk_er_p2_8
   AC6: ER

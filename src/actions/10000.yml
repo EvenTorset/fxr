@@ -1,5 +1,6 @@
 type: 10000
 name: ParticleSystem
+slot: Appearance
 desc: |
   An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
 

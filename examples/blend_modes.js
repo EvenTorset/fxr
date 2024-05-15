@@ -41,8 +41,8 @@ fxr.root.nodes = [
     // This node attaches itself to the camera and moves forward a bit so you
     // can see it.
     new NodeAttachToCamera,
-    new NodeTransform({
-      translateZ: 1,
+    NodeTransform({
+      offsetZ: 1,
     })
   ],
 
@@ -52,9 +52,9 @@ fxr.root.nodes = [
     const x = i % blendModes.length
     const y = Math.floor(i / blendModes.length)
     return new BasicNode([
-      new NodeTransform({
-        translateX: w / blendModes.length * x - w / 2 + w / blendModes.length / 2,
-        translateY: -h / colors.length * y + h / 2 - h / colors.length / 2,
+      NodeTransform({
+        offsetX: w / blendModes.length * x - w / 2 + w / blendModes.length / 2,
+        offsetY: -h / colors.length * y + h / 2 - h / colors.length / 2,
       }),
       new BillboardEx({
         blendMode: blendModes[x],

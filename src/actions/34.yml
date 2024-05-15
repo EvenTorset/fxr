@@ -1,0 +1,61 @@
+type: 34
+name: NodeSpin
+slot: NodeMovement
+desc: |
+  Controls the angular speed of the node.
+properties:
+  angularSpeedX:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node's angular speed around its local X-axis in degrees per second.
+    see:
+      - angularSpeedMultiplierX
+  angularSpeedMultiplierX:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link angularSpeedX}.
+  angularSpeedY:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node's angular speed around its local Y-axis in degrees per second.
+    see:
+      - angularSpeedMultiplierY
+  angularSpeedMultiplierY:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link angularSpeedY}.
+  angularSpeedZ:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node's angular speed around its local Z-axis in degrees per second.
+    see:
+      - angularSpeedMultiplierZ
+  angularSpeedMultiplierZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link angularSpeedZ}.
+  unk_ds3_f1_0:
+    field: int
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+    properties1:
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

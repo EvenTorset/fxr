@@ -1,5 +1,6 @@
 type: 131
 name: ParticleModifier
+slot: ParticleModifier
 desc: |
   Modifies particles in various ways.
 
@@ -18,7 +19,7 @@ properties:
     type: ScalarValue
     argument: EffectAge
     desc: |
-      Controls the speed of the particles emitted from this node, but only if the effect has an action in slot 10 that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+      Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
   scaleX:
     type: ScalarValue
     default: 1

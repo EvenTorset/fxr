@@ -1,5 +1,6 @@
 type: 301
 name: EqualDistanceEmitter
+slot: Emitter
 desc: >
   Emits particles once it has moved a certain distance from where it last emitted particles.
 properties:

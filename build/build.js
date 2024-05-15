@@ -71,6 +71,26 @@ function naturalSorter(as, bs) {
   return b[i] ? -1 : 0
 }
 
+function defValString(prop) {
+  let defValue = prop.default ?? 0
+  if (typeof defValue === 'string') {
+    defValue = `{@link ${defValue}}`
+  } else if (Array.isArray(defValue)) {
+    defValue = `\`[${defValue.join(', ')}]\``
+  } else {
+    defValue = `\`${defValue}\``
+  }
+  return defValue
+}
+
+function defValTS(prop) {
+  const defValue = prop.default ?? 0
+  if (Array.isArray(defValue)) {
+    return `[${defValue.join(', ')}]`
+  }
+  return defValue.toString()
+}
+
 export default async function(writeToDist = true) {
 
   const actionTypes = []
@@ -78,30 +98,40 @@ export default async function(writeToDist = true) {
   const classes = []
   const actionsListEntries = []
   const actionsExport = []
+  const actionSlots = new Map
 
   for (const fn of fs.readdirSync(actionsDir).sort(naturalSorter)) {
     const data = yaml.parse(await fs.promises.readFile(path.join(actionsDir, fn), 'utf-8'))
 
-    for (const prop of Object.keys(data.properties)) {
-      let found = false
-      search:
-      for (const game of Object.values(data.games)) if (typeof game === 'object') {
-        for (const list of Object.values(game)) if (Array.isArray(list)) {
-          if (list.includes(prop)) {
-            found = true
-            break search
+    if ('slot' in data) {
+      if (!actionSlots.has(data.slot)) {
+        actionSlots.set(data.slot, [])
+      }
+      actionSlots.get(data.slot).push(data.name)
+    }
+
+    if ('properties' in data) {
+      for (const prop of Object.keys(data.properties)) {
+        let found = false
+        search:
+        for (const game of Object.values(data.games)) if (typeof game === 'object') {
+          for (const list of Object.values(game)) if (Array.isArray(list)) {
+            if (list.includes(prop)) {
+              found = true
+              break search
+            }
           }
         }
+        if (!found) {
+          console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is not used by any games.`)
+        }
       }
-      if (!found) {
-        console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is not used by any games.`)
-      }
-    }
-    for (const game of Object.values(data.games)) if (typeof game === 'object') {
-      for (const list of Object.values(game)) if (Array.isArray(list)) {
-        for (const prop of list) {
-          if (!(prop in data.properties)) {
-            console.warn(`YAML Warning: Action ${data.type} (${data.name}) is missing the '${prop}' class property.`)
+      for (const game of Object.values(data.games)) if (typeof game === 'object') {
+        for (const list of Object.values(game)) if (Array.isArray(list)) {
+          for (const prop of list) {
+            if (!(prop in data.properties)) {
+              console.warn(`YAML Warning: Action ${data.type} (${data.name}) is missing the '${prop}' class property.`)
+            }
           }
         }
       }
@@ -111,6 +141,9 @@ export default async function(writeToDist = true) {
 
     actionTypes.push(`
       /**
+       * ### Action ${data.type} - ${data.name}${'slot' in data ? `
+       * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+       * 
        * ${data.desc.trim().replace(/\n/g, '\n   * ')}
        * 
        * This action type has a specialized subclass: {@link ${data.name}}
@@ -119,14 +152,10 @@ export default async function(writeToDist = true) {
     `.trim().replace(/^\s{6}/gm, '  '))
 
     actionDataEntries.push(`
-      [ActionType.${data.name}]: {
+      [ActionType.${data.name}]: {${'properties' in data ? `
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
-            let defValue = v.default ?? 0
-            if (Array.isArray(defValue)) {
-              defValue = `[${defValue.join(', ')}]`
-            }
-            return `${k}: { default: ${defValue}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
+            return `${k}: { default: ${defValTS(v)}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
           }).join('\n          ')}
         },
         games: {
@@ -153,21 +182,16 @@ export default async function(writeToDist = true) {
             `.trim().replace(/^\s{14}(?=\})/m, ' '.repeat(10)).replace(/^\s{16}/m, ' '.repeat(12))
           }).join(',\n          ')}
         }
-      }
+      ` : ''}}
     `.trim().replace(/^\s{4}/gm, ''))
 
     if (!data.omitClass) {
-      classes.push(`
+      const propNames = Object.keys(data.properties ?? {})
+      const firstProp = 'properties' in data ? data.properties[propNames[0]] : {}
+      if ('properties' in data && propNames.length > 1) classes.push(`
         export interface ${data.name}Params {
           ${Object.entries(data.properties).filter(e => !e[1].omitClassProp).map(([k, v]) => {
-            let defValue = v.default ?? 0
-            if (typeof defValue === 'string') {
-              defValue = `{@link ${defValue}}`
-            } else if (Array.isArray(defValue)) {
-              defValue = `\`[${defValue.join(', ')}]\``
-            } else {
-              defValue = `\`${defValue}\``
-            }
+            const defValue = defValString(v)
             return (`
                 /**
                  * ${'desc' in v ? v.desc.trim().replace(/\n/g, '\n   * ') : `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ''}.`}
@@ -195,11 +219,14 @@ export default async function(writeToDist = true) {
       )
       classes.push(`
         /**
+         * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
+         * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+         * 
          * ${data.desc.trim().replace(/\n/g, '\n   * ')}
          */
         class ${data.name} extends DataAction {
           declare type: ActionType.${data.name}
-          ${Object.entries(data.properties).filter(e => !e[1].omitClassProp).map(([k, v]) => {
+          ${Object.entries(data.properties ?? {}).filter(e => !e[1].omitClassProp).map(([k, v]) => {
             return (
               'desc' in v ? `
                 /**
@@ -218,10 +245,30 @@ export default async function(writeToDist = true) {
             .join('')
             .trim()
             .replace(/^\s{16}(?=\/\*\*| \*)|^\s{14}(?=\w)/gm, '  ')
-          }
-          constructor(props: ${data.name}Params = {}) {
-            super(ActionType.${data.name})
-            this.assign(props)
+          }${propNames.length === 1 ? `
+          /**
+           * @param ${propNames[0]} ${
+            'desc' in firstProp ?
+              firstProp.desc.trim().replace(/\n/g, '\n   * ') :
+              `Unknown${'field' in firstProp ? ` ${fieldTypeNameMap[firstProp.field]}` : ''}.`
+           }
+           *
+           * **Default**: ${defValString(firstProp)}${
+             'argument' in firstProp ? `
+           * 
+           * **Argument**: {@link PropertyArgument.${firstProp.argument} ${argumentNames[firstProp.argument]}}`:''}${
+             'see' in firstProp ? `
+           * 
+           * See also:
+           * - ${firstProp.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
+           */` : ''}
+          constructor(${
+            'properties' in data ?
+              propNames.length > 1 ? `props: ${data.name}Params = {}` :
+              `${propNames[0]}: ${data.properties[propNames[0]].type ?? typeMap[data.properties[propNames[0]].field]} = ${defValTS(firstProp)}`
+            : ''}) {
+            super(ActionType.${data.name})${'properties' in data ? `
+            this.assign(${propNames.length > 1 ? 'props' : `{ ${propNames[0]} }`})` : ''}
           }
         }
       `.trim()
@@ -244,6 +291,9 @@ export default async function(writeToDist = true) {
   replace('ActionClasses', classes.join('\n\n'))
   replace('ActionsList', '  '+actionsListEntries.join('\n  '))
   replace('ActionsExport', '  '+actionsExport.join(',\n  ') + ',')
+  replace('ActionSlotTypes', Array.from(actionSlots).sort((a, b) => naturalSorter(a[0], b[0])).map(([name, actions]) => {
+    return `  export type ${name}Action =\n${actions.map(e => `    | ${e}`).join('\n')}\n    | Action`
+  }).join('\n\n'))
 
   await fs.promises.writeFile(path.join(srcDir, 'fxr.ts'), libSrc)
   if (writeToDist) {

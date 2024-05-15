@@ -1,5 +1,6 @@
 type: 732
 name: ParticleWindSpeed
+slot: ParticleWind
 desc: |
   Controls how effective the wind is at pushing the particles emitted from the node.
 properties:

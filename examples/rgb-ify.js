@@ -6,7 +6,8 @@ import {
   Distortion,
   DynamicTracer,
   ExternalValue,
-  ExternalValueModifier,
+  ExternalValue1Modifier,
+  LinearProperty,
   FXR,
   Game,
   Keyframe,
@@ -60,7 +61,7 @@ function procProp(list, idx) {
     list[idx] = new ConstantProperty(...list[idx])
   }
   list[idx].modifiers.push(
-    new ExternalValueModifier(ExternalValue.EldenRing.TimeOfDay, true, [
+    new ExternalValue1Modifier(ExternalValue.EldenRing.TimeOfDay, new LinearProperty(true, [
       new Keyframe(0,                [1, 0, 0, 1]),
       new Keyframe(partDuration,     [1, 0, 1, 1]),
       new Keyframe(partDuration * 2, [0, 0, 1, 1]),
@@ -68,7 +69,7 @@ function procProp(list, idx) {
       new Keyframe(partDuration * 4, [0, 1, 0, 1]),
       new Keyframe(partDuration * 5, [1, 1, 0, 1]),
       new Keyframe(partDuration * 6, [1, 0, 0, 1]),
-    ])
+    ]))
   )
 }
 
@@ -122,6 +123,7 @@ while (ids.length) {
       action instanceof SpotLight
     ) {
       procProp(action, 'diffuseColor')
+      procProp(action, 'specularColor')
     } else if (
       action instanceof Distortion ||
       action instanceof RadialBlur ||
@@ -140,9 +142,6 @@ while (ids.length) {
     }
   }
 
-  // Update reference lists, since we used an external value to do this
-  fxr.updateReferences()
-
   // Write the modified file back to ER's FXR format
   await fxr.saveAs(`${outputDir}/${fileName}`, Game.EldenRing)
 
@@ -152,7 +151,7 @@ while (ids.length) {
 
   // Add all of the sfx references to the list of IDs to process, but only if
   // they're not already in the list and they haven't already been processed
-  for (const ref of fxr.sfxReferences) if (!done.includes(ref) && !ids.includes(ref)) {
+  for (const ref of fxr.getReferences().sfx) if (!done.includes(ref) && !ids.includes(ref)) {
     ids.push(ref)
   }
 

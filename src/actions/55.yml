@@ -1,0 +1,40 @@
+type: 55
+name: ParticleAcceleration
+slot: ParticleMovement
+desc: |
+  Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
+properties:
+  gravity:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+
+      Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+  acceleration:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+  accelerationMultiplier:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link acceleration}.
+  unk_ds3_f1_0:
+    field: int
+  unk_ds3_f1_1:
+    field: float
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+    properties1:
+      - gravity
+      - acceleration
+      - accelerationMultiplier
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

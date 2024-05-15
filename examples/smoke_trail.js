@@ -59,7 +59,7 @@ fxr.root.nodes = emitters.map(emitter => new BasicNode([
     here starts out at 1 (perfectly follow, as if attached to the node), and it
     goes down to 0 (completely detached) over 1.5 seconds.
   */
-  new ParticleMovement({
+  ParticleMovement({
     gravity: -0.2,
     followFactor: LinearProperty.basic(false, 1.5, 1, 0)
   }),
@@ -77,7 +77,7 @@ fxr.root.nodes = emitters.map(emitter => new BasicNode([
     layer1: 26020,
     layer1SpeedV: 0.1,
     layer1OffsetU: RandomProperty(0, 1),
-    alphaThreshold: new LinearProperty(false, [
+    alphaFadeThreshold: new LinearProperty(false, [
       new Keyframe(0, 255),
       new Keyframe(0.5, 0),
       new Keyframe(1.5, 32),

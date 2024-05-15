@@ -1,5 +1,6 @@
 type: 75
 name: NodeSound
+slot: NodeAudio
 desc: |
   Plays a sound effect when the node activates that can repeat.
 properties:

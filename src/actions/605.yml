@@ -1,14 +1,17 @@
 type: 605
 name: Model
+slot: Appearance
 desc: |
   Particle with a 3D model.
+
+  Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
 properties:
   orientation:
-    type: OrientationMode
+    type: ModelOrientationMode
     field: int
-    default: OrientationMode.LocalSouth
+    default: ModelOrientationMode.ParticleDirection
     desc: |
-      Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+      Model orientation mode. See {@link ModelOrientationMode} for more information.
   scaleVariationX:
     field: float
     default: 1
@@ -179,70 +182,70 @@ properties:
     desc: |
       Rotation around the X-axis in degrees.
     see:
-      - rotationSpeedX
-      - rotationSpeedMultiplierX
+      - angularSpeedX
+      - angularSpeedMultiplierX
   rotationY:
     type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the Y-axis in degrees.
     see:
-      - rotationSpeedY
-      - rotationSpeedMultiplierY
+      - angularSpeedY
+      - angularSpeedMultiplierY
   rotationZ:
     type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the Z-axis in degrees.
     see:
-      - rotationSpeedZ
-      - rotationSpeedMultiplierZ
-  rotationSpeedX:
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
+  angularSpeedX:
     type: ScalarValue
     argument: ParticleAge
     desc: |
-      Rotation speed around the X-axis in degrees per second.
+      Angular speed around the X-axis in degrees per second.
     see:
       - rotationX
-      - rotationSpeedMultiplierX
-  rotationSpeedY:
+      - angularSpeedMultiplierX
+  angularSpeedY:
     type: ScalarValue
     argument: ParticleAge
     desc: |
-      Rotation speed around the Y-axis in degrees per second.
+      Angular speed around the Y-axis in degrees per second.
     see:
       - rotationY
-      - rotationSpeedMultiplierY
-  rotationSpeedZ:
+      - angularSpeedMultiplierY
+  angularSpeedZ:
     type: ScalarValue
     argument: ParticleAge
     desc: |
-      Rotation speed around the Z-axis in degrees per second.
+      Angular speed around the Z-axis in degrees per second.
     see:
       - rotationZ
-      - rotationSpeedMultiplierZ
-  rotationSpeedMultiplierX:
+      - angularSpeedMultiplierZ
+  angularSpeedMultiplierX:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     desc: |
-      Multiplier for {@link rotationSpeedX}.
+      Multiplier for {@link angularSpeedX}.
     see:
       - rotationX
-  rotationSpeedMultiplierY:
+  angularSpeedMultiplierY:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     desc: |
-      Multiplier for {@link rotationSpeedY}.
+      Multiplier for {@link angularSpeedY}.
     see:
       - rotationY
-  rotationSpeedMultiplierZ:
+  angularSpeedMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     desc: |
-      Multiplier for {@link rotationSpeedZ}.
+      Multiplier for {@link angularSpeedZ}.
     see:
       - rotationZ
   blendMode:
@@ -565,12 +568,12 @@ games:
       - rotationX
       - rotationY
       - rotationZ
-      - rotationSpeedX
-      - rotationSpeedMultiplierX
-      - rotationSpeedY
-      - rotationSpeedMultiplierY
-      - rotationSpeedZ
-      - rotationSpeedMultiplierZ
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
       - color1
       - color2
       - color3
@@ -659,12 +662,12 @@ games:
       - rotationX
       - rotationY
       - rotationZ
-      - rotationSpeedX
-      - rotationSpeedMultiplierX
-      - rotationSpeedY
-      - rotationSpeedMultiplierY
-      - rotationSpeedZ
-      - rotationSpeedMultiplierZ
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
       - blendMode
       - color1
       - color2

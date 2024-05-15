@@ -1,5 +1,6 @@
 type: 603
 name: BillboardEx
+slot: Appearance
 desc: |
   Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
 properties:
@@ -70,81 +71,83 @@ properties:
     argument: ParticleAge
     desc: |
       Color multiplier.
-  alphaThreshold:
+  alphaFadeThreshold:
     type: ScalarValue
     argument: ParticleAge
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
   rotationX:
     type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the X-axis in degrees.
     see:
-      - rotationSpeedX
-      - rotationSpeedMultiplierX
+      - angularSpeedX
+      - angularSpeedMultiplierX
   rotationY:
     type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the Y-axis in degrees.
     see:
-      - rotationSpeedY
-      - rotationSpeedMultiplierY
+      - angularSpeedY
+      - angularSpeedMultiplierY
   rotationZ:
     type: ScalarValue
     argument: Constant0
     desc: |
       Rotation around the Z-axis in degrees.
     see:
-      - rotationSpeedZ
-      - rotationSpeedMultiplierZ
-  rotationSpeedX:
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
+  angularSpeedX:
     type: ScalarValue
     argument: ParticleAge
     desc: |
-      Rotation speed around the X-axis in degrees per second.
+      Angular speed around the X-axis in degrees per second.
     see:
       - rotationX
-      - rotationSpeedMultiplierX
-  rotationSpeedY:
+      - angularSpeedMultiplierX
+  angularSpeedY:
     type: ScalarValue
     argument: ParticleAge
     desc: |
-      Rotation speed around the Y-axis in degrees per second.
+      Angular speed around the Y-axis in degrees per second.
     see:
       - rotationY
-      - rotationSpeedMultiplierY
-  rotationSpeedZ:
+      - angularSpeedMultiplierY
+  angularSpeedZ:
     type: ScalarValue
     argument: ParticleAge
     desc: |
-      Rotation speed around the Z-axis in degrees per second.
+      Angular speed around the Z-axis in degrees per second.
     see:
       - rotationZ
-      - rotationSpeedMultiplierZ
-  rotationSpeedMultiplierX:
+      - angularSpeedMultiplierZ
+  angularSpeedMultiplierX:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     desc: |
-      Multiplier for {@link rotationSpeedX}.
+      Multiplier for {@link angularSpeedX}.
     see:
       - rotationX
-  rotationSpeedMultiplierY:
+  angularSpeedMultiplierY:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     desc: |
-      Multiplier for {@link rotationSpeedY}.
+      Multiplier for {@link angularSpeedY}.
     see:
       - rotationY
-  rotationSpeedMultiplierZ:
+  angularSpeedMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     desc: |
-      Multiplier for {@link rotationSpeedZ}.
+      Multiplier for {@link angularSpeedZ}.
     see:
       - rotationZ
   depthOffset:
@@ -427,8 +430,13 @@ properties:
   unk_ds3_p2_5:
     type: Vector4Value
     default: [1, 1, 1, 1]
-  unk_ds3_p2_6:
+  alphaThreshold:
     type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
   unk_sdt_f1_15:
     field: int
     default: 1
@@ -459,6 +467,8 @@ properties:
   unk_sdt_f2_43:
     field: int
   unk_sdt_f2_44:
+    field: int
+  unk_ac6_f2_45:
     field: int
 games:
   DS3:
@@ -520,16 +530,16 @@ games:
       - color1
       - color2
       - color3
-      - alphaThreshold
+      - alphaFadeThreshold
       - rotationX
       - rotationY
       - rotationZ
-      - rotationSpeedX
-      - rotationSpeedMultiplierX
-      - rotationSpeedY
-      - rotationSpeedMultiplierY
-      - rotationSpeedZ
-      - rotationSpeedMultiplierZ
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
       - depthOffset
       - frameIndex
       - frameIndexOffset
@@ -542,7 +552,7 @@ games:
       - unk_ds3_p2_3
       - unk_ds3_p2_4
       - unk_ds3_p2_5
-      - unk_ds3_p2_6
+      - alphaThreshold
   SDT:
     fields1:
       - orientation
@@ -620,16 +630,16 @@ games:
       - color1
       - color2
       - color3
-      - alphaThreshold
+      - alphaFadeThreshold
       - rotationX
       - rotationY
       - rotationZ
-      - rotationSpeedX
-      - rotationSpeedMultiplierX
-      - rotationSpeedY
-      - rotationSpeedMultiplierY
-      - rotationSpeedZ
-      - rotationSpeedMultiplierZ
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
       - depthOffset
       - frameIndex
       - frameIndexOffset
@@ -637,4 +647,54 @@ games:
       - unk_ds3_p1_22
     properties2: DS3
   ER: SDT
-  AC6: SDT
+  AC6:
+    fields1: SDT
+    fields2:
+      - unk_ds3_f2_0
+      - unk_ds3_f2_1
+      - unk_ds3_f2_2
+      - unk_ds3_f2_3
+      - unk_ds3_f2_4
+      - bloomRed
+      - bloomGreen
+      - bloomBlue
+      - bloomStrength
+      - unk_ds3_f2_9
+      - unk_ds3_f2_10
+      - unk_ds3_f2_11
+      - unk_ds3_f2_12
+      - unk_ds3_f2_13
+      - unkDistFadeClose0
+      - unkDistFadeClose1
+      - unkDistFadeFar0
+      - unkDistFadeFar1
+      - minDistance
+      - maxDistance
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - unk_ds3_f2_24
+      - unkDepthBlend1
+      - unkDepthBlend2
+      - unk_ds3_f2_27
+      - unk_ds3_f2_28
+      - unk_ds3_f2_29
+      - shadowDarkness
+      - unk_sdt_f2_31
+      - unk_sdt_f2_32
+      - specular
+      - glossiness
+      - lighting
+      - unk_sdt_f2_36
+      - unk_sdt_f2_37
+      - specularity
+      - unk_sdt_f2_39
+      - unk_sdt_f2_40
+      - unk_sdt_f2_41
+      - unk_sdt_f2_42
+      - unk_sdt_f2_43
+      - unk_sdt_f2_44
+      - unk_ac6_f2_45
+    properties1: SDT
+    properties2: DS3

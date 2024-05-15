@@ -1,0 +1,67 @@
+type: 122
+name: NodeSpeedPartialFollow
+slot: NodeMovement
+desc: |
+  Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+properties:
+  speedZ:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Controls the speed of the node along its Z-axis.
+  speedMultiplierZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link speedZ}.
+  accelerationY:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the acceleration of the node along its Y-axis.
+
+      Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
+  maxTurnAngle:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+  followFactor:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+    see:
+      - followRotation
+  alignWithMotion:
+    field: int
+    desc: |
+      When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+  unk_ds3_f1_1:
+    field: int
+  turnInterval:
+    field: int
+    desc: |
+      The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+  followRotation:
+    field: bool
+    default: true
+    desc: |
+      Disabling this will make {@link followFactor} only affect translation and not rotation.
+games:
+  DS3:
+    fields1:
+      - alignWithMotion
+      - unk_ds3_f1_1
+      - turnInterval
+      - followRotation
+    properties1:
+      - speedZ
+      - speedMultiplierZ
+      - accelerationY
+      - maxTurnAngle
+      - followFactor
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

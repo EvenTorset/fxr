@@ -1,5 +1,6 @@
 type: 502
 name: EllipticalParticleSpread
+slot: ParticleDirection
 desc: |
   Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
 properties:

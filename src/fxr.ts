@@ -123,143 +123,6 @@ enum ActionType {
    * to disable the effects of the other actions that go in those slots.
    */
   None = 0,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAcceleration = 1,
-  /**
-   * Controls the rotation speed of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpin = 34,
-  /**
-   * Sets the translation and rotation of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeTransform}
-   */
-  StaticNodeTransform = 35,
-  /**
-   * Sets and randomizes the translation and rotation of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeTransform}
-   */
-  RandomNodeTransform = 36,
-  /**
-   * Controls the movement of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMovement}
-   */
-  ParticleAcceleration = 55,
-  /**
-   * Controls the movement of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMovement}
-   */
-  ParticleSpeed = 60,
-  /**
-   * Controls the movement of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMovement}
-   */
-  ParticleSpeedRandomTurns = 64,
-  /**
-   * Controls the movement of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMovement}
-   */
-  ParticleSpeedPartialFollow = 65,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAccelerationRandomTurns = 83,
-  /**
-   * Controls the movement of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMovement}
-   */
-  ParticleAccelerationRandomTurns = 84,
-  /**
-   * Controls the movement of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleMovement}
-   */
-  ParticleAccelerationPartialFollow = 105,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAccelerationPartialFollow = 106,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeAccelerationSpin = 113,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeed = 120,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeedRandomTurns = 121,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeedPartialFollow = 122,
-  /**
-   * Controls the movement of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeMovement}
-   */
-  NodeSpeedSpin = 123,
-  /**
-   * Maps states to effects in the parent node.
-   * 
-   * This action type has a specialized subclass: {@link StateEffectMap}
-   */
-  StateEffectMap = 199,
-  /**
-   * Used in {@link EffectType.SharedEmitter} to emit all particles from child
-   * nodes every time the shared emitter emits something.
-   * 
-   * This action type has a specialized subclass: {@link EmitAllParticles}
-   */
-  EmitAllParticles = 200,
-  /**
-   * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
-   * child node every time the shared emitter emits something.
-   * 
-   * This action type has a specialized subclass: {@link EmitRandomParticles}
-   */
-  EmitRandomParticles = 201,
-  /**
-   * Emits one particle once.
-   * 
-   * This action type has a specialized subclass: {@link OneTimeEmitter}
-   */
-  OneTimeEmitter = 399,
-  /**
-   * Makes all particles use the default initial direction from the emitter.
-   * See {@link InitialDirection} for more information.
-   * 
-   * This action type has a specialized subclass: {@link NoParticleSpread}
-   */
-  NoParticleSpread = 500,
-  Unk700 = 700, // Root node action
-  Unk702 = 702, // Root node action
   Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
   Unk10003_LightShaft = 10003,
@@ -277,48 +140,225 @@ enum ActionType {
   // Data Actions
   /*#ActionType start*/
   /**
+   * ### Action 1 - NodeAcceleration
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
+   * 
+   * This action type has a specialized subclass: {@link NodeAcceleration}
+   */
+  NodeAcceleration = 1,
+  /**
+   * ### Action 15 - NodeTranslation
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
    * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
    * 
    * This action type has a specialized subclass: {@link NodeTranslation}
    */
   NodeTranslation = 15,
   /**
+   * ### Action 34 - NodeSpin
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the angular speed of the node.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpin}
+   */
+  NodeSpin = 34,
+  /**
+   * ### Action 35 - StaticNodeTransform
+   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * 
+   * Controls the translation and rotation of a node.
+   * 
+   * This action type has a specialized subclass: {@link StaticNodeTransform}
+   */
+  StaticNodeTransform = 35,
+  /**
+   * ### Action 36 - RandomNodeTransform
+   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * 
+   * Controls the translation and rotation of a node, and can also randomize them.
+   * 
+   * This action type has a specialized subclass: {@link RandomNodeTransform}
+   */
+  RandomNodeTransform = 36,
+  /**
+   * ### Action 46 - NodeAttachToCamera
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
    * Attaches the node to the camera.
    * 
    * This action type has a specialized subclass: {@link NodeAttachToCamera}
    */
   NodeAttachToCamera = 46,
   /**
+   * ### Action 55 - ParticleAcceleration
+   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * 
+   * Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleAcceleration}
+   */
+  ParticleAcceleration = 55,
+  /**
+   * ### Action 60 - ParticleSpeed
+   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * 
+   * Controls the movement of particles. This is the most basic action for controlling the speed of particles.
+   * 
+   * This action type has a specialized subclass: {@link ParticleSpeed}
+   */
+  ParticleSpeed = 60,
+  /**
+   * ### Action 64 - ParticleSpeedRandomTurns
+   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * 
+   * Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
+   * 
+   * This action type has a specialized subclass: {@link ParticleSpeedRandomTurns}
+   */
+  ParticleSpeedRandomTurns = 64,
+  /**
+   * ### Action 65 - ParticleSpeedPartialFollow
+   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * 
+   * Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
+   * 
+   * This action type has a specialized subclass: {@link ParticleSpeedPartialFollow}
+   */
+  ParticleSpeedPartialFollow = 65,
+  /**
+   * ### Action 75 - NodeSound
+   * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+   * 
    * Plays a sound effect when the node activates that can repeat.
    * 
    * This action type has a specialized subclass: {@link NodeSound}
    */
   NodeSound = 75,
   /**
+   * ### Action 81 - EmissionSound
+   * **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+   * 
    * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
    * 
    * This action type has a specialized subclass: {@link EmissionSound}
    */
   EmissionSound = 81,
   /**
+   * ### Action 83 - NodeAccelerationRandomTurns
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+   * 
+   * This action type has a specialized subclass: {@link NodeAccelerationRandomTurns}
+   */
+  NodeAccelerationRandomTurns = 83,
+  /**
+   * ### Action 84 - ParticleAccelerationRandomTurns
+   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * 
+   * Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
+   * 
+   * This action type has a specialized subclass: {@link ParticleAccelerationRandomTurns}
+   */
+  ParticleAccelerationRandomTurns = 84,
+  /**
+   * ### Action 105 - ParticleAccelerationPartialFollow
+   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * 
+   * Controls the movement of particles. This extends {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns} with the ability to make particles partially follow the parent node.
+   * 
+   * This action type has a specialized subclass: {@link ParticleAccelerationPartialFollow}
+   */
+  ParticleAccelerationPartialFollow = 105,
+  /**
+   * ### Action 106 - NodeAccelerationPartialFollow
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+   * 
+   * This action type has a specialized subclass: {@link NodeAccelerationPartialFollow}
+   */
+  NodeAccelerationPartialFollow = 106,
+  /**
+   * ### Action 113 - NodeAccelerationSpin
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
+   * 
+   * This action type has a specialized subclass: {@link NodeAccelerationSpin}
+   */
+  NodeAccelerationSpin = 113,
+  /**
+   * ### Action 120 - NodeSpeed
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeed}
+   */
+  NodeSpeed = 120,
+  /**
+   * ### Action 121 - NodeSpeedRandomTurns
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeedRandomTurns}
+   */
+  NodeSpeedRandomTurns = 121,
+  /**
+   * ### Action 122 - NodeSpeedPartialFollow
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeedPartialFollow}
+   */
+  NodeSpeedPartialFollow = 122,
+  /**
+   * ### Action 123 - NodeSpeedSpin
+   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * 
+   * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
+   * 
+   * This action type has a specialized subclass: {@link NodeSpeedSpin}
+   */
+  NodeSpeedSpin = 123,
+  /**
+   * ### Action 128 - NodeAttributes
+   * **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+   * 
    * Controls various things about the node, like its duration, and how it is attached to the parent node.
    * 
    * This action type has a specialized subclass: {@link NodeAttributes}
    */
   NodeAttributes = 128,
   /**
+   * ### Action 129 - ParticleAttributes
+   * **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+   * 
    * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
    * 
    * This action type has a specialized subclass: {@link ParticleAttributes}
    */
   ParticleAttributes = 129,
   /**
+   * ### Action 130 - Unk130
+   * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
+   * 
    * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
    * 
    * This action type has a specialized subclass: {@link Unk130}
    */
   Unk130 = 130,
   /**
+   * ### Action 131 - ParticleModifier
+   * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+   * 
    * Modifies particles in various ways.
    * 
    * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
@@ -327,126 +367,233 @@ enum ActionType {
    */
   ParticleModifier = 131,
   /**
+   * ### Action 132 - SFXReference
+   * 
    * References another SFX by its ID.
    * 
    * This action type has a specialized subclass: {@link SFXReference}
    */
   SFXReference = 132,
   /**
+   * ### Action 133 - LevelsOfDetailThresholds
+   * 
    * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    * 
    * This action type has a specialized subclass: {@link LevelsOfDetailThresholds}
    */
   LevelsOfDetailThresholds = 133,
   /**
+   * ### Action 199 - StateEffectMap
+   * 
+   * Maps states to effects in the parent node.
+   * 
+   * This action type has a specialized subclass: {@link StateEffectMap}
+   */
+  StateEffectMap = 199,
+  /**
+   * ### Action 200 - EmitAllParticles
+   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * 
+   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+   * 
+   * This action type has a specialized subclass: {@link EmitAllParticles}
+   */
+  EmitAllParticles = 200,
+  /**
+   * ### Action 201 - EmitRandomParticles
+   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * 
+   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+   * 
+   * This action type has a specialized subclass: {@link EmitRandomParticles}
+   */
+  EmitRandomParticles = 201,
+  /**
+   * ### Action 300 - PeriodicEmitter
+   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * 
    * Emits particles periodically.
    * 
    * This action type has a specialized subclass: {@link PeriodicEmitter}
    */
   PeriodicEmitter = 300,
   /**
+   * ### Action 301 - EqualDistanceEmitter
+   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * 
    * Emits particles once it has moved a certain distance from where it last emitted particles.
    * 
    * This action type has a specialized subclass: {@link EqualDistanceEmitter}
    */
   EqualDistanceEmitter = 301,
   /**
+   * ### Action 399 - OneTimeEmitter
+   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * 
+   * Emits one particle once.
+   * 
+   * This action type has a specialized subclass: {@link OneTimeEmitter}
+   */
+  OneTimeEmitter = 399,
+  /**
+   * ### Action 400 - PointEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter a single point.
    * 
    * This action type has a specialized subclass: {@link PointEmitterShape}
    */
   PointEmitterShape = 400,
   /**
+   * ### Action 401 - DiskEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter disk-shaped.
    * 
    * This action type has a specialized subclass: {@link DiskEmitterShape}
    */
   DiskEmitterShape = 401,
   /**
+   * ### Action 402 - RectangleEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter rectangular.
    * 
    * This action type has a specialized subclass: {@link RectangleEmitterShape}
    */
   RectangleEmitterShape = 402,
   /**
+   * ### Action 403 - SphereEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter spherical.
    * 
    * This action type has a specialized subclass: {@link SphereEmitterShape}
    */
   SphereEmitterShape = 403,
   /**
+   * ### Action 404 - BoxEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter cuboidal.
    * 
    * This action type has a specialized subclass: {@link BoxEmitterShape}
    */
   BoxEmitterShape = 404,
   /**
+   * ### Action 405 - CylinderEmitterShape
+   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * 
    * Makes the emitter cylindrical.
    * 
    * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
   /**
+   * ### Action 500 - NoParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
+   * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+   * 
+   * This action type has a specialized subclass: {@link NoParticleSpread}
+   */
+  NoParticleSpread = 500,
+  /**
+   * ### Action 501 - CircularParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
    * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link CircularParticleSpread}
    */
   CircularParticleSpread = 501,
   /**
+   * ### Action 502 - EllipticalParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
    * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link EllipticalParticleSpread}
    */
   EllipticalParticleSpread = 502,
   /**
+   * ### Action 503 - RectangularParticleSpread
+   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * 
    * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
    * 
    * This action type has a specialized subclass: {@link RectangularParticleSpread}
    */
   RectangularParticleSpread = 503,
   /**
+   * ### Action 600 - PointSprite
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
    * 
    * This action type has a specialized subclass: {@link PointSprite}
    */
   PointSprite = 600,
   /**
+   * ### Action 601 - Line
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Simple line particle. It automatically rotates to match the direction it's moving.
    * 
    * This action type has a specialized subclass: {@link Line}
    */
   Line = 601,
   /**
+   * ### Action 602 - QuadLine
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
    * 
    * This action type has a specialized subclass: {@link QuadLine}
    */
   QuadLine = 602,
   /**
+   * ### Action 603 - BillboardEx
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
    * 
    * This action type has a specialized subclass: {@link BillboardEx}
    */
   BillboardEx = 603,
   /**
+   * ### Action 604 - MultiTextureBillboardEx
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with multiple textures that can scroll.
    * 
    * This action type has a specialized subclass: {@link MultiTextureBillboardEx}
    */
   MultiTextureBillboardEx = 604,
   /**
+   * ### Action 605 - Model
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Particle with a 3D model.
+   * 
+   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
    * 
    * This action type has a specialized subclass: {@link Model}
    */
   Model = 605,
   /**
+   * ### Action 606 - Tracer
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Creates a trail behind moving effects.
    * 
    * This action type has a specialized subclass: {@link Tracer}
    */
   Tracer = 606,
   /**
+   * ### Action 607 - Distortion
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * A particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -455,6 +602,9 @@ enum ActionType {
    */
   Distortion = 607,
   /**
+   * ### Action 608 - RadialBlur
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * A particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -463,36 +613,72 @@ enum ActionType {
    */
   RadialBlur = 608,
   /**
+   * ### Action 609 - PointLight
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Point light source.
    * 
    * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
   /**
+   * ### Action 700 - Unk700
+   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * 
+   * Unknown root node action that was introduced in Elden Ring.
+   * 
+   * This action type has a specialized subclass: {@link Unk700}
+   */
+  Unk700 = 700,
+  /**
+   * ### Action 701 - Unk701
+   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * 
    * Unknown root node action that was introduced in Elden Ring.
    * 
    * This action type has a specialized subclass: {@link Unk701}
    */
   Unk701 = 701,
   /**
+   * ### Action 702 - Unk702
+   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * 
+   * Unknown root node action that was introduced in Elden Ring.
+   * 
+   * This action type has a specialized subclass: {@link Unk702}
+   */
+  Unk702 = 702,
+  /**
+   * ### Action 731 - NodeWindSpeed
+   * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+   * 
    * Controls how effective the wind is at pushing the node.
    * 
    * This action type has a specialized subclass: {@link NodeWindSpeed}
    */
   NodeWindSpeed = 731,
   /**
+   * ### Action 732 - ParticleWindSpeed
+   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * 
    * Controls how effective the wind is at pushing the particles emitted from the node.
    * 
    * This action type has a specialized subclass: {@link ParticleWindSpeed}
    */
   ParticleWindSpeed = 732,
   /**
+   * ### Action 733 - NodeWindAcceleration
+   * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+   * 
    * Controls how effective the wind is at accelerating the node.
    * 
    * This action type has a specialized subclass: {@link NodeWindAcceleration}
    */
   NodeWindAcceleration = 733,
   /**
+   * ### Action 734 - ParticleWindAcceleration
+   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * 
    * Controls how effective the wind is at accelerating the particles emitted from the node.
    * 
    * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
@@ -501,12 +687,18 @@ enum ActionType {
    */
   ParticleWindAcceleration = 734,
   /**
-   * Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+   * ### Action 800 - Unk800
+   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * 
+   * Unknown action that was added in Armored Core 6.
    * 
    * This action type has a specialized subclass: {@link Unk800}
    */
   Unk800 = 800,
   /**
+   * ### Action 10000 - ParticleSystem
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
@@ -515,6 +707,9 @@ enum ActionType {
    */
   ParticleSystem = 10000,
   /**
+   * ### Action 10012 - DynamicTracer
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Creates a trail behind moving effects.
    * 
    * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
@@ -523,30 +718,47 @@ enum ActionType {
    */
   DynamicTracer = 10012,
   /**
+   * ### Action 10013 - WaterInteraction
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
    * 
    * This action type has a specialized subclass: {@link WaterInteraction}
    */
   WaterInteraction = 10013,
   /**
+   * ### Action 10014 - LensFlare
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Creates lens flares with up to 4 textured layers with different colors and sizes.
    * 
    * This action type has a specialized subclass: {@link LensFlare}
    */
   LensFlare = 10014,
   /**
-   * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+   * ### Action 10015 - RichModel
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+   * 
+   * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
    * 
    * This action type has a specialized subclass: {@link RichModel}
    */
   RichModel = 10015,
   /**
+   * ### Action 10500 - Unk10500
+   * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
+   * 
    * Unknown root node action.
    * 
    * This action type has a specialized subclass: {@link Unk10500}
    */
   Unk10500 = 10500,
   /**
+   * ### Action 11000 - SpotLight
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
    * Light source with an elliptic cone shape, a spot light.
    * 
    * This action type has a specialized subclass: {@link SpotLight}
@@ -591,26 +803,24 @@ enum PropertyFunction {
    */
   Linear = 4,
   /**
-   * Uses a custom curve to interpolate the property's values.
+   * Uses a cubic Bezier spline to interpolate the property's values.
    * 
-   * The difference between this and {@link Curve2} is currently unknown.
+   * This property function has a specialized subclass: {@link BezierProperty}
    */
-  Curve1 = 5,
+  Bezier = 5,
   /**
-   * Uses a custom curve to interpolate the property's values.
+   * Uses a cubic Hermite spline to interpolate the property's values.
    * 
-   * The difference between this and {@link Curve1} is currently unknown.
-   * 
-   * This property function has a specialized subclass: {@link Curve2Property}
+   * This property function has a specialized subclass: {@link HermiteProperty}
    */
-  Curve2 = 6,
+  Hermite = 6,
   /**
-   * Same as {@link Curve1} or {@link Curve2} (not sure which), but allows each
-   * component of the value to have a different number of stops.
+   * Same as {@link Hermite}, but allows each component to have a different
+   * number of keyframes.
    * 
    * Only available in Armored Core 6.
    */
-  CompCurve = 7
+  ComponentHermite = 7
 }
 
 enum ModifierType {
@@ -878,7 +1088,7 @@ enum OrientationMode {
   UnkSouth = 3,
   /**
    * Tries to face the camera, but is limited to rotation around the vertical
-   * axis.
+   * global Y-axis.
    */
   GlobalYaw = 4,
   /**
@@ -897,6 +1107,43 @@ enum OrientationMode {
    * the parent node.
    */
   LocalYaw = 7,
+}
+
+enum ModelOrientationMode {
+  /**
+   * Faces global north.
+   */
+  North = 0,
+  /**
+   * Faces away from the camera plane, the same direction as the camera itself.
+   */
+  CameraPlane = 1,
+  /**
+   * Faces in the direction the particle is moving. This direction can be
+   * modified by
+   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * is initially the particle's {@link InitialDirection}.
+   */
+  ParticleDirection = 2,
+  /**
+   * Tries to face the camera, but is limited to rotation around the global
+   * X-axis.
+   * 
+   * Seemingly identical to {@link UnkGlobalPitch}?
+   */
+  GlobalPitch = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical
+   * global Y-axis.
+   */
+  GlobalYaw = 4,
+  /**
+   * Tries to face the camera, but is limited to rotation around the global
+   * X-axis.
+   * 
+   * Seemingly identical to {@link GlobalPitch}?
+   */
+  UnkGlobalPitch = 5,
 }
 
 enum TracerOrientationMode {
@@ -927,6 +1174,37 @@ enum TracerOrientationMode {
    * The tracer source is parallel to the global diagonal (1, 1, 1).
    */
   Diagonal = 5,
+}
+
+enum RichModelOrientationMode {
+  /**
+   * Faces global north.
+   * 
+   * Seemingly identical to {@link UnkNorth}?
+   */
+  North = 0,
+  /**
+   * Faces away from the camera plane, the same direction as the camera itself.
+   */
+  CameraPlane = 1,
+  /**
+   * Faces in the direction the particle is moving. This direction can be
+   * modified by
+   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * is initially the particle's {@link InitialDirection}.
+   */
+  ParticleDirection = 2,
+  /**
+   * Faces global north.
+   * 
+   * Seemingly identical to {@link North}?
+   */
+  UnkNorth = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical
+   * global Y-axis.
+   */
+  GlobalYaw = 4,
 }
 
 enum LightingMode {
@@ -1081,23 +1359,23 @@ enum EmitterShape {
 
 //#region Types / Interfaces
 export type AnyExternalValue =
-  ExternalValue.DarkSouls3 |
-  ExternalValue.Sekiro |
-  ExternalValue.EldenRing |
-  ExternalValue.ArmoredCore6
+  | ExternalValue.DarkSouls3
+  | ExternalValue.Sekiro
+  | ExternalValue.EldenRing
+  | ExternalValue.ArmoredCore6
 
 export type ValuePropertyFunction =
-  PropertyFunction.Zero |
-  PropertyFunction.One |
-  PropertyFunction.Constant
+  | PropertyFunction.Zero
+  | PropertyFunction.One
+  | PropertyFunction.Constant
 
 export type SequencePropertyFunction =
-  PropertyFunction.Stepped |
-  PropertyFunction.Linear |
-  PropertyFunction.Curve1 |
-  PropertyFunction.Curve2
+  | PropertyFunction.Stepped
+  | PropertyFunction.Linear
+  | PropertyFunction.Bezier
+  | PropertyFunction.Hermite
 
-export type ComponentSequencePropertyFunction = PropertyFunction.CompCurve
+export type ComponentSequencePropertyFunction = PropertyFunction.ComponentHermite
 
 export namespace TypeMap {
   export type PropertyValue = {
@@ -1118,14 +1396,38 @@ export namespace TypeMap {
     [ValueType.Vector3]: Vector3Property
     [ValueType.Vector4]: Vector4Property
   }
+  export type Keyframe<T extends ValueType> = {
+    [PropertyFunction.Stepped]: IBasicKeyframe<T>
+    [PropertyFunction.Linear]: IBasicKeyframe<T>
+    [PropertyFunction.Bezier]: IBezierKeyframe<T>
+    [PropertyFunction.Hermite]: IHermiteKeyframe<T>
+  }
 }
 
-export interface IKeyframe<T extends ValueType> {
+export interface IBasicKeyframe<T extends ValueType> {
   position: number
   value: TypeMap.PropertyValue[T]
-  unkTangent1?: TypeMap.PropertyValue[T]
-  unkTangent2?: TypeMap.PropertyValue[T]
 }
+
+export interface IBezierKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
+  p1: TypeMap.PropertyValue[T]
+  p2: TypeMap.PropertyValue[T]
+}
+
+export interface IHermiteKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
+  tangent1: TypeMap.PropertyValue[T]
+  tangent2: TypeMap.PropertyValue[T]
+}
+
+export type AnyKeyframe<T extends ValueType> =
+  | IBasicKeyframe<T>
+  | IBezierKeyframe<T>
+  | IHermiteKeyframe<T>
+
+export type ScalarKeyframeFromAny<K extends AnyKeyframe<T>, T extends ValueType> =
+  K extends IBezierKeyframe<T> ? IBezierKeyframe<ValueType.Scalar> :
+  K extends IHermiteKeyframe<T> ? IHermiteKeyframe<ValueType.Scalar> :
+  IBasicKeyframe<ValueType.Scalar>
 
 export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   valueType: T
@@ -1135,25 +1437,11 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fields: NumericalField[]
   toJSON(): any
   scale(factor: PropertyValue): this
-  power(exponent: PropertyValue): this
   add(summand: PropertyValue): this
   valueAt(arg: number): TypeMap.PropertyValue[T]
   clone(): IProperty<T, F>
   separateComponents(): IProperty<ValueType.Scalar, F>[]
   for(game: Game): IProperty<T, F>
-}
-
-export interface IValueProperty<T extends ValueType> extends IProperty<T, ValuePropertyFunction> {
-  value: TypeMap.PropertyValue[T]
-  clone(): IValueProperty<T>
-}
-
-export interface ISequenceProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
-  loop: boolean
-  keyframes: IKeyframe<T>[]
-  sortKeyframes(): void
-  clone(): ISequenceProperty<T, F>
-  duration: number
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -1163,16 +1451,16 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 export interface IAction {
   readonly type: ActionType
   toJSON(): any
-  minify(): typeof this
+  minify(): AnyAction
 }
 
 export interface IEffect {
   readonly type: EffectType
   getActionCount(game: Game): number
-  getActions(game: Game): IAction[]
+  getActions(game: Game): AnyAction[]
   toJSON(): any
   minify(): typeof this
-  walkActions(): Generator<IAction>
+  walkActions(): Generator<AnyAction>
 }
 
 export interface IModifier<T extends ValueType> {
@@ -1187,6 +1475,7 @@ export interface IModifier<T extends ValueType> {
   separateComponents(): IModifier<ValueType.Scalar>[]
 }
 
+export type AnyAction = Action | DataAction
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
 export type Vector4 = [red: number, green: number, blue: number, alpha: number]
@@ -1205,16 +1494,176 @@ export type Vector3Value = Vector3 | Vector3Property
 export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 
+export type TypedArray =
+  | Int8Array
+  | Uint8Array
+  | Uint8ClampedArray
+  | Int16Array
+  | Uint16Array
+  | Int32Array
+  | Uint32Array
+  | Float32Array
+  | Float64Array
+  | BigInt64Array
+  | BigUint64Array
+
+export type NodeMovementParams =
+  | NodeSpinParams
+  | NodeAccelerationParams
+  | NodeAccelerationRandomTurnsParams
+  | NodeAccelerationPartialFollowParams
+  | NodeAccelerationSpinParams
+  | NodeSpeedParams
+  | NodeSpeedRandomTurnsParams
+  | NodeSpeedPartialFollowParams
+  | NodeSpeedSpinParams
+
+export type NodeTransformParams =
+  | StaticNodeTransformParams
+  | RandomNodeTransformParams
+
+export type ParticleMovementParams =
+  | ParticleAccelerationParams
+  | ParticleAccelerationRandomTurnsParams
+  | ParticleAccelerationPartialFollowParams
+  | ParticleSpeedParams
+  | ParticleSpeedRandomTurnsParams
+  | ParticleSpeedPartialFollowParams
+
+export namespace ActionSlots {
+/*#ActionSlotTypes start*/
+  export type AppearanceAction =
+    | PointSprite
+    | Line
+    | QuadLine
+    | BillboardEx
+    | MultiTextureBillboardEx
+    | Model
+    | Tracer
+    | Distortion
+    | RadialBlur
+    | PointLight
+    | ParticleSystem
+    | DynamicTracer
+    | WaterInteraction
+    | LensFlare
+    | RichModel
+    | SpotLight
+    | Action
+
+  export type BehaviorAction =
+    | EmitAllParticles
+    | EmitRandomParticles
+    | Action
+
+  export type EmissionAudioAction =
+    | EmissionSound
+    | Action
+
+  export type EmitterAction =
+    | PeriodicEmitter
+    | EqualDistanceEmitter
+    | OneTimeEmitter
+    | Action
+
+  export type EmitterShapeAction =
+    | PointEmitterShape
+    | DiskEmitterShape
+    | RectangleEmitterShape
+    | SphereEmitterShape
+    | BoxEmitterShape
+    | CylinderEmitterShape
+    | Action
+
+  export type NodeAttributesAction =
+    | NodeAttributes
+    | Action
+
+  export type NodeAudioAction =
+    | NodeSound
+    | Action
+
+  export type NodeMovementAction =
+    | NodeAcceleration
+    | NodeTranslation
+    | NodeSpin
+    | NodeAttachToCamera
+    | NodeAccelerationRandomTurns
+    | NodeAccelerationPartialFollow
+    | NodeAccelerationSpin
+    | NodeSpeed
+    | NodeSpeedRandomTurns
+    | NodeSpeedPartialFollow
+    | NodeSpeedSpin
+    | Action
+
+  export type NodeTransformAction =
+    | StaticNodeTransform
+    | RandomNodeTransform
+    | Action
+
+  export type NodeWindAction =
+    | NodeWindSpeed
+    | NodeWindAcceleration
+    | Action
+
+  export type ParticleAttributesAction =
+    | ParticleAttributes
+    | Action
+
+  export type ParticleDirectionAction =
+    | NoParticleSpread
+    | CircularParticleSpread
+    | EllipticalParticleSpread
+    | RectangularParticleSpread
+    | Action
+
+  export type ParticleModifierAction =
+    | ParticleModifier
+    | Action
+
+  export type ParticleMovementAction =
+    | ParticleAcceleration
+    | ParticleSpeed
+    | ParticleSpeedRandomTurns
+    | ParticleSpeedPartialFollow
+    | ParticleAccelerationRandomTurns
+    | ParticleAccelerationPartialFollow
+    | Action
+
+  export type ParticleWindAction =
+    | ParticleWindSpeed
+    | ParticleWindAcceleration
+    | Unk800
+    | Action
+
+  export type Unknown70xAction =
+    | Unk700
+    | Unk701
+    | Unk702
+    | Action
+
+  export type Unknown130Action =
+    | Unk130
+    | Action
+
+  export type Unknown10500Action =
+    | Unk10500
+    | Action
+/*#ActionSlotTypes end*/
+}
+
 //#region Action Data
 export type ActionGameDataEntry = {
   fields1?: string[] | Game
   fields2?: string[] | Game
   properties1?: string[] | Game
   properties2?: string[] | Game
+  section10s?: string[] | Game
 }
 const ActionData: {
   [x: string]: {
-    props: {
+    props?: {
       [name: string]: {
         default: any
         field?: FieldType
@@ -1223,12 +1672,32 @@ const ActionData: {
         }
       }
     }
-    games: {
+    games?: {
       [game: string]: ActionGameDataEntry | Game | -2
     }
   }
 } = {
   /*#ActionData start*/
+  [ActionType.NodeAcceleration]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','alignWithMotion','unk_ds3_f1_2'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.NodeTranslation]: {
     props: {
       translation: { default: [0, 0, 0] },
@@ -1246,6 +1715,68 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.NodeSpin]: {
+    props: {
+      angularSpeedX: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedY: { default: 0 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierZ: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0'],
+        properties1: ['angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.StaticNodeTransform]: {
+    props: {
+      offsetX: { default: 0, field: FieldType.Float },
+      offsetY: { default: 0, field: FieldType.Float },
+      offsetZ: { default: 0, field: FieldType.Float },
+      rotationX: { default: 0, field: FieldType.Float },
+      rotationY: { default: 0, field: FieldType.Float },
+      rotationZ: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.RandomNodeTransform]: {
+    props: {
+      offsetX: { default: 0, field: FieldType.Float },
+      offsetY: { default: 0, field: FieldType.Float },
+      offsetZ: { default: 0, field: FieldType.Float },
+      rotationX: { default: 0, field: FieldType.Float },
+      rotationY: { default: 0, field: FieldType.Float },
+      rotationZ: { default: 0, field: FieldType.Float },
+      offsetVarianceX: { default: 0, field: FieldType.Float },
+      offsetVarianceY: { default: 0, field: FieldType.Float },
+      offsetVarianceZ: { default: 0, field: FieldType.Float },
+      rotationVarianceX: { default: 0, field: FieldType.Float },
+      rotationVarianceY: { default: 0, field: FieldType.Float },
+      rotationVarianceZ: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ','offsetVarianceX','offsetVarianceY','offsetVarianceZ','rotationVarianceX','rotationVarianceY','rotationVarianceZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.NodeAttachToCamera]: {
     props: {
       followRotation: { default: true, field: FieldType.Boolean },
@@ -1254,6 +1785,82 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['followRotation','unk_ds3_f1_1']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleAcceleration]: {
+    props: {
+      gravity: { default: 0 },
+      acceleration: { default: 0 },
+      accelerationMultiplier: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
+        properties1: ['gravity','acceleration','accelerationMultiplier']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleSpeed]: {
+    props: {
+      gravity: { default: 0 },
+      speed: { default: 0 },
+      speedMultiplier: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
+        properties1: ['gravity','speed','speedMultiplier']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleSpeedRandomTurns]: {
+    props: {
+      gravity: { default: 0 },
+      speed: { default: 0 },
+      speedMultiplier: { default: 1 },
+      maxTurnAngle: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Float },
+      turnInterval: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','turnInterval'],
+        properties1: ['gravity','speed','speedMultiplier','maxTurnAngle']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleSpeedPartialFollow]: {
+    props: {
+      gravity: { default: 0 },
+      speed: { default: 0 },
+      speedMultiplier: { default: 1 },
+      maxTurnAngle: { default: 0 },
+      followFactor: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Float },
+      turnInterval: { default: 0, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','turnInterval','followRotation'],
+        properties1: ['gravity','speed','speedMultiplier','maxTurnAngle','followFactor']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -1283,6 +1890,204 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['sound','unk_ds3_f1_1']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeAccelerationRandomTurns]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleAccelerationRandomTurns]: {
+    props: {
+      gravity: { default: 0 },
+      acceleration: { default: 0 },
+      accelerationMultiplier: { default: 1 },
+      maxTurnAngle: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Float },
+      turnInterval: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','turnInterval'],
+        properties1: ['gravity','acceleration','accelerationMultiplier','maxTurnAngle']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ParticleAccelerationPartialFollow]: {
+    props: {
+      gravity: { default: 0 },
+      acceleration: { default: 0 },
+      accelerationMultiplier: { default: 1 },
+      maxTurnAngle: { default: 0 },
+      followFactor: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Float },
+      turnInterval: { default: 0, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','turnInterval','followRotation'],
+        properties1: ['gravity','acceleration','accelerationMultiplier','maxTurnAngle','followFactor']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeAccelerationPartialFollow]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      followFactor: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle','followFactor']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeAccelerationSpin]: {
+    props: {
+      speedZ: { default: 0 },
+      accelerationZ: { default: 0 },
+      accelerationMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      angularSpeedX: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedY: { default: 0 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierZ: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','alignWithMotion','unk_ds3_f1_3'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeed]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','alignWithMotion','unk_ds3_f1_2'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeedRandomTurns]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeedPartialFollow]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      maxTurnAngle: { default: 0 },
+      followFactor: { default: 0 },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      turnInterval: { default: 0, field: FieldType.Integer },
+      followRotation: { default: true, field: FieldType.Boolean },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle','followFactor']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.NodeSpeedSpin]: {
+    props: {
+      speedZ: { default: 0 },
+      speedMultiplierZ: { default: 1 },
+      accelerationY: { default: 0 },
+      angularSpeedX: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedY: { default: 0 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierZ: { default: 1 },
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      alignWithMotion: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','alignWithMotion','unk_ds3_f1_3'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -1407,6 +2212,33 @@ const ActionData: {
       }
     }
   },
+  [ActionType.StateEffectMap]: {
+    props: {
+      effectIndices: { default: [0] },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        section10s: ['effectIndices']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.EmitAllParticles]: {},
+  [ActionType.EmitRandomParticles]: {
+    props: {
+      weights: { default: [1] },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        section10s: ['weights']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.PeriodicEmitter]: {
     props: {
       interval: { default: 1 },
@@ -1450,6 +2282,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.OneTimeEmitter]: {},
   [ActionType.PointEmitterShape]: {
     props: {
       direction: { default: InitialDirection.Emitter, field: FieldType.Integer },
@@ -1546,6 +2379,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
+  [ActionType.NoParticleSpread]: {},
   [ActionType.CircularParticleSpread]: {
     props: {
       unk_er_f1_0: { default: false, field: FieldType.Boolean },
@@ -1645,7 +2479,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -1664,7 +2498,7 @@ const ActionData: {
         fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['size','color1','color2','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
@@ -1728,7 +2562,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -1747,7 +2581,7 @@ const ActionData: {
         fields1: ['blendMode','unk_ds3_f1_1'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
@@ -1813,7 +2647,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -1832,7 +2666,7 @@ const ActionData: {
         fields1: ['blendMode','unk_ds3_f1_1'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
@@ -1861,16 +2695,16 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       depthOffset: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
@@ -1932,7 +2766,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f1_15: { default: 1, field: FieldType.Integer },
       unk_sdt_f1_16: { default: 1, field: FieldType.Integer },
       unk_sdt_f1_17: { default: 0, field: FieldType.Integer },
@@ -1946,22 +2780,28 @@ const ActionData: {
       unk_sdt_f2_42: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_43: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_44: { default: 0, field: FieldType.Integer },
+      unk_ac6_f2_45: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
-        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaThreshold','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
+        properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: {
+        fields1: Game.Sekiro,
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
+        properties1: Game.Sekiro,
+        properties2: Game.DarkSouls3
+      }
     }
   },
   [ActionType.MultiTextureBillboardEx]: {
@@ -1996,19 +2836,19 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
       layersColor: { default: [1, 1, 1, 1] },
       layer1Color: { default: [1, 1, 1, 1] },
       layer2Color: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       layer1SpeedU: { default: 0 },
@@ -2063,7 +2903,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
@@ -2084,13 +2924,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -2109,7 +2949,7 @@ const ActionData: {
   },
   [ActionType.Model]: {
     props: {
-      orientation: { default: OrientationMode.LocalSouth, field: FieldType.Integer },
+      orientation: { default: ModelOrientationMode.ParticleDirection, field: FieldType.Integer },
       scaleVariationX: { default: 1, field: FieldType.Float },
       scaleVariationY: { default: 1, field: FieldType.Float },
       scaleVariationZ: { default: 1, field: FieldType.Float },
@@ -2129,12 +2969,12 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       blendMode: { default: BlendMode.Normal, field: FieldType.Integer },
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
@@ -2209,13 +3049,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
-        properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
+        properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_ds3_p2_7']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.EldenRing]: {
@@ -2260,7 +3100,7 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
@@ -2305,7 +3145,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
@@ -2319,13 +3159,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -2404,7 +3244,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Float },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
@@ -2424,7 +3264,7 @@ const ActionData: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','blendMode','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
@@ -2436,7 +3276,7 @@ const ActionData: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12','unk_er_f1_12','unk_er_f1_13'],
         fields2: Game.Sekiro,
         properties1: Game.Sekiro,
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_er_p2_7','unk_er_p2_8']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold','unk_er_p2_7','unk_er_p2_8']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -2492,7 +3332,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: FieldType.Float },
       unk_er_f1_3: { default: 1, field: FieldType.Integer },
       unk_er_f1_4: { default: 1, field: FieldType.Integer },
@@ -2502,7 +3342,7 @@ const ActionData: {
         fields1: ['blendMode','mask','uniformScale','iterations','unk_ds3_f1_4'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['uniformScale','iterations','unk_ds3_f1_4'],
@@ -2595,6 +3435,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.Unk700]: {},
   [ActionType.Unk701]: {
     props: {
       unk_er_p1_0: { default: 1 },
@@ -2606,6 +3447,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.Unk702]: {},
   [ActionType.NodeWindSpeed]: {
     props: {
       speed: { default: 0 },
@@ -2974,7 +3816,7 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
-      alphaThreshold: { default: 0 },
+      alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
@@ -3019,7 +3861,7 @@ const ActionData: {
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
-      unk_ds3_p2_6: { default: 0 },
+      alphaThreshold: { default: 0 },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
@@ -3040,13 +3882,13 @@ const ActionData: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
-        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
+        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -3227,7 +4069,7 @@ const ActionData: {
   },
   [ActionType.RichModel]: {
     props: {
-      orientation: { default: OrientationMode.LocalSouth, field: FieldType.Integer },
+      orientation: { default: RichModelOrientationMode.ParticleDirection, field: FieldType.Integer },
       scaleVariationX: { default: 1, field: FieldType.Float },
       scaleVariationY: { default: 1, field: FieldType.Float },
       scaleVariationZ: { default: 1, field: FieldType.Float },
@@ -3245,12 +4087,12 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      rotationSpeedX: { default: 0 },
-      rotationSpeedY: { default: 0 },
-      rotationSpeedZ: { default: 0 },
-      rotationSpeedMultiplierX: { default: 1 },
-      rotationSpeedMultiplierY: { default: 1 },
-      rotationSpeedMultiplierZ: { default: 1 },
+      angularSpeedX: { default: 0 },
+      angularSpeedY: { default: 0 },
+      angularSpeedZ: { default: 0 },
+      angularSpeedMultiplierX: { default: 1 },
+      angularSpeedMultiplierY: { default: 1 },
+      angularSpeedMultiplierZ: { default: 1 },
       color1: { default: [1, 1, 1, 1] },
       color2: { default: [1, 1, 1, 1] },
       color3: { default: [1, 1, 1, 1] },
@@ -3344,13 +4186,13 @@ const ActionData: {
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unkDistFadeClose0','unkDistFadeClose1','unkDistFadeFar0','unkDistFadeFar1','minDistance','maxDistance','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
       [Game.ArmoredCore6]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
         fields2: Game.EldenRing,
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','rotationSpeedX','rotationSpeedMultiplierX','rotationSpeedY','rotationSpeedMultiplierY','rotationSpeedZ','rotationSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
         properties2: Game.EldenRing
       }
     }
@@ -3451,6 +4293,7 @@ const ActionData: {
   /*#ActionData end*/
 }
 for (const [type, action] of Object.entries(ActionData)) {
+  if (!('props' in action)) continue;
   for (const game of Object.keys(action.games)) {
     const gameData = getActionGameData(type as unknown as ActionType, game as unknown as Game)
     for (const [name, prop] of Object.entries(action.props)) {
@@ -3627,6 +4470,15 @@ const EffectActionSlots = {
 
 function getActionGameData(type: ActionType, game: Game) {
   const adt = ActionData[type]
+  if (!('props' in adt)) {
+    return {
+      fields1: [],
+      fields2: [],
+      properties1: [],
+      properties2: [],
+      section10s: [],
+    }
+  }
   if (!(game in adt.games)) {
     throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
   }
@@ -3635,6 +4487,7 @@ function getActionGameData(type: ActionType, game: Game) {
   data.fields2 ??= []
   data.properties1 ??= []
   data.properties2 ??= []
+  data.section10s ??= []
   if (typeof data.fields1 === 'number') {
     data.fields1 = (adt.games[data.fields1] as ActionGameDataEntry).fields1
   }
@@ -3647,11 +4500,15 @@ function getActionGameData(type: ActionType, game: Game) {
   if (typeof data.properties2 === 'number') {
     data.properties2 = (adt.games[data.properties2] as ActionGameDataEntry).properties2
   }
+  if (typeof data.section10s === 'number') {
+    data.section10s = (adt.games[data.section10s] as ActionGameDataEntry).section10s
+  }
   return data as {
     fields1: string[]
     fields2: string[]
     properties1: string[]
     properties2: string[]
+    section10s: string[]
   }
 }
 
@@ -3692,18 +4549,23 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
       return ValueProperty.fromFields(type, func, modifiers, fields) as unknown as T
     case PropertyFunction.Stepped:
     case PropertyFunction.Linear:
-    case PropertyFunction.Curve1:
-    case PropertyFunction.Curve2:
+    case PropertyFunction.Bezier:
+    case PropertyFunction.Hermite:
       return SequenceProperty.fromFields(type, func, loop, modifiers, fields) as unknown as T
-    case PropertyFunction.CompCurve:
+    case PropertyFunction.ComponentHermite:
       return ComponentSequenceProperty.fromFields(type, loop, modifiers, fields) as unknown as T
     default:
       throw new Error('Unknown property function: ' + func)
   }
 }
 
-function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, properties: IProperty<any, any>[], modifierProp: boolean) {
-  let prop = this
+function writeProperty(
+  prop: IProperty<any, any>,
+  bw: BinaryWriter,
+  game: Game,
+  properties: IProperty<any, any>[],
+  isModifierProp: boolean
+) {
   if (game !== Game.ArmoredCore6 && prop instanceof ComponentSequenceProperty) {
     prop = prop.combineComponents()
   }
@@ -3722,9 +4584,9 @@ function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, 
   bw.writeInt32(typeEnumB)
   bw.writeInt32(prop.fieldCount)
   bw.writeInt32(0)
-  bw.reserveInt32(`${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
+  bw.reserveInt32(`${isModifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
   bw.writeInt32(0)
-  if (!modifierProp) {
+  if (!isModifierProp) {
     bw.reserveInt32(`PropertyModifiersOffset${count}`)
     bw.writeInt32(0)
     bw.writeInt32((prop as IModifiableProperty<any, any>).modifiers.length)
@@ -3733,29 +4595,38 @@ function writeProperty(this: IProperty<any, any>, bw: BinaryWriter, game: Game, 
   properties.push(prop)
 }
 
-function writePropertyModifiers(this: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: IModifier<any>[]) {
+function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: IModifier<any>[]) {
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
-  for (const modifier of this.modifiers) {
-    writeModifier.call(modifier, bw, modifiers)
+  for (const modifier of prop.modifiers) {
+    writeModifier(modifier, bw, modifiers)
   }
 }
 
-function writePropertyFields(this: IProperty<any, any>, bw: BinaryWriter, index: number, modifierProp: boolean): number {
-  const offsetName = `${modifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${index}`
-  const fieldCount = this.fieldCount
+function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index: number, isModifierProp: boolean): number {
+  const offsetName = `${isModifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${index}`
+  const fieldCount = prop.fieldCount
   if (fieldCount === 0) {
     bw.fill(offsetName, 0)
   } else {
     bw.fill(offsetName, bw.position)
-    for (const field of this.fields) {
-      writeField.call(field, bw)
+    for (const field of prop.fields) {
+      writeField(field, bw)
     }
   }
   return fieldCount
 }
 
 //#region Functions - Action
-function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number, section10Count: number): Action {
+function readAction(
+  br: BinaryReader,
+  game: Game,
+  type: number,
+  fieldCount1: number,
+  propertyCount1: number,
+  fieldCount2: number,
+  propertyCount2: number,
+  section10Count: number
+): Action {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   const section10Offset = br.readInt32()
@@ -3777,7 +4648,7 @@ function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: num
   br.stepOut()
 
   br.stepIn(section10Offset)
-  const section10s: Section10[] = []
+  const section10s: number[][] = []
   for (let i = 0; i < section10Count; ++i) {
     section10s.push(readSection10(br))
   }
@@ -3787,32 +4658,21 @@ function readAction(br: BinaryReader, game: Game, type: number, fieldCount1: num
   const fields1 = readFields(br, fieldCount1, Action)
   const fields2 = readFields(br, fieldCount2, Action)
   br.stepOut()
-  if (type in Actions) {
-    const action = new Actions[type]()
-    action.type = type
-    action.fields1 = fields1
-    action.fields2 = fields2
-    action.properties1 = properties1
-    action.properties2 = properties2
-    action.section10s = section10s
-    return action
-  } else {
-    return new Action(type, fields1, fields2, properties1, properties2, section10s)
-  }
+  return new Action(type, fields1, fields2, properties1, properties2, section10s)
 }
 
-function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeAction(action: Action, bw: BinaryWriter, actions: AnyAction[]) {
   const count = actions.length
-  bw.writeInt16(this.type)
+  bw.writeInt16(action.type)
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
-  bw.writeInt32(this.fields1.length)
-  bw.writeInt32(this.section10s.length)
-  bw.writeInt32(this.properties1.length)
-  bw.writeInt32(this.fields2.length)
+  bw.writeInt32(action.fields1.length)
+  bw.writeInt32(action.section10s.length)
+  bw.writeInt32(action.properties1.length)
+  bw.writeInt32(action.fields2.length)
   bw.writeInt32(0)
-  bw.writeInt32(this.properties2.length)
+  bw.writeInt32(action.properties2.length)
   bw.reserveInt32(`ActionFieldsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`ActionSection10sOffset${count}`)
@@ -3821,63 +4681,79 @@ function writeAction(this: Action, bw: BinaryWriter, game: Game, actions: IActio
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  actions.push(this)
+  actions.push(action)
 }
 
-function writeActionProperties(this: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+function writeActionProperties(action: Action, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
-  for (const property of this.properties1) {
-    writeProperty.call(property.for(game), bw, game, properties, false)
+  for (const property of action.properties1) {
+    writeProperty(property.for(game), bw, game, properties, false)
   }
-  for (const property of this.properties2) {
-    writeProperty.call(property.for(game), bw, game, properties, false)
+  for (const property of action.properties2) {
+    writeProperty(property.for(game), bw, game, properties, false)
   }
 }
 
-function writeActionSection10s(this: Action, bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeActionSection10s(action: Action, bw: BinaryWriter, index: number, section10s: number[][]) {
   bw.fill(`ActionSection10sOffset${index}`, bw.position)
-  for (const section10 of this.section10s) {
-    writeSection10.call(section10, bw, section10s)
+  for (const section10 of action.section10s) {
+    writeSection10(section10, bw, section10s)
   }
 }
 
-function writeActionFields(this: Action, bw: BinaryWriter, game: Game, index: number): number {
-  const count: number = this.fields1.length + this.fields2.length
+function writeActionFields(action: Action, bw: BinaryWriter, index: number): number {
+  const count: number = action.fields1.length + action.fields2.length
   if (count === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
   } else {
     bw.fill(`ActionFieldsOffset${index}`, bw.position)
-    for (const field of this.fields1) {
-      writeField.call(field, bw)
+    for (const field of action.fields1) {
+      writeField(field, bw)
     }
-    for (const field of this.fields2) {
-      writeField.call(field, bw)
+    for (const field of action.fields2) {
+      writeField(field, bw)
     }
   }
   return count
 }
 
 //#region Functions - DataAction
-function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCount1: number, propertyCount1: number, fieldCount2: number, propertyCount2: number): DataAction {
+function readDataAction(
+  br: BinaryReader,
+  game: Game,
+  type: ActionType,
+  fieldCount1: number,
+  propertyCount1: number,
+  fieldCount2: number,
+  propertyCount2: number,
+  section10Count: number
+): DataAction {
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
-  br.position += 4 // Section10 offset
+  const section10Offset = br.readInt32()
   br.assertInt32(0)
   const propertyOffset = br.readInt32()
   br.assertInt32(0)
   br.assertInt32(0)
   br.assertInt32(0)
 
+  const adt = ActionData[type]
+  if (!('props' in adt)) {
+    return new DataActions[type]
+  }
+
   const c: {
     fields1: Field[]
     fields2: Field[]
     properties1: AnyProperty[]
     properties2: AnyProperty[]
+    section10s: number[][]
   } = {
     fields1: [],
     fields2: [],
     properties1: [],
     properties2: [],
+    section10s: [],
   }
 
   br.stepIn(propertyOffset)
@@ -3889,8 +4765,13 @@ function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCou
   }
   br.stepOut()
 
+  br.stepIn(section10Offset)
+  for (let i = 0; i < section10Count; ++i) {
+    c.section10s.push(readSection10(br))
+  }
+  br.stepOut()
+
   br.stepIn(fieldOffset)
-  const adt = ActionData[type]
   const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
     c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), null)
@@ -3920,7 +4801,7 @@ function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCou
   }
   br.stepOut()
   let params = Object.fromEntries(
-    Object.entries(adt.props).filter(([name, prop]) => game in prop.paths).map(([name, prop]) => {
+    Object.entries(adt.props).filter(([_, prop]) => game in prop.paths).map(([name, prop]) => {
       const v = c[prop.paths[game][0]][prop.paths[game][1]]
       if (v instanceof Field) {
         return [name, v.value]
@@ -3932,26 +4813,29 @@ function readDataAction(br: BinaryReader, game: Game, type: ActionType, fieldCou
   if (type in ActionDataConversion && 'read' in ActionDataConversion[type]) {
     params = ActionDataConversion[type].read(params, game)
   }
+  if (Object.keys(adt.props).length === 1) {
+    return new DataActions[type](Object.values(params)[0])
+  }
   return new DataActions[type](params)
 }
 
-function writeDataAction(this: DataAction, bw: BinaryWriter, game: Game, actions: IAction[]) {
+function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actions: AnyAction[]) {
   if (game === Game.Generic) {
     throw new Error('DataActions cannot be formatted for Game.Generic.')
   }
-  bw.convertedDataActions.set(this,
-    this.type in ActionDataConversion && 'write' in ActionDataConversion[this.type] ?
-    ActionDataConversion[this.type].write(Object.assign(Object.create(null), this), game) :
-    this
+  bw.convertedDataActions.set(action,
+    action.type in ActionDataConversion && 'write' in ActionDataConversion[action.type] ?
+    ActionDataConversion[action.type].write(Object.assign(Object.create(null), action), game) :
+    action
   )
-  const data = getActionGameData(this.type, game)
+  const data = getActionGameData(action.type, game)
   const count = actions.length
-  bw.writeInt16(this.type)
+  bw.writeInt16(action.type)
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
   bw.writeInt32(data.fields1.length)
-  bw.writeInt32(0) // Section10 count
+  bw.writeInt32(data.section10s.length)
   bw.writeInt32(data.properties1.length)
   bw.writeInt32(data.fields2.length)
   bw.writeInt32(0)
@@ -3964,47 +4848,50 @@ function writeDataAction(this: DataAction, bw: BinaryWriter, game: Game, actions
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  actions.push(this)
+  actions.push(action)
 }
 
-function writeDataActionProperties(this: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
-  const conProps = bw.convertedDataActions.get(this)
-  const properties1: AnyProperty[] = this.getProperties.call(conProps, game, 'properties1')
-  const properties2: AnyProperty[] = this.getProperties.call(conProps, game, 'properties2')
+function writeDataActionProperties(action: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  const conProps = bw.convertedDataActions.get(action)
+  const properties1: AnyProperty[] = action.getProperties.call(conProps, game, 'properties1')
+  const properties2: AnyProperty[] = action.getProperties.call(conProps, game, 'properties2')
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
-    writeProperty.call(property, bw, game, properties, false)
+    writeProperty(property, bw, game, properties, false)
   }
   for (const property of properties2) {
-    writeProperty.call(property, bw, game, properties, false)
+    writeProperty(property, bw, game, properties, false)
   }
 }
 
-function writeDataActionSection10s(this: DataAction, bw: BinaryWriter, index: number, section10s: Section10[]) {
+function writeDataActionSection10s(action: DataAction, bw: BinaryWriter, game: Game, index: number, section10s: number[][]) {
   bw.fill(`ActionSection10sOffset${index}`, bw.position)
+  for (const section10 of action.getSection10s(game)) {
+    writeSection10(section10, bw, section10s)
+  }
 }
 
-function writeDataActionFields(this: DataAction, bw: BinaryWriter, game: Game, index: number): number {
-  const conProps = bw.convertedDataActions.get(this)
-  const fields1: Field[] = this.getFields.call(conProps, game, 'fields1')
-  const fields2: Field[] = this.getFields.call(conProps, game, 'fields2')
+function writeDataActionFields(action: DataAction, bw: BinaryWriter, game: Game, index: number): number {
+  const conProps = bw.convertedDataActions.get(action)
+  const fields1: Field[] = action.getFields.call(conProps, game, 'fields1')
+  const fields2: Field[] = action.getFields.call(conProps, game, 'fields2')
   const count = fields1.length + fields2.length
   if (count === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
   } else {
     bw.fill(`ActionFieldsOffset${index}`, bw.position)
     for (const field of fields1) {
-      writeField.call(field, bw)
+      writeField(field, bw)
     }
     for (const field of fields2) {
-      writeField.call(field, bw)
+      writeField(field, bw)
     }
   }
   return count
 }
 
 //#region Functions - AnyAction
-function readAnyAction(br: BinaryReader, game: Game): IAction {
+function readAnyAction(br: BinaryReader, game: Game): AnyAction {
   const type = br.readInt16()
   br.position += 6
   // br.readUint8() // Unk02
@@ -4020,7 +4907,7 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
   if (game !== Game.Generic && type in ActionData) {
     const data = getActionGameData(type, game)
     if (
-      section10Count === 0 &&
+      section10Count <= data.section10s.length &&
       fieldCount1 <= data.fields1.length &&
       ( // Deal with DS3's action 10012 special case where it has 1 extra field
         // that is skipped while reading
@@ -4031,7 +4918,7 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
-      return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2)
+      return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     } else {
       return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     }
@@ -4040,28 +4927,40 @@ function readAnyAction(br: BinaryReader, game: Game): IAction {
   }
 }
 
-function writeAnyAction(this: IAction, bw: BinaryWriter, game: Game, actions: IAction[]) {
-  if (this instanceof DataAction) {
-    if (ActionData[this.type].games[game] === -2) {
-      writeAction.call(ActionDataConversion[this.type].fallback(this, game), bw, game, actions)
+function writeAnyAction(action: AnyAction, bw: BinaryWriter, game: Game, actions: AnyAction[]) {
+  if (action instanceof DataAction) {
+    if ('props' in ActionData[action.type] && ActionData[action.type].games[game] === -2) {
+      writeAction(ActionDataConversion[action.type].fallback(action, game), bw, actions)
     } else {
-      writeDataAction.call(this, bw, game, actions)
+      writeDataAction(action, bw, game, actions)
     }
   } else {
-    writeAction.call(this, bw, game, actions)
+    writeAction(action, bw, actions)
   }
 }
 
-function writeAnyActionProperties(this: IAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
-  ;(this instanceof Action ? writeActionProperties : writeDataActionProperties).call(this, bw, game, index, properties)
+function writeAnyActionProperties(action: AnyAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
+  if (action instanceof DataAction) {
+    writeDataActionProperties(action, bw, game, index, properties)
+  } else {
+    writeActionProperties(action, bw, game, index, properties)
+  }
 }
 
-function writeAnyActionSection10s(this: IAction, bw: BinaryWriter, index: number, section10s: Section10[]) {
-  ;(this instanceof Action ? writeActionSection10s : writeDataActionSection10s).call(this, bw, index, section10s)
+function writeAnyActionSection10s(action: AnyAction, bw: BinaryWriter, game: Game, index: number, section10s: number[][]) {
+  if (action instanceof DataAction) {
+    writeDataActionSection10s(action, bw, game, index, section10s)
+  } else {
+    writeActionSection10s(action, bw, index, section10s)
+  }
 }
 
-function writeAnyActionFields(this: IAction, bw: BinaryWriter, game: Game, index: number): number {
-  return (this instanceof Action ? writeActionFields : writeDataActionFields).call(this, bw, game, index)
+function writeAnyActionFields(action: AnyAction, bw: BinaryWriter, game: Game, index: number): number {
+  if (action instanceof DataAction) {
+    return writeDataActionFields(action, bw, game, index)
+  } else {
+    return writeActionFields(action, bw, index)
+  }
 }
 
 //#region Functions - Node
@@ -4135,29 +5034,29 @@ function readNode(br: BinaryReader, game: Game): Node {
   return new GenericNode(type, actions, effects, nodes)
 }
 
-function writeNode(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
-  if (game === Game.Generic && !(this instanceof GenericNode)) {
+function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
+  if (game === Game.Generic && !(node instanceof GenericNode)) {
     throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
   }
   const count = nodes.length
   let effectCount = 0
   let actionCount = 0
   let childCount = 0
-  if (this instanceof GenericNode) {
-    effectCount = this.effects.length
-    actionCount = this.actions.length
-    childCount = this.nodes.length
-  } else if (this instanceof NodeWithEffects) {
-    effectCount = this.effects.length
+  if (node instanceof GenericNode) {
+    effectCount = node.effects.length
+    actionCount = node.actions.length
+    childCount = node.nodes.length
+  } else if (node instanceof NodeWithEffects) {
+    effectCount = node.effects.length
     actionCount = 1
-    childCount = this.nodes.length
-  } else if (this instanceof RootNode) {
+    childCount = node.nodes.length
+  } else if (node instanceof RootNode) {
     actionCount = game === Game.DarkSouls3 || game === Game.Sekiro ? 3 : 4
-    childCount = this.nodes.length
-  } else if (this instanceof ProxyNode) {
+    childCount = node.nodes.length
+  } else if (node instanceof ProxyNode) {
     actionCount = 1
   }
-  bw.writeInt16(this.type)
+  bw.writeInt16(node.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
@@ -4171,55 +5070,55 @@ function writeNode(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   bw.writeInt32(0)
   bw.reserveInt32(`NodeChildNodesOffset${count}`)
   bw.writeInt32(0)
-  nodes.push(this)
+  nodes.push(node)
 }
 
-function writeNodeChildren(this: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
-  const num = nodes.indexOf(this)
+function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
+  const num = nodes.indexOf(node)
   let childCount = 0
-  if (this instanceof GenericNode || this instanceof NodeWithEffects || this instanceof RootNode) {
-    childCount = this.nodes.length
+  if (node instanceof GenericNode || node instanceof NodeWithEffects || node instanceof RootNode) {
+    childCount = node.nodes.length
   }
   if (childCount === 0) {
     bw.fill(`NodeChildNodesOffset${num}`, 0)
   } else {
     bw.fill(`NodeChildNodesOffset${num}`, bw.position)
-    const children = (this as Node).getNodes(game)
+    const children = node.getNodes(game)
     for (const node of children) {
-      writeNode.call(node, bw, game, nodes)
+      writeNode(node, bw, game, nodes)
     }
     for (const node of children) {
-      writeNodeChildren.call(node, bw, game, nodes)
+      writeNodeChildren(node, bw, game, nodes)
     }
   }
 }
 
-function writeNodeEffects(this: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
+function writeNodeEffects(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
   let effectCount = 0
-  if (this instanceof GenericNode || this instanceof NodeWithEffects) {
-    effectCount = this.effects.length
+  if (node instanceof GenericNode || node instanceof NodeWithEffects) {
+    effectCount = node.effects.length
   }
   if (effectCount === 0) {
     bw.fill(`NodeEffectsOffset${index}`, 0)
   } else {
     bw.fill(`NodeEffectsOffset${index}`, bw.position)
-    const nodeEffects = this.getEffects(game)
+    const nodeEffects = node.getEffects(game)
     for (let i = 0; i < nodeEffects.length; ++i) {
-      writeEffect.call(nodeEffects[i], bw, game, effectCounter.value + i)
+      writeEffect(nodeEffects[i], bw, game, effectCounter.value + i)
     }
     effectCounter.value += nodeEffects.length
   }
 }
 
-function writeNodeActions(this: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
+function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
   bw.fill(`NodeActionsOffset${index}`, bw.position)
-  const nodeActions = this.getActions(game)
-  const nodeEffects = this.getEffects(game)
+  const nodeActions = node.getActions(game)
+  const nodeEffects = node.getEffects(game)
   for (const action of nodeActions) {
-    writeAnyAction.call(action, bw, game, actions)
+    writeAnyAction(action, bw, game, actions)
   }
   for (let i = 0; i < nodeEffects.length; ++i) {
-    writeEffectActions.call(nodeEffects[i], bw, game, effectCounter.value + i, actions)
+    writeEffectActions(nodeEffects[i], bw, game, effectCounter.value + i, actions)
   }
   effectCounter.value += nodeEffects.length
 }
@@ -4262,23 +5161,23 @@ function readEffect(br: BinaryReader, game: Game): IEffect {
   }
 }
 
-function writeEffect(this: IEffect, bw: BinaryWriter, game: Game, index: number) {
-  bw.writeInt16(this.type)
+function writeEffect(effect: IEffect, bw: BinaryWriter, game: Game, index: number) {
+  bw.writeInt16(effect.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt32(this.getActionCount(game))
+  bw.writeInt32(effect.getActionCount(game))
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.reserveInt32(`EffectActionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeEffectActions(this: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+function writeEffectActions(effect: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
   bw.fill(`EffectActionsOffset${index}`, bw.position)
-  for (const action of this.getActions(game)) {
-    writeAnyAction.call(action, bw, game, actions)
+  for (const action of effect.getActions(game)) {
+    writeAnyAction(action, bw, game, actions)
   }
 }
 
@@ -4334,7 +5233,7 @@ function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
         return new RandomRangeModifier(fields[1].value, fields[2].value, fields[0].value)
       }
       return new RandomRangeModifier(
-        fields.slice(valueType + 1).map(e => e.value) as Vector,
+        fields.slice(valueType + 1, (valueType + 1) * 2).map(e => e.value) as Vector,
         fields.slice((valueType + 1) * 2).map(e => e.value) as Vector,
         fields.slice(0, valueType + 1).map(e => e.value) as Vector,
       )
@@ -4363,34 +5262,34 @@ function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
   }
 }
 
-function writeModifier(this: IModifier<ValueType>, bw: BinaryWriter, modifiers: IModifier<ValueType>[]) {
+function writeModifier(modifier: IModifier<ValueType>, bw: BinaryWriter, modifiers: IModifier<ValueType>[]) {
   const count = modifiers.length
-  bw.writeInt16(Modifier.typeToEnumA(this.type, this.valueType))
+  bw.writeInt16(Modifier.typeToEnumA(modifier.type, modifier.valueType))
   bw.writeUint8(0)
   bw.writeUint8(1)
-  bw.writeInt32(Modifier.enumBValues[this.type] | this.valueType)
-  bw.writeInt32(this.getFieldCount())
-  bw.writeInt32(this.getPropertyCount())
+  bw.writeInt32(Modifier.enumBValues[modifier.type] | modifier.valueType)
+  bw.writeInt32(modifier.getFieldCount())
+  bw.writeInt32(modifier.getPropertyCount())
   bw.reserveInt32(`Section8FieldsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`Section8Section9sOffset${count}`)
   bw.writeInt32(0)
-  modifiers.push(this)
+  modifiers.push(modifier)
 }
 
-function writeModifierProperties(this: IModifier<ValueType>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
+function writeModifierProperties(modifier: IModifier<ValueType>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
-  for (const property of this.getProperties(game)) {
+  for (const property of modifier.getProperties(game)) {
     // Modifier props can't have modifiers, so it's safe to not use .for(game) here
-    writeProperty.call(property, bw, game, properties, true)
+    writeProperty(property, bw, game, properties, true)
   }
 }
 
-function writeModifierFields(this: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
+function writeModifierFields(modifier: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
   bw.fill(`Section8FieldsOffset${index}`, bw.position)
-  const fields = this.getFields()
+  const fields = modifier.getFields()
   for (const field of fields) {
-    writeField.call(field, bw)
+    writeField(field, bw)
   }
   return fields.length
 }
@@ -4401,24 +5300,30 @@ function readSection10(br: BinaryReader) {
   br.assertInt32(0)
   const count = br.readInt32()
   br.assertInt32(0)
-  return new Section10(readFieldsAt(br, offset, count, this))
+  const values: number[] = []
+  br.stepIn(offset)
+  for (let i = count; i > 0; i--) {
+    values.push(br.readInt32())
+  }
+  br.stepOut()
+  return values
 }
 
-function writeSection10(this: Section10, bw: BinaryWriter, section10s: Section10[]) {
+function writeSection10(s10: number[], bw: BinaryWriter, section10s: number[][]) {
   const count = section10s.length
   bw.reserveInt32(`Section10FieldsOffset${count}`)
   bw.writeInt32(0)
-  bw.writeInt32(this.fields.length)
+  bw.writeInt32(s10.length)
   bw.writeInt32(0)
-  section10s.push(this)
+  section10s.push(s10)
 }
 
-function writeSection10Fields(this: Section10, bw: BinaryWriter, index: number): number {
+function writeSection10Fields(s10: number[], bw: BinaryWriter, index: number): number {
   bw.fill(`Section10FieldsOffset${index}`, bw.position)
-  for (const field of (this as Section10).fields) {
-    writeField.call(field, bw)
+  for (const value of s10) {
+    bw.writeInt32(value)
   }
-  return this.fields.length
+  return s10.length
 }
 
 //#region Functions - State
@@ -4436,17 +5341,17 @@ function readState(br: BinaryReader) {
   return new State(conditions)
 }
 
-function writeState(this: State, bw: BinaryWriter, index: number) {
+function writeState(state: State, bw: BinaryWriter, index: number) {
   bw.writeInt32(0)
-  bw.writeInt32(this.conditions.length)
+  bw.writeInt32(state.conditions.length)
   bw.reserveInt32(`StateConditionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeStateConditions(this: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
+function writeStateConditions(state: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
   bw.fill(`StateConditionsOffset${index}`, bw.position)
-  for (const condition of (this as State).conditions) {
-    writeStateCondition.call(condition, bw, conditions)
+  for (const condition of (state as State).conditions) {
+    writeStateCondition(condition, bw, conditions)
   }
 }
 
@@ -4511,23 +5416,31 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
     }
     case OperandType.UnkMinus2:
     case OperandType.StateTime:
-      throw new Error('Unexpected value for operand without value: ' + OperandType[type])
+      br.stepIn(offset)
+      const value = br.readInt32()
+      br.stepOut()
+      console.warn(
+        `Warning: Unexpected value for operand: ${OperandType[type]} - ${value}`,
+        'This operand type should not have a value, so the value will be ignored.',
+        'In most cases, this is caused by other (outdated) tools being used to modify the FXR file.'
+      )
+      return null
   }
 }
 
-function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
+function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
   const count = conditions.length
-  bw.writeInt16(this.operator | this.unk1 << 2)
+  bw.writeInt16(con.operator | con.unk1 << 2)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
-  bw.writeInt32(this.nextState)
+  bw.writeInt32(con.nextState)
   bw.writeInt32(0)
-  bw.writeInt16(this.leftOperandType)
+  bw.writeInt16(con.leftOperandType)
   bw.writeInt8(0)
   bw.writeInt8(1)
   bw.writeInt32(0)
-  bw.writeInt32(+(this.leftOperandValue !== null))
+  bw.writeInt32(+(con.leftOperandValue !== null))
   bw.writeInt32(0)
   bw.reserveInt32(`ConditionLeftOffset${count}`)
   bw.writeInt32(0)
@@ -4535,11 +5448,11 @@ function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, co
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt16(this.rightOperandType)
+  bw.writeInt16(con.rightOperandType)
   bw.writeInt8(0)
   bw.writeInt8(1)
   bw.writeInt32(0)
-  bw.writeInt32(+(this.rightOperandValue !== null))
+  bw.writeInt32(+(con.rightOperandValue !== null))
   bw.writeInt32(0)
   bw.reserveInt32(`ConditionRightOffset${count}`)
   bw.writeInt32(0)
@@ -4547,36 +5460,36 @@ function writeFormattedStateCondition(this: StateCondition, bw: BinaryWriter, co
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  conditions.push(this)
+  conditions.push(con)
 }
 
-function writeStateCondition(this: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
-  writeFormattedStateCondition.call((this as StateCondition).formatCondition(), bw, conditions)
+function writeStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
+  writeFormattedStateCondition((con as StateCondition).formatCondition(), bw, conditions)
 }
 
-function writeStateConditionFields(this: StateCondition, bw: BinaryWriter, index: number): number {
+function writeStateConditionFields(con: StateCondition, bw: BinaryWriter, index: number): number {
   let count = 0
-  if (this.leftOperandValue === null) {
+  if (con.leftOperandValue === null) {
     bw.fill(`ConditionLeftOffset${index}`, 0)
   } else {
-    if (this.leftOperandType === OperandType.Literal) {
+    if (con.leftOperandType === OperandType.Literal) {
       bw.fill(`ConditionLeftOffset${index}`, bw.position)
-      bw.writeFloat32(this.leftOperandValue)
+      bw.writeFloat32(con.leftOperandValue)
     } else {
       bw.fill(`ConditionLeftOffset${index}`, bw.position)
-      bw.writeInt32(this.leftOperandValue)
+      bw.writeInt32(con.leftOperandValue)
     }
     count++
   }
-  if (this.rightOperandValue === null) {
+  if (con.rightOperandValue === null) {
     bw.fill(`ConditionRightOffset${index}`, 0)
   } else {
-    if (this.rightOperandType === OperandType.Literal) {
+    if (con.rightOperandType === OperandType.Literal) {
       bw.fill(`ConditionRightOffset${index}`, bw.position)
-      bw.writeFloat32(this.rightOperandValue)
+      bw.writeFloat32(con.rightOperandValue)
     } else {
       bw.fill(`ConditionRightOffset${index}`, bw.position)
-      bw.writeInt32(this.rightOperandValue)
+      bw.writeInt32(con.rightOperandValue)
     }
     count++
   }
@@ -4589,7 +5502,7 @@ function readField(br: BinaryReader, context: any, index: number) {
   let isInt = false
 
   if (context?.[0] in PropertyFunction) {
-    if (context[0] === PropertyFunction.CompCurve) {
+    if (context[0] === PropertyFunction.ComponentHermite) {
       isInt = index > 0 && index <= context[1] + 1
     } else if (context[0] !== PropertyFunction.Constant) {
       isInt = !index
@@ -4638,7 +5551,7 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
   return fields
 }
 
-function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], context: any): Field[] {
+function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field[] {
   return arrayOf(count, i => {
     switch (types[i]) {
       case FieldType.Boolean:
@@ -4653,23 +5566,23 @@ function readFieldsWithTypes(br: BinaryReader, count: number, types: any[], cont
   })
 }
 
-function readFieldsWithTypesAt(br: BinaryReader, offset: number, count: number, types: any[], context: any): Field[] {
+function readFieldsWithTypesAt(br: BinaryReader, offset: number, count: number, types: FieldType[], context: any): Field[] {
   br.stepIn(offset)
   const fields = readFieldsWithTypes(br, count, types, context)
   br.stepOut()
   return fields
 }
 
-function writeField(this: Field, bw: BinaryWriter) {
-  switch (this.type) {
+function writeField(field: Field, bw: BinaryWriter) {
+  switch (field.type) {
     case FieldType.Boolean:
-      return bw.writeInt32(+this.value)
+      return bw.writeInt32(+field.value)
     case FieldType.Integer:
-      return bw.writeInt32(this.value as number)
+      return bw.writeInt32(field.value as number)
     case FieldType.Float:
-      return bw.writeFloat32(this.value as number)
+      return bw.writeFloat32(field.value as number)
     default:
-      throw new Error('Invalid field type: ' + this.type)
+      throw new Error('Invalid field type: ' + field.type)
   }
 }
 
@@ -4682,14 +5595,6 @@ function randomInt32() {
   return Math.random() * 2**32 | 0
 }
 
-function scalarFromArg(scalar: ScalarValue) {
-  return scalar instanceof Property ? scalar : new ConstantProperty(scalar)
-}
-
-function vectorFromArg(vector: VectorValue) {
-  return vector instanceof Property ? vector : new ConstantProperty(...vector)
-}
-
 function uniqueArray<T>(a: T[]) {
   return Array.from(new Set(a))
 }
@@ -4698,8 +5603,50 @@ function lerp(a: number, b: number, c: number) {
   return a + (b - a) * c
 }
 
-function stepKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
-  let nearestKeyframe: IKeyframe<T>
+function interpolateSegments(arr: number[], targetS: number, maxSegments: number): number[] {
+  const totalDuration = arr[arr.length - 1] - arr[0]
+  const s = totalDuration / Math.min(Math.ceil(totalDuration / targetS), maxSegments)
+  const result: number[] = []
+  for (let i = 0; i < arr.length - 1; i++) {
+    const start = arr[i]
+    const len = arr[i + 1] - start
+    const subdivs = Math.ceil(len / s)
+    const step = len / subdivs
+    result.push(start)
+    for (let j = 1; j < subdivs; j++) {
+      result.push(start + j * step)
+    }
+  }
+  result.push(arr[arr.length - 1])
+  return result
+}
+
+function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number) {
+  const k = 1 - t
+  return k * (k * k * p0 + 3 * t * (k * p1 + t * p2)) + t * t * t * p3
+}
+
+function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(keyframes: K[], position: number) {
+  let prevKeyframe: K, nextKeyframe: K
+
+  for (const kf of keyframes) {
+    if (kf.position <= position) {
+      prevKeyframe = kf
+    } else {
+      nextKeyframe = kf
+      break
+    }
+  }
+
+  return { prevKeyframe, nextKeyframe }
+}
+
+function stepKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  if (keyframes.length === 1) {
+    return keyframes[0].value
+  }
+
+  let nearestKeyframe: IBasicKeyframe<T>
 
   for (const kf of keyframes) {
     if (kf.position <= position) {
@@ -4712,17 +5659,12 @@ function stepKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position:
   return nearestKeyframe.value
 }
 
-function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
-  let prevKeyframe: IKeyframe<T>, nextKeyframe: IKeyframe<T>
-
-  for (const kf of keyframes) {
-    if (kf.position <= position) {
-      prevKeyframe = kf
-    } else {
-      nextKeyframe = kf
-      break
-    }
+function lerpKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  if (keyframes.length === 1) {
+    return keyframes[0].value
   }
+
+  const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
 
   if (!prevKeyframe) {
     return nextKeyframe.value
@@ -4739,163 +5681,314 @@ function lerpKeyframes<T extends ValueType>(keyframes: IKeyframe<T>[], position:
   }
 }
 
+function bezierInterpKeyframes<T extends ValueType>(keyframes: IBezierKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  if (keyframes.length === 1) {
+    return keyframes[0].value
+  }
+
+  const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
+
+  if (!prevKeyframe) {
+    return nextKeyframe.value
+  } else if (!nextKeyframe) {
+    return prevKeyframe.value
+  }
+
+  const x = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
+
+  if (Array.isArray(prevKeyframe.value)) {
+    return prevKeyframe.value.map((_, i) => {
+      const v1 = prevKeyframe.value[i]
+      const v2 = nextKeyframe.value[i]
+      const t1 = prevKeyframe.p1[i]
+      const t2 = nextKeyframe.p2[i]
+      return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x)
+    }) as TypeMap.PropertyValue[T]
+  } else {
+    const v1 = prevKeyframe.value as number
+    const v2 = nextKeyframe.value as number
+    const t1 = prevKeyframe.p1 as number
+    const t2 = nextKeyframe.p2 as number
+    return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x) as TypeMap.PropertyValue[T]
+  }
+}
+
+const hermiteInterpKeyframes = (() => {
+  /*
+    This approximates the interpolation done in Curve2 properties. An exact
+    calculation would be better and probably faster, but as of writing this the
+    formula has not been discovered.
+
+    Hermite interpolation requires each point to have a tangent vector, but
+    these properties only have a tangent angle, so the magnitude is missing.
+    This probably means it's either fixed or calculated in some way based on
+    the property values and/or the angles.
+
+    This approximation uses 9 cubic Bezier curves that closely match 9
+    configurations of tangent angles. The two angles are the two axes of a 3x3
+    grid of these 9 curves, and so the 4 nearest curves are found and bilinear
+    interpolation is used to blend their values. The approximation is pretty
+    accurate, even for values outside of its range ([0,π/2]), but it is not
+    perfect. The 9 cubic Bezier curves can be tweaked to improve accuracy a
+    bit, but even if those are perfect, the approximation may still not be.
+  */
+
+  const calcBezier = (a: number, b: number, t: number) => t * ((t + 3 * (a - b) * t + (3 * b - 6 * a)) * t + (3 * a))
+  const getSlope = (a: number, b: number, t: number) => 3 * (t * (t + 3 * (a - b) * t + 2 * (b - 2 * a)) + a)
+
+  function binarySubdivide(x: number, a: number, b: number, x1: number, x2: number) {
+    let currentX: number, t: number, i = 0
+    do {
+      t = a + (b - a) / 2
+      currentX = calcBezier(x1, x2, t) - x
+      if (currentX > 0) {
+        b = t
+      } else {
+        a = t
+      }
+    } while (Math.abs(currentX) > 1e-7 && ++i < 10)
+    return t
+  }
+
+  function newtonRaphson(x: number, t: number, x1: number, x2: number) {
+    for (let i = 4; i > 0; i--) {
+      const currentSlope = getSlope(x1, x2, t)
+      if (currentSlope === 0) {
+        return t
+      }
+      t -= (calcBezier(x1, x2, t) - x) / currentSlope
+    }
+    return t
+  }
+
+  const samplesCount = 11
+  const sampleStepSize = 1 / (samplesCount - 1)
+  const samplesLastIndex = samplesCount - 1
+
+  function cssCubicBezier(x1: number, y1: number, x2: number, y2: number) {
+    if (x1 === y1 && x2 === y2) {
+      return (x: number) => x
+    }
+
+    const samples = new Float32Array(samplesCount)
+    for (var i = samplesLastIndex; i >= 0; i--) {
+      samples[i] = calcBezier(x1, x2, i * sampleStepSize)
+    }
+
+    const getTForX = (x: number) => {
+      let intervalStart = 0
+      let i = 1
+
+      for (; i !== samplesLastIndex && samples[i] <= x; i++) {
+        intervalStart += sampleStepSize
+      }
+      i--
+
+      const t = intervalStart + (x - samples[i]) * sampleStepSize / (samples[i + 1] - samples[i])
+
+      const slope = getSlope(x1, x2, t)
+      if (slope === 0) {
+        return t
+      } else if (slope >= 1e-3) {
+        return newtonRaphson(x, t, x1, x2)
+      } else {
+        return binarySubdivide(x, intervalStart, intervalStart + sampleStepSize, x1, x2)
+      }
+    }
+
+    return (x: number) => {
+      if (x === 0 || x === 1) {
+        return x
+      }
+      return calcBezier(y1, y2, getTForX(x))
+    }
+  }
+
+  const hermiteApproxFuncs = [
+    cssCubicBezier(0.3, 0.1, 0.7, 0.9),     cssCubicBezier(0.135, 0.135, 0.525, 1),    cssCubicBezier(0.015, 0.675, 0.33, 1),
+    cssCubicBezier(0.475, 0, 0.865, 0.865), (x: number) => x,                          cssCubicBezier(0.015, 0.9, 0.5, 0.5),
+    cssCubicBezier(0.71, 0, 0.985, 0.37),   cssCubicBezier(0.525, 0.525, 0.965, 0.07), cssCubicBezier(0.065, 1.4, 0.935, -0.4),
+  ]
+  function approxHermite(t1: number, t2: number, x: number) {
+    const t1x2 = t1 * 2
+    const t2x2 = t2 * 2
+    const ix = Math.max(0, Math.min(1, Math.floor(t1x2)))
+    const iy = Math.max(0, Math.min(1, Math.floor(t2x2)))
+    const i = ix + 3 * iy
+    const t1x2f = t1x2 - ix
+    return lerp(
+      lerp(hermiteApproxFuncs[i](x), hermiteApproxFuncs[i+1](x), t1x2f),
+      lerp(hermiteApproxFuncs[i+3](x), hermiteApproxFuncs[i+4](x), t1x2f),
+      t2x2 - iy
+    )
+  }
+
+  return function hermiteInterpKeyframes<T extends ValueType>(keyframes: IHermiteKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+    if (keyframes.length === 1) {
+      return keyframes[0].value
+    }
+
+    const { prevKeyframe, nextKeyframe } = surroundingKeyframes(keyframes, position)
+
+    if (!prevKeyframe) {
+      return nextKeyframe.value
+    } else if (!nextKeyframe) {
+      return prevKeyframe.value
+    }
+
+    const x = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
+
+    if (Array.isArray(prevKeyframe.value)) {
+      return prevKeyframe.value.map((_, i) => {
+        const t1 = prevKeyframe.tangent1[i] / Math.PI * 2
+        const t2 = prevKeyframe.tangent2[i] / Math.PI * 2
+        return lerp(
+          prevKeyframe.value[i],
+          nextKeyframe.value[i],
+          approxHermite(t1, t2, x)
+        )
+      }) as TypeMap.PropertyValue[T]
+    } else {
+      const t1 = (prevKeyframe.tangent1 as number) / Math.PI * 2
+      const t2 = (prevKeyframe.tangent2 as number) / Math.PI * 2
+      return lerp(
+        prevKeyframe.value as number,
+        nextKeyframe.value as number,
+        approxHermite(t1, t2, x)
+      ) as TypeMap.PropertyValue[T]
+    }
+  }
+})()
+
 /**
  * Multiplies one number, vector, or a property of either kind by another
  * number, vector, or property.
  * 
  * Multiplying two vectors of different dimensionalities is not supported, but
  * a vector and a scalar will work.
- * @param p1 
- * @param p2 
+ * @param av1 
+ * @param av2 
  * @returns 
  */
-function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
+function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If p2 is none of these, it's invalid, likely undefined or null, it must
   // either return something or throw to avoid a recursive loop.
   if (!(
-    typeof p2 === 'number' ||
-    Array.isArray(p2) ||
-    p2 instanceof Property
+    typeof av2 === 'number' ||
+    Array.isArray(av2) ||
+    av2 instanceof Property
   )) {
-    throw new Error('Invalid operand for anyValueMult: ' + p2)
+    throw new Error('Invalid operand for anyValueMult: ' + av2)
   }
 
-  if (p1 instanceof ComponentSequenceProperty) {
-    p1 = p1.combineComponents()
+  if (av1 instanceof ComponentSequenceProperty) {
+    av1 = av1.combineComponents()
   }
-  if (p2 instanceof ComponentSequenceProperty) {
-    p2 = p2.combineComponents()
+  if (av2 instanceof ComponentSequenceProperty) {
+    av2 = av2.combineComponents()
   }
-  if (typeof p1 === 'number') {
-    if (typeof p2 === 'number') {
-      return p1 * p2 as T
-    } else if (Array.isArray(p2)) {
-      return p2.map(e => e * p1) as unknown as T
-    } else if (p2 instanceof ValueProperty) {
-      return new ValueProperty(
-        p2.valueType,
-        anyValueMult(p1, p2.value),
-        p2.modifiers.map(mod => Modifier.multPropertyValue(mod, p1))
-      ) as unknown as T
-    } else if (p2 instanceof SequenceProperty) {
-      return new SequenceProperty(
-        p2.valueType,
-        p2.function,
-        p2.loop,
-        p2.keyframes.map(kf => new Keyframe(
-          kf.position,
-          (Array.isArray(kf.value) ? kf.value.map(e => e * p1) : kf.value * p1) as PropertyValue
-        )),
-        p2.modifiers.map(mod => Modifier.multPropertyValue(mod, p1))
-      ) as unknown as T
+  if (typeof av1 === 'number') {
+    if (typeof av2 === 'number') {
+      return av1 * av2 as T
+    } else if (Array.isArray(av2)) {
+      return av2.map(e => e * av1) as unknown as T
+    } else if (av2 instanceof ValueProperty || av2 instanceof SequenceProperty) {
+      return av2.clone().scale(av1) as unknown as T
     }
-  } else if (Array.isArray(p1)) {
-    if (Array.isArray(p2)) {
-      return p2.map((e, i) => e * p1[i]) as unknown as T
-    } else if (p2 instanceof ValueProperty) {
-      let mods = p2.modifiers
-      if (p2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
+  } else if (Array.isArray(av1)) {
+    if (Array.isArray(av2)) {
+      return av2.map((e, i) => e * av1[i]) as unknown as T
+    } else if (av2 instanceof ValueProperty) {
+      let mods = av2.modifiers
+      if (av2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
       }
       return new ValueProperty(
-        p1.length - 1,
-        anyValueMult(p1, p2.value),
-        mods.map(mod => Modifier.multPropertyValue(mod, p1))
+        av1.length - 1,
+        anyValueMult(av1, av2.value),
+        mods.map(mod => Modifier.multPropertyValue(mod, av1))
       ) as unknown as T
-    } else if (p2 instanceof SequenceProperty) {
-      let mods = p2.modifiers
-      if (p2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
+    } else if (av2 instanceof SequenceProperty) {
+      let mods = av2.modifiers
+      if (av2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
       }
       return new SequenceProperty(
-        p1.length - 1,
-        p2.function,
-        p2.loop,
-        p2.keyframes.map(kf => new Keyframe(
-          kf.position,
-          (Array.isArray(kf.value) ?
-            kf.value.map((e, i) => e * p1[i]) :
-            p1.map(e => e * kf.value)
-          ) as PropertyValue
-        )),
-        mods.map(mod => Modifier.multPropertyValue(mod, p1))
+        av1.length - 1,
+        av2.function,
+        av2.loop,
+        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1)),
+        mods.map(mod => Modifier.multPropertyValue(mod, av1))
       ) as unknown as T
     }
-  } else if (p1 instanceof ValueProperty) {
-    if (p2 instanceof ValueProperty) {
-      let p1Mods = p1.modifiers
-      let p2Mods = p2.modifiers
-      const vt = Math.max(p1.valueType, p2.valueType)
-      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+  } else if (av1 instanceof ValueProperty) {
+    if (av2 instanceof ValueProperty) {
+      let av1Mods = av1.modifiers
+      let av2Mods = av2.modifiers
+      const vt = Math.max(av1.valueType, av2.valueType)
+      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      return new ValueProperty(vt, anyValueMult(p1.value, p2.value), [
-        ...p1Mods.map(mod => Modifier.multPropertyValue(mod, p2.value)),
-        ...p2Mods.map(mod => Modifier.multPropertyValue(mod, p1.value)),
+      return new ValueProperty(vt, anyValueMult(av1.value, av2.value), [
+        ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.value)),
+        ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.value)),
       ]) as unknown as T
-    } else if (p2 instanceof SequenceProperty) {
-      let p1Mods = p1.modifiers
-      let p2Mods = p2.modifiers
-      const vt = Math.max(p1.valueType, p2.valueType)
-      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    } else if (av2 instanceof SequenceProperty) {
+      let av1Mods = av1.modifiers
+      let av2Mods = av2.modifiers
+      const vt = Math.max(av1.valueType, av2.valueType)
+      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        p2.valueType,
-        p2.function,
-        p2.loop,
-        p2.keyframes.map(kf => new Keyframe(
-          kf.position,
-          (Array.isArray(kf.value) ?
-            kf.value.map((e, i) => e * p1.value[i]) :
-            p1.value.map(e => e * kf.value)
-          ) as PropertyValue
-        )),
+        av2.valueType,
+        av2.function,
+        av2.loop,
+        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1.value)),
         [
-          ...p1Mods.map(mod => Modifier.multPropertyValue(mod, p2.valueAt(0))),
-          ...p2Mods.map(mod => Modifier.multPropertyValue(mod, p1.value)),
+          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.value)),
         ]
       ) as unknown as T
     }
-  } else if (p1 instanceof SequenceProperty && p2 instanceof SequenceProperty) {
+  } else if (av1 instanceof SequenceProperty && av2 instanceof SequenceProperty) {
     const positions = new Set<number>
-    for (const keyframe of p1.keyframes) {
+    for (const keyframe of av1.keyframes) {
       positions.add(keyframe.position)
     }
-    for (const keyframe of p2.keyframes) {
+    for (const keyframe of av2.keyframes) {
       positions.add(keyframe.position)
     }
-    let p1Mods = p1.modifiers
-    let p2Mods = p2.modifiers
-    const vt = Math.max(p1.valueType, p2.valueType)
-    if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-      p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    let av1Mods = av1.modifiers
+    let av2Mods = av2.modifiers
+    const vt = Math.max(av1.valueType, av2.valueType)
+    if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+      av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-      p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      this.loop,
-      Array.from(positions)
-        .sort((a, b) => a - b)
+      av1.loop && av2.loop,
+      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
         .map(e => new Keyframe(e,
-          anyValueMult(p1.valueAt(e), p2.valueAt(e)) as PropertyValue
+          anyValueMult(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
         ))
     ).withModifiers(
-      ...p1Mods.map(mod => Modifier.multPropertyValue(mod, p2.valueAt(0))),
-      ...p2Mods.map(mod => Modifier.multPropertyValue(mod, p1.valueAt(0))),
+      ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.valueAt(0))),
+      ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.valueAt(0))),
     ) as unknown as T
   }
 
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
-  return anyValueMult(p2, p1)
+  return anyValueMult(av2, av1)
 }
 
 /**
@@ -4904,157 +5997,141 @@ function anyValueMult<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
  * 
  * Adding two vectors of different dimensionalities is not supported, but
  * a vector and a scalar will work.
- * @param p1 
- * @param p2 
+ * @param av1 
+ * @param av2 
  * @returns 
  */
-function anyValueSum<T extends AnyValue>(p1: AnyValue, p2: AnyValue): T {
+function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If p2 is none of these, it's invalid, likely undefined or null, it must
   // either return something or throw to avoid a recursive loop.
   if (!(
-    typeof p2 === 'number' ||
-    Array.isArray(p2) ||
-    p2 instanceof Property
+    typeof av2 === 'number' ||
+    Array.isArray(av2) ||
+    av2 instanceof Property
   )) {
-    throw new Error('Invalid operand for anyValueMult: ' + p2)
+    throw new Error('Invalid operand for anyValueMult: ' + av2)
   }
 
-  if (p1 instanceof ComponentSequenceProperty) {
-    p1 = p1.combineComponents()
+  if (av1 instanceof ComponentSequenceProperty) {
+    av1 = av1.combineComponents()
   }
-  if (p2 instanceof ComponentSequenceProperty) {
-    p2 = p2.combineComponents()
+  if (av2 instanceof ComponentSequenceProperty) {
+    av2 = av2.combineComponents()
   }
-  if (typeof p1 === 'number') {
-    if (typeof p2 === 'number') {
-      return p1 + p2 as T
-    } else if (Array.isArray(p2)) {
-      return p2.map(e => e + p1) as unknown as T
-    } else if (p2 instanceof ValueProperty) {
+  if (typeof av1 === 'number') {
+    if (typeof av2 === 'number') {
+      return av1 + av2 as T
+    } else if (Array.isArray(av2)) {
+      return av2.map(e => e + av1) as unknown as T
+    } else if (av2 instanceof ValueProperty) {
       return new ValueProperty(
-        p2.valueType,
-        anyValueSum(p1, p2.value),
-        p2.modifiers.map(mod => Modifier.sumPropertyValue(mod, p1))
+        av2.valueType,
+        anyValueSum(av1, av2.value),
+        av2.modifiers.map(mod => Modifier.sumPropertyValue(mod, av1))
       ) as unknown as T
-    } else if (p2 instanceof SequenceProperty) {
+    } else if (av2 instanceof SequenceProperty) {
       return new SequenceProperty(
-        p2.valueType,
-        p2.function,
-        p2.loop,
-        p2.keyframes.map(kf => new Keyframe(
-          kf.position,
-          (Array.isArray(kf.value) ? kf.value.map(e => e + p1) : kf.value + p1) as PropertyValue
-        )),
-        p2.modifiers.map(mod => Modifier.sumPropertyValue(mod, p1))
+        av2.valueType,
+        av2.function,
+        av2.loop,
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1)),
+        av2.modifiers.map(mod => Modifier.sumPropertyValue(mod, av1))
       ) as unknown as T
     }
-  } else if (Array.isArray(p1)) {
-    if (Array.isArray(p2)) {
-      return p2.map((e, i) => e + p1[i]) as unknown as T
-    } else if (p2 instanceof ValueProperty) {
-      let mods = p2.modifiers
-      if (p2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
+  } else if (Array.isArray(av1)) {
+    if (Array.isArray(av2)) {
+      return av2.map((e, i) => e + av1[i]) as unknown as T
+    } else if (av2 instanceof ValueProperty) {
+      let mods = av2.modifiers
+      if (av2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
       }
       return new ValueProperty(
-        p1.length - 1,
-        anyValueSum(p1, p2.value),
-        mods.map(mod => Modifier.sumPropertyValue(mod, p1))
+        av1.length - 1,
+        anyValueSum(av1, av2.value),
+        mods.map(mod => Modifier.sumPropertyValue(mod, av1))
       ) as unknown as T
-    } else if (p2 instanceof SequenceProperty) {
-      let mods = p2.modifiers
-      if (p2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, p1.length - 1))
+    } else if (av2 instanceof SequenceProperty) {
+      let mods = av2.modifiers
+      if (av2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
       }
       return new SequenceProperty(
-        p1.length - 1,
-        p2.function,
-        p2.loop,
-        p2.keyframes.map(kf => new Keyframe(
-          kf.position,
-          (Array.isArray(kf.value) ?
-            kf.value.map((e, i) => e + p1[i]) :
-            p1.map(e => e + kf.value)
-          ) as PropertyValue
-        )),
-        mods.map(mod => Modifier.sumPropertyValue(mod, p1))
+        av1.length - 1,
+        av2.function,
+        av2.loop,
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1)),
+        mods.map(mod => Modifier.sumPropertyValue(mod, av1))
       ) as unknown as T
     }
-  } else if (p1 instanceof ValueProperty) {
-    if (p2 instanceof ValueProperty) {
-      let p1Mods = p1.modifiers
-      let p2Mods = p2.modifiers
-      const vt = Math.max(p1.valueType, p2.valueType)
-      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+  } else if (av1 instanceof ValueProperty) {
+    if (av2 instanceof ValueProperty) {
+      let av1Mods = av1.modifiers
+      let av2Mods = av2.modifiers
+      const vt = Math.max(av1.valueType, av2.valueType)
+      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      return new ValueProperty(vt, anyValueSum(p1.value, p2.value), [
-        ...p1Mods.map(mod => Modifier.sumPropertyValue(mod, p2.value)),
-        ...p2Mods.map(mod => Modifier.sumPropertyValue(mod, p1.value)),
+      return new ValueProperty(vt, anyValueSum(av1.value, av2.value), [
+        ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.value)),
+        ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.value)),
       ]) as unknown as T
-    } else if (p2 instanceof SequenceProperty) {
-      let p1Mods = p1.modifiers
-      let p2Mods = p2.modifiers
-      const vt = Math.max(p1.valueType, p2.valueType)
-      if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-        p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    } else if (av2 instanceof SequenceProperty) {
+      let av1Mods = av1.modifiers
+      let av2Mods = av2.modifiers
+      const vt = Math.max(av1.valueType, av2.valueType)
+      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-        p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        p2.valueType,
-        p2.function,
-        p2.loop,
-        p2.keyframes.map(kf => new Keyframe(
-          kf.position,
-          (Array.isArray(kf.value) ?
-            kf.value.map((e, i) => e + p1.value[i]) :
-            p1.value.map(e => e + kf.value)
-          ) as PropertyValue
-        )),
+        av2.valueType,
+        av2.function,
+        av2.loop,
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1.value)),
         [
-          ...p1Mods.map(mod => Modifier.sumPropertyValue(mod, p2.valueAt(0))),
-          ...p2Mods.map(mod => Modifier.sumPropertyValue(mod, p1.value)),
+          ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.value)),
         ]
       ) as unknown as T
     }
-  } else if (p1 instanceof SequenceProperty && p2 instanceof SequenceProperty) {
+  } else if (av1 instanceof SequenceProperty && av2 instanceof SequenceProperty) {
     const positions = new Set<number>
-    for (const keyframe of p1.keyframes) {
+    for (const keyframe of av1.keyframes) {
       positions.add(keyframe.position)
     }
-    for (const keyframe of p2.keyframes) {
+    for (const keyframe of av2.keyframes) {
       positions.add(keyframe.position)
     }
-    let p1Mods = p1.modifiers
-    let p2Mods = p2.modifiers
-    const vt = Math.max(p1.valueType, p2.valueType)
-    if (vt > ValueType.Scalar && p1.valueType === ValueType.Scalar) {
-      p1Mods = p1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    let av1Mods = av1.modifiers
+    let av2Mods = av2.modifiers
+    const vt = Math.max(av1.valueType, av2.valueType)
+    if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+      av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && p2.valueType === ValueType.Scalar) {
-      p2Mods = p2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+    if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      this.loop,
-      Array.from(positions)
-        .sort((a, b) => a - b)
+      av1.loop && av2.loop,
+      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
         .map(e => new Keyframe(e,
-          anyValueSum(p1.valueAt(e), p2.valueAt(e)) as PropertyValue
+          anyValueSum(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
         ))
     ).withModifiers(
-      ...p1Mods.map(mod => Modifier.sumPropertyValue(mod, p2.valueAt(0))),
-      ...p2Mods.map(mod => Modifier.sumPropertyValue(mod, p1.valueAt(0))),
+      ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.valueAt(0))),
+      ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.valueAt(0))),
     ) as unknown as T
   }
 
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
-  return anyValueSum(p2, p1)
+  return anyValueSum(av2, av1)
 }
 
 function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
@@ -5069,7 +6146,14 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
   if (!comps.some(c => c instanceof Property)) {
     return comps as Vector
   }
-  const positions = new Set<number>
+  const hasCurveComp = comps.some(e =>
+    e instanceof SequenceProperty && (
+      e.function === PropertyFunction.Bezier ||
+      e.function === PropertyFunction.Hermite
+    ) ||
+    e instanceof ComponentSequenceProperty
+  )
+  const positions = new Set<number>()
   for (const comp of comps) {
     if (comp instanceof SequenceProperty) {
       for (const keyframe of comp.keyframes) {
@@ -5117,8 +6201,10 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
     })
   }
   if (positions.size >= 2) {
-    const keyframes = Array.from(positions).sort((a, b) => a - b)
-      .map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
+    const keyframes = (hasCurveComp ?
+      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40) :
+      Array.from(positions).sort((a, b) => a - b)
+    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
     return new LinearProperty(
       comps.some(e => (e instanceof SequenceProperty || e instanceof ComponentSequenceProperty) && e.loop),
       keyframes
@@ -5139,9 +6225,154 @@ function separateComponents(value: VectorValue): ScalarValue[] {
 }
 
 const ActionDataConversion = {
-  [ActionType.SFXReference]: {
-    read(props: { sfx: number }, game: Game) {
-      return props.sfx
+  [ActionType.StaticNodeTransform]: {
+    read(props: StaticNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      props.rotationX *= -1
+      return props
+    },
+    write(props: StaticNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      props.rotationX *= -1
+      return props
+    },
+    minify(this: StaticNodeTransform): AnyAction {
+      if (
+        this.offsetX === 0 &&
+        this.offsetY === 0 &&
+        this.offsetZ === 0 &&
+        this.rotationX === 0 &&
+        this.rotationY === 0 &&
+        this.rotationZ === 0
+      ) {
+        return new Action
+      }
+      return this
+    }
+  },
+  [ActionType.RandomNodeTransform]: {
+    read(props: RandomNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      return props
+    },
+    write(props: RandomNodeTransformParams, game: Game) {
+      props.offsetX *= -1
+      return props
+    },
+    minify(this: RandomNodeTransform): AnyAction {
+      if (
+        this.offsetVarianceX === 0 &&
+        this.offsetVarianceY === 0 &&
+        this.offsetVarianceZ === 0 &&
+        this.rotationVarianceX === 0 &&
+        this.rotationVarianceY === 0 &&
+        this.rotationVarianceZ === 0
+      ) {
+        return ActionDataConversion[ActionType.StaticNodeTransform].minify.call(
+          new StaticNodeTransform(this).assign({
+            // For some reason, StaticNodeTransform flips the X rotation, but
+            // this one doesn't, even though the X offset is flipped in both.
+            rotationX: -this.rotationX
+          })
+        )
+      }
+      return this
+    }
+  },
+  [ActionType.ParticleSpeedRandomTurns]: {
+    read(props: ParticleSpeedRandomTurnsParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      return props
+    },
+    write(props: ParticleSpeedRandomTurnsParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      return props
+    }
+  },
+  [ActionType.ParticleSpeedPartialFollow]: {
+    read(props: ParticleSpeedPartialFollowParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      props.followRotation = !props.followRotation
+      return props
+    },
+    write(props: ParticleSpeedPartialFollowParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      props.followRotation = !props.followRotation
+      return props
+    }
+  },
+  [ActionType.NodeAccelerationRandomTurns]: {
+    read(props: NodeAccelerationRandomTurnsParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      return props
+    },
+    write(props: NodeAccelerationRandomTurnsParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      return props
+    }
+  },
+  [ActionType.ParticleAccelerationRandomTurns]: {
+    read(props: ParticleAccelerationRandomTurnsParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      return props
+    },
+    write(props: ParticleAccelerationRandomTurnsParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      return props
+    }
+  },
+  [ActionType.ParticleAccelerationPartialFollow]: {
+    read(props: ParticleAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      props.followRotation = !props.followRotation
+      return props
+    },
+    write(props: ParticleAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      props.followRotation = !props.followRotation
+      return props
+    }
+  },
+  [ActionType.NodeAccelerationPartialFollow]: {
+    read(props: NodeAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      props.followRotation = !props.followRotation
+      return props
+    },
+    write(props: NodeAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      props.followRotation = !props.followRotation
+      return props
+    }
+  },
+  [ActionType.NodeSpeedRandomTurns]: {
+    read(props: NodeSpeedRandomTurnsParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      return props
+    },
+    write(props: NodeSpeedRandomTurnsParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      return props
+    }
+  },
+  [ActionType.NodeSpeedPartialFollow]: {
+    read(props: NodeSpeedPartialFollowParams, game: Game) {
+      props.turnInterval = props.turnInterval / 50
+      props.followRotation = !props.followRotation
+      return props
+    },
+    write(props: NodeAccelerationPartialFollowParams, game: Game) {
+      props.turnInterval = Math.round(props.turnInterval * 50)
+      props.followRotation = !props.followRotation
+      return props
+    }
+  },
+  [ActionType.StateEffectMap]: {
+    minify(this: StateEffectMap): StateEffectMap {
+      if (this.effectIndices.length > 1 && this.effectIndices.every(e => e === 0)) {
+        return new StateEffectMap
+      }
+      return this
     }
   },
   [ActionType.PointLight]: {
@@ -5255,19 +6486,6 @@ const ActionDataConversion = {
     }
   }
 }
-
-export type TypedArray =
-  | Int8Array
-  | Uint8Array
-  | Uint8ClampedArray
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Float32Array
-  | Float64Array
-  | BigInt64Array
-  | BigUint64Array
 
 class BinaryReader extends DataView {
 
@@ -5615,9 +6833,9 @@ class FXR {
   states: State[]
   root: RootNode | GenericNode
 
-  sfxReferences: number[]
-  externalValues1: number[]
-  externalValues2: number[]
+  // sfxReferences: number[]
+  // externalValues1: number[]
+  // externalValues2: number[]
   // unkEmpty: number[]
 
   /**
@@ -5627,17 +6845,17 @@ class FXR {
     id: number,
     root: RootNode | GenericNode = new RootNode,
     states: State[] = [ new State ],
-    sfxReferences: number[] = [],
-    externalValues1: number[] = [],
-    externalValues2: number[] = [],
+    // sfxReferences: number[] = [],
+    // externalValues1: number[] = [],
+    // externalValues2: number[] = [],
     // unkEmpty: number[] = [],
   ) {
     this.id = id
     this.root = root
     this.states = states
-    this.sfxReferences = sfxReferences
-    this.externalValues1 = externalValues1
-    this.externalValues2 = externalValues2
+    // this.sfxReferences = sfxReferences
+    // this.externalValues1 = externalValues1
+    // this.externalValues2 = externalValues2
     // this.unkEmpty = unkEmpty
   }
 
@@ -5672,10 +6890,14 @@ class FXR {
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    const version = game === Game.Generic ? br.assertInt16(
-      FXRVersion.DarkSouls3,
-      FXRVersion.Sekiro
-    ) :  br.assertInt16(GameVersionMap[game])
+    if (game === Game.Generic) {
+      br.assertInt16(
+        FXRVersion.DarkSouls3,
+        FXRVersion.Sekiro
+      )
+    } else {
+      br.assertInt16(GameVersionMap[game])
+    }
     br.assertInt32(1)
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
@@ -5705,28 +6927,28 @@ class FXR {
     br.assertInt32(1)
     br.assertInt32(0)
 
-    let sfxReferences: number[] = []
-    let externalValues1: number[] = []
-    let externalValues2: number[] = []
+    // let sfxReferences: number[] = []
+    // let externalValues1: number[] = []
+    // let externalValues2: number[] = []
     // let unkEmpty: number[] = []
 
-    if (version === FXRVersion.Sekiro) {
-      const sfxReferencesOffset = br.readInt32()
-      const sfxReferencesCount  = br.readInt32()
-      const externalValues1Offset = br.readInt32()
-      const externalValues1Count  = br.readInt32()
-      const externalValues2Offset = br.readInt32()
-      const externalValues2Count  = br.readInt32()
-      br.readInt32()
-      br.assertInt32(0)
-      // const unkEmptyOffset = br.readInt32()
-      // const unkEmptyCount  = br.readInt32()
+    // if (version === FXRVersion.Sekiro) {
+    //   const sfxReferencesOffset = br.readInt32()
+    //   const sfxReferencesCount  = br.readInt32()
+    //   const externalValues1Offset = br.readInt32()
+    //   const externalValues1Count  = br.readInt32()
+    //   const externalValues2Offset = br.readInt32()
+    //   const externalValues2Count  = br.readInt32()
+    //   br.readInt32()
+    //   br.assertInt32(0)
+    //   // const unkEmptyOffset = br.readInt32()
+    //   // const unkEmptyCount  = br.readInt32()
 
-      sfxReferences = br.getInt32s(sfxReferencesOffset, sfxReferencesCount)
-      externalValues1 = br.getInt32s(externalValues1Offset, externalValues1Count)
-      externalValues2 = br.getInt32s(externalValues2Offset, externalValues2Count)
-      // unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
-    }
+    //   sfxReferences = br.getInt32s(sfxReferencesOffset, sfxReferencesCount)
+    //   externalValues1 = br.getInt32s(externalValues1Offset, externalValues1Count)
+    //   externalValues2 = br.getInt32s(externalValues2Offset, externalValues2Count)
+    //   // unkEmpty = br.getInt32s(unkEmptyOffset, unkEmptyCount)
+    // }
 
     br.position = stateListOffset
     br.assertInt32(0)
@@ -5747,9 +6969,9 @@ class FXR {
       id,
       rootNode,
       states,
-      sfxReferences,
-      externalValues1,
-      externalValues2,
+      // sfxReferences,
+      // externalValues1,
+      // externalValues2,
       // unkEmpty,
     )
   }
@@ -5792,13 +7014,18 @@ class FXR {
     bw.writeInt32(1)
     bw.writeInt32(0)
 
+    const refs = version === FXRVersion.Sekiro ? this.getReferences() : {
+      sfx: [],
+      externalValues1: [],
+      externalValues2: [],
+    }
     if (version === FXRVersion.Sekiro) {
       bw.reserveInt32('SFXReferencesOffset')
-      bw.writeInt32(this.sfxReferences.length)
+      bw.writeInt32(refs.sfx.length)
       bw.reserveInt32('ExternalValues1Offset')
-      bw.writeInt32(this.externalValues1.length)
+      bw.writeInt32(refs.externalValues1.length)
       bw.reserveInt32('ExternalValues2Offset')
-      bw.writeInt32(this.externalValues2.length)
+      bw.writeInt32(refs.externalValues2.length)
       // bw.reserveInt32('UnkEmptyOffset')
       // bw.writeInt32(this.unkEmpty.length)
       bw.writeInt32(0)
@@ -5814,27 +7041,27 @@ class FXR {
     bw.fill('StatesOffset1', bw.position)
     bw.fill('StatesOffset2', bw.position)
     for (let i = 0; i < this.states.length; ++i) {
-      writeState.call(this.states[i], bw, i)
+      writeState(this.states[i], bw, i)
     }
 
     bw.pad(16)
     bw.fill('ConditionOffset', bw.position)
     const conditions: StateCondition[] = []
     for (let i = 0; i < this.states.length; ++i) {
-      writeStateConditions.call(this.states[i], bw, i, conditions)
+      writeStateConditions(this.states[i], bw, i, conditions)
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    writeNode.call(this.root, bw, game, nodes)
-    writeNodeChildren.call(this.root, bw, game, nodes)
+    writeNode(this.root, bw, game, nodes)
+    writeNodeChildren(this.root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
     let counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeEffects.call(nodes[i], bw, game, i, counter)
+      writeNodeEffects(nodes[i], bw, game, i, counter)
     }
     bw.fill('EffectCount', counter.value)
     bw.pad(16)
@@ -5842,14 +7069,14 @@ class FXR {
     counter.value = 0
     const actions: Action[] = []
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeActions.call(nodes[i], bw, game, i, counter, actions)
+      writeNodeActions(nodes[i], bw, game, i, counter, actions)
     }
     bw.fill('ActionCount', actions.length)
     bw.pad(16)
     bw.fill('PropertyOffset', bw.position)
     const properties: IModifiableProperty<any, any>[] = []
     for (let i = 0; i < actions.length; ++i) {
-      writeAnyActionProperties.call(actions[i], bw, game, i, properties)
+      writeAnyActionProperties(actions[i], bw, game, i, properties)
     }
     bw.fill('PropertyCount', properties.length)
     bw.pad(16)
@@ -5857,43 +7084,43 @@ class FXR {
     const modifiers: IModifier<ValueType>[] = []
     for (let i = 0; i < properties.length; ++i) {
       // The property has already gone through .for(game) here, so don't use it again
-      writePropertyModifiers.call(properties[i], bw, i, modifiers)
+      writePropertyModifiers(properties[i], bw, i, modifiers)
     }
     bw.fill('Section8Count', modifiers.length)
     bw.pad(16)
     bw.fill('Section9Offset', bw.position)
     const modProps: Property<any, any>[] = []
     for (let i = 0; i < modifiers.length; ++i) {
-      writeModifierProperties.call(modifiers[i], bw, game, i, modProps)
+      writeModifierProperties(modifiers[i], bw, game, i, modProps)
     }
     bw.fill('Section9Count', modProps.length)
     bw.pad(16)
     bw.fill('Section10Offset', bw.position)
-    const section10s: Section10[] = []
+    const section10s: number[][] = []
     for (let i = 0; i < actions.length; ++i) {
-      writeAnyActionSection10s.call(actions[i], bw, i, section10s)
+      writeAnyActionSection10s(actions[i], bw, game, i, section10s)
     }
     bw.fill('Section10Count', section10s.length)
     bw.pad(16)
     bw.fill('FieldOffset', bw.position)
     let fieldCount = 0
     for (let i = 0; i < conditions.length; ++i) {
-      fieldCount += writeStateConditionFields.call(conditions[i], bw, i)
+      fieldCount += writeStateConditionFields(conditions[i], bw, i)
     }
     for (let i = 0; i < actions.length; ++i) {
-      fieldCount += writeAnyActionFields.call(actions[i], bw, game, i)
+      fieldCount += writeAnyActionFields(actions[i], bw, game, i)
     }
     for (let i = 0; i < properties.length; ++i) {
-      fieldCount += writePropertyFields.call(properties[i], bw, i, false)
+      fieldCount += writePropertyFields(properties[i], bw, i, false)
     }
     for (let i = 0; i < modifiers.length; ++i) {
-      fieldCount += writeModifierFields.call(modifiers[i], bw, i)
+      fieldCount += writeModifierFields(modifiers[i], bw, i)
     }
     for (let i = 0; i < modProps.length; ++i) {
-      fieldCount += writePropertyFields.call(modProps[i], bw, i, true)
+      fieldCount += writePropertyFields(modProps[i], bw, i, true)
     }
     for (let i = 0; i < section10s.length; ++i) {
-      fieldCount += writeSection10Fields.call(section10s[i], bw, i)
+      fieldCount += writeSection10Fields(section10s[i], bw, i)
     }
     bw.fill('FieldCount', fieldCount)
     bw.pad(16)
@@ -5903,15 +7130,15 @@ class FXR {
     }
 
     bw.fill('SFXReferencesOffset', bw.position)
-    bw.writeInt32s(this.sfxReferences)
+    bw.writeInt32s(refs.sfx)
     bw.pad(16)
 
     bw.fill('ExternalValues1Offset', bw.position)
-    bw.writeInt32s(this.externalValues1)
+    bw.writeInt32s(refs.externalValues1)
     bw.pad(16)
 
     bw.fill('ExternalValues2Offset', bw.position)
-    bw.writeInt32s(this.externalValues2)
+    bw.writeInt32s(refs.externalValues2)
     bw.pad(16)
 
     // if (this.unkEmpty.length > 0) {
@@ -5939,25 +7166,15 @@ class FXR {
     id,
     states,
     root,
-    sfxReferences,
-    externalValues1,
-    externalValues2
   }: {
     id: number
     states: string[]
     root: any
-    sfxReferences: number[]
-    externalValues1: number[]
-    externalValues2: number[]
-    unkEmpty: number[]
   }) {
     return new FXR(
       id,
       Node.fromJSON(root) as RootNode | GenericNode,
       states.map(state => State.from(state)),
-      sfxReferences,
-      externalValues1,
-      externalValues2
     )
   }
 
@@ -5965,9 +7182,6 @@ class FXR {
     return {
       id: this.id,
       states: this.states.map(state => state.toString()),
-      sfxReferences: this.sfxReferences,
-      externalValues1: this.externalValues1,
-      externalValues2: this.externalValues2,
       root: this.root.toJSON(),
     }
   }
@@ -5983,23 +7197,32 @@ class FXR {
       this.id,
       this.root.minify() as RootNode | GenericNode,
       this.states,
-      this.sfxReferences,
-      this.externalValues1,
-      this.externalValues2
     )
   }
 
   /**
-   * Updates {@link sfxReferences}, {@link externalValues1}, and
-   * {@link externalValues2} with the values used in the FXR.
+   * Gets lists of various types of references in the FXR.
    */
-  updateReferences() {
-    const references: number[] = []
+  getReferences(): {
+    sfx: number[]
+    externalValues1: number[]
+    externalValues2: number[]
+  } {
+    const sfx: number[] = []
     const externalValues1: number[] = []
     const externalValues2: number[] = []
     for (const node of this.root.walk()) {
       if (node instanceof ProxyNode) {
-        references.push(node.sfx)
+        sfx.push(node.sfx)
+      } else if (node instanceof GenericNode && node.type === NodeType.Proxy) {
+        if (node.actions.length === 0) {
+          throw new Error('Missing action 132 in Proxy node!')
+        }
+        if (node.actions[0] instanceof Action) {
+          sfx.push(node.actions[0].fields1[0].value as number)
+        } else if (node.actions[0] instanceof SFXReference) {
+          sfx.push(node.actions[0].sfx)
+        }
       }
     }
     for (const prop of this.root.walkProperties()) {
@@ -6024,10 +7247,11 @@ class FXR {
         }
       }
     }
-    this.sfxReferences = uniqueArray(references).sort((a, b) => a - b)
-    this.externalValues1 = uniqueArray(externalValues1).sort((a, b) => a - b)
-    this.externalValues2 = uniqueArray(externalValues2).sort((a, b) => a - b)
-    return this
+    return {
+      sfx: uniqueArray(sfx).sort((a, b) => a - b),
+      externalValues1: uniqueArray(externalValues1).sort((a, b) => a - b),
+      externalValues2: uniqueArray(externalValues2).sort((a, b) => a - b),
+    }
   }
 
   /**
@@ -6046,7 +7270,7 @@ class FXR {
         list.push(effect.emissionAudio.sound)
       }
       const action = effect.appearance
-      if (action instanceof PointSprite) {
+      if (action instanceof PointSprite || action instanceof WaterInteraction) {
         list.push(action.texture)
       } else if (action instanceof BillboardEx) {
         list.push(action.texture)
@@ -6399,7 +7623,7 @@ abstract class Node {
 
   constructor(public readonly type: NodeType) {}
 
-  abstract getActions(game: Game): IAction[]
+  abstract getActions(game: Game): AnyAction[]
   getEffects(game: Game): IEffect[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
@@ -6483,9 +7707,11 @@ abstract class Node {
         yield* action.properties1
         yield* action.properties2
       } else {
-        for (const prop of Object.keys(ActionData[action.type].props)) {
-          if (action[prop] instanceof Property) {
-            yield action[prop]
+        if ('props' in ActionData[action.type]) {
+          for (const prop of Object.keys(ActionData[action.type].props)) {
+            if (action[prop] instanceof Property) {
+              yield action[prop]
+            }
           }
         }
       }
@@ -6502,37 +7728,37 @@ abstract class Node {
     for (const effect of this.walkEffects()) if (
       effect instanceof BasicEffect || effect instanceof SharedEmitterEffect
     ) {
-      const slot1 = effect.nodeTransform as ActionWithNumericalFields
-      switch (slot1.type) {
-        case ActionType.RandomNodeTransform:
-          slot1.fields1[6] = new FloatField(slot1.fields1[6].value * factor)
-          slot1.fields1[7] = new FloatField(slot1.fields1[7].value * factor)
-          slot1.fields1[8] = new FloatField(slot1.fields1[8].value * factor)
-        case ActionType.StaticNodeTransform:
-          slot1.fields1[0] = new FloatField(slot1.fields1[0].value * factor)
-          slot1.fields1[1] = new FloatField(slot1.fields1[1].value * factor)
-          slot1.fields1[2] = new FloatField(slot1.fields1[2].value * factor)
-          break
+      const slot1 = effect.nodeTransform
+      if (slot1 instanceof RandomNodeTransform) {
+        slot1.offsetVarianceX *= factor
+        slot1.offsetVarianceY *= factor
+        slot1.offsetVarianceZ *= factor
+      }
+      if (slot1 instanceof StaticNodeTransform || slot1 instanceof RandomNodeTransform) {
+        slot1.offsetX *= factor
+        slot1.offsetY *= factor
+        slot1.offsetZ *= factor
       }
       const slot2 = effect.nodeMovement
-      if (slot2 instanceof NodeTranslation) {
+      if (
+        slot2 instanceof NodeAcceleration ||
+        slot2 instanceof NodeAccelerationRandomTurns ||
+        slot2 instanceof NodeAccelerationPartialFollow ||
+        slot2 instanceof NodeAccelerationSpin
+      ) {
+        slot2.speedZ = anyValueMult(factor, slot2.speedZ)
+        slot2.accelerationZ = anyValueMult(factor, slot2.accelerationZ)
+        slot2.accelerationY = anyValueMult(factor, slot2.accelerationY)
+      } else if (
+        slot2 instanceof NodeSpeed ||
+        slot2 instanceof NodeSpeedRandomTurns ||
+        slot2 instanceof NodeSpeedPartialFollow ||
+        slot2 instanceof NodeSpeedSpin
+      ) {
+        slot2.speedZ = anyValueMult(factor, slot2.speedZ)
+        slot2.accelerationY = anyValueMult(factor, slot2.accelerationY)
+      } else if (slot2 instanceof NodeTranslation) {
         slot2.translation = anyValueMult(factor, slot2.translation)
-      } else switch (slot2.type) {
-        case ActionType.NodeAcceleration:
-        case ActionType.NodeAccelerationRandomTurns:
-        case ActionType.NodeAccelerationPartialFollow:
-        case ActionType.NodeAccelerationSpin:
-          slot2.properties1[0].scale(factor)
-          slot2.properties1[1].scale(factor)
-          slot2.properties1[3].scale(factor)
-          break
-        case ActionType.NodeSpeed:
-        case ActionType.NodeSpeedRandomTurns:
-        case ActionType.NodeSpeedPartialFollow:
-        case ActionType.NodeSpeedSpin:
-          slot2.properties1[0].scale(factor)
-          slot2.properties1[2].scale(factor)
-          break
       }
       const slot4 = effect.emitter
       if (slot4 instanceof EqualDistanceEmitter) {
@@ -6709,16 +7935,21 @@ abstract class Node {
         }
 
         const slot10 = effect.particleMovement
-        switch (slot10.type) {
-          case ActionType.ParticleAcceleration:
-          case ActionType.ParticleSpeed:
-          case ActionType.ParticleSpeedRandomTurns:
-          case ActionType.ParticleSpeedPartialFollow:
-          case ActionType.ParticleAccelerationRandomTurns:
-          case ActionType.ParticleAccelerationPartialFollow:
-            slot10.properties1[0].scale(factor)
-            slot10.properties1[1].scale(factor)
-            break
+        if (
+          slot10 instanceof ParticleAcceleration ||
+          slot10 instanceof ParticleAccelerationRandomTurns ||
+          slot10 instanceof ParticleAccelerationPartialFollow
+        ) {
+          slot10.gravity = anyValueMult(factor, slot10.gravity)
+          slot10.acceleration = anyValueMult(factor, slot10.acceleration)
+        }
+        if (
+          slot10 instanceof ParticleSpeed ||
+          slot10 instanceof ParticleSpeedRandomTurns ||
+          slot10 instanceof ParticleSpeedPartialFollow
+        ) {
+          slot10.gravity = anyValueMult(factor, slot10.gravity)
+          slot10.speed = anyValueMult(factor, slot10.speed)
         }
 
         const slot13 = effect.nodeWind
@@ -6788,7 +8019,7 @@ abstract class Node {
       if (effect.particleModifier instanceof ParticleModifier) {
         procVec4Value(effect.particleModifier, 'color')
       }
-      const slot9 = effect.appearance as ActionWithNumericalFields | DataAction
+      const slot9 = effect.appearance
       if (slot9 instanceof Action) switch (slot9.type) {
         case ActionType.Unk10001_StandardCorrectParticle:
           procProp(slot9.properties1, 13)
@@ -6817,7 +8048,11 @@ abstract class Node {
         procVec4Value(slot9, 'layersColor')
         procVec4Value(slot9, 'layer1Color')
         procVec4Value(slot9, 'layer2Color')
-      } else if (slot9 instanceof Distortion || slot9 instanceof RadialBlur || slot9 instanceof ParticleSystem) {
+      } else if (
+        slot9 instanceof Distortion ||
+        slot9 instanceof RadialBlur ||
+        slot9 instanceof ParticleSystem
+      ) {
         procVec4Value(slot9, 'color')
       } else if (slot9 instanceof LensFlare) {
         procVec4Value(slot9, 'layer1Color')
@@ -6861,14 +8096,14 @@ class GenericNode extends Node {
 
   constructor(
     type: NodeType,
-    public actions: IAction[],
+    public actions: AnyAction[],
     public effects: IEffect[],
     public nodes: Node[]
   ) {
     super(type)
   }
 
-  getActions(game: Game): IAction[] { return this.actions }
+  getActions(game: Game): AnyAction[] { return this.actions }
   getEffects(game: Game): IEffect[] { return this.effects }
   getNodes(game: Game): Node[] { return this.nodes }
 
@@ -6916,14 +8151,14 @@ class GenericNode extends Node {
  */
 class RootNode extends Node {
 
-  unk70x: IAction = new Action(ActionType.Unk700)
+  unk70x: ActionSlots.Unknown70xAction = new Action(ActionType.Unk700)
 
   constructor(
     public nodes: Node[] = [],
-    unk70x: IAction = null,
-    public unk10100: IAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
-    public unk10400: IAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
-    public unk10500: IAction = new Unk10500
+    unk70x: ActionSlots.Unknown70xAction = null,
+    public unk10100: AnyAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
+    public unk10400: AnyAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
+    public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
     if (unk70x !== null) {
@@ -6931,7 +8166,7 @@ class RootNode extends Node {
     }
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     switch (game) {
       case Game.DarkSouls3:
       case Game.Sekiro:
@@ -7013,7 +8248,7 @@ class ProxyNode extends Node {
    */
   constructor(public sfx: number) { super(NodeType.Proxy) }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [ new SFXReference(this.sfx) ]
   }
 
@@ -7045,8 +8280,8 @@ class NodeWithEffects extends Node {
     super(type)
   }
 
-  getActions(game: Game): IAction[] {
-    return [ new StateEffectMap(...this.stateEffectMap) ]
+  getActions(game: Game): AnyAction[] {
+    return [ new StateEffectMap(this.stateEffectMap) ]
   }
 
   getEffects(game: Game): IEffect[] {
@@ -7134,13 +8369,13 @@ class BasicNode extends NodeWithEffects {
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: IEffect[] | IAction[] = [], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: IEffect[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
     if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicEffect(effectsOrEffectActions as IAction[])
+        new BasicEffect(effectsOrEffectActions as AnyAction[])
       ], nodes)
     } else {
       super(
@@ -7232,13 +8467,13 @@ const Nodes = {
  */
 class Effect implements IEffect {
 
-  constructor(public type: EffectType, public actions: IAction[]) {}
+  constructor(public type: EffectType, public actions: AnyAction[]) {}
 
   getActionCount(game: Game): number {
     return this.actions.length
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return this.actions
   }
 
@@ -7322,7 +8557,7 @@ class LevelsOfDetailEffect implements IEffect {
     return 1
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [
       new LevelsOfDetailThresholds({
         duration: this.duration,
@@ -7354,47 +8589,21 @@ class LevelsOfDetailEffect implements IEffect {
 }
 
 export interface BasicEffectParams {
-  nodeAttributes?: Action | NodeAttributes
-  nodeTransform?: Action
-  nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
-  nodeAudio?: Action | NodeSound
-  emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
-  emitterShape?:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-  particleDirection?:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-  particleModifier?: Action | ParticleModifier
-  particleAttributes?: Action | ParticleAttributes
-  appearance?:
-    Action |
-    PointSprite |
-    Line |
-    QuadLine |
-    BillboardEx |
-    MultiTextureBillboardEx |
-    Model |
-    Tracer |
-    Distortion |
-    RadialBlur |
-    PointLight |
-    DynamicTracer |
-    WaterInteraction |
-    RichModel |
-    SpotLight
-  particleMovement?: Action
-  emissionAudio?: Action | EmissionSound
-  slot12?: Action | Unk130
-  nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
-  particleWind?: Action | ParticleWindAcceleration | ParticleWindSpeed | Unk800
+  nodeAttributes?: ActionSlots.NodeAttributesAction
+  nodeTransform?: ActionSlots.NodeTransformAction
+  nodeMovement?: ActionSlots.NodeMovementAction
+  nodeAudio?: ActionSlots.NodeAudioAction
+  emitter?: ActionSlots.EmitterAction
+  emitterShape?:ActionSlots.EmitterShapeAction
+  particleDirection?:ActionSlots.ParticleDirectionAction
+  particleModifier?: ActionSlots.ParticleModifierAction
+  particleAttributes?: ActionSlots.ParticleAttributesAction
+  appearance?:ActionSlots.AppearanceAction
+  particleMovement?: ActionSlots.ParticleMovementAction
+  emissionAudio?: ActionSlots.EmissionAudioAction
+  slot12?: ActionSlots.Unknown130Action
+  nodeWind?: ActionSlots.NodeWindAction
+  particleWind?: ActionSlots.ParticleWindAction
 }
 
 /**
@@ -7402,79 +8611,44 @@ export interface BasicEffectParams {
  * emit particles of many different types.
  * 
  * Default actions:
- * Index | Action
- * ------|----------
- * 0     | {@link ActionType.NodeAttributes NodeAttributes}
- * 1     | {@link ActionType.None None}
- * 2     | {@link ActionType.None None}
- * 3     | {@link ActionType.None None}
- * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
- * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
- * 7     | {@link ActionType.ParticleModifier ParticleModifier}
- * 8     | {@link ActionType.ParticleAttributes ParticleAttributes}
- * 9     | {@link ActionType.None None}
- * 10    | {@link ActionType.None None}
- * 11    | {@link ActionType.None None}
- * 12    | {@link ActionType.Unk130 Unk130}
- * 13    | {@link ActionType.None None}
- * 14    | {@link ActionType.None None}
+ * Index | Slot | Action
+ * :-----|:-----|:------
+ * 0     | {@link ActionSlots.NodeAttributesAction NodeAttributes} | {@link ActionType.NodeAttributes NodeAttributes}
+ * 1     | {@link ActionSlots.NodeTransformAction NodeTransform} | {@link ActionType.None None}
+ * 2     | {@link ActionSlots.NodeMovementAction NodeMovement} | {@link ActionType.None None}
+ * 3     | {@link ActionSlots.NodeAudioAction NodeAudio} | {@link ActionType.None None}
+ * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+ * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
+ * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
+ * 7     | {@link ActionSlots.ParticleModifierAction ParticleModifier} | {@link ActionType.ParticleModifier ParticleModifier}
+ * 8     | {@link ActionSlots.ParticleAttributesAction ParticleAttributes} | {@link ActionType.ParticleAttributes ParticleAttributes}
+ * 9     | {@link ActionSlots.AppearanceAction Appearance} | {@link ActionType.None None}
+ * 10    | {@link ActionSlots.ParticleMovementAction ParticleMovement} | {@link ActionType.None None}
+ * 11    | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
+ * 12    | {@link ActionSlots.Unknown130Action Unknown130} | {@link ActionType.Unk130 Unk130}
+ * 13    | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
+ * 14    | {@link ActionSlots.ParticleWindAction ParticleWind} | {@link ActionType.None None}
  */
 class BasicEffect implements IEffect {
   readonly type = EffectType.Basic
 
-  nodeAttributes: Action | NodeAttributes = new NodeAttributes
-  nodeTransform: Action = new Action
-  nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
-  nodeAudio: Action | NodeSound = new Action
-  emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
-  emitterShape:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-    = new PointEmitterShape
-  particleDirection:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-    = new NoParticleSpread
-  particleModifier: Action | ParticleModifier = new ParticleModifier
-  particleAttributes: Action | ParticleAttributes = new ParticleAttributes
-  appearance:
-    Action |
-    PointSprite |
-    Line |
-    QuadLine |
-    BillboardEx |
-    MultiTextureBillboardEx |
-    Model |
-    Tracer |
-    Distortion |
-    RadialBlur |
-    PointLight |
-    DynamicTracer |
-    WaterInteraction |
-    LensFlare |
-    RichModel |
-    SpotLight
-    = new Action
-  particleMovement: Action = new Action
-  emissionAudio: Action | EmissionSound = new Action
-  slot12: Action | Unk130 = new Unk130
-  nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
-  particleWind:
-    Action |
-    ParticleWindAcceleration |
-    ParticleWindSpeed |
-    Unk800
-    = new Action
+  nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
+  nodeTransform: ActionSlots.NodeTransformAction = new Action
+  nodeMovement: ActionSlots.NodeMovementAction = new Action
+  nodeAudio: ActionSlots.NodeAudioAction = new Action
+  emitter: ActionSlots.EmitterAction = new OneTimeEmitter
+  emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
+  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
+  particleModifier: ActionSlots.ParticleModifierAction = new ParticleModifier
+  particleAttributes: ActionSlots.ParticleAttributesAction = new ParticleAttributes
+  appearance: ActionSlots.AppearanceAction = new Action
+  particleMovement: ActionSlots.ParticleMovementAction = new Action
+  emissionAudio: ActionSlots.EmissionAudioAction = new Action
+  slot12: ActionSlots.Unknown130Action = new Unk130
+  nodeWind: ActionSlots.NodeWindAction = new Action
+  particleWind: ActionSlots.ParticleWindAction = new Action
 
-  constructor(params: BasicEffectParams | IAction[]) {
+  constructor(params: BasicEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
@@ -7519,7 +8693,7 @@ class BasicEffect implements IEffect {
     return game === Game.DarkSouls3 ? 13 : 15
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [
       this.nodeAttributes,
       this.nodeTransform,
@@ -7602,27 +8776,16 @@ class BasicEffect implements IEffect {
 }
 
 export interface SharedEmitterEffectParams {
-  nodeAttributes?: Action | NodeAttributes
-  nodeTransform?: Action
-  nodeMovement?: Action | NodeTranslation | NodeAttachToCamera
-  nodeAudio?: Action | NodeSound
-  emitter?: Action | PeriodicEmitter | EqualDistanceEmitter
-  emitterShape?:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-  particleDirection?:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-  behavior?: Action
-  emissionAudio?: Action | EmissionSound
-  nodeWind?: Action | NodeWindAcceleration | NodeWindSpeed
+  nodeAttributes?: ActionSlots.NodeAttributesAction
+  nodeTransform?: ActionSlots.NodeTransformAction
+  nodeMovement?: ActionSlots.NodeMovementAction
+  nodeAudio?: ActionSlots.NodeAudioAction
+  emitter?: ActionSlots.EmitterAction
+  emitterShape?: ActionSlots.EmitterShapeAction
+  particleDirection?: ActionSlots.ParticleDirectionAction
+  behavior?: ActionSlots.BehaviorAction
+  emissionAudio?: ActionSlots.EmissionAudioAction
+  nodeWind?: ActionSlots.NodeWindAction
 }
 
 /**
@@ -7631,47 +8794,34 @@ export interface SharedEmitterEffectParams {
  * the particles of.
  * 
  * Default actions:
- * Index | Action
- * ------|----------
- * 0     | {@link ActionType.NodeAttributes NodeAttributes}
- * 1     | {@link ActionType.None None}
- * 2     | {@link ActionType.None None}
- * 3     | {@link ActionType.None None}
- * 4     | {@link ActionType.OneTimeEmitter OneTimeEmitter}
- * 5     | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionType.NoParticleSpread NoParticleSpread}
- * 7     | {@link ActionType.EmitAllParticles AllChildNodes}
- * 8     | {@link ActionType.None None}
- * 9     | {@link ActionType.None None}
+ * Index | Slot | Action
+ * :-----|:-----|:------
+ * 0     | {@link ActionSlots.NodeAttributesAction NodeAttributes} | {@link ActionType.NodeAttributes NodeAttributes}
+ * 1     | {@link ActionSlots.NodeTransformAction NodeTransform} | {@link ActionType.None None}
+ * 2     | {@link ActionSlots.NodeMovementAction NodeMovement} | {@link ActionType.None None}
+ * 3     | {@link ActionSlots.NodeAudioAction NodeAudio} | {@link ActionType.None None}
+ * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
+ * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
+ * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
+ * 7     | {@link ActionSlots.BehaviorAction Behavior} | {@link ActionType.EmitAllParticles EmitAllParticles}
+ * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
+ * 9     | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
  */
 class SharedEmitterEffect implements IEffect {
   readonly type = EffectType.SharedEmitter
 
-  nodeAttributes: Action | NodeAttributes = new NodeAttributes
-  nodeTransform: Action = new Action
-  nodeMovement: Action | NodeTranslation | NodeAttachToCamera = new Action
-  nodeAudio: Action | NodeSound = new Action
-  emitter: Action | PeriodicEmitter | EqualDistanceEmitter = new OneTimeEmitter
-  emitterShape:
-    Action |
-    PointEmitterShape |
-    DiskEmitterShape |
-    RectangleEmitterShape |
-    SphereEmitterShape |
-    BoxEmitterShape |
-    CylinderEmitterShape
-    = new PointEmitterShape
-  particleDirection:
-    Action |
-    CircularParticleSpread |
-    EllipticalParticleSpread |
-    RectangularParticleSpread
-    = new NoParticleSpread
-  behavior: Action = new EmitAllParticles
-  emissionAudio: Action | EmissionSound = new Action
-  nodeWind: Action | NodeWindAcceleration | NodeWindSpeed = new Action
+  nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
+  nodeTransform: ActionSlots.NodeTransformAction = new Action
+  nodeMovement: ActionSlots.NodeMovementAction = new Action
+  nodeAudio: ActionSlots.NodeAudioAction = new Action
+  emitter: ActionSlots.EmitterAction = new OneTimeEmitter
+  emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
+  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
+  behavior: ActionSlots.BehaviorAction = new EmitAllParticles
+  emissionAudio: ActionSlots.EmissionAudioAction = new Action
+  nodeWind: ActionSlots.NodeWindAction = new Action
 
-  constructor(params: SharedEmitterEffectParams | IAction[]) {
+  constructor(params: SharedEmitterEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
@@ -7706,7 +8856,7 @@ class SharedEmitterEffect implements IEffect {
     return 10
   }
 
-  getActions(game: Game): IAction[] {
+  getActions(game: Game): AnyAction[] {
     return [
       this.nodeAttributes,
       this.nodeTransform,
@@ -7776,7 +8926,7 @@ class Action implements IAction {
   fields2: Field[]
   properties1: AnyProperty[]
   properties2: AnyProperty[]
-  section10s: Section10[]
+  section10s: number[][]
 
   constructor(
     type: number = ActionType.None,
@@ -7784,7 +8934,7 @@ class Action implements IAction {
     fields2: Field[] = [],
     properties1: AnyProperty[] = [],
     properties2: AnyProperty[] = [],
-    section10s: Section10[] = [],
+    section10s: number[][] = [],
   ) {
     this.type = type
     this.fields1 = fields1
@@ -7847,6 +8997,9 @@ class Action implements IAction {
   }
 
   static fromJSON(obj: any) {
+    if (obj === null) {
+      return new Action
+    }
     if (
       obj.type in ActionData &&
       !('fields1' in obj) &&
@@ -7855,29 +9008,31 @@ class Action implements IAction {
       !('properties2' in obj) &&
       !('section10s' in obj)
     ) {
-      return new DataActions[obj.type](Object.fromEntries(Object.entries(obj).map(([k, v]) => {
-        return [k, typeof v === 'object' && !Array.isArray(v) ? Property.fromJSON(v) : v]
-      }).filter(e => e[0] !== 'type')))
-    } else if (obj.type in Actions) {
-      const action: Action = new Actions[obj.type]
-      action.type = obj.type
-      action.fields1 = (obj.fields1 ?? []).map(e => Field.fromJSON(e))
-      action.fields2 = (obj.fields2 ?? []).map(e => Field.fromJSON(e))
-      action.properties1 = (obj.properties1 ?? []).map(e => Property.fromJSON(e))
-      action.properties2 = (obj.properties2 ?? []).map(e => Property.fromJSON(e))
-      action.section10s = (obj.section10s ?? []).map(e => Section10.fromJSON(e))
-      return action
+      if ('props' in ActionData[obj.type]) {
+        const propKeys = Object.keys(ActionData[obj.type].props)
+        if (propKeys.length === 1) {
+          return new DataActions[obj.type](obj[propKeys[0]])
+        }
+        return new DataActions[obj.type](Object.fromEntries(Object.entries(obj).map(([k, v]) => {
+          return [k, typeof v === 'object' && !Array.isArray(v) ? Property.fromJSON(v) : v]
+        }).filter(e => e[0] !== 'type')))
+      } else {
+        return new DataActions[obj.type]
+      }
     } else return new Action(
       obj.type,
       (obj.fields1 ?? []).map(e => Field.fromJSON(e)),
       (obj.fields2 ?? []).map(e => Field.fromJSON(e)),
       (obj.properties1 ?? []).map(e => Property.fromJSON(e)),
       (obj.properties2 ?? []).map(e => Property.fromJSON(e)),
-      (obj.section10s ?? []).map(e => Section10.fromJSON(e))
+      obj.section10s
     )
   }
 
   toJSON() {
+    if (this.type === 0) {
+      return null
+    }
     const o: {
       type: ActionType
       fields1?: any[]
@@ -7890,7 +9045,7 @@ class Action implements IAction {
     if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
     if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
     if (this.properties2.length > 0) o.properties2 = this.properties2.map(prop => prop.toJSON())
-    if (this.section10s.length > 0) o.section10s = this.section10s.map(s10 => s10.toJSON())
+    if (this.section10s.length > 0) o.section10s = this.section10s
     return o
   }
 
@@ -7906,11 +9061,6 @@ class Action implements IAction {
     return this
   }
 
-}
-
-export interface ActionWithNumericalFields extends Action {
-  fields1: NumericalField[]
-  fields2: NumericalField[]
 }
 
 /**
@@ -7936,6 +9086,9 @@ class DataAction implements IAction {
   }
 
   toJSON() {
+    if (!('props' in ActionData[this.type])) {
+      return { type: this.type }
+    }
     return {
       type: this.type,
       ...Object.fromEntries(
@@ -7951,6 +9104,9 @@ class DataAction implements IAction {
   }
 
   minify() {
+    if (this.type in ActionDataConversion && 'minify' in ActionDataConversion[this.type]) {
+      return ActionDataConversion[this.type].minify.call(this)
+    }
     return this
   }
 
@@ -7972,226 +9128,26 @@ class DataAction implements IAction {
     })
   }
 
+  getSection10s(game: Game): number[][] {
+    const data = getActionGameData(this.type, game)
+    return (data.section10s ?? []).map((name: string) => this[name])
+  }
+
   toAction(game: Game) {
     return new Action(
       this.type,
       this.getFields(game, 'fields1'),
       this.getFields(game, 'fields2'),
       this.getProperties(game, 'properties1'),
-      this.getProperties(game, 'properties2')
+      this.getProperties(game, 'properties2'),
+      this.getSection10s(game)
     )
   }
 
 }
 
-export interface NodeMovementParams {
-  /**
-   * Controls how fast the node should spin around its X-axis in degrees per
-   * second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   * 
-   * See also:
-   * - {@link spinXMultiplier}
-   */
-  spinX?: ScalarValue
-  /**
-   * Multiplier for {@link spinX}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   */
-  spinXMultiplier?: ScalarValue
-  /**
-   * Controls how fast the node should spin around its Y-axis in degrees per
-   * second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   * 
-   * See also:
-   * - {@link spinYMultiplier}
-   */
-  spinY?: ScalarValue
-  /**
-   * Multiplier for {@link spinY}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   */
-  spinYMultiplier?: ScalarValue
-  /**
-   * Controls how fast the node should spin around its Z-axis in degrees per
-   * second. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   * 
-   * See also:
-   * - {@link spinZMultiplier}
-   */
-  spinZ?: ScalarValue
-  /**
-   * Multiplier for {@link spinZ}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link maxTurnAngle}
-   * - {@link turnInterval}
-   * - {@link followFactor}
-   * - {@link followRotation}
-   */
-  spinZMultiplier?: ScalarValue
-  /**
-   * Controls the speed of the node along its Z-axis. Defaults to 0.
-   * 
-   * **Argument**:
-   * - If {@link speedZMultiplier} is set:
-   * {@link PropertyArgument.EffectAge Effect age}
-   * - If {@link speedZMultiplier} is **not** set:
-   * {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link speedZMultiplier}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Multiplier for {@link speedZ}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link accelerationZ}
-   * - {@link accelerationZMultiplier}
-   */
-  speedZMultiplier?: ScalarValue
-  /**
-   * Controls the acceleration of the node in the +Z direction. This value
-   * cannot be negative. Defaults to 0.
-   * 
-   * Incompatible with the following parameters:
-   * - {@link speedZMultiplier}
-   * 
-   * See also:
-   * - {@link accelerationZMultiplier}
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  accelerationZ?: ScalarValue
-  /**
-   * Multiplier for {@link accelerationZ}. Defaults to 1.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link speedZMultiplier}
-   */
-  accelerationZMultiplier?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * The node will turn a random amount based on this value at intervals
-   * defined by {@link turnInterval}. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at
-   * this interval. The units are seconds, but due to how the field that stores
-   * this value works, the value will be rounded to the nearest 0.02 seconds.
-   * Defaults to 0.
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   */
-  turnInterval?: number
-  /**
-   * Controls how well the node should follow the parent node if it is not
-   * attached. At 0, the node will not follow at all. At 1, the node will
-   * follow perfectly, as if attached to the parent node. Negative values will
-   * make the node move in the opposite direction compared to the parent node.
-   * Values greater than 1 will make the node exaggerate the parent node's
-   * movement. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and
-   * not rotation. Defaults to true.
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   * 
-   * Incompatible with the following parameters:
-   * - {@link spinX}
-   * - {@link spinXMultiplier}
-   * - {@link spinY}
-   * - {@link spinYMultiplier}
-   * - {@link spinZ}
-   * - {@link spinZMultiplier}
-   */
-  followRotation?: boolean
-}
 /**
- * Controls the movement of the node.
- * 
- * This class covers most of the Node Movement action types:
+ * Constructs one of the following {@link ActionSlots.NodeMovementAction Node Movement} classes:
  * - {@link ActionType.NodeSpin NodeSpin}
  * - {@link ActionType.NodeAcceleration NodeAcceleration}
  * - {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns}
@@ -8202,777 +9158,253 @@ export interface NodeMovementParams {
  * - {@link ActionType.NodeSpeedPartialFollow NodeSpeedPartialFollow}
  * - {@link ActionType.NodeSpeedSpin NodeSpeedSpin}
  * 
- * Which one is produced by the constructor depends on what arguments are set.
- * By default, the basic acceleration action is created.
+ * Which one is produced depends on what arguments are set.
+ * 
+ * If you are trying to figure out what some of the unknown fields in these
+ * actions do, use the actual classes themselves instead of relying on this
+ * shortcut. It only exists to make things easier, not to control exactly what
+ * happens.
  */
-class NodeMovement extends Action {
-
-  constructor({
-    spinX = null,
-    spinXMultiplier = null,
-    spinY = null,
-    spinYMultiplier = null,
-    spinZ = null,
-    spinZMultiplier = null,
-    speedZ = null,
-    speedZMultiplier = null,
-    accelerationZ = null,
-    accelerationZMultiplier = null,
-    accelerationY = null,
-    maxTurnAngle = null,
-    turnInterval = null,
-    followFactor = null,
-    followRotation = null,
-  }: NodeMovementParams = {}) {
-    const speed = +(speedZMultiplier !== null)
-    const acceleration = +(accelerationZ !== null || accelerationZMultiplier !== null) << 1
-    const spin = +[spinX, spinXMultiplier, spinY, spinYMultiplier, spinZ, spinZMultiplier].some(e => e !== null) << 2
-    const randomTurns = +(maxTurnAngle !== null || turnInterval !== null) << 3
-    const partialFollow = +(followFactor !== null || followRotation !== null) << 4
-    const aos = +(speed || acceleration || speedZ !== null || accelerationY !== null) << 5
-    spinX ??= 0
-    spinXMultiplier ??= 1
-    spinY ??= 0
-    spinYMultiplier ??= 1
-    spinZ ??= 0
-    spinZMultiplier ??= 1
-    speedZ ??= 0
-    speedZMultiplier ??= 1
-    accelerationZ ??= 0
-    accelerationZMultiplier ??= 1
-    accelerationY ??= 0
-    maxTurnAngle ??= 0
-    turnInterval ??= 0
-    followFactor ??= 0
-    followRotation ??= true
-    switch (speed | acceleration | spin | randomTurns | partialFollow | aos) {
-      case acceleration | aos: super(ActionType.NodeAcceleration, [
-        new IntField,
-        new IntField,
-        new FloatField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-      ]); break;
-      case spin: super(ActionType.NodeSpin, [
-        new IntField(1),
-      ], [], [
-        scalarFromArg(spinX),
-        scalarFromArg(spinXMultiplier),
-        scalarFromArg(spinY),
-        scalarFromArg(spinYMultiplier),
-        scalarFromArg(spinZ),
-        scalarFromArg(spinZMultiplier),
-      ]); break;
-      case acceleration | randomTurns | aos: super(ActionType.NodeAccelerationRandomTurns, [
-        new IntField,
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-      ]); break;
-      case acceleration | partialFollow | aos:
-      case acceleration | partialFollow | randomTurns | aos: super(ActionType.NodeAccelerationPartialFollow, [
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-        new BoolField(followRotation),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-        scalarFromArg(followFactor),
-      ]); break;
-      case acceleration | spin | aos: super(ActionType.NodeAccelerationSpin, [
-        new IntField,
-        new IntField,
-        new IntField,
-        new IntField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(accelerationZ),
-        scalarFromArg(accelerationZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(spinX),
-        scalarFromArg(spinXMultiplier),
-        scalarFromArg(spinY),
-        scalarFromArg(spinYMultiplier),
-        scalarFromArg(spinZ),
-        scalarFromArg(spinZMultiplier),
-      ]); break;
-      case speed | aos: super(ActionType.NodeSpeed, [
-        new IntField,
-        new IntField,
-        new IntField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-      ]); break;
-      case speed | randomTurns | aos: super(ActionType.NodeSpeedRandomTurns, [
-        new IntField,
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-      ]); break;
-      case speed | partialFollow | aos:
-      case speed | partialFollow | randomTurns | aos: super(ActionType.NodeSpeedPartialFollow, [
-        new IntField,
-        new IntField,
-        new IntField(Math.round(turnInterval * 50)),
-        new BoolField(followRotation),
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(maxTurnAngle),
-        scalarFromArg(followFactor),
-      ]); break;
-      case speed | spin | aos: super(ActionType.NodeSpeedSpin, [
-        new IntField,
-        new IntField,
-        new IntField,
-        new IntField,
-      ], [], [
-        scalarFromArg(speedZ),
-        scalarFromArg(speedZMultiplier),
-        scalarFromArg(accelerationY),
-        scalarFromArg(spinX),
-        scalarFromArg(spinXMultiplier),
-        scalarFromArg(spinY),
-        scalarFromArg(spinYMultiplier),
-        scalarFromArg(spinZ),
-        scalarFromArg(spinZMultiplier),
-      ]); break;
-      default:
-        if (speed && acceleration) {
-          throw new Error('Speed Z multiplier is not compatible with acceleration node movement actions.')
-        }
-        if (spin && (randomTurns || partialFollow)) {
-          throw new Error('Spin cannot be used together with random turns or partial follow in node movement actions.')
-        }
-        throw new Error('Incompatible arguments given to NodeMovement constructor.')
-    }
+function NodeMovement(params: NodeMovementParams = {}) {
+  const acceleration = 'accelerationZ' in params || 'accelerationMultiplierZ' in params,
+        speed = 'speedMultiplierZ' in params,
+        randomTurns = 'maxTurnAngle' in params || 'turnInterval' in params,
+        partialFollow = 'followFactor' in params || 'followRotation' in params,
+        spin = (
+          'angularSpeedX' in params ||
+          'angularSpeedMultiplierX' in params ||
+          'angularSpeedY' in params ||
+          'angularSpeedMultiplierY' in params ||
+          'angularSpeedZ' in params ||
+          'angularSpeedMultiplierZ' in params
+        ),
+        speedOrAccel = (
+          'accelerationZ' in params ||
+          'accelerationMultiplierZ' in params ||
+          'speedZ' in params ||
+          'speedMultiplierZ' in params ||
+          'accelerationY' in params ||
+          'alignWithMotion' in params
+        )
+  if ((randomTurns || partialFollow) && spin) {
+    throw new Error('Angular speed is not compatible with random turns properties or partial follow properties in Node Movement actions.')
   }
-
+  if (acceleration && speed) {
+    throw new Error('Speed and acceleration properties are not compatible in Node Movement actions.')
+  }
+  if (spin && !speedOrAccel) {
+    return new NodeSpin(params)
+  }
+  if (speed) {
+    if (spin) {
+      return new NodeSpeedSpin(params)
+    }
+    if (partialFollow) {
+      return new NodeSpeedPartialFollow(params)
+    }
+    if (randomTurns) {
+      return new NodeSpeedRandomTurns(params)
+    }
+    return new NodeSpeed(params)
+  }
+  if (spin) {
+    return new NodeAccelerationSpin(params)
+  }
+  if (partialFollow) {
+    return new NodeAccelerationPartialFollow(params)
+  }
+  if (randomTurns) {
+    return new NodeAccelerationRandomTurns(params)
+  }
+  if (speedOrAccel) {
+    return new NodeAcceleration(params)
+  }
+  return new Action
 }
 
-export interface NodeTransformParams {
-  /**
-   * Translates the node along the X-axis. Defaults to 0.
-   */
-  translateX?: number
-  /**
-   * Translates the node along the Y-axis. Defaults to 0.
-   */
-  translateY?: number
-  /**
-   * Translates the node along the Z-axis. Defaults to 0.
-   */
-  translateZ?: number
-  /**
-   * Node rotation around the X-axis in degrees. Defaults to 0.
-   */
-  rotateX?: number
-  /**
-   * Node rotation around the Y-axis in degrees. Defaults to 0.
-   */
-  rotateY?: number
-  /**
-   * Node rotation around the Z-axis in degrees. Defaults to 0.
-   */
-  rotateZ?: number
-  /**
-   * The maximum change in translation along the X-axis from
-   * {@link translateX the base value} caused by randomization. When the
-   * node is created, its translation along this axis will be a random
-   * number between the base value minus this value and the base value plus
-   * this value. Defaults to 0.
-   */
-  randomTranslationX?: number
-  /**
-   * The maximum change in translation along the Y-axis from
-   * {@link translateY the base value} caused by randomization. When the
-   * node is created, its translation along this axis will be a random
-   * number between the base value minus this value and the base value plus
-   * this value. Defaults to 0.
-   */
-  randomTranslationY?: number
-  /**
-   * The maximum change in translation along the Z-axis from
-   * {@link translateZ the base value} caused by randomization. When the
-   * node is created, its translation along this axis will be a random
-   * number between the base value minus this value and the base value plus
-   * this value. Defaults to 0.
-   */
-  randomTranslationZ?: number
-  /**
-   * The maximum change in rotation around the X-axis from
-   * {@link rotateX the base value} caused by randomization. When the node
-   * is created, its rotation around this axis will be a random number between
-   * the base value minus this value and the base value plus this value.
-   * Defaults to 0.
-   */
-  randomRotationX?: number
-  /**
-   * The maximum change in rotation around the Y-axis from
-   * {@link rotateY the base value} caused by randomization. When the node
-   * is created, its rotation around this axis will be a random number between
-   * the base value minus this value and the base value plus this value.
-   * Defaults to 0.
-   */
-  randomRotationY?: number
-  /**
-   * The maximum change in rotation around the Z-axis from
-   * {@link rotateZ the base value} caused by randomization. When the node
-   * is created, its rotation around this axis will be a random number between
-   * the base value minus this value and the base value plus this value.
-   * Defaults to 0.
-   */
-  randomRotationZ?: number
-}
 /**
- * Sets the translation and rotation of the node. Optionally randomizes
- * the translation and rotation.
- * 
- * If any of the randomization parameters are not 0, it will create a
- * {@link ActionType.RandomNodeTransform RandomNodeTransform action} instead of
- * a {@link ActionType.StaticNodeTransform StaticNodeTransform action}, which
- * have different numbers of fields.
- * 
- * **Note about the X-axis**:  
- * Both of the action types represented by this class have the X-axis reversed.
- * RandomNodeTransform only has it reversed for translation, not rotation. This
- * class will automatically handle these strange inconsitencies and correct
- * them when using its accessors or contructor parameters, but it is important
- * to keep in mind if you are manually editing the fields of the action.
+ * Constructs one of the
+ * {@link ActionSlots.NodeTransformAction Node Transform} classes. Which one
+ * depends on the arguments given, which means that if any of the randomization
+ * arguments are used, it will produce a {@link RandomNodeTransform}.
  */
-class NodeTransform extends Action {
-
-  declare fields1: FloatField[]
-
-  constructor({
-    translateX = 0,
-    translateY = 0,
-    translateZ = 0,
-    rotateX = 0,
-    rotateY = 0,
-    rotateZ = 0,
-    randomTranslationX = 0,
-    randomTranslationY = 0,
-    randomTranslationZ = 0,
-    randomRotationX = 0,
-    randomRotationY = 0,
-    randomRotationZ = 0,
-  }: NodeTransformParams = {}) {
-    if (
-      randomTranslationX === 0 &&
-      randomTranslationY === 0 &&
-      randomTranslationZ === 0 &&
-      randomRotationX === 0 &&
-      randomRotationY === 0 &&
-      randomRotationZ === 0
-    ) {
-      super(ActionType.StaticNodeTransform, [
-        // These two actions have their X-axis reversed for some reason
-        new FloatField(-translateX),
-        new FloatField(translateY),
-        new FloatField(translateZ),
-        new FloatField(-rotateX),
-        new FloatField(rotateY),
-        new FloatField(rotateZ),
-      ])
-    } else {
-      super(ActionType.RandomNodeTransform, [
-        new FloatField(-translateX),
-        new FloatField(translateY),
-        new FloatField(translateZ),
-        // While action 35 has the X-axis reversed for both translation and
-        // rotation, action 36 only has it reversed for translation
-        new FloatField(rotateX),
-        new FloatField(rotateY),
-        new FloatField(rotateZ),
-        new FloatField(randomTranslationX),
-        new FloatField(randomTranslationY),
-        new FloatField(randomTranslationZ),
-        new FloatField(randomRotationX),
-        new FloatField(randomRotationY),
-        new FloatField(randomRotationZ),
-      ])
-    }
+function NodeTransform(params: NodeTransformParams = {}) {
+  if (
+    'offsetVarianceX' in params ||
+    'offsetVarianceY' in params ||
+    'offsetVarianceZ' in params ||
+    'rotationVarianceX' in params ||
+    'rotationVarianceY' in params ||
+    'rotationVarianceZ' in params
+  ) {
+    return new RandomNodeTransform(params)
+  } else if (
+    'offsetX' in params ||
+    'offsetY' in params ||
+    'offsetZ' in params ||
+    'rotationX' in params ||
+    'rotationY' in params ||
+    'rotationZ' in params
+  ) {
+    return new StaticNodeTransform(params)
   }
-
-  get translateX() { return -this.fields1[0].value }
-  set translateX(value) { this.fields1[0].value = -value }
-
-  get translateY() { return this.fields1[1].value }
-  set translateY(value) { this.fields1[1].value = value }
-
-  get translateZ() { return this.fields1[2].value }
-  set translateZ(value) { this.fields1[2].value = value }
-
-  get rotateX() {
-    switch (this.type) {
-      case ActionType.StaticNodeTransform: return -this.fields1[3].value
-      case ActionType.RandomNodeTransform: return this.fields1[3].value
-    }
-  }
-  set rotateX(value) {
-    switch (this.type) {
-      case ActionType.StaticNodeTransform: this.fields1[3].value = -value; break
-      case ActionType.RandomNodeTransform: this.fields1[3].value = value; break
-    }
-  }
-
-  get rotateY() { return this.fields1[4].value }
-  set rotateY(value) { this.fields1[4].value = value }
-
-  get rotateZ() { return this.fields1[5].value }
-  set rotateZ(value) { this.fields1[5].value = value }
-
-  #setRandomizationField(index: number, value: number) {
-    if (value !== 0 && this.type === ActionType.StaticNodeTransform) {
-      this.type = ActionType.RandomNodeTransform
-      // The X rotation field needs to swap sign because it rotates the
-      // opposite direction in action 35 for some reason.
-      this.fields1[3].value *= -1
-      this.fields1.push(
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-        new FloatField(0),
-      )
-    }
-    this.fields1[index].value = value
-  }
-
-  get randomTranslationX() { return this.fields1[6]?.value ?? 0 }
-  set randomTranslationX(value) { this.#setRandomizationField(6, value) }
-
-  get randomTranslationY() { return this.fields1[7]?.value ?? 0 }
-  set randomTranslationY(value) { this.#setRandomizationField(7, value) }
-
-  get randomTranslationZ() { return this.fields1[8]?.value ?? 0 }
-  set randomTranslationZ(value) { this.#setRandomizationField(8, value) }
-
-  get randomRotationX() { return this.fields1[9]?.value ?? 0 }
-  set randomRotationX(value) { this.#setRandomizationField(9, value) }
-
-  get randomRotationY() { return this.fields1[10]?.value ?? 0 }
-  set randomRotationY(value) { this.#setRandomizationField(10, value) }
-
-  get randomRotationZ() { return this.fields1[11]?.value ?? 0 }
-  set randomRotationZ(value) { this.#setRandomizationField(11, value) }
-
-  minify() {
-    if (this.type === ActionType.RandomNodeTransform) {
-      if (
-        this.fields1[6].value === 0 &&
-        this.fields1[7].value === 0 &&
-        this.fields1[8].value === 0 &&
-        this.fields1[9].value === 0 &&
-        this.fields1[10].value === 0 &&
-        this.fields1[11].value === 0
-      ) {
-        if (
-          this.fields1[0].value === 0 &&
-          this.fields1[1].value === 0 &&
-          this.fields1[2].value === 0 &&
-          this.fields1[3].value === 0 &&
-          this.fields1[4].value === 0 &&
-          this.fields1[5].value === 0
-        ) {
-          // This transform doesn't do anything, return a None action.
-          return new Action
-        } else {
-          // This doesn't use the randomization fields, return a static
-          // transform action instead
-          return new Action(ActionType.StaticNodeTransform, [
-            this.fields1[0],
-            this.fields1[1],
-            this.fields1[2],
-            new FloatField(-this.fields1[3].value),
-            this.fields1[4],
-            this.fields1[5],
-          ])
-        }
-      } else {
-        // This action can't be minified more without losing functionality,
-        // return it without any changes
-        return this
-      }
-    } else {
-      if (
-        this.fields1[0].value === 0 &&
-        this.fields1[1].value === 0 &&
-        this.fields1[2].value === 0 &&
-        this.fields1[3].value === 0 &&
-        this.fields1[4].value === 0 &&
-        this.fields1[5].value === 0
-      ) {
-        // This transform doesn't do anything, return a None action.
-        return new Action
-      } else {
-        // This action can't be minified more without losing functionality,
-        // return it without any changes
-        return this
-      }
-    }
-  }
-
+  return new Action
 }
 
-export interface ParticleMovementParams {
-  /**
-   * Downwards acceleration. This will always point towards global down, even
-   * if the node is rotated. Defaults to 0.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The acceleration for the particles. The direction depends on the emitter
-   * shape. Defaults to 0.
-   * 
-   * This can not be used together with any of the speed properties:
-   * - {@link speed}
-   * - {@link speedMultiplier}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  acceleration?: ScalarValue
-  /**
-   * Multiplier for the {@link acceleration} property. Defaults to 1.
-   * 
-   * This can not be used together with any of the speed properties:
-   * - {@link speed}
-   * - {@link speedMultiplier}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  accelerationMultiplier?: ScalarValue
-  /**
-   * The speed that the particles will travel at. The direction depends on the
-   * emitter shape. Defaults to 0.
-   * 
-   * This can not be used together with any of the acceleration properties:
-   * - {@link acceleration}
-   * - {@link accelerationMultiplier}
-   * 
-   * Setting this will produce one of the speed actions instead of one of the
-   * acceleration actions:
-   * - {@link ActionType.ParticleSpeed ParticleSpeed}
-   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
-   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speed?: ScalarValue
-  /**
-   * Multiplier for the {@link speed} property. Defaults to 1.
-   * 
-   * This can not be used together with any of the acceleration properties:
-   * - {@link acceleration}
-   * - {@link accelerationMultiplier}
-   * 
-   * Setting this will produce one of the speed actions instead of one of the
-   * acceleration actions:
-   * - {@link ActionType.ParticleSpeed ParticleSpeed}
-   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
-   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedMultiplier?: ScalarValue
-  /**
-   * The particles will turn a random amount based on this value at intervals
-   * defined by {@link turnInterval}. Defaults to 0.
-   * 
-   * Unless one of the partial follow parameters are set, setting this will
-   * produce one of the random turns actions:
-   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
-   * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * The particles will turn a random amount based on {@link maxTurnAngle} at
-   * this interval. The units are seconds, but due to how the field that stores
-   * this value works, the value will be rounded to the nearest 0.02 seconds.
-   * Defaults to 0.
-   * 
-   * Unless one of the partial follow parameters are set, setting this will
-   * produce one of the random turns actions:
-   * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
-   * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
-   */
-  turnInterval?: number
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and
-   * not rotation. Defaults to true.
-   * 
-   * Setting this will produce one of the partial follow actions:
-   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
-   * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  followRotation?: boolean
-  /**
-   * Controls how well the particles should follow the node if they are not
-   * attached. At 0, particles will not follow at all. At 1, particles will
-   * follow perfectly, as if attached to the node. Negative values will make
-   * the particles move in the opposite direction compared to the node. Values
-   * greater than 1 will make the particles exaggerate the node's movement.
-   * Defaults to 0.
-   * 
-   * Setting this will produce one of the partial follow actions:
-   * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
-   * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
-  /**
-   * Unknown. Fields1, index 0.
-   */
-  unkField0?: number
-  /**
-   * Unknown. Fields1, index 1.
-   * 
-   * Only used when creating one of the basic particle movement actions:
-   * - {@link ActionType.ParticleAcceleration}
-   * - {@link ActionType.ParticleSpeed}
-   */
-  unkField1?: number
-}
 /**
- * Controls how particles move.
- * 
- * This class covers all of the Particle Movement action types:
+ * Constructs one of the following {@link ActionSlots.ParticleMovementAction Particle Movement} classes:
  * - {@link ActionType.ParticleAcceleration ParticleAcceleration}
+ * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
+ * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
  * - {@link ActionType.ParticleSpeed ParticleSpeed}
  * - {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns}
  * - {@link ActionType.ParticleSpeedPartialFollow ParticleSpeedPartialFollow}
- * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
- * - {@link ActionType.ParticleAccelerationPartialFollow ParticleAccelerationPartialFollow}
  * 
- * Which one is produced by the constructor depends on what arguments are set.
- * By default, the basic acceleration action is created.
- */
-class ParticleMovement extends Action {
-
-  constructor({
-    gravity = 0,
-    maxTurnAngle = null,
-    turnInterval = null,
-    acceleration = null,
-    accelerationMultiplier = null,
-    speed = null,
-    speedMultiplier = null,
-    followRotation = null,
-    followFactor = null,
-    unkField0 = 0,
-    unkField1 = null,
-  }: ParticleMovementParams = {}) {
-    let asProp: ScalarValue, asMultProp: ScalarValue
-    const isSpeedAct = speed !== null || speedMultiplier !== null
-    if (isSpeedAct) {
-      if (acceleration !== null || accelerationMultiplier !== null) {
-        throw new Error('The speed properties and the acceleration properties cannot be used together in a ParticleMovement action.')
-      }
-      asProp = speed ?? 0
-      asMultProp = speedMultiplier ?? 1
-    } else {
-      asProp = acceleration ?? 0
-      asMultProp = accelerationMultiplier ?? 1
-    }
-    if (followFactor !== null || followRotation !== null) {
-      turnInterval ??= 0
-      maxTurnAngle ??= 0
-      followRotation ??= true
-      followFactor ??= 0
-      super(
-        isSpeedAct ?
-          ActionType.ParticleSpeedPartialFollow
-        : ActionType.ParticleAccelerationPartialFollow,
-        [
-          new FloatField(unkField0),
-          new IntField(Math.round(turnInterval * 50)),
-          new BoolField(!followRotation),
-        ], [], [
-          scalarFromArg(gravity),
-          scalarFromArg(asProp),
-          scalarFromArg(asMultProp),
-          scalarFromArg(maxTurnAngle),
-          scalarFromArg(followFactor),
-        ]
-      )
-    } else if (turnInterval !== null || maxTurnAngle !== null) {
-      turnInterval ??= 0
-      maxTurnAngle ??= 0
-      super(
-        isSpeedAct ?
-          ActionType.ParticleSpeedRandomTurns
-        : ActionType.ParticleAccelerationRandomTurns,
-        [
-          new FloatField(unkField0),
-          new IntField(Math.round(turnInterval * 50)),
-        ], [], [
-          scalarFromArg(gravity),
-          scalarFromArg(asProp),
-          scalarFromArg(asMultProp),
-          scalarFromArg(maxTurnAngle),
-        ]
-      )
-    } else {
-      unkField1 ??= 0
-      super(
-        isSpeedAct ?
-          ActionType.ParticleSpeed
-        : ActionType.ParticleAcceleration,
-        [
-          new FloatField(unkField0),
-          new FloatField(unkField1),
-        ], [], [
-          scalarFromArg(gravity),
-          scalarFromArg(asProp),
-          scalarFromArg(asMultProp),
-        ]
-      )
-    }
-  }
-
-}
-
-/**
- * References another SFX by its ID.
- */
-class SFXReference extends DataAction {
-
-  /**
-   * The ID of the referenced SFX.
-   */
-  sfx: number
-
-  /**
-   * @param sfx The ID of the referenced SFX.
-   */
-  constructor(sfx: number) {
-    super(ActionType.SFXReference)
-    this.assign({ sfx })
-  }
-
-}
-
-/**
- * Maps states to effects in the parent node.
+ * Which one is produced depends on what arguments are set.
  * 
- * The index of each value represents the index of the state, and the value
- * represents the index of the effect that should be active when the state is
- * active.
+ * If you are trying to figure out what some of the unknown fields in these
+ * actions do, use the actual classes themselves instead of relying on this
+ * shortcut. It only exists to make things easier, not to control exactly what
+ * happens.
  */
-class StateEffectMap extends Action {
-
-  constructor(...effectIndices: number[]) {
-    if (effectIndices.length === 0) {
-      effectIndices.push(0)
+function ParticleMovement(params: ParticleMovementParams = {}) {
+  if (
+    'speed' in params ||
+    'speedMultiplier' in params
+  ) {
+    if (
+      'acceleration' in params ||
+      'accelerationMultiplier' in params
+    ) {
+      throw new Error('The speed properties are not compatible with the acceleration properties in Particle Movement actions.')
     }
-    if (effectIndices.every(e => e === 0)) {
-      /*
-        If every index is 0, it is equivalent to just having a single field
-        with 0, so this automatically minifies the action.
-      */
-      super(ActionType.StateEffectMap, [], [], [], [], [
-        new Section10([new IntField])
-      ])
-    } else {
-      super(ActionType.StateEffectMap, [], [], [], [], [
-        new Section10(effectIndices.map(i => new IntField(i)))
-      ])
+    if (
+      'followFactor' in params ||
+      'followRotation' in params
+    ) {
+      return new ParticleSpeedPartialFollow(params)
     }
-  }
-
-  get effectIndices() { return this.section10s[0].fields.map(e => e.value) }
-  set effectIndices(value: number[]) {
-    if (value.every(e => e === 0)) {
-      this.section10s[0].fields = [new IntField]
-    } else {
-      this.section10s[0].fields = value.map(e => new IntField(e))
+    if (
+      'maxTurnAngle' in params ||
+      'turnInterval' in params
+    ) {
+      return new ParticleSpeedRandomTurns(params)
     }
+    return new ParticleSpeed(params)
   }
-
-}
-
-/**
- * Used in {@link EffectType.SharedEmitter} to emit all particles from child
- * nodes every time the shared emitter emits something.
- */
-class EmitAllParticles extends Action {
-
-  constructor() {
-    super(ActionType.EmitAllParticles)
+  if (
+    'followFactor' in params ||
+    'followRotation' in params
+  ) {
+    return new ParticleAccelerationPartialFollow(params)
   }
-
-}
-
-/**
- * Used in {@link EffectType.SharedEmitter} to emit a particle from a random
- * child node every time the shared emitter emits something.
- */
-class EmitRandomParticles extends Action {
-
-  constructor(...weights: number[]) {
-    super(ActionType.EmitRandomParticles, [], [], [], [], [
-      new Section10(weights.map(w => new IntField(w)))
-    ])
+  if (
+    'maxTurnAngle' in params ||
+    'turnInterval' in params
+  ) {
+    return new ParticleAccelerationRandomTurns(params)
   }
-
-}
-
-/**
- * Emits one particle once.
- * 
- * Contains no fields or properties.
- */
-class OneTimeEmitter extends Action {
-
-  constructor() {
-    super(ActionType.OneTimeEmitter)
-  }
-
-}
-
-/**
- * Makes all particles use the default initial direction from the emitter. See
- * {@link InitialDirection} for more information.
- */
-class NoParticleSpread extends Action {
-
-  constructor() {
-    super(ActionType.NoParticleSpread)
-  }
-
+  return new ParticleAcceleration(params)
 }
 
 /*#ActionClasses start*/
+export interface NodeAccelerationParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+}
+
+/**
+ * ### {@link ActionType.NodeAcceleration Action 1 - NodeAcceleration}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
+ */
+class NodeAcceleration extends DataAction {
+  declare type: ActionType.NodeAcceleration
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_2: number
+  constructor(props: NodeAccelerationParams = {}) {
+    super(ActionType.NodeAcceleration)
+    this.assign(props)
+  }
+}
+
 export interface NodeTranslationParams {
   /**
    * An offset for the position of the node.
@@ -8991,6 +9423,9 @@ export interface NodeTranslationParams {
 }
 
 /**
+ * ### {@link ActionType.NodeTranslation Action 15 - NodeTranslation}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
  * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
  */
 class NodeTranslation extends DataAction {
@@ -9011,6 +9446,346 @@ class NodeTranslation extends DataAction {
   }
 }
 
+export interface NodeSpinParams {
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX?: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY?: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpin Action 34 - NodeSpin}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the angular speed of the node.
+ */
+class NodeSpin extends DataAction {
+  declare type: ActionType.NodeSpin
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ: ScalarValue
+  unk_ds3_f1_0: number
+  constructor(props: NodeSpinParams = {}) {
+    super(ActionType.NodeSpin)
+    this.assign(props)
+  }
+}
+
+export interface StaticNodeTransformParams {
+  /**
+   * Translation of the node along the local X-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetX?: number
+  /**
+   * Translation of the node along the local Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetY?: number
+  /**
+   * Translation of the node along the local Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetZ?: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationX?: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationY?: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationZ?: number
+}
+
+/**
+ * ### {@link ActionType.StaticNodeTransform Action 35 - StaticNodeTransform}
+ * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+ * 
+ * Controls the translation and rotation of a node.
+ */
+class StaticNodeTransform extends DataAction {
+  declare type: ActionType.StaticNodeTransform
+  /**
+   * Translation of the node along the local X-axis.
+   */
+  offsetX: number
+  /**
+   * Translation of the node along the local Y-axis.
+   */
+  offsetY: number
+  /**
+   * Translation of the node along the local Z-axis.
+   */
+  offsetZ: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   */
+  rotationX: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   */
+  rotationY: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   */
+  rotationZ: number
+  constructor(props: StaticNodeTransformParams = {}) {
+    super(ActionType.StaticNodeTransform)
+    this.assign(props)
+  }
+}
+
+export interface RandomNodeTransformParams {
+  /**
+   * Translation of the node along the local X-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetX?: number
+  /**
+   * Translation of the node along the local Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetY?: number
+  /**
+   * Translation of the node along the local Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  offsetZ?: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationX?: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationY?: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  rotationZ?: number
+  /**
+   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `0`
+   */
+  offsetVarianceX?: number
+  /**
+   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `0`
+   */
+  offsetVarianceY?: number
+  /**
+   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `0`
+   */
+  offsetVarianceZ?: number
+  /**
+   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `0`
+   */
+  rotationVarianceX?: number
+  /**
+   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `0`
+   */
+  rotationVarianceY?: number
+  /**
+   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `0`
+   */
+  rotationVarianceZ?: number
+}
+
+/**
+ * ### {@link ActionType.RandomNodeTransform Action 36 - RandomNodeTransform}
+ * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+ * 
+ * Controls the translation and rotation of a node, and can also randomize them.
+ */
+class RandomNodeTransform extends DataAction {
+  declare type: ActionType.RandomNodeTransform
+  /**
+   * Translation of the node along the local X-axis.
+   */
+  offsetX: number
+  /**
+   * Translation of the node along the local Y-axis.
+   */
+  offsetY: number
+  /**
+   * Translation of the node along the local Z-axis.
+   */
+  offsetZ: number
+  /**
+   * The rotation of the node around the local X-axis in degrees.
+   */
+  rotationX: number
+  /**
+   * The rotation of the node around the local Y-axis in degrees.
+   */
+  rotationY: number
+  /**
+   * The rotation of the node around the local Z-axis in degrees.
+   */
+  rotationZ: number
+  /**
+   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
+   */
+  offsetVarianceX: number
+  /**
+   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
+   */
+  offsetVarianceY: number
+  /**
+   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
+   */
+  offsetVarianceZ: number
+  /**
+   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
+   */
+  rotationVarianceX: number
+  /**
+   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
+   */
+  rotationVarianceY: number
+  /**
+   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
+   */
+  rotationVarianceZ: number
+  constructor(props: RandomNodeTransformParams = {}) {
+    super(ActionType.RandomNodeTransform)
+    this.assign(props)
+  }
+}
+
 export interface NodeAttachToCameraParams {
   /**
    * Disable this to stop the node from following the rotation of the camera.
@@ -9027,6 +9802,9 @@ export interface NodeAttachToCameraParams {
 }
 
 /**
+ * ### {@link ActionType.NodeAttachToCamera Action 46 - NodeAttachToCamera}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
  * Attaches the node to the camera.
  */
 class NodeAttachToCamera extends DataAction {
@@ -9038,6 +9816,394 @@ class NodeAttachToCamera extends DataAction {
   unk_ds3_f1_1: number
   constructor(props: NodeAttachToCameraParams = {}) {
     super(ActionType.NodeAttachToCamera)
+    this.assign(props)
+  }
+}
+
+export interface ParticleAccelerationParams {
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: ScalarValue
+  /**
+   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration?: ScalarValue
+  /**
+   * Multiplier for {@link acceleration}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMultiplier?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+}
+
+/**
+ * ### {@link ActionType.ParticleAcceleration Action 55 - ParticleAcceleration}
+ * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+ * 
+ * Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
+ */
+class ParticleAcceleration extends DataAction {
+  declare type: ActionType.ParticleAcceleration
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity: ScalarValue
+  /**
+   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration: ScalarValue
+  /**
+   * Multiplier for {@link acceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMultiplier: ScalarValue
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  constructor(props: ParticleAccelerationParams = {}) {
+    super(ActionType.ParticleAcceleration)
+    this.assign(props)
+  }
+}
+
+export interface ParticleSpeedParams {
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: ScalarValue
+  /**
+   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed?: ScalarValue
+  /**
+   * Multiplier for {@link speed}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMultiplier?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+}
+
+/**
+ * ### {@link ActionType.ParticleSpeed Action 60 - ParticleSpeed}
+ * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+ * 
+ * Controls the movement of particles. This is the most basic action for controlling the speed of particles.
+ */
+class ParticleSpeed extends DataAction {
+  declare type: ActionType.ParticleSpeed
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity: ScalarValue
+  /**
+   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed: ScalarValue
+  /**
+   * Multiplier for {@link speed}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMultiplier: ScalarValue
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  constructor(props: ParticleSpeedParams = {}) {
+    super(ActionType.ParticleSpeed)
+    this.assign(props)
+  }
+}
+
+export interface ParticleSpeedRandomTurnsParams {
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: ScalarValue
+  /**
+   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed?: ScalarValue
+  /**
+   * Multiplier for {@link speed}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMultiplier?: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+}
+
+/**
+ * ### {@link ActionType.ParticleSpeedRandomTurns Action 64 - ParticleSpeedRandomTurns}
+ * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+ * 
+ * Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
+ */
+class ParticleSpeedRandomTurns extends DataAction {
+  declare type: ActionType.ParticleSpeedRandomTurns
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity: ScalarValue
+  /**
+   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed: ScalarValue
+  /**
+   * Multiplier for {@link speed}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMultiplier: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   */
+  turnInterval: number
+  constructor(props: ParticleSpeedRandomTurnsParams = {}) {
+    super(ActionType.ParticleSpeedRandomTurns)
+    this.assign(props)
+  }
+}
+
+export interface ParticleSpeedPartialFollowParams {
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: ScalarValue
+  /**
+   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed?: ScalarValue
+  /**
+   * Multiplier for {@link speed}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMultiplier?: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: ScalarValue
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+}
+
+/**
+ * ### {@link ActionType.ParticleSpeedPartialFollow Action 65 - ParticleSpeedPartialFollow}
+ * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+ * 
+ * Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
+ */
+class ParticleSpeedPartialFollow extends DataAction {
+  declare type: ActionType.ParticleSpeedPartialFollow
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity: ScalarValue
+  /**
+   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speed: ScalarValue
+  /**
+   * Multiplier for {@link speed}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  speedMultiplier: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   */
+  turnInterval: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   */
+  followRotation: boolean
+  constructor(props: ParticleSpeedPartialFollowParams = {}) {
+    super(ActionType.ParticleSpeedPartialFollow)
     this.assign(props)
   }
 }
@@ -9068,6 +10234,9 @@ export interface NodeSoundParams {
 }
 
 /**
+ * ### {@link ActionType.NodeSound Action 75 - NodeSound}
+ * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+ * 
  * Plays a sound effect when the node activates that can repeat.
  */
 class NodeSound extends DataAction {
@@ -9110,6 +10279,9 @@ export interface EmissionSoundParams {
 }
 
 /**
+ * ### {@link ActionType.EmissionSound Action 81 - EmissionSound}
+ * **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+ * 
  * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
  */
 class EmissionSound extends DataAction {
@@ -9121,6 +10293,1223 @@ class EmissionSound extends DataAction {
   unk_ds3_f1_1: number
   constructor(props: EmissionSoundParams = {}) {
     super(ActionType.EmissionSound)
+    this.assign(props)
+  }
+}
+
+export interface NodeAccelerationRandomTurnsParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+}
+
+/**
+ * ### {@link ActionType.NodeAccelerationRandomTurns Action 83 - NodeAccelerationRandomTurns}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+ */
+class NodeAccelerationRandomTurns extends DataAction {
+  declare type: ActionType.NodeAccelerationRandomTurns
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  constructor(props: NodeAccelerationRandomTurnsParams = {}) {
+    super(ActionType.NodeAccelerationRandomTurns)
+    this.assign(props)
+  }
+}
+
+export interface ParticleAccelerationRandomTurnsParams {
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: ScalarValue
+  /**
+   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration?: ScalarValue
+  /**
+   * Multiplier for {@link acceleration}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMultiplier?: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+}
+
+/**
+ * ### {@link ActionType.ParticleAccelerationRandomTurns Action 84 - ParticleAccelerationRandomTurns}
+ * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+ * 
+ * Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
+ */
+class ParticleAccelerationRandomTurns extends DataAction {
+  declare type: ActionType.ParticleAccelerationRandomTurns
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity: ScalarValue
+  /**
+   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration: ScalarValue
+  /**
+   * Multiplier for {@link acceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMultiplier: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   */
+  turnInterval: number
+  constructor(props: ParticleAccelerationRandomTurnsParams = {}) {
+    super(ActionType.ParticleAccelerationRandomTurns)
+    this.assign(props)
+  }
+}
+
+export interface ParticleAccelerationPartialFollowParams {
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity?: ScalarValue
+  /**
+   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration?: ScalarValue
+  /**
+   * Multiplier for {@link acceleration}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMultiplier?: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: ScalarValue
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+}
+
+/**
+ * ### {@link ActionType.ParticleAccelerationPartialFollow Action 105 - ParticleAccelerationPartialFollow}
+ * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+ * 
+ * Controls the movement of particles. This extends {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns} with the ability to make particles partially follow the parent node.
+ */
+class ParticleAccelerationPartialFollow extends DataAction {
+  declare type: ActionType.ParticleAccelerationPartialFollow
+  /**
+   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+   * 
+   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  gravity: ScalarValue
+  /**
+   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  acceleration: ScalarValue
+  /**
+   * Multiplier for {@link acceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  accelerationMultiplier: ScalarValue
+  /**
+   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   */
+  turnInterval: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   */
+  followRotation: boolean
+  constructor(props: ParticleAccelerationPartialFollowParams = {}) {
+    super(ActionType.ParticleAccelerationPartialFollow)
+    this.assign(props)
+  }
+}
+
+export interface NodeAccelerationPartialFollowParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link accelerationY}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along the global Y-axis. When set to anything that isn't 0, this overrides the direction of {@link accelerationZ}.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+}
+
+/**
+ * ### {@link ActionType.NodeAccelerationPartialFollow Action 106 - NodeAccelerationPartialFollow}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+ */
+class NodeAccelerationPartialFollow extends DataAction {
+  declare type: ActionType.NodeAccelerationPartialFollow
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link accelerationY}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along the global Y-axis. When set to anything that isn't 0, this overrides the direction of {@link accelerationZ}.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   */
+  followRotation: boolean
+  constructor(props: NodeAccelerationPartialFollowParams = {}) {
+    super(ActionType.NodeAccelerationPartialFollow)
+    this.assign(props)
+  }
+}
+
+export interface NodeAccelerationSpinParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ?: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX?: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY?: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+}
+
+/**
+ * ### {@link ActionType.NodeAccelerationSpin Action 113 - NodeAccelerationSpin}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
+ */
+class NodeAccelerationSpin extends DataAction {
+  declare type: ActionType.NodeAccelerationSpin
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationZ: ScalarValue
+  /**
+   * Multiplier for {@link accelerationZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ: ScalarValue
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_3: number
+  constructor(props: NodeAccelerationSpinParams = {}) {
+    super(ActionType.NodeAccelerationSpin)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpeed Action 120 - NodeSpeed}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
+ */
+class NodeSpeed extends DataAction {
+  declare type: ActionType.NodeSpeed
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_2: number
+  constructor(props: NodeSpeedParams = {}) {
+    super(ActionType.NodeSpeed)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedRandomTurnsParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpeedRandomTurns Action 121 - NodeSpeedRandomTurns}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
+ */
+class NodeSpeedRandomTurns extends DataAction {
+  declare type: ActionType.NodeSpeedRandomTurns
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  constructor(props: NodeSpeedRandomTurnsParams = {}) {
+    super(ActionType.NodeSpeedRandomTurns)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedPartialFollowParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle?: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor?: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
+   */
+  turnInterval?: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
+   */
+  followRotation?: boolean
+}
+
+/**
+ * ### {@link ActionType.NodeSpeedPartialFollow Action 122 - NodeSpeedPartialFollow}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+ */
+class NodeSpeedPartialFollow extends DataAction {
+  declare type: ActionType.NodeSpeedPartialFollow
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  maxTurnAngle: ScalarValue
+  /**
+   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link followRotation}
+   */
+  followFactor: ScalarValue
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_1: number
+  /**
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   */
+  turnInterval: number
+  /**
+   * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   */
+  followRotation: boolean
+  constructor(props: NodeSpeedPartialFollowParams = {}) {
+    super(ActionType.NodeSpeedPartialFollow)
+    this.assign(props)
+  }
+}
+
+export interface NodeSpeedSpinParams {
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ?: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ?: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY?: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX?: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY?: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ?: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+}
+
+/**
+ * ### {@link ActionType.NodeSpeedSpin Action 123 - NodeSpeedSpin}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
+ */
+class NodeSpeedSpin extends DataAction {
+  declare type: ActionType.NodeSpeedSpin
+  /**
+   * Controls the speed of the node along its Z-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  speedZ: ScalarValue
+  /**
+   * Multiplier for {@link speedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  speedMultiplierZ: ScalarValue
+  /**
+   * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  accelerationY: ScalarValue
+  /**
+   * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierX}
+   */
+  angularSpeedX: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedX}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierX: ScalarValue
+  /**
+   * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierY}
+   */
+  angularSpeedY: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedY}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierY: ScalarValue
+  /**
+   * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link angularSpeedMultiplierZ}
+   */
+  angularSpeedZ: ScalarValue
+  /**
+   * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  angularSpeedMultiplierZ: ScalarValue
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   */
+  alignWithMotion: number
+  unk_ds3_f1_3: number
+  constructor(props: NodeSpeedSpinParams = {}) {
+    super(ActionType.NodeSpeedSpin)
     this.assign(props)
   }
 }
@@ -9161,6 +11550,9 @@ export interface NodeAttributesParams {
 }
 
 /**
+ * ### {@link ActionType.NodeAttributes Action 128 - NodeAttributes}
+ * **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+ * 
  * Controls various things about the node, like its duration, and how it is attached to the parent node.
  */
 class NodeAttributes extends DataAction {
@@ -9205,6 +11597,9 @@ export interface ParticleAttributesParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleAttributes Action 129 - ParticleAttributes}
+ * **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+ * 
  * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
  */
 class ParticleAttributes extends DataAction {
@@ -9331,6 +11726,9 @@ export interface Unk130Params {
 }
 
 /**
+ * ### {@link ActionType.Unk130 Action 130 - Unk130}
+ * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
+ * 
  * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
@@ -9371,7 +11769,7 @@ export interface ParticleModifierParams {
    */
   uniformScale?: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in slot 10 that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
    * 
    * **Default**: `0`
    * 
@@ -9419,6 +11817,9 @@ export interface ParticleModifierParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleModifier Action 131 - ParticleModifier}
+ * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+ * 
  * Modifies particles in various ways.
    * 
    * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
@@ -9435,7 +11836,7 @@ class ParticleModifier extends DataAction {
    */
   uniformScale: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in slot 10 that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
@@ -9473,6 +11874,28 @@ class ParticleModifier extends DataAction {
   constructor(props: ParticleModifierParams = {}) {
     super(ActionType.ParticleModifier)
     this.assign(props)
+  }
+}
+
+/**
+ * ### {@link ActionType.SFXReference Action 132 - SFXReference}
+ * 
+ * References another SFX by its ID.
+ */
+class SFXReference extends DataAction {
+  declare type: ActionType.SFXReference
+  /**
+   * The ID of the referenced SFX.
+   */
+  sfx: number
+  /**
+   * @param sfx The ID of the referenced SFX.
+   *
+   * **Default**: `0`
+   */
+  constructor(sfx: number = 0) {
+    super(ActionType.SFXReference)
+    this.assign({ sfx })
   }
 }
 
@@ -9524,6 +11947,8 @@ export interface LevelsOfDetailThresholdsParams {
 }
 
 /**
+ * ### {@link ActionType.LevelsOfDetailThresholds Action 133 - LevelsOfDetailThresholds}
+ * 
  * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
@@ -9558,6 +11983,73 @@ class LevelsOfDetailThresholds extends DataAction {
   constructor(props: LevelsOfDetailThresholdsParams = {}) {
     super(ActionType.LevelsOfDetailThresholds)
     this.assign(props)
+  }
+}
+
+/**
+ * ### {@link ActionType.StateEffectMap Action 199 - StateEffectMap}
+ * 
+ * Maps states to effects in the parent node.
+ */
+class StateEffectMap extends DataAction {
+  declare type: ActionType.StateEffectMap
+  /**
+   * A list of effect indices.
+   * 
+   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   */
+  effectIndices: number[]
+  /**
+   * @param effectIndices A list of effect indices.
+   * 
+   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   *
+   * **Default**: `[0]`
+   */
+  constructor(effectIndices: number[] = [0]) {
+    super(ActionType.StateEffectMap)
+    this.assign({ effectIndices })
+  }
+}
+
+/**
+ * ### {@link ActionType.EmitAllParticles Action 200 - EmitAllParticles}
+ * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * 
+ * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+ */
+class EmitAllParticles extends DataAction {
+  declare type: ActionType.EmitAllParticles
+  
+  constructor() {
+    super(ActionType.EmitAllParticles)
+  }
+}
+
+/**
+ * ### {@link ActionType.EmitRandomParticles Action 201 - EmitRandomParticles}
+ * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * 
+ * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+ */
+class EmitRandomParticles extends DataAction {
+  declare type: ActionType.EmitRandomParticles
+  /**
+   * Probability weights for each child node to be picked when emitting.
+   * 
+   * The weights are stored as integers, so non-integer values in this list will be truncated.
+   */
+  weights: number[]
+  /**
+   * @param weights Probability weights for each child node to be picked when emitting.
+   * 
+   * The weights are stored as integers, so non-integer values in this list will be truncated.
+   *
+   * **Default**: `[1]`
+   */
+  constructor(weights: number[] = [1]) {
+    super(ActionType.EmitRandomParticles)
+    this.assign({ weights })
   }
 }
 
@@ -9603,6 +12095,9 @@ export interface PeriodicEmitterParams {
 }
 
 /**
+ * ### {@link ActionType.PeriodicEmitter Action 300 - PeriodicEmitter}
+ * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+ * 
  * Emits particles periodically.
  */
 class PeriodicEmitter extends DataAction {
@@ -9684,6 +12179,9 @@ export interface EqualDistanceEmitterParams {
 }
 
 /**
+ * ### {@link ActionType.EqualDistanceEmitter Action 301 - EqualDistanceEmitter}
+ * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+ * 
  * Emits particles once it has moved a certain distance from where it last emitted particles.
  */
 class EqualDistanceEmitter extends DataAction {
@@ -9710,16 +12208,24 @@ class EqualDistanceEmitter extends DataAction {
   }
 }
 
-export interface PointEmitterShapeParams {
-  /**
-   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
-   * 
-   * **Default**: {@link InitialDirection.Emitter}
-   */
-  direction?: InitialDirection
+/**
+ * ### {@link ActionType.OneTimeEmitter Action 399 - OneTimeEmitter}
+ * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+ * 
+ * Emits one particle once.
+ */
+class OneTimeEmitter extends DataAction {
+  declare type: ActionType.OneTimeEmitter
+  
+  constructor() {
+    super(ActionType.OneTimeEmitter)
+  }
 }
 
 /**
+ * ### {@link ActionType.PointEmitterShape Action 400 - PointEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter a single point.
  */
 class PointEmitterShape extends DataAction {
@@ -9728,9 +12234,14 @@ class PointEmitterShape extends DataAction {
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
   direction: InitialDirection
-  constructor(props: PointEmitterShapeParams = {}) {
+  /**
+   * @param direction Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   *
+   * **Default**: {@link InitialDirection.Emitter}
+   */
+  constructor(direction: InitialDirection = InitialDirection.Emitter) {
     super(ActionType.PointEmitterShape)
-    this.assign(props)
+    this.assign({ direction })
   }
 }
 
@@ -9764,6 +12275,9 @@ export interface DiskEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.DiskEmitterShape Action 401 - DiskEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter disk-shaped.
  */
 class DiskEmitterShape extends DataAction {
@@ -9832,6 +12346,9 @@ export interface RectangleEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.RectangleEmitterShape Action 402 - RectangleEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter rectangular.
  */
 class RectangleEmitterShape extends DataAction {
@@ -9886,6 +12403,9 @@ export interface SphereEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.SphereEmitterShape Action 403 - SphereEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter spherical.
  */
 class SphereEmitterShape extends DataAction {
@@ -9946,6 +12466,9 @@ export interface BoxEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.BoxEmitterShape Action 404 - BoxEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter cuboidal.
  */
 class BoxEmitterShape extends DataAction {
@@ -10020,6 +12543,9 @@ export interface CylinderEmitterShapeParams {
 }
 
 /**
+ * ### {@link ActionType.CylinderEmitterShape Action 405 - CylinderEmitterShape}
+ * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+ * 
  * Makes the emitter cylindrical.
  */
 class CylinderEmitterShape extends DataAction {
@@ -10054,6 +12580,20 @@ class CylinderEmitterShape extends DataAction {
   }
 }
 
+/**
+ * ### {@link ActionType.NoParticleSpread Action 500 - NoParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
+ * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+ */
+class NoParticleSpread extends DataAction {
+  declare type: ActionType.NoParticleSpread
+  
+  constructor() {
+    super(ActionType.NoParticleSpread)
+  }
+}
+
 export interface CircularParticleSpreadParams {
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
@@ -10085,6 +12625,9 @@ export interface CircularParticleSpreadParams {
 }
 
 /**
+ * ### {@link ActionType.CircularParticleSpread Action 501 - CircularParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
  * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
  */
 class CircularParticleSpread extends DataAction {
@@ -10161,6 +12704,9 @@ export interface EllipticalParticleSpreadParams {
 }
 
 /**
+ * ### {@link ActionType.EllipticalParticleSpread Action 502 - EllipticalParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
  * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
  */
 class EllipticalParticleSpread extends DataAction {
@@ -10243,6 +12789,9 @@ export interface RectangularParticleSpreadParams {
 }
 
 /**
+ * ### {@link ActionType.RectangularParticleSpread Action 503 - RectangularParticleSpread}
+ * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * 
  * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
  */
 class RectangularParticleSpread extends DataAction {
@@ -10612,11 +13161,15 @@ export interface PointSpriteParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -10692,6 +13245,9 @@ export interface PointSpriteParams {
 }
 
 /**
+ * ### {@link ActionType.PointSprite Action 600 - PointSprite}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
  */
 class PointSprite extends DataAction {
@@ -10841,7 +13397,14 @@ class PointSprite extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -11197,11 +13760,15 @@ export interface LineParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -11277,6 +13844,9 @@ export interface LineParams {
 }
 
 /**
+ * ### {@link ActionType.Line Action 601 - Line}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Simple line particle. It automatically rotates to match the direction it's moving.
  */
 class Line extends DataAction {
@@ -11439,7 +14009,14 @@ class Line extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -11814,11 +14391,15 @@ export interface QuadLineParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -11894,6 +14475,9 @@ export interface QuadLineParams {
 }
 
 /**
+ * ### {@link ActionType.QuadLine Action 602 - QuadLine}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
  */
 class QuadLine extends DataAction {
@@ -12071,7 +14655,14 @@ class QuadLine extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -12184,11 +14775,13 @@ export interface BillboardExParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
@@ -12197,8 +14790,8 @@ export interface BillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -12209,8 +14802,8 @@ export interface BillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -12221,12 +14814,12 @@ export interface BillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -12234,11 +14827,11 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -12246,11 +14839,11 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -12258,11 +14851,11 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -12271,9 +14864,9 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -12282,9 +14875,9 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -12293,7 +14886,7 @@ export interface BillboardExParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
@@ -12758,11 +15351,15 @@ export interface BillboardExParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -12841,9 +15438,18 @@ export interface BillboardExParams {
    * **Default**: `0`
    */
   unk_sdt_f2_44?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_45?: number
 }
 
 /**
+ * ### {@link ActionType.BillboardEx Action 603 - BillboardEx}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
  */
 class BillboardEx extends DataAction {
@@ -12921,17 +15527,19 @@ class BillboardEx extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -12940,8 +15548,8 @@ class BillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -12950,67 +15558,67 @@ class BillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
@@ -13241,7 +15849,14 @@ class BillboardEx extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f1_15: number
   unk_sdt_f1_16: number
   unk_sdt_f1_17: number
@@ -13255,6 +15870,7 @@ class BillboardEx extends DataAction {
   unk_sdt_f2_42: number
   unk_sdt_f2_43: number
   unk_sdt_f2_44: number
+  unk_ac6_f2_45: number
   constructor(props: BillboardExParams = {}) {
     super(ActionType.BillboardEx)
     this.assign(props)
@@ -13514,8 +16130,8 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -13526,8 +16142,8 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -13538,12 +16154,12 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -13551,11 +16167,11 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -13563,11 +16179,11 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -13575,11 +16191,11 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -13588,9 +16204,9 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -13599,9 +16215,9 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -13610,7 +16226,7 @@ export interface MultiTextureBillboardExParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -13662,11 +16278,13 @@ export interface MultiTextureBillboardExParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -14026,11 +16644,15 @@ export interface MultiTextureBillboardExParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -14124,6 +16746,9 @@ export interface MultiTextureBillboardExParams {
 }
 
 /**
+ * ### {@link ActionType.MultiTextureBillboardEx Action 604 - MultiTextureBillboardEx}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with multiple textures that can scroll.
  */
 class MultiTextureBillboardEx extends DataAction {
@@ -14321,8 +16946,8 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -14331,8 +16956,8 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -14341,67 +16966,67 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -14441,9 +17066,11 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -14580,7 +17207,14 @@ class MultiTextureBillboardEx extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -14604,11 +17238,11 @@ class MultiTextureBillboardEx extends DataAction {
 
 export interface ModelParams {
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Model orientation mode. See {@link ModelOrientationMode} for more information.
    * 
-   * **Default**: {@link OrientationMode.LocalSouth}
+   * **Default**: {@link ModelOrientationMode.ParticleDirection}
    */
-  orientation?: OrientationMode
+  orientation?: ModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -14816,8 +17450,8 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -14828,8 +17462,8 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -14840,12 +17474,12 @@ export interface ModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -14853,11 +17487,11 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -14865,11 +17499,11 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -14877,11 +17511,11 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -14890,9 +17524,9 @@ export interface ModelParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -14901,9 +17535,9 @@ export interface ModelParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -14912,7 +17546,7 @@ export interface ModelParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Blend mode.
    * 
@@ -15402,14 +18036,19 @@ export interface ModelParams {
 }
 
 /**
+ * ### {@link ActionType.Model Action 605 - Model}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Particle with a 3D model.
+   * 
+   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
  */
 class Model extends DataAction {
   declare type: ActionType.Model
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Model orientation mode. See {@link ModelOrientationMode} for more information.
    */
-  orientation: OrientationMode
+  orientation: ModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -15583,8 +18222,8 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -15593,8 +18232,8 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -15603,67 +18242,67 @@ class Model extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Blend mode.
    * 
@@ -16107,11 +18746,13 @@ export interface TracerParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -16398,11 +19039,15 @@ export interface TracerParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -16454,6 +19099,9 @@ export interface TracerParams {
 }
 
 /**
+ * ### {@link ActionType.Tracer Action 606 - Tracer}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Creates a trail behind moving effects.
  */
 class Tracer extends DataAction {
@@ -16647,9 +19295,11 @@ class Tracer extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -16739,7 +19389,14 @@ class Tracer extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -17275,11 +19932,15 @@ export interface DistortionParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown float.
    * 
@@ -17361,6 +20022,9 @@ export interface DistortionParams {
 }
 
 /**
+ * ### {@link ActionType.Distortion Action 607 - Distortion}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * A particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -17660,7 +20324,14 @@ class Distortion extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
@@ -18066,11 +20737,15 @@ export interface RadialBlurParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown float.
    * 
@@ -18092,6 +20767,9 @@ export interface RadialBlurParams {
 }
 
 /**
+ * ### {@link ActionType.RadialBlur Action 608 - RadialBlur}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * A particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
@@ -18294,7 +20972,14 @@ class RadialBlur extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   unk_er_f1_3: number
   unk_er_f1_4: number
@@ -18704,6 +21389,9 @@ export interface PointLightParams {
 }
 
 /**
+ * ### {@link ActionType.PointLight Action 609 - PointLight}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Point light source.
  */
 class PointLight extends DataAction {
@@ -18921,24 +21609,51 @@ class PointLight extends DataAction {
   }
 }
 
-export interface Unk701Params {
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_p1_0?: ScalarValue
+/**
+ * ### {@link ActionType.Unk700 Action 700 - Unk700}
+ * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * 
+ * Unknown root node action that was introduced in Elden Ring.
+ */
+class Unk700 extends DataAction {
+  declare type: ActionType.Unk700
+  
+  constructor() {
+    super(ActionType.Unk700)
+  }
 }
 
 /**
+ * ### {@link ActionType.Unk701 Action 701 - Unk701}
+ * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * 
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk701 extends DataAction {
   declare type: ActionType.Unk701
   unk_er_p1_0: ScalarValue
-  constructor(props: Unk701Params = {}) {
+  /**
+   * @param unk_er_p1_0 Unknown.
+   *
+   * **Default**: `1`
+   */
+  constructor(unk_er_p1_0: ScalarValue = 1) {
     super(ActionType.Unk701)
-    this.assign(props)
+    this.assign({ unk_er_p1_0 })
+  }
+}
+
+/**
+ * ### {@link ActionType.Unk702 Action 702 - Unk702}
+ * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * 
+ * Unknown root node action that was introduced in Elden Ring.
+ */
+class Unk702 extends DataAction {
+  declare type: ActionType.Unk702
+  
+  constructor() {
+    super(ActionType.Unk702)
   }
 }
 
@@ -18968,6 +21683,9 @@ export interface NodeWindSpeedParams {
 }
 
 /**
+ * ### {@link ActionType.NodeWindSpeed Action 731 - NodeWindSpeed}
+ * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+ * 
  * Controls how effective the wind is at pushing the node.
  */
 class NodeWindSpeed extends DataAction {
@@ -19026,6 +21744,9 @@ export interface ParticleWindSpeedParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleWindSpeed Action 732 - ParticleWindSpeed}
+ * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * 
  * Controls how effective the wind is at pushing the particles emitted from the node.
  */
 class ParticleWindSpeed extends DataAction {
@@ -19082,6 +21803,9 @@ export interface NodeWindAccelerationParams {
 }
 
 /**
+ * ### {@link ActionType.NodeWindAcceleration Action 733 - NodeWindAcceleration}
+ * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+ * 
  * Controls how effective the wind is at accelerating the node.
  */
 class NodeWindAcceleration extends DataAction {
@@ -19140,6 +21864,9 @@ export interface ParticleWindAccelerationParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleWindAcceleration Action 734 - ParticleWindAcceleration}
+ * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * 
  * Controls how effective the wind is at accelerating the particles emitted from the node.
    * 
    * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
@@ -19194,7 +21921,10 @@ export interface Unk800Params {
 }
 
 /**
- * Unknown action that was added in Armored Core 6 and can go into the same slot as the particle wind actions.
+ * ### {@link ActionType.Unk800 Action 800 - Unk800}
+ * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * 
+ * Unknown action that was added in Armored Core 6.
  */
 class Unk800 extends DataAction {
   declare type: ActionType.Unk800
@@ -20812,6 +23542,9 @@ export interface ParticleSystemParams {
 }
 
 /**
+ * ### {@link ActionType.ParticleSystem Action 10000 - ParticleSystem}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
@@ -21824,11 +24557,13 @@ export interface DynamicTracerParams {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold?: ScalarValue
+  alphaFadeThreshold?: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -22115,11 +24850,15 @@ export interface DynamicTracerParams {
    */
   unk_ds3_p2_5?: Vector4Value
   /**
-   * Unknown.
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
-  unk_ds3_p2_6?: ScalarValue
+  alphaThreshold?: ScalarValue
   /**
    * Unknown integer.
    * 
@@ -22213,6 +24952,9 @@ export interface DynamicTracerParams {
 }
 
 /**
+ * ### {@link ActionType.DynamicTracer Action 10012 - DynamicTracer}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Creates a trail behind moving effects.
    * 
    * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
@@ -22408,9 +25150,11 @@ class DynamicTracer extends DataAction {
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
+   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  alphaThreshold: ScalarValue
+  alphaFadeThreshold: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
@@ -22500,7 +25244,14 @@ class DynamicTracer extends DataAction {
   unk_ds3_p2_3: Vector4Value
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
-  unk_ds3_p2_6: ScalarValue
+  /**
+   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+   * 
+   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  alphaThreshold: ScalarValue
   unk_sdt_f2_31: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
@@ -22556,6 +25307,9 @@ export interface WaterInteractionParams {
 }
 
 /**
+ * ### {@link ActionType.WaterInteraction Action 10013 - WaterInteraction}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
  */
 class WaterInteraction extends DataAction {
@@ -23668,6 +26422,9 @@ export interface LensFlareParams {
 }
 
 /**
+ * ### {@link ActionType.LensFlare Action 10014 - LensFlare}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Creates lens flares with up to 4 textured layers with different colors and sizes.
  */
 class LensFlare extends DataAction {
@@ -24317,11 +27074,11 @@ class LensFlare extends DataAction {
 
 export interface RichModelParams {
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
    * 
-   * **Default**: {@link OrientationMode.LocalSouth}
+   * **Default**: {@link RichModelOrientationMode.ParticleDirection}
    */
-  orientation?: OrientationMode
+  orientation?: RichModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -24511,8 +27268,8 @@ export interface RichModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX?: ScalarValue
   /**
@@ -24523,8 +27280,8 @@ export interface RichModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY?: ScalarValue
   /**
@@ -24535,12 +27292,12 @@ export interface RichModelParams {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ?: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -24548,11 +27305,11 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX?: ScalarValue
+  angularSpeedX?: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -24560,11 +27317,11 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY?: ScalarValue
+  angularSpeedY?: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Default**: `0`
    * 
@@ -24572,11 +27329,11 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ?: ScalarValue
+  angularSpeedZ?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Default**: `1`
    * 
@@ -24585,9 +27342,9 @@ export interface RichModelParams {
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX?: ScalarValue
+  angularSpeedMultiplierX?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Default**: `1`
    * 
@@ -24596,9 +27353,9 @@ export interface RichModelParams {
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY?: ScalarValue
+  angularSpeedMultiplierY?: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Default**: `1`
    * 
@@ -24607,7 +27364,7 @@ export interface RichModelParams {
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ?: ScalarValue
+  angularSpeedMultiplierZ?: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -25147,14 +27904,19 @@ export interface RichModelParams {
 }
 
 /**
- * Particle with a 3D model. Similar to {@link Model}, but with some different options and seemingly no way to change the blend mode.
+ * ### {@link ActionType.RichModel Action 10015 - RichModel}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+   * 
+   * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  */
 class RichModel extends DataAction {
   declare type: ActionType.RichModel
   /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
    */
-  orientation: OrientationMode
+  orientation: RichModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
@@ -25314,8 +28076,8 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedX}
+   * - {@link angularSpeedMultiplierX}
    */
   rotationX: ScalarValue
   /**
@@ -25324,8 +28086,8 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedY}
+   * - {@link angularSpeedMultiplierY}
    */
   rotationY: ScalarValue
   /**
@@ -25334,67 +28096,67 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link rotationSpeedZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedZ}
+   * - {@link angularSpeedMultiplierZ}
    */
   rotationZ: ScalarValue
   /**
-   * Rotation speed around the X-axis in degrees per second.
+   * Angular speed around the X-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
-   * - {@link rotationSpeedMultiplierX}
+   * - {@link angularSpeedMultiplierX}
    */
-  rotationSpeedX: ScalarValue
+  angularSpeedX: ScalarValue
   /**
-   * Rotation speed around the Y-axis in degrees per second.
+   * Angular speed around the Y-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
-   * - {@link rotationSpeedMultiplierY}
+   * - {@link angularSpeedMultiplierY}
    */
-  rotationSpeedY: ScalarValue
+  angularSpeedY: ScalarValue
   /**
-   * Rotation speed around the Z-axis in degrees per second.
+   * Angular speed around the Z-axis in degrees per second.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
-   * - {@link rotationSpeedMultiplierZ}
+   * - {@link angularSpeedMultiplierZ}
    */
-  rotationSpeedZ: ScalarValue
+  angularSpeedZ: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedX}.
+   * Multiplier for {@link angularSpeedX}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationX}
    */
-  rotationSpeedMultiplierX: ScalarValue
+  angularSpeedMultiplierX: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedY}.
+   * Multiplier for {@link angularSpeedY}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationY}
    */
-  rotationSpeedMultiplierY: ScalarValue
+  angularSpeedMultiplierY: ScalarValue
   /**
-   * Multiplier for {@link rotationSpeedZ}.
+   * Multiplier for {@link angularSpeedZ}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
    * - {@link rotationZ}
    */
-  rotationSpeedMultiplierZ: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Color multiplier for the particle.
    * 
@@ -25638,6 +28400,9 @@ export interface Unk10500Params {
 }
 
 /**
+ * ### {@link ActionType.Unk10500 Action 10500 - Unk10500}
+ * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
+ * 
  * Unknown root node action.
  */
 class Unk10500 extends DataAction {
@@ -26019,6 +28784,9 @@ export interface SpotLightParams {
 }
 
 /**
+ * ### {@link ActionType.SpotLight Action 11000 - SpotLight}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
  * Light source with an elliptic cone shape, a spot light.
  */
 class SpotLight extends DataAction {
@@ -26238,57 +29006,48 @@ class SpotLight extends DataAction {
 }
 /*#ActionClasses end*/
 
-const Actions = {
-  NodeMovement,
-  [ActionType.NodeAcceleration]: NodeMovement, NodeAcceleration: NodeMovement,
-  [ActionType.NodeSpin]: NodeMovement, NodeSpin: NodeMovement,
-  [ActionType.NodeAccelerationRandomTurns]: NodeMovement, NodeAccelerationRandomTurns: NodeMovement,
-  [ActionType.NodeAccelerationPartialFollow]: NodeMovement, NodeAccelerationPartialFollow: NodeMovement,
-  [ActionType.NodeAccelerationSpin]: NodeMovement, NodeAccelerationSpin: NodeMovement,
-  [ActionType.NodeSpeed]: NodeMovement, NodeSpeed: NodeMovement,
-  [ActionType.NodeSpeedRandomTurns]: NodeMovement, NodeSpeedRandomTurns: NodeMovement,
-  [ActionType.NodeSpeedPartialFollow]: NodeMovement, NodeSpeedPartialFollow: NodeMovement,
-  [ActionType.NodeSpeedSpin]: NodeMovement, NodeSpeedSpin: NodeMovement,
-
-  NodeTransform,
-  [ActionType.StaticNodeTransform]: NodeTransform, StaticNodeTransform: NodeTransform,
-  [ActionType.RandomNodeTransform]: NodeTransform, RandomNodeTransform: NodeTransform,
-
-  ParticleMovement,
-  [ActionType.ParticleAcceleration]: ParticleMovement, ParticleAcceleration: ParticleMovement,
-  [ActionType.ParticleSpeed]: ParticleMovement, ParticleSpeed: ParticleMovement,
-  [ActionType.ParticleSpeedRandomTurns]: ParticleMovement, ParticleSpeedRandomTurns: ParticleMovement,
-  [ActionType.ParticleSpeedPartialFollow]: ParticleMovement, ParticleSpeedPartialFollow: ParticleMovement,
-  [ActionType.ParticleAccelerationRandomTurns]: ParticleMovement, ParticleAccelerationRandomTurns: ParticleMovement,
-  [ActionType.ParticleAccelerationPartialFollow]: ParticleMovement, ParticleAccelerationPartialFollow: ParticleMovement,
-
-  [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
-  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
-  [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
-  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-}
-
 const DataActions = {
   /*#ActionsList start*/
+  [ActionType.NodeAcceleration]: NodeAcceleration, NodeAcceleration,
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
+  [ActionType.NodeSpin]: NodeSpin, NodeSpin,
+  [ActionType.StaticNodeTransform]: StaticNodeTransform, StaticNodeTransform,
+  [ActionType.RandomNodeTransform]: RandomNodeTransform, RandomNodeTransform,
   [ActionType.NodeAttachToCamera]: NodeAttachToCamera, NodeAttachToCamera,
+  [ActionType.ParticleAcceleration]: ParticleAcceleration, ParticleAcceleration,
+  [ActionType.ParticleSpeed]: ParticleSpeed, ParticleSpeed,
+  [ActionType.ParticleSpeedRandomTurns]: ParticleSpeedRandomTurns, ParticleSpeedRandomTurns,
+  [ActionType.ParticleSpeedPartialFollow]: ParticleSpeedPartialFollow, ParticleSpeedPartialFollow,
   [ActionType.NodeSound]: NodeSound, NodeSound,
   [ActionType.EmissionSound]: EmissionSound, EmissionSound,
+  [ActionType.NodeAccelerationRandomTurns]: NodeAccelerationRandomTurns, NodeAccelerationRandomTurns,
+  [ActionType.ParticleAccelerationRandomTurns]: ParticleAccelerationRandomTurns, ParticleAccelerationRandomTurns,
+  [ActionType.ParticleAccelerationPartialFollow]: ParticleAccelerationPartialFollow, ParticleAccelerationPartialFollow,
+  [ActionType.NodeAccelerationPartialFollow]: NodeAccelerationPartialFollow, NodeAccelerationPartialFollow,
+  [ActionType.NodeAccelerationSpin]: NodeAccelerationSpin, NodeAccelerationSpin,
+  [ActionType.NodeSpeed]: NodeSpeed, NodeSpeed,
+  [ActionType.NodeSpeedRandomTurns]: NodeSpeedRandomTurns, NodeSpeedRandomTurns,
+  [ActionType.NodeSpeedPartialFollow]: NodeSpeedPartialFollow, NodeSpeedPartialFollow,
+  [ActionType.NodeSpeedSpin]: NodeSpeedSpin, NodeSpeedSpin,
   [ActionType.NodeAttributes]: NodeAttributes, NodeAttributes,
   [ActionType.ParticleAttributes]: ParticleAttributes, ParticleAttributes,
   [ActionType.Unk130]: Unk130, Unk130,
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
+  [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
+  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
+  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
+  [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
   [ActionType.PointEmitterShape]: PointEmitterShape, PointEmitterShape,
   [ActionType.DiskEmitterShape]: DiskEmitterShape, DiskEmitterShape,
   [ActionType.RectangleEmitterShape]: RectangleEmitterShape, RectangleEmitterShape,
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
+  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
   [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
   [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
   [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
@@ -26302,7 +29061,9 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
+  [ActionType.Unk700]: Unk700, Unk700,
   [ActionType.Unk701]: Unk701, Unk701,
+  [ActionType.Unk702]: Unk702, Unk702,
   [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
   [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
@@ -26391,32 +29152,101 @@ class FloatField extends Field implements NumericalField {
 
 }
 
-//#region Property
-class Keyframe<T extends ValueType> implements IKeyframe<T> {
-
-  position: number
-  value: TypeMap.PropertyValue[T]
-  unkTangent1?: TypeMap.PropertyValue[T]
-  unkTangent2?: TypeMap.PropertyValue[T]
+//#region Keyframe
+class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
 
   constructor(
-    position: number,
-    value: TypeMap.PropertyValue[T],
-    unkTangent1?: TypeMap.PropertyValue[T],
-    unkTangent2?: TypeMap.PropertyValue[T]
-  ) {
-    this.position = position
-    this.value = value
-    this.unkTangent1 = unkTangent1
-    this.unkTangent2 = unkTangent2
+    public position: number,
+    public value: TypeMap.PropertyValue[T]
+  ) {}
+
+  static copy<T extends ValueType, K extends AnyKeyframe<T>>(orig: K): K {
+    if ('p1' in orig) {
+      return new BezierKeyframe(orig.position, orig.value, orig.p1, orig.p2) as K
+    } else if ('tangent1' in orig) {
+      return new HermiteKeyframe(orig.position, orig.value, orig.tangent1, orig.tangent2) as K
+    }
+    return new Keyframe(orig.position, orig.value) as K
   }
 
-  static copy<T extends ValueType>(orig: IKeyframe<T>) {
-    return new Keyframe(orig.position, orig.value, orig.unkTangent1, orig.unkTangent2)
+  static component<T extends ValueType, K extends AnyKeyframe<T>>(kf: K, i: number): ScalarKeyframeFromAny<K, T> {
+    if (Array.isArray(kf.value)) {
+      if (i < 0 || i >= kf.value.length) {
+        throw new Error('Index of keyframe component out of range.')
+      }
+      if ('p1' in kf) {
+        return new BezierKeyframe(kf.position, kf.value[i], kf.p1[i], kf.p2[i]) as ScalarKeyframeFromAny<K, T>
+      } else if ('tangent1' in kf) {
+        return new HermiteKeyframe(kf.position, kf.value[i], kf.tangent1[i], kf.tangent2[i]) as ScalarKeyframeFromAny<K, T>
+      }
+      return new Keyframe(kf.position, kf.value[i]) as ScalarKeyframeFromAny<K, T>
+    } else {
+      if (i !== 0) {
+        throw new Error('Index of keyframe component out of range.')
+      }
+      return kf as unknown as ScalarKeyframeFromAny<K, T>
+    }
+  }
+
+  static scale<T extends AnyKeyframe<ValueType>>(kf: AnyKeyframe<ValueType>, factor: PropertyValue): T {
+    if (typeof kf.value === 'number') {
+      kf.value = typeof factor === 'number' ? kf.value * factor : factor.map(e => (kf.value as number) * e) as Vector
+    } else {
+      kf.value = (typeof factor === 'number' ? kf.value.map(e => e * factor) : kf.value.map((e, i) => e * factor[i])) as Vector
+    }
+    if ('p1' in kf) {
+      if (typeof kf.p1 === 'number') {
+        kf.p1 = typeof factor === 'number' ? kf.p1 * factor : factor.map(e => (kf.p1 as number) * e) as Vector
+      } else {
+        kf.p1 = (typeof factor === 'number' ? kf.p1.map(e => e * factor) : kf.p1.map((e, i) => e * factor[i])) as Vector
+      }
+      if (typeof kf.p2 === 'number') {
+        kf.p2 = typeof factor === 'number' ? kf.p2 * factor : factor.map(e => (kf.p2 as number) * e) as Vector
+      } else {
+        kf.p2 = (typeof factor === 'number' ? kf.p2.map(e => e * factor) : kf.p2.map((e, i) => e * factor[i])) as Vector
+      }
+    }
+    return kf as T
+  }
+
+  static add<T extends AnyKeyframe<ValueType>>(kf: AnyKeyframe<ValueType>, summand: PropertyValue): T {
+    if (typeof kf.value === 'number') {
+      kf.value = typeof summand === 'number' ? kf.value + summand : summand.map(e => (kf.value as number) + e) as Vector
+    } else {
+      kf.value = (typeof summand === 'number' ? kf.value.map(e => e + summand) : kf.value.map((e, i) => e + summand[i])) as Vector
+    }
+    return kf as T
   }
 
 }
 
+class BezierKeyframe<T extends ValueType> extends Keyframe<T> implements IBezierKeyframe<T> {
+
+  constructor(
+    position: number,
+    value: TypeMap.PropertyValue[T],
+    public p1: TypeMap.PropertyValue[T],
+    public p2: TypeMap.PropertyValue[T],
+  ) {
+    super(position, value)
+  }
+
+}
+
+class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermiteKeyframe<T> {
+
+  constructor(
+    position: number,
+    value: TypeMap.PropertyValue[T],
+    public tangent1: TypeMap.PropertyValue[T],
+    public tangent2: TypeMap.PropertyValue[T],
+  ) {
+    super(position, value)
+  }
+
+}
+
+//#region Property
 abstract class Property<T extends ValueType, F extends PropertyFunction> implements IModifiableProperty<T, F> {
 
   valueType: T
@@ -26466,10 +29296,10 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
       switch (PropertyFunction[obj.function as string]) {
         case PropertyFunction.Stepped:
         case PropertyFunction.Linear:
-        case PropertyFunction.Curve1:
-        case PropertyFunction.Curve2:
+        case PropertyFunction.Bezier:
+        case PropertyFunction.Hermite:
           return SequenceProperty.fromJSON<T>(obj)
-        case PropertyFunction.CompCurve:
+        case PropertyFunction.ComponentHermite:
           return ComponentSequenceProperty.fromJSON<T>(obj)
       }
     } else {
@@ -26518,7 +29348,6 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract fields: NumericalField[]
   abstract toJSON(): any
   abstract scale(factor: PropertyValue): this
-  abstract power(exponent: PropertyValue): this
   abstract add(summand: PropertyValue): this
   abstract valueAt(arg: number): TypeMap.PropertyValue[T]
   abstract clone(): Property<T, F>
@@ -26528,7 +29357,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
 
 class ValueProperty<T extends ValueType>
   extends Property<T, ValuePropertyFunction>
-  implements IModifiableProperty<T, ValuePropertyFunction>, IValueProperty<T> {
+  implements IModifiableProperty<T, ValuePropertyFunction> {
 
   value: TypeMap.PropertyValue[T]
 
@@ -26624,19 +29453,6 @@ class ValueProperty<T extends ValueType>
     return this
   }
 
-  power(exponent: PropertyValue) {
-    if (this.valueType === ValueType.Scalar) {
-      (this.value as number) **= exponent as number
-    } else {
-      if (typeof exponent === 'number') {
-        this.value = (this.value as Vector).map(e => e ** exponent) as TypeMap.PropertyValue[T]
-      } else {
-        this.value = (this.value as Vector).map((e, i) => e ** exponent[i]) as TypeMap.PropertyValue[T]
-      }
-    }
-    return this
-  }
-
   add(summand: PropertyValue) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) += summand as number
@@ -26673,21 +29489,16 @@ class ValueProperty<T extends ValueType>
 
 class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   extends Property<T, F>
-  implements IModifiableProperty<T, F>, ISequenceProperty<T, F> {
-
-  loop: boolean
-  keyframes: IKeyframe<T>[]
+  implements IModifiableProperty<T, F> {
 
   constructor(
     valueType: T,
     func: F,
-    loop: boolean = false,
-    keyframes: IKeyframe<T>[] = [],
+    public loop: boolean = false,
+    public keyframes: TypeMap.Keyframe<T>[F][] = [],
     modifiers: IModifier<T>[] = []
   ) {
     super(valueType, func, modifiers)
-    this.loop = loop
-    this.keyframes = keyframes
   }
 
   sortKeyframes() {
@@ -26699,18 +29510,18 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
         return 1 + 2 * this.componentCount + (1 + this.componentCount) * this.keyframes.length
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
+      case PropertyFunction.Bezier:
+      case PropertyFunction.Hermite:
         return 1 + 2 * this.componentCount + (1 + 3 * this.componentCount) * this.keyframes.length
     }
   }
 
   get fields(): NumericalField[] {
     const cc = this.componentCount
+    this.sortKeyframes()
     switch (this.function) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
-        this.sortKeyframes()
         return [
           new IntField(this.keyframes.length),
           ...(cc === 1 ?
@@ -26728,9 +29539,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               e => (e.value as Vector).map(e => new FloatField(e))
           )
         ]
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
-        this.sortKeyframes()
+      case PropertyFunction.Bezier:
         return [
           new IntField(this.keyframes.length),
           ...(cc === 1 ?
@@ -26749,13 +29558,41 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField(e.unkTangent1 as number) ] :
-              e => (e.unkTangent1 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IBezierKeyframe<T>).p1 as number) ] :
+              e => ((e as IBezierKeyframe<T>).p1 as Vector).map(e => new FloatField(e))
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField(e.unkTangent2 as number) ] :
-              e => (e.unkTangent2 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IBezierKeyframe<T>).p2 as number) ] :
+              e => ((e as IBezierKeyframe<T>).p2 as Vector).map(e => new FloatField(e))
+          ),
+        ]
+      case PropertyFunction.Hermite:
+        return [
+          new IntField(this.keyframes.length),
+          ...(cc === 1 ?
+            [Math.min(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
+          ...(cc === 1 ?
+            [Math.max(...this.keyframes.map(e => e.value as number))] :
+            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
+          ).map(e => new FloatField(e)),
+          ...this.keyframes.map(e => new FloatField(e.position)),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField(e.value as number) ] :
+              e => (e.value as Vector).map(e => new FloatField(e))
+          ),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent1 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).tangent1 as Vector).map(e => new FloatField(e))
+          ),
+          ...this.keyframes.flatMap(
+            this.valueType === ValueType.Scalar ?
+              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent2 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).tangent2 as Vector).map(e => new FloatField(e))
           ),
         ]
       default:
@@ -26781,13 +29618,13 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
             ) as TypeMap.PropertyValue[T]
-          )
+          ) as TypeMap.Keyframe<T>[F]
         ), modifiers)
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2:
+      case PropertyFunction.Bezier:
+      case PropertyFunction.Hermite:
         return new SequenceProperty(valueType, func, loop, arrayOf(
           fieldValues[0],
-          i => new Keyframe(
+          i => new (func === PropertyFunction.Bezier ? BezierKeyframe : HermiteKeyframe)(
             fieldValues[1 + 2 * (valueType + 1) + i],
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
@@ -26801,7 +29638,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
               fieldValues[1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
             ) as TypeMap.PropertyValue[T],
-          )
+          ) as TypeMap.Keyframe<T>[F]
         ), modifiers)
       default:
         throw new Error('Incompatible or unknown function in property: ' + func)
@@ -26811,11 +29648,11 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   static fromJSON<T extends ValueType>(obj: {
     function: string
     modifiers?: any[]
-    keyframes?: IKeyframe<any>[]
+    keyframes?: AnyKeyframe<T>[]
     loop?: boolean
   }): SequenceProperty<T, any> {
     return new SequenceProperty(
-      Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar,
+      (Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar) as T,
       PropertyFunction[obj.function],
       obj.loop ?? false,
       obj.keyframes,
@@ -26829,37 +29666,55 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Linear: {
         const o: {
           function: string
-          loop?: boolean
-          keyframes?: any[]
+          loop: boolean
+          keyframes: any[]
           modifiers?: any[]
         } = {
           function: PropertyFunction[this.function],
+          loop: this.loop,
+          keyframes: this.keyframes.map(e => ({
+            position: e.position,
+            value: e.value
+          }))
         }
-        if (this.function > PropertyFunction.Constant) o.loop = this.loop
-        o.keyframes = this.keyframes.map(e => ({
-          position: e.position,
-          value: e.value
-        }))
         if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
         return o
       }
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2: {
+      case PropertyFunction.Bezier: {
         const o: {
           function: string
-          loop?: boolean
-          keyframes?: any[]
+          loop: boolean
+          keyframes: any[]
           modifiers?: any[]
         } = {
           function: PropertyFunction[this.function],
+          loop: this.loop,
+          keyframes: this.keyframes.map(e => ({
+            position: e.position,
+            value: e.value,
+            p1: (e as IBezierKeyframe<T>).p1,
+            p2: (e as IBezierKeyframe<T>).p2,
+          }))
         }
-        if (this.function > PropertyFunction.Constant) o.loop = this.loop
-        o.keyframes = this.keyframes.map(e => ({
-          position: e.position,
-          value: e.value,
-          unkTangent1: e.unkTangent1,
-          unkTangent2: e.unkTangent2,
-        }))
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        return o
+      }
+      case PropertyFunction.Hermite: {
+        const o: {
+          function: string
+          loop: boolean
+          keyframes: any[]
+          modifiers?: any[]
+        } = {
+          function: PropertyFunction[this.function],
+          loop: this.loop,
+          keyframes: this.keyframes.map(e => ({
+            position: e.position,
+            value: e.value,
+            tangent1: (e as IHermiteKeyframe<T>).tangent1,
+            tangent2: (e as IHermiteKeyframe<T>).tangent2,
+          }))
+        }
         if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
         return o
       }
@@ -26867,61 +29722,57 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   }
 
   scale(factor: PropertyValue) {
+    if (this.valueType === ValueType.Scalar && Array.isArray(factor)) {
+      throw new Error([
+        'Scalar properties cannot be scaled by a vector.',
+        'If you need to make a vector property by scaling a',
+        'scalar property by a vector, use anyValueMult instead.'
+      ].join(' '))
+    }
     for (const kf of this.keyframes) {
-      if (this.valueType === ValueType.Scalar) {
-        (kf.value as number) *= factor as number
-      } else {
-        if (typeof factor === 'number') {
-          kf.value = (kf.value as Vector).map(e => e * factor) as TypeMap.PropertyValue[T]
-        } else {
-          kf.value = (kf.value as Vector).map((e, i) => e * factor[i]) as TypeMap.PropertyValue[T]
-        }
-      }
+      Keyframe.scale(kf, factor)
     }
     this.modifiersScale(factor)
     return this
   }
 
-  power(exponent: PropertyValue) {
-    for (const kf of this.keyframes) {
-      if (this.valueType === ValueType.Scalar) {
-        (kf.value as number) **= exponent as number
-      } else {
-        if (typeof exponent === 'number') {
-          kf.value = (kf.value as Vector).map(e => e ** exponent) as TypeMap.PropertyValue[T]
-        } else {
-          kf.value = (kf.value as Vector).map((e, i) => e ** exponent[i]) as TypeMap.PropertyValue[T]
-        }
-      }
-    }
-    return this
-  }
-
   add(summand: PropertyValue) {
+    if (this.valueType === ValueType.Scalar && Array.isArray(summand)) {
+      throw new Error([
+        'Vectors cannot be added to scalar properties.',
+        'If you need to make a vector property by adding a',
+        'vector to a scalar property, use anyValueSum instead.'
+      ].join(' '))
+    }
     for (const kf of this.keyframes) {
-      if (this.valueType === ValueType.Scalar) {
-        (kf.value as number) += summand as number
-      } else {
-        if (typeof summand === 'number') {
-          kf.value = (kf.value as Vector).map(e => e + summand) as TypeMap.PropertyValue[T]
-        } else {
-          kf.value = (kf.value as Vector).map((e, i) => e + summand[i]) as TypeMap.PropertyValue[T]
-        }
-      }
+      Keyframe.add(kf, summand)
     }
     return this
   }
 
   valueAt(arg: number): TypeMap.PropertyValue[T] {
+    if (this.loop) {
+      const duration = this.duration
+      if (duration === 0) {
+        // Return NaN when the property loops and the duration is 0.
+        // This matches what the games do in the same case.
+        return (
+          this.valueType === ValueType.Scalar ?
+            NaN :
+            arrayOf(this.componentCount, _ => NaN)
+        ) as TypeMap.PropertyValue[T]
+      }
+      arg %= duration
+    }
     switch (this.function) {
       case PropertyFunction.Stepped:
         return stepKeyframes(this.keyframes, arg)
       case PropertyFunction.Linear:
-      case PropertyFunction.Curve1:
-      case PropertyFunction.Curve2: {
-        //TODO: Implement better approximations for Curve1 and Curve2 prop values
         return lerpKeyframes(this.keyframes, arg)
-      }
+      case PropertyFunction.Bezier:
+        return bezierInterpKeyframes((this.keyframes as IBezierKeyframe<T>[]), arg)
+      case PropertyFunction.Hermite:
+        return hermiteInterpKeyframes((this.keyframes as IHermiteKeyframe<T>[]), arg)
     }
   }
 
@@ -26930,7 +29781,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       this.valueType,
       this.function,
       this.loop,
-      this.keyframes.map(e => Keyframe.copy<T>(e)),
+      this.keyframes.map(e => Keyframe.copy(e)),
       this.modifiers.map(e => e.clone())
     )
   }
@@ -26944,19 +29795,15 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         ValueType.Scalar,
         this.function,
         this.loop,
-        this.keyframes.map(kf => new Keyframe<ValueType.Scalar>(
-          kf.position,
-          kf.value[i],
-          kf.unkTangent1?.[i],
-          kf.unkTangent2?.[i]
-        ))).withModifiers(
+        this.keyframes.map(kf => Keyframe.component(kf, i) as TypeMap.Keyframe<ValueType.Scalar>[F])
+      ).withModifiers(
           ...mods.map(comps => comps[i])
         )
       )
     }
   }
 
-  get duration() { return Math.max(...this.keyframes.map(kf => kf.position)) }
+  get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
     for (const kf of this.keyframes) {
@@ -26967,22 +29814,21 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 }
 
 class ComponentSequenceProperty<T extends ValueType>
-  extends Property<T, PropertyFunction.CompCurve>
-  implements IModifiableProperty<T, PropertyFunction.CompCurve> {
+  extends Property<T, PropertyFunction.ComponentHermite>
+  implements IModifiableProperty<T, PropertyFunction.ComponentHermite> {
 
-  declare function: PropertyFunction.CompCurve
-  loop: boolean
-  components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[]
+  declare function: PropertyFunction.ComponentHermite
+
+  components: SequenceProperty<ValueType.Scalar, PropertyFunction.Hermite>[]
 
   constructor(
     valueType: T,
-    loop: boolean = false,
-    components: ISequenceProperty<ValueType.Scalar, PropertyFunction.Curve2>[],
+    public loop: boolean = false,
+    components: IHermiteKeyframe<ValueType.Scalar>[][],
     modifiers: IModifier<T>[] = []
   ) {
-    super(valueType, PropertyFunction.CompCurve, modifiers)
-    this.loop = loop
-    this.components = components
+    super(valueType, PropertyFunction.ComponentHermite, modifiers)
+    this.components = components.map(e => new HermiteProperty(false, e))
   }
 
   sortComponentKeyframes() {
@@ -26998,18 +29844,15 @@ class ComponentSequenceProperty<T extends ValueType>
   get fields(): NumericalField[] {
     this.sortComponentKeyframes()
     return [
-      new FloatField(this.components.reduce(
-        (a, e) => Math.max(a, e.keyframes[e.keyframes.length - 1].position),
-        0
-      )),
+      new FloatField(this.duration),
       ...this.components.map(e => new IntField(e.keyframes.length)),
       ...this.components.map(comp => new FloatField(Math.min(...comp.keyframes.map(e => e.value)))),
       ...this.components.map(comp => new FloatField(Math.max(...comp.keyframes.map(e => e.value)))),
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
-        ...comp.keyframes.map(e => new FloatField(e.unkTangent1)),
-        ...comp.keyframes.map(e => new FloatField(e.unkTangent2)),
+        ...comp.keyframes.map(e => new FloatField(e.tangent1)),
+        ...comp.keyframes.map(e => new FloatField(e.tangent2)),
       ])
     ]
   }
@@ -27022,31 +29865,29 @@ class ComponentSequenceProperty<T extends ValueType>
   ): ComponentSequenceProperty<T> {
     let offset = 1 + 3 * (valueType + 1)
     return new ComponentSequenceProperty(valueType, loop, arrayOf(valueType + 1, i => {
-      return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Curve2, false, [], [
+      return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Hermite, false, [], [
         fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
-      ])
+      ]).keyframes
     }), modifiers)
   }
 
   toJSON() {
     const o: {
-      function: 'CompCurve'
-      components: IKeyframe<ValueType.Scalar>[][]
-      loop?: boolean
+      function: 'ComponentHermite'
+      loop: boolean
+      components: IHermiteKeyframe<ValueType.Scalar>[][]
       modifiers?: any[]
     } = {
-      function: 'CompCurve',
+      function: PropertyFunction[this.function] as 'ComponentHermite',
       loop: this.loop,
-      components: []
+      components: this.components.map(e => e.keyframes.map(f => ({
+        position: f.position,
+        value: f.value,
+        tangent1: f.tangent1,
+        tangent2: f.tangent2,
+      })))
     }
-    if (this.loop) o.loop = true
-    o.components = this.components.map(e => e.keyframes.map(f => ({
-      position: f.position,
-      value: f.value,
-      unkTangent1: f.unkTangent1,
-      unkTangent2: f.unkTangent2,
-    })))
     if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.toJSON())
     return o
   }
@@ -27056,13 +29897,16 @@ class ComponentSequenceProperty<T extends ValueType>
     loop = false,
     modifiers = []
   }: {
-    components: IKeyframe<ValueType.Scalar>[][]
+    components: IHermiteKeyframe<ValueType.Scalar>[][]
     loop: boolean
     modifiers?: any[]
   }): ComponentSequenceProperty<T> {
-    return new ComponentSequenceProperty(components.length - 1 as T, loop, components.map(comp => {
-      return new SequenceProperty(ValueType.Scalar, PropertyFunction.Curve2, false, comp)
-    }), (modifiers ?? []).map(mod => Modifier.fromJSON(mod) as IModifier<T>))
+    return new ComponentSequenceProperty(
+      components.length - 1 as T,
+      loop,
+      components,
+      (modifiers ?? []).map(mod => Modifier.fromJSON(mod) as IModifier<T>)
+    )
   }
 
   scale(factor: PropertyValue) {
@@ -27070,13 +29914,6 @@ class ComponentSequenceProperty<T extends ValueType>
       comp.scale(typeof factor === 'number' ? factor : factor[i])
     }
     this.modifiersScale(factor)
-    return this
-  }
-
-  power(exponent: PropertyValue) {
-    for (const [i, comp] of this.components.entries()) {
-      comp.power(typeof exponent === 'number' ? exponent : exponent[i])
-    }
     return this
   }
 
@@ -27088,6 +29925,19 @@ class ComponentSequenceProperty<T extends ValueType>
   }
 
   valueAt(arg: number): TypeMap.PropertyValue[T] {
+    if (this.loop) {
+      const duration = this.duration
+      if (duration === 0) {
+        // Return NaN when the property loops and the duration is 0.
+        // This matches what the games do in the same case.
+        return (
+          this.valueType === ValueType.Scalar ?
+            NaN :
+            arrayOf(this.componentCount, _ => NaN)
+        ) as TypeMap.PropertyValue[T]
+      }
+      arg %= duration
+    }
     return (
       this.valueType === ValueType.Scalar ?
         this.components[0].valueAt(arg)
@@ -27099,7 +29949,7 @@ class ComponentSequenceProperty<T extends ValueType>
     return new ComponentSequenceProperty(
       this.valueType,
       this.loop,
-      this.components.map(e => e.clone()),
+      this.components.map(e => e.keyframes.map(f => Keyframe.copy(f))),
       this.modifiers.map(e => e.clone())
     )
   }
@@ -27112,7 +29962,7 @@ class ComponentSequenceProperty<T extends ValueType>
       return arrayOf(this.componentCount, i => new ComponentSequenceProperty(
         ValueType.Scalar,
         this.loop,
-        [this.components[i]],
+        [this.components[i].keyframes],
         mods.map(comps => comps[i])
       ))
     }
@@ -27133,11 +29983,12 @@ class ComponentSequenceProperty<T extends ValueType>
         positions.add(keyframe.position)
       }
     }
-    const keyframes = Array.from(positions).sort((a, b) => a - b).map(e => new Keyframe(e, this.valueAt(e)))
+    const keyframes = interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+      .map(e => new Keyframe(e, this.valueAt(e)))
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
   }
 
-  get duration() { return Math.max(...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
+  get duration() { return Math.max(0, ...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
   set duration(value: number) {
     const factor = value / this.duration
     for (const c of this.components) {
@@ -27160,9 +30011,9 @@ class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
 class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Stepped> {
 
-  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Properties with a stepped function must have at least 2 stops.')
+  constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
@@ -27172,9 +30023,9 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 
 class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {
 
-  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Properties with a linear function must have at least 2 stops.')
+  constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Linear, loop, keyframes)
@@ -27273,14 +30124,26 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
 }
 
-class Curve2Property<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Curve2> {
+class BezierProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Bezier> {
 
-  constructor(loop: boolean, keyframes: IKeyframe<T>[]) {
-    if (keyframes.length < 2) {
-      throw new Error ('Properties with a curve function must have at least 2 stops.')
+  constructor(loop: boolean, keyframes: IBezierKeyframe<T>[]) {
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
-    super(comps - 1 as T, PropertyFunction.Curve2, loop, keyframes)
+    super(comps - 1 as T, PropertyFunction.Bezier, loop, keyframes)
+  }
+
+}
+
+class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Hermite> {
+
+  constructor(loop: boolean, keyframes: IHermiteKeyframe<T>[]) {
+    if (keyframes.length === 0) {
+      throw new Error ('Sequence properties must have at least one keyframes.')
+    }
+    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
+    super(comps - 1 as T, PropertyFunction.Hermite, loop, keyframes)
   }
 
 }
@@ -27349,7 +30212,7 @@ function BloodVisibilityProperty<T extends ValueType>(
 //#region Modifier
 namespace Modifier {
 
-  export function fromJSON(obj: any): IModifier<ValueType> {
+  export function fromJSON<T extends ValueType>(obj: any): IModifier<T> {
     if ('fields' in obj || 'properties' in obj || !(obj.type in ModifierType)) {
       return new GenericModifier(
         obj.type,
@@ -27418,7 +30281,7 @@ namespace Modifier {
         ))
       } else if (prop instanceof ComponentSequenceProperty) {
         prop = new ComponentSequenceProperty(vt, prop.loop,
-          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].clone())
+          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].keyframes.map(kf => Keyframe.copy(kf)))
         )
       }
       return new (mod.constructor as any)(mod.externalValue, prop)
@@ -27956,25 +30819,6 @@ function PrecipitationModifier<T extends ValueType>(
   ]) as unknown as TypeMap.Property[T])
 }
 
-//#region Section10
-class Section10 {
-
-  fields: NumericalField[]
-
-  constructor(fields: NumericalField[]) {
-    this.fields = fields
-  }
-
-  static fromJSON(fields: []) {
-    return new Section10(fields.map(field => Field.fromJSON(field) as NumericalField))
-  }
-
-  toJSON() {
-    return this.fields.map(field => field.toJSON())
-  }
-
-}
-
 export {
   Game,
   FXRVersion,
@@ -27992,7 +30836,9 @@ export {
   AttachMode,
   PropertyArgument,
   OrientationMode,
+  ModelOrientationMode,
   TracerOrientationMode,
+  RichModelOrientationMode,
   LightingMode,
   DistortionMode,
   DistortionShape,
@@ -28002,7 +30848,6 @@ export {
   Nodes,
   EffectActionSlots,
   ActionData,
-  Actions,
   DataActions,
 
   FXR,
@@ -28029,30 +30874,47 @@ export {
   NodeMovement,
   NodeTransform,
   ParticleMovement,
-  StateEffectMap,
-  EmitAllParticles,
-  EmitRandomParticles,
-  OneTimeEmitter,
-  NoParticleSpread,
   /*#ActionsExport start*/
+  NodeAcceleration,
   NodeTranslation,
+  NodeSpin,
+  StaticNodeTransform,
+  RandomNodeTransform,
   NodeAttachToCamera,
+  ParticleAcceleration,
+  ParticleSpeed,
+  ParticleSpeedRandomTurns,
+  ParticleSpeedPartialFollow,
   NodeSound,
   EmissionSound,
+  NodeAccelerationRandomTurns,
+  ParticleAccelerationRandomTurns,
+  ParticleAccelerationPartialFollow,
+  NodeAccelerationPartialFollow,
+  NodeAccelerationSpin,
+  NodeSpeed,
+  NodeSpeedRandomTurns,
+  NodeSpeedPartialFollow,
+  NodeSpeedSpin,
   NodeAttributes,
   ParticleAttributes,
   Unk130,
   ParticleModifier,
   SFXReference,
   LevelsOfDetailThresholds,
+  StateEffectMap,
+  EmitAllParticles,
+  EmitRandomParticles,
   PeriodicEmitter,
   EqualDistanceEmitter,
+  OneTimeEmitter,
   PointEmitterShape,
   DiskEmitterShape,
   RectangleEmitterShape,
   SphereEmitterShape,
   BoxEmitterShape,
   CylinderEmitterShape,
+  NoParticleSpread,
   CircularParticleSpread,
   EllipticalParticleSpread,
   RectangularParticleSpread,
@@ -28066,7 +30928,9 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
+  Unk700,
   Unk701,
+  Unk702,
   NodeWindSpeed,
   ParticleWindSpeed,
   NodeWindAcceleration,
@@ -28087,6 +30951,9 @@ export {
   FloatField,
 
   Keyframe,
+  BezierKeyframe,
+  HermiteKeyframe,
+
   Property,
   ValueProperty,
   SequenceProperty,
@@ -28094,7 +30961,8 @@ export {
   ConstantProperty,
   SteppedProperty,
   LinearProperty,
-  Curve2Property,
+  BezierProperty,
+  HermiteProperty,
   RandomProperty,
   RainbowProperty,
   BloodVisibilityProperty,
@@ -28112,6 +30980,4 @@ export {
   ExternalValue2Modifier,
   BloodVisibilityModifier,
   PrecipitationModifier,
-
-  Section10
 }

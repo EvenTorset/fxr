@@ -1,5 +1,6 @@
 type: 46
 name: NodeAttachToCamera
+slot: NodeMovement
 desc: |
   Attaches the node to the camera.
 properties:

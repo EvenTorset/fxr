@@ -1,5 +1,6 @@
 type: 731
 name: NodeWindSpeed
+slot: NodeWind
 desc: |
   Controls how effective the wind is at pushing the node.
 properties:

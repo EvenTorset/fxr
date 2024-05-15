@@ -1,0 +1,5 @@
+type: 200
+name: EmitAllParticles
+slot: Behavior
+desc: |
+  Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.

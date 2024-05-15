@@ -1,5 +1,6 @@
 type: 10013
 name: WaterInteraction
+slot: Appearance
 desc: |
   Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
 properties:

@@ -1,0 +1,91 @@
+type: 123
+name: NodeSpeedSpin
+slot: NodeMovement
+desc: |
+  Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
+properties:
+  speedZ:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Controls the speed of the node along its Z-axis.
+  speedMultiplierZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link speedZ}.
+  accelerationY:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the acceleration of the node along its Y-axis.
+  angularSpeedX:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node's angular speed around its local X-axis in degrees per second.
+    see:
+      - angularSpeedMultiplierX
+  angularSpeedMultiplierX:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link angularSpeedX}.
+  angularSpeedY:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node's angular speed around its local Y-axis in degrees per second.
+    see:
+      - angularSpeedMultiplierY
+  angularSpeedMultiplierY:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link angularSpeedY}.
+  angularSpeedZ:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node's angular speed around its local Z-axis in degrees per second.
+    see:
+      - angularSpeedMultiplierZ
+  angularSpeedMultiplierZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link angularSpeedZ}.
+  unk_ds3_f1_0:
+    field: int
+  unk_ds3_f1_1:
+    field: int
+  alignWithMotion:
+    field: int
+    desc: |
+      When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+  unk_ds3_f1_3:
+    field: int
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+      - alignWithMotion
+      - unk_ds3_f1_3
+    properties1:
+      - speedZ
+      - speedMultiplierZ
+      - accelerationY
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

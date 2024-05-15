@@ -1,5 +1,6 @@
 type: 734
 name: ParticleWindAcceleration
+slot: ParticleWind
 desc: |
   Controls how effective the wind is at accelerating the particles emitted from the node.
 

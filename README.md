@@ -22,7 +22,7 @@ To edit existing FXR files, all you need is an ArrayBuffer or typed array with t
 import { FXR, Game } from '@cccode/fxr'
 
 // Parse file
-const fxr = FXR.read('f000450360.fxr', Game.EldenRing)
+const fxr = await FXR.read('f000450360.fxr', Game.EldenRing)
 
 // Make changes to the FXR, for example scaling it so it's half as big:
 fxr.root.scale(0.5)
@@ -77,7 +77,7 @@ import {
   BasicNode,
   Action,
   FloatField,
-  NodeTransform,
+  StaticNodeTransform,
   PeriodicEmitter,
   CylinderEmitterShape,
   ParticleAttributes,
@@ -116,7 +116,7 @@ fxr.root.nodes = [
     // better for readability and they are a lot easier to create.
 
     // This is equivalent to the action created above:
-    new NodeTransform({ translateY: 0.5 }),
+    new StaticNodeTransform({ offsetY: 0.5 }),
 
 
     new PeriodicEmitter({ interval: 0.1, perInterval: 10 }), // Action 300

@@ -1,0 +1,57 @@
+type: 83
+name: NodeAccelerationRandomTurns
+slot: NodeMovement
+desc: |
+  Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+properties:
+  speedZ:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Controls the speed of the node along its Z-axis.
+  accelerationZ:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+  accelerationMultiplierZ:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Multiplier for {@link accelerationZ}.
+  accelerationY:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Controls the acceleration of the node along its Y-axis.
+  maxTurnAngle:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+  alignWithMotion:
+    field: int
+    desc: |
+      When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+  unk_ds3_f1_1:
+    field: int
+  turnInterval:
+    field: int
+    desc: |
+      The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+games:
+  DS3:
+    fields1:
+      - alignWithMotion
+      - unk_ds3_f1_1
+      - turnInterval
+    properties1:
+      - speedZ
+      - accelerationZ
+      - accelerationMultiplierZ
+      - accelerationY
+      - maxTurnAngle
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

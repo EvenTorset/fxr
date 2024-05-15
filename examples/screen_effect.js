@@ -40,8 +40,8 @@ fxr.root.nodes = [
     new NodeAttachToCamera,
     // Offset the node slightly so that it's in front of the camera instead of
     // being at the exact same position as the camera.
-    new NodeTransform({
-      translateZ: distance
+    NodeTransform({
+      offsetZ: distance
     }),
     /*
       Use any particle type you'd like here. RadialBlur and Distortion are
