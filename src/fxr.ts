@@ -18716,7 +18716,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   widthMultiplier?: ScalarValue
   /**
@@ -19271,7 +19271,7 @@ class Tracer extends DataAction {
   /**
    * Multiplier for {@link width}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   widthMultiplier: ScalarValue
   /**
@@ -24527,7 +24527,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   widthMultiplier?: ScalarValue
   /**
@@ -25126,7 +25126,7 @@ class DynamicTracer extends DataAction {
   /**
    * Multiplier for {@link width}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   widthMultiplier: ScalarValue
   /**

@@ -179,7 +179,7 @@ properties:
   widthMultiplier:
     type: ScalarValue
     default: 1
-    argument: ParticleAge
+    argument: EmissionTime
     desc: |
       Multiplier for {@link width}.
   color1:
