@@ -7841,6 +7841,7 @@ abstract class Node {
           slot9.particleSizeXMin = anyValueMult(factor, slot9.particleSizeXMin)
           slot9.particleSizeYMin = anyValueMult(factor, slot9.particleSizeYMin)
           slot9.particleSizeXMax = anyValueMult(factor, slot9.particleSizeXMax)
+          slot9.particleSizeYMax = anyValueMult(factor, slot9.particleSizeYMax)
           slot9.particleGrowthRateX = anyValueMult(factor, slot9.particleGrowthRateX)
           slot9.particleGrowthRateY = anyValueMult(factor, slot9.particleGrowthRateY)
           slot9.particleGrowthRateXStatic = anyValueMult(factor, slot9.particleGrowthRateXStatic)
