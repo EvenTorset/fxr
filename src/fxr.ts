@@ -9348,7 +9348,7 @@ export interface NodeAccelerationParams {
    */
   unk_ds3_f1_0?: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -9395,7 +9395,7 @@ class NodeAcceleration extends DataAction {
   accelerationY: ScalarValue
   unk_ds3_f1_0: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_2: number
@@ -10339,7 +10339,7 @@ export interface NodeAccelerationRandomTurnsParams {
    */
   maxTurnAngle?: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -10397,7 +10397,7 @@ class NodeAccelerationRandomTurns extends DataAction {
    */
   maxTurnAngle: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_1: number
@@ -10703,7 +10703,7 @@ export interface NodeAccelerationPartialFollowParams {
    */
   followFactor?: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -10781,7 +10781,7 @@ class NodeAccelerationPartialFollow extends DataAction {
    */
   followFactor: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_1: number
@@ -10902,7 +10902,7 @@ export interface NodeAccelerationSpinParams {
    */
   unk_ds3_f1_1?: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -10995,7 +10995,7 @@ class NodeAccelerationSpin extends DataAction {
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_3: number
@@ -11037,7 +11037,7 @@ export interface NodeSpeedParams {
    */
   unk_ds3_f1_0?: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -11078,7 +11078,7 @@ class NodeSpeed extends DataAction {
   accelerationY: ScalarValue
   unk_ds3_f1_0: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_2: number
@@ -11122,7 +11122,7 @@ export interface NodeSpeedRandomTurnsParams {
    */
   maxTurnAngle?: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -11174,7 +11174,7 @@ class NodeSpeedRandomTurns extends DataAction {
    */
   maxTurnAngle: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_1: number
@@ -11235,7 +11235,7 @@ export interface NodeSpeedPartialFollowParams {
    */
   followFactor?: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -11304,7 +11304,7 @@ class NodeSpeedPartialFollow extends DataAction {
    */
   followFactor: ScalarValue
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_1: number
@@ -11417,7 +11417,7 @@ export interface NodeSpeedSpinParams {
    */
   unk_ds3_f1_1?: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
@@ -11504,7 +11504,7 @@ class NodeSpeedSpin extends DataAction {
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    */
   alignWithMotion: number
   unk_ds3_f1_3: number
