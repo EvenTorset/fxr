@@ -7162,19 +7162,25 @@ class FXR {
     await fs.writeFile(path, Buffer.from(this.toArrayBuffer(game)))
   }
 
-  static fromJSON({
-    id,
-    states,
-    root,
-  }: {
+  static fromJSON(obj: {
     id: number
     states: string[]
     root: any
+  } | {
+    version: string
+    fxr: any
   }) {
+    if ('fxr' in obj) {
+      return new FXR(
+        obj.fxr.id,
+        Node.fromJSON(obj.fxr.root) as RootNode | GenericNode,
+        obj.fxr.states.map(state => State.from(state)),
+      )
+    }
     return new FXR(
-      id,
-      Node.fromJSON(root) as RootNode | GenericNode,
-      states.map(state => State.from(state)),
+      obj.id,
+      Node.fromJSON(obj.root) as RootNode | GenericNode,
+      obj.states.map(state => State.from(state)),
     )
   }
 

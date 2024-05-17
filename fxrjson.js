@@ -47,7 +47,7 @@ await (async () => {
         `correctly, please serialize it with ${json.version} instead.`
       )
     }
-    const fxr = FXR.fromJSON(json.fxr)
+    const fxr = FXR.fromJSON(json)
     await fxr.saveAs(filePath.replace(/.json$/, ''), game)
   }
 
