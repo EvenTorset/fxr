@@ -1,0 +1,186 @@
+type: 10100
+name: Unk10100
+slot: Unknown10100
+desc: |
+  Unknown root node action.
+properties:
+  unk_ds3_f1_0:
+    field: int
+  unk_ds3_f1_1:
+    field: int
+    default: 1
+  unk_ds3_f1_2:
+    field: int
+    default: 1
+  unk_ds3_f1_3:
+    field: int
+    default: 1
+    desc: |
+      Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
+  unk_ds3_f1_4:
+    field: int
+  unk_ds3_f1_5:
+    field: int
+  unk_ds3_f1_6:
+    field: int
+  unk_ds3_f1_7:
+    field: int
+  unk_ds3_f1_8:
+    field: int
+  unk_ds3_f1_9:
+    field: int
+  unk_ds3_f1_10:
+    field: int
+  unk_ds3_f1_11:
+    field: int
+  unk_ds3_f1_12:
+    field: int
+  unk_ds3_f1_13:
+    field: int
+  unk_ds3_f1_14:
+    field: int
+  unk_ds3_f1_15:
+    field: int
+  unk_ds3_f1_16:
+    field: int
+  unk_ds3_f1_17:
+    field: int
+  unk_ds3_f1_18:
+    field: int
+  unk_ds3_f1_19:
+    field: int
+  unk_ds3_f1_20:
+    field: int
+  unk_ds3_f1_21:
+    field: int
+  unk_ds3_f1_22:
+    field: int
+  unk_ds3_f1_23:
+    field: int
+    default: -1
+  unk_ds3_f1_24:
+    field: int
+  unk_ds3_f1_25:
+    field: int
+  unk_ds3_f1_26:
+    field: int
+  unk_ds3_f1_27:
+    field: int
+  unk_ds3_f1_28:
+    field: int
+  unk_ds3_f1_29:
+    field: int
+  unk_ds3_f1_30:
+    field: int
+  unk_ds3_f1_31:
+    field: int
+  unk_ds3_f1_32:
+    field: int
+  unk_ds3_f1_33:
+    field: int
+  unk_ds3_f1_34:
+    field: int
+  unk_ds3_f1_35:
+    field: int
+  unk_ds3_f1_36:
+    field: int
+  unk_ds3_f1_37:
+    field: int
+  unk_ds3_f1_38:
+    field: int
+  unk_ds3_f1_39:
+    field: int
+  unk_ds3_f1_40:
+    field: int
+  unk_ds3_f1_41:
+    field: int
+  unk_ds3_f1_42:
+    field: int
+  unk_ds3_f1_43:
+    field: int
+  unk_ds3_f1_44:
+    field: int
+  unk_ds3_f1_45:
+    field: int
+  unk_ds3_f1_46:
+    field: int
+  unk_ds3_f1_47:
+    field: int
+  unk_ds3_f1_48:
+    field: int
+  unk_ds3_f1_49:
+    field: int
+  unk_ds3_f1_50:
+    field: int
+  unk_ds3_f1_51:
+    field: int
+  unk_ds3_f1_52:
+    field: int
+  unk_ds3_f1_53:
+    field: int
+  unk_ds3_f1_54:
+    field: int
+  unk_ds3_f1_55:
+    field: int
+games:
+  DS3:
+    fields1:
+      - unk_ds3_f1_0
+      - unk_ds3_f1_1
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - unk_ds3_f1_7
+      - unk_ds3_f1_8
+      - unk_ds3_f1_9
+      - unk_ds3_f1_10
+      - unk_ds3_f1_11
+      - unk_ds3_f1_12
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+      - unk_ds3_f1_16
+      - unk_ds3_f1_17
+      - unk_ds3_f1_18
+      - unk_ds3_f1_19
+      - unk_ds3_f1_20
+      - unk_ds3_f1_21
+      - unk_ds3_f1_22
+      - unk_ds3_f1_23
+      - unk_ds3_f1_24
+      - unk_ds3_f1_25
+      - unk_ds3_f1_26
+      - unk_ds3_f1_27
+      - unk_ds3_f1_28
+      - unk_ds3_f1_29
+      - unk_ds3_f1_30
+      - unk_ds3_f1_31
+      - unk_ds3_f1_32
+      - unk_ds3_f1_33
+      - unk_ds3_f1_34
+      - unk_ds3_f1_35
+      - unk_ds3_f1_36
+      - unk_ds3_f1_37
+      - unk_ds3_f1_38
+      - unk_ds3_f1_39
+      - unk_ds3_f1_40
+      - unk_ds3_f1_41
+      - unk_ds3_f1_42
+      - unk_ds3_f1_43
+      - unk_ds3_f1_44
+      - unk_ds3_f1_45
+      - unk_ds3_f1_46
+      - unk_ds3_f1_47
+      - unk_ds3_f1_48
+      - unk_ds3_f1_49
+      - unk_ds3_f1_50
+      - unk_ds3_f1_51
+      - unk_ds3_f1_52
+      - unk_ds3_f1_53
+      - unk_ds3_f1_54
+      - unk_ds3_f1_55
+  SDT: DS3
+  ER: DS3
+  AC6: DS3

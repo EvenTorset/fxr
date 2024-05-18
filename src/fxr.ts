@@ -129,13 +129,10 @@ enum ActionType {
   Unk10008_SparkParticle = 10008,
   Unk10009_SparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
-  Unk10100 = 10100, // Root node action
   Unk10200_ForceFieldCancelArea = 10200,
-  Unk10300_ForceFieldWindArea = 10300,
   Unk10301_ForceFieldGravityArea = 10301,
   Unk10302_CollisionFieldArea = 10302,
   Unk10303_ForceFieldTurbulenceArea = 10303,
-  Unk10400 = 10400, // Root node action
 
   // Data Actions
   /*#ActionType start*/
@@ -746,6 +743,33 @@ enum ActionType {
    * This action type has a specialized subclass: {@link RichModel}
    */
   RichModel = 10015,
+  /**
+   * ### Action 10100 - Unk10100
+   * **Slot**: {@link ActionSlots.Unknown10100Action Unknown10100}
+   * 
+   * Unknown root node action.
+   * 
+   * This action type has a specialized subclass: {@link Unk10100}
+   */
+  Unk10100 = 10100,
+  /**
+   * ### Action 10300 - WindForce
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Creates a wind force in a volume.
+   * 
+   * This action type has a specialized subclass: {@link WindForce}
+   */
+  WindForce = 10300,
+  /**
+   * ### Action 10400 - Unk10400
+   * **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
+   * 
+   * Unknown root node action.
+   * 
+   * This action type has a specialized subclass: {@link Unk10400}
+   */
+  Unk10400 = 10400,
   /**
    * ### Action 10500 - Unk10500
    * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
@@ -1548,6 +1572,7 @@ export namespace ActionSlots {
     | WaterInteraction
     | LensFlare
     | RichModel
+    | WindForce
     | SpotLight
     | Action
 
@@ -1645,6 +1670,14 @@ export namespace ActionSlots {
 
   export type Unknown130Action =
     | Unk130
+    | Action
+
+  export type Unknown10100Action =
+    | Unk10100
+    | Action
+
+  export type Unknown10400Action =
+    | Unk10400
     | Action
 
   export type Unknown10500Action =
@@ -4197,6 +4230,230 @@ const ActionData: {
       }
     }
   },
+  [ActionType.Unk10100]: {
+    props: {
+      unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_13: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_16: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_17: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_18: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_19: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_23: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_24: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_25: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_26: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_27: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_30: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_31: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_32: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_33: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_34: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_35: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_36: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_37: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_38: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_39: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_40: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_41: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_42: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_43: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_44: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_45: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_46: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_47: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_48: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_49: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_50: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_51: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_52: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_53: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_54: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_55: { default: 0, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','unk_ds3_f1_51','unk_ds3_f1_52','unk_ds3_f1_53','unk_ds3_f1_54','unk_ds3_f1_55']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.WindForce]: {
+    props: {
+      intensity: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_0: { default: 1, field: FieldType.Integer },
+      radius: { default: 10, field: FieldType.Float },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_3: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_4: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_5: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_13: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_16: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_17: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_18: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_19: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_24: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_25: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_26: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_27: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_28: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_29: { default: 30, field: FieldType.Integer },
+      unk_ds3_f1_30: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_31: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_32: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_33: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_34: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_35: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_36: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_37: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_38: { default: 10, field: FieldType.Float },
+      unk_ds3_f1_39: { default: 10, field: FieldType.Float },
+      unk_ds3_f1_40: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_41: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_42: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_43: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_44: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_45: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_46: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_47: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_48: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_48: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_49: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_50: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_51: { default: 0, field: FieldType.Float },
+      unk_sdt_f1_52: { default: 0, field: FieldType.Float },
+      fadeOutTime: { default: 2, field: FieldType.Integer },
+      unk_sdt_f1_54: { default: 0, field: FieldType.Float },
+      unk_sdt_f1_55: { default: 0, field: FieldType.Float },
+      unk_sdt_f1_56: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_57: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_58: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_49: { default: 10, field: FieldType.Float },
+      unk_ds3_f1_50: { default: 60, field: FieldType.Float },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
+        properties1: ['intensity']
+      },
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
+        properties1: Game.DarkSouls3
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.Unk10400]: {
+    props: {
+      unk_ds3_f1_0: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_3: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_4: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_6: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_7: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_9: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_10: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_11: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_12: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_13: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_14: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_15: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_16: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_17: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_18: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_19: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_20: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_21: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_22: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_23: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_24: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_25: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_26: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_28: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_29: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_30: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_31: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_32: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_33: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_34: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_35: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_36: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_37: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_38: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_39: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_40: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_41: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_42: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_43: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_44: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_45: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_46: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_47: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_48: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_49: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_50: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_51: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_52: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_53: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_54: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_55: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_56: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_57: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_58: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_59: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_60: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_61: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_62: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_63: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_64: { default: 1, field: FieldType.Integer },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','unk_ds3_f1_51','unk_ds3_f1_52','unk_ds3_f1_53','unk_ds3_f1_54','unk_ds3_f1_55','unk_ds3_f1_56','unk_ds3_f1_57','unk_ds3_f1_58','unk_ds3_f1_59','unk_ds3_f1_60','unk_ds3_f1_61','unk_ds3_f1_62','unk_ds3_f1_63','unk_ds3_f1_64']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.Unk10500]: {
     props: {
       rateOfTime: { default: 1, field: FieldType.Float },
@@ -4382,7 +4639,7 @@ const EffectActionSlots = {
       ActionType.LensFlare,
       ActionType.RichModel,
       ActionType.Unk10200_ForceFieldCancelArea,
-      ActionType.Unk10300_ForceFieldWindArea,
+      ActionType.WindForce,
       ActionType.Unk10301_ForceFieldGravityArea,
       ActionType.Unk10302_CollisionFieldArea,
       ActionType.Unk10303_ForceFieldTurbulenceArea,
@@ -6455,6 +6712,18 @@ const ActionDataConversion = {
       return props
     }
   },
+  [ActionType.WindForce]: {
+    read(props: WindForceParams, game: Game) {
+      if ('fadeOutTime' in props) {
+        props.fadeOutTime = props.fadeOutTime / 30
+      }
+      return props
+    },
+    write(props: WindForceParams, game: Game) {
+      props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      return props
+    }
+  },
   [ActionType.SpotLight]: {
     read(props: SpotLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
@@ -6487,6 +6756,7 @@ const ActionDataConversion = {
   }
 }
 
+//#region Binary Reader/Writer
 class BinaryReader extends DataView {
 
   position: number = 0
@@ -7838,6 +8108,13 @@ abstract class Node {
           slot9.jitterX *= factor
           slot9.jitterY *= factor
           slot9.jitterZ *= factor
+        } else if (slot9 instanceof WindForce) {
+          slot9.radius *= factor
+          slot9.unk_ds3_f1_2 *= factor
+          slot9.unk_ds3_f1_3 *= factor
+          slot9.unk_ds3_f1_4 *= factor
+          slot9.unk_ds3_f1_7 *= factor
+          slot9.unk_ds3_f1_8 *= factor
         } else if (slot9 instanceof ParticleSystem) {
           slot9.emitterSizeX = anyValueMult(factor, slot9.emitterSizeX)
           slot9.emitterSizeY = anyValueMult(factor, slot9.emitterSizeY)
@@ -8158,13 +8435,13 @@ class GenericNode extends Node {
  */
 class RootNode extends Node {
 
-  unk70x: ActionSlots.Unknown70xAction = new Action(ActionType.Unk700)
+  unk70x: ActionSlots.Unknown70xAction = new Unk700
 
   constructor(
     public nodes: Node[] = [],
     unk70x: ActionSlots.Unknown70xAction = null,
-    public unk10100: AnyAction = new Action(ActionType.Unk10100, arrayOf(56, () => new IntField(0))),
-    public unk10400: AnyAction = new Action(ActionType.Unk10400, arrayOf(65, () => new IntField(1))),
+    public unk10100: ActionSlots.Unknown10100Action = new Unk10100,
+    public unk10400: ActionSlots.Unknown10400Action = new Unk10400,
     public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
@@ -28335,6 +28612,1361 @@ class RichModel extends DataAction {
   }
 }
 
+export interface Unk10100Params {
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_2?: number
+  /**
+   * Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_3?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_4?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_6?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_24?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_25?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_26?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_29?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_30?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_33?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_34?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_35?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_36?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_37?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_38?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_39?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_40?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_41?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_42?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_43?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_44?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_45?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_46?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_47?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_48?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_49?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_50?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_51?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_52?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_53?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_54?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_55?: number
+}
+
+/**
+ * ### {@link ActionType.Unk10100 Action 10100 - Unk10100}
+ * **Slot**: {@link ActionSlots.Unknown10100Action Unknown10100}
+ * 
+ * Unknown root node action.
+ */
+class Unk10100 extends DataAction {
+  declare type: ActionType.Unk10100
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  unk_ds3_f1_2: number
+  /**
+   * Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
+   */
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_6: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_10: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f1_16: number
+  unk_ds3_f1_17: number
+  unk_ds3_f1_18: number
+  unk_ds3_f1_19: number
+  unk_ds3_f1_20: number
+  unk_ds3_f1_21: number
+  unk_ds3_f1_22: number
+  unk_ds3_f1_23: number
+  unk_ds3_f1_24: number
+  unk_ds3_f1_25: number
+  unk_ds3_f1_26: number
+  unk_ds3_f1_27: number
+  unk_ds3_f1_28: number
+  unk_ds3_f1_29: number
+  unk_ds3_f1_30: number
+  unk_ds3_f1_31: number
+  unk_ds3_f1_32: number
+  unk_ds3_f1_33: number
+  unk_ds3_f1_34: number
+  unk_ds3_f1_35: number
+  unk_ds3_f1_36: number
+  unk_ds3_f1_37: number
+  unk_ds3_f1_38: number
+  unk_ds3_f1_39: number
+  unk_ds3_f1_40: number
+  unk_ds3_f1_41: number
+  unk_ds3_f1_42: number
+  unk_ds3_f1_43: number
+  unk_ds3_f1_44: number
+  unk_ds3_f1_45: number
+  unk_ds3_f1_46: number
+  unk_ds3_f1_47: number
+  unk_ds3_f1_48: number
+  unk_ds3_f1_49: number
+  unk_ds3_f1_50: number
+  unk_ds3_f1_51: number
+  unk_ds3_f1_52: number
+  unk_ds3_f1_53: number
+  unk_ds3_f1_54: number
+  unk_ds3_f1_55: number
+  constructor(props: Unk10100Params = {}) {
+    super(ActionType.Unk10100)
+    this.assign(props)
+  }
+}
+
+export interface WindForceParams {
+  /**
+   * The intensity of the wind in the volume.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  intensity?: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * The radius of the sphere where the wind force is active.
+   * 
+   * **Default**: `10`
+   */
+  radius?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_4?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_6?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_24?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_25?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_26?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_27?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `30`
+   */
+  unk_ds3_f1_29?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_30?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_33?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_34?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_35?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_36?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_37?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `10`
+   */
+  unk_ds3_f1_38?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `10`
+   */
+  unk_ds3_f1_39?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_40?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_41?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_42?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_43?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_44?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_45?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_46?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_47?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_48?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_48?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_49?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_50?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_51?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_52?: number
+  /**
+   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `2`
+   */
+  fadeOutTime?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_54?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_55?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_56?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_57?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_58?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `10`
+   */
+  unk_ds3_f1_49?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `60`
+   */
+  unk_ds3_f1_50?: number
+}
+
+/**
+ * ### {@link ActionType.WindForce Action 10300 - WindForce}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Creates a wind force in a volume.
+ */
+class WindForce extends DataAction {
+  declare type: ActionType.WindForce
+  /**
+   * The intensity of the wind in the volume.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  intensity: ScalarValue
+  unk_ds3_f1_0: number
+  /**
+   * The radius of the sphere where the wind force is active.
+   */
+  radius: number
+  unk_ds3_f1_2: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_6: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_10: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f1_16: number
+  unk_ds3_f1_17: number
+  unk_ds3_f1_18: number
+  unk_ds3_f1_19: number
+  unk_ds3_f1_20: number
+  unk_ds3_f1_21: number
+  unk_ds3_f1_22: number
+  unk_ds3_f1_23: number
+  unk_ds3_f1_24: number
+  unk_ds3_f1_25: number
+  unk_ds3_f1_26: number
+  unk_ds3_f1_27: number
+  unk_ds3_f1_28: number
+  unk_ds3_f1_29: number
+  unk_ds3_f1_30: number
+  unk_ds3_f1_31: number
+  unk_ds3_f1_32: number
+  unk_ds3_f1_33: number
+  unk_ds3_f1_34: number
+  unk_ds3_f1_35: number
+  unk_ds3_f1_36: number
+  unk_ds3_f1_37: number
+  unk_ds3_f1_38: number
+  unk_ds3_f1_39: number
+  unk_ds3_f1_40: number
+  unk_ds3_f1_41: number
+  unk_ds3_f1_42: number
+  unk_ds3_f1_43: number
+  unk_ds3_f1_44: number
+  unk_ds3_f1_45: number
+  unk_ds3_f1_46: number
+  unk_ds3_f1_47: number
+  unk_ds3_f1_48: number
+  unk_sdt_f1_48: number
+  unk_sdt_f1_49: number
+  unk_sdt_f1_50: number
+  unk_sdt_f1_51: number
+  unk_sdt_f1_52: number
+  /**
+   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   */
+  fadeOutTime: number
+  unk_sdt_f1_54: number
+  unk_sdt_f1_55: number
+  unk_sdt_f1_56: number
+  unk_sdt_f1_57: number
+  unk_sdt_f1_58: number
+  unk_ds3_f1_49: number
+  unk_ds3_f1_50: number
+  constructor(props: WindForceParams = {}) {
+    super(ActionType.WindForce)
+    this.assign(props)
+  }
+}
+
+export interface Unk10400Params {
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_1?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_3?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_4?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_6?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_24?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_25?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_26?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_29?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_30?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_33?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_34?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_35?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_36?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_37?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_38?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_39?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_40?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_41?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_42?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_43?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_44?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_45?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_46?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_47?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_48?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_49?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_50?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_51?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_52?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_53?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_54?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_55?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_56?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_57?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_58?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_59?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_60?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_61?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_62?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_63?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_64?: number
+}
+
+/**
+ * ### {@link ActionType.Unk10400 Action 10400 - Unk10400}
+ * **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
+ * 
+ * Unknown root node action.
+ */
+class Unk10400 extends DataAction {
+  declare type: ActionType.Unk10400
+  unk_ds3_f1_0: number
+  unk_ds3_f1_1: number
+  unk_ds3_f1_2: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_6: number
+  unk_ds3_f1_7: number
+  unk_ds3_f1_8: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_10: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f1_16: number
+  unk_ds3_f1_17: number
+  unk_ds3_f1_18: number
+  unk_ds3_f1_19: number
+  unk_ds3_f1_20: number
+  unk_ds3_f1_21: number
+  unk_ds3_f1_22: number
+  unk_ds3_f1_23: number
+  unk_ds3_f1_24: number
+  unk_ds3_f1_25: number
+  unk_ds3_f1_26: number
+  unk_ds3_f1_27: number
+  unk_ds3_f1_28: number
+  unk_ds3_f1_29: number
+  unk_ds3_f1_30: number
+  unk_ds3_f1_31: number
+  unk_ds3_f1_32: number
+  unk_ds3_f1_33: number
+  unk_ds3_f1_34: number
+  unk_ds3_f1_35: number
+  unk_ds3_f1_36: number
+  unk_ds3_f1_37: number
+  unk_ds3_f1_38: number
+  unk_ds3_f1_39: number
+  unk_ds3_f1_40: number
+  unk_ds3_f1_41: number
+  unk_ds3_f1_42: number
+  unk_ds3_f1_43: number
+  unk_ds3_f1_44: number
+  unk_ds3_f1_45: number
+  unk_ds3_f1_46: number
+  unk_ds3_f1_47: number
+  unk_ds3_f1_48: number
+  unk_ds3_f1_49: number
+  unk_ds3_f1_50: number
+  unk_ds3_f1_51: number
+  unk_ds3_f1_52: number
+  unk_ds3_f1_53: number
+  unk_ds3_f1_54: number
+  unk_ds3_f1_55: number
+  unk_ds3_f1_56: number
+  unk_ds3_f1_57: number
+  unk_ds3_f1_58: number
+  unk_ds3_f1_59: number
+  unk_ds3_f1_60: number
+  unk_ds3_f1_61: number
+  unk_ds3_f1_62: number
+  unk_ds3_f1_63: number
+  unk_ds3_f1_64: number
+  constructor(props: Unk10400Params = {}) {
+    super(ActionType.Unk10400)
+    this.assign(props)
+  }
+}
+
 export interface Unk10500Params {
   /**
    * Controls how fast time passes for the entire effect.
@@ -29081,6 +30713,9 @@ const DataActions = {
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
   [ActionType.RichModel]: RichModel, RichModel,
+  [ActionType.Unk10100]: Unk10100, Unk10100,
+  [ActionType.WindForce]: WindForce, WindForce,
+  [ActionType.Unk10400]: Unk10400, Unk10400,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
   /*#ActionsList end*/
@@ -30948,6 +32583,9 @@ export {
   WaterInteraction,
   LensFlare,
   RichModel,
+  Unk10100,
+  WindForce,
+  Unk10400,
   Unk10500,
   SpotLight,
   /*#ActionsExport end*/
