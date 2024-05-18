@@ -11,9 +11,6 @@
     "require": "./dist/cjs/fxr.js"
   },
   "types": "./dist/esm/fxr.d.ts",
-  "bin": {
-    "fxrjson": "fxrjson.js"
-  },
   "scripts": {
     "build:yaml": "node build/run.js",
     "build:ts:esm": "npx tsc --p tsconfig-esm.json",
@@ -52,8 +49,5 @@
     "typedoc": "^0.25.12",
     "typescript": "^5.4.3",
     "yaml": "^2.4.1"
-  },
-  "dependencies": {
-    "json-beautify": "^1.1.1"
   }
 }
