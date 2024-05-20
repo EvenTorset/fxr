@@ -7537,85 +7537,97 @@ class FXR {
    * another.
    */
   getResources() {
-    const list = []
+    const res: {
+      textures: { resource: ScalarValue, type: string }[],
+      models: { resource: ScalarValue }[],
+      anibnds: { resource: ScalarValue }[],
+      sounds: { resource: ScalarValue }[]
+    } = {
+      textures: [],
+      models: [],
+      anibnds: [],
+      sounds: []
+    }
     for (const effect of this.root.walkEffects()) if (effect instanceof BasicEffect) {
       if (effect.nodeAudio instanceof NodeSound) {
-        list.push(effect.nodeAudio.sound)
+        res.sounds.push({ resource: effect.nodeAudio.sound })
       }
       if (effect.emissionAudio instanceof EmissionSound) {
-        list.push(effect.emissionAudio.sound)
+        res.sounds.push({ resource: effect.emissionAudio.sound })
       }
       const action = effect.appearance
-      if (action instanceof PointSprite || action instanceof WaterInteraction) {
-        list.push(action.texture)
+      if (action instanceof PointSprite) {
+        res.textures.push({ resource: action.texture, type: 'a' })
+      } else if (action instanceof WaterInteraction) {
+        res.textures.push({ resource: action.texture, type: 'd' })
       } else if (action instanceof BillboardEx) {
-        list.push(action.texture)
-        list.push(action.normalMap)
-        list.push(action.specular)
+        res.textures.push({ resource: action.texture, type: 'a' })
+        res.textures.push({ resource: action.normalMap, type: 'n' })
+        res.textures.push({ resource: action.specular, type: '3m' })
       } else if (action instanceof MultiTextureBillboardEx) {
-        list.push(action.mask)
-        list.push(action.layer1)
-        list.push(action.layer2)
-        list.push(action.specular)
+        res.textures.push({ resource: action.mask, type: 'a' })
+        res.textures.push({ resource: action.layer1, type: 'a' })
+        res.textures.push({ resource: action.layer2, type: 'a' })
+        res.textures.push({ resource: action.specular, type: '3m' })
       } else if (action instanceof Model || action instanceof RichModel) {
-        list.push(action.model)
-        list.push(action.anibnd)
+        res.models.push({ resource: action.model })
+        res.anibnds.push({ resource: action.anibnd })
       } else if (action instanceof Tracer || action instanceof DynamicTracer) {
-        list.push(action.texture)
-        list.push(action.normalMap)
+        res.textures.push({ resource: action.texture, type: 'a' })
+        res.textures.push({ resource: action.normalMap, type: 'n' })
       } else if (action instanceof Distortion) {
-        list.push(action.texture)
-        list.push(action.normalMap)
-        list.push(action.mask)
+        res.textures.push({ resource: action.texture, type: 'a' })
+        res.textures.push({ resource: action.normalMap, type: 'n' })
+        res.textures.push({ resource: action.mask, type: 'a' })
       } else if (action instanceof RadialBlur) {
-        list.push(action.mask)
+        res.textures.push({ resource: action.mask, type: 'a' })
       } else if (action instanceof ParticleSystem) {
-        list.push(action.texture)
-        list.push(action.normalMap)
+        res.textures.push({ resource: action.texture, type: 'a' })
+        res.textures.push({ resource: action.normalMap, type: 'n' })
       } else if (action instanceof LensFlare) {
-        list.push(action.layer1)
-        list.push(action.layer2)
-        list.push(action.layer3)
-        list.push(action.layer4)
+        res.textures.push({ resource: action.layer1, type: 'a' })
+        res.textures.push({ resource: action.layer2, type: 'a' })
+        res.textures.push({ resource: action.layer3, type: 'a' })
+        res.textures.push({ resource: action.layer4, type: 'a' })
       } else if (action instanceof Action) switch (action.type) {
         case ActionType.Unk10001_StandardCorrectParticle:
-          list.push(action.fields1[1].value)
-          list.push(action.fields1[3].value)
+          res.textures.push({ resource: action.fields1[1].value as number, type: 'a' })
+          res.textures.push({ resource: action.fields1[3].value as number, type: 'n' })
           break
       }
     }
-    return uniqueArray(list.map(e => {
-      if (e instanceof Property) {
-        const obj = e.toJSON()
-        if (typeof obj === 'number') {
-          return obj
+    const cleanList = (list: { resource: ScalarValue }[]) => list.map(e => {
+      if (e.resource instanceof Property) {
+        e.resource = e.resource.valueAt(0)
+      }
+      return e
+    }).filter((e, i, a) => e.resource !== 0 && a.findIndex(f => f.resource === e.resource) === i).sort((a, b) => {
+      if (a.resource instanceof Property) {
+        if (b.resource instanceof Property) {
+          return a.resource.valueAt(0) - b.resource.valueAt(0)
         } else {
-          return JSON.stringify(obj)
+          return a.resource.valueAt(0) - b.resource
         }
       } else {
-        return e
-      }
-    }).filter(e => e !== 0)).map(e => {
-      if (typeof e === 'string') {
-        return Property.fromJSON(JSON.parse(e))
-      } else {
-        return e
-      }
-    }).sort((a, b) => {
-      if (a instanceof Property) {
-        if (b instanceof Property) {
-          return a.valueAt(0) - b.valueAt(0)
+        if (b.resource instanceof Property) {
+          return a.resource - b.resource.valueAt(0)
         } else {
-          return a.valueAt(0) - b
-        }
-      } else {
-        if (b instanceof Property) {
-          return a - b.valueAt(0)
-        } else {
-          return a - b
+          return a.resource - b.resource
         }
       }
-    })
+    }) as { resource: number }[]
+
+    return {
+      textures: cleanList(res.textures),
+      models: cleanList(res.models).map(e => e.resource),
+      anibnds: cleanList(res.anibnds).map(e => e.resource),
+      sounds: cleanList(res.sounds).map(e => e.resource)
+    } as {
+      textures: { resource: number, type: string }[],
+      models: number[],
+      anibnds: number[],
+      sounds: number[]
+    }
   }
 
 }
