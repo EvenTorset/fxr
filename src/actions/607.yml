@@ -306,7 +306,7 @@ properties:
     field: float
     default: -1
   unk_ds3_f2_20:
-    field: int
+    field: float
     default: 1
   unk_ds3_f2_21:
     field: int

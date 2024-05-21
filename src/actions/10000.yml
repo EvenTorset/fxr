@@ -584,9 +584,9 @@ properties:
     field: int
     default: 8
   unk_ds3_f1_139:
-    field: int
+    field: float
   unk_ds3_f1_140:
-    field: int
+    field: float
   unk_ds3_f1_141:
     field: int
   limitUpdateDistance:
@@ -600,7 +600,7 @@ properties:
   unk_ds3_f1_144:
     field: int
   unk_ds3_f1_145:
-    field: int
+    field: float
   particleRandomTurns:
     field: bool
     default: false

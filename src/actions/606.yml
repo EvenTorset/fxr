@@ -248,7 +248,7 @@ properties:
   unk_ds3_f1_7:
     field: int
   unk_ds3_f1_8:
-    field: int
+    field: float
   unk_ds3_f1_9:
     field: float
   unk_ds3_f1_13:
@@ -272,7 +272,7 @@ properties:
     field: int
     default: 1
   unk_ds3_f2_9:
-    field: int
+    field: float
   unk_ds3_f2_10:
     field: int
   unk_ds3_f2_11:

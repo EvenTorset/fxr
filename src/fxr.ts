@@ -1937,7 +1937,7 @@ const ActionData: {
       accelerationY: { default: 0 },
       maxTurnAngle: { default: 0 },
       alignWithMotion: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_1: { default: 0, field: FieldType.Float },
       turnInterval: { default: 0, field: FieldType.Integer },
     },
     games: {
@@ -2489,7 +2489,7 @@ const ActionData: {
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
       unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -2507,13 +2507,13 @@ const ActionData: {
       unkDepthBlend2: { default: 0, field: FieldType.Float },
       unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Float },
       unk_ds3_p2_2: { default: 0 },
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
       alphaThreshold: { default: 0 },
-      unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Float },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
@@ -2572,7 +2572,7 @@ const ActionData: {
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
       unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -2590,7 +2590,7 @@ const ActionData: {
       unkDepthBlend2: { default: 0, field: FieldType.Float },
       unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Float },
       unk_ds3_p2_2: { default: 0 },
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
@@ -2657,7 +2657,7 @@ const ActionData: {
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
       unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -2675,13 +2675,13 @@ const ActionData: {
       unkDepthBlend2: { default: 0, field: FieldType.Float },
       unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
-      unk_ds3_f2_29: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_29: { default: 0, field: FieldType.Float },
       unk_ds3_p2_2: { default: 0 },
       unk_ds3_p2_3: { default: [1, 1, 1, 1] },
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
       alphaThreshold: { default: 0 },
-      unk_sdt_f2_30: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_30: { default: 0, field: FieldType.Float },
       unk_sdt_f2_31: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_32: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
@@ -2772,9 +2772,9 @@ const ActionData: {
       unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_1: { default: 0, field: FieldType.Boolean },
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Float },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -2905,9 +2905,9 @@ const ActionData: {
       unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
-      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Float },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -3037,7 +3037,7 @@ const ActionData: {
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
       unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -3046,7 +3046,7 @@ const ActionData: {
       unkDistFadeClose1: { default: -1, field: FieldType.Float },
       unkDistFadeFar0: { default: -1, field: FieldType.Float },
       unkDistFadeFar1: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Float },
       unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
@@ -3055,7 +3055,7 @@ const ActionData: {
       unkDepthBlend2: { default: 0, field: FieldType.Float },
       unk_ds3_f2_26: { default: 1, field: FieldType.Integer },
       unk_ds3_f2_27: { default: 0, field: FieldType.Integer },
-      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Float },
       unk_ds3_p1_15: { default: 0 },
       unk_ds3_p1_24: { default: 0 },
       unk_ds3_p2_2: { default: 0 },
@@ -3142,7 +3142,7 @@ const ActionData: {
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Float },
       unk_ds3_f1_9: { default: 0, field: FieldType.Float },
       unk_ds3_f1_13: { default: -1, field: FieldType.Integer },
       unk_ds3_f1_14: { default: -1, field: FieldType.Integer },
@@ -3152,7 +3152,7 @@ const ActionData: {
       unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
       unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_4: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Float },
       unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
@@ -3261,7 +3261,7 @@ const ActionData: {
       unkDistFadeClose1: { default: -1, field: FieldType.Float },
       unkDistFadeFar0: { default: -1, field: FieldType.Float },
       unkDistFadeFar1: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_20: { default: 1, field: FieldType.Float },
       unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
@@ -3352,7 +3352,7 @@ const ActionData: {
       unkDistFadeFar1: { default: -1, field: FieldType.Float },
       unk_ds3_f2_20: { default: 0.5, field: FieldType.Float },
       unk_ds3_f2_21: { default: 1, field: FieldType.Integer },
-      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Float },
       unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
       unkDepthBlend1: { default: 1, field: FieldType.Float },
@@ -3429,7 +3429,7 @@ const ActionData: {
       unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_22: { default: 100, field: FieldType.Integer },
       unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
-      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Float },
       unk_ds3_p1_3: { default: 0 },
       unk_ds3_p1_4: { default: 0 },
       unk_ds3_p1_5: { default: 0 },
@@ -3700,13 +3700,13 @@ const ActionData: {
       unk_ds3_f1_136: { default: 0, field: FieldType.Float },
       unk_ds3_f1_137: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_138: { default: 8, field: FieldType.Integer },
-      unk_ds3_f1_139: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_140: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_139: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_140: { default: 0, field: FieldType.Float },
       unk_ds3_f1_141: { default: 0, field: FieldType.Integer },
       limitUpdateDistance: { default: 0, field: FieldType.Boolean },
       updateDistance: { default: 0, field: FieldType.Float },
       unk_ds3_f1_144: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_145: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_145: { default: 0, field: FieldType.Float },
       particleRandomTurns: { default: false, field: FieldType.Boolean },
       particleRandomTurnIntervalMax: { default: 1, field: FieldType.Integer },
       traceParticles: { default: false, field: FieldType.Boolean },
@@ -3858,7 +3858,7 @@ const ActionData: {
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_8: { default: 0, field: FieldType.Float },
       unk_ds3_f1_9: { default: 0, field: FieldType.Float },
       unk_ds3_f1_13: { default: -1, field: FieldType.Integer },
       unk_ds3_f1_14: { default: -1, field: FieldType.Integer },
@@ -3877,7 +3877,7 @@ const ActionData: {
       unkDistFadeClose1: { default: -1, field: FieldType.Float },
       unkDistFadeFar0: { default: -1, field: FieldType.Float },
       unkDistFadeFar1: { default: -1, field: FieldType.Float },
-      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Float },
       unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
@@ -3902,14 +3902,14 @@ const ActionData: {
       unk_er_f1_18: { default: 1, field: FieldType.Integer },
       unk_er_f1_19: { default: 1, field: FieldType.Integer },
       unk_er_f1_20: { default: 0, field: FieldType.Integer },
-      unk_er_f1_21: { default: 0, field: FieldType.Integer },
+      unk_er_f1_21: { default: 0, field: FieldType.Float },
       unk_er_f2_39: { default: 0, field: FieldType.Integer },
       unk_er_f2_40: { default: 1, field: FieldType.Float },
       unk_sdt_f1_14: { default: 1, field: FieldType.Integer },
       unk_sdt_f1_15: { default: 1, field: FieldType.Float },
       unk_sdt_f1_16: { default: 1, field: FieldType.Float },
       unk_sdt_f1_17: { default: 1, field: FieldType.Float },
-      unk_ac6_f2_41: { default: 0, field: FieldType.Integer },
+      unk_ac6_f2_41: { default: 0, field: FieldType.Float },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -4027,19 +4027,19 @@ const ActionData: {
       unk_er_f1_4: { default: 0, field: FieldType.Integer },
       unk_er_f1_8: { default: 0, field: FieldType.Integer },
       unk_er_f1_17: { default: 0, field: FieldType.Integer },
-      unk_er_f1_18: { default: 0, field: FieldType.Integer },
+      unk_er_f1_18: { default: 0, field: FieldType.Float },
       unk_er_f1_19: { default: 1, field: FieldType.Float },
       unk_er_f1_20: { default: -1, field: FieldType.Float },
       unk_er_f1_29: { default: 0, field: FieldType.Integer },
-      unk_er_f1_30: { default: 0, field: FieldType.Integer },
+      unk_er_f1_30: { default: 0, field: FieldType.Float },
       unk_er_f1_31: { default: 1, field: FieldType.Float },
       unk_er_f1_32: { default: -1, field: FieldType.Float },
       unk_er_f1_41: { default: 0, field: FieldType.Integer },
-      unk_er_f1_42: { default: 0, field: FieldType.Integer },
+      unk_er_f1_42: { default: 0, field: FieldType.Float },
       unk_er_f1_43: { default: 1, field: FieldType.Float },
       unk_er_f1_44: { default: -1, field: FieldType.Float },
       unk_er_f1_53: { default: 0, field: FieldType.Integer },
-      unk_er_f1_54: { default: 0, field: FieldType.Integer },
+      unk_er_f1_54: { default: 0, field: FieldType.Float },
       unk_er_f1_55: { default: 1, field: FieldType.Float },
       unk_er_f1_56: { default: -1, field: FieldType.Float },
       unk_er_f1_57: { default: 0, field: FieldType.Integer },
@@ -4146,7 +4146,7 @@ const ActionData: {
       unk_er_f1_7: { default: 0, field: FieldType.Integer },
       unk_er_f1_8: { default: -2, field: FieldType.Integer },
       unk_er_f1_9: { default: -2, field: FieldType.Integer },
-      unk_er_f1_14: { default: 0, field: FieldType.Integer },
+      unk_er_f1_14: { default: 0, field: FieldType.Float },
       unk_er_f1_15: { default: 0, field: FieldType.Integer },
       unk_er_f1_16: { default: 0, field: FieldType.Integer },
       unk_er_f1_17: { default: 0, field: FieldType.Integer },
@@ -4156,7 +4156,7 @@ const ActionData: {
       unk_er_f1_21: { default: 0, field: FieldType.Integer },
       unk_er_f1_22: { default: 0, field: FieldType.Integer },
       unk_er_f1_23: { default: 0, field: FieldType.Integer },
-      unk_er_f1_24: { default: 0, field: FieldType.Integer },
+      unk_er_f1_24: { default: 0, field: FieldType.Float },
       unk_er_f1_25: { default: 1, field: FieldType.Integer },
       unk_er_f2_0: { default: 0, field: FieldType.Integer },
       unk_er_f2_1: { default: 0, field: FieldType.Integer },
@@ -4207,7 +4207,7 @@ const ActionData: {
       unk_ac6_f1_28: { default: -1, field: FieldType.Float },
       unk_ac6_f1_29: { default: 0, field: FieldType.Integer },
       unk_ac6_f1_30: { default: 0, field: FieldType.Integer },
-      unk_ac6_f1_31: { default: 0, field: FieldType.Integer },
+      unk_ac6_f1_31: { default: 0, field: FieldType.Float },
       unk_ac6_f1_32: { default: 0, field: FieldType.Integer },
       unk_ac6_f1_33: { default: 1, field: FieldType.Integer },
       unk_ac6_f1_34: { default: 0, field: FieldType.Integer },
@@ -4306,8 +4306,8 @@ const ActionData: {
       unk_ds3_f1_2: { default: 0, field: FieldType.Float },
       unk_ds3_f1_3: { default: 0, field: FieldType.Float },
       unk_ds3_f1_4: { default: 0, field: FieldType.Float },
-      unk_ds3_f1_5: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_6: { default: 0, field: FieldType.Float },
       unk_ds3_f1_7: { default: 0, field: FieldType.Float },
       unk_ds3_f1_8: { default: 0, field: FieldType.Float },
       unk_ds3_f1_9: { default: 0, field: FieldType.Integer },
@@ -4459,12 +4459,13 @@ const ActionData: {
       rateOfTime: { default: 1, field: FieldType.Float },
       unk_ds3_f1_0: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_1: { default: 0, field: FieldType.Float },
-      unk_ds3_f1_2: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Float },
       unk_ds3_f1_3: { default: 0, field: FieldType.Float },
       unk_ds3_f1_4: { default: 0, field: FieldType.Float },
       unk_ds3_f1_5: { default: 0, field: FieldType.Float },
       unk_ds3_f1_6: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_7: { default: 0, field: FieldType.Integer },
+      unk_ac6_f1_7: { default: 0, field: FieldType.Float },
       unk_ds3_f1_8: { default: 0, field: FieldType.Integer },
       unk_sdt_f1_9: { default: 0, field: FieldType.Integer },
     },
@@ -4479,7 +4480,10 @@ const ActionData: {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
         properties1: ['rateOfTime']
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ac6_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+        properties1: Game.EldenRing
+      }
     }
   },
   [ActionType.SpotLight]: {
@@ -10641,7 +10645,7 @@ export interface NodeAccelerationRandomTurnsParams {
    */
   alignWithMotion?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -13319,7 +13323,7 @@ export interface PointSpriteParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -13427,7 +13431,7 @@ export interface PointSpriteParams {
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -13467,7 +13471,7 @@ export interface PointSpriteParams {
    */
   alphaThreshold?: ScalarValue
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -13918,7 +13922,7 @@ export interface LineParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -14026,7 +14030,7 @@ export interface LineParams {
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -14552,7 +14556,7 @@ export interface QuadLineParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -14660,7 +14664,7 @@ export interface QuadLineParams {
    */
   unk_ds3_f2_28?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -14700,7 +14704,7 @@ export interface QuadLineParams {
    */
   alphaThreshold?: ScalarValue
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -15488,7 +15492,7 @@ export interface BillboardExParams {
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -15500,7 +15504,7 @@ export interface BillboardExParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -16760,7 +16764,7 @@ export interface MultiTextureBillboardExParams {
    */
   unk_ds3_f2_2?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -16772,7 +16776,7 @@ export interface MultiTextureBillboardExParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -18096,7 +18100,7 @@ export interface ModelParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -18150,7 +18154,7 @@ export interface ModelParams {
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -18204,7 +18208,7 @@ export interface ModelParams {
    */
   unk_ds3_f2_27?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -19120,7 +19124,7 @@ export interface TracerParams {
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -19180,7 +19184,7 @@ export interface TracerParams {
    */
   unk_ds3_f2_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -20138,7 +20142,7 @@ export interface DistortionParams {
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
@@ -20961,7 +20965,7 @@ export interface RadialBlurParams {
    */
   unk_ds3_f2_21?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -21593,7 +21597,7 @@ export interface PointLightParams {
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -23178,13 +23182,13 @@ export interface ParticleSystemParams {
    */
   unk_ds3_f1_138?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_139?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -23214,7 +23218,7 @@ export interface ParticleSystemParams {
    */
   unk_ds3_f1_144?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -24934,7 +24938,7 @@ export interface DynamicTracerParams {
    */
   unk_ds3_f1_7?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -25048,7 +25052,7 @@ export interface DynamicTracerParams {
    */
   unkDistFadeFar1?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -25207,7 +25211,7 @@ export interface DynamicTracerParams {
    */
   unk_er_f1_20?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -25249,7 +25253,7 @@ export interface DynamicTracerParams {
    */
   unk_sdt_f1_17?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -26377,7 +26381,7 @@ export interface LensFlareParams {
    */
   unk_er_f1_17?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -26401,7 +26405,7 @@ export interface LensFlareParams {
    */
   unk_er_f1_29?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -26425,7 +26429,7 @@ export interface LensFlareParams {
    */
   unk_er_f1_41?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -26449,7 +26453,7 @@ export interface LensFlareParams {
    */
   unk_er_f1_53?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -27785,7 +27789,7 @@ export interface RichModelParams {
    */
   unk_er_f1_9?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -27845,7 +27849,7 @@ export interface RichModelParams {
    */
   unk_er_f1_23?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -28153,7 +28157,7 @@ export interface RichModelParams {
    */
   unk_ac6_f1_30?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -29085,13 +29089,13 @@ export interface WindForceParams {
    */
   unk_ds3_f1_4?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ds3_f1_5?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -30010,7 +30014,7 @@ export interface Unk10500Params {
    */
   unk_ds3_f1_1?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -30045,6 +30049,12 @@ export interface Unk10500Params {
    * **Default**: `0`
    */
   unk_ds3_f1_7?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_7?: number
   /**
    * Unknown integer.
    * 
@@ -30081,6 +30091,7 @@ class Unk10500 extends DataAction {
   unk_ds3_f1_5: number
   unk_ds3_f1_6: number
   unk_ds3_f1_7: number
+  unk_ac6_f1_7: number
   unk_ds3_f1_8: number
   unk_sdt_f1_9: number
   constructor(props: Unk10500Params = {}) {

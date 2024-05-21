@@ -165,8 +165,7 @@ properties:
     field: int
     default: 1
   unk_ds3_f2_9:
-    field: int
-    default: 0
+    field: float
   unk_ds3_f2_10:
     field: int
     default: 0
@@ -219,8 +218,7 @@ properties:
     field: int
     default: 0
   unk_ds3_f2_29:
-    field: int
-    default: 0
+    field: float
   unk_ds3_p2_2:
     type: ScalarValue
     default: 0
@@ -241,8 +239,7 @@ properties:
 
       This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
   unk_sdt_f2_30:
-    field: int
-    default: 0
+    field: float
   unk_sdt_f2_31:
     field: int
     default: 0

@@ -250,7 +250,7 @@ properties:
   unk_ds3_f1_7:
     field: int
   unk_ds3_f1_8:
-    field: int
+    field: float
   unk_ds3_f1_9:
     field: float
   unk_ds3_f1_13:
@@ -296,7 +296,7 @@ properties:
     field: float
     default: -1
   unk_ds3_f2_20:
-    field: int
+    field: float
   unk_ds3_f2_21:
     field: int
   unk_ds3_f2_22:
@@ -367,7 +367,7 @@ properties:
   unk_er_f1_20:
     field: int
   unk_er_f1_21:
-    field: int
+    field: float
   unk_er_f2_39:
     field: int
   unk_er_f2_40:
@@ -386,7 +386,7 @@ properties:
     field: float
     default: 1
   unk_ac6_f2_41:
-    field: int
+    field: float
 games:
   DS3:
     fields1:
