@@ -32534,6 +32534,7 @@ export {
 
   Action,
   DataAction,
+  getActionGameData,
   NodeMovement,
   NodeTransform,
   ParticleMovement,
