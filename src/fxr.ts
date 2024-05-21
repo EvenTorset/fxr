@@ -8222,12 +8222,12 @@ abstract class Node {
           slot9 instanceof RichModel
         ) {
           for (const prop of [
-            'unkDistFadeClose0',
-            'unkDistFadeClose1',
-            'unkDistFadeFar0',
-            'unkDistFadeFar1',
             'minDistance',
+            'minFadeDistance',
+            'maxFadeDistance',
             'maxDistance',
+            'minDistanceThreshold',
+            'maxDistanceThreshold',
           ]) if (slot9[prop] > 0) {
             slot9[prop] *= factor
           }
