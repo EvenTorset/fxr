@@ -8,6 +8,7 @@ import {
   FXR,
   InitialDirection,
   Keyframe,
+  LightingMode,
   LinearProperty,
   MultiTextureBillboardEx,
   NodeTransform,
@@ -16,7 +17,6 @@ import {
   ParticleMovement,
   ParticleWindAcceleration,
   PeriodicEmitter,
-  PointEmitterShape,
   PointLight,
   RandomProperty,
   State,
@@ -50,11 +50,10 @@ fxr.states = [
 function crossguardSide(position) {
   return new BasicNode([
     NodeTransform({
-      rotationZ: 90,
+      rotationY: 90,
       offsetY: 0.54,
       offsetX: 0.135 * position
     }),
-    new PointEmitterShape({ direction: InitialDirection.LocalDown }),
     new MultiTextureBillboardEx({
       orientation: OrientationMode.LocalYaw,
       blendMode: BlendMode.Source,
@@ -107,20 +106,24 @@ fxr.root.nodes = [
   ], [
     // Steam during rain/snow
     new BasicNode([
-      new PeriodicEmitter({ interval: 0.2 }),
+      new PeriodicEmitter({ interval: 0.1 }),
       new CylinderEmitterShape({ radius: 0.1 }),
       new ParticleAttributes({
         duration: 4,
         attachment: AttachMode.None
       }),
-      ParticleMovement({ gravity: -0.1 }),
+      ParticleMovement({
+        gravity: -0.1,
+        followFactor: LinearProperty.basic(false, 0.25, 1, 0),
+      }),
       new ParticleWindAcceleration({ acceleration: 0.02 }),
-      new MultiTextureBillboardEx({
-        mask: 31261,
+      new BillboardEx({
+        texture: 21021,
         columns: 8,
         totalFrames: 64,
-        width: 0.4,
+        width: RandomProperty(0.1, 0.4),
         uniformScale: true,
+        rotationZ: RandomProperty(0, 360),
         color1: new LinearProperty(false, [
           new Keyframe(0, [1, 1, 1, 0]),
           new Keyframe(0.5, [1, 1, 1, 0.35]),
@@ -128,13 +131,10 @@ fxr.root.nodes = [
         ]),
         frameIndex: LinearProperty.basic(true, 4, 0, 32),
         frameIndexOffset: RandomProperty(0, 32),
-        rgbMultiplier: 5,
-        layer1: 34020,
-        layer1SpeedV: 0.5,
-        layer1Color: new LinearProperty(false, [
-          new Keyframe(0.5, [...color, 1]),
-          new Keyframe(4, [1, 1, 1, 1]),
-        ]),
+        hideIndoors: true,
+        minDistance: 2,
+        minFadeDistance: 4,
+        lighting: LightingMode.Lit,
       })
     ]).mapStates(-1, 0), // Disable when there's no rain/snow
 
@@ -153,7 +153,7 @@ fxr.root.nodes = [
 
     // Blade
     new BasicNode([
-      new PointEmitterShape({ direction: InitialDirection.LocalDown }),
+      NodeTransform({ rotationX: 90 }),
       new BillboardEx({
         orientation: OrientationMode.LocalYaw,
         blendMode: BlendMode.Add,
@@ -241,5 +241,5 @@ fxr.root.nodes = [
         bloomStrength: bloomMultiplier * 0.5,
       })
     ]).mapStates(0, 0),
-  ]).mapStates(0, 0)
+  ])
 ]
