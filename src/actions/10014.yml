@@ -607,7 +607,7 @@ properties:
   unk_er_f1_17:
     field: int
   unk_er_f1_18:
-    field: int
+    field: float
   unk_er_f1_19:
     field: float
     default: 1
@@ -617,7 +617,7 @@ properties:
   unk_er_f1_29:
     field: int
   unk_er_f1_30:
-    field: int
+    field: float
   unk_er_f1_31:
     field: float
     default: 1
@@ -627,7 +627,7 @@ properties:
   unk_er_f1_41:
     field: int
   unk_er_f1_42:
-    field: int
+    field: float
   unk_er_f1_43:
     field: float
     default: 1
@@ -637,7 +637,7 @@ properties:
   unk_er_f1_53:
     field: int
   unk_er_f1_54:
-    field: int
+    field: float
   unk_er_f1_55:
     field: float
     default: 1

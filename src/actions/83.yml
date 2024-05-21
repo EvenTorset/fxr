@@ -35,7 +35,7 @@ properties:
     desc: |
       When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
   unk_ds3_f1_1:
-    field: int
+    field: float
   turnInterval:
     field: int
     desc: |
