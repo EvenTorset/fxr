@@ -445,8 +445,10 @@ properties:
     default: 1
   unk_sdt_f1_17:
     field: int
-  unk_sdt_f2_31:
-    field: int
+  hideIndoors:
+    field: bool
+    desc: |
+      When enabled, this stops the particles from being shown indoors.
   unk_sdt_f2_32:
     field: int
     default: 1
@@ -605,7 +607,7 @@ games:
       - unk_ds3_f2_28
       - unk_ds3_f2_29
       - shadowDarkness
-      - unk_sdt_f2_31
+      - hideIndoors
       - unk_sdt_f2_32
       - specular
       - glossiness
@@ -681,7 +683,7 @@ games:
       - unk_ds3_f2_28
       - unk_ds3_f2_29
       - shadowDarkness
-      - unk_sdt_f2_31
+      - hideIndoors
       - unk_sdt_f2_32
       - specular
       - glossiness

@@ -803,12 +803,14 @@ properties:
   unk_ds3_f2_28:
     field: int
   unk_sdt_f2_29:
-    field: int
+    field: float
   unk_sdt_f2_30:
     field: float
     default: 1
-  unk_sdt_f2_31:
-    field: int
+  hideIndoors:
+    field: bool
+    desc: |
+      When enabled, this stops the particles from being shown indoors.
   unk_sdt_f2_32:
     field: int
     default: 1
@@ -1360,7 +1362,7 @@ games:
       - unk_ds3_f2_28
       - unk_sdt_f2_29
       - unk_sdt_f2_30
-      - unk_sdt_f2_31
+      - hideIndoors
       - unk_sdt_f2_32
       - unk_sdt_f2_33
       - unk_sdt_f2_34
@@ -1572,7 +1574,7 @@ games:
       - unk_ds3_f2_28
       - unk_sdt_f2_29
       - unk_sdt_f2_30
-      - unk_sdt_f2_31
+      - hideIndoors
       - unk_sdt_f2_32
       - unk_sdt_f2_33
       - unk_sdt_f2_34
