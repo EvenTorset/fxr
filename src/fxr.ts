@@ -2493,8 +2493,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -2529,19 +2529,19 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['size','color1','color2','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: ['texture','blendMode','size','color1','color2','color3'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
@@ -2576,8 +2576,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -2612,13 +2612,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['blendMode','unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
         properties2: Game.DarkSouls3
       },
@@ -2661,8 +2661,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -2697,13 +2697,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['blendMode','unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
         properties2: Game.DarkSouls3
       },
@@ -2778,8 +2778,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -2818,20 +2818,20 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
         properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: {
         fields1: Game.Sekiro,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -2911,8 +2911,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -2956,25 +2956,25 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
         properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -3041,8 +3041,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -3081,13 +3081,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
         properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_ds3_p2_7']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
@@ -3099,7 +3099,7 @@ const ActionData: {
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
         properties2: Game.Sekiro
       }
@@ -3156,8 +3156,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -3191,19 +3191,19 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
@@ -3256,8 +3256,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -3295,13 +3295,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','blendMode','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: ['blendMode','offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
         properties2: Game.DarkSouls3
       },
@@ -3345,8 +3345,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -3373,13 +3373,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['blendMode','mask','uniformScale','iterations','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['uniformScale','iterations','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30'],
         properties1: ['blendMode','mask','offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
         properties2: Game.DarkSouls3
       },
@@ -3745,8 +3745,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -3802,19 +3802,19 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','desaturate'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAccelerationZ','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
@@ -3872,8 +3872,8 @@ const ActionData: {
       unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -3914,25 +3914,25 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40','unk_ac6_f2_41'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40','unk_ac6_f2_41'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -4167,8 +4167,8 @@ const ActionData: {
       unk_er_f2_12: { default: 0, field: FieldType.Integer },
       unk_er_f2_13: { default: 0, field: FieldType.Integer },
       minDistance: { default: -1, field: FieldType.Float },
-      minFadeStartDistance: { default: -1, field: FieldType.Float },
-      maxFadeStartDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
       maxDistance: { default: -1, field: FieldType.Float },
       minDistanceThreshold: { default: -1, field: FieldType.Float },
       maxDistanceThreshold: { default: -1, field: FieldType.Float },
@@ -4218,7 +4218,7 @@ const ActionData: {
     games: {
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
-        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeStartDistance','minDistance','maxFadeStartDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
+        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
@@ -13337,15 +13337,15 @@ export interface PointSpriteParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -13360,12 +13360,12 @@ export interface PointSpriteParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -13374,26 +13374,26 @@ export interface PointSpriteParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -13404,9 +13404,9 @@ export interface PointSpriteParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -13417,9 +13417,9 @@ export interface PointSpriteParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -13716,13 +13716,13 @@ class PointSprite extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -13735,36 +13735,36 @@ class PointSprite extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -13773,9 +13773,9 @@ class PointSprite extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -13784,9 +13784,9 @@ class PointSprite extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -14044,15 +14044,15 @@ export interface LineParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -14067,12 +14067,12 @@ export interface LineParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -14081,26 +14081,26 @@ export interface LineParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -14111,9 +14111,9 @@ export interface LineParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -14124,9 +14124,9 @@ export interface LineParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -14436,13 +14436,13 @@ class Line extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -14455,36 +14455,36 @@ class Line extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -14493,9 +14493,9 @@ class Line extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -14504,9 +14504,9 @@ class Line extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -14786,15 +14786,15 @@ export interface QuadLineParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -14809,12 +14809,12 @@ export interface QuadLineParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -14823,26 +14823,26 @@ export interface QuadLineParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -14853,9 +14853,9 @@ export interface QuadLineParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -14866,9 +14866,9 @@ export interface QuadLineParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -15193,13 +15193,13 @@ class QuadLine extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -15212,36 +15212,36 @@ class QuadLine extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -15250,9 +15250,9 @@ class QuadLine extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -15261,9 +15261,9 @@ class QuadLine extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -15842,15 +15842,15 @@ export interface BillboardExParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -15865,12 +15865,12 @@ export interface BillboardExParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -15879,26 +15879,26 @@ export interface BillboardExParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -15909,9 +15909,9 @@ export interface BillboardExParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -15922,9 +15922,9 @@ export interface BillboardExParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -16493,13 +16493,13 @@ class BillboardEx extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -16512,36 +16512,36 @@ class BillboardEx extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -16550,9 +16550,9 @@ class BillboardEx extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -16561,9 +16561,9 @@ class BillboardEx extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -17222,15 +17222,15 @@ export interface MultiTextureBillboardExParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -17245,12 +17245,12 @@ export interface MultiTextureBillboardExParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -17259,26 +17259,26 @@ export interface MultiTextureBillboardExParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -17289,9 +17289,9 @@ export interface MultiTextureBillboardExParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -17302,9 +17302,9 @@ export interface MultiTextureBillboardExParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -17958,13 +17958,13 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -17977,36 +17977,36 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -18015,9 +18015,9 @@ class MultiTextureBillboardEx extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -18026,9 +18026,9 @@ class MultiTextureBillboardEx extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -18654,15 +18654,15 @@ export interface ModelParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -18677,12 +18677,12 @@ export interface ModelParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -18691,26 +18691,26 @@ export interface ModelParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -18721,9 +18721,9 @@ export interface ModelParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -18734,9 +18734,9 @@ export interface ModelParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -19346,13 +19346,13 @@ class Model extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -19365,36 +19365,36 @@ class Model extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -19403,9 +19403,9 @@ class Model extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -19414,9 +19414,9 @@ class Model extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -19846,15 +19846,15 @@ export interface TracerParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -19869,12 +19869,12 @@ export interface TracerParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -19883,26 +19883,26 @@ export interface TracerParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -19913,9 +19913,9 @@ export interface TracerParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -19926,9 +19926,9 @@ export interface TracerParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -20351,13 +20351,13 @@ class Tracer extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -20370,36 +20370,36 @@ class Tracer extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -20408,9 +20408,9 @@ class Tracer extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -20419,9 +20419,9 @@ class Tracer extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -20858,15 +20858,15 @@ export interface DistortionParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -20881,12 +20881,12 @@ export interface DistortionParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -20895,26 +20895,26 @@ export interface DistortionParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -20925,9 +20925,9 @@ export interface DistortionParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -20938,9 +20938,9 @@ export interface DistortionParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -21403,13 +21403,13 @@ class Distortion extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -21422,36 +21422,36 @@ class Distortion extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -21460,9 +21460,9 @@ class Distortion extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -21471,9 +21471,9 @@ class Distortion extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -21777,15 +21777,15 @@ export interface RadialBlurParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -21800,12 +21800,12 @@ export interface RadialBlurParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -21814,26 +21814,26 @@ export interface RadialBlurParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -21844,9 +21844,9 @@ export interface RadialBlurParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -21857,9 +21857,9 @@ export interface RadialBlurParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -22160,13 +22160,13 @@ class RadialBlur extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -22179,36 +22179,36 @@ class RadialBlur extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -22217,9 +22217,9 @@ class RadialBlur extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -22228,9 +22228,9 @@ class RadialBlur extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -24464,15 +24464,15 @@ export interface ParticleSystemParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -24487,12 +24487,12 @@ export interface ParticleSystemParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -24501,26 +24501,26 @@ export interface ParticleSystemParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -24531,9 +24531,9 @@ export interface ParticleSystemParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -24544,9 +24544,9 @@ export interface ParticleSystemParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -25513,13 +25513,13 @@ class ParticleSystem extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -25532,36 +25532,36 @@ class ParticleSystem extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -25570,9 +25570,9 @@ class ParticleSystem extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -25581,9 +25581,9 @@ class ParticleSystem extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -26092,15 +26092,15 @@ export interface DynamicTracerParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -26115,12 +26115,12 @@ export interface DynamicTracerParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -26129,26 +26129,26 @@ export interface DynamicTracerParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -26159,9 +26159,9 @@ export interface DynamicTracerParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -26172,9 +26172,9 @@ export interface DynamicTracerParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -26641,13 +26641,13 @@ class DynamicTracer extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -26660,36 +26660,36 @@ class DynamicTracer extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -26698,9 +26698,9 @@ class DynamicTracer extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -26709,9 +26709,9 @@ class DynamicTracer extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -29093,15 +29093,15 @@ export interface RichModelParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -29116,12 +29116,12 @@ export interface RichModelParams {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance?: number
+  minFadeDistance?: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
@@ -29130,26 +29130,26 @@ export interface RichModelParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance?: number
+  maxFadeDistance?: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -29160,9 +29160,9 @@ export interface RichModelParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -29173,9 +29173,9 @@ export interface RichModelParams {
    * **Default**: `-1`
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
@@ -29784,13 +29784,13 @@ class RichModel extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeStartDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
@@ -29803,36 +29803,36 @@ class RichModel extends DataAction {
    * 
    * See also:
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  minFadeStartDistance: number
+  minFadeDistance: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
-  maxFadeStartDistance: number
+  maxFadeDistance: number
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeStartDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link minDistanceThreshold}
    * - {@link maxDistanceThreshold}
    */
@@ -29841,9 +29841,9 @@ class RichModel extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link maxDistanceThreshold}
    */
@@ -29852,9 +29852,9 @@ class RichModel extends DataAction {
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
    * See also:
-   * - {@link minFadeStartDistance}
+   * - {@link minFadeDistance}
    * - {@link minDistance}
-   * - {@link maxFadeStartDistance}
+   * - {@link maxFadeDistance}
    * - {@link maxDistance}
    * - {@link minDistanceThreshold}
    */
