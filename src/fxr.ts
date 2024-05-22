@@ -84,37 +84,35 @@ enum NodeType {
    */
   Basic = 2200,
   /**
-   * A node that overrides the emitter of its child nodes with its own,
-   * allowing a single emitter to emit multiple types of particles.
+   * A node that emits its child nodes.
    * 
-   * This node type has a specialized subclass: {@link SharedEmitterNode}
+   * This node type has a specialized subclass: {@link NodeEmitterNode}
    */
-  SharedEmitter = 2202,
+  NodeEmitter = 2202,
 }
 
 enum EffectType {
   /**
    * Manages the duration and thresholds for the
-   * {@link NodeType.LevelsOfDetail level of detail node}.
+   * {@link NodeType.LevelsOfDetail levels of detail node}.
    * 
    * This effect type has a specialized subclass: {@link LevelsOfDetailEffect}
    */
   LevelsOfDetail = 1002,
   /**
    * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
-   * emit particles of many different types.
+   * to control emission and properties of particles.
    * 
    * This effect type has a specialized subclass: {@link BasicEffect}
    */
   Basic = 1004,
   /**
-   * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
-   * override emitters of child nodes and control which of the child nodes to use
-   * the particles of.
+   * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
+   * the emission of child nodes.
    * 
-   * This effect type has a specialized subclass: {@link SharedEmitterEffect}
+   * This effect type has a specialized subclass: {@link NodeEmitterEffect}
    */
-  SharedEmitter = 1005,
+  NodeEmitter = 1005,
 }
 
 enum ActionType {
@@ -388,23 +386,23 @@ enum ActionType {
    */
   StateEffectMap = 199,
   /**
-   * ### Action 200 - EmitAllParticles
-   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * ### Action 200 - SelectAllNodes
+   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * 
-   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
    * 
-   * This action type has a specialized subclass: {@link EmitAllParticles}
+   * This action type has a specialized subclass: {@link SelectAllNodes}
    */
-  EmitAllParticles = 200,
+  SelectAllNodes = 200,
   /**
-   * ### Action 201 - EmitRandomParticles
-   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * ### Action 201 - SelectRandomNode
+   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * 
-   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
    * 
-   * This action type has a specialized subclass: {@link EmitRandomParticles}
+   * This action type has a specialized subclass: {@link SelectRandomNode}
    */
-  EmitRandomParticles = 201,
+  SelectRandomNode = 201,
   /**
    * ### Action 300 - PeriodicEmitter
    * **Slot**: {@link ActionSlots.EmitterAction Emitter}
@@ -487,41 +485,41 @@ enum ActionType {
    */
   CylinderEmitterShape = 405,
   /**
-   * ### Action 500 - NoParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 500 - NoDirectionModifier
+   * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
    * 
-   * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+   * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link NoParticleSpread}
+   * This action type has a specialized subclass: {@link NoDirectionModifier}
    */
-  NoParticleSpread = 500,
+  NoDirectionModifier = 500,
   /**
-   * ### Action 501 - CircularParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 501 - CircularDirectionModifier
+   * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
    * 
-   * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+   * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link CircularParticleSpread}
+   * This action type has a specialized subclass: {@link CircularDirectionModifier}
    */
-  CircularParticleSpread = 501,
+  CircularDirectionModifier = 501,
   /**
-   * ### Action 502 - EllipticalParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 502 - EllipticalDirectionModifier
+   * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
    * 
-   * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+   * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link EllipticalParticleSpread}
+   * This action type has a specialized subclass: {@link EllipticalDirectionModifier}
    */
-  EllipticalParticleSpread = 502,
+  EllipticalDirectionModifier = 502,
   /**
-   * ### Action 503 - RectangularParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 503 - RectangularDirectionModifier
+   * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
    * 
-   * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+   * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link RectangularParticleSpread}
+   * This action type has a specialized subclass: {@link RectangularDirectionModifier}
    */
-  RectangularParticleSpread = 503,
+  RectangularDirectionModifier = 503,
   /**
    * ### Action 600 - PointSprite
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1145,7 +1143,7 @@ enum ModelOrientationMode {
   /**
    * Faces in the direction the particle is moving. This direction can be
    * modified by
-   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * {@link ActionSlots.DirectionModifierAction DirectionModifier actions}, and
    * is initially the particle's {@link InitialDirection}.
    */
   ParticleDirection = 2,
@@ -1214,7 +1212,7 @@ enum RichModelOrientationMode {
   /**
    * Faces in the direction the particle is moving. This direction can be
    * modified by
-   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * {@link ActionSlots.DirectionModifierAction DirectionModifier actions}, and
    * is initially the particle's {@link InitialDirection}.
    */
   ParticleDirection = 2,
@@ -1296,18 +1294,18 @@ enum DistortionShape {
 }
 
 /**
- * A particle's initial direction is used for various things that require a
- * direction, but does not have a set one to follow.
+ * An emitted instance's initial direction is used for various things that
+ * require a direction, but does not have a set one to follow.
  * - {@link ActionType.ParticleModifier ParticleModifier action}'s
  * {@link ParticleModifierParams.speed speed}.
  * - {@link ActionType.Line Line action}'s initial rotation.
  * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
  * 
  * The initial direction can be further modified by the following actions:
- * - {@link ActionType.NoParticleSpread NoParticleSpread}
- * - {@link ActionType.CircularParticleSpread CircularParticleSpread}
- * - {@link ActionType.EllipticalParticleSpread EllipticalParticleSpread}
- * - {@link ActionType.RectangularParticleSpread RectangularParticleSpread}
+ * - {@link ActionType.NoDirectionModifier NoDirectionModifier}
+ * - {@link ActionType.CircularDirectionModifier CircularDirectionModifier}
+ * - {@link ActionType.EllipticalDirectionModifier EllipticalDirectionModifier}
+ * - {@link ActionType.RectangularDirectionModifier RectangularDirectionModifier}
  */
 enum InitialDirection {
   /**
@@ -1576,9 +1574,11 @@ export namespace ActionSlots {
     | SpotLight
     | Action
 
-  export type BehaviorAction =
-    | EmitAllParticles
-    | EmitRandomParticles
+  export type DirectionModifierAction =
+    | NoDirectionModifier
+    | CircularDirectionModifier
+    | EllipticalDirectionModifier
+    | RectangularDirectionModifier
     | Action
 
   export type EmissionAudioAction =
@@ -1622,6 +1622,11 @@ export namespace ActionSlots {
     | NodeSpeedSpin
     | Action
 
+  export type NodeSelectorAction =
+    | SelectAllNodes
+    | SelectRandomNode
+    | Action
+
   export type NodeTransformAction =
     | StaticNodeTransform
     | RandomNodeTransform
@@ -1634,13 +1639,6 @@ export namespace ActionSlots {
 
   export type ParticleAttributesAction =
     | ParticleAttributes
-    | Action
-
-  export type ParticleDirectionAction =
-    | NoParticleSpread
-    | CircularParticleSpread
-    | EllipticalParticleSpread
-    | RectangularParticleSpread
     | Action
 
   export type ParticleModifierAction =
@@ -2258,8 +2256,8 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
-  [ActionType.EmitAllParticles]: {},
-  [ActionType.EmitRandomParticles]: {
+  [ActionType.SelectAllNodes]: {},
+  [ActionType.SelectRandomNode]: {
     props: {
       weights: { default: [1] },
     },
@@ -2412,8 +2410,8 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.NoParticleSpread]: {},
-  [ActionType.CircularParticleSpread]: {
+  [ActionType.NoDirectionModifier]: {},
+  [ActionType.CircularDirectionModifier]: {
     props: {
       unk_er_f1_0: { default: false, field: FieldType.Boolean },
       angle: { default: 30 },
@@ -2431,7 +2429,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.EllipticalParticleSpread]: {
+  [ActionType.EllipticalDirectionModifier]: {
     props: {
       unk_er_f1_0: { default: false, field: FieldType.Boolean },
       angleX: { default: 30 },
@@ -2450,7 +2448,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.RectangularParticleSpread]: {
+  [ActionType.RectangularDirectionModifier]: {
     props: {
       angleX: { default: 30 },
       angleY: { default: 30 },
@@ -4609,10 +4607,10 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.NoParticleSpread,
-      ActionType.CircularParticleSpread,
-      ActionType.EllipticalParticleSpread,
-      ActionType.RectangularParticleSpread
+      ActionType.NoDirectionModifier,
+      ActionType.CircularDirectionModifier,
+      ActionType.EllipticalDirectionModifier,
+      ActionType.RectangularDirectionModifier
     ],
     [
       ActionType.ParticleModifier
@@ -4673,7 +4671,7 @@ const EffectActionSlots = {
       ActionType.Unk800
     ]
   ],
-  [EffectType.SharedEmitter]: [
+  [EffectType.NodeEmitter]: [
     [
       ActionType.NodeAttributes
     ],
@@ -4710,14 +4708,14 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.NoParticleSpread,
-      ActionType.CircularParticleSpread,
-      ActionType.EllipticalParticleSpread,
-      ActionType.RectangularParticleSpread
+      ActionType.NoDirectionModifier,
+      ActionType.CircularDirectionModifier,
+      ActionType.EllipticalDirectionModifier,
+      ActionType.RectangularDirectionModifier
     ],
     [
-      ActionType.EmitAllParticles,
-      ActionType.EmitRandomParticles
+      ActionType.SelectAllNodes,
+      ActionType.SelectRandomNode
     ],
     [
       ActionType.EmissionSound
@@ -5286,9 +5284,9 @@ function readNode(br: BinaryReader, game: Game): Node {
         return new BasicNode(effects, nodes).mapStates(...actions[0].effectIndices)
       }
       break
-    case NodeType.SharedEmitter:
+    case NodeType.NodeEmitter:
       if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new SharedEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
+        return new NodeEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
       }
       break
   }
@@ -5415,8 +5413,8 @@ function readEffect(br: BinaryReader, game: Game): IEffect {
     ])
   } else if (type === EffectType.Basic && actionCount <= 15) {
     return new BasicEffect(actions)
-  } else if (type === EffectType.SharedEmitter && actionCount <= 10) {
-    return new SharedEmitterEffect(actions)
+  } else if (type === EffectType.NodeEmitter && actionCount <= 10) {
+    return new NodeEmitterEffect(actions)
   } else {
     return new Effect(type, actions)
   }
@@ -7931,8 +7929,8 @@ abstract class Node {
         return LevelsOfDetailNode.fromJSON(obj)
       case NodeType.Basic:
         return BasicNode.fromJSON(obj)
-      case NodeType.SharedEmitter:
-        return SharedEmitterNode.fromJSON(obj)
+      case NodeType.NodeEmitter:
+        return NodeEmitterNode.fromJSON(obj)
       default:
         return GenericNode.fromJSON(obj)
     }
@@ -8018,7 +8016,7 @@ abstract class Node {
    */
   scale(factor: number) {
     for (const effect of this.walkEffects()) if (
-      effect instanceof BasicEffect || effect instanceof SharedEmitterEffect
+      effect instanceof BasicEffect || effect instanceof NodeEmitterEffect
     ) {
       const slot1 = effect.nodeTransform
       if (slot1 instanceof RandomNodeTransform) {
@@ -8265,7 +8263,7 @@ abstract class Node {
         } else if (slot14 instanceof ParticleWindSpeed) {
           slot14.speed = anyValueMult(factor, slot14.speed)
         }
-      } else { // Shared emitter effect
+      } else { // Node emitter effect
         const slot9 = effect.nodeWind
         if (slot9 instanceof NodeWindAcceleration) {
           slot9.acceleration = anyValueMult(factor, slot9.acceleration)
@@ -8706,24 +8704,23 @@ class BasicNode extends NodeWithEffects {
 }
 
 /**
- * A node that overrides the emitter of its child nodes with its own, allowing
- * a single emitter to emit multiple types of particles.
+ * A node that emits its child nodes.
  */
-class SharedEmitterNode extends NodeWithEffects {
+class NodeEmitterNode extends NodeWithEffects {
 
-  declare effects: SharedEmitterEffect[]
+  declare effects: NodeEmitterEffect[]
 
   constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
-      throw new Error('Non-node passed as node to SharedEmitterNode.')
+      throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
     if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
-      super(NodeType.SharedEmitter, [
-        new SharedEmitterEffect(effectsOrEffectActions as Action[])
+      super(NodeType.NodeEmitter, [
+        new NodeEmitterEffect(effectsOrEffectActions as Action[])
       ], nodes)
     } else {
       super(
-        NodeType.SharedEmitter,
+        NodeType.NodeEmitter,
         effectsOrEffectActions as IEffect[],
         nodes
       )
@@ -8734,14 +8731,14 @@ class SharedEmitterNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new SharedEmitterNode(
+    return new NodeEmitterNode(
       obj.effects.map((e: any) => Effect.fromJSON(e)),
       obj.nodes.map((e: any) => Node.fromJSON(e))
     ).mapStates(...obj.stateEffectMap)
   }
 
   minify(): Node {
-    return new SharedEmitterNode(
+    return new NodeEmitterNode(
       this.effects.map(e => e.minify()),
       this.nodes.map(e => e.minify())
     ).mapStates(...this.stateEffectMap)
@@ -8763,7 +8760,7 @@ const Nodes = {
  * for effects that are known:
  * - {@link LevelsOfDetailEffect}
  * - {@link BasicEffect}
- * - {@link SharedEmitterEffect}
+ * - {@link NodeEmitterEffect}
  */
 class Effect implements IEffect {
 
@@ -8807,7 +8804,7 @@ class Effect implements IEffect {
           nodeAudio: Action.fromJSON(obj.nodeAudio),
           emitter: Action.fromJSON(obj.emitter),
           emitterShape: Action.fromJSON(obj.emitterShape),
-          particleDirection: Action.fromJSON(obj.particleDirection),
+          directionModifier: Action.fromJSON(obj.directionModifier),
           particleModifier: Action.fromJSON(obj.particleModifier),
           particleAttributes: Action.fromJSON(obj.particleAttributes),
           appearance: Action.fromJSON(obj.appearance),
@@ -8817,16 +8814,16 @@ class Effect implements IEffect {
           nodeWind: Action.fromJSON(obj.nodeWind),
           particleWind: Action.fromJSON(obj.particleWind),
         })
-      case EffectType.SharedEmitter:
-        return new SharedEmitterEffect({
+      case EffectType.NodeEmitter:
+        return new NodeEmitterEffect({
           nodeAttributes: Action.fromJSON(obj.nodeAttributes),
           nodeTransform: Action.fromJSON(obj.nodeTransform),
           nodeMovement: Action.fromJSON(obj.nodeMovement),
           nodeAudio: Action.fromJSON(obj.nodeAudio),
           emitter: Action.fromJSON(obj.emitter),
           emitterShape: Action.fromJSON(obj.emitterShape),
-          particleDirection: Action.fromJSON(obj.particleDirection),
-          behavior: Action.fromJSON(obj.behavior),
+          directionModifier: Action.fromJSON(obj.directionModifier),
+          nodeSelector: Action.fromJSON(obj.nodeSelector),
           emissionAudio: Action.fromJSON(obj.emissionAudio),
           nodeWind: Action.fromJSON(obj.nodeWind),
         })
@@ -8895,7 +8892,7 @@ export interface BasicEffectParams {
   nodeAudio?: ActionSlots.NodeAudioAction
   emitter?: ActionSlots.EmitterAction
   emitterShape?:ActionSlots.EmitterShapeAction
-  particleDirection?:ActionSlots.ParticleDirectionAction
+  directionModifier?:ActionSlots.DirectionModifierAction
   particleModifier?: ActionSlots.ParticleModifierAction
   particleAttributes?: ActionSlots.ParticleAttributesAction
   appearance?:ActionSlots.AppearanceAction
@@ -8919,7 +8916,7 @@ export interface BasicEffectParams {
  * 3     | {@link ActionSlots.NodeAudioAction NodeAudio} | {@link ActionType.None None}
  * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
+ * 6     | {@link ActionSlots.DirectionModifierAction DirectionModifier} | {@link ActionType.NoDirectionModifier NoDirectionModifier}
  * 7     | {@link ActionSlots.ParticleModifierAction ParticleModifier} | {@link ActionType.ParticleModifier ParticleModifier}
  * 8     | {@link ActionSlots.ParticleAttributesAction ParticleAttributes} | {@link ActionType.ParticleAttributes ParticleAttributes}
  * 9     | {@link ActionSlots.AppearanceAction Appearance} | {@link ActionType.None None}
@@ -8938,7 +8935,7 @@ class BasicEffect implements IEffect {
   nodeAudio: ActionSlots.NodeAudioAction = new Action
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
   emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
-  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
+  directionModifier: ActionSlots.DirectionModifierAction = new NoDirectionModifier
   particleModifier: ActionSlots.ParticleModifierAction = new ParticleModifier
   particleAttributes: ActionSlots.ParticleAttributesAction = new ParticleAttributes
   appearance: ActionSlots.AppearanceAction = new Action
@@ -8959,7 +8956,7 @@ class BasicEffect implements IEffect {
           case 3:  this.nodeAudio          = action as Action; break;
           case 4:  this.emitter            = action as Action; break;
           case 5:  this.emitterShape       = action as Action; break;
-          case 6:  this.particleDirection  = action as Action; break;
+          case 6:  this.directionModifier  = action as Action; break;
           case 7:  this.particleModifier   = action as Action; break;
           case 8:  this.particleAttributes = action as Action; break;
           case 9:  this.appearance         = action as Action; break;
@@ -8977,7 +8974,7 @@ class BasicEffect implements IEffect {
       if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
       if ('emitter' in params) this.emitter = params.emitter
       if ('emitterShape' in params) this.emitterShape = params.emitterShape
-      if ('particleDirection' in params) this.particleDirection = params.particleDirection
+      if ('directionModifier' in params) this.directionModifier = params.directionModifier
       if ('particleModifier' in params) this.particleModifier = params.particleModifier
       if ('particleAttributes' in params) this.particleAttributes = params.particleAttributes
       if ('appearance' in params) this.appearance = params.appearance
@@ -9001,7 +8998,7 @@ class BasicEffect implements IEffect {
       this.nodeAudio,
       this.emitter,
       this.emitterShape,
-      this.particleDirection,
+      this.directionModifier,
       this.particleModifier,
       this.particleAttributes,
       this.appearance,
@@ -9024,7 +9021,7 @@ class BasicEffect implements IEffect {
       nodeAudio: this.nodeAudio.toJSON(),
       emitter: this.emitter.toJSON(),
       emitterShape: this.emitterShape.toJSON(),
-      particleDirection: this.particleDirection.toJSON(),
+      directionModifier: this.directionModifier.toJSON(),
       particleModifier: this.particleModifier.toJSON(),
       particleAttributes: this.particleAttributes.toJSON(),
       appearance: this.appearance.toJSON(),
@@ -9043,7 +9040,7 @@ class BasicEffect implements IEffect {
     this.nodeAudio = this.nodeAudio.minify()
     this.emitter = this.emitter.minify()
     this.emitterShape = this.emitterShape.minify()
-    this.particleDirection = this.particleDirection.minify()
+    this.directionModifier = this.directionModifier.minify()
     this.particleModifier = this.particleModifier.minify()
     this.particleAttributes = this.particleAttributes.minify()
     this.appearance = this.appearance.minify()
@@ -9062,7 +9059,7 @@ class BasicEffect implements IEffect {
     yield this.nodeAudio
     yield this.emitter
     yield this.emitterShape
-    yield this.particleDirection
+    yield this.directionModifier
     yield this.particleModifier
     yield this.particleAttributes
     yield this.appearance
@@ -9075,23 +9072,22 @@ class BasicEffect implements IEffect {
 
 }
 
-export interface SharedEmitterEffectParams {
+export interface NodeEmitterEffectParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
   nodeAudio?: ActionSlots.NodeAudioAction
   emitter?: ActionSlots.EmitterAction
   emitterShape?: ActionSlots.EmitterShapeAction
-  particleDirection?: ActionSlots.ParticleDirectionAction
-  behavior?: ActionSlots.BehaviorAction
+  directionModifier?: ActionSlots.DirectionModifierAction
+  nodeSelector?: ActionSlots.NodeSelectorAction
   emissionAudio?: ActionSlots.EmissionAudioAction
   nodeWind?: ActionSlots.NodeWindAction
 }
 
 /**
- * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
- * override emitters of child nodes and control which of the child nodes to use
- * the particles of.
+ * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
+ * the emission of child nodes.
  * 
  * Default actions:
  * Index | Slot | Action
@@ -9102,13 +9098,13 @@ export interface SharedEmitterEffectParams {
  * 3     | {@link ActionSlots.NodeAudioAction NodeAudio} | {@link ActionType.None None}
  * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
- * 7     | {@link ActionSlots.BehaviorAction Behavior} | {@link ActionType.EmitAllParticles EmitAllParticles}
+ * 6     | {@link ActionSlots.DirectionModifierAction DirectionModifier} | {@link ActionType.NoDirectionModifier NoDirectionModifier}
+ * 7     | {@link ActionSlots.NodeSelectorAction NodeSelector} | {@link ActionType.SelectAllNodes SelectAllNodes}
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 9     | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
  */
-class SharedEmitterEffect implements IEffect {
-  readonly type = EffectType.SharedEmitter
+class NodeEmitterEffect implements IEffect {
+  readonly type = EffectType.NodeEmitter
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -9116,15 +9112,15 @@ class SharedEmitterEffect implements IEffect {
   nodeAudio: ActionSlots.NodeAudioAction = new Action
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
   emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
-  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
-  behavior: ActionSlots.BehaviorAction = new EmitAllParticles
+  directionModifier: ActionSlots.DirectionModifierAction = new NoDirectionModifier
+  nodeSelector: ActionSlots.NodeSelectorAction = new SelectAllNodes
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeWind: ActionSlots.NodeWindAction = new Action
 
-  constructor(params: SharedEmitterEffectParams | AnyAction[]) {
+  constructor(params: NodeEmitterEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
+        const index = EffectActionSlots[EffectType.NodeEmitter].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0: this.nodeAttributes    = action as Action; break;
           case 1: this.nodeTransform     = action as Action; break;
@@ -9132,8 +9128,8 @@ class SharedEmitterEffect implements IEffect {
           case 3: this.nodeAudio         = action as Action; break;
           case 4: this.emitter           = action as Action; break;
           case 5: this.emitterShape      = action as Action; break;
-          case 6: this.particleDirection = action as Action; break;
-          case 7: this.behavior          = action as Action; break;
+          case 6: this.directionModifier = action as Action; break;
+          case 7: this.nodeSelector      = action as Action; break;
           case 8: this.emissionAudio     = action as Action; break;
           case 9: this.nodeWind          = action as Action; break;
         }
@@ -9145,8 +9141,8 @@ class SharedEmitterEffect implements IEffect {
       if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
       if ('emitter' in params) this.emitter = params.emitter
       if ('emitterShape' in params) this.emitterShape = params.emitterShape
-      if ('particleDirection' in params) this.particleDirection = params.particleDirection
-      if ('behavior' in params) this.behavior = params.behavior
+      if ('directionModifier' in params) this.directionModifier = params.directionModifier
+      if ('nodeSelector' in params) this.nodeSelector = params.nodeSelector
       if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
       if ('nodeWind' in params) this.nodeWind = params.nodeWind
     }
@@ -9164,8 +9160,8 @@ class SharedEmitterEffect implements IEffect {
       this.nodeAudio,
       this.emitter,
       this.emitterShape,
-      this.particleDirection,
-      this.behavior,
+      this.directionModifier,
+      this.nodeSelector,
       this.emissionAudio,
       game === Game.DarkSouls3 ? [] : [
         this.nodeWind,
@@ -9182,8 +9178,8 @@ class SharedEmitterEffect implements IEffect {
       nodeAudio: this.nodeAudio.toJSON(),
       emitter: this.emitter.toJSON(),
       emitterShape: this.emitterShape.toJSON(),
-      particleDirection: this.particleDirection.toJSON(),
-      behavior: this.behavior.toJSON(),
+      directionModifier: this.directionModifier.toJSON(),
+      nodeSelector: this.nodeSelector.toJSON(),
       emissionAudio: this.emissionAudio.toJSON(),
       nodeWind: this.nodeWind.toJSON(),
     }
@@ -9196,8 +9192,8 @@ class SharedEmitterEffect implements IEffect {
     this.nodeAudio = this.nodeAudio.minify()
     this.emitter = this.emitter.minify()
     this.emitterShape = this.emitterShape.minify()
-    this.particleDirection = this.particleDirection.minify()
-    this.behavior = this.behavior.minify()
+    this.directionModifier = this.directionModifier.minify()
+    this.nodeSelector = this.nodeSelector.minify()
     this.emissionAudio = this.emissionAudio.minify()
     this.nodeWind = this.nodeWind.minify()
     return this
@@ -9210,8 +9206,8 @@ class SharedEmitterEffect implements IEffect {
     yield this.nodeAudio
     yield this.emitter
     yield this.emitterShape
-    yield this.particleDirection
-    yield this.behavior
+    yield this.directionModifier
+    yield this.nodeSelector
     yield this.emissionAudio
     yield this.nodeWind
   }
@@ -12069,7 +12065,7 @@ export interface ParticleModifierParams {
    */
   uniformScale?: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Default**: `0`
    * 
@@ -12136,7 +12132,7 @@ class ParticleModifier extends DataAction {
    */
   uniformScale: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
@@ -12313,42 +12309,42 @@ class StateEffectMap extends DataAction {
 }
 
 /**
- * ### {@link ActionType.EmitAllParticles Action 200 - EmitAllParticles}
- * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * ### {@link ActionType.SelectAllNodes Action 200 - SelectAllNodes}
+ * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+ * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
  */
-class EmitAllParticles extends DataAction {
-  declare type: ActionType.EmitAllParticles
+class SelectAllNodes extends DataAction {
+  declare type: ActionType.SelectAllNodes
   
   constructor() {
-    super(ActionType.EmitAllParticles)
+    super(ActionType.SelectAllNodes)
   }
 }
 
 /**
- * ### {@link ActionType.EmitRandomParticles Action 201 - EmitRandomParticles}
- * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * ### {@link ActionType.SelectRandomNode Action 201 - SelectRandomNode}
+ * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+ * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
  */
-class EmitRandomParticles extends DataAction {
-  declare type: ActionType.EmitRandomParticles
+class SelectRandomNode extends DataAction {
+  declare type: ActionType.SelectRandomNode
   /**
-   * Probability weights for each child node to be picked when emitting.
+   * Probability weights for each child node to be selected for emission.
    * 
    * The weights are stored as integers, so non-integer values in this list will be truncated.
    */
   weights: number[]
   /**
-   * @param weights Probability weights for each child node to be picked when emitting.
+   * @param weights Probability weights for each child node to be selected for emission.
    * 
    * The weights are stored as integers, so non-integer values in this list will be truncated.
    *
    * **Default**: `[1]`
    */
   constructor(weights: number[] = [1]) {
-    super(ActionType.EmitRandomParticles)
+    super(ActionType.SelectRandomNode)
     this.assign({ weights })
   }
 }
@@ -12881,20 +12877,20 @@ class CylinderEmitterShape extends DataAction {
 }
 
 /**
- * ### {@link ActionType.NoParticleSpread Action 500 - NoParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.NoDirectionModifier Action 500 - NoDirectionModifier}
+ * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
  * 
- * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+ * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
  */
-class NoParticleSpread extends DataAction {
-  declare type: ActionType.NoParticleSpread
+class NoDirectionModifier extends DataAction {
+  declare type: ActionType.NoDirectionModifier
   
   constructor() {
-    super(ActionType.NoParticleSpread)
+    super(ActionType.NoDirectionModifier)
   }
 }
 
-export interface CircularParticleSpreadParams {
+export interface CircularDirectionModifierParams {
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    * 
@@ -12925,13 +12921,13 @@ export interface CircularParticleSpreadParams {
 }
 
 /**
- * ### {@link ActionType.CircularParticleSpread Action 501 - CircularParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.CircularDirectionModifier Action 501 - CircularDirectionModifier}
+ * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
  * 
- * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+ * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
  */
-class CircularParticleSpread extends DataAction {
-  declare type: ActionType.CircularParticleSpread
+class CircularDirectionModifier extends DataAction {
+  declare type: ActionType.CircularDirectionModifier
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -12953,13 +12949,13 @@ class CircularParticleSpread extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   distribution: ScalarValue
-  constructor(props: CircularParticleSpreadParams = {}) {
-    super(ActionType.CircularParticleSpread)
+  constructor(props: CircularDirectionModifierParams = {}) {
+    super(ActionType.CircularDirectionModifier)
     this.assign(props)
   }
 }
 
-export interface EllipticalParticleSpreadParams {
+export interface EllipticalDirectionModifierParams {
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    * 
@@ -13004,13 +13000,13 @@ export interface EllipticalParticleSpreadParams {
 }
 
 /**
- * ### {@link ActionType.EllipticalParticleSpread Action 502 - EllipticalParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.EllipticalDirectionModifier Action 502 - EllipticalDirectionModifier}
+ * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
  * 
- * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+ * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
  */
-class EllipticalParticleSpread extends DataAction {
-  declare type: ActionType.EllipticalParticleSpread
+class EllipticalDirectionModifier extends DataAction {
+  declare type: ActionType.EllipticalDirectionModifier
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -13044,13 +13040,13 @@ class EllipticalParticleSpread extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   distribution: ScalarValue
-  constructor(props: EllipticalParticleSpreadParams = {}) {
-    super(ActionType.EllipticalParticleSpread)
+  constructor(props: EllipticalDirectionModifierParams = {}) {
+    super(ActionType.EllipticalDirectionModifier)
     this.assign(props)
   }
 }
 
-export interface RectangularParticleSpreadParams {
+export interface RectangularDirectionModifierParams {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -13089,13 +13085,13 @@ export interface RectangularParticleSpreadParams {
 }
 
 /**
- * ### {@link ActionType.RectangularParticleSpread Action 503 - RectangularParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.RectangularDirectionModifier Action 503 - RectangularDirectionModifier}
+ * **Slot**: {@link ActionSlots.DirectionModifierAction DirectionModifier}
  * 
- * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+ * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
  */
-class RectangularParticleSpread extends DataAction {
-  declare type: ActionType.RectangularParticleSpread
+class RectangularDirectionModifier extends DataAction {
+  declare type: ActionType.RectangularDirectionModifier
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -13125,8 +13121,8 @@ class RectangularParticleSpread extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   distribution: ScalarValue
-  constructor(props: RectangularParticleSpreadParams = {}) {
-    super(ActionType.RectangularParticleSpread)
+  constructor(props: RectangularDirectionModifierParams = {}) {
+    super(ActionType.RectangularDirectionModifier)
     this.assign(props)
   }
 }
@@ -32003,8 +31999,8 @@ const DataActions = {
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
-  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
+  [ActionType.SelectAllNodes]: SelectAllNodes, SelectAllNodes,
+  [ActionType.SelectRandomNode]: SelectRandomNode, SelectRandomNode,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
@@ -32014,10 +32010,10 @@ const DataActions = {
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
-  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
-  [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
-  [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
+  [ActionType.NoDirectionModifier]: NoDirectionModifier, NoDirectionModifier,
+  [ActionType.CircularDirectionModifier]: CircularDirectionModifier, CircularDirectionModifier,
+  [ActionType.EllipticalDirectionModifier]: EllipticalDirectionModifier, EllipticalDirectionModifier,
+  [ActionType.RectangularDirectionModifier]: RectangularDirectionModifier, RectangularDirectionModifier,
   [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
@@ -33832,12 +33828,12 @@ export {
   ProxyNode,
   LevelsOfDetailNode,
   BasicNode,
-  SharedEmitterNode,
+  NodeEmitterNode,
 
   Effect,
   LevelsOfDetailEffect,
   BasicEffect,
-  SharedEmitterEffect,
+  NodeEmitterEffect,
 
   Action,
   DataAction,
@@ -33874,8 +33870,8 @@ export {
   SFXReference,
   LevelsOfDetailThresholds,
   StateEffectMap,
-  EmitAllParticles,
-  EmitRandomParticles,
+  SelectAllNodes,
+  SelectRandomNode,
   PeriodicEmitter,
   EqualDistanceEmitter,
   OneTimeEmitter,
@@ -33885,10 +33881,10 @@ export {
   SphereEmitterShape,
   BoxEmitterShape,
   CylinderEmitterShape,
-  NoParticleSpread,
-  CircularParticleSpread,
-  EllipticalParticleSpread,
-  RectangularParticleSpread,
+  NoDirectionModifier,
+  CircularDirectionModifier,
+  EllipticalDirectionModifier,
+  RectangularDirectionModifier,
   PointSprite,
   Line,
   QuadLine,

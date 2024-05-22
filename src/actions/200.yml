@@ -1,5 +1,5 @@
 type: 200
-name: EmitAllParticles
-slot: Behavior
+name: SelectAllNodes
+slot: NodeSelector
 desc: |
-  Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+  Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.

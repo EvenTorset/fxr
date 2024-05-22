@@ -1,8 +1,8 @@
 type: 502
-name: EllipticalParticleSpread
-slot: ParticleDirection
+name: EllipticalDirectionModifier
+slot: DirectionModifier
 desc: |
-  Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+  Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
 properties:
   unk_er_f1_0:
     field: bool
