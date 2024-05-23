@@ -7442,6 +7442,9 @@ class FXR {
     version: string
     fxr: any
   }) {
+    if (obj instanceof FXR) {
+      return obj
+    }
     if ('fxr' in obj) {
       return new FXR(
         obj.fxr.id,
@@ -7459,7 +7462,7 @@ class FXR {
   toJSON() {
     return {
       id: this.id,
-      states: this.states.map(state => state.toString()),
+      states: this.states.map(state => state.toJSON()),
       root: this.root.toJSON(),
     }
   }
@@ -7664,12 +7667,27 @@ class State {
    * ```
    * @returns The new state.
    */
-  static from(stateString: string) {
-    return new State(stateString.split('&&').filter(e => e.trim().length > 0).map(e => StateCondition.from(e)))
+  static from(obj: string | string[] | State) {
+    if (obj instanceof State) {
+      return obj
+    }
+    if (Array.isArray(obj)) {
+      return new State(obj.map(e => StateCondition.from(e)))
+    }
+    if (obj.trim().length > 0) {
+      return new State([ StateCondition.from(obj) ])
+    }
+    return new State
   }
 
-  toString() {
-    return this.conditions.map(c => c.toString()).join(' && ')
+  toJSON() {
+    if (this.conditions.length === 0) {
+      return ''
+    }
+    if (this.conditions.length === 1) {
+      return this.conditions[0].toString()
+    }
+    return this.conditions.map(c => c.toString())
   }
 
 }
@@ -7780,7 +7798,10 @@ class StateCondition {
    * 
    * @returns A new {@link StateCondition} based on the expression.
    */
-  static from(expression: string) {
+  static from(expression: string | StateCondition) {
+    if (expression instanceof StateCondition) {
+      return expression
+    }
     const m = expression.match(this.#reExpression)
     if (m === null) {
       throw new Error('Syntax error in condition expression: ' + expression)
@@ -7920,6 +7941,9 @@ abstract class Node {
   minify(): Node { return this }
 
   static fromJSON(obj: any): Node {
+    if (obj instanceof Node) {
+      return obj
+    }
     switch (obj.type) {
       case NodeType.Root:
         return RootNode.fromJSON(obj)
@@ -8791,6 +8815,9 @@ class Effect implements IEffect {
   }
 
   static fromJSON(obj: any): IEffect {
+    if (obj instanceof Effect) {
+      return obj
+    }
     if ('actions' in obj) {
       return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
@@ -9295,6 +9322,9 @@ class Action implements IAction {
   static fromJSON(obj: any) {
     if (obj === null) {
       return new Action
+    }
+    if (obj instanceof Action || obj instanceof DataAction) {
+      return obj
     }
     if (
       obj.type in ActionData &&
@@ -32258,6 +32288,9 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   }
 
   static fromJSON<T extends ValueType>(obj: any) {
+    if (obj instanceof Property) {
+      return obj
+    }
     if (typeof obj === 'object' && 'function' in obj) {
       switch (PropertyFunction[obj.function as string]) {
         case PropertyFunction.Stepped:
