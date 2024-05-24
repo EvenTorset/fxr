@@ -6404,18 +6404,12 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     throw new Error('Invalid operand for anyValueMult: ' + av2)
   }
 
-  if (av1 instanceof ComponentSequenceProperty) {
-    av1 = av1.combineComponents()
-  }
-  if (av2 instanceof ComponentSequenceProperty) {
-    av2 = av2.combineComponents()
-  }
   if (typeof av1 === 'number') {
     if (typeof av2 === 'number') {
       return av1 * av2 as T
     } else if (Array.isArray(av2)) {
-      return av2.map(e => e * av1) as unknown as T
-    } else if (av2 instanceof ValueProperty || av2 instanceof SequenceProperty) {
+      return av2.map(e => e * (av1 as number)) as unknown as T
+    } else if (av2 instanceof Property) {
       return av2.clone().scale(av1) as unknown as T
     }
   } else if (Array.isArray(av1)) {
@@ -6424,42 +6418,58 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     } else if (av2 instanceof ValueProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new ValueProperty(
         av1.length - 1,
         anyValueMult(av1, av2.value),
         mods.map(mod => Modifier.multPropertyValue(mod, av1))
       ) as unknown as T
-    } else if (av2 instanceof SequenceProperty) {
+    } else if (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
-      return new SequenceProperty(
-        av1.length - 1,
-        av2.function,
-        av2.loop,
-        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1)),
-        mods.map(mod => Modifier.multPropertyValue(mod, av1))
-      ) as unknown as T
+      if (av2 instanceof SequenceProperty) {
+        return new SequenceProperty(
+          av1.length - 1,
+          av2.function,
+          av2.loop,
+          av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1 as Vector)),
+          mods.map(mod => Modifier.multPropertyValue(mod, av1))
+        ) as unknown as T
+      } else {
+        const cav2 = av2
+        return new ComponentSequenceProperty(
+          av1.length - 1,
+          av2.loop,
+          av1.map((c, i) => cav2.components[cav2.components.length === 1 ? 0 : i].keyframes
+            .map(kf => Keyframe.scale(Keyframe.copy(kf), c))
+          ),
+          mods.map(mod => Modifier.multPropertyValue(mod, av1))
+        ) as unknown as T
+      }
     }
   } else if (av1 instanceof ValueProperty) {
     if (av2 instanceof ValueProperty) {
-      let av1Mods = av1.modifiers
-      let av2Mods = av2.modifiers
-      const vt = Math.max(av1.valueType, av2.valueType)
-      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+      const cav1 = av1
+      const cav2 = av2
+      let av1Mods = cav1.modifiers
+      let av2Mods = cav2.modifiers
+      const vt = Math.max(cav1.valueType, cav2.valueType)
+      if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ValueProperty(vt, anyValueMult(av1.value, av2.value), [
-        ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.value)),
-        ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.value)),
+        ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.value)),
+        ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
       ]) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
+      const cav1 = av1
+      const cav2 = av2
       let av1Mods = av1.modifiers
       let av2Mods = av2.modifiers
       const vt = Math.max(av1.valueType, av2.valueType)
@@ -6470,42 +6480,78 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        av2.valueType,
+        vt,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1.value)),
+        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value)),
         [
-          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.valueAt(0))),
-          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.value)),
+          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
+        ]
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      const cav1 = av1
+      const cav2 = av2
+      let av1Mods = av1.modifiers
+      let av2Mods = av2.modifiers
+      const vt = Math.max(av1.valueType, av2.valueType)
+      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      return new ComponentSequenceProperty(
+        vt,
+        av2.loop,
+        arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value))
+        ),
+        [
+          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
         ]
       ) as unknown as T
     }
-  } else if (av1 instanceof SequenceProperty && av2 instanceof SequenceProperty) {
+  } else if (
+    (av1 instanceof SequenceProperty || av1 instanceof ComponentSequenceProperty) &&
+    (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty)
+  ) {
+    if (av1 instanceof ComponentSequenceProperty) {
+      av1 = av1.combineComponents()
+    }
+    if (av2 instanceof ComponentSequenceProperty) {
+      av2 = av2.combineComponents()
+    }
+    const cav1 = av1 as SequenceProperty<any, any>
+    const cav2 = av1 as SequenceProperty<any, any>
     const positions = new Set<number>
-    for (const keyframe of av1.keyframes) {
+    for (const keyframe of cav1.keyframes) {
       positions.add(keyframe.position)
     }
-    for (const keyframe of av2.keyframes) {
+    for (const keyframe of cav2.keyframes) {
       positions.add(keyframe.position)
     }
-    let av1Mods = av1.modifiers
-    let av2Mods = av2.modifiers
-    const vt = Math.max(av1.valueType, av2.valueType)
-    if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    let av1Mods = cav1.modifiers
+    let av2Mods = cav2.modifiers
+    const vt = Math.max(cav1.valueType, cav2.valueType)
+    if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
       av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+    if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      av1.loop && av2.loop,
-      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
-        .map(e => new Keyframe(e,
-          anyValueMult(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
-        ))
+      cav1.loop && cav2.loop,
+      (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
+        Array.from(positions).sort((a, b) => a - b) :
+        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+      ).map(e => new Keyframe(e,
+        anyValueMult(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
+      ))
     ).withModifiers(
-      ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.valueAt(0))),
-      ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.valueAt(0))),
+      ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
+      ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.valueAt(0))),
     ) as unknown as T
   }
 
@@ -6535,30 +6581,31 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     throw new Error('Invalid operand for anyValueMult: ' + av2)
   }
 
-  if (av1 instanceof ComponentSequenceProperty) {
-    av1 = av1.combineComponents()
-  }
-  if (av2 instanceof ComponentSequenceProperty) {
-    av2 = av2.combineComponents()
-  }
   if (typeof av1 === 'number') {
     if (typeof av2 === 'number') {
       return av1 + av2 as T
     } else if (Array.isArray(av2)) {
-      return av2.map(e => e + av1) as unknown as T
+      return av2.map(e => e + (av1 as number)) as unknown as T
     } else if (av2 instanceof ValueProperty) {
       return new ValueProperty(
         av2.valueType,
         anyValueSum(av1, av2.value),
-        av2.modifiers.map(mod => Modifier.sumPropertyValue(mod, av1))
+        av2.modifiers.map(mod => mod.clone())
       ) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
       return new SequenceProperty(
         av2.valueType,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1)),
-        av2.modifiers.map(mod => Modifier.sumPropertyValue(mod, av1))
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as number))),
+        av2.modifiers.map(mod => mod.clone())
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      return new ComponentSequenceProperty(
+        av2.valueType,
+        av2.loop,
+        av2.components.map(c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))),
+        av2.modifiers.map(mod => mod.clone())
       ) as unknown as T
     }
   } else if (Array.isArray(av1)) {
@@ -6567,24 +6614,38 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     } else if (av2 instanceof ValueProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new ValueProperty(
         av1.length - 1,
         anyValueSum(av1, av2.value),
-        mods.map(mod => Modifier.sumPropertyValue(mod, av1))
+        mods.map(mod => mod.clone())
       ) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new SequenceProperty(
         av1.length - 1,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1)),
-        mods.map(mod => Modifier.sumPropertyValue(mod, av1))
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as Vector))),
+        mods.map(mod => mod.clone())
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      const cav2 = av2
+      let mods = cav2.modifiers
+      if (cav2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+      }
+      return new ComponentSequenceProperty(
+        av1.length - 1,
+        cav2.loop,
+        av1.map((c, i) => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.add(Keyframe.copy(kf), c))
+        ),
+        mods.map(mod => mod.clone())
       ) as unknown as T
     }
   } else if (av1 instanceof ValueProperty) {
@@ -6599,8 +6660,8 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ValueProperty(vt, anyValueSum(av1.value, av2.value), [
-        ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.value)),
-        ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.value)),
+        ...av1Mods.map(mod => mod.clone()),
+        ...av2Mods.map(mod => mod.clone()),
       ]) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
       let av1Mods = av1.modifiers
@@ -6613,42 +6674,78 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        av2.valueType,
+        vt,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1.value)),
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as ValueProperty<any>).value)),
         [
-          ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.valueAt(0))),
-          ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.value)),
+          ...av1Mods.map(mod => mod.clone()),
+          ...av2Mods.map(mod => mod.clone()),
+        ]
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      const cav1 = av1
+      const cav2 = av2
+      let av1Mods = cav1.modifiers
+      let av2Mods = cav2.modifiers
+      const vt = Math.max(cav1.valueType, cav2.valueType)
+      if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      return new ComponentSequenceProperty(
+        vt,
+        cav2.loop,
+        arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.add(Keyframe.copy(kf), cav1.value))
+        ),
+        [
+          ...av1Mods.map(mod => mod.clone()),
+          ...av2Mods.map(mod => mod.clone()),
         ]
       ) as unknown as T
     }
-  } else if (av1 instanceof SequenceProperty && av2 instanceof SequenceProperty) {
+  } else if (
+    (av1 instanceof SequenceProperty || av1 instanceof ComponentSequenceProperty) &&
+    (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty)
+  ) {
+    if (av1 instanceof ComponentSequenceProperty) {
+      av1 = av1.combineComponents()
+    }
+    if (av2 instanceof ComponentSequenceProperty) {
+      av2 = av2.combineComponents()
+    }
+    const cav1 = av1 as SequenceProperty<any, any>
+    const cav2 = av1 as SequenceProperty<any, any>
     const positions = new Set<number>
-    for (const keyframe of av1.keyframes) {
+    for (const keyframe of cav1.keyframes) {
       positions.add(keyframe.position)
     }
-    for (const keyframe of av2.keyframes) {
+    for (const keyframe of cav2.keyframes) {
       positions.add(keyframe.position)
     }
-    let av1Mods = av1.modifiers
-    let av2Mods = av2.modifiers
-    const vt = Math.max(av1.valueType, av2.valueType)
-    if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    let av1Mods = cav1.modifiers
+    let av2Mods = cav2.modifiers
+    const vt = Math.max(cav1.valueType, cav2.valueType)
+    if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
       av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+    if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      av1.loop && av2.loop,
-      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
-        .map(e => new Keyframe(e,
-          anyValueSum(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
-        ))
+      cav1.loop && cav2.loop,
+      (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
+        Array.from(positions).sort((a, b) => a - b) :
+        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+      ).map(e => new Keyframe(e,
+        anyValueSum(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
+      ))
     ).withModifiers(
-      ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.valueAt(0))),
-      ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.valueAt(0))),
+      ...av1Mods.map(mod => mod.clone()),
+      ...av2Mods.map(mod => mod.clone()),
     ) as unknown as T
   }
 
@@ -35141,24 +35238,9 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  protected modifiersScale(factor: PropertyValue) {
-    for (const mod of this.modifiers) {
-      const cc = mod.valueType + 1
-      if (mod instanceof RandomDeltaModifier) {
-        if (this.valueType === ValueType.Scalar) {
-          mod.max *= factor as number
-        } else for (let i = this.valueType; i >= 0; i--) {
-          mod.max[i] *= typeof factor === 'number' ? factor : factor[i]
-        }
-      } else if (mod instanceof RandomRangeModifier) {
-        if (this.valueType === ValueType.Scalar) {
-          mod.min *= factor as number
-          mod.max *= factor as number
-        } else for (let i = this.valueType; i >= 0; i--) {
-          mod.min[i] *= typeof factor === 'number' ? factor : factor[i]
-          mod.max[i] *= typeof factor === 'number' ? factor : factor[i]
-        }
-      }
+  protected modifiersScale(factor: TypeMap.PropertyValue[T] | number) {
+    for (let i = this.modifiers.length - 1; i >= 0; i--) {
+      this.modifiers[i] = Modifier.multPropertyValue(this.modifiers[i], factor)
     }
   }
 
@@ -35313,7 +35395,7 @@ class ValueProperty<T extends ValueType>
     }
   }
 
-  scale(factor: PropertyValue) {
+  scale(factor: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) *= factor as number
     } else {
@@ -35327,7 +35409,7 @@ class ValueProperty<T extends ValueType>
     return this
   }
 
-  add(summand: PropertyValue) {
+  add(summand: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) += summand as number
     } else {
@@ -35595,7 +35677,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  scale(factor: PropertyValue) {
+  scale(factor: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar && Array.isArray(factor)) {
       throw new Error([
         'Scalar properties cannot be scaled by a vector.',
@@ -35610,7 +35692,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     return this
   }
 
-  add(summand: PropertyValue) {
+  add(summand: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar && Array.isArray(summand)) {
       throw new Error([
         'Vectors cannot be added to scalar properties.',
@@ -35783,7 +35865,7 @@ class ComponentSequenceProperty<T extends ValueType>
     )
   }
 
-  scale(factor: PropertyValue) {
+  scale(factor: TypeMap.PropertyValue[T] | number) {
     for (const [i, comp] of this.components.entries()) {
       comp.scale(typeof factor === 'number' ? factor : factor[i])
     }
@@ -35791,7 +35873,7 @@ class ComponentSequenceProperty<T extends ValueType>
     return this
   }
 
-  add(summand: PropertyValue) {
+  add(summand: TypeMap.PropertyValue[T] | number) {
     for (const [i, comp] of this.components.entries()) {
       comp.add(typeof summand === 'number' ? summand : summand[i])
     }
@@ -36162,7 +36244,7 @@ namespace Modifier {
     }
   }
 
-  export function multPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T]): IModifier<T> {
+  export function multPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T] | number): IModifier<T> {
     mod = mod.clone()
     if (typeof v === 'number') {
       if (mod instanceof RandomDeltaModifier) {
@@ -36194,44 +36276,6 @@ namespace Modifier {
         } else for (let i = mod.valueType; i >= 0; i--) {
           mod.min[i] *= v[i]
           mod.max[i] *= v[i]
-        }
-      }
-    }
-    return mod
-  }
-
-  export function sumPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T]): IModifier<T> {
-    mod = mod.clone()
-    if (typeof v === 'number') {
-      if (mod instanceof RandomDeltaModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.max += v
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.max[i] += v
-        }
-      } else if (mod instanceof RandomRangeModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.min += v
-          mod.max += v
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.min[i] += v
-          mod.max[i] += v
-        }
-      }
-    } else {
-      if (mod instanceof RandomDeltaModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.max += v[0]
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.max[i] += v[i]
-        }
-      } else if (mod instanceof RandomRangeModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.min += v[0]
-          mod.max += v[0]
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.min[i] += v[i]
-          mod.max[i] += v[i]
         }
       }
     }
