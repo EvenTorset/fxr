@@ -3246,7 +3246,7 @@ const ActionData: {
       sizeZ: { default: 1 },
       color: { default: [1, 1, 1, 1] },
       intensity: { default: 1 },
-      stirSpeed: { default: 1 },
+      stirSpeed: { default: 60 },
       radius: { default: 1 },
       normalMapOffsetU: { default: 0 },
       normalMapOffsetV: { default: 0 },
@@ -6896,6 +6896,16 @@ const ActionDataConversion = {
         return new StateEffectMap
       }
       return this
+    }
+  },
+  [ActionType.Distortion]: {
+    read(props: DistortionParams, game: Game) {
+      props.stirSpeed = anyValueMult(180 / Math.PI, props.stirSpeed)
+      return props
+    },
+    write(props: DistortionParams, game: Game) {
+      props.stirSpeed = anyValueMult(Math.PI / 180, props.stirSpeed)
+      return props
     }
   },
   [ActionType.PointLight]: {
@@ -21045,9 +21055,9 @@ export interface DistortionParams {
    */
   intensity?: ScalarValue
   /**
-   * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
-   * **Default**: `1`
+   * **Default**: `60`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -21666,7 +21676,7 @@ class Distortion extends DataAction {
    */
   intensity: ScalarValue
   /**
-   * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */

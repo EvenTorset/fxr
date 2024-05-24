@@ -210,10 +210,10 @@ properties:
       Controls the intensity of the distortion effect. At 0, there is no distortion at all.
   stirSpeed:
     type: ScalarValue
-    default: 1
+    default: 60
     argument: ParticleAge
     desc: |
-      Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+      Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
   radius:
     type: ScalarValue
     default: 1
