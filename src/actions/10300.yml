@@ -79,9 +79,13 @@ properties:
     default: 30
   unk_ds3_f1_30:
     field: int
-  unk_ds3_f1_31:
-    field: int
-    default: 1
+  affectSFX:
+    field: bool
+    default: true
+    desc: |
+      When this is enabled, the wind will be able to affect sfx, including the one with this action.
+
+      This seems to also change how the wind affects other things in some way, but exactly how is unknown.
   unk_ds3_f1_32:
     field: int
   unk_ds3_f1_33:
@@ -198,7 +202,7 @@ games:
       - unk_ds3_f1_28
       - unk_ds3_f1_29
       - unk_ds3_f1_30
-      - unk_ds3_f1_31
+      - affectSFX
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - unk_ds3_f1_34
@@ -254,7 +258,7 @@ games:
       - unk_ds3_f1_28
       - unk_ds3_f1_29
       - unk_ds3_f1_30
-      - unk_ds3_f1_31
+      - affectSFX
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - unk_ds3_f1_34
