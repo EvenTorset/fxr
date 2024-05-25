@@ -1470,12 +1470,14 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fieldCount: number
   fields: NumericalField[]
   toJSON(): any
-  scale(factor: PropertyValue): this
-  add(summand: PropertyValue): this
+  scale(factor: TypeMap.PropertyValue[T] | number): this
+  add(summand: TypeMap.PropertyValue[T] | number): this
   valueAt(arg: number): TypeMap.PropertyValue[T]
   clone(): IProperty<T, F>
   separateComponents(): IProperty<ValueType.Scalar, F>[]
   for(game: Game): IProperty<T, F>
+  min(): TypeMap.PropertyValue[T]
+  max(): TypeMap.PropertyValue[T]
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -35317,6 +35319,8 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract valueAt(arg: number): TypeMap.PropertyValue[T]
   abstract clone(): Property<T, F>
   abstract separateComponents(): Property<ValueType.Scalar, F>[]
+  abstract min(): TypeMap.PropertyValue[T]
+  abstract max(): TypeMap.PropertyValue[T]
 
 }
 
@@ -35450,6 +35454,14 @@ class ValueProperty<T extends ValueType>
     }
   }
 
+  min(): TypeMap.PropertyValue[T] {
+    return this.value
+  }
+
+  max(): TypeMap.PropertyValue[T] {
+    return this.value
+  }
+
 }
 
 class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
@@ -35489,14 +35501,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Linear:
         return [
           new IntField(this.keyframes.length),
-          ...(cc === 1 ?
-            [Math.min(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
-          ...(cc === 1 ?
-            [Math.max(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.min()] : this.min() as Vector).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.max()] : this.max() as Vector).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -35507,14 +35513,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Bezier:
         return [
           new IntField(this.keyframes.length),
-          ...(cc === 1 ?
-            [Math.min(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
-          ...(cc === 1 ?
-            [Math.max(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.min()] : this.min() as Vector).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.max()] : this.max() as Vector).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -35535,14 +35535,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Hermite:
         return [
           new IntField(this.keyframes.length),
-          ...(cc === 1 ?
-            [Math.min(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
-          ...(cc === 1 ?
-            [Math.max(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.min()] : this.min() as Vector).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.max()] : this.max() as Vector).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -35768,6 +35762,24 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
+  min(): TypeMap.PropertyValue[T] {
+    const cc = this.componentCount
+    if (cc === 1) {
+      return Math.min(...this.keyframes.map(e => e.value as number)) as TypeMap.PropertyValue[T]
+    } else {
+      return arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i]))) as TypeMap.PropertyValue[T]
+    }
+  }
+
+  max(): TypeMap.PropertyValue[T] {
+    const cc = this.componentCount
+    if (cc === 1) {
+      return Math.max(...this.keyframes.map(e => e.value as number)) as TypeMap.PropertyValue[T]
+    } else {
+      return arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i]))) as TypeMap.PropertyValue[T]
+    }
+  }
+
   get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
@@ -35811,8 +35823,8 @@ class ComponentSequenceProperty<T extends ValueType>
     return [
       new FloatField(this.duration),
       ...this.components.map(e => new IntField(e.keyframes.length)),
-      ...this.components.map(comp => new FloatField(Math.min(...comp.keyframes.map(e => e.value)))),
-      ...this.components.map(comp => new FloatField(Math.max(...comp.keyframes.map(e => e.value)))),
+      ...this.components.map(comp => new FloatField(comp.min())),
+      ...this.components.map(comp => new FloatField(comp.max())),
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
@@ -35951,6 +35963,22 @@ class ComponentSequenceProperty<T extends ValueType>
     const keyframes = interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
       .map(e => new Keyframe(e, this.valueAt(e)))
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
+  }
+
+  min(): TypeMap.PropertyValue[T] {
+    if (this.valueType == ValueType.Scalar) {
+      return this.components[0].min() as TypeMap.PropertyValue[T]
+    } else {
+      return this.components.map(c => c.min()) as TypeMap.PropertyValue[T]
+    }
+  }
+
+  max(): TypeMap.PropertyValue[T] {
+    if (this.valueType == ValueType.Scalar) {
+      return this.components[0].max() as TypeMap.PropertyValue[T]
+    } else {
+      return this.components.map(c => c.max()) as TypeMap.PropertyValue[T]
+    }
   }
 
   get duration() { return Math.max(0, ...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
