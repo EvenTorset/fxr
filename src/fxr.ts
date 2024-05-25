@@ -3125,7 +3125,7 @@ const ActionData: {
       concurrentSegments: { default: 100, field: FieldType.Integer },
       columns: { default: 1, field: FieldType.Integer },
       totalFrames: { default: 1, field: FieldType.Integer },
-      attachedUV: { default: 1, field: FieldType.Boolean },
+      attachedUV: { default: true, field: FieldType.Boolean },
       bloomRed: { default: 1, field: FieldType.Float },
       bloomGreen: { default: 1, field: FieldType.Float },
       bloomBlue: { default: 1, field: FieldType.Float },
@@ -4092,7 +4092,7 @@ const ActionData: {
       concurrentSegments: { default: 100, field: FieldType.Integer },
       columns: { default: 1, field: FieldType.Integer },
       totalFrames: { default: 1, field: FieldType.Integer },
-      attachedUV: { default: 1, field: FieldType.Boolean },
+      attachedUV: { default: true, field: FieldType.Boolean },
       bloomRed: { default: 1, field: FieldType.Float },
       bloomGreen: { default: 1, field: FieldType.Float },
       bloomBlue: { default: 1, field: FieldType.Float },
@@ -19947,7 +19947,7 @@ export interface TracerParams {
   /**
    * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
    * 
-   * **Default**: `1`
+   * **Default**: `true`
    */
   attachedUV?: boolean
   /**
@@ -28758,7 +28758,7 @@ export interface DynamicTracerParams {
   /**
    * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
    * 
-   * **Default**: `1`
+   * **Default**: `true`
    */
   attachedUV?: boolean
   /**
