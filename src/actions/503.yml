@@ -1,8 +1,8 @@
 type: 503
-name: RectangularParticleSpread
-slot: ParticleDirection
+name: RectangularSpread
+slot: DirectionSpread
 desc: |
-  Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+  Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
 properties:
   angleX:
     type: ScalarValue

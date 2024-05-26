@@ -11,10 +11,17 @@ While the library does not have any dependencies, it *does* have some dev depend
 npm i @cccode/fxr --omit=dev
 ```
 
-If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](https://github.com/EvenTorset/fxr/blob/main/NODE.md).
+If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](https://github.com/EvenTorset/fxr/blob/main/NODE.md). It goes over the basics and can help you set everything up and get started.
 
 ## Documentation
 Check out the auto-generated docs at https://fxr-docs.pages.dev/ to find more information about the specialized action classes and other things. Also check out the [example directory](https://github.com/EvenTorset/fxr/tree/main/examples) in the GitHub repo, it includes examples for creating new effects as well as editing existing effects in various ways.
+
+## fxrjson
+The library has the ability to deserialize FXR files into JSON objects and it can also do the reverse. [**fxrjson**](https://www.npmjs.com/package/fxrjson) is a tool that uses this to allow you to do it through the right-click context menu on Windows or through a command line interface.
+
+[![fxrjson context menu](https://raw.githubusercontent.com/EvenTorset/fxr/main/images/fxrjson_context_menu.png)](https://www.npmjs.com/package/fxrjson)
+
+This can be useful to see what existing effects do, or to copy parts of existing effects to use in your own, like in [the example script about this](https://github.com/EvenTorset/fxr/blob/main/examples/from_json.js). The JSON files can also be edited manually and converted back to FXR after using fxrjson again.
 
 ## Editing FXR files
 To edit existing FXR files, all you need is an ArrayBuffer or typed array with the file's content. The example below is written for Node, but by replacing how you get the buffer and what you do with the output it should also work fine in the browser.

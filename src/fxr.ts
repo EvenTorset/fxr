@@ -84,37 +84,35 @@ enum NodeType {
    */
   Basic = 2200,
   /**
-   * A node that overrides the emitter of its child nodes with its own,
-   * allowing a single emitter to emit multiple types of particles.
+   * A node that emits its child nodes.
    * 
-   * This node type has a specialized subclass: {@link SharedEmitterNode}
+   * This node type has a specialized subclass: {@link NodeEmitterNode}
    */
-  SharedEmitter = 2202,
+  NodeEmitter = 2202,
 }
 
 enum EffectType {
   /**
    * Manages the duration and thresholds for the
-   * {@link NodeType.LevelsOfDetail level of detail node}.
+   * {@link NodeType.LevelsOfDetail levels of detail node}.
    * 
    * This effect type has a specialized subclass: {@link LevelsOfDetailEffect}
    */
   LevelsOfDetail = 1002,
   /**
    * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
-   * emit particles of many different types.
+   * to control emission and properties of particles.
    * 
    * This effect type has a specialized subclass: {@link BasicEffect}
    */
   Basic = 1004,
   /**
-   * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
-   * override emitters of child nodes and control which of the child nodes to use
-   * the particles of.
+   * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
+   * the emission of child nodes.
    * 
-   * This effect type has a specialized subclass: {@link SharedEmitterEffect}
+   * This effect type has a specialized subclass: {@link NodeEmitterEffect}
    */
-  SharedEmitter = 1005,
+  NodeEmitter = 1005,
 }
 
 enum ActionType {
@@ -123,7 +121,6 @@ enum ActionType {
    * to disable the effects of the other actions that go in those slots.
    */
   None = 0,
-  Unk10001_StandardCorrectParticle = 10001,
   Unk10002_Fluid = 10002,
   Unk10003_LightShaft = 10003,
   Unk10008_SparkParticle = 10008,
@@ -388,23 +385,23 @@ enum ActionType {
    */
   StateEffectMap = 199,
   /**
-   * ### Action 200 - EmitAllParticles
-   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * ### Action 200 - SelectAllNodes
+   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * 
-   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
    * 
-   * This action type has a specialized subclass: {@link EmitAllParticles}
+   * This action type has a specialized subclass: {@link SelectAllNodes}
    */
-  EmitAllParticles = 200,
+  SelectAllNodes = 200,
   /**
-   * ### Action 201 - EmitRandomParticles
-   * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+   * ### Action 201 - SelectRandomNode
+   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * 
-   * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
    * 
-   * This action type has a specialized subclass: {@link EmitRandomParticles}
+   * This action type has a specialized subclass: {@link SelectRandomNode}
    */
-  EmitRandomParticles = 201,
+  SelectRandomNode = 201,
   /**
    * ### Action 300 - PeriodicEmitter
    * **Slot**: {@link ActionSlots.EmitterAction Emitter}
@@ -487,41 +484,41 @@ enum ActionType {
    */
   CylinderEmitterShape = 405,
   /**
-   * ### Action 500 - NoParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 500 - NoSpread
+   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
    * 
-   * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+   * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link NoParticleSpread}
+   * This action type has a specialized subclass: {@link NoSpread}
    */
-  NoParticleSpread = 500,
+  NoSpread = 500,
   /**
-   * ### Action 501 - CircularParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 501 - CircularSpread
+   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
    * 
-   * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+   * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link CircularParticleSpread}
+   * This action type has a specialized subclass: {@link CircularSpread}
    */
-  CircularParticleSpread = 501,
+  CircularSpread = 501,
   /**
-   * ### Action 502 - EllipticalParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 502 - EllipticalSpread
+   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
    * 
-   * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+   * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link EllipticalParticleSpread}
+   * This action type has a specialized subclass: {@link EllipticalSpread}
    */
-  EllipticalParticleSpread = 502,
+  EllipticalSpread = 502,
   /**
-   * ### Action 503 - RectangularParticleSpread
-   * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+   * ### Action 503 - RectangularSpread
+   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
    * 
-   * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+   * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
    * 
-   * This action type has a specialized subclass: {@link RectangularParticleSpread}
+   * This action type has a specialized subclass: {@link RectangularSpread}
    */
-  RectangularParticleSpread = 503,
+  RectangularSpread = 503,
   /**
    * ### Action 600 - PointSprite
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -703,6 +700,19 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ParticleSystem}
    */
   ParticleSystem = 10000,
+  /**
+   * ### Action 10001 - ParticleSystem2
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Very similar to {@link ActionType.ParticleSystem ParticleSystem}, with no known differences.
+   * 
+   * In the RTTI, the other action is called "StandardParticle", while this one is called "StandardCorrectParticle".
+   * 
+   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.ParticleSystem ParticleSystem} much simpler. When written for those two games, this action will be converted to the other action automatically.
+   * 
+   * This action type has a specialized subclass: {@link ParticleSystem2}
+   */
+  ParticleSystem2 = 10001,
   /**
    * ### Action 10012 - DynamicTracer
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1145,7 +1155,7 @@ enum ModelOrientationMode {
   /**
    * Faces in the direction the particle is moving. This direction can be
    * modified by
-   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and
    * is initially the particle's {@link InitialDirection}.
    */
   ParticleDirection = 2,
@@ -1214,7 +1224,7 @@ enum RichModelOrientationMode {
   /**
    * Faces in the direction the particle is moving. This direction can be
    * modified by
-   * {@link ActionSlots.ParticleDirectionAction ParticleDirection actions}, and
+   * {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and
    * is initially the particle's {@link InitialDirection}.
    */
   ParticleDirection = 2,
@@ -1296,18 +1306,18 @@ enum DistortionShape {
 }
 
 /**
- * A particle's initial direction is used for various things that require a
- * direction, but does not have a set one to follow.
+ * An emitted instance's initial direction is used for various things that
+ * require a direction, but does not have a set one to follow.
  * - {@link ActionType.ParticleModifier ParticleModifier action}'s
  * {@link ParticleModifierParams.speed speed}.
  * - {@link ActionType.Line Line action}'s initial rotation.
  * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
  * 
  * The initial direction can be further modified by the following actions:
- * - {@link ActionType.NoParticleSpread NoParticleSpread}
- * - {@link ActionType.CircularParticleSpread CircularParticleSpread}
- * - {@link ActionType.EllipticalParticleSpread EllipticalParticleSpread}
- * - {@link ActionType.RectangularParticleSpread RectangularParticleSpread}
+ * - {@link ActionType.NoSpread NoSpread}
+ * - {@link ActionType.CircularSpread CircularDirectionSpread}
+ * - {@link ActionType.EllipticalSpread EllipticalDirectionSpread}
+ * - {@link ActionType.RectangularSpread RectangularDirectionSpread}
  */
 enum InitialDirection {
   /**
@@ -1460,12 +1470,14 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fieldCount: number
   fields: NumericalField[]
   toJSON(): any
-  scale(factor: PropertyValue): this
-  add(summand: PropertyValue): this
+  scale(factor: TypeMap.PropertyValue[T] | number): this
+  add(summand: TypeMap.PropertyValue[T] | number): this
   valueAt(arg: number): TypeMap.PropertyValue[T]
   clone(): IProperty<T, F>
   separateComponents(): IProperty<ValueType.Scalar, F>[]
   for(game: Game): IProperty<T, F>
+  min(): TypeMap.PropertyValue[T]
+  max(): TypeMap.PropertyValue[T]
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -1568,6 +1580,7 @@ export namespace ActionSlots {
     | RadialBlur
     | PointLight
     | ParticleSystem
+    | ParticleSystem2
     | DynamicTracer
     | WaterInteraction
     | LensFlare
@@ -1576,9 +1589,11 @@ export namespace ActionSlots {
     | SpotLight
     | Action
 
-  export type BehaviorAction =
-    | EmitAllParticles
-    | EmitRandomParticles
+  export type DirectionSpreadAction =
+    | NoSpread
+    | CircularSpread
+    | EllipticalSpread
+    | RectangularSpread
     | Action
 
   export type EmissionAudioAction =
@@ -1622,6 +1637,11 @@ export namespace ActionSlots {
     | NodeSpeedSpin
     | Action
 
+  export type NodeSelectorAction =
+    | SelectAllNodes
+    | SelectRandomNode
+    | Action
+
   export type NodeTransformAction =
     | StaticNodeTransform
     | RandomNodeTransform
@@ -1634,13 +1654,6 @@ export namespace ActionSlots {
 
   export type ParticleAttributesAction =
     | ParticleAttributes
-    | Action
-
-  export type ParticleDirectionAction =
-    | NoParticleSpread
-    | CircularParticleSpread
-    | EllipticalParticleSpread
-    | RectangularParticleSpread
     | Action
 
   export type ParticleModifierAction =
@@ -2258,8 +2271,8 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
-  [ActionType.EmitAllParticles]: {},
-  [ActionType.EmitRandomParticles]: {
+  [ActionType.SelectAllNodes]: {},
+  [ActionType.SelectRandomNode]: {
     props: {
       weights: { default: [1] },
     },
@@ -2412,8 +2425,8 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.NoParticleSpread]: {},
-  [ActionType.CircularParticleSpread]: {
+  [ActionType.NoSpread]: {},
+  [ActionType.CircularSpread]: {
     props: {
       unk_er_f1_0: { default: false, field: FieldType.Boolean },
       angle: { default: 30 },
@@ -2431,7 +2444,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.EllipticalParticleSpread]: {
+  [ActionType.EllipticalSpread]: {
     props: {
       unk_er_f1_0: { default: false, field: FieldType.Boolean },
       angleX: { default: 30 },
@@ -2450,7 +2463,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.RectangularParticleSpread]: {
+  [ActionType.RectangularSpread]: {
     props: {
       angleX: { default: 30 },
       angleY: { default: 30 },
@@ -2764,8 +2777,8 @@ const ActionData: {
       unk_ds3_f1_11: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_12: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_13: { default: -1, field: FieldType.Float },
-      unk_ds3_f1_14: { default: 1, field: FieldType.Integer },
-      unk_ds3_f1_15: { default: 0, field: FieldType.Integer },
+      depthBlend: { default: true, field: FieldType.Boolean },
+      octagonal: { default: false, field: FieldType.Boolean },
       unk_ds3_f1_16: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
       unk_ds3_f2_1: { default: 0, field: FieldType.Boolean },
@@ -2817,13 +2830,13 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16'],
+        fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','depthBlend','octagonal','unk_ds3_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','depthBlend','octagonal','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
         properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
@@ -3114,7 +3127,7 @@ const ActionData: {
       concurrentSegments: { default: 100, field: FieldType.Integer },
       columns: { default: 1, field: FieldType.Integer },
       totalFrames: { default: 1, field: FieldType.Integer },
-      attachedUV: { default: 1, field: FieldType.Boolean },
+      attachedUV: { default: true, field: FieldType.Boolean },
       bloomRed: { default: 1, field: FieldType.Float },
       bloomGreen: { default: 1, field: FieldType.Float },
       bloomBlue: { default: 1, field: FieldType.Float },
@@ -3235,7 +3248,7 @@ const ActionData: {
       sizeZ: { default: 1 },
       color: { default: [1, 1, 1, 1] },
       intensity: { default: 1 },
-      stirSpeed: { default: 1 },
+      stirSpeed: { default: 60 },
       radius: { default: 1 },
       normalMapOffsetU: { default: 0 },
       normalMapOffsetV: { default: 0 },
@@ -3760,15 +3773,15 @@ const ActionData: {
       unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
       unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
       unk_sdt_f2_29: { default: 0, field: FieldType.Float },
-      unk_sdt_f2_30: { default: 1, field: FieldType.Float },
+      shadowDarkness: { default: 0, field: FieldType.Float },
       hideIndoors: { default: 0, field: FieldType.Boolean },
       unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
-      unk_sdt_f2_33: { default: 0, field: FieldType.Integer },
-      unk_sdt_f2_34: { default: 0.5, field: FieldType.Float },
-      unk_sdt_f2_35: { default: -2, field: FieldType.Integer },
+      specular: { default: 0, field: FieldType.Integer },
+      glossiness: { default: 0.25, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, field: FieldType.Integer },
       unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
       unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
-      unk_sdt_f2_38: { default: 0, field: FieldType.Integer },
+      specularity: { default: 0.5, field: FieldType.Float },
       unk_er_f2_39: { default: 0, field: FieldType.Integer },
       particleFollowFactor: { default: 1 },
       unk_ds3_p1_1: { default: 0 },
@@ -3808,15 +3821,266 @@ const ActionData: {
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
+      },
+      [Game.ArmoredCore6]: Game.EldenRing
+    }
+  },
+  [ActionType.ParticleSystem2]: {
+    props: {
+      unk_ds3_f1_0: { default: 1005, field: FieldType.Integer },
+      texture: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_2: { default: 0, field: FieldType.Integer },
+      normalMap: { default: 0, field: FieldType.Integer },
+      emitterShape: { default: EmitterShape.Box, field: FieldType.Integer },
+      unk_ds3_f1_5: { default: 0, field: FieldType.Integer },
+      emitterSizeX: { default: 1, field: FieldType.Float },
+      emitterSizeY: { default: 1, field: FieldType.Float },
+      emitterSizeZ: { default: 1, field: FieldType.Float },
+      emitterRotationX: { default: 0, field: FieldType.Float },
+      emitterRotationY: { default: 0, field: FieldType.Float },
+      emitterRotationZ: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_12: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_13: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_14: { default: 1, field: FieldType.Float },
+      emitterDistribution: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_16: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_17: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_18: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_19: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_21: { default: 100, field: FieldType.Integer },
+      emissionParticleCount: { default: 10, field: FieldType.Integer },
+      emissionParticleCountMin: { default: 0, field: FieldType.Integer },
+      emissionParticleCountMax: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_25: { default: 0, field: FieldType.Integer },
+      emissionIntervalMin: { default: 1, field: FieldType.Integer },
+      emissionIntervalMax: { default: 1, field: FieldType.Integer },
+      limitEmissionCount: { default: false, field: FieldType.Boolean },
+      emissionCountLimit: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_30: { default: 0, field: FieldType.Integer },
+      particleDuration: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_32: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_33: { default: 0, field: FieldType.Integer },
+      particleOffsetX: { default: 0, field: FieldType.Float },
+      particleOffsetY: { default: 0, field: FieldType.Float },
+      particleOffsetZ: { default: 0, field: FieldType.Float },
+      particleOffsetXMin: { default: 0, field: FieldType.Float },
+      particleOffsetYMin: { default: 0, field: FieldType.Float },
+      particleOffsetZMin: { default: 0, field: FieldType.Float },
+      particleOffsetXMax: { default: 0, field: FieldType.Float },
+      particleOffsetYMax: { default: 0, field: FieldType.Float },
+      particleOffsetZMax: { default: 0, field: FieldType.Float },
+      particleSpeedX: { default: 0, field: FieldType.Float },
+      particleSpeedY: { default: 0, field: FieldType.Float },
+      particleSpeedZ: { default: 0, field: FieldType.Float },
+      particleSpeedXMin: { default: 0, field: FieldType.Float },
+      particleSpeedYMin: { default: 0, field: FieldType.Float },
+      particleSpeedZMin: { default: 0, field: FieldType.Float },
+      particleSpeedXMax: { default: 0, field: FieldType.Float },
+      particleSpeedYMax: { default: 0, field: FieldType.Float },
+      particleSpeedZMax: { default: 0, field: FieldType.Float },
+      particleAccelerationXMin: { default: 0, field: FieldType.Float },
+      particleAccelerationYMin: { default: 0, field: FieldType.Float },
+      particleAccelerationZMin: { default: 0, field: FieldType.Float },
+      particleAccelerationXMax: { default: 0, field: FieldType.Float },
+      particleAccelerationYMax: { default: 0, field: FieldType.Float },
+      particleAccelerationZMax: { default: 0, field: FieldType.Float },
+      particleRotationVarianceX: { default: 0, field: FieldType.Float },
+      particleRotationVarianceY: { default: 0, field: FieldType.Float },
+      particleRotationVarianceZ: { default: 0, field: FieldType.Float },
+      particleAngularSpeedVarianceX: { default: 0, field: FieldType.Float },
+      particleAngularSpeedVarianceY: { default: 0, field: FieldType.Float },
+      particleAngularSpeedVarianceZ: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationXMin: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationYMin: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationZMin: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationXMax: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationYMax: { default: 0, field: FieldType.Float },
+      particleAngularAccelerationZMax: { default: 0, field: FieldType.Float },
+      particleUniformScale: { default: false, field: FieldType.Boolean },
+      particleSizeX: { default: 1, field: FieldType.Float },
+      particleSizeY: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_73: { default: 1, field: FieldType.Float },
+      particleSizeXMin: { default: 0, field: FieldType.Float },
+      particleSizeYMin: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_76: { default: 0, field: FieldType.Float },
+      particleSizeXMax: { default: 0, field: FieldType.Float },
+      particleSizeYMax: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_79: { default: 0, field: FieldType.Float },
+      particleGrowthRateXStatic: { default: 0, field: FieldType.Float },
+      particleGrowthRateYStatic: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_82: { default: 0, field: FieldType.Float },
+      particleGrowthRateXMin: { default: 0, field: FieldType.Float },
+      particleGrowthRateYMin: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_85: { default: 0, field: FieldType.Float },
+      particleGrowthRateXMax: { default: 0, field: FieldType.Float },
+      particleGrowthRateYMax: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_88: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationXMin: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationYMin: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_91: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationXMax: { default: 0, field: FieldType.Float },
+      particleGrowthAccelerationYMax: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_94: { default: 0, field: FieldType.Float },
+      rgbMultiplier: { default: 1, field: FieldType.Float },
+      alphaMultiplier: { default: 1, field: FieldType.Float },
+      redVariationMin: { default: 0, field: FieldType.Float },
+      greenVariationMin: { default: 0, field: FieldType.Float },
+      blueVariationMin: { default: 0, field: FieldType.Float },
+      alphaVariationMin: { default: 0, field: FieldType.Float },
+      redVariationMax: { default: 0, field: FieldType.Float },
+      greenVariationMax: { default: 0, field: FieldType.Float },
+      blueVariationMax: { default: 0, field: FieldType.Float },
+      alphaVariationMax: { default: 0, field: FieldType.Float },
+      blendMode: { default: 2, field: FieldType.Integer },
+      columns: { default: 1, field: FieldType.Integer },
+      totalFrames: { default: 1, field: FieldType.Integer },
+      randomTextureFrame: { default: false, field: FieldType.Boolean },
+      unk_ds3_f1_109: { default: 0, field: FieldType.Integer },
+      maxFrameIndex: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_111: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_112: { default: -1, field: FieldType.Integer },
+      unk_ds3_f1_113: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_114: { default: 1, field: FieldType.Integer },
+      unk_ds3_f1_115: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_116: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_117: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_118: { default: 1, field: FieldType.Float },
+      particleDurationMultiplier: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_120: { default: 1, field: FieldType.Float },
+      particleSizeMultiplier: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_122: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_123: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_124: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_125: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_126: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_127: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_128: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_129: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_130: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_131: { default: 1, field: FieldType.Float },
+      unk_ds3_f1_132: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_133: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_134: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_135: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_136: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_137: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_138: { default: 8, field: FieldType.Integer },
+      unk_ds3_f1_139: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_140: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_141: { default: 0, field: FieldType.Integer },
+      limitUpdateDistance: { default: 0, field: FieldType.Boolean },
+      updateDistance: { default: 0, field: FieldType.Float },
+      unk_ds3_f1_144: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_145: { default: 0, field: FieldType.Float },
+      particleRandomTurns: { default: false, field: FieldType.Boolean },
+      particleRandomTurnIntervalMax: { default: 1, field: FieldType.Integer },
+      traceParticles: { default: false, field: FieldType.Boolean },
+      unk_ds3_f1_149: { default: 1, field: FieldType.Float },
+      particleTraceLength: { default: 1, field: FieldType.Float },
+      traceParticlesThreshold: { default: 0, field: FieldType.Float },
+      traceParticleHead: { default: false, field: FieldType.Boolean },
+      unk_ds3_f1_153: { default: 0, field: FieldType.Integer },
+      unk_ds3_f1_154: { default: 0, field: FieldType.Integer },
+      bloom: { default: false, field: FieldType.Boolean },
+      bloomRed: { default: 1, field: FieldType.Float },
+      bloomGreen: { default: 1, field: FieldType.Float },
+      bloomBlue: { default: 1, field: FieldType.Float },
+      bloomStrength: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_160: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_161: { default: 0, field: FieldType.Integer },
+      unk_sdt_f1_162: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_163: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_164: { default: 1, field: FieldType.Float },
+      unk_sdt_f1_165: { default: 0, field: FieldType.Integer },
+      unk_sdt_f1_166: { default: 1, field: FieldType.Float },
+      unk_er_f1_167: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_0: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_1: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_2: { default: 8, field: FieldType.Integer },
+      unk_ds3_f2_3: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_4: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_5: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_6: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_7: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_8: { default: 1, field: FieldType.Float },
+      unk_ds3_f2_9: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_10: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_11: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_12: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_13: { default: 0, field: FieldType.Integer },
+      minDistance: { default: -1, field: FieldType.Float },
+      minFadeDistance: { default: -1, field: FieldType.Float },
+      maxFadeDistance: { default: -1, field: FieldType.Float },
+      maxDistance: { default: -1, field: FieldType.Float },
+      minDistanceThreshold: { default: -1, field: FieldType.Float },
+      maxDistanceThreshold: { default: -1, field: FieldType.Float },
+      unk_ds3_f2_20: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_21: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_22: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_23: { default: 0, field: FieldType.Integer },
+      unk_ds3_f2_24: { default: 0, field: FieldType.Integer },
+      unkDepthBlend1: { default: 1, field: FieldType.Float },
+      unkDepthBlend2: { default: 0, field: FieldType.Float },
+      unk_ds3_f2_27: { default: 1, field: FieldType.Integer },
+      unk_ds3_f2_28: { default: 0, field: FieldType.Integer },
+      unk_sdt_f2_29: { default: 0, field: FieldType.Float },
+      shadowDarkness: { default: 0, field: FieldType.Float },
+      hideIndoors: { default: 0, field: FieldType.Boolean },
+      unk_sdt_f2_32: { default: 1, field: FieldType.Integer },
+      specular: { default: 0, field: FieldType.Integer },
+      glossiness: { default: 0.25, field: FieldType.Float },
+      lighting: { default: LightingMode.Unlit, field: FieldType.Integer },
+      unk_sdt_f2_36: { default: -2, field: FieldType.Integer },
+      unk_sdt_f2_37: { default: 0, field: FieldType.Integer },
+      specularity: { default: 0.5, field: FieldType.Float },
+      unk_er_f2_39: { default: 0, field: FieldType.Integer },
+      particleFollowFactor: { default: 1 },
+      unk_ds3_p1_1: { default: 0 },
+      unk_ds3_p1_2: { default: 0 },
+      unk_ds3_p1_3: { default: 0 },
+      particleAccelerationX: { default: 0 },
+      particleAccelerationY: { default: 0 },
+      particleAccelerationZ: { default: 0 },
+      unk_ds3_p1_7: { default: 0 },
+      unk_ds3_p1_8: { default: 0 },
+      particleAngularAccelerationZ: { default: 0 },
+      particleGrowthRateX: { default: 0 },
+      particleGrowthRateY: { default: 0 },
+      unk_ds3_p1_12: { default: 0 },
+      color: { default: [1, 1, 1, 1] },
+      unk_ds3_p1_14: { default: 1 },
+      unk_ds3_p1_15: { default: 0 },
+      unkParticleAccelerationZ: { default: 0 },
+      unk_ds3_p1_17: { default: 0 },
+      particleGravity: { default: 0 },
+      particleRandomTurnAngle: { default: 0 },
+      unk_ds3_p1_20: { default: 0 },
+      unk_ds3_p2_0: { default: 1 },
+      unk_ds3_p2_1: { default: 1 },
+      unk_ds3_p2_2: { default: 0 },
+      unk_ds3_p2_3: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_4: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_5: { default: [1, 1, 1, 1] },
+      unk_ds3_p2_6: { default: 0 },
+    },
+    games: {
+      [Game.DarkSouls3]: -2,
+      [Game.Sekiro]: -2,
+      [Game.EldenRing]: {
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
+        properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAccelerationZ','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
+        properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
@@ -3830,7 +4094,7 @@ const ActionData: {
       concurrentSegments: { default: 100, field: FieldType.Integer },
       columns: { default: 1, field: FieldType.Integer },
       totalFrames: { default: 1, field: FieldType.Integer },
-      attachedUV: { default: 1, field: FieldType.Boolean },
+      attachedUV: { default: true, field: FieldType.Boolean },
       bloomRed: { default: 1, field: FieldType.Float },
       bloomGreen: { default: 1, field: FieldType.Float },
       bloomBlue: { default: 1, field: FieldType.Float },
@@ -4332,7 +4596,7 @@ const ActionData: {
       unk_ds3_f1_28: { default: 0, field: FieldType.Float },
       unk_ds3_f1_29: { default: 30, field: FieldType.Integer },
       unk_ds3_f1_30: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_31: { default: 1, field: FieldType.Integer },
+      affectSFX: { default: true, field: FieldType.Boolean },
       unk_ds3_f1_32: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_33: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_34: { default: 0, field: FieldType.Float },
@@ -4366,11 +4630,11 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
+        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','affectSFX','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
         properties1: ['intensity']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
+        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','affectSFX','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
         properties1: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -4609,10 +4873,10 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.NoParticleSpread,
-      ActionType.CircularParticleSpread,
-      ActionType.EllipticalParticleSpread,
-      ActionType.RectangularParticleSpread
+      ActionType.NoSpread,
+      ActionType.CircularSpread,
+      ActionType.EllipticalSpread,
+      ActionType.RectangularSpread
     ],
     [
       ActionType.ParticleModifier
@@ -4632,7 +4896,7 @@ const EffectActionSlots = {
       ActionType.RadialBlur,
       ActionType.PointLight,
       ActionType.ParticleSystem,
-      ActionType.Unk10001_StandardCorrectParticle,
+      ActionType.ParticleSystem2,
       ActionType.Unk10002_Fluid,
       ActionType.Unk10003_LightShaft,
       ActionType.Unk10008_SparkParticle,
@@ -4673,7 +4937,7 @@ const EffectActionSlots = {
       ActionType.Unk800
     ]
   ],
-  [EffectType.SharedEmitter]: [
+  [EffectType.NodeEmitter]: [
     [
       ActionType.NodeAttributes
     ],
@@ -4710,14 +4974,14 @@ const EffectActionSlots = {
       ActionType.CylinderEmitterShape
     ],
     [
-      ActionType.NoParticleSpread,
-      ActionType.CircularParticleSpread,
-      ActionType.EllipticalParticleSpread,
-      ActionType.RectangularParticleSpread
+      ActionType.NoSpread,
+      ActionType.CircularSpread,
+      ActionType.EllipticalSpread,
+      ActionType.RectangularSpread
     ],
     [
-      ActionType.EmitAllParticles,
-      ActionType.EmitRandomParticles
+      ActionType.SelectAllNodes,
+      ActionType.SelectRandomNode
     ],
     [
       ActionType.EmissionSound
@@ -5286,9 +5550,9 @@ function readNode(br: BinaryReader, game: Game): Node {
         return new BasicNode(effects, nodes).mapStates(...actions[0].effectIndices)
       }
       break
-    case NodeType.SharedEmitter:
+    case NodeType.NodeEmitter:
       if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new SharedEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
+        return new NodeEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
       }
       break
   }
@@ -5415,8 +5679,8 @@ function readEffect(br: BinaryReader, game: Game): IEffect {
     ])
   } else if (type === EffectType.Basic && actionCount <= 15) {
     return new BasicEffect(actions)
-  } else if (type === EffectType.SharedEmitter && actionCount <= 10) {
-    return new SharedEmitterEffect(actions)
+  } else if (type === EffectType.NodeEmitter && actionCount <= 10) {
+    return new NodeEmitterEffect(actions)
   } else {
     return new Effect(type, actions)
   }
@@ -6142,18 +6406,12 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     throw new Error('Invalid operand for anyValueMult: ' + av2)
   }
 
-  if (av1 instanceof ComponentSequenceProperty) {
-    av1 = av1.combineComponents()
-  }
-  if (av2 instanceof ComponentSequenceProperty) {
-    av2 = av2.combineComponents()
-  }
   if (typeof av1 === 'number') {
     if (typeof av2 === 'number') {
       return av1 * av2 as T
     } else if (Array.isArray(av2)) {
-      return av2.map(e => e * av1) as unknown as T
-    } else if (av2 instanceof ValueProperty || av2 instanceof SequenceProperty) {
+      return av2.map(e => e * (av1 as number)) as unknown as T
+    } else if (av2 instanceof Property) {
       return av2.clone().scale(av1) as unknown as T
     }
   } else if (Array.isArray(av1)) {
@@ -6162,42 +6420,58 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     } else if (av2 instanceof ValueProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new ValueProperty(
         av1.length - 1,
         anyValueMult(av1, av2.value),
         mods.map(mod => Modifier.multPropertyValue(mod, av1))
       ) as unknown as T
-    } else if (av2 instanceof SequenceProperty) {
+    } else if (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
-      return new SequenceProperty(
-        av1.length - 1,
-        av2.function,
-        av2.loop,
-        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1)),
-        mods.map(mod => Modifier.multPropertyValue(mod, av1))
-      ) as unknown as T
+      if (av2 instanceof SequenceProperty) {
+        return new SequenceProperty(
+          av1.length - 1,
+          av2.function,
+          av2.loop,
+          av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1 as Vector)),
+          mods.map(mod => Modifier.multPropertyValue(mod, av1))
+        ) as unknown as T
+      } else {
+        const cav2 = av2
+        return new ComponentSequenceProperty(
+          av1.length - 1,
+          av2.loop,
+          av1.map((c, i) => cav2.components[cav2.components.length === 1 ? 0 : i].keyframes
+            .map(kf => Keyframe.scale(Keyframe.copy(kf), c))
+          ),
+          mods.map(mod => Modifier.multPropertyValue(mod, av1))
+        ) as unknown as T
+      }
     }
   } else if (av1 instanceof ValueProperty) {
     if (av2 instanceof ValueProperty) {
-      let av1Mods = av1.modifiers
-      let av2Mods = av2.modifiers
-      const vt = Math.max(av1.valueType, av2.valueType)
-      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+      const cav1 = av1
+      const cav2 = av2
+      let av1Mods = cav1.modifiers
+      let av2Mods = cav2.modifiers
+      const vt = Math.max(cav1.valueType, cav2.valueType)
+      if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ValueProperty(vt, anyValueMult(av1.value, av2.value), [
-        ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.value)),
-        ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.value)),
+        ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.value)),
+        ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
       ]) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
+      const cav1 = av1
+      const cav2 = av2
       let av1Mods = av1.modifiers
       let av2Mods = av2.modifiers
       const vt = Math.max(av1.valueType, av2.valueType)
@@ -6208,42 +6482,78 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        av2.valueType,
+        vt,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1.value)),
+        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value)),
         [
-          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.valueAt(0))),
-          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.value)),
+          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
+        ]
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      const cav1 = av1
+      const cav2 = av2
+      let av1Mods = av1.modifiers
+      let av2Mods = av2.modifiers
+      const vt = Math.max(av1.valueType, av2.valueType)
+      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      return new ComponentSequenceProperty(
+        vt,
+        av2.loop,
+        arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value))
+        ),
+        [
+          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
         ]
       ) as unknown as T
     }
-  } else if (av1 instanceof SequenceProperty && av2 instanceof SequenceProperty) {
+  } else if (
+    (av1 instanceof SequenceProperty || av1 instanceof ComponentSequenceProperty) &&
+    (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty)
+  ) {
+    if (av1 instanceof ComponentSequenceProperty) {
+      av1 = av1.combineComponents()
+    }
+    if (av2 instanceof ComponentSequenceProperty) {
+      av2 = av2.combineComponents()
+    }
+    const cav1 = av1 as SequenceProperty<any, any>
+    const cav2 = av1 as SequenceProperty<any, any>
     const positions = new Set<number>
-    for (const keyframe of av1.keyframes) {
+    for (const keyframe of cav1.keyframes) {
       positions.add(keyframe.position)
     }
-    for (const keyframe of av2.keyframes) {
+    for (const keyframe of cav2.keyframes) {
       positions.add(keyframe.position)
     }
-    let av1Mods = av1.modifiers
-    let av2Mods = av2.modifiers
-    const vt = Math.max(av1.valueType, av2.valueType)
-    if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    let av1Mods = cav1.modifiers
+    let av2Mods = cav2.modifiers
+    const vt = Math.max(cav1.valueType, cav2.valueType)
+    if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
       av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+    if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      av1.loop && av2.loop,
-      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
-        .map(e => new Keyframe(e,
-          anyValueMult(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
-        ))
+      cav1.loop && cav2.loop,
+      (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
+        Array.from(positions).sort((a, b) => a - b) :
+        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+      ).map(e => new Keyframe(e,
+        anyValueMult(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
+      ))
     ).withModifiers(
-      ...av1Mods.map(mod => Modifier.multPropertyValue(mod, av2.valueAt(0))),
-      ...av2Mods.map(mod => Modifier.multPropertyValue(mod, av1.valueAt(0))),
+      ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
+      ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.valueAt(0))),
     ) as unknown as T
   }
 
@@ -6273,30 +6583,31 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     throw new Error('Invalid operand for anyValueMult: ' + av2)
   }
 
-  if (av1 instanceof ComponentSequenceProperty) {
-    av1 = av1.combineComponents()
-  }
-  if (av2 instanceof ComponentSequenceProperty) {
-    av2 = av2.combineComponents()
-  }
   if (typeof av1 === 'number') {
     if (typeof av2 === 'number') {
       return av1 + av2 as T
     } else if (Array.isArray(av2)) {
-      return av2.map(e => e + av1) as unknown as T
+      return av2.map(e => e + (av1 as number)) as unknown as T
     } else if (av2 instanceof ValueProperty) {
       return new ValueProperty(
         av2.valueType,
         anyValueSum(av1, av2.value),
-        av2.modifiers.map(mod => Modifier.sumPropertyValue(mod, av1))
+        av2.modifiers.map(mod => mod.clone())
       ) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
       return new SequenceProperty(
         av2.valueType,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1)),
-        av2.modifiers.map(mod => Modifier.sumPropertyValue(mod, av1))
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as number))),
+        av2.modifiers.map(mod => mod.clone())
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      return new ComponentSequenceProperty(
+        av2.valueType,
+        av2.loop,
+        av2.components.map(c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))),
+        av2.modifiers.map(mod => mod.clone())
       ) as unknown as T
     }
   } else if (Array.isArray(av1)) {
@@ -6305,24 +6616,38 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     } else if (av2 instanceof ValueProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new ValueProperty(
         av1.length - 1,
         anyValueSum(av1, av2.value),
-        mods.map(mod => Modifier.sumPropertyValue(mod, av1))
+        mods.map(mod => mod.clone())
       ) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
       let mods = av2.modifiers
       if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1.length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new SequenceProperty(
         av1.length - 1,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1)),
-        mods.map(mod => Modifier.sumPropertyValue(mod, av1))
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as Vector))),
+        mods.map(mod => mod.clone())
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      const cav2 = av2
+      let mods = cav2.modifiers
+      if (cav2.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+      }
+      return new ComponentSequenceProperty(
+        av1.length - 1,
+        cav2.loop,
+        av1.map((c, i) => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.add(Keyframe.copy(kf), c))
+        ),
+        mods.map(mod => mod.clone())
       ) as unknown as T
     }
   } else if (av1 instanceof ValueProperty) {
@@ -6337,8 +6662,8 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ValueProperty(vt, anyValueSum(av1.value, av2.value), [
-        ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.value)),
-        ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.value)),
+        ...av1Mods.map(mod => mod.clone()),
+        ...av2Mods.map(mod => mod.clone()),
       ]) as unknown as T
     } else if (av2 instanceof SequenceProperty) {
       let av1Mods = av1.modifiers
@@ -6351,42 +6676,78 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        av2.valueType,
+        vt,
         av2.function,
         av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1.value)),
+        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as ValueProperty<any>).value)),
         [
-          ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.valueAt(0))),
-          ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.value)),
+          ...av1Mods.map(mod => mod.clone()),
+          ...av2Mods.map(mod => mod.clone()),
+        ]
+      ) as unknown as T
+    } else if (av2 instanceof ComponentSequenceProperty) {
+      const cav1 = av1
+      const cav2 = av2
+      let av1Mods = cav1.modifiers
+      let av2Mods = cav2.modifiers
+      const vt = Math.max(cav1.valueType, cav2.valueType)
+      if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
+        av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
+        av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
+      }
+      return new ComponentSequenceProperty(
+        vt,
+        cav2.loop,
+        arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.add(Keyframe.copy(kf), cav1.value))
+        ),
+        [
+          ...av1Mods.map(mod => mod.clone()),
+          ...av2Mods.map(mod => mod.clone()),
         ]
       ) as unknown as T
     }
-  } else if (av1 instanceof SequenceProperty && av2 instanceof SequenceProperty) {
+  } else if (
+    (av1 instanceof SequenceProperty || av1 instanceof ComponentSequenceProperty) &&
+    (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty)
+  ) {
+    if (av1 instanceof ComponentSequenceProperty) {
+      av1 = av1.combineComponents()
+    }
+    if (av2 instanceof ComponentSequenceProperty) {
+      av2 = av2.combineComponents()
+    }
+    const cav1 = av1 as SequenceProperty<any, any>
+    const cav2 = av1 as SequenceProperty<any, any>
     const positions = new Set<number>
-    for (const keyframe of av1.keyframes) {
+    for (const keyframe of cav1.keyframes) {
       positions.add(keyframe.position)
     }
-    for (const keyframe of av2.keyframes) {
+    for (const keyframe of cav2.keyframes) {
       positions.add(keyframe.position)
     }
-    let av1Mods = av1.modifiers
-    let av2Mods = av2.modifiers
-    const vt = Math.max(av1.valueType, av2.valueType)
-    if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    let av1Mods = cav1.modifiers
+    let av2Mods = cav2.modifiers
+    const vt = Math.max(cav1.valueType, cav2.valueType)
+    if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
       av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+    if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      av1.loop && av2.loop,
-      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
-        .map(e => new Keyframe(e,
-          anyValueSum(av1.valueAt(e), av2.valueAt(e)) as PropertyValue
-        ))
+      cav1.loop && cav2.loop,
+      (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
+        Array.from(positions).sort((a, b) => a - b) :
+        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+      ).map(e => new Keyframe(e,
+        anyValueSum(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
+      ))
     ).withModifiers(
-      ...av1Mods.map(mod => Modifier.sumPropertyValue(mod, av2.valueAt(0))),
-      ...av2Mods.map(mod => Modifier.sumPropertyValue(mod, av1.valueAt(0))),
+      ...av1Mods.map(mod => mod.clone()),
+      ...av2Mods.map(mod => mod.clone()),
     ) as unknown as T
   }
 
@@ -6636,6 +6997,16 @@ const ActionDataConversion = {
       return this
     }
   },
+  [ActionType.Distortion]: {
+    read(props: DistortionParams, game: Game) {
+      props.stirSpeed = anyValueMult(180 / Math.PI, props.stirSpeed)
+      return props
+    },
+    write(props: DistortionParams, game: Game) {
+      props.stirSpeed = anyValueMult(Math.PI / 180, props.stirSpeed)
+      return props
+    }
+  },
   [ActionType.PointLight]: {
     read(props: PointLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
@@ -6716,15 +7087,72 @@ const ActionDataConversion = {
       return props
     }
   },
+  [ActionType.ParticleSystem2]: {
+    read(props: ParticleSystem2Params, game: Game) {
+      if (props.particleUniformScale) {
+        /*
+          This action's uniform scale field acts differently from every other
+          action that has it. Instead of just ignoring the Y size-related
+          fields and properties, the X and Y size are added together. So, to
+          make this class work more consistently with the other ones, this
+          adds the Y value to the X value and sets the Y value to 0.
+        */
+        props.particleSizeX += props.particleSizeY
+        props.particleSizeY = 0
+        props.particleSizeXMin += props.particleSizeYMin
+        props.particleSizeYMin = 0
+        props.particleSizeXMax += props.particleSizeYMax
+        props.particleSizeYMax = 0
+        props.particleGrowthAccelerationXMin += props.particleGrowthAccelerationYMin
+        props.particleGrowthAccelerationYMin = 0
+        props.particleGrowthAccelerationXMax += props.particleGrowthAccelerationYMax
+        props.particleGrowthAccelerationYMax = 0
+        props.particleGrowthRateX = anyValueSum(props.particleGrowthRateX, props.particleGrowthRateY)
+        props.particleGrowthRateY = 0
+        props.particleGrowthRateXStatic += props.particleGrowthRateYStatic
+        props.particleGrowthRateYStatic = 0
+      }
+      props.emissionIntervalMin /= 30
+      props.emissionIntervalMax /= 30
+      props.particleDuration /= 30
+      props.particleRandomTurnIntervalMax /= 30
+
+      props.particleAngularAccelerationZ = anyValueMult(180 / Math.PI, props.particleAngularAccelerationZ)
+      return props
+    },
+    write(props: ParticleSystem2Params, game: Game) {
+      if (props.particleUniformScale) {
+        props.particleSizeY = 0
+        props.particleSizeYMin = 0
+        props.particleSizeYMax = 0
+        props.particleGrowthAccelerationYMin = 0
+        props.particleGrowthAccelerationYMax = 0
+        props.particleGrowthRateY = 0
+        props.particleGrowthRateYStatic = 0
+      }
+      props.emissionIntervalMin = Math.round(props.emissionIntervalMin * 30)
+      props.emissionIntervalMax = Math.round(props.emissionIntervalMax * 30)
+      props.particleDuration = Math.round(props.particleDuration * 30)
+      props.particleRandomTurnIntervalMax = Math.round(props.particleRandomTurnIntervalMax * 30)
+
+      props.particleAngularAccelerationZ = anyValueMult(Math.PI / 180, props.particleAngularAccelerationZ)
+      return props
+    },
+    fallback(action: ParticleSystem2, game: Game) {
+      return new ParticleSystem(action).toAction(game)
+    }
+  },
   [ActionType.WindForce]: {
     read(props: WindForceParams, game: Game) {
       if ('fadeOutTime' in props) {
         props.fadeOutTime = props.fadeOutTime / 30
       }
+      props.affectSFX = !props.affectSFX
       return props
     },
     write(props: WindForceParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      props.affectSFX = !props.affectSFX
       return props
     }
   },
@@ -7438,30 +7866,33 @@ class FXR {
 
   static fromJSON(obj: {
     id: number
-    states: string[]
-    root: any
+    states?: (string | string[])[]
+    root?: any
   } | {
     version: string
     fxr: any
   }) {
+    if (obj instanceof FXR) {
+      return obj
+    }
     if ('fxr' in obj) {
       return new FXR(
         obj.fxr.id,
-        Node.fromJSON(obj.fxr.root) as RootNode | GenericNode,
-        obj.fxr.states.map(state => State.from(state)),
+        'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
+        'states' in obj.fxr ? obj.fxr.states.map(state => State.from(state)) : undefined,
       )
     }
     return new FXR(
       obj.id,
-      Node.fromJSON(obj.root) as RootNode | GenericNode,
-      obj.states.map(state => State.from(state)),
+      'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
+      'states' in obj ? obj.states.map(state => State.from(state)) : undefined,
     )
   }
 
   toJSON() {
     return {
       id: this.id,
-      states: this.states.map(state => state.toString()),
+      states: this.states.map(state => state.toJSON()),
       root: this.root.toJSON(),
     }
   }
@@ -7585,7 +8016,7 @@ class FXR {
         res.textures.push({ resource: action.mask, type: 'a' })
       } else if (action instanceof RadialBlur) {
         res.textures.push({ resource: action.mask, type: 'a' })
-      } else if (action instanceof ParticleSystem) {
+      } else if (action instanceof ParticleSystem || action instanceof ParticleSystem2) {
         res.textures.push({ resource: action.texture, type: 'a' })
         res.textures.push({ resource: action.normalMap, type: 'n' })
       } else if (action instanceof LensFlare) {
@@ -7593,11 +8024,6 @@ class FXR {
         res.textures.push({ resource: action.layer2, type: 'a' })
         res.textures.push({ resource: action.layer3, type: 'a' })
         res.textures.push({ resource: action.layer4, type: 'a' })
-      } else if (action instanceof Action) switch (action.type) {
-        case ActionType.Unk10001_StandardCorrectParticle:
-          res.textures.push({ resource: action.fields1[1].value as number, type: 'a' })
-          res.textures.push({ resource: action.fields1[3].value as number, type: 'n' })
-          break
       }
     }
     const cleanList = (list: { resource: ScalarValue }[]) => list.map(e => {
@@ -7646,32 +8072,30 @@ class State {
   }
 
   /**
-   * Parses a logical expression in a string and creates a
-   * {@link State} from it.
-   * @param stateString A logical expression comprised of one or more
-   * conditions separated by `&&`. The state may only be active if all of its
-   * conditions are true.
-   * 
-   * Syntax:
-   * ```text
-   * stateString = <conditionExpression>[ && <conditionExpression>[...]]
-   * ```
-   * See {@link StateCondition.from} for more information about
-   * `conditionExpression`.
-   * 
-   * Examples:
-   * ```text
-   * time < 0.5 else 1 && ext(2000) == 2
-   * ext(0) < 1 && time < 2 && 1 == 1
-   * ```
-   * @returns The new state.
+   * @param obj A {@link StateCondition.from state condition expression}, an
+   * array of state condition expressions, or a state.
    */
-  static from(stateString: string) {
-    return new State(stateString.split('&&').filter(e => e.trim().length > 0).map(e => StateCondition.from(e)))
+  static from(obj: string | string[] | State) {
+    if (obj instanceof State) {
+      return obj
+    }
+    if (Array.isArray(obj)) {
+      return new State(obj.map(e => StateCondition.from(e)))
+    }
+    if (obj.trim().length > 0) {
+      return new State([ StateCondition.from(obj) ])
+    }
+    return new State
   }
 
-  toString() {
-    return this.conditions.map(c => c.toString()).join(' && ')
+  toJSON() {
+    if (this.conditions.length === 0) {
+      return ''
+    }
+    if (this.conditions.length === 1) {
+      return this.conditions[0].toString()
+    }
+    return this.conditions.map(c => c.toString())
   }
 
 }
@@ -7782,7 +8206,10 @@ class StateCondition {
    * 
    * @returns A new {@link StateCondition} based on the expression.
    */
-  static from(expression: string) {
+  static from(expression: string | StateCondition) {
+    if (expression instanceof StateCondition) {
+      return expression
+    }
     const m = expression.match(this.#reExpression)
     if (m === null) {
       throw new Error('Syntax error in condition expression: ' + expression)
@@ -7922,6 +8349,9 @@ abstract class Node {
   minify(): Node { return this }
 
   static fromJSON(obj: any): Node {
+    if (obj instanceof Node) {
+      return obj
+    }
     switch (obj.type) {
       case NodeType.Root:
         return RootNode.fromJSON(obj)
@@ -7931,8 +8361,8 @@ abstract class Node {
         return LevelsOfDetailNode.fromJSON(obj)
       case NodeType.Basic:
         return BasicNode.fromJSON(obj)
-      case NodeType.SharedEmitter:
-        return SharedEmitterNode.fromJSON(obj)
+      case NodeType.NodeEmitter:
+        return NodeEmitterNode.fromJSON(obj)
       default:
         return GenericNode.fromJSON(obj)
     }
@@ -8018,7 +8448,7 @@ abstract class Node {
    */
   scale(factor: number) {
     for (const effect of this.walkEffects()) if (
-      effect instanceof BasicEffect || effect instanceof SharedEmitterEffect
+      effect instanceof BasicEffect || effect instanceof NodeEmitterEffect
     ) {
       const slot1 = effect.nodeTransform
       if (slot1 instanceof RandomNodeTransform) {
@@ -8131,7 +8561,7 @@ abstract class Node {
           slot9.unk_ds3_f1_4 *= factor
           slot9.unk_ds3_f1_7 *= factor
           slot9.unk_ds3_f1_8 *= factor
-        } else if (slot9 instanceof ParticleSystem) {
+        } else if (slot9 instanceof ParticleSystem || slot9 instanceof ParticleSystem2) {
           slot9.emitterSizeX = anyValueMult(factor, slot9.emitterSizeX)
           slot9.emitterSizeY = anyValueMult(factor, slot9.emitterSizeY)
           slot9.emitterSizeZ = anyValueMult(factor, slot9.emitterSizeZ)
@@ -8218,6 +8648,7 @@ abstract class Node {
           slot9 instanceof Distortion ||
           slot9 instanceof RadialBlur ||
           slot9 instanceof ParticleSystem ||
+          slot9 instanceof ParticleSystem2 ||
           slot9 instanceof DynamicTracer ||
           slot9 instanceof RichModel
         ) {
@@ -8265,7 +8696,7 @@ abstract class Node {
         } else if (slot14 instanceof ParticleWindSpeed) {
           slot14.speed = anyValueMult(factor, slot14.speed)
         }
-      } else { // Shared emitter effect
+      } else { // Node emitter effect
         const slot9 = effect.nodeWind
         if (slot9 instanceof NodeWindAcceleration) {
           slot9.acceleration = anyValueMult(factor, slot9.acceleration)
@@ -8320,11 +8751,7 @@ abstract class Node {
         procVec4Value(effect.particleModifier, 'color')
       }
       const slot9 = effect.appearance
-      if (slot9 instanceof Action) switch (slot9.type) {
-        case ActionType.Unk10001_StandardCorrectParticle:
-          procProp(slot9.properties1, 13)
-          break
-      } else if (
+      if (
         slot9 instanceof PointSprite ||
         slot9 instanceof BillboardEx ||
         slot9 instanceof Model ||
@@ -8351,7 +8778,8 @@ abstract class Node {
       } else if (
         slot9 instanceof Distortion ||
         slot9 instanceof RadialBlur ||
-        slot9 instanceof ParticleSystem
+        slot9 instanceof ParticleSystem ||
+        slot9 instanceof ParticleSystem2
       ) {
         procVec4Value(slot9, 'color')
       } else if (slot9 instanceof LensFlare) {
@@ -8374,6 +8802,7 @@ abstract class Node {
         slot9 instanceof Distortion ||
         slot9 instanceof RadialBlur ||
         slot9 instanceof ParticleSystem ||
+        slot9 instanceof ParticleSystem2 ||
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
@@ -8414,15 +8843,15 @@ class GenericNode extends Node {
     nodes
   }: {
     type: number
-    actions: []
-    effects: []
-    nodes: []
+    actions: any[]
+    effects?: any[]
+    nodes?: any[]
   }) {
     return new GenericNode(
       type,
       actions.map(action => Action.fromJSON(action)),
-      effects.map(effect => Effect.fromJSON(effect)),
-      nodes.map(node => Node.fromJSON(node))
+      (effects ?? []).map(effect => Effect.fromJSON(effect)),
+      (nodes ?? []).map(node => Node.fromJSON(node))
     )
   }
 
@@ -8455,13 +8884,13 @@ class RootNode extends Node {
 
   constructor(
     public nodes: Node[] = [],
-    unk70x: ActionSlots.Unknown70xAction = null,
+    unk70x?: ActionSlots.Unknown70xAction,
     public unk10100: ActionSlots.Unknown10100Action = new Unk10100,
     public unk10400: ActionSlots.Unknown10400Action = new Unk10400,
     public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
-    if (unk70x !== null) {
+    if (unk70x !== undefined && unk70x !== null) {
       this.unk70x = unk70x
     }
   }
@@ -8505,10 +8934,10 @@ class RootNode extends Node {
     }
     return new RootNode(
       (obj.nodes ?? []).map(node => Node.fromJSON(node)),
-      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : null,
-      Action.fromJSON(obj.unk10100),
-      Action.fromJSON(obj.unk10400),
-      Action.fromJSON(obj.unk10500)
+      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : undefined,
+      'unk10100' in obj ? Action.fromJSON(obj.unk10100) : undefined,
+      'unk10400' in obj ? Action.fromJSON(obj.unk10400) : undefined,
+      'unk10500' in obj ? Action.fromJSON(obj.unk10500) : undefined
     )
   }
 
@@ -8641,10 +9070,14 @@ class LevelsOfDetailNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new LevelsOfDetailNode(
-      obj.effects.map((e: any) => Effect.fromJSON(e)),
-      obj.nodes.map((e: any) => Node.fromJSON(e))
-    ).mapStates(...obj.stateEffectMap)
+    const node = new LevelsOfDetailNode(
+      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
+    )
+    if ('stateEffectMap' in obj) {
+      node.mapStates(...obj.stateEffectMap)
+    }
+    return node
   }
 
   minify(): Node {
@@ -8690,10 +9123,14 @@ class BasicNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new BasicNode(
-      obj.effects.map((e: any) => Effect.fromJSON(e)),
-      obj.nodes.map((e: any) => Node.fromJSON(e))
-    ).mapStates(...obj.stateEffectMap)
+    const node = new BasicNode(
+      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
+    )
+    if ('stateEffectMap' in obj) {
+      node.mapStates(...obj.stateEffectMap)
+    }
+    return node
   }
 
   minify(): Node {
@@ -8706,24 +9143,23 @@ class BasicNode extends NodeWithEffects {
 }
 
 /**
- * A node that overrides the emitter of its child nodes with its own, allowing
- * a single emitter to emit multiple types of particles.
+ * A node that emits its child nodes.
  */
-class SharedEmitterNode extends NodeWithEffects {
+class NodeEmitterNode extends NodeWithEffects {
 
-  declare effects: SharedEmitterEffect[]
+  declare effects: NodeEmitterEffect[]
 
   constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
-      throw new Error('Non-node passed as node to SharedEmitterNode.')
+      throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
     if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
-      super(NodeType.SharedEmitter, [
-        new SharedEmitterEffect(effectsOrEffectActions as Action[])
+      super(NodeType.NodeEmitter, [
+        new NodeEmitterEffect(effectsOrEffectActions as Action[])
       ], nodes)
     } else {
       super(
-        NodeType.SharedEmitter,
+        NodeType.NodeEmitter,
         effectsOrEffectActions as IEffect[],
         nodes
       )
@@ -8734,14 +9170,18 @@ class SharedEmitterNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new SharedEmitterNode(
-      obj.effects.map((e: any) => Effect.fromJSON(e)),
-      obj.nodes.map((e: any) => Node.fromJSON(e))
-    ).mapStates(...obj.stateEffectMap)
+    const node = new NodeEmitterNode(
+      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
+    )
+    if ('stateEffectMap' in obj) {
+      node.mapStates(...obj.stateEffectMap)
+    }
+    return node
   }
 
   minify(): Node {
-    return new SharedEmitterNode(
+    return new NodeEmitterNode(
       this.effects.map(e => e.minify()),
       this.nodes.map(e => e.minify())
     ).mapStates(...this.stateEffectMap)
@@ -8763,7 +9203,7 @@ const Nodes = {
  * for effects that are known:
  * - {@link LevelsOfDetailEffect}
  * - {@link BasicEffect}
- * - {@link SharedEmitterEffect}
+ * - {@link NodeEmitterEffect}
  */
 class Effect implements IEffect {
 
@@ -8794,42 +9234,47 @@ class Effect implements IEffect {
   }
 
   static fromJSON(obj: any): IEffect {
+    if (obj instanceof Effect) {
+      return obj
+    }
     if ('actions' in obj) {
       return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
       case EffectType.LevelsOfDetail:
         return new LevelsOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
-      case EffectType.Basic:
-        return new BasicEffect({
-          nodeAttributes: Action.fromJSON(obj.nodeAttributes),
-          nodeTransform: Action.fromJSON(obj.nodeTransform),
-          nodeMovement: Action.fromJSON(obj.nodeMovement),
-          nodeAudio: Action.fromJSON(obj.nodeAudio),
-          emitter: Action.fromJSON(obj.emitter),
-          emitterShape: Action.fromJSON(obj.emitterShape),
-          particleDirection: Action.fromJSON(obj.particleDirection),
-          particleModifier: Action.fromJSON(obj.particleModifier),
-          particleAttributes: Action.fromJSON(obj.particleAttributes),
-          appearance: Action.fromJSON(obj.appearance),
-          particleMovement: Action.fromJSON(obj.particleMovement),
-          emissionAudio: Action.fromJSON(obj.emissionAudio),
-          slot12: Action.fromJSON(obj.slot12),
-          nodeWind: Action.fromJSON(obj.nodeWind),
-          particleWind: Action.fromJSON(obj.particleWind),
-        })
-      case EffectType.SharedEmitter:
-        return new SharedEmitterEffect({
-          nodeAttributes: Action.fromJSON(obj.nodeAttributes),
-          nodeTransform: Action.fromJSON(obj.nodeTransform),
-          nodeMovement: Action.fromJSON(obj.nodeMovement),
-          nodeAudio: Action.fromJSON(obj.nodeAudio),
-          emitter: Action.fromJSON(obj.emitter),
-          emitterShape: Action.fromJSON(obj.emitterShape),
-          particleDirection: Action.fromJSON(obj.particleDirection),
-          behavior: Action.fromJSON(obj.behavior),
-          emissionAudio: Action.fromJSON(obj.emissionAudio),
-          nodeWind: Action.fromJSON(obj.nodeWind),
-        })
+      case EffectType.Basic: {
+        const params: BasicEffectParams = {}
+        if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
+        if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
+        if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
+        if ('nodeAudio' in obj) params.nodeAudio = Action.fromJSON(obj.nodeAudio)
+        if ('emitter' in obj) params.emitter = Action.fromJSON(obj.emitter)
+        if ('emitterShape' in obj) params.emitterShape = Action.fromJSON(obj.emitterShape)
+        if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
+        if ('particleModifier' in obj) params.particleModifier = Action.fromJSON(obj.particleModifier)
+        if ('particleAttributes' in obj) params.particleAttributes = Action.fromJSON(obj.particleAttributes)
+        if ('appearance' in obj) params.appearance = Action.fromJSON(obj.appearance)
+        if ('particleMovement' in obj) params.particleMovement = Action.fromJSON(obj.particleMovement)
+        if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
+        if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
+        if ('nodeWind' in obj) params.nodeWind = Action.fromJSON(obj.nodeWind)
+        if ('particleWind' in obj) params.particleWind = Action.fromJSON(obj.particleWind)
+        return new BasicEffect(params)
+      }
+      case EffectType.NodeEmitter: {
+        const params: NodeEmitterEffectParams = {}
+        if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
+        if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
+        if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
+        if ('nodeAudio' in obj) params.nodeAudio = Action.fromJSON(obj.nodeAudio)
+        if ('emitter' in obj) params.emitter = Action.fromJSON(obj.emitter)
+        if ('emitterShape' in obj) params.emitterShape = Action.fromJSON(obj.emitterShape)
+        if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
+        if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
+        if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
+        if ('nodeWind' in obj) params.nodeWind = Action.fromJSON(obj.nodeWind)
+        return new NodeEmitterEffect(params)
+      }
     }
     throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
   }
@@ -8895,7 +9340,7 @@ export interface BasicEffectParams {
   nodeAudio?: ActionSlots.NodeAudioAction
   emitter?: ActionSlots.EmitterAction
   emitterShape?:ActionSlots.EmitterShapeAction
-  particleDirection?:ActionSlots.ParticleDirectionAction
+  directionSpread?:ActionSlots.DirectionSpreadAction
   particleModifier?: ActionSlots.ParticleModifierAction
   particleAttributes?: ActionSlots.ParticleAttributesAction
   appearance?:ActionSlots.AppearanceAction
@@ -8919,7 +9364,7 @@ export interface BasicEffectParams {
  * 3     | {@link ActionSlots.NodeAudioAction NodeAudio} | {@link ActionType.None None}
  * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
+ * 6     | {@link ActionSlots.DirectionSpreadAction DirectionSpread} | {@link ActionType.NoSpread NoSpread}
  * 7     | {@link ActionSlots.ParticleModifierAction ParticleModifier} | {@link ActionType.ParticleModifier ParticleModifier}
  * 8     | {@link ActionSlots.ParticleAttributesAction ParticleAttributes} | {@link ActionType.ParticleAttributes ParticleAttributes}
  * 9     | {@link ActionSlots.AppearanceAction Appearance} | {@link ActionType.None None}
@@ -8938,7 +9383,7 @@ class BasicEffect implements IEffect {
   nodeAudio: ActionSlots.NodeAudioAction = new Action
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
   emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
-  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
+  directionSpread: ActionSlots.DirectionSpreadAction = new NoSpread
   particleModifier: ActionSlots.ParticleModifierAction = new ParticleModifier
   particleAttributes: ActionSlots.ParticleAttributesAction = new ParticleAttributes
   appearance: ActionSlots.AppearanceAction = new Action
@@ -8959,7 +9404,7 @@ class BasicEffect implements IEffect {
           case 3:  this.nodeAudio          = action as Action; break;
           case 4:  this.emitter            = action as Action; break;
           case 5:  this.emitterShape       = action as Action; break;
-          case 6:  this.particleDirection  = action as Action; break;
+          case 6:  this.directionSpread    = action as Action; break;
           case 7:  this.particleModifier   = action as Action; break;
           case 8:  this.particleAttributes = action as Action; break;
           case 9:  this.appearance         = action as Action; break;
@@ -8977,7 +9422,7 @@ class BasicEffect implements IEffect {
       if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
       if ('emitter' in params) this.emitter = params.emitter
       if ('emitterShape' in params) this.emitterShape = params.emitterShape
-      if ('particleDirection' in params) this.particleDirection = params.particleDirection
+      if ('directionSpread' in params) this.directionSpread = params.directionSpread
       if ('particleModifier' in params) this.particleModifier = params.particleModifier
       if ('particleAttributes' in params) this.particleAttributes = params.particleAttributes
       if ('appearance' in params) this.appearance = params.appearance
@@ -9001,7 +9446,7 @@ class BasicEffect implements IEffect {
       this.nodeAudio,
       this.emitter,
       this.emitterShape,
-      this.particleDirection,
+      this.directionSpread,
       this.particleModifier,
       this.particleAttributes,
       this.appearance,
@@ -9024,7 +9469,7 @@ class BasicEffect implements IEffect {
       nodeAudio: this.nodeAudio.toJSON(),
       emitter: this.emitter.toJSON(),
       emitterShape: this.emitterShape.toJSON(),
-      particleDirection: this.particleDirection.toJSON(),
+      directionSpread: this.directionSpread.toJSON(),
       particleModifier: this.particleModifier.toJSON(),
       particleAttributes: this.particleAttributes.toJSON(),
       appearance: this.appearance.toJSON(),
@@ -9043,7 +9488,7 @@ class BasicEffect implements IEffect {
     this.nodeAudio = this.nodeAudio.minify()
     this.emitter = this.emitter.minify()
     this.emitterShape = this.emitterShape.minify()
-    this.particleDirection = this.particleDirection.minify()
+    this.directionSpread = this.directionSpread.minify()
     this.particleModifier = this.particleModifier.minify()
     this.particleAttributes = this.particleAttributes.minify()
     this.appearance = this.appearance.minify()
@@ -9062,7 +9507,7 @@ class BasicEffect implements IEffect {
     yield this.nodeAudio
     yield this.emitter
     yield this.emitterShape
-    yield this.particleDirection
+    yield this.directionSpread
     yield this.particleModifier
     yield this.particleAttributes
     yield this.appearance
@@ -9075,23 +9520,22 @@ class BasicEffect implements IEffect {
 
 }
 
-export interface SharedEmitterEffectParams {
+export interface NodeEmitterEffectParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
   nodeAudio?: ActionSlots.NodeAudioAction
   emitter?: ActionSlots.EmitterAction
   emitterShape?: ActionSlots.EmitterShapeAction
-  particleDirection?: ActionSlots.ParticleDirectionAction
-  behavior?: ActionSlots.BehaviorAction
+  directionSpread?: ActionSlots.DirectionSpreadAction
+  nodeSelector?: ActionSlots.NodeSelectorAction
   emissionAudio?: ActionSlots.EmissionAudioAction
   nodeWind?: ActionSlots.NodeWindAction
 }
 
 /**
- * Effect used in {@link NodeType.SharedEmitter shared emitter nodes} to
- * override emitters of child nodes and control which of the child nodes to use
- * the particles of.
+ * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
+ * the emission of child nodes.
  * 
  * Default actions:
  * Index | Slot | Action
@@ -9102,13 +9546,13 @@ export interface SharedEmitterEffectParams {
  * 3     | {@link ActionSlots.NodeAudioAction NodeAudio} | {@link ActionType.None None}
  * 4     | {@link ActionSlots.EmitterAction Emitter} | {@link ActionType.OneTimeEmitter OneTimeEmitter}
  * 5     | {@link ActionSlots.EmitterShapeAction EmitterShape} | {@link ActionType.PointEmitterShape PointEmitterShape}
- * 6     | {@link ActionSlots.ParticleDirectionAction ParticleDirection} | {@link ActionType.NoParticleSpread NoParticleSpread}
- * 7     | {@link ActionSlots.BehaviorAction Behavior} | {@link ActionType.EmitAllParticles EmitAllParticles}
+ * 6     | {@link ActionSlots.DirectionSpreadAction DirectionSpread} | {@link ActionType.NoSpread NoSpread}
+ * 7     | {@link ActionSlots.NodeSelectorAction NodeSelector} | {@link ActionType.SelectAllNodes SelectAllNodes}
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 9     | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
  */
-class SharedEmitterEffect implements IEffect {
-  readonly type = EffectType.SharedEmitter
+class NodeEmitterEffect implements IEffect {
+  readonly type = EffectType.NodeEmitter
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -9116,26 +9560,26 @@ class SharedEmitterEffect implements IEffect {
   nodeAudio: ActionSlots.NodeAudioAction = new Action
   emitter: ActionSlots.EmitterAction = new OneTimeEmitter
   emitterShape: ActionSlots.EmitterShapeAction = new PointEmitterShape
-  particleDirection: ActionSlots.ParticleDirectionAction = new NoParticleSpread
-  behavior: ActionSlots.BehaviorAction = new EmitAllParticles
+  directionSpread: ActionSlots.DirectionSpreadAction = new NoSpread
+  nodeSelector: ActionSlots.NodeSelectorAction = new SelectAllNodes
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeWind: ActionSlots.NodeWindAction = new Action
 
-  constructor(params: SharedEmitterEffectParams | AnyAction[]) {
+  constructor(params: NodeEmitterEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = EffectActionSlots[EffectType.SharedEmitter].findIndex(a => a.includes(action.type))
+        const index = EffectActionSlots[EffectType.NodeEmitter].findIndex(a => a.includes(action.type))
         switch (index) {
-          case 0: this.nodeAttributes    = action as Action; break;
-          case 1: this.nodeTransform     = action as Action; break;
-          case 2: this.nodeMovement      = action as Action; break;
-          case 3: this.nodeAudio         = action as Action; break;
-          case 4: this.emitter           = action as Action; break;
-          case 5: this.emitterShape      = action as Action; break;
-          case 6: this.particleDirection = action as Action; break;
-          case 7: this.behavior          = action as Action; break;
-          case 8: this.emissionAudio     = action as Action; break;
-          case 9: this.nodeWind          = action as Action; break;
+          case 0: this.nodeAttributes  = action as Action; break;
+          case 1: this.nodeTransform   = action as Action; break;
+          case 2: this.nodeMovement    = action as Action; break;
+          case 3: this.nodeAudio       = action as Action; break;
+          case 4: this.emitter         = action as Action; break;
+          case 5: this.emitterShape    = action as Action; break;
+          case 6: this.directionSpread = action as Action; break;
+          case 7: this.nodeSelector    = action as Action; break;
+          case 8: this.emissionAudio   = action as Action; break;
+          case 9: this.nodeWind        = action as Action; break;
         }
       }
     } else {
@@ -9145,8 +9589,8 @@ class SharedEmitterEffect implements IEffect {
       if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
       if ('emitter' in params) this.emitter = params.emitter
       if ('emitterShape' in params) this.emitterShape = params.emitterShape
-      if ('particleDirection' in params) this.particleDirection = params.particleDirection
-      if ('behavior' in params) this.behavior = params.behavior
+      if ('directionSpread' in params) this.directionSpread = params.directionSpread
+      if ('nodeSelector' in params) this.nodeSelector = params.nodeSelector
       if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
       if ('nodeWind' in params) this.nodeWind = params.nodeWind
     }
@@ -9164,8 +9608,8 @@ class SharedEmitterEffect implements IEffect {
       this.nodeAudio,
       this.emitter,
       this.emitterShape,
-      this.particleDirection,
-      this.behavior,
+      this.directionSpread,
+      this.nodeSelector,
       this.emissionAudio,
       game === Game.DarkSouls3 ? [] : [
         this.nodeWind,
@@ -9182,8 +9626,8 @@ class SharedEmitterEffect implements IEffect {
       nodeAudio: this.nodeAudio.toJSON(),
       emitter: this.emitter.toJSON(),
       emitterShape: this.emitterShape.toJSON(),
-      particleDirection: this.particleDirection.toJSON(),
-      behavior: this.behavior.toJSON(),
+      directionSpread: this.directionSpread.toJSON(),
+      nodeSelector: this.nodeSelector.toJSON(),
       emissionAudio: this.emissionAudio.toJSON(),
       nodeWind: this.nodeWind.toJSON(),
     }
@@ -9196,8 +9640,8 @@ class SharedEmitterEffect implements IEffect {
     this.nodeAudio = this.nodeAudio.minify()
     this.emitter = this.emitter.minify()
     this.emitterShape = this.emitterShape.minify()
-    this.particleDirection = this.particleDirection.minify()
-    this.behavior = this.behavior.minify()
+    this.directionSpread = this.directionSpread.minify()
+    this.nodeSelector = this.nodeSelector.minify()
     this.emissionAudio = this.emissionAudio.minify()
     this.nodeWind = this.nodeWind.minify()
     return this
@@ -9210,8 +9654,8 @@ class SharedEmitterEffect implements IEffect {
     yield this.nodeAudio
     yield this.emitter
     yield this.emitterShape
-    yield this.particleDirection
-    yield this.behavior
+    yield this.directionSpread
+    yield this.nodeSelector
     yield this.emissionAudio
     yield this.nodeWind
   }
@@ -9299,6 +9743,9 @@ class Action implements IAction {
   static fromJSON(obj: any) {
     if (obj === null) {
       return new Action
+    }
+    if (obj instanceof Action || obj instanceof DataAction) {
+      return obj
     }
     if (
       obj.type in ActionData &&
@@ -9434,13 +9881,16 @@ class DataAction implements IAction {
   }
 
   toAction(game: Game) {
+    const convertedProps = this.type in ActionDataConversion && 'write' in ActionDataConversion[this.type] ?
+      ActionDataConversion[this.type].write(Object.assign(Object.create(null), this), game) :
+      this
     return new Action(
       this.type,
-      this.getFields(game, 'fields1'),
-      this.getFields(game, 'fields2'),
-      this.getProperties(game, 'properties1'),
-      this.getProperties(game, 'properties2'),
-      this.getSection10s(game)
+      this.getFields.call(convertedProps, game, 'fields1'),
+      this.getFields.call(convertedProps, game, 'fields2'),
+      this.getProperties.call(convertedProps, game, 'properties1'),
+      this.getProperties.call(convertedProps, game, 'properties2'),
+      this.getSection10s.call(convertedProps, game)
     )
   }
 
@@ -12069,7 +12519,7 @@ export interface ParticleModifierParams {
    */
   uniformScale?: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Default**: `0`
    * 
@@ -12136,7 +12586,7 @@ class ParticleModifier extends DataAction {
    */
   uniformScale: boolean
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the {@link InitialDirection initial particle direction}.
+   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
@@ -12313,42 +12763,42 @@ class StateEffectMap extends DataAction {
 }
 
 /**
- * ### {@link ActionType.EmitAllParticles Action 200 - EmitAllParticles}
- * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * ### {@link ActionType.SelectAllNodes Action 200 - SelectAllNodes}
+ * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit all particles from child nodes every time the shared emitter emits something.
+ * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
  */
-class EmitAllParticles extends DataAction {
-  declare type: ActionType.EmitAllParticles
+class SelectAllNodes extends DataAction {
+  declare type: ActionType.SelectAllNodes
   
   constructor() {
-    super(ActionType.EmitAllParticles)
+    super(ActionType.SelectAllNodes)
   }
 }
 
 /**
- * ### {@link ActionType.EmitRandomParticles Action 201 - EmitRandomParticles}
- * **Slot**: {@link ActionSlots.BehaviorAction Behavior}
+ * ### {@link ActionType.SelectRandomNode Action 201 - SelectRandomNode}
+ * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.SharedEmitter SharedEmitter effects} to emit a particle from a random child node every time the shared emitter emits something.
+ * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
  */
-class EmitRandomParticles extends DataAction {
-  declare type: ActionType.EmitRandomParticles
+class SelectRandomNode extends DataAction {
+  declare type: ActionType.SelectRandomNode
   /**
-   * Probability weights for each child node to be picked when emitting.
+   * Probability weights for each child node to be selected for emission.
    * 
    * The weights are stored as integers, so non-integer values in this list will be truncated.
    */
   weights: number[]
   /**
-   * @param weights Probability weights for each child node to be picked when emitting.
+   * @param weights Probability weights for each child node to be selected for emission.
    * 
    * The weights are stored as integers, so non-integer values in this list will be truncated.
    *
    * **Default**: `[1]`
    */
   constructor(weights: number[] = [1]) {
-    super(ActionType.EmitRandomParticles)
+    super(ActionType.SelectRandomNode)
     this.assign({ weights })
   }
 }
@@ -12881,20 +13331,20 @@ class CylinderEmitterShape extends DataAction {
 }
 
 /**
- * ### {@link ActionType.NoParticleSpread Action 500 - NoParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.NoSpread Action 500 - NoSpread}
+ * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
  * 
- * Makes all particles use the default initial direction from the emitter. See {@link InitialDirection} for more information.
+ * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
  */
-class NoParticleSpread extends DataAction {
-  declare type: ActionType.NoParticleSpread
+class NoSpread extends DataAction {
+  declare type: ActionType.NoSpread
   
   constructor() {
-    super(ActionType.NoParticleSpread)
+    super(ActionType.NoSpread)
   }
 }
 
-export interface CircularParticleSpreadParams {
+export interface CircularSpreadParams {
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    * 
@@ -12925,13 +13375,13 @@ export interface CircularParticleSpreadParams {
 }
 
 /**
- * ### {@link ActionType.CircularParticleSpread Action 501 - CircularParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.CircularSpread Action 501 - CircularSpread}
+ * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
  * 
- * Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+ * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
  */
-class CircularParticleSpread extends DataAction {
-  declare type: ActionType.CircularParticleSpread
+class CircularSpread extends DataAction {
+  declare type: ActionType.CircularSpread
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -12953,13 +13403,13 @@ class CircularParticleSpread extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   distribution: ScalarValue
-  constructor(props: CircularParticleSpreadParams = {}) {
-    super(ActionType.CircularParticleSpread)
+  constructor(props: CircularSpreadParams = {}) {
+    super(ActionType.CircularSpread)
     this.assign(props)
   }
 }
 
-export interface EllipticalParticleSpreadParams {
+export interface EllipticalSpreadParams {
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    * 
@@ -13004,13 +13454,13 @@ export interface EllipticalParticleSpreadParams {
 }
 
 /**
- * ### {@link ActionType.EllipticalParticleSpread Action 502 - EllipticalParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.EllipticalSpread Action 502 - EllipticalSpread}
+ * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
  * 
- * Gives each particle a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
+ * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
  */
-class EllipticalParticleSpread extends DataAction {
-  declare type: ActionType.EllipticalParticleSpread
+class EllipticalSpread extends DataAction {
+  declare type: ActionType.EllipticalSpread
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -13044,13 +13494,13 @@ class EllipticalParticleSpread extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   distribution: ScalarValue
-  constructor(props: EllipticalParticleSpreadParams = {}) {
-    super(ActionType.EllipticalParticleSpread)
+  constructor(props: EllipticalSpreadParams = {}) {
+    super(ActionType.EllipticalSpread)
     this.assign(props)
   }
 }
 
-export interface RectangularParticleSpreadParams {
+export interface RectangularSpreadParams {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -13089,13 +13539,13 @@ export interface RectangularParticleSpreadParams {
 }
 
 /**
- * ### {@link ActionType.RectangularParticleSpread Action 503 - RectangularParticleSpread}
- * **Slot**: {@link ActionSlots.ParticleDirectionAction ParticleDirection}
+ * ### {@link ActionType.RectangularSpread Action 503 - RectangularSpread}
+ * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
  * 
- * Gives each particle a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
+ * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
  */
-class RectangularParticleSpread extends DataAction {
-  declare type: ActionType.RectangularParticleSpread
+class RectangularSpread extends DataAction {
+  declare type: ActionType.RectangularSpread
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -13125,8 +13575,8 @@ class RectangularParticleSpread extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   distribution: ScalarValue
-  constructor(props: RectangularParticleSpreadParams = {}) {
-    super(ActionType.RectangularParticleSpread)
+  constructor(props: RectangularSpreadParams = {}) {
+    super(ActionType.RectangularSpread)
     this.assign(props)
   }
 }
@@ -15762,17 +16212,17 @@ export interface BillboardExParams {
    */
   unk_ds3_f1_13?: number
   /**
-   * Unknown integer.
+   * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
    * 
-   * **Default**: `1`
+   * **Default**: `true`
    */
-  unk_ds3_f1_14?: number
+  depthBlend?: boolean
   /**
-   * Unknown integer.
+   * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_ds3_f1_15?: number
+  octagonal?: boolean
   /**
    * Unknown integer.
    * 
@@ -16477,8 +16927,14 @@ class BillboardEx extends DataAction {
   unk_ds3_f1_11: number
   unk_ds3_f1_12: number
   unk_ds3_f1_13: number
-  unk_ds3_f1_14: number
-  unk_ds3_f1_15: number
+  /**
+   * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
+   */
+  depthBlend: boolean
+  /**
+   * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
+   */
+  octagonal: boolean
   unk_ds3_f1_16: number
   unk_ds3_f2_0: number
   unk_ds3_f2_1: boolean
@@ -19515,7 +19971,7 @@ export interface TracerParams {
   /**
    * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
    * 
-   * **Default**: `1`
+   * **Default**: `true`
    */
   attachedUV?: boolean
   /**
@@ -20720,9 +21176,9 @@ export interface DistortionParams {
    */
   intensity?: ScalarValue
   /**
-   * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
-   * **Default**: `1`
+   * **Default**: `60`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -21341,7 +21797,7 @@ class Distortion extends DataAction {
    */
   intensity: ScalarValue
   /**
-   * Controls the speed of the stirring effect in radians per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -24612,11 +25068,11 @@ export interface ParticleSystemParams {
    */
   unk_sdt_f2_29?: number
   /**
-   * Unknown float.
+   * Controls how dark shaded parts of the particle are.
    * 
-   * **Default**: `1`
+   * **Default**: `0`
    */
-  unk_sdt_f2_30?: number
+  shadowDarkness?: number
   /**
    * When enabled, this stops the particles from being shown indoors.
    * 
@@ -24630,23 +25086,33 @@ export interface ParticleSystemParams {
    */
   unk_sdt_f2_32?: number
   /**
-   * Unknown integer.
+   * Specular texture ID.
    * 
    * **Default**: `0`
-   */
-  unk_sdt_f2_33?: number
-  /**
-   * Unknown float.
    * 
-   * **Default**: `0.5`
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
    */
-  unk_sdt_f2_34?: number
+  specular?: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * **Default**: `0.25`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
   /**
    * Unknown integer.
    * 
-   * **Default**: `-2`
+   * **Default**: {@link LightingMode.Unlit}
    */
-  unk_sdt_f2_35?: number
+  lighting?: LightingMode
   /**
    * Unknown integer.
    * 
@@ -24660,11 +25126,16 @@ export interface ParticleSystemParams {
    */
   unk_sdt_f2_37?: number
   /**
-   * Unknown integer.
+   * Controls how bright the specular highlights are.
    * 
-   * **Default**: `0`
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
    */
-  unk_sdt_f2_38?: number
+  specularity?: number
   /**
    * Unknown integer.
    * 
@@ -25598,18 +26069,45 @@ class ParticleSystem extends DataAction {
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
   unk_sdt_f2_29: number
-  unk_sdt_f2_30: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  shadowDarkness: number
   /**
    * When enabled, this stops the particles from being shown indoors.
    */
   hideIndoors: boolean
   unk_sdt_f2_32: number
-  unk_sdt_f2_33: number
-  unk_sdt_f2_34: number
-  unk_sdt_f2_35: number
+  /**
+   * Specular texture ID.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness: number
+  lighting: LightingMode
   unk_sdt_f2_36: number
   unk_sdt_f2_37: number
-  unk_sdt_f2_38: number
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity: number
   unk_er_f2_39: number
   /**
    * Controls how well the particles follow the node if it moves.
@@ -25704,6 +26202,2529 @@ class ParticleSystem extends DataAction {
   }
 }
 
+export interface ParticleSystem2Params {
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1005`
+   */
+  unk_ds3_f1_0?: number
+  /**
+   * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
+   */
+  texture?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  normalMap?: number
+  /**
+   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
+   */
+  emitterShape?: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * The width of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeX?: number
+  /**
+   * The height of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeY?: number
+  /**
+   * The depth of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeZ?: number
+  /**
+   * The rotation of the emitter around the X-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationX?: number
+  /**
+   * The rotation of the emitter around the Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationY?: number
+  /**
+   * The rotation of the emitter around the Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_12?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+   * | Shape | Behavior |
+   * |-|-|
+   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
+   */
+  emitterDistribution?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_16?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `100`
+   */
+  unk_ds3_f1_21?: number
+  /**
+   * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link emissionParticleCountMin}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCount?: number
+  /**
+   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCountMin?: number
+  /**
+   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMin}
+   */
+  emissionParticleCountMax?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_25?: number
+  /**
+   * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link emissionIntervalMax}
+   */
+  emissionIntervalMin?: number
+  /**
+   * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link emissionIntervalMin}
+   */
+  emissionIntervalMax?: number
+  /**
+   * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+   * 
+   * **Default**: `false`
+   */
+  limitEmissionCount?: boolean
+  /**
+   * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+   * 
+   * **Default**: `0`
+   */
+  emissionCountLimit?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_30?: number
+  /**
+   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   */
+  particleDuration?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_33?: number
+  /**
+   * Particle position offset along the X-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetXMin}
+   * - {@link particleOffsetXMax}
+   */
+  particleOffsetX?: number
+  /**
+   * Particle position offset along the Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetYMin}
+   * - {@link particleOffsetYMax}
+   */
+  particleOffsetY?: number
+  /**
+   * Particle position offset along the Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetZMin}
+   * - {@link particleOffsetZMax}
+   */
+  particleOffsetZ?: number
+  /**
+   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetXMin?: number
+  /**
+   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetYMin?: number
+  /**
+   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZMin?: number
+  /**
+   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetXMax?: number
+  /**
+   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetYMax?: number
+  /**
+   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZMax?: number
+  /**
+   * Particle speed along the X-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedXMax}
+   */
+  particleSpeedX?: number
+  /**
+   * Particle speed along the Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedYMax}
+   */
+  particleSpeedY?: number
+  /**
+   * Particle speed along the Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedZMax}
+   */
+  particleSpeedZ?: number
+  /**
+   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedXMin?: number
+  /**
+   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedYMin?: number
+  /**
+   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedZMin?: number
+  /**
+   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedXMax?: number
+  /**
+   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedYMax?: number
+  /**
+   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
+   * 
+   * **Default**: `0`
+   */
+  particleSpeedZMax?: number
+  /**
+   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationXMin?: number
+  /**
+   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationYMin?: number
+  /**
+   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationZMin?: number
+  /**
+   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationXMax?: number
+  /**
+   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationYMax?: number
+  /**
+   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationZMax?: number
+  /**
+   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  particleRotationVarianceX?: number
+  /**
+   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  particleRotationVarianceY?: number
+  /**
+   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
+   * 
+   * **Default**: `0`
+   */
+  particleRotationVarianceZ?: number
+  /**
+   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularSpeedVarianceX?: number
+  /**
+   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularSpeedVarianceY?: number
+  /**
+   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
+   */
+  particleAngularSpeedVarianceZ?: number
+  /**
+   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationXMax}
+   */
+  particleAngularAccelerationXMin?: number
+  /**
+   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationYMax}
+   */
+  particleAngularAccelerationYMin?: number
+  /**
+   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationZMax}
+   */
+  particleAngularAccelerationZMin?: number
+  /**
+   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationXMin}
+   */
+  particleAngularAccelerationXMax?: number
+  /**
+   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationYMin}
+   */
+  particleAngularAccelerationYMax?: number
+  /**
+   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationZMin}
+   */
+  particleAngularAccelerationZMax?: number
+  /**
+   * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleSizeX}
+   * - {@link particleSizeY}
+   * - {@link particleSizeXMin}
+   * - {@link particleSizeYMin}
+   * - {@link particleSizeXMax}
+   * - {@link particleSizeYMax}
+   * - {@link particleGrowthRateX}
+   * - {@link particleGrowthRateY}
+   * - {@link particleGrowthRateXStatic}
+   * - {@link particleGrowthRateYStatic}
+   * - {@link particleGrowthAccelerationXMin}
+   * - {@link particleGrowthAccelerationYMin}
+   * - {@link particleGrowthAccelerationXMax}
+   * - {@link particleGrowthAccelerationYMax}
+   */
+  particleUniformScale?: boolean
+  /**
+   * The width of the particle.
+   * 
+   * **Default**: `1`
+   */
+  particleSizeX?: number
+  /**
+   * The height of the particle.
+   * 
+   * **Default**: `1`
+   */
+  particleSizeY?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_73?: number
+  /**
+   * The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeXMin?: number
+  /**
+   * The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_76?: number
+  /**
+   * The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeXMax?: number
+  /**
+   * The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
+   * 
+   * **Default**: `0`
+   */
+  particleSizeYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_79?: number
+  /**
+   * The rate of change for the width of the particles.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleGrowthRateX}
+   */
+  particleGrowthRateXStatic?: number
+  /**
+   * The rate of change for the height of the particles.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleGrowthRateY}
+   */
+  particleGrowthRateYStatic?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_82?: number
+  /**
+   * Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateXMin?: number
+  /**
+   * Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_85?: number
+  /**
+   * Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateXMax?: number
+  /**
+   * Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthRateYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_88?: number
+  /**
+   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationXMin?: number
+  /**
+   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationYMin?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_91?: number
+  /**
+   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationXMax?: number
+  /**
+   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
+   */
+  particleGrowthAccelerationYMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_94?: number
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   */
+  rgbMultiplier?: number
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   */
+  alphaMultiplier?: number
+  /**
+   * Minimum random variation for the red value of the particle color. A random value between this and {@link redVariationMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  redVariationMin?: number
+  /**
+   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenVariationMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  greenVariationMin?: number
+  /**
+   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueVariationMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  blueVariationMin?: number
+  /**
+   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaVariationMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  alphaVariationMin?: number
+  /**
+   * Maximum random variation for the red value of the particle color. A random value between this and {@link redVariationMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  redVariationMax?: number
+  /**
+   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenVariationMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  greenVariationMax?: number
+  /**
+   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueVariationMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  blueVariationMax?: number
+  /**
+   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaVariationMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  alphaVariationMax?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: `2`
+   */
+  blendMode?: BlendMode
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns?: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames?: number
+  /**
+   * When enabled, this makes each particle pick a random frame from the animation and only display that one frame.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link maxFrameIndex}
+   */
+  randomTextureFrame?: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_109?: number
+  /**
+   * Controls the maximum frame index when {@link randomTextureFrame picking a random frame to display}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link randomTextureFrame}
+   */
+  maxFrameIndex?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_111?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_112?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_113?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_114?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_115?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_116?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_117?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_118?: number
+  /**
+   * Multiplier for {@link particleDuration}.
+   * 
+   * **Default**: `1`
+   */
+  particleDurationMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_120?: number
+  /**
+   * Scalar multiplier for the size of the particles.
+   * 
+   * **Default**: `1`
+   */
+  particleSizeMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_122?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_123?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_124?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_125?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_126?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_127?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_128?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_129?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_130?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_131?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_132?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_133?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_134?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_135?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_136?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_137?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
+  unk_ds3_f1_138?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_139?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_140?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_141?: number
+  /**
+   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+   * 
+   * **Default**: `0`
+   */
+  limitUpdateDistance?: boolean
+  /**
+   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   * 
+   * **Default**: `0`
+   */
+  updateDistance?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_144?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_145?: number
+  /**
+   * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleRandomTurnIntervalMax}
+   * - {@link particleRandomTurnAngle}
+   */
+  particleRandomTurns?: boolean
+  /**
+   * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link particleRandomTurns}
+   * - {@link particleRandomTurnAngle}
+   */
+  particleRandomTurnIntervalMax?: number
+  /**
+   * If enabled, this causes the particles to orient themselves and stretch in the direction they are moving on the screen, making them almost resemble {@link ActionType.Tracer Tracer} particles.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleTraceLength}
+   */
+  traceParticles?: boolean
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_149?: number
+  /**
+   * Controls how much the particles are stretched when {@link traceParticles} is enabled.
+   * 
+   * **Default**: `1`
+   */
+  particleTraceLength?: number
+  /**
+   * A central fraction of the emitter volume where the particles will not be trace particles. In this volume, the particles act as if {@link traceParticles} is disabled.
+   * 
+   * **Default**: `0`
+   */
+  traceParticlesThreshold?: number
+  /**
+   * If enabled, this will add a billboarding sprite to the leading end of trace particles.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link traceParticles}
+   */
+  traceParticleHead?: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_153?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_154?: number
+  /**
+   * Controls whether or not the particles have a bloom effect.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloom?: boolean
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * This controls the intensity of the bloom effect.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_160?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_161?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_162?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_163?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_164?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_165?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f1_166?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_er_f1_167?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_1?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
+  unk_ds3_f2_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_3?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_4?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_5?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_6?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_7?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_13?: number
+  /**
+   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistance?: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minFadeDistance?: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxFadeDistance?: number
+  /**
+   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxDistance?: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistanceThreshold?: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   */
+  maxDistanceThreshold?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_24?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unkDepthBlend1?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unkDepthBlend2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f2_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_28?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f2_29?: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
+   */
+  shadowDarkness?: number
+  /**
+   * When enabled, this stops the particles from being shown indoors.
+   * 
+   * **Default**: `0`
+   */
+  hideIndoors?: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_sdt_f2_32?: number
+  /**
+   * Specular texture ID.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular?: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * **Default**: `0.25`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
+  lighting?: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_sdt_f2_36?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f2_37?: number
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_39?: number
+  /**
+   * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `1`
+   */
+  particleFollowFactor?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_3?: ScalarValue
+  /**
+   * Particle acceleration along the X-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAccelerationXMin}
+   * - {@link particleAccelerationXMax}
+   */
+  particleAccelerationX?: ScalarValue
+  /**
+   * Particle acceleration along the Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAccelerationYMin}
+   * - {@link particleAccelerationYMax}
+   */
+  particleAccelerationY?: ScalarValue
+  /**
+   * Particle acceleration along the Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAccelerationZMin}
+   * - {@link particleAccelerationZMax}
+   */
+  particleAccelerationZ?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_7?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_8?: ScalarValue
+  /**
+   * Angular acceleration for particles around the Z-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationZMin}
+   * - {@link particleAngularAccelerationZMax}
+   */
+  particleAngularAccelerationZ?: ScalarValue
+  /**
+   * The rate of change for the width of the particles.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleGrowthRateXStatic}
+   */
+  particleGrowthRateX?: ScalarValue
+  /**
+   * The rate of change for the height of the particles.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleGrowthRateYStatic}
+   */
+  particleGrowthRateY?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_12?: ScalarValue
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  color?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p1_14?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_15?: ScalarValue
+  /**
+   * Seemingly identical to {@link particleAccelerationZ}?
+   * 
+   * **Default**: `0`
+   */
+  unkParticleAccelerationZ?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_17?: ScalarValue
+  /**
+   * Downwards acceleration for particles.
+   * 
+   * **Default**: `0`
+   */
+  particleGravity?: ScalarValue
+  /**
+   * Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleRandomTurns}
+   * - {@link particleRandomTurnIntervalMax}
+   */
+  particleRandomTurnAngle?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_20?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p2_0?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p2_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_3?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_4?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ds3_p2_5?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p2_6?: ScalarValue
+}
+
+/**
+ * ### {@link ActionType.ParticleSystem2 Action 10001 - ParticleSystem2}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Very similar to {@link ActionType.ParticleSystem ParticleSystem}, with no known differences.
+   * 
+   * In the RTTI, the other action is called "StandardParticle", while this one is called "StandardCorrectParticle".
+   * 
+   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.ParticleSystem ParticleSystem} much simpler. When written for those two games, this action will be converted to the other action automatically.
+ */
+class ParticleSystem2 extends DataAction {
+  declare type: ActionType.ParticleSystem2
+  unk_ds3_f1_0: number
+  /**
+   * The ID of the texture of the particles.
+   */
+  texture: number
+  unk_ds3_f1_2: number
+  normalMap: number
+  /**
+   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   */
+  emitterShape: EmitterShape
+  unk_ds3_f1_5: number
+  /**
+   * The width of the emitter.
+   */
+  emitterSizeX: number
+  /**
+   * The height of the emitter.
+   */
+  emitterSizeY: number
+  /**
+   * The depth of the emitter.
+   */
+  emitterSizeZ: number
+  /**
+   * The rotation of the emitter around the X-axis.
+   */
+  emitterRotationX: number
+  /**
+   * The rotation of the emitter around the Y-axis.
+   */
+  emitterRotationY: number
+  /**
+   * The rotation of the emitter around the Z-axis.
+   */
+  emitterRotationZ: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  /**
+   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+   * | Shape | Behavior |
+   * |-|-|
+   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   */
+  emitterDistribution: number
+  unk_ds3_f1_16: number
+  unk_ds3_f1_17: number
+  unk_ds3_f1_18: number
+  unk_ds3_f1_19: number
+  unk_ds3_f1_20: number
+  unk_ds3_f1_21: number
+  /**
+   * The number of particles to emit per emission.
+   * 
+   * See also:
+   * - {@link emissionParticleCountMin}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCount: number
+  /**
+   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCountMin: number
+  /**
+   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMin}
+   */
+  emissionParticleCountMax: number
+  unk_ds3_f1_25: number
+  /**
+   * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionIntervalMax}
+   */
+  emissionIntervalMin: number
+  /**
+   * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionIntervalMin}
+   */
+  emissionIntervalMax: number
+  /**
+   * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+   */
+  limitEmissionCount: boolean
+  /**
+   * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+   */
+  emissionCountLimit: number
+  unk_ds3_f1_30: number
+  /**
+   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   */
+  particleDuration: number
+  unk_ds3_f1_32: number
+  unk_ds3_f1_33: number
+  /**
+   * Particle position offset along the X-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetXMin}
+   * - {@link particleOffsetXMax}
+   */
+  particleOffsetX: number
+  /**
+   * Particle position offset along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetYMin}
+   * - {@link particleOffsetYMax}
+   */
+  particleOffsetY: number
+  /**
+   * Particle position offset along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetZMin}
+   * - {@link particleOffsetZMax}
+   */
+  particleOffsetZ: number
+  /**
+   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   */
+  particleOffsetXMin: number
+  /**
+   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   */
+  particleOffsetYMin: number
+  /**
+   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   */
+  particleOffsetZMin: number
+  /**
+   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
+   */
+  particleOffsetXMax: number
+  /**
+   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
+   */
+  particleOffsetYMax: number
+  /**
+   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
+   */
+  particleOffsetZMax: number
+  /**
+   * Particle speed along the X-axis.
+   * 
+   * See also:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedXMax}
+   */
+  particleSpeedX: number
+  /**
+   * Particle speed along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedYMax}
+   */
+  particleSpeedY: number
+  /**
+   * Particle speed along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedZMax}
+   */
+  particleSpeedZ: number
+  /**
+   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   */
+  particleSpeedXMin: number
+  /**
+   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
+   */
+  particleSpeedYMin: number
+  /**
+   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
+   */
+  particleSpeedZMin: number
+  /**
+   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
+   */
+  particleSpeedXMax: number
+  /**
+   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
+   */
+  particleSpeedYMax: number
+  /**
+   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
+   */
+  particleSpeedZMax: number
+  /**
+   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
+   */
+  particleAccelerationXMin: number
+  /**
+   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
+   */
+  particleAccelerationYMin: number
+  /**
+   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
+   */
+  particleAccelerationZMin: number
+  /**
+   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
+   */
+  particleAccelerationXMax: number
+  /**
+   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
+   */
+  particleAccelerationYMax: number
+  /**
+   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
+   */
+  particleAccelerationZMax: number
+  /**
+   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
+   */
+  particleRotationVarianceX: number
+  /**
+   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
+   */
+  particleRotationVarianceY: number
+  /**
+   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
+   */
+  particleRotationVarianceZ: number
+  /**
+   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
+   */
+  particleAngularSpeedVarianceX: number
+  /**
+   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
+   */
+  particleAngularSpeedVarianceY: number
+  /**
+   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
+   */
+  particleAngularSpeedVarianceZ: number
+  /**
+   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationXMax}
+   */
+  particleAngularAccelerationXMin: number
+  /**
+   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationYMax}
+   */
+  particleAngularAccelerationYMin: number
+  /**
+   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationZMax}
+   */
+  particleAngularAccelerationZMin: number
+  /**
+   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationXMin}
+   */
+  particleAngularAccelerationXMax: number
+  /**
+   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationYMin}
+   */
+  particleAngularAccelerationYMax: number
+  /**
+   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationZMin}
+   */
+  particleAngularAccelerationZMax: number
+  /**
+   * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+   * 
+   * See also:
+   * - {@link particleSizeX}
+   * - {@link particleSizeY}
+   * - {@link particleSizeXMin}
+   * - {@link particleSizeYMin}
+   * - {@link particleSizeXMax}
+   * - {@link particleSizeYMax}
+   * - {@link particleGrowthRateX}
+   * - {@link particleGrowthRateY}
+   * - {@link particleGrowthRateXStatic}
+   * - {@link particleGrowthRateYStatic}
+   * - {@link particleGrowthAccelerationXMin}
+   * - {@link particleGrowthAccelerationYMin}
+   * - {@link particleGrowthAccelerationXMax}
+   * - {@link particleGrowthAccelerationYMax}
+   */
+  particleUniformScale: boolean
+  /**
+   * The width of the particle.
+   */
+  particleSizeX: number
+  /**
+   * The height of the particle.
+   */
+  particleSizeY: number
+  unk_ds3_f1_73: number
+  /**
+   * The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
+   */
+  particleSizeXMin: number
+  /**
+   * The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
+   */
+  particleSizeYMin: number
+  unk_ds3_f1_76: number
+  /**
+   * The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
+   */
+  particleSizeXMax: number
+  /**
+   * The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
+   */
+  particleSizeYMax: number
+  unk_ds3_f1_79: number
+  /**
+   * The rate of change for the width of the particles.
+   * 
+   * See also:
+   * - {@link particleGrowthRateX}
+   */
+  particleGrowthRateXStatic: number
+  /**
+   * The rate of change for the height of the particles.
+   * 
+   * See also:
+   * - {@link particleGrowthRateY}
+   */
+  particleGrowthRateYStatic: number
+  unk_ds3_f1_82: number
+  /**
+   * Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   */
+  particleGrowthRateXMin: number
+  /**
+   * Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   */
+  particleGrowthRateYMin: number
+  unk_ds3_f1_85: number
+  /**
+   * Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   */
+  particleGrowthRateXMax: number
+  /**
+   * Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   */
+  particleGrowthRateYMax: number
+  unk_ds3_f1_88: number
+  /**
+   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
+   */
+  particleGrowthAccelerationXMin: number
+  /**
+   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
+   */
+  particleGrowthAccelerationYMin: number
+  unk_ds3_f1_91: number
+  /**
+   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
+   */
+  particleGrowthAccelerationXMax: number
+  /**
+   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
+   */
+  particleGrowthAccelerationYMax: number
+  unk_ds3_f1_94: number
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   */
+  rgbMultiplier: number
+  /**
+   * Alpha multiplier.
+   */
+  alphaMultiplier: number
+  /**
+   * Minimum random variation for the red value of the particle color. A random value between this and {@link redVariationMax} will be added to the color.
+   */
+  redVariationMin: number
+  /**
+   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenVariationMax} will be added to the color.
+   */
+  greenVariationMin: number
+  /**
+   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueVariationMax} will be added to the color.
+   */
+  blueVariationMin: number
+  /**
+   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaVariationMax} will be added to the color.
+   */
+  alphaVariationMin: number
+  /**
+   * Maximum random variation for the red value of the particle color. A random value between this and {@link redVariationMin} will be added to the color.
+   */
+  redVariationMax: number
+  /**
+   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenVariationMin} will be added to the color.
+   */
+  greenVariationMax: number
+  /**
+   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueVariationMin} will be added to the color.
+   */
+  blueVariationMax: number
+  /**
+   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaVariationMin} will be added to the color.
+   */
+  alphaVariationMax: number
+  /**
+   * Blend mode.
+   */
+  blendMode: BlendMode
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * See also:
+   * - {@link totalFrames}
+   */
+  columns: number
+  /**
+   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * See also:
+   * - {@link columns}
+   */
+  totalFrames: number
+  /**
+   * When enabled, this makes each particle pick a random frame from the animation and only display that one frame.
+   * 
+   * See also:
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link maxFrameIndex}
+   */
+  randomTextureFrame: boolean
+  unk_ds3_f1_109: number
+  /**
+   * Controls the maximum frame index when {@link randomTextureFrame picking a random frame to display}.
+   * 
+   * See also:
+   * - {@link randomTextureFrame}
+   */
+  maxFrameIndex: number
+  unk_ds3_f1_111: number
+  unk_ds3_f1_112: number
+  unk_ds3_f1_113: number
+  unk_ds3_f1_114: number
+  unk_ds3_f1_115: number
+  unk_ds3_f1_116: number
+  unk_ds3_f1_117: number
+  unk_ds3_f1_118: number
+  /**
+   * Multiplier for {@link particleDuration}.
+   */
+  particleDurationMultiplier: number
+  unk_ds3_f1_120: number
+  /**
+   * Scalar multiplier for the size of the particles.
+   */
+  particleSizeMultiplier: number
+  unk_ds3_f1_122: number
+  unk_ds3_f1_123: number
+  unk_ds3_f1_124: number
+  unk_ds3_f1_125: number
+  unk_ds3_f1_126: number
+  unk_ds3_f1_127: number
+  unk_ds3_f1_128: number
+  unk_ds3_f1_129: number
+  unk_ds3_f1_130: number
+  unk_ds3_f1_131: number
+  unk_ds3_f1_132: number
+  unk_ds3_f1_133: number
+  unk_ds3_f1_134: number
+  unk_ds3_f1_135: number
+  unk_ds3_f1_136: number
+  unk_ds3_f1_137: number
+  unk_ds3_f1_138: number
+  unk_ds3_f1_139: number
+  unk_ds3_f1_140: number
+  unk_ds3_f1_141: number
+  /**
+   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+   */
+  limitUpdateDistance: boolean
+  /**
+   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   */
+  updateDistance: number
+  unk_ds3_f1_144: number
+  unk_ds3_f1_145: number
+  /**
+   * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
+   * 
+   * See also:
+   * - {@link particleRandomTurnIntervalMax}
+   * - {@link particleRandomTurnAngle}
+   */
+  particleRandomTurns: boolean
+  /**
+   * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
+   * 
+   * See also:
+   * - {@link particleRandomTurns}
+   * - {@link particleRandomTurnAngle}
+   */
+  particleRandomTurnIntervalMax: number
+  /**
+   * If enabled, this causes the particles to orient themselves and stretch in the direction they are moving on the screen, making them almost resemble {@link ActionType.Tracer Tracer} particles.
+   * 
+   * See also:
+   * - {@link particleTraceLength}
+   */
+  traceParticles: boolean
+  unk_ds3_f1_149: number
+  /**
+   * Controls how much the particles are stretched when {@link traceParticles} is enabled.
+   */
+  particleTraceLength: number
+  /**
+   * A central fraction of the emitter volume where the particles will not be trace particles. In this volume, the particles act as if {@link traceParticles} is disabled.
+   */
+  traceParticlesThreshold: number
+  /**
+   * If enabled, this will add a billboarding sprite to the leading end of trace particles.
+   * 
+   * See also:
+   * - {@link traceParticles}
+   */
+  traceParticleHead: boolean
+  unk_ds3_f1_153: number
+  unk_ds3_f1_154: number
+  /**
+   * Controls whether or not the particles have a bloom effect.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloom: boolean
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * This controls the intensity of the bloom effect.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  unk_sdt_f1_160: number
+  unk_sdt_f1_161: number
+  unk_sdt_f1_162: number
+  unk_sdt_f1_163: number
+  unk_sdt_f1_164: number
+  unk_sdt_f1_165: number
+  unk_sdt_f1_166: number
+  unk_er_f1_167: number
+  unk_ds3_f2_0: number
+  unk_ds3_f2_1: number
+  unk_ds3_f2_2: number
+  unk_ds3_f2_3: number
+  unk_ds3_f2_4: number
+  unk_ds3_f2_5: number
+  unk_ds3_f2_6: number
+  unk_ds3_f2_7: number
+  unk_ds3_f2_8: number
+  unk_ds3_f2_9: number
+  unk_ds3_f2_10: number
+  unk_ds3_f2_11: number
+  unk_ds3_f2_12: number
+  unk_ds3_f2_13: number
+  /**
+   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistance: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minFadeDistance: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxFadeDistance: number
+  /**
+   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxDistance: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistanceThreshold: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   */
+  maxDistanceThreshold: number
+  unk_ds3_f2_20: number
+  unk_ds3_f2_21: number
+  unk_ds3_f2_22: number
+  unk_ds3_f2_23: number
+  unk_ds3_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ds3_f2_27: number
+  unk_ds3_f2_28: number
+  unk_sdt_f2_29: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  shadowDarkness: number
+  /**
+   * When enabled, this stops the particles from being shown indoors.
+   */
+  hideIndoors: boolean
+  unk_sdt_f2_32: number
+  /**
+   * Specular texture ID.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link glossiness}
+   * - {@link specularity}
+   */
+  specular: number
+  /**
+   * Controls how sharp the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link specularity}
+   */
+  glossiness: number
+  lighting: LightingMode
+  unk_sdt_f2_36: number
+  unk_sdt_f2_37: number
+  /**
+   * Controls how bright the specular highlights are.
+   * 
+   * See also:
+   * - {@link lighting}
+   * - {@link specular}
+   * - {@link glossiness}
+   */
+  specularity: number
+  unk_er_f2_39: number
+  /**
+   * Controls how well the particles follow the node if it moves.
+   */
+  particleFollowFactor: ScalarValue
+  unk_ds3_p1_1: ScalarValue
+  unk_ds3_p1_2: ScalarValue
+  unk_ds3_p1_3: ScalarValue
+  /**
+   * Particle acceleration along the X-axis.
+   * 
+   * See also:
+   * - {@link particleAccelerationXMin}
+   * - {@link particleAccelerationXMax}
+   */
+  particleAccelerationX: ScalarValue
+  /**
+   * Particle acceleration along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleAccelerationYMin}
+   * - {@link particleAccelerationYMax}
+   */
+  particleAccelerationY: ScalarValue
+  /**
+   * Particle acceleration along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleAccelerationZMin}
+   * - {@link particleAccelerationZMax}
+   */
+  particleAccelerationZ: ScalarValue
+  unk_ds3_p1_7: ScalarValue
+  unk_ds3_p1_8: ScalarValue
+  /**
+   * Angular acceleration for particles around the Z-axis in degrees per second squared.
+   * 
+   * See also:
+   * - {@link particleAngularAccelerationZMin}
+   * - {@link particleAngularAccelerationZMax}
+   */
+  particleAngularAccelerationZ: ScalarValue
+  /**
+   * The rate of change for the width of the particles.
+   * 
+   * See also:
+   * - {@link particleGrowthRateXStatic}
+   */
+  particleGrowthRateX: ScalarValue
+  /**
+   * The rate of change for the height of the particles.
+   * 
+   * See also:
+   * - {@link particleGrowthRateYStatic}
+   */
+  particleGrowthRateY: ScalarValue
+  unk_ds3_p1_12: ScalarValue
+  /**
+   * Color multiplier.
+   */
+  color: Vector4Value
+  unk_ds3_p1_14: ScalarValue
+  unk_ds3_p1_15: ScalarValue
+  /**
+   * Seemingly identical to {@link particleAccelerationZ}?
+   */
+  unkParticleAccelerationZ: ScalarValue
+  unk_ds3_p1_17: ScalarValue
+  /**
+   * Downwards acceleration for particles.
+   */
+  particleGravity: ScalarValue
+  /**
+   * Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
+   * 
+   * See also:
+   * - {@link particleRandomTurns}
+   * - {@link particleRandomTurnIntervalMax}
+   */
+  particleRandomTurnAngle: ScalarValue
+  unk_ds3_p1_20: ScalarValue
+  unk_ds3_p2_0: ScalarValue
+  unk_ds3_p2_1: ScalarValue
+  unk_ds3_p2_2: ScalarValue
+  unk_ds3_p2_3: Vector4Value
+  unk_ds3_p2_4: Vector4Value
+  unk_ds3_p2_5: Vector4Value
+  unk_ds3_p2_6: ScalarValue
+  constructor(props: ParticleSystem2Params = {}) {
+    super(ActionType.ParticleSystem2)
+    this.assign(props)
+  }
+}
+
 export interface DynamicTracerParams {
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
@@ -25761,7 +28782,7 @@ export interface DynamicTracerParams {
   /**
    * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
    * 
-   * **Default**: `1`
+   * **Default**: `true`
    */
   attachedUV?: boolean
   /**
@@ -30541,11 +33562,13 @@ export interface WindForceParams {
    */
   unk_ds3_f1_30?: number
   /**
-   * Unknown integer.
+   * When this is enabled, the wind will be able to affect sfx, including the one with this action.
    * 
-   * **Default**: `1`
+   * This seems to also change how the wind affects other things in some way, but exactly how is unknown.
+   * 
+   * **Default**: `true`
    */
-  unk_ds3_f1_31?: number
+  affectSFX?: boolean
   /**
    * Unknown integer.
    * 
@@ -30776,7 +33799,12 @@ class WindForce extends DataAction {
   unk_ds3_f1_28: number
   unk_ds3_f1_29: number
   unk_ds3_f1_30: number
-  unk_ds3_f1_31: number
+  /**
+   * When this is enabled, the wind will be able to affect sfx, including the one with this action.
+   * 
+   * This seems to also change how the wind affects other things in some way, but exactly how is unknown.
+   */
+  affectSFX: boolean
   unk_ds3_f1_32: number
   unk_ds3_f1_33: number
   unk_ds3_f1_34: number
@@ -32003,8 +35031,8 @@ const DataActions = {
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
   [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
-  [ActionType.EmitAllParticles]: EmitAllParticles, EmitAllParticles,
-  [ActionType.EmitRandomParticles]: EmitRandomParticles, EmitRandomParticles,
+  [ActionType.SelectAllNodes]: SelectAllNodes, SelectAllNodes,
+  [ActionType.SelectRandomNode]: SelectRandomNode, SelectRandomNode,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
   [ActionType.EqualDistanceEmitter]: EqualDistanceEmitter, EqualDistanceEmitter,
   [ActionType.OneTimeEmitter]: OneTimeEmitter, OneTimeEmitter,
@@ -32014,10 +35042,10 @@ const DataActions = {
   [ActionType.SphereEmitterShape]: SphereEmitterShape, SphereEmitterShape,
   [ActionType.BoxEmitterShape]: BoxEmitterShape, BoxEmitterShape,
   [ActionType.CylinderEmitterShape]: CylinderEmitterShape, CylinderEmitterShape,
-  [ActionType.NoParticleSpread]: NoParticleSpread, NoParticleSpread,
-  [ActionType.CircularParticleSpread]: CircularParticleSpread, CircularParticleSpread,
-  [ActionType.EllipticalParticleSpread]: EllipticalParticleSpread, EllipticalParticleSpread,
-  [ActionType.RectangularParticleSpread]: RectangularParticleSpread, RectangularParticleSpread,
+  [ActionType.NoSpread]: NoSpread, NoSpread,
+  [ActionType.CircularSpread]: CircularSpread, CircularSpread,
+  [ActionType.EllipticalSpread]: EllipticalSpread, EllipticalSpread,
+  [ActionType.RectangularSpread]: RectangularSpread, RectangularSpread,
   [ActionType.PointSprite]: PointSprite, PointSprite,
   [ActionType.Line]: Line, Line,
   [ActionType.QuadLine]: QuadLine, QuadLine,
@@ -32037,6 +35065,7 @@ const DataActions = {
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.Unk800]: Unk800, Unk800,
   [ActionType.ParticleSystem]: ParticleSystem, ParticleSystem,
+  [ActionType.ParticleSystem2]: ParticleSystem2, ParticleSystem2,
   [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
@@ -32240,28 +35269,16 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  protected modifiersScale(factor: PropertyValue) {
-    for (const mod of this.modifiers) {
-      const cc = mod.valueType + 1
-      if (mod instanceof RandomDeltaModifier) {
-        if (this.valueType === ValueType.Scalar) {
-          mod.max *= factor as number
-        } else for (let i = this.valueType; i >= 0; i--) {
-          mod.max[i] *= typeof factor === 'number' ? factor : factor[i]
-        }
-      } else if (mod instanceof RandomRangeModifier) {
-        if (this.valueType === ValueType.Scalar) {
-          mod.min *= factor as number
-          mod.max *= factor as number
-        } else for (let i = this.valueType; i >= 0; i--) {
-          mod.min[i] *= typeof factor === 'number' ? factor : factor[i]
-          mod.max[i] *= typeof factor === 'number' ? factor : factor[i]
-        }
-      }
+  protected modifiersScale(factor: TypeMap.PropertyValue[T] | number) {
+    for (let i = this.modifiers.length - 1; i >= 0; i--) {
+      this.modifiers[i] = Modifier.multPropertyValue(this.modifiers[i], factor)
     }
   }
 
   static fromJSON<T extends ValueType>(obj: any) {
+    if (obj instanceof Property) {
+      return obj
+    }
     if (typeof obj === 'object' && 'function' in obj) {
       switch (PropertyFunction[obj.function as string]) {
         case PropertyFunction.Stepped:
@@ -32322,6 +35339,8 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract valueAt(arg: number): TypeMap.PropertyValue[T]
   abstract clone(): Property<T, F>
   abstract separateComponents(): Property<ValueType.Scalar, F>[]
+  abstract min(): TypeMap.PropertyValue[T]
+  abstract max(): TypeMap.PropertyValue[T]
 
 }
 
@@ -32409,7 +35428,7 @@ class ValueProperty<T extends ValueType>
     }
   }
 
-  scale(factor: PropertyValue) {
+  scale(factor: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) *= factor as number
     } else {
@@ -32423,7 +35442,7 @@ class ValueProperty<T extends ValueType>
     return this
   }
 
-  add(summand: PropertyValue) {
+  add(summand: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) += summand as number
     } else {
@@ -32453,6 +35472,14 @@ class ValueProperty<T extends ValueType>
         ...mods.map(comps => comps[i])
       ))
     }
+  }
+
+  min(): TypeMap.PropertyValue[T] {
+    return this.value
+  }
+
+  max(): TypeMap.PropertyValue[T] {
+    return this.value
   }
 
 }
@@ -32494,14 +35521,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Linear:
         return [
           new IntField(this.keyframes.length),
-          ...(cc === 1 ?
-            [Math.min(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
-          ...(cc === 1 ?
-            [Math.max(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.min()] : this.min() as Vector).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.max()] : this.max() as Vector).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -32512,14 +35533,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Bezier:
         return [
           new IntField(this.keyframes.length),
-          ...(cc === 1 ?
-            [Math.min(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
-          ...(cc === 1 ?
-            [Math.max(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.min()] : this.min() as Vector).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.max()] : this.max() as Vector).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -32540,14 +35555,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
       case PropertyFunction.Hermite:
         return [
           new IntField(this.keyframes.length),
-          ...(cc === 1 ?
-            [Math.min(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
-          ...(cc === 1 ?
-            [Math.max(...this.keyframes.map(e => e.value as number))] :
-            arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i])))
-          ).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.min()] : this.min() as Vector).map(e => new FloatField(e)),
+          ...(cc === 1 ? [this.max()] : this.max() as Vector).map(e => new FloatField(e)),
           ...this.keyframes.map(e => new FloatField(e.position)),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
@@ -32691,7 +35700,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  scale(factor: PropertyValue) {
+  scale(factor: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar && Array.isArray(factor)) {
       throw new Error([
         'Scalar properties cannot be scaled by a vector.',
@@ -32706,7 +35715,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     return this
   }
 
-  add(summand: PropertyValue) {
+  add(summand: TypeMap.PropertyValue[T] | number) {
     if (this.valueType === ValueType.Scalar && Array.isArray(summand)) {
       throw new Error([
         'Vectors cannot be added to scalar properties.',
@@ -32773,6 +35782,24 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
+  min(): TypeMap.PropertyValue[T] {
+    const cc = this.componentCount
+    if (cc === 1) {
+      return Math.min(...this.keyframes.map(e => e.value as number)) as TypeMap.PropertyValue[T]
+    } else {
+      return arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i]))) as TypeMap.PropertyValue[T]
+    }
+  }
+
+  max(): TypeMap.PropertyValue[T] {
+    const cc = this.componentCount
+    if (cc === 1) {
+      return Math.max(...this.keyframes.map(e => e.value as number)) as TypeMap.PropertyValue[T]
+    } else {
+      return arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i]))) as TypeMap.PropertyValue[T]
+    }
+  }
+
   get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
@@ -32816,8 +35843,8 @@ class ComponentSequenceProperty<T extends ValueType>
     return [
       new FloatField(this.duration),
       ...this.components.map(e => new IntField(e.keyframes.length)),
-      ...this.components.map(comp => new FloatField(Math.min(...comp.keyframes.map(e => e.value)))),
-      ...this.components.map(comp => new FloatField(Math.max(...comp.keyframes.map(e => e.value)))),
+      ...this.components.map(comp => new FloatField(comp.min())),
+      ...this.components.map(comp => new FloatField(comp.max())),
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
@@ -32879,7 +35906,7 @@ class ComponentSequenceProperty<T extends ValueType>
     )
   }
 
-  scale(factor: PropertyValue) {
+  scale(factor: TypeMap.PropertyValue[T] | number) {
     for (const [i, comp] of this.components.entries()) {
       comp.scale(typeof factor === 'number' ? factor : factor[i])
     }
@@ -32887,7 +35914,7 @@ class ComponentSequenceProperty<T extends ValueType>
     return this
   }
 
-  add(summand: PropertyValue) {
+  add(summand: TypeMap.PropertyValue[T] | number) {
     for (const [i, comp] of this.components.entries()) {
       comp.add(typeof summand === 'number' ? summand : summand[i])
     }
@@ -32956,6 +35983,22 @@ class ComponentSequenceProperty<T extends ValueType>
     const keyframes = interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
       .map(e => new Keyframe(e, this.valueAt(e)))
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
+  }
+
+  min(): TypeMap.PropertyValue[T] {
+    if (this.valueType == ValueType.Scalar) {
+      return this.components[0].min() as TypeMap.PropertyValue[T]
+    } else {
+      return this.components.map(c => c.min()) as TypeMap.PropertyValue[T]
+    }
+  }
+
+  max(): TypeMap.PropertyValue[T] {
+    if (this.valueType == ValueType.Scalar) {
+      return this.components[0].max() as TypeMap.PropertyValue[T]
+    } else {
+      return this.components.map(c => c.max()) as TypeMap.PropertyValue[T]
+    }
   }
 
   get duration() { return Math.max(0, ...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
@@ -33119,6 +36162,26 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 }
 
 /**
+ * Creates a property with a {@link RandomDeltaModifier} and a mean value,
+ * effectively creating a property with a random values around a mean.
+ * @param mean The average value. Used as the value for the property itself.
+ * @param devation How far away from the mean the values generated by the
+ * property can be.
+ * @param seed A seed or set of seeds for the random number generator to use
+ * to generate the random property values.
+ * @returns 
+ */
+function RandomDeltaProperty<T extends ValueType>(
+  mean: TypeMap.PropertyValue[T],
+  devation: TypeMap.PropertyValue[T],
+  seed?: TypeMap.PropertyValue[T]
+): ConstantProperty<T> {
+  return new ConstantProperty<T>(...(typeof mean === 'number' ? [mean] : mean as Vector)).withModifiers(
+    new RandomDeltaModifier(devation, seed)
+  )
+}
+
+/**
  * Creates a property with a {@link RandomRangeModifier} and no value,
  * effectively creating a property with a random value in a given range.
  * @param minValue The lower bound of the range of possible values for the
@@ -33129,11 +36192,15 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
  * to generate the random property values.
  * @returns 
  */
-function RandomProperty(minValue: PropertyValue, maxValue: PropertyValue, seed?: PropertyValue) {
-  return new ValueProperty(
-    (Array.isArray(minValue) ? minValue.length - 1 : ValueType.Scalar) as ValueType,
-    Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0,
-    [ new RandomRangeModifier(minValue, maxValue, seed) ]
+function RandomRangeProperty<T extends ValueType>(
+  minValue: TypeMap.PropertyValue[T],
+  maxValue: TypeMap.PropertyValue[T],
+  seed?: TypeMap.PropertyValue[T]
+): ConstantProperty<T> {
+  return new ConstantProperty<T>(
+    ...(Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : [0])
+  ).withModifiers(
+    new RandomRangeModifier(minValue, maxValue, seed)
   )
 }
 
@@ -33258,7 +36325,7 @@ namespace Modifier {
     }
   }
 
-  export function multPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T]): IModifier<T> {
+  export function multPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T] | number): IModifier<T> {
     mod = mod.clone()
     if (typeof v === 'number') {
       if (mod instanceof RandomDeltaModifier) {
@@ -33290,44 +36357,6 @@ namespace Modifier {
         } else for (let i = mod.valueType; i >= 0; i--) {
           mod.min[i] *= v[i]
           mod.max[i] *= v[i]
-        }
-      }
-    }
-    return mod
-  }
-
-  export function sumPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T]): IModifier<T> {
-    mod = mod.clone()
-    if (typeof v === 'number') {
-      if (mod instanceof RandomDeltaModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.max += v
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.max[i] += v
-        }
-      } else if (mod instanceof RandomRangeModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.min += v
-          mod.max += v
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.min[i] += v
-          mod.max[i] += v
-        }
-      }
-    } else {
-      if (mod instanceof RandomDeltaModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.max += v[0]
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.max[i] += v[i]
-        }
-      } else if (mod instanceof RandomRangeModifier) {
-        if (mod.valueType === ValueType.Scalar) {
-          mod.min += v[0]
-          mod.max += v[0]
-        } else for (let i = mod.valueType; i >= 0; i--) {
-          mod.min[i] += v[i]
-          mod.max[i] += v[i]
         }
       }
     }
@@ -33832,12 +36861,12 @@ export {
   ProxyNode,
   LevelsOfDetailNode,
   BasicNode,
-  SharedEmitterNode,
+  NodeEmitterNode,
 
   Effect,
   LevelsOfDetailEffect,
   BasicEffect,
-  SharedEmitterEffect,
+  NodeEmitterEffect,
 
   Action,
   DataAction,
@@ -33874,8 +36903,8 @@ export {
   SFXReference,
   LevelsOfDetailThresholds,
   StateEffectMap,
-  EmitAllParticles,
-  EmitRandomParticles,
+  SelectAllNodes,
+  SelectRandomNode,
   PeriodicEmitter,
   EqualDistanceEmitter,
   OneTimeEmitter,
@@ -33885,10 +36914,10 @@ export {
   SphereEmitterShape,
   BoxEmitterShape,
   CylinderEmitterShape,
-  NoParticleSpread,
-  CircularParticleSpread,
-  EllipticalParticleSpread,
-  RectangularParticleSpread,
+  NoSpread,
+  CircularSpread,
+  EllipticalSpread,
+  RectangularSpread,
   PointSprite,
   Line,
   QuadLine,
@@ -33908,6 +36937,7 @@ export {
   ParticleWindAcceleration,
   Unk800,
   ParticleSystem,
+  ParticleSystem2,
   DynamicTracer,
   WaterInteraction,
   LensFlare,
@@ -33937,7 +36967,8 @@ export {
   LinearProperty,
   BezierProperty,
   HermiteProperty,
-  RandomProperty,
+  RandomDeltaProperty,
+  RandomRangeProperty,
   RainbowProperty,
   BloodVisibilityProperty,
   anyValueMult,

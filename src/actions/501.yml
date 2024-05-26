@@ -1,8 +1,8 @@
 type: 501
-name: CircularParticleSpread
-slot: ParticleDirection
+name: CircularSpread
+slot: DirectionSpread
 desc: |
-  Gives each particle a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+  Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
 properties:
   unk_er_f1_0:
     field: bool
