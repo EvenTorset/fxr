@@ -337,11 +337,16 @@ properties:
   unk_ds3_f1_13:
     field: float
     default: -1
-  unk_ds3_f1_14:
-    field: int
-    default: 1
-  unk_ds3_f1_15:
-    field: int
+  depthBlend:
+    field: bool
+    default: true
+    desc: |
+      Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
+  octagonal:
+    field: bool
+    default: false
+    desc: |
+      Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
   unk_ds3_f1_16:
     field: int
   unk_ds3_f2_0:
@@ -541,8 +546,8 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
-      - unk_ds3_f1_14
-      - unk_ds3_f1_15
+      - depthBlend
+      - octagonal
       - unk_ds3_f1_16
     fields2:
       - unk_ds3_f2_0
@@ -621,8 +626,8 @@ games:
       - unk_ds3_f1_11
       - unk_ds3_f1_12
       - unk_ds3_f1_13
-      - unk_ds3_f1_14
-      - unk_ds3_f1_15
+      - depthBlend
+      - octagonal
       - unk_ds3_f1_16
       - unk_sdt_f1_15
       - unk_sdt_f1_16
