@@ -9230,37 +9230,39 @@ class Effect implements IEffect {
     } else switch (obj.type) {
       case EffectType.LevelsOfDetail:
         return new LevelsOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
-      case EffectType.Basic:
-        return new BasicEffect({
-          nodeAttributes: Action.fromJSON(obj.nodeAttributes),
-          nodeTransform: Action.fromJSON(obj.nodeTransform),
-          nodeMovement: Action.fromJSON(obj.nodeMovement),
-          nodeAudio: Action.fromJSON(obj.nodeAudio),
-          emitter: Action.fromJSON(obj.emitter),
-          emitterShape: Action.fromJSON(obj.emitterShape),
-          directionSpread: Action.fromJSON(obj.directionSpread),
-          particleModifier: Action.fromJSON(obj.particleModifier),
-          particleAttributes: Action.fromJSON(obj.particleAttributes),
-          appearance: Action.fromJSON(obj.appearance),
-          particleMovement: Action.fromJSON(obj.particleMovement),
-          emissionAudio: Action.fromJSON(obj.emissionAudio),
-          slot12: Action.fromJSON(obj.slot12),
-          nodeWind: Action.fromJSON(obj.nodeWind),
-          particleWind: Action.fromJSON(obj.particleWind),
-        })
-      case EffectType.NodeEmitter:
-        return new NodeEmitterEffect({
-          nodeAttributes: Action.fromJSON(obj.nodeAttributes),
-          nodeTransform: Action.fromJSON(obj.nodeTransform),
-          nodeMovement: Action.fromJSON(obj.nodeMovement),
-          nodeAudio: Action.fromJSON(obj.nodeAudio),
-          emitter: Action.fromJSON(obj.emitter),
-          emitterShape: Action.fromJSON(obj.emitterShape),
-          directionSpread: Action.fromJSON(obj.directionSpread),
-          nodeSelector: Action.fromJSON(obj.nodeSelector),
-          emissionAudio: Action.fromJSON(obj.emissionAudio),
-          nodeWind: Action.fromJSON(obj.nodeWind),
-        })
+      case EffectType.Basic: {
+        const params: BasicEffectParams = {}
+        if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
+        if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
+        if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
+        if ('nodeAudio' in obj) params.nodeAudio = Action.fromJSON(obj.nodeAudio)
+        if ('emitter' in obj) params.emitter = Action.fromJSON(obj.emitter)
+        if ('emitterShape' in obj) params.emitterShape = Action.fromJSON(obj.emitterShape)
+        if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
+        if ('particleModifier' in obj) params.particleModifier = Action.fromJSON(obj.particleModifier)
+        if ('particleAttributes' in obj) params.particleAttributes = Action.fromJSON(obj.particleAttributes)
+        if ('appearance' in obj) params.appearance = Action.fromJSON(obj.appearance)
+        if ('particleMovement' in obj) params.particleMovement = Action.fromJSON(obj.particleMovement)
+        if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
+        if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
+        if ('nodeWind' in obj) params.nodeWind = Action.fromJSON(obj.nodeWind)
+        if ('particleWind' in obj) params.particleWind = Action.fromJSON(obj.particleWind)
+        return new BasicEffect(params)
+      }
+      case EffectType.NodeEmitter: {
+        const params: NodeEmitterEffectParams = {}
+        if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
+        if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
+        if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
+        if ('nodeAudio' in obj) params.nodeAudio = Action.fromJSON(obj.nodeAudio)
+        if ('emitter' in obj) params.emitter = Action.fromJSON(obj.emitter)
+        if ('emitterShape' in obj) params.emitterShape = Action.fromJSON(obj.emitterShape)
+        if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
+        if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
+        if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
+        if ('nodeWind' in obj) params.nodeWind = Action.fromJSON(obj.nodeWind)
+        return new NodeEmitterEffect(params)
+      }
     }
     throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
   }
