@@ -20,10 +20,11 @@ import {
   QuadLine,
   RadialBlur,
   ParticleSystem,
+  ParticleSystem2,
   LensFlare,
   RichModel,
   SpotLight,
-  Tracer
+  Tracer,
 } from '@cccode/fxr'
 
 // Input folder to grab the original files from
@@ -127,7 +128,8 @@ while (ids.length) {
     } else if (
       action instanceof Distortion ||
       action instanceof RadialBlur ||
-      action instanceof ParticleSystem
+      action instanceof ParticleSystem ||
+      action instanceof ParticleSystem2
     ) {
       procProp(action, 'color')
     } else if (action instanceof LensFlare) {
@@ -135,10 +137,6 @@ while (ids.length) {
       procProp(action, 'layer2Color')
       procProp(action, 'layer3Color')
       procProp(action, 'layer4Color')
-    } else switch (action.type) {
-      case ActionType.Unk10001_StandardCorrectParticle:
-        procProp(action.properties1, 13)
-        break
     }
   }
 

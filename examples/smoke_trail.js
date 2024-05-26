@@ -10,7 +10,7 @@ import {
   ParticleAttributes,
   ParticleMovement,
   PeriodicEmitter,
-  RandomProperty,
+  RandomRangeProperty,
 } from '@cccode/fxr'
 
 /*
@@ -76,7 +76,7 @@ fxr.root.nodes = emitters.map(emitter => new BasicNode([
     mask: 10061,
     layer1: 26020,
     layer1SpeedV: 0.1,
-    layer1OffsetU: RandomProperty(0, 1),
+    layer1OffsetU: RandomRangeProperty(0, 1),
     alphaFadeThreshold: new LinearProperty(false, [
       new Keyframe(0, 255),
       new Keyframe(0.5, 0),

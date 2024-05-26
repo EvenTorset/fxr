@@ -13,7 +13,7 @@ import {
   PeriodicEmitter,
   PointLight,
   QuadLine,
-  RandomProperty,
+  RandomRangeProperty,
   SphereEmitterShape,
 } from '@cccode/fxr'
 
@@ -48,7 +48,7 @@ fxr.root.nodes = [
         new Keyframe(1, 255),
       ]),
       frameIndex: LinearProperty.basic(true, 1.5, 0, 64),
-      frameIndexOffset: RandomProperty(0, 64),
+      frameIndexOffset: RandomRangeProperty(0, 64),
       layer1SpeedV: 0.5,
       rgbMultiplier: 400,
       offsetY: 0.3,
@@ -78,8 +78,8 @@ fxr.root.nodes = [
       blendMode: BlendMode.Add,
       startColor: [1, 0.15, 0.025, 1],
       endColor: [1, 0, 0, 0],
-      width: RandomProperty(0.002, 0.004, 91846942),
-      length: RandomProperty(0.02, 0.04, 91846942),
+      width: RandomRangeProperty(0.002, 0.004, 91846942),
+      length: RandomRangeProperty(0.02, 0.04, 91846942),
       color1: new LinearProperty(false, [
         new Keyframe(0, [0, 0, 0, 0]),
         new Keyframe(0.5, [1, 1, 1, 1]),

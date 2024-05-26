@@ -34,7 +34,7 @@ Node runs JS code as CommonJS scripts by default, so you must tell it that your 
 {
   "type": "module",
   "dependencies": {
-    "@cccode/fxr": "^4.0.0"
+    "@cccode/fxr": "^10.0.0"
   }
 }
 ```
