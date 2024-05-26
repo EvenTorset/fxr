@@ -7866,8 +7866,8 @@ class FXR {
 
   static fromJSON(obj: {
     id: number
-    states: string[]
-    root: any
+    states?: (string | string[])[]
+    root?: any
   } | {
     version: string
     fxr: any
@@ -7878,14 +7878,14 @@ class FXR {
     if ('fxr' in obj) {
       return new FXR(
         obj.fxr.id,
-        Node.fromJSON(obj.fxr.root) as RootNode | GenericNode,
-        obj.fxr.states.map(state => State.from(state)),
+        'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
+        'states' in obj.fxr ? obj.fxr.states.map(state => State.from(state)) : undefined,
       )
     }
     return new FXR(
       obj.id,
-      Node.fromJSON(obj.root) as RootNode | GenericNode,
-      obj.states.map(state => State.from(state)),
+      'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
+      'states' in obj ? obj.states.map(state => State.from(state)) : undefined,
     )
   }
 
