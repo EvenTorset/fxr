@@ -1,6 +1,6 @@
 type: 503
-name: RectangularDirectionModifier
-slot: DirectionModifier
+name: RectangularSpread
+slot: DirectionSpread
 desc: |
   Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
 properties:

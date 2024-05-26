@@ -1,5 +1,5 @@
 type: 500
-name: NoDirectionModifier
-slot: DirectionModifier
+name: NoSpread
+slot: DirectionSpread
 desc: |
   Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.

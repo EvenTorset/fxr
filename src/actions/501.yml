@@ -1,6 +1,6 @@
 type: 501
-name: CircularDirectionModifier
-slot: DirectionModifier
+name: CircularSpread
+slot: DirectionSpread
 desc: |
   Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
 properties:

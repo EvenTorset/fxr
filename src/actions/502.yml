@@ -1,6 +1,6 @@
 type: 502
-name: EllipticalDirectionModifier
-slot: DirectionModifier
+name: EllipticalSpread
+slot: DirectionSpread
 desc: |
   Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
 properties:
