@@ -8843,15 +8843,15 @@ class GenericNode extends Node {
     nodes
   }: {
     type: number
-    actions: []
-    effects: []
-    nodes: []
+    actions: any[]
+    effects?: any[]
+    nodes?: any[]
   }) {
     return new GenericNode(
       type,
       actions.map(action => Action.fromJSON(action)),
-      effects.map(effect => Effect.fromJSON(effect)),
-      nodes.map(node => Node.fromJSON(node))
+      (effects ?? []).map(effect => Effect.fromJSON(effect)),
+      (nodes ?? []).map(node => Node.fromJSON(node))
     )
   }
 
@@ -8884,13 +8884,13 @@ class RootNode extends Node {
 
   constructor(
     public nodes: Node[] = [],
-    unk70x: ActionSlots.Unknown70xAction = null,
+    unk70x?: ActionSlots.Unknown70xAction,
     public unk10100: ActionSlots.Unknown10100Action = new Unk10100,
     public unk10400: ActionSlots.Unknown10400Action = new Unk10400,
     public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
-    if (unk70x !== null) {
+    if (unk70x !== undefined && unk70x !== null) {
       this.unk70x = unk70x
     }
   }
@@ -8934,10 +8934,10 @@ class RootNode extends Node {
     }
     return new RootNode(
       (obj.nodes ?? []).map(node => Node.fromJSON(node)),
-      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : null,
-      Action.fromJSON(obj.unk10100),
-      Action.fromJSON(obj.unk10400),
-      Action.fromJSON(obj.unk10500)
+      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : undefined,
+      'unk10100' in obj ? Action.fromJSON(obj.unk10100) : undefined,
+      'unk10400' in obj ? Action.fromJSON(obj.unk10400) : undefined,
+      'unk10500' in obj ? Action.fromJSON(obj.unk10500) : undefined
     )
   }
 
@@ -9070,10 +9070,14 @@ class LevelsOfDetailNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new LevelsOfDetailNode(
-      obj.effects.map((e: any) => Effect.fromJSON(e)),
-      obj.nodes.map((e: any) => Node.fromJSON(e))
-    ).mapStates(...obj.stateEffectMap)
+    const node = new LevelsOfDetailNode(
+      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
+    )
+    if ('stateEffectMap' in obj) {
+      node.mapStates(...obj.stateEffectMap)
+    }
+    return node
   }
 
   minify(): Node {
@@ -9119,10 +9123,14 @@ class BasicNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new BasicNode(
-      obj.effects.map((e: any) => Effect.fromJSON(e)),
-      obj.nodes.map((e: any) => Node.fromJSON(e))
-    ).mapStates(...obj.stateEffectMap)
+    const node = new BasicNode(
+      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
+    )
+    if ('stateEffectMap' in obj) {
+      node.mapStates(...obj.stateEffectMap)
+    }
+    return node
   }
 
   minify(): Node {
@@ -9162,10 +9170,14 @@ class NodeEmitterNode extends NodeWithEffects {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
     }
-    return new NodeEmitterNode(
-      obj.effects.map((e: any) => Effect.fromJSON(e)),
-      obj.nodes.map((e: any) => Node.fromJSON(e))
-    ).mapStates(...obj.stateEffectMap)
+    const node = new NodeEmitterNode(
+      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
+    )
+    if ('stateEffectMap' in obj) {
+      node.mapStates(...obj.stateEffectMap)
+    }
+    return node
   }
 
   minify(): Node {
