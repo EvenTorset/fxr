@@ -239,10 +239,10 @@ properties:
   unk_er_f1_25:
     field: float
     default: 1
-  unk_ac6_f1_26:
+  unk_er_f1_26:
     field: int
     default: 1
-  unk_ac6_f1_27:
+  unk_er_f1_27:
     field: int
 games:
   DS3:
@@ -331,35 +331,7 @@ games:
       - falloffExponent
       - unk_er_f1_24
       - unk_er_f1_25
+      - unk_er_f1_26
+      - unk_er_f1_27
     properties1: SDT
-  AC6:
-    fields1:
-      - unk_sdt_f1_0
-      - jitterAndFlicker
-      - jitterAcceleration
-      - unk_sdt_f1_3
-      - jitterX
-      - jitterY
-      - jitterZ
-      - flickerIntervalMin
-      - flickerIntervalMax
-      - flickerBrightness
-      - shadows
-      - separateSpecular
-      - shadowDarkness
-      - unk_ds3_f1_3
-      - unk_ds3_f1_4
-      - fadeOutTime
-      - unk_sdt_f1_16
-      - unk_sdt_f1_17
-      - unk_sdt_f1_18
-      - volumeDensity
-      - unk_sdt_f1_20
-      - phaseFunction
-      - asymmetryParam
-      - falloffExponent
-      - unk_er_f1_24
-      - unk_er_f1_25
-      - unk_ac6_f1_26
-      - unk_ac6_f1_27
-    properties1: SDT
+  AC6: ER

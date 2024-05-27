@@ -4596,7 +4596,7 @@ const ActionData: {
       unk_ds3_f1_28: { default: 0, field: FieldType.Float },
       unk_ds3_f1_29: { default: 30, field: FieldType.Integer },
       unk_ds3_f1_30: { default: 0, field: FieldType.Integer },
-      affectSFX: { default: true, field: FieldType.Boolean },
+      unk_ds3_f1_31: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_32: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_33: { default: 0, field: FieldType.Integer },
       unk_ds3_f1_34: { default: 0, field: FieldType.Float },
@@ -4630,11 +4630,11 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','affectSFX','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
+        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
         properties1: ['intensity']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','affectSFX','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
+        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
         properties1: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -4793,8 +4793,8 @@ const ActionData: {
       unk_sdt_p1_10: { default: 1 },
       unk_er_f1_24: { default: 1, field: FieldType.Integer },
       unk_er_f1_25: { default: 1, field: FieldType.Float },
-      unk_ac6_f1_26: { default: 1, field: FieldType.Integer },
-      unk_ac6_f1_27: { default: 0, field: FieldType.Integer },
+      unk_er_f1_26: { default: 1, field: FieldType.Integer },
+      unk_er_f1_27: { default: 0, field: FieldType.Integer },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -4806,13 +4806,10 @@ const ActionData: {
         properties1: ['diffuseColor','specularColor','diffuseMultiplier','specularMultiplier','near','far','radiusX','radiusY','unk_ds3_p1_6','unk_ds3_p1_7','unk_sdt_p1_10']
       },
       [Game.EldenRing]: {
-        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent','unk_er_f1_24','unk_er_f1_25'],
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent','unk_er_f1_24','unk_er_f1_25','unk_er_f1_26','unk_er_f1_27'],
         properties1: Game.Sekiro
       },
-      [Game.ArmoredCore6]: {
-        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent','unk_er_f1_24','unk_er_f1_25','unk_ac6_f1_26','unk_ac6_f1_27'],
-        properties1: Game.Sekiro
-      }
+      [Game.ArmoredCore6]: Game.EldenRing
     }
   }
   /*#ActionData end*/
@@ -7147,12 +7144,10 @@ const ActionDataConversion = {
       if ('fadeOutTime' in props) {
         props.fadeOutTime = props.fadeOutTime / 30
       }
-      props.affectSFX = !props.affectSFX
       return props
     },
     write(props: WindForceParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
-      props.affectSFX = !props.affectSFX
       return props
     }
   },
@@ -33562,13 +33557,15 @@ export interface WindForceParams {
    */
   unk_ds3_f1_30?: number
   /**
-   * When this is enabled, the wind will be able to affect sfx, including the one with this action.
+   * When this is set to 0, the wind will be able to affect sfx, including the one with this action. When it's set to 1, it seems to only affect non-sfx things, like plants and trees.
    * 
-   * This seems to also change how the wind affects other things in some way, but exactly how is unknown.
+   * The way non-sfx are affected by the wind seems to also change a bit between values 0 and 1, but exactly how is unknown.
    * 
-   * **Default**: `true`
+   * In DS3 and Sekiro, some effects have this set to 2, so it is not just a boolean. What 2 does is unknown.
+   * 
+   * **Default**: `0`
    */
-  affectSFX?: boolean
+  unk_ds3_f1_31?: number
   /**
    * Unknown integer.
    * 
@@ -33800,11 +33797,13 @@ class WindForce extends DataAction {
   unk_ds3_f1_29: number
   unk_ds3_f1_30: number
   /**
-   * When this is enabled, the wind will be able to affect sfx, including the one with this action.
+   * When this is set to 0, the wind will be able to affect sfx, including the one with this action. When it's set to 1, it seems to only affect non-sfx things, like plants and trees.
    * 
-   * This seems to also change how the wind affects other things in some way, but exactly how is unknown.
+   * The way non-sfx are affected by the wind seems to also change a bit between values 0 and 1, but exactly how is unknown.
+   * 
+   * In DS3 and Sekiro, some effects have this set to 2, so it is not just a boolean. What 2 does is unknown.
    */
-  affectSFX: boolean
+  unk_ds3_f1_31: number
   unk_ds3_f1_32: number
   unk_ds3_f1_33: number
   unk_ds3_f1_34: number
@@ -34769,13 +34768,13 @@ export interface SpotLightParams {
    * 
    * **Default**: `1`
    */
-  unk_ac6_f1_26?: number
+  unk_er_f1_26?: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f1_27?: number
+  unk_er_f1_27?: number
 }
 
 /**
@@ -34992,8 +34991,8 @@ class SpotLight extends DataAction {
   unk_sdt_p1_10: ScalarValue
   unk_er_f1_24: number
   unk_er_f1_25: number
-  unk_ac6_f1_26: number
-  unk_ac6_f1_27: number
+  unk_er_f1_26: number
+  unk_er_f1_27: number
   constructor(props: SpotLightParams = {}) {
     super(ActionType.SpotLight)
     this.assign(props)
