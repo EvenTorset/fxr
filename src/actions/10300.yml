@@ -79,13 +79,14 @@ properties:
     default: 30
   unk_ds3_f1_30:
     field: int
-  affectSFX:
-    field: bool
-    default: true
+  unk_ds3_f1_31:
+    field: int
     desc: |
-      When this is enabled, the wind will be able to affect sfx, including the one with this action.
+      When this is set to 0, the wind will be able to affect sfx, including the one with this action. When it's set to 1, it seems to only affect non-sfx things, like plants and trees.
 
-      This seems to also change how the wind affects other things in some way, but exactly how is unknown.
+      The way non-sfx are affected by the wind seems to also change a bit between values 0 and 1, but exactly how is unknown.
+
+      In DS3 and Sekiro, some effects have this set to 2, so it is not just a boolean. What 2 does is unknown.
   unk_ds3_f1_32:
     field: int
   unk_ds3_f1_33:
@@ -202,7 +203,7 @@ games:
       - unk_ds3_f1_28
       - unk_ds3_f1_29
       - unk_ds3_f1_30
-      - affectSFX
+      - unk_ds3_f1_31
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - unk_ds3_f1_34
@@ -258,7 +259,7 @@ games:
       - unk_ds3_f1_28
       - unk_ds3_f1_29
       - unk_ds3_f1_30
-      - affectSFX
+      - unk_ds3_f1_31
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - unk_ds3_f1_34
