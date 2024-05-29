@@ -1,12 +1,12 @@
 type: 10001
-name: ParticleSystem2
+name: GPUStandardCorrectParticle
 slot: Appearance
 desc: |
-  Very similar to {@link ActionType.ParticleSystem ParticleSystem}, with no known differences.
+  Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
 
-  In the RTTI, the other action is called "StandardParticle", while this one is called "StandardCorrectParticle".
+  The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
 
-  Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.ParticleSystem ParticleSystem} much simpler. When written for those two games, this action will be converted to the other action automatically.
+  Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
 properties:
   unk_ds3_f1_0:
     field: int
@@ -599,10 +599,19 @@ properties:
     field: float
     desc: |
       Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
-  unk_ds3_f1_144:
-    field: int
-  unk_ds3_f1_145:
+  particleCollision:
+    field: bool
+    default: false
+    desc: |
+      When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+    see:
+      - particleBounciness
+  particleBounciness:
     field: float
+    desc: |
+      Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+    see:
+      - particleCollision
   particleRandomTurns:
     field: bool
     default: false
@@ -1156,8 +1165,8 @@ games:
       - unk_ds3_f1_141
       - limitUpdateDistance
       - updateDistance
-      - unk_ds3_f1_144
-      - unk_ds3_f1_145
+      - particleCollision
+      - particleBounciness
       - particleRandomTurns
       - particleRandomTurnIntervalMax
       - traceParticles

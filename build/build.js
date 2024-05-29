@@ -222,7 +222,7 @@ export default async function(writeToDist = true) {
          * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
          * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
          * 
-         * ${data.desc.trim().replace(/\n/g, '\n   * ')}
+         * ${data.desc.trim().replace(/\n/g, '\n * ')}
          */
         class ${data.name} extends DataAction {
           declare type: ActionType.${data.name}

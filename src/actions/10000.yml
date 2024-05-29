@@ -1,10 +1,12 @@
 type: 10000
-name: ParticleSystem
+name: GPUStandardParticle
 slot: Appearance
 desc: |
-  An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
+  An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
 
   Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+
+  The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
 properties:
   unk_ds3_f1_0:
     field: int
@@ -597,10 +599,19 @@ properties:
     field: float
     desc: |
       Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
-  unk_ds3_f1_144:
-    field: int
-  unk_ds3_f1_145:
+  particleCollision:
+    field: bool
+    default: false
+    desc: |
+      When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+    see:
+      - particleBounciness
+  particleBounciness:
     field: float
+    desc: |
+      Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+    see:
+      - particleCollision
   particleRandomTurns:
     field: bool
     default: false
@@ -1156,8 +1167,8 @@ games:
       - unk_ds3_f1_141
       - limitUpdateDistance
       - updateDistance
-      - unk_ds3_f1_144
-      - unk_ds3_f1_145
+      - particleCollision
+      - particleBounciness
       - particleRandomTurns
       - particleRandomTurnIntervalMax
       - traceParticles
@@ -1380,8 +1391,8 @@ games:
       - unk_ds3_f1_141
       - limitUpdateDistance
       - updateDistance
-      - unk_ds3_f1_144
-      - unk_ds3_f1_145
+      - particleCollision
+      - particleBounciness
       - particleRandomTurns
       - particleRandomTurnIntervalMax
       - traceParticles
@@ -1591,8 +1602,8 @@ games:
       - unk_ds3_f1_141
       - limitUpdateDistance
       - updateDistance
-      - unk_ds3_f1_144
-      - unk_ds3_f1_145
+      - particleCollision
+      - particleBounciness
       - particleRandomTurns
       - particleRandomTurnIntervalMax
       - traceParticles

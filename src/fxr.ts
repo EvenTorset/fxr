@@ -123,8 +123,8 @@ enum ActionType {
   None = 0,
   Unk10002_Fluid = 10002,
   Unk10003_LightShaft = 10003,
-  Unk10008_SparkParticle = 10008,
-  Unk10009_SparkCorrectParticle = 10009,
+  GPUSparkParticle = 10008,
+  GPUSparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
   Unk10200_ForceFieldCancelArea = 10200,
   Unk10301_ForceFieldGravityArea = 10301,
@@ -690,29 +690,31 @@ enum ActionType {
    */
   Unk800 = 800,
   /**
-   * ### Action 10000 - ParticleSystem
+   * ### Action 10000 - GPUStandardParticle
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * 
-   * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
+   * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
    * 
-   * This action type has a specialized subclass: {@link ParticleSystem}
+   * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
+   * 
+   * This action type has a specialized subclass: {@link GPUStandardParticle}
    */
-  ParticleSystem = 10000,
+  GPUStandardParticle = 10000,
   /**
-   * ### Action 10001 - ParticleSystem2
+   * ### Action 10001 - GPUStandardCorrectParticle
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * 
-   * Very similar to {@link ActionType.ParticleSystem ParticleSystem}, with no known differences.
+   * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
    * 
-   * In the RTTI, the other action is called "StandardParticle", while this one is called "StandardCorrectParticle".
+   * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
    * 
-   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.ParticleSystem ParticleSystem} much simpler. When written for those two games, this action will be converted to the other action automatically.
+   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
    * 
-   * This action type has a specialized subclass: {@link ParticleSystem2}
+   * This action type has a specialized subclass: {@link GPUStandardCorrectParticle}
    */
-  ParticleSystem2 = 10001,
+  GPUStandardCorrectParticle = 10001,
   /**
    * ### Action 10012 - DynamicTracer
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1359,8 +1361,13 @@ enum InitialDirection {
 }
 
 /**
- * Emitter shapes for {@link ActionType.ParticleSystem ParticleSystem}. Not
- * related to the emitter shape actions.
+ * Emitter shapes for the following actions:
+ * - {@link ActionType.GPUStandardParticle GPUStandardParticle}
+ * - {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle}
+ * - {@link ActionType.GPUSparkParticle GPUSparkParticle}
+ * - {@link ActionType.GPUSparkCorrectParticle GPUSparkCorrectParticle}
+ * 
+ * Not related to the {@link ActionSlots.EmitterShapeAction emitter shape actions}.
  */
 enum EmitterShape {
   /**
@@ -1371,14 +1378,14 @@ enum EmitterShape {
    * A cuboid.
    * 
    * The difference between this and {@link Box2} is how the
-   * {@link ParticleSystem.emitterDistribution distribution} field acts on it.
+   * {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
    */
   Box = 1,
   /**
    * A cuboid.
    * 
    * The difference between this and {@link Box} is how the
-   * {@link ParticleSystem.emitterDistribution distribution} field acts on it.
+   * {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
    */
   Box2 = 2,
   /**
@@ -1579,8 +1586,8 @@ export namespace ActionSlots {
     | Distortion
     | RadialBlur
     | PointLight
-    | ParticleSystem
-    | ParticleSystem2
+    | GPUStandardParticle
+    | GPUStandardCorrectParticle
     | DynamicTracer
     | WaterInteraction
     | LensFlare
@@ -3572,7 +3579,7 @@ const ActionData: {
       }
     }
   },
-  [ActionType.ParticleSystem]: {
+  [ActionType.GPUStandardParticle]: {
     props: {
       unk_ds3_f1_0: { default: 1005, field: FieldType.Integer },
       texture: { default: 1, field: FieldType.Integer },
@@ -3718,8 +3725,8 @@ const ActionData: {
       unk_ds3_f1_141: { default: 0, field: FieldType.Integer },
       limitUpdateDistance: { default: 0, field: FieldType.Boolean },
       updateDistance: { default: 0, field: FieldType.Float },
-      unk_ds3_f1_144: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_145: { default: 0, field: FieldType.Float },
+      particleCollision: { default: false, field: FieldType.Boolean },
+      particleBounciness: { default: 0, field: FieldType.Float },
       particleRandomTurns: { default: false, field: FieldType.Boolean },
       particleRandomTurnIntervalMax: { default: 1, field: FieldType.Integer },
       traceParticles: { default: false, field: FieldType.Boolean },
@@ -3814,19 +3821,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','desaturate'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','desaturate'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAccelerationZ','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
@@ -3834,7 +3841,7 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.ParticleSystem2]: {
+  [ActionType.GPUStandardCorrectParticle]: {
     props: {
       unk_ds3_f1_0: { default: 1005, field: FieldType.Integer },
       texture: { default: 1, field: FieldType.Integer },
@@ -3980,8 +3987,8 @@ const ActionData: {
       unk_ds3_f1_141: { default: 0, field: FieldType.Integer },
       limitUpdateDistance: { default: 0, field: FieldType.Boolean },
       updateDistance: { default: 0, field: FieldType.Float },
-      unk_ds3_f1_144: { default: 0, field: FieldType.Integer },
-      unk_ds3_f1_145: { default: 0, field: FieldType.Float },
+      particleCollision: { default: false, field: FieldType.Boolean },
+      particleBounciness: { default: 0, field: FieldType.Float },
       particleRandomTurns: { default: false, field: FieldType.Boolean },
       particleRandomTurnIntervalMax: { default: 1, field: FieldType.Integer },
       traceParticles: { default: false, field: FieldType.Boolean },
@@ -4077,7 +4084,7 @@ const ActionData: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: -2,
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','unk_ds3_f1_144','unk_ds3_f1_145','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redVariationMin','greenVariationMin','blueVariationMin','alphaVariationMin','redVariationMax','greenVariationMax','blueVariationMax','alphaVariationMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAccelerationZ','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
@@ -4892,12 +4899,12 @@ const EffectActionSlots = {
       ActionType.Distortion,
       ActionType.RadialBlur,
       ActionType.PointLight,
-      ActionType.ParticleSystem,
-      ActionType.ParticleSystem2,
+      ActionType.GPUStandardParticle,
+      ActionType.GPUSparkCorrectParticle,
       ActionType.Unk10002_Fluid,
       ActionType.Unk10003_LightShaft,
-      ActionType.Unk10008_SparkParticle,
-      ActionType.Unk10009_SparkCorrectParticle,
+      ActionType.GPUSparkParticle,
+      ActionType.GPUSparkCorrectParticle,
       ActionType.Unk10010_Tracer,
       ActionType.DynamicTracer,
       ActionType.WaterInteraction,
@@ -7032,8 +7039,8 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.ParticleSystem]: {
-    read(props: ParticleSystemParams, game: Game) {
+  [ActionType.GPUStandardParticle]: {
+    read(props: GPUStandardParticleParams, game: Game) {
       if (props.particleUniformScale) {
         /*
           This action's uniform scale field acts differently from every other
@@ -7065,7 +7072,7 @@ const ActionDataConversion = {
       props.particleAngularAccelerationZ = anyValueMult(180 / Math.PI, props.particleAngularAccelerationZ)
       return props
     },
-    write(props: ParticleSystemParams, game: Game) {
+    write(props: GPUStandardParticleParams, game: Game) {
       if (props.particleUniformScale) {
         props.particleSizeY = 0
         props.particleSizeYMin = 0
@@ -7084,8 +7091,8 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.ParticleSystem2]: {
-    read(props: ParticleSystem2Params, game: Game) {
+  [ActionType.GPUStandardCorrectParticle]: {
+    read(props: GPUStandardCorrectParticleParams, game: Game) {
       if (props.particleUniformScale) {
         /*
           This action's uniform scale field acts differently from every other
@@ -7117,7 +7124,7 @@ const ActionDataConversion = {
       props.particleAngularAccelerationZ = anyValueMult(180 / Math.PI, props.particleAngularAccelerationZ)
       return props
     },
-    write(props: ParticleSystem2Params, game: Game) {
+    write(props: GPUStandardCorrectParticleParams, game: Game) {
       if (props.particleUniformScale) {
         props.particleSizeY = 0
         props.particleSizeYMin = 0
@@ -7135,8 +7142,8 @@ const ActionDataConversion = {
       props.particleAngularAccelerationZ = anyValueMult(Math.PI / 180, props.particleAngularAccelerationZ)
       return props
     },
-    fallback(action: ParticleSystem2, game: Game) {
-      return new ParticleSystem(action).toAction(game)
+    fallback(action: GPUStandardCorrectParticle, game: Game) {
+      return new GPUStandardParticle(action).toAction(game)
     }
   },
   [ActionType.WindForce]: {
@@ -8011,7 +8018,10 @@ class FXR {
         res.textures.push({ resource: action.mask, type: 'a' })
       } else if (action instanceof RadialBlur) {
         res.textures.push({ resource: action.mask, type: 'a' })
-      } else if (action instanceof ParticleSystem || action instanceof ParticleSystem2) {
+      } else if (
+        action instanceof GPUStandardParticle ||
+        action instanceof GPUStandardCorrectParticle
+      ) {
         res.textures.push({ resource: action.texture, type: 'a' })
         res.textures.push({ resource: action.normalMap, type: 'n' })
       } else if (action instanceof LensFlare) {
@@ -8556,7 +8566,10 @@ abstract class Node {
           slot9.unk_ds3_f1_4 *= factor
           slot9.unk_ds3_f1_7 *= factor
           slot9.unk_ds3_f1_8 *= factor
-        } else if (slot9 instanceof ParticleSystem || slot9 instanceof ParticleSystem2) {
+        } else if (
+          slot9 instanceof GPUStandardParticle ||
+          slot9 instanceof GPUStandardCorrectParticle
+        ) {
           slot9.emitterSizeX = anyValueMult(factor, slot9.emitterSizeX)
           slot9.emitterSizeY = anyValueMult(factor, slot9.emitterSizeY)
           slot9.emitterSizeZ = anyValueMult(factor, slot9.emitterSizeZ)
@@ -8642,8 +8655,8 @@ abstract class Node {
           slot9 instanceof Tracer ||
           slot9 instanceof Distortion ||
           slot9 instanceof RadialBlur ||
-          slot9 instanceof ParticleSystem ||
-          slot9 instanceof ParticleSystem2 ||
+          slot9 instanceof GPUStandardParticle ||
+          slot9 instanceof GPUStandardCorrectParticle ||
           slot9 instanceof DynamicTracer ||
           slot9 instanceof RichModel
         ) {
@@ -8773,8 +8786,8 @@ abstract class Node {
       } else if (
         slot9 instanceof Distortion ||
         slot9 instanceof RadialBlur ||
-        slot9 instanceof ParticleSystem ||
-        slot9 instanceof ParticleSystem2
+        slot9 instanceof GPUStandardParticle ||
+        slot9 instanceof GPUStandardCorrectParticle
       ) {
         procVec4Value(slot9, 'color')
       } else if (slot9 instanceof LensFlare) {
@@ -8796,8 +8809,8 @@ abstract class Node {
         slot9 instanceof Tracer ||
         slot9 instanceof Distortion ||
         slot9 instanceof RadialBlur ||
-        slot9 instanceof ParticleSystem ||
-        slot9 instanceof ParticleSystem2 ||
+        slot9 instanceof GPUStandardParticle ||
+        slot9 instanceof GPUStandardCorrectParticle ||
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
@@ -12566,8 +12579,8 @@ export interface ParticleModifierParams {
  * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
  * 
  * Modifies particles in various ways.
-   * 
-   * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
+ * 
+ * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
  */
 class ParticleModifier extends DataAction {
   declare type: ActionType.ParticleModifier
@@ -19385,8 +19398,8 @@ export interface ModelParams {
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Particle with a 3D model.
-   * 
-   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+ * 
+ * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
  */
 class Model extends DataAction {
   declare type: ActionType.Model
@@ -21587,8 +21600,8 @@ export interface DistortionParams {
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * A particle that distorts anything seen through it.
-   * 
-   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ * 
+ * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class Distortion extends DataAction {
   declare type: ActionType.Distortion
@@ -22440,8 +22453,8 @@ export interface RadialBlurParams {
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * A particle that applies a radial blur to anything seen through it.
-   * 
-   * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ * 
+ * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class RadialBlur extends DataAction {
   declare type: ActionType.RadialBlur
@@ -23597,8 +23610,8 @@ export interface ParticleWindAccelerationParams {
  * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
  * 
  * Controls how effective the wind is at accelerating the particles emitted from the node.
-   * 
-   * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
+ * 
+ * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
  */
 class ParticleWindAcceleration extends DataAction {
   declare type: ActionType.ParticleWindAcceleration
@@ -23666,7 +23679,7 @@ class Unk800 extends DataAction {
   }
 }
 
-export interface ParticleSystemParams {
+export interface GPUStandardParticleParams {
   /**
    * Unknown integer.
    * 
@@ -24635,17 +24648,23 @@ export interface ParticleSystemParams {
    */
   updateDistance?: number
   /**
-   * Unknown integer.
+   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleBounciness}
    */
-  unk_ds3_f1_144?: number
+  particleCollision?: boolean
   /**
-   * Unknown float.
+   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleCollision}
    */
-  unk_ds3_f1_145?: number
+  particleBounciness?: number
   /**
    * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
    * 
@@ -25334,15 +25353,17 @@ export interface ParticleSystemParams {
 }
 
 /**
- * ### {@link ActionType.ParticleSystem Action 10000 - ParticleSystem}
+ * ### {@link ActionType.GPUStandardParticle Action 10000 - GPUStandardParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * An entire particle system in a single action. This seems to use GPU particles, which means thousands of particles can be rendered without much impact on performance.
-   * 
-   * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+ * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+ * 
+ * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+ * 
+ * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
  */
-class ParticleSystem extends DataAction {
-  declare type: ActionType.ParticleSystem
+class GPUStandardParticle extends DataAction {
+  declare type: ActionType.GPUStandardParticle
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
@@ -25857,8 +25878,20 @@ class ParticleSystem extends DataAction {
    * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
    */
   updateDistance: number
-  unk_ds3_f1_144: number
-  unk_ds3_f1_145: number
+  /**
+   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * See also:
+   * - {@link particleBounciness}
+   */
+  particleCollision: boolean
+  /**
+   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+   * 
+   * See also:
+   * - {@link particleCollision}
+   */
+  particleBounciness: number
   /**
    * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
    * 
@@ -26191,13 +26224,13 @@ class ParticleSystem extends DataAction {
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
-  constructor(props: ParticleSystemParams = {}) {
-    super(ActionType.ParticleSystem)
+  constructor(props: GPUStandardParticleParams = {}) {
+    super(ActionType.GPUStandardParticle)
     this.assign(props)
   }
 }
 
-export interface ParticleSystem2Params {
+export interface GPUStandardCorrectParticleParams {
   /**
    * Unknown integer.
    * 
@@ -27166,17 +27199,23 @@ export interface ParticleSystem2Params {
    */
   updateDistance?: number
   /**
-   * Unknown integer.
+   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleBounciness}
    */
-  unk_ds3_f1_144?: number
+  particleCollision?: boolean
   /**
-   * Unknown float.
+   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleCollision}
    */
-  unk_ds3_f1_145?: number
+  particleBounciness?: number
   /**
    * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
    * 
@@ -27859,17 +27898,17 @@ export interface ParticleSystem2Params {
 }
 
 /**
- * ### {@link ActionType.ParticleSystem2 Action 10001 - ParticleSystem2}
+ * ### {@link ActionType.GPUStandardCorrectParticle Action 10001 - GPUStandardCorrectParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very similar to {@link ActionType.ParticleSystem ParticleSystem}, with no known differences.
-   * 
-   * In the RTTI, the other action is called "StandardParticle", while this one is called "StandardCorrectParticle".
-   * 
-   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.ParticleSystem ParticleSystem} much simpler. When written for those two games, this action will be converted to the other action automatically.
+ * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
+ * 
+ * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+ * 
+ * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
  */
-class ParticleSystem2 extends DataAction {
-  declare type: ActionType.ParticleSystem2
+class GPUStandardCorrectParticle extends DataAction {
+  declare type: ActionType.GPUStandardCorrectParticle
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
@@ -28384,8 +28423,20 @@ class ParticleSystem2 extends DataAction {
    * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
    */
   updateDistance: number
-  unk_ds3_f1_144: number
-  unk_ds3_f1_145: number
+  /**
+   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * See also:
+   * - {@link particleBounciness}
+   */
+  particleCollision: boolean
+  /**
+   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+   * 
+   * See also:
+   * - {@link particleCollision}
+   */
+  particleBounciness: number
   /**
    * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
    * 
@@ -28714,8 +28765,8 @@ class ParticleSystem2 extends DataAction {
   unk_ds3_p2_4: Vector4Value
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
-  constructor(props: ParticleSystem2Params = {}) {
-    super(ActionType.ParticleSystem2)
+  constructor(props: GPUStandardCorrectParticleParams = {}) {
+    super(ActionType.GPUStandardCorrectParticle)
     this.assign(props)
   }
 }
@@ -29409,8 +29460,8 @@ export interface DynamicTracerParams {
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Creates a trail behind moving effects.
-   * 
-   * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+ * 
+ * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
  */
 class DynamicTracer extends DataAction {
   declare type: ActionType.DynamicTracer
@@ -32469,8 +32520,8 @@ export interface RichModelParams {
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
-   * 
-   * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
+ * 
+ * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  */
 class RichModel extends DataAction {
   declare type: ActionType.RichModel
@@ -35063,8 +35114,8 @@ const DataActions = {
   [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
   [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
   [ActionType.Unk800]: Unk800, Unk800,
-  [ActionType.ParticleSystem]: ParticleSystem, ParticleSystem,
-  [ActionType.ParticleSystem2]: ParticleSystem2, ParticleSystem2,
+  [ActionType.GPUStandardParticle]: GPUStandardParticle, GPUStandardParticle,
+  [ActionType.GPUStandardCorrectParticle]: GPUStandardCorrectParticle, GPUStandardCorrectParticle,
   [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
@@ -36935,8 +36986,8 @@ export {
   NodeWindAcceleration,
   ParticleWindAcceleration,
   Unk800,
-  ParticleSystem,
-  ParticleSystem2,
+  GPUStandardParticle,
+  GPUStandardCorrectParticle,
   DynamicTracer,
   WaterInteraction,
   LensFlare,
