@@ -30056,30 +30056,18 @@ export interface GPUSparkParticleParams {
    * Particle acceleration along the X-axis.
    * 
    * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
    */
   particleAccelerationX?: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
    * 
    * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
    */
   particleAccelerationY?: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
    * 
    * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
    */
   particleAccelerationZ?: ScalarValue
   /**
@@ -30690,26 +30678,14 @@ class GPUSparkParticle extends DataAction {
   unk_ac6_p1_3: ScalarValue
   /**
    * Particle acceleration along the X-axis.
-   * 
-   * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
-   * 
-   * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
-   * 
-   * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
    */
   particleAccelerationZ: ScalarValue
   /**

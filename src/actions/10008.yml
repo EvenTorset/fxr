@@ -631,23 +631,14 @@ properties:
     type: ScalarValue
     desc: |
       Particle acceleration along the X-axis.
-    see:
-      - particleAccelerationXMin
-      - particleAccelerationXMax
   particleAccelerationY:
     type: ScalarValue
     desc: |
       Particle acceleration along the Y-axis.
-    see:
-      - particleAccelerationYMin
-      - particleAccelerationYMax
   particleAccelerationZ:
     type: ScalarValue
     desc: |
       Particle acceleration along the Z-axis.
-    see:
-      - particleAccelerationZMin
-      - particleAccelerationZMax
   color:
     type: Vector4Value
     default: [1, 1, 1, 1]
