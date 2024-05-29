@@ -16,9 +16,9 @@ const typeMap = {
 }
 
 const fieldMap = {
-  int: 'FieldType.Integer',
-  float: 'FieldType.Float',
-  bool: 'FieldType.Boolean'
+  int: 1,
+  float: 2,
+  bool: 0
 }
 
 const fieldTypeNameMap = {
