@@ -4900,7 +4900,7 @@ const EffectActionSlots = {
       ActionType.RadialBlur,
       ActionType.PointLight,
       ActionType.GPUStandardParticle,
-      ActionType.GPUSparkCorrectParticle,
+      ActionType.GPUStandardCorrectParticle,
       ActionType.Unk10002_Fluid,
       ActionType.Unk10003_LightShaft,
       ActionType.GPUSparkParticle,
