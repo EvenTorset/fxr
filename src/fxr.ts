@@ -4138,8 +4138,8 @@ const ActionData: {
       unk_ac6_f1_10: { default: 1, field: 2 },
       unk_ac6_f1_11: { default: 1, field: 2 },
       emitterDistribution: { default: 0, field: 2 },
-      unk_ac6_f1_13: { default: 0, field: 1 },
-      unk_ac6_f1_14: { default: 0, field: 1 },
+      unk_ac6_f1_13: { default: 0, field: 2 },
+      unk_ac6_f1_14: { default: 0, field: 2 },
       unk_ac6_f1_15: { default: -1, field: 1 },
       unk_ac6_f1_16: { default: 0, field: 1 },
       unk_ac6_f1_17: { default: 0, field: 1 },
@@ -4317,8 +4317,8 @@ const ActionData: {
       unk_ac6_f1_10: { default: 1, field: 2 },
       unk_ac6_f1_11: { default: 1, field: 2 },
       emitterDistribution: { default: 0, field: 2 },
-      unk_ac6_f1_13: { default: 0, field: 1 },
-      unk_ac6_f1_14: { default: 0, field: 1 },
+      unk_ac6_f1_13: { default: 0, field: 2 },
+      unk_ac6_f1_14: { default: 0, field: 2 },
       unk_ac6_f1_15: { default: -1, field: 1 },
       unk_ac6_f1_16: { default: 0, field: 1 },
       unk_ac6_f1_17: { default: 0, field: 1 },
@@ -29335,13 +29335,13 @@ export interface GPUSparkParticleParams {
    */
   emitterDistribution?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_13?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
@@ -31040,13 +31040,13 @@ export interface GPUSparkCorrectParticleParams {
    */
   emitterDistribution?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */
   unk_ac6_f1_13?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `0`
    */

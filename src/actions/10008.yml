@@ -72,9 +72,9 @@ properties:
       | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
       | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
   unk_ac6_f1_13:
-    field: int
+    field: float
   unk_ac6_f1_14:
-    field: int
+    field: float
   unk_ac6_f1_15:
     field: int
     default: -1
