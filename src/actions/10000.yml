@@ -138,11 +138,11 @@ properties:
       The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
   unk_ds3_f1_30:
     field: int
-  particleDuration:
+  particleDurationUnit:
     field: int
-    default: 1
+    default: 30
     desc: |
-      The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+      The unit of {@link particleDuration}. The unit of this is 1/30s.
   unk_ds3_f1_32:
     field: int
   unk_ds3_f1_33:
@@ -438,42 +438,42 @@ properties:
     default: 1
     desc: |
       Alpha multiplier.
-  redVariationMin:
+  redMin:
     field: float
     desc: |
-      Minimum random variation for the red value of the particle color. A random value between this and {@link redVariationMax} will be added to the color.
-  greenVariationMin:
+      Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+  greenMin:
     field: float
     desc: |
-      Minimum random variation for the green value of the particle color. A random value between this and {@link greenVariationMax} will be added to the color.
-  blueVariationMin:
+      Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+  blueMin:
     field: float
     desc: |
-      Minimum random variation for the blue value of the particle color. A random value between this and {@link blueVariationMax} will be added to the color.
-  alphaVariationMin:
+      Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
+  alphaMin:
     field: float
     desc: |
-      Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaVariationMax} will be added to the color.
-  redVariationMax:
+      Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
+  redMax:
     field: float
     desc: |
-      Maximum random variation for the red value of the particle color. A random value between this and {@link redVariationMin} will be added to the color.
-  greenVariationMax:
+      Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
+  greenMax:
     field: float
     desc: |
-      Maximum random variation for the green value of the particle color. A random value between this and {@link greenVariationMin} will be added to the color.
-  blueVariationMax:
+      Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
+  blueMax:
     field: float
     desc: |
-      Maximum random variation for the blue value of the particle color. A random value between this and {@link blueVariationMin} will be added to the color.
-  alphaVariationMax:
+      Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
+  alphaMax:
     field: float
     desc: |
-      Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaVariationMin} will be added to the color.
+      Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
   blendMode:
     type: BlendMode
     field: int
-    default: 2
+    default: BlendMode.Normal
     desc: |
       Blend mode.
   columns:
@@ -528,11 +528,11 @@ properties:
   unk_ds3_f1_118:
     field: float
     default: 1
-  particleDurationMultiplier:
+  particleDuration:
     field: float
     default: 1
     desc: |
-      Multiplier for {@link particleDuration}.
+      The duration of the particles. The unit for this is controlled by {@link particleDurationUnit}.
   unk_ds3_f1_120:
     field: float
     default: 1
@@ -595,6 +595,8 @@ properties:
     field: bool
     desc: |
       If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+
+      It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
   updateDistance:
     field: float
     desc: |
@@ -917,7 +919,6 @@ properties:
     field: int
   particleFollowFactor:
     type: ScalarValue
-    default: 1
     desc: |
       Controls how well the particles follow the node if it moves.
   unk_ds3_p1_1:
@@ -982,7 +983,7 @@ properties:
     default: 1
   unk_ds3_p1_15:
     type: ScalarValue
-  unkParticleAccelerationZ:
+  unkParticleAcceleration:
     type: ScalarValue
     desc: |
       Seemingly identical to {@link particleAccelerationZ}?
@@ -1054,7 +1055,7 @@ games:
       - limitEmissionCount
       - emissionCountLimit
       - unk_ds3_f1_30
-      - particleDuration
+      - particleDurationUnit
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - particleOffsetX
@@ -1120,14 +1121,14 @@ games:
       - unk_ds3_f1_94
       - rgbMultiplier
       - alphaMultiplier
-      - redVariationMin
-      - greenVariationMin
-      - blueVariationMin
-      - alphaVariationMin
-      - redVariationMax
-      - greenVariationMax
-      - blueVariationMax
-      - alphaVariationMax
+      - redMin
+      - greenMin
+      - blueMin
+      - alphaMin
+      - redMax
+      - greenMax
+      - blueMax
+      - alphaMax
       - blendMode
       - columns
       - totalFrames
@@ -1142,7 +1143,7 @@ games:
       - unk_ds3_f1_116
       - unk_ds3_f1_117
       - unk_ds3_f1_118
-      - particleDurationMultiplier
+      - particleDuration
       - unk_ds3_f1_120
       - particleSizeMultiplier
       - unk_ds3_f1_122
@@ -1232,7 +1233,7 @@ games:
       - color
       - unk_ds3_p1_14
       - unk_ds3_p1_15
-      - unkParticleAccelerationZ
+      - unkParticleAcceleration
       - unk_ds3_p1_17
       - particleGravity
       - particleRandomTurnAngle
@@ -1278,7 +1279,7 @@ games:
       - limitEmissionCount
       - emissionCountLimit
       - unk_ds3_f1_30
-      - particleDuration
+      - particleDurationUnit
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - particleOffsetX
@@ -1344,14 +1345,14 @@ games:
       - unk_ds3_f1_94
       - rgbMultiplier
       - alphaMultiplier
-      - redVariationMin
-      - greenVariationMin
-      - blueVariationMin
-      - alphaVariationMin
-      - redVariationMax
-      - greenVariationMax
-      - blueVariationMax
-      - alphaVariationMax
+      - redMin
+      - greenMin
+      - blueMin
+      - alphaMin
+      - redMax
+      - greenMax
+      - blueMax
+      - alphaMax
       - blendMode
       - columns
       - totalFrames
@@ -1366,7 +1367,7 @@ games:
       - unk_ds3_f1_116
       - unk_ds3_f1_117
       - unk_ds3_f1_118
-      - particleDurationMultiplier
+      - particleDuration
       - unk_ds3_f1_120
       - particleSizeMultiplier
       - unk_ds3_f1_122
@@ -1489,7 +1490,7 @@ games:
       - limitEmissionCount
       - emissionCountLimit
       - unk_ds3_f1_30
-      - particleDuration
+      - particleDurationUnit
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - particleOffsetX
@@ -1555,14 +1556,14 @@ games:
       - unk_ds3_f1_94
       - rgbMultiplier
       - alphaMultiplier
-      - redVariationMin
-      - greenVariationMin
-      - blueVariationMin
-      - alphaVariationMin
-      - redVariationMax
-      - greenVariationMax
-      - blueVariationMax
-      - alphaVariationMax
+      - redMin
+      - greenMin
+      - blueMin
+      - alphaMin
+      - redMax
+      - greenMax
+      - blueMax
+      - alphaMax
       - blendMode
       - columns
       - totalFrames
@@ -1577,7 +1578,7 @@ games:
       - unk_ds3_f1_116
       - unk_ds3_f1_117
       - unk_ds3_f1_118
-      - particleDurationMultiplier
+      - particleDuration
       - unk_ds3_f1_120
       - particleSizeMultiplier
       - unk_ds3_f1_122
