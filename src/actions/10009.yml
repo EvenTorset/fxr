@@ -1,14 +1,15 @@
-type: 10008
-name: GPUSparkParticle
+type: 10009
+name: GPUSparkCorrectParticle
 slot: Appearance
 desc: |
-  Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+  Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
 
-  What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
+  Not all of the differences have been documented yet, but here are some:
+  - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
+  - The particles from this action are smaller.
+  - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
 
-  The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
-
-  This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
+  The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
 properties:
   texture:
     field: int
@@ -699,7 +700,6 @@ properties:
   unk_ac6_p2_6:
     type: ScalarValue
 games:
-  SDT: AC6
   ER: AC6
   AC6:
     fields1:

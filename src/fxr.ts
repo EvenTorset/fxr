@@ -123,7 +123,6 @@ enum ActionType {
   None = 0,
   Unk10002_Fluid = 10002,
   Unk10003_LightShaft = 10003,
-  GPUSparkCorrectParticle = 10009,
   Unk10010_Tracer = 10010,
   Unk10200_ForceFieldCancelArea = 10200,
   Unk10301_ForceFieldGravityArea = 10301,
@@ -729,6 +728,22 @@ enum ActionType {
    * This action type has a specialized subclass: {@link GPUSparkParticle}
    */
   GPUSparkParticle = 10008,
+  /**
+   * ### Action 10009 - GPUSparkCorrectParticle
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+   * 
+   * Not all of the differences have been documented yet, but here are some:
+   * - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
+   * - The particles from this action are smaller.
+   * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
+   * 
+   * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+   * 
+   * This action type has a specialized subclass: {@link GPUSparkCorrectParticle}
+   */
+  GPUSparkCorrectParticle = 10009,
   /**
    * ### Action 10012 - DynamicTracer
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1603,6 +1618,7 @@ export namespace ActionSlots {
     | GPUStandardParticle
     | GPUStandardCorrectParticle
     | GPUSparkParticle
+    | GPUSparkCorrectParticle
     | DynamicTracer
     | WaterInteraction
     | LensFlare
@@ -4276,8 +4292,186 @@ const ActionData: {
       unk_ac6_p2_6: { default: 0 },
     },
     games: {
-      [Game.EldenRing]: Game.ArmoredCore6,
       [Game.Sekiro]: Game.ArmoredCore6,
+      [Game.EldenRing]: Game.ArmoredCore6,
+      [Game.ArmoredCore6]: {
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','hideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
+        properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
+        properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
+      }
+    }
+  },
+  [ActionType.GPUSparkCorrectParticle]: {
+    props: {
+      texture: { default: 1, field: 1 },
+      emitterShape: { default: EmitterShape.Box, field: 1 },
+      unk_ac6_f1_1: { default: 0, field: 1 },
+      emitterSizeX: { default: 1, field: 2 },
+      emitterSizeY: { default: 1, field: 2 },
+      emitterSizeZ: { default: 1, field: 2 },
+      emitterRotationX: { default: 0, field: 2 },
+      emitterRotationY: { default: 0, field: 2 },
+      emitterRotationZ: { default: 0, field: 2 },
+      unk_ac6_f1_9: { default: 1, field: 2 },
+      unk_ac6_f1_10: { default: 1, field: 2 },
+      unk_ac6_f1_11: { default: 1, field: 2 },
+      emitterDistribution: { default: 0, field: 2 },
+      unk_ac6_f1_13: { default: 0, field: 1 },
+      unk_ac6_f1_14: { default: 0, field: 1 },
+      unk_ac6_f1_15: { default: -1, field: 1 },
+      unk_ac6_f1_16: { default: 0, field: 1 },
+      unk_ac6_f1_17: { default: 0, field: 1 },
+      emissionParticleCount: { default: 10, field: 1 },
+      emissionParticleCountMin: { default: 0, field: 1 },
+      emissionParticleCountMax: { default: 0, field: 1 },
+      emissionInterval: { default: 0, field: 1 },
+      emissionIntervalMin: { default: 0, field: 1 },
+      emissionIntervalMax: { default: 0, field: 1 },
+      limitConcurrentEmissions: { default: false, field: 0 },
+      concurrentEmissionsLimit: { default: 0, field: 1 },
+      unk_ac6_f1_26: { default: 0, field: 1 },
+      particleDuration: { default: 1, field: 1 },
+      unk_ac6_f1_28: { default: 0, field: 1 },
+      unk_ac6_f1_29: { default: 0, field: 1 },
+      particleOffsetX: { default: 0, field: 2 },
+      particleOffsetY: { default: 0, field: 2 },
+      particleOffsetZ: { default: 0, field: 2 },
+      particleOffsetXMin: { default: 0, field: 2 },
+      particleOffsetYMin: { default: 0, field: 2 },
+      particleOffsetZMin: { default: 0, field: 2 },
+      particleOffsetXMax: { default: 0, field: 2 },
+      particleOffsetYMax: { default: 0, field: 2 },
+      particleOffsetZMax: { default: 0, field: 2 },
+      unk_ac6_f1_39: { default: 0, field: 1 },
+      particleSpeedXMin: { default: -0.01, field: 2 },
+      particleSpeedYMin: { default: -0.01, field: 2 },
+      particleSpeedZMin: { default: -0.01, field: 2 },
+      particleSpeedXMax: { default: 0.01, field: 2 },
+      particleSpeedYMax: { default: 0.01, field: 2 },
+      particleSpeedZMax: { default: 0.01, field: 2 },
+      rgbMultiplier: { default: 1, field: 2 },
+      alphaMultiplier: { default: 1, field: 2 },
+      redMin: { default: 0, field: 2 },
+      greenMin: { default: 0, field: 2 },
+      blueMin: { default: 0, field: 2 },
+      alphaMin: { default: 0, field: 2 },
+      redMax: { default: 0, field: 2 },
+      greenMax: { default: 0, field: 2 },
+      blueMax: { default: 0, field: 2 },
+      alphaMax: { default: 0, field: 2 },
+      blendMode: { default: BlendMode.Normal, field: 1 },
+      unk_ac6_f1_57: { default: -1, field: 1 },
+      unk_ac6_f1_58: { default: -1, field: 1 },
+      unk_ac6_f1_59: { default: 0, field: 1 },
+      unk_ac6_f1_60: { default: 0, field: 1 },
+      unk_ac6_f1_61: { default: 0, field: 1 },
+      unk_ac6_f1_62: { default: 0, field: 1 },
+      particleLengthMin: { default: 1, field: 2 },
+      particleLengthMax: { default: 1, field: 2 },
+      particleWidthMin: { default: 1, field: 2 },
+      particleWidthMax: { default: 1, field: 2 },
+      unk_ac6_f1_67: { default: 1, field: 2 },
+      unk_ac6_f1_68: { default: 1, field: 2 },
+      particleDurationMultiplier: { default: 1, field: 2 },
+      unk_ac6_f1_70: { default: 1, field: 2 },
+      unk_ac6_f1_71: { default: 1, field: 2 },
+      unk_ac6_f1_72: { default: 1, field: 2 },
+      unk_ac6_f1_73: { default: 1, field: 2 },
+      unk_ac6_f1_74: { default: 1, field: 2 },
+      unk_ac6_f1_75: { default: 0, field: 2 },
+      unk_ac6_f1_76: { default: 1, field: 2 },
+      unk_ac6_f1_77: { default: 1, field: 2 },
+      unk_ac6_f1_78: { default: 1, field: 2 },
+      unk_ac6_f1_79: { default: 1, field: 2 },
+      unk_ac6_f1_80: { default: 1, field: 2 },
+      unk_ac6_f1_81: { default: 0, field: 1 },
+      unk_ac6_f1_82: { default: 0, field: 1 },
+      unk_ac6_f1_83: { default: 0, field: 1 },
+      unk_ac6_f1_84: { default: 0, field: 2 },
+      unk_ac6_f1_85: { default: 0, field: 2 },
+      unk_ac6_f1_86: { default: 0, field: 1 },
+      unk_ac6_f1_87: { default: 8, field: 1 },
+      unk_ac6_f1_88: { default: 0, field: 1 },
+      unk_ac6_f1_89: { default: 0, field: 1 },
+      limitUpdateDistance: { default: 0, field: 0 },
+      updateDistance: { default: 0, field: 2 },
+      particleCollision: { default: false, field: 0 },
+      particleBounciness: { default: 0, field: 2 },
+      unk_ac6_f1_94: { default: 0, field: 1 },
+      unk_ac6_f1_95: { default: 0, field: 1 },
+      bloom: { default: false, field: 0 },
+      bloomRed: { default: 1, field: 2 },
+      bloomGreen: { default: 1, field: 2 },
+      bloomBlue: { default: 1, field: 2 },
+      bloomStrength: { default: 1, field: 2 },
+      unk_ac6_f1_101: { default: 1, field: 2 },
+      unk_ac6_f1_102: { default: 0, field: 1 },
+      unk_ac6_f1_103: { default: 1, field: 2 },
+      unk_ac6_f2_0: { default: 0, field: 1 },
+      unk_ac6_f2_1: { default: 0, field: 1 },
+      unk_ac6_f2_2: { default: 8, field: 1 },
+      unk_ac6_f2_3: { default: 0, field: 1 },
+      unk_ac6_f2_4: { default: 0, field: 1 },
+      unk_ac6_f2_5: { default: 1, field: 2 },
+      unk_ac6_f2_6: { default: 1, field: 2 },
+      unk_ac6_f2_7: { default: 1, field: 2 },
+      unk_ac6_f2_8: { default: 1, field: 2 },
+      unk_ac6_f2_9: { default: 0, field: 1 },
+      unk_ac6_f2_10: { default: 0, field: 1 },
+      unk_ac6_f2_11: { default: 0, field: 1 },
+      unk_ac6_f2_12: { default: 0, field: 1 },
+      unk_ac6_f2_13: { default: 0, field: 1 },
+      minFadeDistance: { default: -1, field: 2 },
+      minDistance: { default: -1, field: 2 },
+      maxFadeDistance: { default: -1, field: 2 },
+      maxDistance: { default: -1, field: 2 },
+      minDistanceThreshold: { default: -1, field: 2 },
+      maxDistanceThreshold: { default: -1, field: 2 },
+      unk_ac6_f2_20: { default: 0, field: 1 },
+      unk_ac6_f2_21: { default: 0, field: 1 },
+      unk_ac6_f2_22: { default: 0, field: 1 },
+      unk_ac6_f2_23: { default: 0, field: 1 },
+      unk_ac6_f2_24: { default: 0, field: 1 },
+      unkDepthBlend1: { default: 1, field: 2 },
+      unkDepthBlend2: { default: 0, field: 2 },
+      unk_ac6_f2_27: { default: 1, field: 1 },
+      unk_ac6_f2_28: { default: 0, field: 1 },
+      unk_ac6_f2_29: { default: 0, field: 2 },
+      shadowDarkness: { default: 1, field: 2 },
+      hideIndoors: { default: 0, field: 0 },
+      unk_ac6_f2_32: { default: 0, field: 1 },
+      unk_ac6_f2_33: { default: 0, field: 1 },
+      unk_ac6_f2_34: { default: 0.5, field: 2 },
+      lighting: { default: LightingMode.Unlit, field: 1 },
+      unk_ac6_f2_36: { default: -2, field: 1 },
+      unk_ac6_f2_37: { default: 0, field: 1 },
+      unk_ac6_f2_38: { default: 0, field: 2 },
+      unk_ac6_f2_39: { default: 0, field: 1 },
+      particleFollowFactor: { default: 0 },
+      unk_ac6_p1_1: { default: 0 },
+      unk_ac6_p1_2: { default: 0 },
+      unk_ac6_p1_3: { default: 0 },
+      particleAccelerationX: { default: 0 },
+      particleAccelerationY: { default: 0 },
+      particleAccelerationZ: { default: 0 },
+      color: { default: [1, 1, 1, 1] },
+      particleLength: { default: 1 },
+      particleWidth: { default: 0.1 },
+      unkParticleAcceleration: { default: 0 },
+      unk_ac6_p1_11: { default: 0 },
+      particleGravity: { default: 1 },
+      unk_ac6_p1_13: { default: 0 },
+      unk_ac6_p2_0: { default: 1 },
+      unk_ac6_p2_1: { default: 1 },
+      unk_ac6_p2_2: { default: 0 },
+      unk_ac6_p2_3: { default: [1, 1, 1, 1] },
+      unk_ac6_p2_4: { default: [1, 1, 1, 1] },
+      unk_ac6_p2_5: { default: [1, 1, 1, 1] },
+      unk_ac6_p2_6: { default: 0 },
+    },
+    games: {
+      [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
         fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','hideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
@@ -7356,6 +7550,22 @@ const ActionDataConversion = {
       return props
     }
   },
+  [ActionType.GPUSparkCorrectParticle]: {
+    read(props: GPUSparkCorrectParticleParams, game: Game) {
+      props.emissionInterval /= 30
+      props.emissionIntervalMin /= 30
+      props.emissionIntervalMax /= 30
+      props.particleDuration /= 30
+      return props
+    },
+    write(props: GPUSparkCorrectParticleParams, game: Game) {
+      props.emissionInterval = Math.round(props.emissionInterval * 30)
+      props.emissionIntervalMin = Math.round(props.emissionIntervalMin * 30)
+      props.emissionIntervalMax = Math.round(props.emissionIntervalMax * 30)
+      props.particleDuration = Math.round(props.particleDuration * 30)
+      return props
+    }
+  },
   [ActionType.WindForce]: {
     read(props: WindForceParams, game: Game) {
       if ('fadeOutTime' in props) {
@@ -8203,7 +8413,11 @@ class FXR {
         res.sounds.push({ resource: effect.emissionAudio.sound })
       }
       const action = effect.appearance
-      if (action instanceof PointSprite || action instanceof GPUSparkParticle) {
+      if (
+        action instanceof PointSprite ||
+        action instanceof GPUSparkParticle ||
+        action instanceof GPUSparkCorrectParticle
+      ) {
         res.textures.push({ resource: action.texture, type: 'a' })
       } else if (action instanceof WaterInteraction) {
         res.textures.push({ resource: action.texture, type: 'd' })
@@ -8834,7 +9048,10 @@ abstract class Node {
           slot9.particleOffsetZMax *= factor
           slot9.unk_ds3_f1_135 *= factor
           slot9.unk_ds3_f1_136 *= factor
-        } else if (slot9 instanceof GPUSparkParticle) {
+        } else if (
+          slot9 instanceof GPUSparkParticle ||
+          slot9 instanceof GPUSparkCorrectParticle
+        ) {
           slot9.emitterSizeX *= factor
           slot9.emitterSizeY *= factor
           slot9.emitterSizeZ *= factor
@@ -8904,6 +9121,7 @@ abstract class Node {
           slot9 instanceof GPUStandardParticle ||
           slot9 instanceof GPUStandardCorrectParticle ||
           slot9 instanceof GPUSparkParticle ||
+          slot9 instanceof GPUSparkCorrectParticle ||
           slot9 instanceof DynamicTracer ||
           slot9 instanceof RichModel
         ) {
@@ -9035,7 +9253,8 @@ abstract class Node {
         slot9 instanceof RadialBlur ||
         slot9 instanceof GPUStandardParticle ||
         slot9 instanceof GPUStandardCorrectParticle ||
-        slot9 instanceof GPUSparkParticle
+        slot9 instanceof GPUSparkParticle ||
+        slot9 instanceof GPUSparkCorrectParticle
       ) {
         procVec4Value(slot9, 'color')
       } else if (slot9 instanceof LensFlare) {
@@ -9060,6 +9279,7 @@ abstract class Node {
         slot9 instanceof GPUStandardParticle ||
         slot9 instanceof GPUStandardCorrectParticle ||
         slot9 instanceof GPUSparkParticle ||
+        slot9 instanceof GPUSparkCorrectParticle ||
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
@@ -30733,6 +30953,1712 @@ class GPUSparkParticle extends DataAction {
   }
 }
 
+export interface GPUSparkCorrectParticleParams {
+  /**
+   * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
+   */
+  texture?: number
+  /**
+   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
+   */
+  emitterShape?: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_1?: number
+  /**
+   * The width of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeX?: number
+  /**
+   * The height of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeY?: number
+  /**
+   * The depth of the emitter.
+   * 
+   * **Default**: `1`
+   */
+  emitterSizeZ?: number
+  /**
+   * The rotation of the emitter around the X-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationX?: number
+  /**
+   * The rotation of the emitter around the Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationY?: number
+  /**
+   * The rotation of the emitter around the Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  emitterRotationZ?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_9?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_10?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_11?: number
+  /**
+   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+   * | Shape | Behavior |
+   * |-|-|
+   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
+   */
+  emitterDistribution?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_17?: number
+  /**
+   * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link emissionParticleCountMin}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCount?: number
+  /**
+   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCountMin?: number
+  /**
+   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMin}
+   */
+  emissionParticleCountMax?: number
+  /**
+   * The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionIntervalMin}
+   * - {@link emissionIntervalMax}
+   */
+  emissionInterval?: number
+  /**
+   * The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionInterval}
+   * - {@link emissionIntervalMax}
+   */
+  emissionIntervalMin?: number
+  /**
+   * The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link emissionInterval}
+   * - {@link emissionIntervalMin}
+   */
+  emissionIntervalMax?: number
+  /**
+   * If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
+   * 
+   * **Default**: `false`
+   */
+  limitConcurrentEmissions?: boolean
+  /**
+   * The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
+   * 
+   * **Default**: `0`
+   */
+  concurrentEmissionsLimit?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_26?: number
+  /**
+   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
+   */
+  particleDuration?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_29?: number
+  /**
+   * Particle position offset along the X-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetXMin}
+   * - {@link particleOffsetXMax}
+   */
+  particleOffsetX?: number
+  /**
+   * Particle position offset along the Y-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetYMin}
+   * - {@link particleOffsetYMax}
+   */
+  particleOffsetY?: number
+  /**
+   * Particle position offset along the Z-axis.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleOffsetZMin}
+   * - {@link particleOffsetZMax}
+   */
+  particleOffsetZ?: number
+  /**
+   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetXMin?: number
+  /**
+   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetYMin?: number
+  /**
+   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZMin?: number
+  /**
+   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetXMax?: number
+  /**
+   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetYMax?: number
+  /**
+   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
+   * 
+   * **Default**: `0`
+   */
+  particleOffsetZMax?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_39?: number
+  /**
+   * Minimum particle speed along the X-axis.
+   * 
+   * **Default**: `-0.01`
+   */
+  particleSpeedXMin?: number
+  /**
+   * Minimum particle speed along the Y-axis.
+   * 
+   * **Default**: `-0.01`
+   */
+  particleSpeedYMin?: number
+  /**
+   * Minimum particle speed along the Z-axis.
+   * 
+   * **Default**: `-0.01`
+   */
+  particleSpeedZMin?: number
+  /**
+   * Maximum particle speed along the X-axis.
+   * 
+   * **Default**: `0.01`
+   */
+  particleSpeedXMax?: number
+  /**
+   * Maximum particle speed along the Y-axis.
+   * 
+   * **Default**: `0.01`
+   */
+  particleSpeedYMax?: number
+  /**
+   * Maximum particle speed along the Z-axis.
+   * 
+   * **Default**: `0.01`
+   */
+  particleSpeedZMax?: number
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
+   */
+  rgbMultiplier?: number
+  /**
+   * Alpha multiplier.
+   * 
+   * **Default**: `1`
+   */
+  alphaMultiplier?: number
+  /**
+   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  redMin?: number
+  /**
+   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  greenMin?: number
+  /**
+   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  blueMin?: number
+  /**
+   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  alphaMin?: number
+  /**
+   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  redMax?: number
+  /**
+   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  greenMax?: number
+  /**
+   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  blueMax?: number
+  /**
+   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
+   * 
+   * **Default**: `0`
+   */
+  alphaMax?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
+   */
+  blendMode?: BlendMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_57?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ac6_f1_58?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_59?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_60?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_61?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_62?: number
+  /**
+   * Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
+   * 
+   * **Default**: `1`
+   */
+  particleLengthMin?: number
+  /**
+   * Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
+   * 
+   * **Default**: `1`
+   */
+  particleLengthMax?: number
+  /**
+   * Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   * 
+   * **Default**: `1`
+   */
+  particleWidthMin?: number
+  /**
+   * Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   * 
+   * **Default**: `1`
+   */
+  particleWidthMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_67?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_68?: number
+  /**
+   * Multiplier for {@link particleDuration}.
+   * 
+   * **Default**: `1`
+   */
+  particleDurationMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_70?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_71?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_72?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_73?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_74?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_75?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_76?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_77?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_78?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_79?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_80?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_81?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_82?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_83?: number
+  /**
+   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_84?: number
+  /**
+   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_85?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_86?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
+  unk_ac6_f1_87?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_88?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_89?: number
+  /**
+   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+   * 
+   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * 
+   * **Default**: `0`
+   */
+  limitUpdateDistance?: boolean
+  /**
+   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   * 
+   * **Default**: `0`
+   */
+  updateDistance?: number
+  /**
+   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link particleBounciness}
+   */
+  particleCollision?: boolean
+  /**
+   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link particleCollision}
+   */
+  particleBounciness?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_94?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_95?: number
+  /**
+   * Controls whether or not the particles have a bloom effect.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloom?: boolean
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed?: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen?: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue?: number
+  /**
+   * This controls the intensity of the bloom effect.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_101?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f1_102?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f1_103?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_0?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_1?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
+  unk_ac6_f2_2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_3?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_4?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f2_5?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f2_6?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f2_7?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f2_8?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_13?: number
+  /**
+   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minFadeDistance?: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistance?: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxFadeDistance?: number
+  /**
+   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxDistance?: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistanceThreshold?: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   */
+  maxDistanceThreshold?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_24?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unkDepthBlend1?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unkDepthBlend2?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_f2_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_28?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_29?: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `1`
+   */
+  shadowDarkness?: number
+  /**
+   * When enabled, this stops the particles from being shown indoors.
+   * 
+   * **Default**: `0`
+   */
+  hideIndoors?: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_33?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.5`
+   */
+  unk_ac6_f2_34?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
+  lighting?: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_ac6_f2_36?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_37?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_38?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_f2_39?: number
+  /**
+   * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `0`
+   */
+  particleFollowFactor?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p1_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p1_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p1_3?: ScalarValue
+  /**
+   * Particle acceleration along the X-axis.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationX?: ScalarValue
+  /**
+   * Particle acceleration along the Y-axis.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationY?: ScalarValue
+  /**
+   * Particle acceleration along the Z-axis.
+   * 
+   * **Default**: `0`
+   */
+  particleAccelerationZ?: ScalarValue
+  /**
+   * Color multiplier.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  color?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  particleLength?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0.1`
+   */
+  particleWidth?: ScalarValue
+  /**
+   * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
+   * 
+   * This requires any of the following fields to have a non-zero value:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedXMax}
+   * - {@link particleSpeedYMax}
+   * - {@link particleSpeedZMax}
+   * 
+   * **Default**: `0`
+   */
+  unkParticleAcceleration?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p1_11?: ScalarValue
+  /**
+   * Downwards acceleration for particles.
+   * 
+   * This requires any of the following fields to have a non-zero value:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedXMax}
+   * - {@link particleSpeedYMax}
+   * - {@link particleSpeedZMax}
+   * 
+   * **Default**: `1`
+   */
+  particleGravity?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p1_13?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_p2_0?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ac6_p2_1?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p2_2?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ac6_p2_3?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ac6_p2_4?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  unk_ac6_p2_5?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ac6_p2_6?: ScalarValue
+}
+
+/**
+ * ### {@link ActionType.GPUSparkCorrectParticle Action 10009 - GPUSparkCorrectParticle}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+ * 
+ * Not all of the differences have been documented yet, but here are some:
+ * - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
+ * - The particles from this action are smaller.
+ * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
+ * 
+ * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+ */
+class GPUSparkCorrectParticle extends DataAction {
+  declare type: ActionType.GPUSparkCorrectParticle
+  /**
+   * The ID of the texture of the particles.
+   */
+  texture: number
+  /**
+   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   */
+  emitterShape: EmitterShape
+  unk_ac6_f1_1: number
+  /**
+   * The width of the emitter.
+   */
+  emitterSizeX: number
+  /**
+   * The height of the emitter.
+   */
+  emitterSizeY: number
+  /**
+   * The depth of the emitter.
+   */
+  emitterSizeZ: number
+  /**
+   * The rotation of the emitter around the X-axis.
+   */
+  emitterRotationX: number
+  /**
+   * The rotation of the emitter around the Y-axis.
+   */
+  emitterRotationY: number
+  /**
+   * The rotation of the emitter around the Z-axis.
+   */
+  emitterRotationZ: number
+  unk_ac6_f1_9: number
+  unk_ac6_f1_10: number
+  unk_ac6_f1_11: number
+  /**
+   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+   * | Shape | Behavior |
+   * |-|-|
+   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   */
+  emitterDistribution: number
+  unk_ac6_f1_13: number
+  unk_ac6_f1_14: number
+  unk_ac6_f1_15: number
+  unk_ac6_f1_16: number
+  unk_ac6_f1_17: number
+  /**
+   * The number of particles to emit per emission.
+   * 
+   * See also:
+   * - {@link emissionParticleCountMin}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCount: number
+  /**
+   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMax}
+   */
+  emissionParticleCountMin: number
+  /**
+   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * See also:
+   * - {@link emissionParticleCount}
+   * - {@link emissionParticleCountMin}
+   */
+  emissionParticleCountMax: number
+  /**
+   * The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionIntervalMin}
+   * - {@link emissionIntervalMax}
+   */
+  emissionInterval: number
+  /**
+   * The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionInterval}
+   * - {@link emissionIntervalMax}
+   */
+  emissionIntervalMin: number
+  /**
+   * The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * See also:
+   * - {@link emissionInterval}
+   * - {@link emissionIntervalMin}
+   */
+  emissionIntervalMax: number
+  /**
+   * If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
+   */
+  limitConcurrentEmissions: boolean
+  /**
+   * The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
+   */
+  concurrentEmissionsLimit: number
+  unk_ac6_f1_26: number
+  /**
+   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   */
+  particleDuration: number
+  unk_ac6_f1_28: number
+  unk_ac6_f1_29: number
+  /**
+   * Particle position offset along the X-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetXMin}
+   * - {@link particleOffsetXMax}
+   */
+  particleOffsetX: number
+  /**
+   * Particle position offset along the Y-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetYMin}
+   * - {@link particleOffsetYMax}
+   */
+  particleOffsetY: number
+  /**
+   * Particle position offset along the Z-axis.
+   * 
+   * See also:
+   * - {@link particleOffsetZMin}
+   * - {@link particleOffsetZMax}
+   */
+  particleOffsetZ: number
+  /**
+   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   */
+  particleOffsetXMin: number
+  /**
+   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   */
+  particleOffsetYMin: number
+  /**
+   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   */
+  particleOffsetZMin: number
+  /**
+   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
+   */
+  particleOffsetXMax: number
+  /**
+   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
+   */
+  particleOffsetYMax: number
+  /**
+   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
+   */
+  particleOffsetZMax: number
+  unk_ac6_f1_39: number
+  /**
+   * Minimum particle speed along the X-axis.
+   */
+  particleSpeedXMin: number
+  /**
+   * Minimum particle speed along the Y-axis.
+   */
+  particleSpeedYMin: number
+  /**
+   * Minimum particle speed along the Z-axis.
+   */
+  particleSpeedZMin: number
+  /**
+   * Maximum particle speed along the X-axis.
+   */
+  particleSpeedXMax: number
+  /**
+   * Maximum particle speed along the Y-axis.
+   */
+  particleSpeedYMax: number
+  /**
+   * Maximum particle speed along the Z-axis.
+   */
+  particleSpeedZMax: number
+  /**
+   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   */
+  rgbMultiplier: number
+  /**
+   * Alpha multiplier.
+   */
+  alphaMultiplier: number
+  /**
+   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   */
+  redMin: number
+  /**
+   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   */
+  greenMin: number
+  /**
+   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
+   */
+  blueMin: number
+  /**
+   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
+   */
+  alphaMin: number
+  /**
+   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
+   */
+  redMax: number
+  /**
+   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
+   */
+  greenMax: number
+  /**
+   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
+   */
+  blueMax: number
+  /**
+   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
+   */
+  alphaMax: number
+  /**
+   * Blend mode.
+   */
+  blendMode: BlendMode
+  unk_ac6_f1_57: number
+  unk_ac6_f1_58: number
+  unk_ac6_f1_59: number
+  unk_ac6_f1_60: number
+  unk_ac6_f1_61: number
+  unk_ac6_f1_62: number
+  /**
+   * Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
+   */
+  particleLengthMin: number
+  /**
+   * Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
+   */
+  particleLengthMax: number
+  /**
+   * Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   */
+  particleWidthMin: number
+  /**
+   * Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   */
+  particleWidthMax: number
+  unk_ac6_f1_67: number
+  unk_ac6_f1_68: number
+  /**
+   * Multiplier for {@link particleDuration}.
+   */
+  particleDurationMultiplier: number
+  unk_ac6_f1_70: number
+  unk_ac6_f1_71: number
+  unk_ac6_f1_72: number
+  unk_ac6_f1_73: number
+  unk_ac6_f1_74: number
+  unk_ac6_f1_75: number
+  unk_ac6_f1_76: number
+  unk_ac6_f1_77: number
+  unk_ac6_f1_78: number
+  unk_ac6_f1_79: number
+  unk_ac6_f1_80: number
+  unk_ac6_f1_81: number
+  unk_ac6_f1_82: number
+  unk_ac6_f1_83: number
+  /**
+   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
+   */
+  unk_ac6_f1_84: number
+  /**
+   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
+   */
+  unk_ac6_f1_85: number
+  unk_ac6_f1_86: number
+  unk_ac6_f1_87: number
+  unk_ac6_f1_88: number
+  unk_ac6_f1_89: number
+  /**
+   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+   * 
+   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   */
+  limitUpdateDistance: boolean
+  /**
+   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   */
+  updateDistance: number
+  /**
+   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * See also:
+   * - {@link particleBounciness}
+   */
+  particleCollision: boolean
+  /**
+   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+   * 
+   * See also:
+   * - {@link particleCollision}
+   */
+  particleBounciness: number
+  unk_ac6_f1_94: number
+  unk_ac6_f1_95: number
+  /**
+   * Controls whether or not the particles have a bloom effect.
+   * 
+   * See also:
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloom: boolean
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomRed: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomBlue}
+   * - {@link bloomStrength}
+   */
+  bloomGreen: number
+  /**
+   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomStrength}
+   */
+  bloomBlue: number
+  /**
+   * This controls the intensity of the bloom effect.
+   * 
+   * See also:
+   * - {@link bloom}
+   * - {@link bloomRed}
+   * - {@link bloomGreen}
+   * - {@link bloomBlue}
+   */
+  bloomStrength: number
+  unk_ac6_f1_101: number
+  unk_ac6_f1_102: number
+  unk_ac6_f1_103: number
+  unk_ac6_f2_0: number
+  unk_ac6_f2_1: number
+  unk_ac6_f2_2: number
+  unk_ac6_f2_3: number
+  unk_ac6_f2_4: number
+  unk_ac6_f2_5: number
+  unk_ac6_f2_6: number
+  unk_ac6_f2_7: number
+  unk_ac6_f2_8: number
+  unk_ac6_f2_9: number
+  unk_ac6_f2_10: number
+  unk_ac6_f2_11: number
+  unk_ac6_f2_12: number
+  unk_ac6_f2_13: number
+  /**
+   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minFadeDistance: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * See also:
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistance: number
+  /**
+   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+   * 
+   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxFadeDistance: number
+  /**
+   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * 
+   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link minDistanceThreshold}
+   * - {@link maxDistanceThreshold}
+   */
+  maxDistance: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link maxDistanceThreshold}
+   */
+  minDistanceThreshold: number
+  /**
+   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * See also:
+   * - {@link minFadeDistance}
+   * - {@link minDistance}
+   * - {@link maxFadeDistance}
+   * - {@link maxDistance}
+   * - {@link minDistanceThreshold}
+   */
+  maxDistanceThreshold: number
+  unk_ac6_f2_20: number
+  unk_ac6_f2_21: number
+  unk_ac6_f2_22: number
+  unk_ac6_f2_23: number
+  unk_ac6_f2_24: number
+  unkDepthBlend1: number
+  unkDepthBlend2: number
+  unk_ac6_f2_27: number
+  unk_ac6_f2_28: number
+  unk_ac6_f2_29: number
+  /**
+   * Controls how dark shaded parts of the particle are.
+   */
+  shadowDarkness: number
+  /**
+   * When enabled, this stops the particles from being shown indoors.
+   */
+  hideIndoors: boolean
+  unk_ac6_f2_32: number
+  unk_ac6_f2_33: number
+  unk_ac6_f2_34: number
+  lighting: LightingMode
+  unk_ac6_f2_36: number
+  unk_ac6_f2_37: number
+  unk_ac6_f2_38: number
+  unk_ac6_f2_39: number
+  /**
+   * Controls how well the particles follow the node if it moves.
+   */
+  particleFollowFactor: ScalarValue
+  unk_ac6_p1_1: ScalarValue
+  unk_ac6_p1_2: ScalarValue
+  unk_ac6_p1_3: ScalarValue
+  /**
+   * Particle acceleration along the X-axis.
+   */
+  particleAccelerationX: ScalarValue
+  /**
+   * Particle acceleration along the Y-axis.
+   */
+  particleAccelerationY: ScalarValue
+  /**
+   * Particle acceleration along the Z-axis.
+   */
+  particleAccelerationZ: ScalarValue
+  /**
+   * Color multiplier.
+   */
+  color: Vector4Value
+  particleLength: ScalarValue
+  particleWidth: ScalarValue
+  /**
+   * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
+   * 
+   * This requires any of the following fields to have a non-zero value:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedXMax}
+   * - {@link particleSpeedYMax}
+   * - {@link particleSpeedZMax}
+   */
+  unkParticleAcceleration: ScalarValue
+  unk_ac6_p1_11: ScalarValue
+  /**
+   * Downwards acceleration for particles.
+   * 
+   * This requires any of the following fields to have a non-zero value:
+   * - {@link particleSpeedXMin}
+   * - {@link particleSpeedYMin}
+   * - {@link particleSpeedZMin}
+   * - {@link particleSpeedXMax}
+   * - {@link particleSpeedYMax}
+   * - {@link particleSpeedZMax}
+   */
+  particleGravity: ScalarValue
+  unk_ac6_p1_13: ScalarValue
+  unk_ac6_p2_0: ScalarValue
+  unk_ac6_p2_1: ScalarValue
+  unk_ac6_p2_2: ScalarValue
+  unk_ac6_p2_3: Vector4Value
+  unk_ac6_p2_4: Vector4Value
+  unk_ac6_p2_5: Vector4Value
+  unk_ac6_p2_6: ScalarValue
+  constructor(props: GPUSparkCorrectParticleParams = {}) {
+    super(ActionType.GPUSparkCorrectParticle)
+    this.assign(props)
+  }
+}
+
 export interface DynamicTracerParams {
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
@@ -37079,6 +39005,7 @@ const DataActions = {
   [ActionType.GPUStandardParticle]: GPUStandardParticle, GPUStandardParticle,
   [ActionType.GPUStandardCorrectParticle]: GPUStandardCorrectParticle, GPUStandardCorrectParticle,
   [ActionType.GPUSparkParticle]: GPUSparkParticle, GPUSparkParticle,
+  [ActionType.GPUSparkCorrectParticle]: GPUSparkCorrectParticle, GPUSparkCorrectParticle,
   [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
@@ -38972,6 +40899,7 @@ export {
   GPUStandardParticle,
   GPUStandardCorrectParticle,
   GPUSparkParticle,
+  GPUSparkCorrectParticle,
   DynamicTracer,
   WaterInteraction,
   LensFlare,
