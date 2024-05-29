@@ -5318,10 +5318,10 @@ function writeProperty(
   properties.push(prop)
 }
 
-function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, index: number, modifiers: IModifier<any>[]) {
+function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, game: Game, index: number, modifiers: IModifier<any>[]) {
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
   for (const modifier of prop.modifiers) {
-    writeModifier(modifier, bw, modifiers)
+    writeModifier(modifier, bw, game, modifiers)
   }
 }
 
@@ -5907,7 +5907,7 @@ function writeEffectActions(effect: IEffect, bw: BinaryWriter, game: Game, index
 //#region Functions - Modifier
 function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
   const typeEnumA = br.readUint16()
-  const modifierType: number = Modifier.enumAToType(typeEnumA)
+  const modifierType = Modifier.enumAToType(typeEnumA)
   if (!(modifierType in ModifierType)) {
     throw new Error('Unrecognized modifier type: ' + typeEnumA)
   }
@@ -5985,12 +5985,12 @@ function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
   }
 }
 
-function writeModifier(modifier: IModifier<ValueType>, bw: BinaryWriter, modifiers: IModifier<ValueType>[]) {
+function writeModifier(modifier: IModifier<ValueType>, bw: BinaryWriter, game: Game, modifiers: IModifier<ValueType>[]) {
   const count = modifiers.length
   bw.writeInt16(Modifier.typeToEnumA(modifier.type, modifier.valueType))
   bw.writeUint8(0)
   bw.writeUint8(1)
-  bw.writeInt32(Modifier.enumBValues[modifier.type] | modifier.valueType)
+  bw.writeInt32(Modifier.enumBValues[game][modifier.type] | modifier.valueType)
   bw.writeInt32(modifier.getFieldCount())
   bw.writeInt32(modifier.getPropertyCount())
   bw.reserveInt32(`Section8FieldsOffset${count}`)
@@ -7992,7 +7992,7 @@ class FXR {
     const modifiers: IModifier<ValueType>[] = []
     for (let i = 0; i < properties.length; ++i) {
       // The property has already gone through .for(game) here, so don't use it again
-      writePropertyModifiers(properties[i], bw, i, modifiers)
+      writePropertyModifiers(properties[i], bw, game, i, modifiers)
     }
     bw.fill('Section8Count', modifiers.length)
     bw.pad(16)
@@ -38304,11 +38304,31 @@ namespace Modifier {
   }
 
   export const enumBValues = {
-    [ModifierType.RandomDelta]: 0,
-    [ModifierType.RandomRange]: 4,
-    [ModifierType.ExternalValue1]: 8,
-    [ModifierType.ExternalValue2]: 12,
-    [ModifierType.RandomFraction]: 16,
+    [Game.DarkSouls3]: {
+      [ModifierType.RandomDelta]: 0,
+      [ModifierType.ExternalValue1]: 4,
+      [ModifierType.RandomFraction]: 8,
+    },
+    [Game.Sekiro]: {
+      [ModifierType.RandomDelta]: 0,
+      [ModifierType.RandomRange]: 4,
+      [ModifierType.ExternalValue1]: 8,
+      [ModifierType.RandomFraction]: 12,
+    },
+    [Game.EldenRing]: {
+      [ModifierType.RandomDelta]: 0,
+      [ModifierType.RandomRange]: 4,
+      [ModifierType.ExternalValue1]: 8,
+      [ModifierType.ExternalValue2]: 12,
+      [ModifierType.RandomFraction]: 16,
+    },
+    [Game.ArmoredCore6]: {
+      [ModifierType.RandomDelta]: 0,
+      [ModifierType.RandomRange]: 4,
+      [ModifierType.ExternalValue1]: 8,
+      [ModifierType.ExternalValue2]: 12,
+      [ModifierType.RandomFraction]: 16,
+    },
   }
 
   export function enumAToType(typeEnumA: number): ModifierType {
