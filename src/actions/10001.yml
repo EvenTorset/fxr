@@ -138,11 +138,11 @@ properties:
       The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
   unk_ds3_f1_30:
     field: int
-  particleDurationUnit:
+  particleDuration:
     field: int
-    default: 30
+    default: 1
     desc: |
-      The unit of {@link particleDuration}. The unit of this is 1/30s.
+      The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
   unk_ds3_f1_32:
     field: int
   unk_ds3_f1_33:
@@ -528,11 +528,11 @@ properties:
   unk_ds3_f1_118:
     field: float
     default: 1
-  particleDuration:
+  particleDurationMultiplier:
     field: float
     default: 1
     desc: |
-      The duration of the particles. The unit for this is controlled by {@link particleDurationUnit}.
+      Multiplier for {@link particleDuration}.
   unk_ds3_f1_120:
     field: float
     default: 1
@@ -1053,7 +1053,7 @@ games:
       - limitEmissionCount
       - emissionCountLimit
       - unk_ds3_f1_30
-      - particleDurationUnit
+      - particleDuration
       - unk_ds3_f1_32
       - unk_ds3_f1_33
       - particleOffsetX
@@ -1141,7 +1141,7 @@ games:
       - unk_ds3_f1_116
       - unk_ds3_f1_117
       - unk_ds3_f1_118
-      - particleDuration
+      - particleDurationMultiplier
       - unk_ds3_f1_120
       - particleSizeMultiplier
       - unk_ds3_f1_122

@@ -136,11 +136,11 @@ properties:
       The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
   unk_ac6_f1_26:
     field: int
-  particleDurationUnit:
+  particleDuration:
     field: int
-    default: 30
+    default: 1
     desc: |
-      The unit of {@link particleDuration}. The unit of this is 1/30s.
+      The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
   unk_ac6_f1_28:
     field: int
   unk_ac6_f1_29:
@@ -310,11 +310,11 @@ properties:
   unk_ac6_f1_68:
     field: float
     default: 1
-  particleDuration:
+  particleDurationMultiplier:
     field: float
     default: 1
     desc: |
-      The duration of the particles. The unit for this is controlled by {@link particleDurationUnit}.
+      Multiplier for {@link particleDuration}.
   unk_ac6_f1_70:
     field: float
     default: 1
@@ -739,7 +739,7 @@ games:
       - limitConcurrentEmissions
       - concurrentEmissionsLimit
       - unk_ac6_f1_26
-      - particleDurationUnit
+      - particleDuration
       - unk_ac6_f1_28
       - unk_ac6_f1_29
       - particleOffsetX
@@ -781,7 +781,7 @@ games:
       - particleWidthMax
       - unk_ac6_f1_67
       - unk_ac6_f1_68
-      - particleDuration
+      - particleDurationMultiplier
       - unk_ac6_f1_70
       - unk_ac6_f1_71
       - unk_ac6_f1_72
