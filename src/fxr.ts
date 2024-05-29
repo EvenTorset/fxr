@@ -8622,6 +8622,8 @@ abstract class Node {
           slot9.particleOffsetXMax = anyValueMult(factor, slot9.particleOffsetXMax)
           slot9.particleOffsetYMax = anyValueMult(factor, slot9.particleOffsetYMax)
           slot9.particleOffsetZMax = anyValueMult(factor, slot9.particleOffsetZMax)
+          slot9.unk_ds3_f1_135 = anyValueMult(factor, slot9.unk_ds3_f1_135)
+          slot9.unk_ds3_f1_136 = anyValueMult(factor, slot9.unk_ds3_f1_136)
         } else if (slot9 instanceof LensFlare) {
           slot9.layer1Width = anyValueMult(factor, slot9.layer1Width)
           slot9.layer1Height = anyValueMult(factor, slot9.layer1Height)
