@@ -110,6 +110,7 @@ properties:
     field: int
     default: 80201
     argument: Constant0
+    resource: model
     desc: |
       Model ID.
   sizeX:
@@ -303,6 +304,7 @@ properties:
       Alpha multiplier.
   anibnd:
     field: int
+    resource: anibnd
     desc: |
       Anibnd ID.
     see:

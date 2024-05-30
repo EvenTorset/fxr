@@ -1435,6 +1435,13 @@ enum EmitterShape {
   Cylinder = 4,
 }
 
+enum ResourceType {
+  Texture = 0,
+  Model = 1,
+  Anibnd = 2,
+  Sound = 3,
+}
+
 //#region Types / Interfaces
 export type AnyExternalValue =
   | ExternalValue.DarkSouls3
@@ -1760,6 +1767,8 @@ const ActionData: {
       [name: string]: {
         default: any
         field?: FieldType
+        resource?: ResourceType
+        textureType?: string
         paths?: {
           [game: string]: [string, number]
         }
@@ -1962,7 +1971,7 @@ const ActionData: {
   },
   [ActionType.NodeSound]: {
     props: {
-      sound: { default: 0, field: 1 },
+      sound: { default: 0, field: 1, resource: 3 },
       repeat: { default: false, field: 0 },
       volume: { default: 1, field: 2 },
     },
@@ -1977,7 +1986,7 @@ const ActionData: {
   },
   [ActionType.EmissionSound]: {
     props: {
-      sound: { default: 0, field: 1 },
+      sound: { default: 0, field: 1, resource: 3 },
       unk_ds3_f1_1: { default: 1, field: 2 },
     },
     games: {
@@ -2527,7 +2536,7 @@ const ActionData: {
   },
   [ActionType.PointSprite]: {
     props: {
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       size: { default: 1 },
       color1: { default: [1, 1, 1, 1] },
@@ -2778,7 +2787,7 @@ const ActionData: {
   },
   [ActionType.BillboardEx]: {
     props: {
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       offsetX: { default: 0 },
       offsetY: { default: 0 },
@@ -2804,7 +2813,7 @@ const ActionData: {
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       orientation: { default: OrientationMode.CameraPlane, field: 1 },
-      normalMap: { default: 0, field: 1 },
+      normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       scaleVariationX: { default: 1, field: 2 },
       scaleVariationY: { default: 1, field: 2 },
       uniformScale: { default: false, field: 0 },
@@ -2816,7 +2825,7 @@ const ActionData: {
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
-      specular: { default: 0, field: 1 },
+      specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -2900,9 +2909,9 @@ const ActionData: {
   [ActionType.MultiTextureBillboardEx]: {
     props: {
       orientation: { default: OrientationMode.CameraPlane, field: 1 },
-      mask: { default: 1, field: 1 },
-      layer1: { default: 1, field: 1 },
-      layer2: { default: 1, field: 1 },
+      mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
+      layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
+      layer2: { default: 1, field: 1, resource: 0, textureType: 'a' },
       uniformScale: { default: false, field: 0 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -2914,7 +2923,7 @@ const ActionData: {
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
-      specular: { default: 0, field: 1 },
+      specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
       unk_sdt_f2_38: { default: 1, field: 1 },
@@ -3053,7 +3062,7 @@ const ActionData: {
       bloomGreen: { default: 1, field: 2 },
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
-      model: { default: 80201, field: 1 },
+      model: { default: 80201, field: 1, resource: 1 },
       sizeX: { default: 1 },
       sizeY: { default: 1 },
       sizeZ: { default: 1 },
@@ -3085,7 +3094,7 @@ const ActionData: {
       unk_ds3_f1_11: { default: true, field: 0 },
       unk_ds3_f1_12: { default: true, field: 0 },
       unk_ds3_f1_13: { default: 1, field: 1 },
-      anibnd: { default: 0, field: 1 },
+      anibnd: { default: 0, field: 1, resource: 2 },
       animation: { default: 0, field: 1 },
       loopAnimation: { default: true, field: 0 },
       animationSpeed: { default: 1, field: 2 },
@@ -3168,7 +3177,7 @@ const ActionData: {
   [ActionType.Tracer]: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
-      normalMap: { default: 0, field: 1 },
+      normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2 },
       segmentDuration: { default: 1, field: 2 },
       concurrentSegments: { default: 100, field: 1 },
@@ -3180,11 +3189,11 @@ const ActionData: {
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
-      specular: { default: 0, field: 1 },
+      specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
       specularity: { default: 0.5, field: 2 },
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1 },
       widthMultiplier: { default: 1 },
@@ -3275,9 +3284,9 @@ const ActionData: {
       mode: { default: DistortionMode.NormalMap, field: 1 },
       shape: { default: DistortionShape.Rectangle, field: 1 },
       orientation: { default: OrientationMode.CameraPlane, field: 1 },
-      texture: { default: 0, field: 1 },
-      normalMap: { default: 0, field: 1 },
-      mask: { default: 0, field: 1 },
+      texture: { default: 0, field: 1, resource: 0, textureType: 'a' },
+      normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
+      mask: { default: 0, field: 1, resource: 0, textureType: 'a' },
       scaleVariationX: { default: 1, field: 2 },
       scaleVariationY: { default: 1, field: 2 },
       scaleVariationZ: { default: 1, field: 2 },
@@ -3383,7 +3392,7 @@ const ActionData: {
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      mask: { default: 1, field: 1 },
+      mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
       offsetX: { default: 0 },
       offsetY: { default: 0 },
       offsetZ: { default: 0 },
@@ -3622,9 +3631,9 @@ const ActionData: {
   [ActionType.GPUStandardParticle]: {
     props: {
       unk_ds3_f1_0: { default: 1005, field: 1 },
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       unk_ds3_f1_2: { default: 0, field: 1 },
-      normalMap: { default: 0, field: 1 },
+      normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ds3_f1_5: { default: 0, field: 1 },
       emitterSizeX: { default: 1, field: 2 },
@@ -3823,7 +3832,7 @@ const ActionData: {
       shadowDarkness: { default: 0, field: 2 },
       hideIndoors: { default: 0, field: 0 },
       unk_sdt_f2_32: { default: 1, field: 1 },
-      specular: { default: 0, field: 1 },
+      specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
@@ -3884,9 +3893,9 @@ const ActionData: {
   [ActionType.GPUStandardCorrectParticle]: {
     props: {
       unk_ds3_f1_0: { default: 1005, field: 1 },
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       unk_ds3_f1_2: { default: 0, field: 1 },
-      normalMap: { default: 0, field: 1 },
+      normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ds3_f1_5: { default: 0, field: 1 },
       emitterSizeX: { default: 1, field: 2 },
@@ -4084,7 +4093,7 @@ const ActionData: {
       shadowDarkness: { default: 0, field: 2 },
       hideIndoors: { default: 0, field: 0 },
       unk_sdt_f2_32: { default: 1, field: 1 },
-      specular: { default: 0, field: 1 },
+      specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
@@ -4134,7 +4143,7 @@ const ActionData: {
   },
   [ActionType.LightShaft]: {
     props: {
-      texture: { default: 0, field: 1 },
+      texture: { default: 0, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Add, field: 1 },
       unk_ds3_f1_2: { default: 0.75, field: 2 },
       unk_ds3_f1_3: { default: 0.75, field: 2 },
@@ -4185,7 +4194,7 @@ const ActionData: {
   },
   [ActionType.GPUSparkParticle]: {
     props: {
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ac6_f1_1: { default: 0, field: 1 },
       emitterSizeX: { default: 1, field: 2 },
@@ -4364,7 +4373,7 @@ const ActionData: {
   },
   [ActionType.GPUSparkCorrectParticle]: {
     props: {
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ac6_f1_1: { default: 0, field: 1 },
       emitterSizeX: { default: 1, field: 2 },
@@ -4543,7 +4552,7 @@ const ActionData: {
   [ActionType.DynamicTracer]: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
-      normalMap: { default: 0, field: 1 },
+      normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2 },
       segmentDuration: { default: 1, field: 2 },
       concurrentSegments: { default: 100, field: 1 },
@@ -4555,11 +4564,11 @@ const ActionData: {
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
-      specular: { default: 0, field: 1 },
+      specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
       specularity: { default: 0.5, field: 2 },
-      texture: { default: 1, field: 1 },
+      texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1 },
       widthMultiplier: { default: 1 },
@@ -4659,7 +4668,7 @@ const ActionData: {
   },
   [ActionType.WaterInteraction]: {
     props: {
-      texture: { default: 50004, field: 1 },
+      texture: { default: 50004, field: 1, resource: 0, textureType: 'd' },
       depth: { default: 1, field: 2 },
       scale: { default: 1, field: 2 },
       descent: { default: 0.15, field: 2 },
@@ -4675,7 +4684,7 @@ const ActionData: {
   },
   [ActionType.LensFlare]: {
     props: {
-      layer1: { default: 1, field: 1 },
+      layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer1Width: { default: 1 },
       layer1Height: { default: 1 },
       layer1Color: { default: [1, 1, 1, 1] },
@@ -4691,7 +4700,7 @@ const ActionData: {
       layer1BloomGreen: { default: 1, field: 2 },
       layer1BloomBlue: { default: 1, field: 2 },
       layer1BloomAlpha: { default: 1, field: 2 },
-      layer2: { default: 0, field: 1 },
+      layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer2Width: { default: 1 },
       layer2Height: { default: 1 },
       layer2Color: { default: [1, 1, 1, 1] },
@@ -4707,7 +4716,7 @@ const ActionData: {
       layer2BloomGreen: { default: 1, field: 2 },
       layer2BloomBlue: { default: 1, field: 2 },
       layer2BloomAlpha: { default: 1, field: 2 },
-      layer3: { default: 0, field: 1 },
+      layer3: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer3Width: { default: 1 },
       layer3Height: { default: 1 },
       layer3Color: { default: [1, 1, 1, 1] },
@@ -4723,7 +4732,7 @@ const ActionData: {
       layer3BloomGreen: { default: 1, field: 2 },
       layer3BloomBlue: { default: 1, field: 2 },
       layer3BloomAlpha: { default: 1, field: 2 },
-      layer4: { default: 0, field: 1 },
+      layer4: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer4Width: { default: 1 },
       layer4Height: { default: 1 },
       layer4Color: { default: [1, 1, 1, 1] },
@@ -4830,7 +4839,7 @@ const ActionData: {
       bloomGreen: { default: 1, field: 2 },
       bloomBlue: { default: 1, field: 2 },
       bloomStrength: { default: 0, field: 2 },
-      model: { default: 80201, field: 1 },
+      model: { default: 80201, field: 1, resource: 1 },
       sizeX: { default: 1 },
       sizeY: { default: 1 },
       sizeZ: { default: 1 },
@@ -4854,7 +4863,7 @@ const ActionData: {
       vSpeedMultiplier: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      anibnd: { default: 0, field: 1 },
+      anibnd: { default: 0, field: 1, resource: 2 },
       animation: { default: 0, field: 1 },
       loopAnimation: { default: true, field: 0 },
       animationSpeed: { default: 1, field: 2 },
@@ -8454,7 +8463,7 @@ class FXR {
    * another.
    */
   getResources() {
-    const res: {
+    const reslist: {
       textures: { resource: ScalarValue, type: string }[],
       models: { resource: ScalarValue }[],
       anibnds: { resource: ScalarValue }[],
@@ -8465,55 +8474,24 @@ class FXR {
       anibnds: [],
       sounds: []
     }
-    for (const effect of this.root.walkEffects()) if (effect instanceof BasicEffect) {
-      if (effect.nodeAudio instanceof NodeSound) {
-        res.sounds.push({ resource: effect.nodeAudio.sound })
-      }
-      if (effect.emissionAudio instanceof EmissionSound) {
-        res.sounds.push({ resource: effect.emissionAudio.sound })
-      }
-      const action = effect.appearance
-      if (
-        action instanceof PointSprite ||
-        action instanceof LightShaft ||
-        action instanceof GPUSparkParticle ||
-        action instanceof GPUSparkCorrectParticle
-      ) {
-        res.textures.push({ resource: action.texture, type: 'a' })
-      } else if (action instanceof WaterInteraction) {
-        res.textures.push({ resource: action.texture, type: 'd' })
-      } else if (action instanceof BillboardEx) {
-        res.textures.push({ resource: action.texture, type: 'a' })
-        res.textures.push({ resource: action.normalMap, type: 'n' })
-        res.textures.push({ resource: action.specular, type: '3m' })
-      } else if (action instanceof MultiTextureBillboardEx) {
-        res.textures.push({ resource: action.mask, type: 'a' })
-        res.textures.push({ resource: action.layer1, type: 'a' })
-        res.textures.push({ resource: action.layer2, type: 'a' })
-        res.textures.push({ resource: action.specular, type: '3m' })
-      } else if (action instanceof Model || action instanceof RichModel) {
-        res.models.push({ resource: action.model })
-        res.anibnds.push({ resource: action.anibnd })
-      } else if (action instanceof Tracer || action instanceof DynamicTracer) {
-        res.textures.push({ resource: action.texture, type: 'a' })
-        res.textures.push({ resource: action.normalMap, type: 'n' })
-      } else if (action instanceof Distortion) {
-        res.textures.push({ resource: action.texture, type: 'a' })
-        res.textures.push({ resource: action.normalMap, type: 'n' })
-        res.textures.push({ resource: action.mask, type: 'a' })
-      } else if (action instanceof RadialBlur) {
-        res.textures.push({ resource: action.mask, type: 'a' })
-      } else if (
-        action instanceof GPUStandardParticle ||
-        action instanceof GPUStandardCorrectParticle
-      ) {
-        res.textures.push({ resource: action.texture, type: 'a' })
-        res.textures.push({ resource: action.normalMap, type: 'n' })
-      } else if (action instanceof LensFlare) {
-        res.textures.push({ resource: action.layer1, type: 'a' })
-        res.textures.push({ resource: action.layer2, type: 'a' })
-        res.textures.push({ resource: action.layer3, type: 'a' })
-        res.textures.push({ resource: action.layer4, type: 'a' })
+    for (const action of this.root.walkActions()) {
+      if (action instanceof DataAction) {
+        for (const res of action.getResourceProperties()) {
+          switch (res.type) {
+            case ResourceType.Texture:
+              reslist.textures.push({ resource: action[res.property], type: res.textureType })
+              break
+            case ResourceType.Model:
+              reslist.models.push({ resource: action[res.property] })
+              break
+            case ResourceType.Anibnd:
+              reslist.anibnds.push({ resource: action[res.property] })
+              break
+            case ResourceType.Sound:
+              reslist.sounds.push({ resource: action[res.property] })
+              break
+          }
+        }
       }
     }
     const cleanList = (list: { resource: ScalarValue }[]) => list.map(e => {
@@ -8538,10 +8516,10 @@ class FXR {
     }) as { resource: number }[]
 
     return {
-      textures: cleanList(res.textures),
-      models: cleanList(res.models).map(e => e.resource),
-      anibnds: cleanList(res.anibnds).map(e => e.resource),
-      sounds: cleanList(res.sounds).map(e => e.resource)
+      textures: cleanList(reslist.textures),
+      models: cleanList(reslist.models).map(e => e.resource),
+      anibnds: cleanList(reslist.anibnds).map(e => e.resource),
+      sounds: cleanList(reslist.sounds).map(e => e.resource)
     } as {
       textures: { resource: number, type: string }[],
       models: number[],
@@ -9351,6 +9329,36 @@ abstract class Node {
         ;[slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength] = func(
           [slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength]
         )
+      }
+    }
+  }
+
+  /**
+   * Remaps all resource IDs in the entire branch.
+   * @param func The function that is used to map the old resource IDs to the new ones.
+   */
+  remapResources(func: (type: ResourceType, resource: number, textureType?: string) => number) {
+    for (const action of this.walkActions()) {
+      if (action instanceof DataAction) {
+        for (const res of action.getResourceProperties()) {
+          switch (res.type) {
+            case ResourceType.Texture:
+              action[res.property] = func(
+                res.type,
+                action[res.property] instanceof Property ? action[res.property].valueAt(0) : action[res.property],
+                res.textureType
+              )
+              break
+            case ResourceType.Model:
+            case ResourceType.Anibnd:
+            case ResourceType.Sound:
+              action[res.property] = func(
+                res.type,
+                action[res.property] instanceof Property ? action[res.property].valueAt(0) : action[res.property]
+              )
+              break
+          }
+        }
       }
     }
   }
@@ -10434,6 +10442,35 @@ class DataAction implements IAction {
       this.getProperties.call(convertedProps, game, 'properties2'),
       this.getSection10s.call(convertedProps, game)
     )
+  }
+
+  getResourceProperties(): {
+    property: string
+    type: ResourceType
+    textureType?: string
+  }[] {
+    if (!('props' in ActionData[this.type])) {
+      return []
+    }
+
+    const resourceProps = []
+    for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+      if ('resource' in v) {
+        if (v.resource === ResourceType.Texture) {
+          resourceProps.push({
+            property: k,
+            type: v.resource,
+            textureType: v.textureType
+          })
+        } else {
+          resourceProps.push({
+            property: k,
+            type: v.resource
+          })
+        }
+      }
+    }
+    return resourceProps
   }
 
 }
@@ -41175,6 +41212,7 @@ export {
   DistortionShape,
   InitialDirection,
   EmitterShape,
+  ResourceType,
 
   Nodes,
   EffectActionSlots,

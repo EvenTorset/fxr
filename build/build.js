@@ -41,6 +41,13 @@ const argumentNames = {
   EffectAge: 'Effect age',
 }
 
+const resourceMap = {
+  texture: 0,
+  model: 1,
+  anibnd: 2,
+  sound: 3,
+}
+
 function naturalSorter(as, bs) {
   let a, b, a1, b1, i = 0, n, L,
   rx = /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
@@ -155,7 +162,13 @@ export default async function(writeToDist = true) {
       [ActionType.${data.name}]: {${'properties' in data ? `
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
-            return `${k}: { default: ${defValTS(v)}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
+            return `${k}: { default: ${defValTS(v)}${
+              'field' in v ? `, field: ${fieldMap[v.field]}` : ''
+            }${
+              'resource' in v ? `, resource: ${resourceMap[v.resource]}` : ''
+            }${
+              'textureType' in v ? `, textureType: '${v.textureType}'` : ''
+            } },`
           }).join('\n          ')}
         },
         games: {

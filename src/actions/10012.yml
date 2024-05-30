@@ -15,6 +15,8 @@ properties:
   normalMap:
     field: int
     default: 0
+    resource: texture
+    textureType: 'n'
     desc: |
       Normal map texture ID.
 
@@ -112,6 +114,8 @@ properties:
       Controls how dark shaded parts of the trail are.
   specular:
     field: int
+    resource: texture
+    textureType: 3m
     desc: |
       Specular texture ID.
     see:
@@ -147,6 +151,8 @@ properties:
     field: int
     default: 1
     argument: Constant0
+    resource: texture
+    textureType: a
     desc: |
       Texture ID.
   blendMode:

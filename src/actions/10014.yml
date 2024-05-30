@@ -7,6 +7,8 @@ properties:
   layer1:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       Layer 1 texture ID.
   layer1Width:
@@ -145,6 +147,8 @@ properties:
   layer2:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Layer 2 texture ID.
   layer2Width:
@@ -283,6 +287,8 @@ properties:
   layer3:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Layer 3 texture ID.
   layer3Width:
@@ -421,6 +427,8 @@ properties:
   layer4:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Layer 4 texture ID.
 

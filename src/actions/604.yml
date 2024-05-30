@@ -13,16 +13,22 @@ properties:
   mask:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       Mask texture ID.
   layer1:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       Layer 1 texture ID.
   layer2:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       Layer 2 texture ID.
   uniformScale:
@@ -120,12 +126,12 @@ properties:
       - bloomBlue
   shadowDarkness:
     field: float
-    default: 0
     desc: |
       Controls how dark shaded parts of the particle are.
   specular:
     field: int
-    default: 0
+    resource: texture
+    textureType: 3m
     desc: |
       Specular texture ID.
     see:

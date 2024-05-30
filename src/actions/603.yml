@@ -9,6 +9,8 @@ properties:
     field: int
     default: 1
     argument: Constant0
+    resource: texture
+    textureType: a
     desc: |
       Texture ID.
   blendMode:
@@ -187,6 +189,8 @@ properties:
       Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
   normalMap:
     field: int
+    resource: texture
+    textureType: 'n'
     desc: |
       Normal map texture ID.
   scaleVariationX:
@@ -298,6 +302,8 @@ properties:
       Controls how dark shaded parts of the particle are.
   specular:
     field: int
+    resource: texture
+    textureType: 3m
     desc: |
       Specular texture ID.
     see:

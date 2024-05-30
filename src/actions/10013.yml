@@ -7,6 +7,8 @@ properties:
   texture:
     field: int
     default: 50004
+    resource: texture
+    textureType: d
     desc: |
       The ID for a texture that controls the shape of the interaction.
   depth:

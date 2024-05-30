@@ -27,6 +27,8 @@ properties:
   texture:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Texture ID.
 
@@ -34,6 +36,8 @@ properties:
   normalMap:
     field: int
     default: 0
+    resource: texture
+    textureType: 'n'
     desc: |
       Normal map texture ID.
 
@@ -41,6 +45,8 @@ properties:
   mask:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Mask texture ID. This texture is used to control the color and opacity of the particle.
   scaleVariationX:

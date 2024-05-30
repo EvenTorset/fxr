@@ -6,6 +6,8 @@ desc: |
 properties:
   texture:
     field: int
+    resource: texture
+    textureType: a
     desc: |
       Texture ID.
   blendMode:

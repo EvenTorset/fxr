@@ -82,6 +82,8 @@ properties:
     field: int
     default: 1
     argument: Constant0
+    resource: texture
+    textureType: a
     desc: |
       Mask texture ID. This texture is used to control the opacity of the particle.
   offsetX:

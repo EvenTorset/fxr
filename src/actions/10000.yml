@@ -14,12 +14,16 @@ properties:
   texture:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       The ID of the texture of the particles.
   unk_ds3_f1_2:
     field: int
   normalMap:
     field: int
+    resource: texture
+    textureType: 'n'
   emitterShape:
     type: EmitterShape
     field: int
@@ -882,6 +886,8 @@ properties:
     default: 1
   specular:
     field: int
+    resource: texture
+    textureType: 3m
     desc: |
       Specular texture ID.
     see:

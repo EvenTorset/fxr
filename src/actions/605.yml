@@ -124,6 +124,7 @@ properties:
     field: int
     default: 80201
     argument: Constant0
+    resource: model
     desc: |
       Model ID.
   sizeX:
@@ -355,6 +356,7 @@ properties:
     default: 1
   anibnd:
     field: int
+    resource: anibnd
     desc: |
       Anibnd ID.
     see:

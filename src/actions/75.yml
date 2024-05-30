@@ -6,6 +6,7 @@ desc: |
 properties:
   sound:
     field: int
+    resource: sound
     desc: |
       The ID of the sound to play.
   repeat:

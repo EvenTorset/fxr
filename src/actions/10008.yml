@@ -13,6 +13,8 @@ properties:
   texture:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       The ID of the texture of the particles.
   emitterShape:
