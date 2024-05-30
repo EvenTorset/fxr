@@ -122,7 +122,6 @@ enum ActionType {
    */
   None = 0,
   Unk10002_Fluid = 10002,
-  Unk10003_LightShaft = 10003,
   Unk10010_Tracer = 10010,
   Unk10200_ForceFieldCancelArea = 10200,
   Unk10301_ForceFieldGravityArea = 10301,
@@ -713,6 +712,15 @@ enum ActionType {
    * This action type has a specialized subclass: {@link GPUStandardCorrectParticle}
    */
   GPUStandardCorrectParticle = 10001,
+  /**
+   * ### Action 10003 - LightShaft
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+   * 
+   * This action type has a specialized subclass: {@link LightShaft}
+   */
+  LightShaft = 10003,
   /**
    * ### Action 10008 - GPUSparkParticle
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1617,6 +1625,7 @@ export namespace ActionSlots {
     | PointLight
     | GPUStandardParticle
     | GPUStandardCorrectParticle
+    | LightShaft
     | GPUSparkParticle
     | GPUSparkCorrectParticle
     | DynamicTracer
@@ -4123,6 +4132,57 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
+  [ActionType.LightShaft]: {
+    props: {
+      texture: { default: 0, field: 1 },
+      blendMode: { default: BlendMode.Add, field: 1 },
+      unk_ds3_f1_2: { default: 0.75, field: 2 },
+      unk_ds3_f1_3: { default: 0.75, field: 2 },
+      unk_ds3_f1_4: { default: 2, field: 2 },
+      unk_ds3_f1_5: { default: 0.1, field: 2 },
+      unk_ds3_f1_6: { default: 1, field: 2 },
+      unk_ds3_f1_7: { default: 1, field: 2 },
+      layers: { default: 30, field: 1 },
+      unk_ds3_f1_9: { default: 1, field: 2 },
+      unk_ds3_f1_10: { default: 1, field: 2 },
+      unk_ds3_f1_11: { default: 1, field: 2 },
+      unk_ds3_f1_12: { default: 0, field: 1 },
+      unk_ds3_f1_13: { default: 0, field: 1 },
+      unk_ds3_f1_14: { default: 0, field: 1 },
+      unk_ds3_f1_15: { default: 1, field: 2 },
+      unk_ds3_f1_16: { default: 1, field: 1 },
+      unk_ds3_f1_17: { default: 0, field: 1 },
+      unk_ds3_f1_18: { default: 1, field: 2 },
+      unk_ds3_f1_19: { default: 1, field: 2 },
+      unk_ds3_f1_20: { default: 1, field: 2 },
+      unk_ds3_f1_21: { default: 1, field: 2 },
+      unk_ds3_f1_22: { default: -1, field: 2 },
+      unk_ds3_f1_23: { default: -1, field: 2 },
+      unk_ds3_f1_24: { default: 0, field: 1 },
+      unk_ds3_f1_25: { default: 1, field: 2 },
+      unk_ds3_f1_26: { default: 1, field: 2 },
+      unk_ds3_f1_27: { default: 1, field: 2 },
+      unk_ds3_f1_28: { default: -1, field: 2 },
+      unk_ds3_f1_29: { default: 0, field: 1 },
+      width: { default: 1 },
+      height: { default: 1 },
+      color1: { default: [1, 1, 1, 1] },
+      color2: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1] },
+      unk_ds3_p1_5: { default: 0 },
+      unk_ds3_p1_6: { default: 0 },
+      unk_ds3_p1_7: { default: 0 },
+      unk_ds3_p1_8: { default: 1 },
+      unk_ds3_p1_9: { default: 1 },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','layers','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29'],
+        properties1: ['width','height','color1','color2','color3','unk_ds3_p1_5','unk_ds3_p1_6','unk_ds3_p1_7','unk_ds3_p1_8','unk_ds3_p1_9']
+      },
+      [Game.Sekiro]: Game.DarkSouls3
+    }
+  },
   [ActionType.GPUSparkParticle]: {
     props: {
       texture: { default: 1, field: 1 },
@@ -5290,7 +5350,7 @@ const EffectActionSlots = {
       ActionType.GPUStandardParticle,
       ActionType.GPUStandardCorrectParticle,
       ActionType.Unk10002_Fluid,
-      ActionType.Unk10003_LightShaft,
+      ActionType.LightShaft,
       ActionType.GPUSparkParticle,
       ActionType.GPUSparkCorrectParticle,
       ActionType.Unk10010_Tracer,
@@ -8415,6 +8475,7 @@ class FXR {
       const action = effect.appearance
       if (
         action instanceof PointSprite ||
+        action instanceof LightShaft ||
         action instanceof GPUSparkParticle ||
         action instanceof GPUSparkCorrectParticle
       ) {
@@ -9048,6 +9109,9 @@ abstract class Node {
           slot9.particleOffsetZMax *= factor
           slot9.unk_ds3_f1_135 *= factor
           slot9.unk_ds3_f1_136 *= factor
+        } else if (slot9 instanceof LightShaft) {
+          slot9.width = anyValueMult(factor, slot9.width)
+          slot9.height = anyValueMult(factor, slot9.height)
         } else if (
           slot9 instanceof GPUSparkParticle ||
           slot9 instanceof GPUSparkCorrectParticle
@@ -9229,6 +9293,7 @@ abstract class Node {
         slot9 instanceof BillboardEx ||
         slot9 instanceof Model ||
         slot9 instanceof Tracer ||
+        slot9 instanceof LightShaft ||
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
@@ -29248,6 +29313,312 @@ class GPUStandardCorrectParticle extends DataAction {
   }
 }
 
+export interface LightShaftParams {
+  /**
+   * Texture ID.
+   * 
+   * **Default**: `0`
+   */
+  texture?: number
+  /**
+   * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Add}
+   */
+  blendMode?: BlendMode
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.75`
+   */
+  unk_ds3_f1_2?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.75`
+   */
+  unk_ds3_f1_3?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `2`
+   */
+  unk_ds3_f1_4?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.1`
+   */
+  unk_ds3_f1_5?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_6?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_7?: number
+  /**
+   * The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
+   * 
+   * **Default**: `30`
+   */
+  layers?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_9?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_10?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_17?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_18?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_19?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_20?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_21?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_22?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_24?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_25?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_26?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_27?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
+  unk_ds3_f1_28?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_29?: number
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  width?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  height?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  color1?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  color2?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
+  color3?: Vector4Value
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_5?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_6?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_p1_7?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p1_8?: ScalarValue
+  /**
+   * Unknown.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_p1_9?: ScalarValue
+}
+
+/**
+ * ### {@link ActionType.LightShaft Action 10003 - LightShaft}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+ */
+class LightShaft extends DataAction {
+  declare type: ActionType.LightShaft
+  /**
+   * Texture ID.
+   */
+  texture: number
+  /**
+   * Blend mode.
+   */
+  blendMode: BlendMode
+  unk_ds3_f1_2: number
+  unk_ds3_f1_3: number
+  unk_ds3_f1_4: number
+  unk_ds3_f1_5: number
+  unk_ds3_f1_6: number
+  unk_ds3_f1_7: number
+  /**
+   * The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
+   */
+  layers: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_10: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f1_16: number
+  unk_ds3_f1_17: number
+  unk_ds3_f1_18: number
+  unk_ds3_f1_19: number
+  unk_ds3_f1_20: number
+  unk_ds3_f1_21: number
+  unk_ds3_f1_22: number
+  unk_ds3_f1_23: number
+  unk_ds3_f1_24: number
+  unk_ds3_f1_25: number
+  unk_ds3_f1_26: number
+  unk_ds3_f1_27: number
+  unk_ds3_f1_28: number
+  unk_ds3_f1_29: number
+  width: ScalarValue
+  height: ScalarValue
+  color1: Vector4Value
+  color2: Vector4Value
+  color3: Vector4Value
+  unk_ds3_p1_5: ScalarValue
+  unk_ds3_p1_6: ScalarValue
+  unk_ds3_p1_7: ScalarValue
+  unk_ds3_p1_8: ScalarValue
+  unk_ds3_p1_9: ScalarValue
+  constructor(props: LightShaftParams = {}) {
+    super(ActionType.LightShaft)
+    this.assign(props)
+  }
+}
+
 export interface GPUSparkParticleParams {
   /**
    * The ID of the texture of the particles.
@@ -39004,6 +39375,7 @@ const DataActions = {
   [ActionType.Unk800]: Unk800, Unk800,
   [ActionType.GPUStandardParticle]: GPUStandardParticle, GPUStandardParticle,
   [ActionType.GPUStandardCorrectParticle]: GPUStandardCorrectParticle, GPUStandardCorrectParticle,
+  [ActionType.LightShaft]: LightShaft, LightShaft,
   [ActionType.GPUSparkParticle]: GPUSparkParticle, GPUSparkParticle,
   [ActionType.GPUSparkCorrectParticle]: GPUSparkCorrectParticle, GPUSparkCorrectParticle,
   [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
@@ -40898,6 +41270,7 @@ export {
   Unk800,
   GPUStandardParticle,
   GPUStandardCorrectParticle,
+  LightShaft,
   GPUSparkParticle,
   GPUSparkCorrectParticle,
   DynamicTracer,
