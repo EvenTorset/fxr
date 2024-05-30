@@ -8494,12 +8494,15 @@ class FXR {
         }
       }
     }
-    const cleanList = (list: { resource: ScalarValue }[]) => list.map(e => {
+    const cleanList = (list: { resource: ScalarValue, type?: string }[]) => list.map(e => {
       if (e.resource instanceof Property) {
         e.resource = e.resource.valueAt(0)
       }
       return e
-    }).filter((e, i, a) => e.resource !== 0 && a.findIndex(f => f.resource === e.resource) === i).sort((a, b) => {
+    }).filter((e, i, a) => e.resource !== 0 && a.findIndex(f =>
+      f.resource === e.resource &&
+      f.type === e.type
+    ) === i).sort((a, b) => {
       if (a.resource instanceof Property) {
         if (b.resource instanceof Property) {
           return a.resource.valueAt(0) - b.resource.valueAt(0)
