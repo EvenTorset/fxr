@@ -99,9 +99,11 @@ properties:
   width:
     type: ScalarValue
     default: 1
+    scale: true
   height:
     type: ScalarValue
     default: 1
+    scale: true
   color1:
     type: Vector4Value
     default: [1, 1, 1, 1]

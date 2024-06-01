@@ -30,16 +30,19 @@ properties:
   emitterSizeX:
     field: float
     default: 1
+    scale: true
     desc: |
       The width of the emitter.
   emitterSizeY:
     field: float
     default: 1
+    scale: true
     desc: |
       The height of the emitter.
   emitterSizeZ:
     field: float
     default: 1
+    scale: true
     desc: |
       The depth of the emitter.
   emitterRotationX:
@@ -150,6 +153,7 @@ properties:
     field: int
   particleOffsetX:
     field: float
+    scale: true
     desc: |
       Particle position offset along the X-axis.
     see:
@@ -157,6 +161,7 @@ properties:
       - particleOffsetXMax
   particleOffsetY:
     field: float
+    scale: true
     desc: |
       Particle position offset along the Y-axis.
     see:
@@ -164,6 +169,7 @@ properties:
       - particleOffsetYMax
   particleOffsetZ:
     field: float
+    scale: true
     desc: |
       Particle position offset along the Z-axis.
     see:
@@ -171,26 +177,32 @@ properties:
       - particleOffsetZMax
   particleOffsetXMin:
     field: float
+    scale: true
     desc: |
       Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
   particleOffsetYMin:
     field: float
+    scale: true
     desc: |
       Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
   particleOffsetZMin:
     field: float
+    scale: true
     desc: |
       Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
   particleOffsetXMax:
     field: float
+    scale: true
     desc: |
       Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
   particleOffsetYMax:
     field: float
+    scale: true
     desc: |
       Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
   particleOffsetZMax:
     field: float
+    scale: true
     desc: |
       Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
   unk_ac6_f1_39:
@@ -198,31 +210,37 @@ properties:
   particleSpeedXMin:
     field: float
     default: -0.01
+    scale: true
     desc: |
       Minimum particle speed along the X-axis.
   particleSpeedYMin:
     field: float
     default: -0.01
+    scale: true
     desc: |
       Minimum particle speed along the Y-axis.
   particleSpeedZMin:
     field: float
     default: -0.01
+    scale: true
     desc: |
       Minimum particle speed along the Z-axis.
   particleSpeedXMax:
     field: float
     default: 0.01
+    scale: true
     desc: |
       Maximum particle speed along the X-axis.
   particleSpeedYMax:
     field: float
     default: 0.01
+    scale: true
     desc: |
       Maximum particle speed along the Y-axis.
   particleSpeedZMax:
     field: float
     default: 0.01
+    scale: true
     desc: |
       Maximum particle speed along the Z-axis.
   rgbMultiplier:
@@ -290,21 +308,25 @@ properties:
   particleLengthMin:
     field: float
     default: 1
+    scale: true
     desc: |
       Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
   particleLengthMax:
     field: float
     default: 1
+    scale: true
     desc: |
       Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
   particleWidthMin:
     field: float
     default: 1
+    scale: true
     desc: |
       Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
   particleWidthMax:
     field: float
     default: 1
+    scale: true
     desc: |
       Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
   unk_ac6_f1_67:
@@ -358,10 +380,12 @@ properties:
     field: int
   unk_ac6_f1_84:
     field: float
+    scale: true
     desc: |
       Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
   unk_ac6_f1_85:
     field: float
+    scale: true
     desc: |
       Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
   unk_ac6_f1_86:
@@ -381,6 +405,7 @@ properties:
       It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
   updateDistance:
     field: float
+    scale: true
     desc: |
       Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
   particleCollision:
@@ -494,6 +519,7 @@ properties:
   minFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -509,6 +535,7 @@ properties:
   minDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -522,6 +549,7 @@ properties:
   maxFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -535,6 +563,7 @@ properties:
   maxDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -550,6 +579,7 @@ properties:
   minDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -561,6 +591,7 @@ properties:
   maxDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -584,6 +615,7 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
+    scale: true
   unk_ac6_f2_27:
     field: int
     default: 1
@@ -632,14 +664,17 @@ properties:
     type: ScalarValue
   particleAccelerationX:
     type: ScalarValue
+    scale: true
     desc: |
       Particle acceleration along the X-axis.
   particleAccelerationY:
     type: ScalarValue
+    scale: true
     desc: |
       Particle acceleration along the Y-axis.
   particleAccelerationZ:
     type: ScalarValue
+    scale: true
     desc: |
       Particle acceleration along the Z-axis.
   color:
@@ -655,6 +690,7 @@ properties:
     default: 0.1
   unkParticleAcceleration:
     type: ScalarValue
+    scale: true
     desc: |
       Similar to {@link particleAccelerationZ}, but this does not go exactly north?
 
@@ -670,6 +706,7 @@ properties:
   particleGravity:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Downwards acceleration for particles.
 

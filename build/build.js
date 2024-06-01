@@ -48,6 +48,11 @@ const resourceMap = {
   sound: 3,
 }
 
+const scaleMap = {
+  true: 1,
+  ifNotMinusOne: 2,
+}
+
 function naturalSorter(as, bs) {
   let a, b, a1, b1, i = 0, n, L,
   rx = /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
@@ -168,6 +173,8 @@ export default async function(writeToDist = true) {
               'resource' in v ? `, resource: ${resourceMap[v.resource]}` : ''
             }${
               'textureType' in v ? `, textureType: '${v.textureType}'` : ''
+            }${
+              'scale' in v ? `, scale: ${scaleMap[v.scale]}` : ''
             } },`
           }).join('\n          ')}
         },

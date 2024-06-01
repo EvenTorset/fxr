@@ -35,16 +35,19 @@ properties:
   emitterSizeX:
     field: float
     default: 1
+    scale: true
     desc: |
       The width of the emitter.
   emitterSizeY:
     field: float
     default: 1
+    scale: true
     desc: |
       The height of the emitter.
   emitterSizeZ:
     field: float
     default: 1
+    scale: true
     desc: |
       The depth of the emitter.
   emitterRotationX:
@@ -153,6 +156,7 @@ properties:
     field: int
   particleOffsetX:
     field: float
+    scale: true
     desc: |
       Particle position offset along the X-axis.
     see:
@@ -160,6 +164,7 @@ properties:
       - particleOffsetXMax
   particleOffsetY:
     field: float
+    scale: true
     desc: |
       Particle position offset along the Y-axis.
     see:
@@ -167,6 +172,7 @@ properties:
       - particleOffsetYMax
   particleOffsetZ:
     field: float
+    scale: true
     desc: |
       Particle position offset along the Z-axis.
     see:
@@ -174,30 +180,37 @@ properties:
       - particleOffsetZMax
   particleOffsetXMin:
     field: float
+    scale: true
     desc: |
       Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
   particleOffsetYMin:
     field: float
+    scale: true
     desc: |
       Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
   particleOffsetZMin:
     field: float
+    scale: true
     desc: |
       Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
   particleOffsetXMax:
     field: float
+    scale: true
     desc: |
       Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
   particleOffsetYMax:
     field: float
+    scale: true
     desc: |
       Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
   particleOffsetZMax:
     field: float
+    scale: true
     desc: |
       Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
   particleSpeedX:
     field: float
+    scale: true
     desc: |
       Particle speed along the X-axis.
     see:
@@ -205,6 +218,7 @@ properties:
       - particleSpeedXMax
   particleSpeedY:
     field: float
+    scale: true
     desc: |
       Particle speed along the Y-axis.
     see:
@@ -212,6 +226,7 @@ properties:
       - particleSpeedYMax
   particleSpeedZ:
     field: float
+    scale: true
     desc: |
       Particle speed along the Z-axis.
     see:
@@ -219,50 +234,62 @@ properties:
       - particleSpeedZMax
   particleSpeedXMin:
     field: float
+    scale: true
     desc: |
       Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
   particleSpeedYMin:
     field: float
+    scale: true
     desc: |
       Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
   particleSpeedZMin:
     field: float
+    scale: true
     desc: |
       Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
   particleSpeedXMax:
     field: float
+    scale: true
     desc: |
       Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
   particleSpeedYMax:
     field: float
+    scale: true
     desc: |
       Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
   particleSpeedZMax:
     field: float
+    scale: true
     desc: |
       Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
   particleAccelerationXMin:
     field: float
+    scale: true
     desc: |
       Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
   particleAccelerationYMin:
     field: float
+    scale: true
     desc: |
       Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
   particleAccelerationZMin:
     field: float
+    scale: true
     desc: |
       Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
   particleAccelerationXMax:
     field: float
+    scale: true
     desc: |
       Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
   particleAccelerationYMax:
     field: float
+    scale: true
     desc: |
       Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
   particleAccelerationZMax:
     field: float
+    scale: true
     desc: |
       Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
   particleRotationVarianceX:
@@ -348,11 +375,13 @@ properties:
   particleSizeX:
     field: float
     default: 1
+    scale: true
     desc: |
       The width of the particle.
   particleSizeY:
     field: float
     default: 1
+    scale: true
     desc: |
       The height of the particle.
   unk_ds3_f1_73:
@@ -360,32 +389,38 @@ properties:
     default: 1
   particleSizeXMin:
     field: float
+    scale: true
     desc: |
       The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
   particleSizeYMin:
     field: float
+    scale: true
     desc: |
       The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
   unk_ds3_f1_76:
     field: float
   particleSizeXMax:
     field: float
+    scale: true
     desc: |
       The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
   particleSizeYMax:
     field: float
+    scale: true
     desc: |
       The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
   unk_ds3_f1_79:
     field: float
   particleGrowthRateXStatic:
     field: float
+    scale: true
     desc: |
       The rate of change for the width of the particles.
     see:
       - particleGrowthRateX
   particleGrowthRateYStatic:
     field: float
+    scale: true
     desc: |
       The rate of change for the height of the particles.
     see:
@@ -394,40 +429,48 @@ properties:
     field: float
   particleGrowthRateXMin:
     field: float
+    scale: true
     desc: |
       Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
   particleGrowthRateYMin:
     field: float
+    scale: true
     desc: |
       Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
   unk_ds3_f1_85:
     field: float
   particleGrowthRateXMax:
     field: float
+    scale: true
     desc: |
       Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
   particleGrowthRateYMax:
     field: float
+    scale: true
     desc: |
       Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
   unk_ds3_f1_88:
     field: float
   particleGrowthAccelerationXMin:
     field: float
+    scale: true
     desc: |
       Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
   particleGrowthAccelerationYMin:
     field: float
+    scale: true
     desc: |
       Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
   unk_ds3_f1_91:
     field: float
   particleGrowthAccelerationXMax:
     field: float
+    scale: true
     desc: |
       Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
   particleGrowthAccelerationYMax:
     field: float
+    scale: true
     desc: |
       Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
   unk_ds3_f1_94:
@@ -582,8 +625,10 @@ properties:
     field: int
   unk_ds3_f1_135:
     field: float
+    scale: true
   unk_ds3_f1_136:
     field: float
+    scale: true
   unk_ds3_f1_137:
     field: int
   unk_ds3_f1_138:
@@ -603,6 +648,7 @@ properties:
       It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
   updateDistance:
     field: float
+    scale: true
     desc: |
       Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
   particleCollision:
@@ -647,6 +693,7 @@ properties:
   particleTraceLength:
     field: float
     default: 1
+    scale: true
     desc: |
       Controls how much the particles are stretched when {@link traceParticles} is enabled.
   traceParticlesThreshold:
@@ -772,6 +819,7 @@ properties:
   minDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -787,6 +835,7 @@ properties:
   minFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -800,6 +849,7 @@ properties:
   maxFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -813,6 +863,7 @@ properties:
   maxDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -828,6 +879,7 @@ properties:
   minDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -839,6 +891,7 @@ properties:
   maxDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -862,6 +915,7 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
+    scale: true
   unk_ds3_f2_27:
     field: int
     default: 1
@@ -931,6 +985,7 @@ properties:
     type: ScalarValue
   particleAccelerationX:
     type: ScalarValue
+    scale: true
     desc: |
       Particle acceleration along the X-axis.
     see:
@@ -938,6 +993,7 @@ properties:
       - particleAccelerationXMax
   particleAccelerationY:
     type: ScalarValue
+    scale: true
     desc: |
       Particle acceleration along the Y-axis.
     see:
@@ -945,6 +1001,7 @@ properties:
       - particleAccelerationYMax
   particleAccelerationZ:
     type: ScalarValue
+    scale: true
     desc: |
       Particle acceleration along the Z-axis.
     see:
@@ -963,12 +1020,14 @@ properties:
       - particleAngularAccelerationZMax
   particleGrowthRateX:
     type: ScalarValue
+    scale: true
     desc: |
       The rate of change for the width of the particles.
     see:
       - particleGrowthRateXStatic
   particleGrowthRateY:
     type: ScalarValue
+    scale: true
     desc: |
       The rate of change for the height of the particles.
     see:
@@ -987,12 +1046,14 @@ properties:
     type: ScalarValue
   unkParticleAcceleration:
     type: ScalarValue
+    scale: true
     desc: |
       Seemingly identical to {@link particleAccelerationZ}?
   unk_ds3_p1_17:
     type: ScalarValue
   particleGravity:
     type: ScalarValue
+    scale: true
     desc: |
       Downwards acceleration for particles.
   particleRandomTurnAngle:

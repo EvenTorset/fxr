@@ -8,6 +8,7 @@ properties:
     type: ScalarValue
     default: 0.1
     argument: EffectAge
+    scale: true
     desc: >
       How much the emitter must move to trigger emission.
   maxConcurrent:

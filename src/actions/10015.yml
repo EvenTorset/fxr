@@ -117,6 +117,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
+    scale: true
     desc: |
       The width of the particle.
 
@@ -129,6 +130,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
+    scale: true
     desc: |
       The height of the particle.
 
@@ -141,6 +143,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
+    scale: true
     desc: |
       The depth of the particle.
 
@@ -400,6 +403,7 @@ properties:
   minDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -415,6 +419,7 @@ properties:
   minFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -428,6 +433,7 @@ properties:
   maxFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -441,6 +447,7 @@ properties:
   maxDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -456,6 +463,7 @@ properties:
   minDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -467,6 +475,7 @@ properties:
   maxDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -490,6 +499,7 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
+    scale: true
   unk_er_f2_27:
     field: int
   unk_er_f2_28:

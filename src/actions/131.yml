@@ -18,6 +18,7 @@ properties:
   speed:
     type: ScalarValue
     argument: EffectAge
+    scale: true
     desc: |
       Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
   scaleX:

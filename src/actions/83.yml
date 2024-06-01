@@ -7,11 +7,13 @@ properties:
   speedZ:
     type: ScalarValue
     argument: Constant0
+    scale: true
     desc: |
       Controls the speed of the node along its Z-axis.
   accelerationZ:
     type: ScalarValue
     argument: EffectAge
+    scale: true
     desc: |
       Controls the acceleration of the node along its Z-axis. This value cannot be negative.
   accelerationMultiplierZ:
@@ -23,6 +25,7 @@ properties:
   accelerationY:
     type: ScalarValue
     argument: EffectAge
+    scale: true
     desc: |
       Controls the acceleration of the node along its Y-axis.
   maxTurnAngle:

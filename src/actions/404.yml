@@ -19,18 +19,21 @@ properties:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    scale: true
     desc: |
       Width of the cuboid.
   sizeY:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    scale: true
     desc: |
       Height of the cuboid.
   sizeZ:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    scale: true
     desc: |
       Depth of the cuboid.
 games:

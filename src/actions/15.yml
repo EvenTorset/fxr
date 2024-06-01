@@ -8,6 +8,7 @@ properties:
     type: Vector3Value
     default: [0, 0, 0]
     argument: EffectAge
+    scale: true
     desc: |
       An offset for the position of the node.
   unk_er_f1_0:

@@ -7,6 +7,7 @@ properties:
   speedZ:
     type: ScalarValue
     argument: Constant0
+    scale: true
     desc: |
       Controls the speed of the node along its Z-axis.
   speedMultiplierZ:
@@ -18,6 +19,7 @@ properties:
   accelerationY:
     type: ScalarValue
     argument: EffectAge
+    scale: true
     desc: |
       Controls the acceleration of the node along its Y-axis.
   angularSpeedX:

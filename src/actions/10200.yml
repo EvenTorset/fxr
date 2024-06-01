@@ -27,12 +27,14 @@ properties:
   sphereRadius:
     field: float
     default: 10
+    scale: true
     desc: |
       The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
     see:
       - shape
   boxSizeX:
     field: float
+    scale: true
     desc: |
       The width of the {@link ForceVolumeShape.Box box} volume.
     see:
@@ -41,6 +43,7 @@ properties:
       - boxSizeZ
   boxSizeY:
     field: float
+    scale: true
     desc: |
       The height of the {@link ForceVolumeShape.Box box} volume.
     see:
@@ -49,6 +52,7 @@ properties:
       - boxSizeZ
   boxSizeZ:
     field: float
+    scale: true
     desc: |
       The depth of the {@link ForceVolumeShape.Box box} volume.
     see:
@@ -57,6 +61,7 @@ properties:
       - boxSizeY
   cylinderHeight:
     field: float
+    scale: true
     desc: |
       The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
     see:
@@ -64,6 +69,7 @@ properties:
       - cylinderRadius
   cylinderRadius:
     field: float
+    scale: true
     desc: |
       The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
     see:
@@ -71,6 +77,7 @@ properties:
       - cylinderHeight
   squarePrismHeight:
     field: float
+    scale: true
     desc: |
       The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
     see:
@@ -78,6 +85,7 @@ properties:
       - squarePrismApothem
   squarePrismApothem:
     field: float
+    scale: true
     desc: |
       The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
     see:
