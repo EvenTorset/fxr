@@ -73,57 +73,15 @@ properties:
     default: false
     desc: |
       Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
-  bloomRed:
-    field: float
-    default: 1
+  bloomColor:
+    field: vec4
+    default: [1, 1, 1, 0]
     desc: |
-      Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
       Note:
       - This has no effect if the "Effects Quality" setting is set to "Low".
       - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
-  bloomGreen:
-    field: float
-    default: 1
-    desc: |
-      Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomRed
-      - bloomBlue
-      - bloomStrength
-  bloomBlue:
-    field: float
-    default: 1
-    desc: |
-      Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomRed
-      - bloomGreen
-      - bloomStrength
-  bloomStrength:
-    field: float
-    desc: |
-      Controls the strength of the additional bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
   shadowDarkness:
     field: float
     desc: |
@@ -639,10 +597,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11
@@ -736,10 +694,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11
@@ -842,10 +800,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11
@@ -893,10 +851,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11

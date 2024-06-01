@@ -253,38 +253,16 @@ properties:
     default: 1
     desc: |
       Alpha multiplier.
-  redMin:
-    field: float
+  colorMin:
+    field: vec4
+    default: [0, 0, 0, 0]
     desc: |
-      Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
-  greenMin:
-    field: float
+      Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+  colorMax:
+    field: vec4
+    default: [0, 0, 0, 0]
     desc: |
-      Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
-  blueMin:
-    field: float
-    desc: |
-      Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-  alphaMin:
-    field: float
-    desc: |
-      Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-  redMax:
-    field: float
-    desc: |
-      Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-  greenMax:
-    field: float
-    desc: |
-      Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-  blueMax:
-    field: float
-    desc: |
-      Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-  alphaMax:
-    field: float
-    desc: |
-      Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
+      Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
   blendMode:
     type: BlendMode
     field: int
@@ -431,50 +409,18 @@ properties:
     desc: |
       Controls whether or not the particles have a bloom effect.
     see:
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
-  bloomRed:
-    field: float
-    default: 1
+      - bloomColor
+  bloomColor:
+    field: vec4
+    default: [1, 1, 1, 0]
     desc: |
-      The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
     see:
       - bloom
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
-  bloomGreen:
-    field: float
-    default: 1
-    desc: |
-      The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-    see:
-      - bloom
-      - bloomRed
-      - bloomBlue
-      - bloomStrength
-  bloomBlue:
-    field: float
-    default: 1
-    desc: |
-      The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-    see:
-      - bloom
-      - bloomRed
-      - bloomGreen
-      - bloomStrength
-  bloomStrength:
-    field: float
-    default: 1
-    desc: |
-      This controls the intensity of the bloom effect.
-    see:
-      - bloom
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
   unk_ac6_f1_101:
     field: float
     default: 1
@@ -790,14 +736,14 @@ games:
       - particleSpeedZMax
       - rgbMultiplier
       - alphaMultiplier
-      - redMin
-      - greenMin
-      - blueMin
-      - alphaMin
-      - redMax
-      - greenMax
-      - blueMax
-      - alphaMax
+      - colorMin
+      #
+      #
+      #
+      - colorMax
+      #
+      #
+      #
       - blendMode
       - unk_ac6_f1_57
       - unk_ac6_f1_58
@@ -839,10 +785,10 @@ games:
       - unk_ac6_f1_94
       - unk_ac6_f1_95
       - bloom
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ac6_f1_101
       - unk_ac6_f1_102
       - unk_ac6_f1_103

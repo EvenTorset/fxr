@@ -994,6 +994,9 @@ enum FieldType {
   Boolean,
   Integer,
   Float,
+  Vector2,
+  Vector3,
+  Vector4,
 }
 
 enum BlendMode {
@@ -1566,6 +1569,22 @@ export namespace TypeMap {
     [PropertyFunction.Bezier]: IBezierKeyframe<T>
     [PropertyFunction.Hermite]: IHermiteKeyframe<T>
   }
+  export type FieldTypeName = {
+    [FieldType.Boolean]: 'Boolean'
+    [FieldType.Integer]: 'Integer'
+    [FieldType.Float]: 'Float'
+    [FieldType.Vector2]: 'Vector2'
+    [FieldType.Vector3]: 'Vector3'
+    [FieldType.Vector4]: 'Vector4'
+  }
+  export type FieldValue = {
+    [FieldType.Boolean]: boolean
+    [FieldType.Integer]: number
+    [FieldType.Float]: number
+    [FieldType.Vector2]: Vector2
+    [FieldType.Vector3]: Vector3
+    [FieldType.Vector4]: Vector4
+  }
 }
 
 export interface IBasicKeyframe<T extends ValueType> {
@@ -1633,7 +1652,7 @@ export interface IModifier<T extends ValueType> {
   readonly type: ModifierType
   readonly valueType: T
   getFieldCount(): number
-  getFields(): NumericalField[]
+  getFields(): Field<FieldType>[]
   getPropertyCount(): number
   getProperties(game: Game): AnyProperty[]
   toJSON(): any
@@ -1659,6 +1678,7 @@ export type Vector2Value = Vector2 | Vector2Property
 export type Vector3Value = Vector3 | Vector3Property
 export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
+export type NumericalField = Field<FieldType.Integer | FieldType.Float>
 
 export type TypedArray =
   | Int8Array
@@ -2627,10 +2647,7 @@ const ActionData: {
       color3: { default: [1, 1, 1, 1] },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       unk_ds3_f1_2: { default: -2, field: 1 },
       unk_ds3_f1_3: { default: -2, field: 1 },
       unk_ds3_f1_4: { default: 0, field: 1 },
@@ -2681,19 +2698,19 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['texture','blendMode','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['size','color1','color2','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: ['texture','blendMode','size','color1','color2','color3'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_er_f1_3','unk_er_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_er_f2_39'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
@@ -2712,10 +2729,7 @@ const ActionData: {
       color3: { default: [1, 1, 1, 1] },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       unk_ds3_f1_1: { default: -1, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
       unk_ds3_f2_1: { default: 0, field: 1 },
@@ -2764,13 +2778,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['blendMode','unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
         properties2: Game.DarkSouls3
       },
@@ -2797,10 +2811,7 @@ const ActionData: {
       color3: { default: [1, 1, 1, 1] },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       unk_ds3_f1_1: { default: -1, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
       unk_ds3_f2_1: { default: 0, field: 1 },
@@ -2849,13 +2860,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['blendMode','unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','width','length','color1','color2','startColor','endColor','widthMultiplier','lengthMultiplier','color3'],
         properties2: Game.DarkSouls3
       },
@@ -2903,10 +2914,7 @@ const ActionData: {
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       interpolateFrames: { default: true, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -2970,20 +2978,20 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','depthBlend','octagonal','unk_ds3_f1_16'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','depthBlend','octagonal','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
         properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: {
         fields1: Game.Sekiro,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -3001,10 +3009,7 @@ const ActionData: {
       interpolateFrames: { default: true, field: 0 },
       depthBlend: { default: true, field: 0 },
       octagonal: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -3108,25 +3113,25 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
         properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -3141,10 +3146,7 @@ const ActionData: {
       uniformScale: { default: false, field: 0 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       model: { default: 80201, field: 1, resource: 1 },
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
@@ -3233,13 +3235,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','model','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','blendMode','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_ds3_f2_28'],
         properties1: ['sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6','unk_ds3_p2_7']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','columns','totalFrames','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','anibnd','animation','loopAnimation','animationSpeed','unk_ds3_f1_18'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','blendMode','color1','color2','color3','unk_ds3_p1_15','frameIndex','frameIndexOffset','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV','unk_ds3_p1_24'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
@@ -3251,7 +3253,7 @@ const ActionData: {
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
         properties2: Game.Sekiro
       }
@@ -3267,10 +3269,7 @@ const ActionData: {
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -3343,19 +3342,19 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
@@ -3374,10 +3373,7 @@ const ActionData: {
       scaleVariationY: { default: 1, field: 2 },
       scaleVariationZ: { default: 1, field: 2 },
       uniformScale: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
@@ -3447,13 +3443,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','blendMode','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38'],
         properties1: ['blendMode','offsetX','offsetY','offsetZ','sizeX','sizeY','sizeZ','color','unk_ds3_p1_7','intensity','unk_ds3_p1_9','stirSpeed','radius','normalMapOffsetU','normalMapOffsetV','normalMapSpeedU','normalMapSpeedV'],
         properties2: Game.DarkSouls3
       },
@@ -3470,10 +3466,7 @@ const ActionData: {
     props: {
       uniformScale: { default: false, field: 0 },
       iterations: { default: 1, field: 1 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
       offsetX: { default: 0, scale: 1 },
@@ -3525,13 +3518,13 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['blendMode','mask','uniformScale','iterations','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['uniformScale','iterations','unk_ds3_f1_4'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30'],
         properties1: ['blendMode','mask','offsetX','offsetY','offsetZ','width','height','color','unk_ds3_p1_6','blurRadius'],
         properties2: Game.DarkSouls3
       },
@@ -3806,14 +3799,8 @@ const ActionData: {
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
-      redMin: { default: 0, field: 2 },
-      greenMin: { default: 0, field: 2 },
-      blueMin: { default: 0, field: 2 },
-      alphaMin: { default: 0, field: 2 },
-      redMax: { default: 0, field: 2 },
-      greenMax: { default: 0, field: 2 },
-      blueMax: { default: 0, field: 2 },
-      alphaMax: { default: 0, field: 2 },
+      colorMin: { default: [0, 0, 0, 0], field: 5 },
+      colorMax: { default: [0, 0, 0, 0], field: 5 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -3865,10 +3852,7 @@ const ActionData: {
       unk_ds3_f1_153: { default: 0, field: 1 },
       unk_ds3_f1_154: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 1, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       desaturate: { default: 0, field: 2 },
       unk_sdt_f1_160: { default: 1, field: 2 },
       unk_sdt_f1_161: { default: 0, field: 1 },
@@ -3949,19 +3933,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','desaturate'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','desaturate'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
@@ -4068,14 +4052,8 @@ const ActionData: {
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
-      redMin: { default: 0, field: 2 },
-      greenMin: { default: 0, field: 2 },
-      blueMin: { default: 0, field: 2 },
-      alphaMin: { default: 0, field: 2 },
-      redMax: { default: 0, field: 2 },
-      greenMax: { default: 0, field: 2 },
-      blueMax: { default: 0, field: 2 },
-      alphaMax: { default: 0, field: 2 },
+      colorMin: { default: [0, 0, 0, 0], field: 5 },
+      colorMax: { default: [0, 0, 0, 0], field: 5 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -4127,10 +4105,7 @@ const ActionData: {
       unk_ds3_f1_153: { default: 0, field: 1 },
       unk_ds3_f1_154: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 1, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       unk_sdt_f1_160: { default: 1, field: 2 },
       unk_sdt_f1_161: { default: 0, field: 1 },
       unk_sdt_f1_162: { default: 1, field: 2 },
@@ -4212,7 +4187,7 @@ const ActionData: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: -2,
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
@@ -4321,14 +4296,8 @@ const ActionData: {
       particleSpeedZMax: { default: 0.01, field: 2, scale: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
-      redMin: { default: 0, field: 2 },
-      greenMin: { default: 0, field: 2 },
-      blueMin: { default: 0, field: 2 },
-      alphaMin: { default: 0, field: 2 },
-      redMax: { default: 0, field: 2 },
-      greenMax: { default: 0, field: 2 },
-      blueMax: { default: 0, field: 2 },
-      alphaMax: { default: 0, field: 2 },
+      colorMin: { default: [0, 0, 0, 0], field: 5 },
+      colorMax: { default: [0, 0, 0, 0], field: 5 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       unk_ac6_f1_57: { default: -1, field: 1 },
       unk_ac6_f1_58: { default: -1, field: 1 },
@@ -4370,10 +4339,7 @@ const ActionData: {
       unk_ac6_f1_94: { default: 0, field: 1 },
       unk_ac6_f1_95: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 1, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       unk_ac6_f1_101: { default: 1, field: 2 },
       unk_ac6_f1_102: { default: 0, field: 1 },
       unk_ac6_f1_103: { default: 1, field: 2 },
@@ -4443,7 +4409,7 @@ const ActionData: {
       [Game.Sekiro]: Game.ArmoredCore6,
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','hideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -4500,14 +4466,8 @@ const ActionData: {
       particleSpeedZMax: { default: 0.01, field: 2, scale: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
-      redMin: { default: 0, field: 2 },
-      greenMin: { default: 0, field: 2 },
-      blueMin: { default: 0, field: 2 },
-      alphaMin: { default: 0, field: 2 },
-      redMax: { default: 0, field: 2 },
-      greenMax: { default: 0, field: 2 },
-      blueMax: { default: 0, field: 2 },
-      alphaMax: { default: 0, field: 2 },
+      colorMin: { default: [0, 0, 0, 0], field: 5 },
+      colorMax: { default: [0, 0, 0, 0], field: 5 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       unk_ac6_f1_57: { default: -1, field: 1 },
       unk_ac6_f1_58: { default: -1, field: 1 },
@@ -4549,10 +4509,7 @@ const ActionData: {
       unk_ac6_f1_94: { default: 0, field: 1 },
       unk_ac6_f1_95: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 1, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       unk_ac6_f1_101: { default: 1, field: 2 },
       unk_ac6_f1_102: { default: 0, field: 1 },
       unk_ac6_f1_103: { default: 1, field: 2 },
@@ -4621,7 +4578,7 @@ const ActionData: {
     games: {
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','redMin','greenMin','blueMin','alphaMin','redMax','greenMax','blueMax','alphaMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','hideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -4638,10 +4595,7 @@ const ActionData: {
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -4721,25 +4675,25 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: {
         fields1: Game.EldenRing,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40','unk_ac6_f2_41'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40','unk_ac6_f2_41'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -4914,10 +4868,7 @@ const ActionData: {
       scaleVariationY: { default: 1, field: 2 },
       scaleVariationZ: { default: 1, field: 2 },
       uniformScale: { default: false, field: 0 },
-      bloomRed: { default: 1, field: 2 },
-      bloomGreen: { default: 1, field: 2 },
-      bloomBlue: { default: 1, field: 2 },
-      bloomStrength: { default: 0, field: 2 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5 },
       model: { default: 80201, field: 1, resource: 1 },
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
@@ -5025,7 +4976,7 @@ const ActionData: {
     games: {
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','unk_er_f1_7','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
-        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomRed','bloomGreen','bloomBlue','bloomStrength','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
+        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomColor','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
@@ -5825,10 +5776,10 @@ function writeAction(action: Action, bw: BinaryWriter, actions: AnyAction[]) {
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
-  bw.writeInt32(action.fields1.length)
+  bw.writeInt32(fieldsCount(action.fields1))
   bw.writeInt32(action.section10s.length)
   bw.writeInt32(action.properties1.length)
-  bw.writeInt32(action.fields2.length)
+  bw.writeInt32(fieldsCount(action.fields2))
   bw.writeInt32(0)
   bw.writeInt32(action.properties2.length)
   bw.reserveInt32(`ActionFieldsOffset${count}`)
@@ -5860,17 +5811,19 @@ function writeActionSection10s(action: Action, bw: BinaryWriter, index: number, 
 }
 
 function writeActionFields(action: Action, bw: BinaryWriter, index: number): number {
-  const count: number = action.fields1.length + action.fields2.length
-  if (count === 0) {
+  if (action.fields1.length + action.fields2.length === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
-  } else {
-    bw.fill(`ActionFieldsOffset${index}`, bw.position)
-    for (const field of action.fields1) {
-      writeField(field, bw)
-    }
-    for (const field of action.fields2) {
-      writeField(field, bw)
-    }
+    return 0
+  }
+  let count = 0
+  bw.fill(`ActionFieldsOffset${index}`, bw.position)
+  for (const field of action.fields1) {
+    writeField(field, bw)
+    count += fieldCompCount[field.type]
+  }
+  for (const field of action.fields2) {
+    writeField(field, bw)
+    count += fieldCompCount[field.type]
   }
   return count
 }
@@ -5901,8 +5854,8 @@ function readDataAction(
   }
 
   const c: {
-    fields1: Field[]
-    fields2: Field[]
+    fields1: Field<FieldType>[]
+    fields2: Field<FieldType>[]
     properties1: AnyProperty[]
     properties2: AnyProperty[]
     section10s: number[][]
@@ -5986,16 +5939,23 @@ function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actio
     ActionDataConversion[action.type].write(Object.assign(Object.create(null), action), game) :
     action
   )
+  const adt = ActionData[action.type]
   const data = getActionGameData(action.type, game)
   const count = actions.length
   bw.writeInt16(action.type)
   bw.writeUint8(0) // Unk02
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
-  bw.writeInt32(data.fields1.length)
+  bw.writeInt32(data.fields1
+    .map(name => fieldCompCount[adt.props[name].field])
+    .reduce((a, e) => a + e, 0)
+  )
   bw.writeInt32(data.section10s.length)
   bw.writeInt32(data.properties1.length)
-  bw.writeInt32(data.fields2.length)
+  bw.writeInt32(data.fields2
+    .map(name => fieldCompCount[adt.props[name].field])
+    .reduce((a, e) => a + e, 0)
+  )
   bw.writeInt32(0)
   bw.writeInt32(data.properties2.length)
   bw.reserveInt32(`ActionFieldsOffset${count}`)
@@ -6031,19 +5991,21 @@ function writeDataActionSection10s(action: DataAction, bw: BinaryWriter, game: G
 
 function writeDataActionFields(action: DataAction, bw: BinaryWriter, game: Game, index: number): number {
   const conProps = bw.convertedDataActions.get(action)
-  const fields1: Field[] = action.getFields.call(conProps, game, 'fields1')
-  const fields2: Field[] = action.getFields.call(conProps, game, 'fields2')
-  const count = fields1.length + fields2.length
-  if (count === 0) {
+  const fields1: Field<FieldType>[] = action.getFields.call(conProps, game, 'fields1')
+  const fields2: Field<FieldType>[] = action.getFields.call(conProps, game, 'fields2')
+  if (fields1.length + fields2.length === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
-  } else {
-    bw.fill(`ActionFieldsOffset${index}`, bw.position)
-    for (const field of fields1) {
-      writeField(field, bw)
-    }
-    for (const field of fields2) {
-      writeField(field, bw)
-    }
+    return 0
+  }
+  let count = 0
+  bw.fill(`ActionFieldsOffset${index}`, bw.position)
+  for (const field of fields1) {
+    writeField(field, bw)
+    count += fieldCompCount[field.type]
+  }
+  for (const field of fields2) {
+    writeField(field, bw)
+    count += fieldCompCount[field.type]
   }
   return count
 }
@@ -6446,10 +6408,12 @@ function writeModifierProperties(modifier: IModifier<ValueType>, bw: BinaryWrite
 function writeModifierFields(modifier: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
   bw.fill(`Section8FieldsOffset${index}`, bw.position)
   const fields = modifier.getFields()
+  let count = 0
   for (const field of fields) {
     writeField(field, bw)
+    count += fieldCompCount[field.type]
   }
-  return fields.length
+  return count
 }
 
 //#region Functions - Section10
@@ -6709,38 +6673,59 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
   return fields
 }
 
-function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field[] {
+function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field<FieldType>[] {
   return arrayOf(count, i => {
     switch (types[i]) {
-      case FieldType.Boolean:
-        return new BoolField(!!br.assertInt32(0, 1))
-      case FieldType.Integer:
-        return new IntField(br.readInt32())
-      case FieldType.Float:
-        return new FloatField(br.readFloat32())
-      default:
-        return readField(br, context, 0)
+      case FieldType.Boolean: return new BoolField(!!br.assertInt32(0, 1))
+      case FieldType.Integer: return new IntField(br.readInt32())
+      case FieldType.Float: return new FloatField(br.readFloat32())
+      case FieldType.Vector2: return new Vec2Field([ br.readFloat32(), br.readFloat32() ])
+      case FieldType.Vector3: return new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ])
+      case FieldType.Vector4: return new Vec4Field([
+        br.readFloat32(),
+        br.readFloat32(),
+        br.readFloat32(),
+        br.readFloat32()
+      ])
+      default: return readField(br, context, 0)
     }
   })
 }
 
-function readFieldsWithTypesAt(br: BinaryReader, offset: number, count: number, types: FieldType[], context: any): Field[] {
+function readFieldsWithTypesAt(
+  br: BinaryReader,
+  offset: number,
+  count: number,
+  types: FieldType[],
+  context: any
+): Field<FieldType>[] {
   br.stepIn(offset)
   const fields = readFieldsWithTypes(br, count, types, context)
   br.stepOut()
   return fields
 }
 
-function writeField(field: Field, bw: BinaryWriter) {
+function writeField(field: Field<FieldType>, bw: BinaryWriter) {
   switch (field.type) {
-    case FieldType.Boolean:
-      return bw.writeInt32(+field.value)
-    case FieldType.Integer:
-      return bw.writeInt32(field.value as number)
-    case FieldType.Float:
-      return bw.writeFloat32(field.value as number)
-    default:
-      throw new Error('Invalid field type: ' + field.type)
+    case FieldType.Boolean: return bw.writeInt32(+field.value)
+    case FieldType.Integer: return bw.writeInt32(field.value as number)
+    case FieldType.Float: return bw.writeFloat32(field.value as number)
+    case FieldType.Vector2:
+      bw.writeFloat32(field.value[0])
+      bw.writeFloat32(field.value[1])
+      break
+    case FieldType.Vector3:
+      bw.writeFloat32(field.value[0])
+      bw.writeFloat32(field.value[1])
+      bw.writeFloat32(field.value[2])
+      break
+    case FieldType.Vector4:
+      bw.writeFloat32(field.value[0])
+      bw.writeFloat32(field.value[1])
+      bw.writeFloat32(field.value[2])
+      bw.writeFloat32(field.value[3])
+      break
+    default: throw new Error('Invalid field type: ' + field.type)
   }
 }
 
@@ -7477,6 +7462,21 @@ function separateComponents(value: VectorValue): ScalarValue[] {
   } else {
     return value
   }
+}
+
+const fieldCompCount = [
+  1, // Boolean
+  1, // Integer
+  1, // Float
+  2, // Vector2
+  3, // Vector3
+  4, // Vector4
+]
+
+function fieldsCount(fields: Field<FieldType>[]) {
+  let count = 0
+  for (const field of fields) count += field.type[field.type]
+  return count
 }
 
 const ActionDataConversion = {
@@ -9200,9 +9200,7 @@ abstract class Node {
         slot9 instanceof DynamicTracer ||
         slot9 instanceof RichModel
       ) {
-        ;[slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength] = func(
-          [slot9.bloomRed, slot9.bloomGreen, slot9.bloomBlue, slot9.bloomStrength]
-        )
+        slot9.bloomColor = func(slot9.bloomColor)
       }
     }
   }
@@ -10089,30 +10087,16 @@ class NodeEmitterEffect implements IEffect {
 //#region Action
 class Action implements IAction {
 
-  type: ActionType
-  fields1: Field[]
-  fields2: Field[]
-  properties1: AnyProperty[]
-  properties2: AnyProperty[]
-  section10s: number[][]
-
   constructor(
-    type: number = ActionType.None,
-    fields1: Field[] = [],
-    fields2: Field[] = [],
-    properties1: AnyProperty[] = [],
-    properties2: AnyProperty[] = [],
-    section10s: number[][] = [],
-  ) {
-    this.type = type
-    this.fields1 = fields1
-    this.fields2 = fields2
-    this.properties1 = properties1
-    this.properties2 = properties2
-    this.section10s = section10s
-  }
+    public type: ActionType = ActionType.None,
+    public fields1: Field<FieldType>[] = [],
+    public fields2: Field<FieldType>[] = [],
+    public properties1: AnyProperty[] = [],
+    public properties2: AnyProperty[] = [],
+    public section10s: number[][] = [],
+  ) {}
 
-  withFields1(...fields: { index: number, field: Field | number | boolean }[]) {
+  withFields1(...fields: { index: number, field: Field<FieldType> | PropertyValue | boolean }[]) {
     for (const { index, field } of fields) {
       if (field instanceof Field) {
         this.fields1[index] = field
@@ -10123,7 +10107,7 @@ class Action implements IAction {
     return this
   }
 
-  withFields2(...fields: { index: number, field: Field | number | boolean }[]) {
+  withFields2(...fields: { index: number, field: Field<FieldType> | PropertyValue | boolean }[]) {
     for (const { index, field } of fields) {
       if (field instanceof Field) {
         this.fields2[index] = field
@@ -10281,11 +10265,14 @@ class DataAction implements IAction {
     return this
   }
 
-  getFields(game: Game, list: 'fields1' | 'fields2'): Field[] {
+  getFields(game: Game, list: 'fields1' | 'fields2'): Field<FieldType>[] {
     const data = getActionGameData(this.type, game)
     return data[list].map((name: string) => {
       const prop = ActionData[this.type].props[name]
-      return new Field(prop.field, this[name] instanceof Property ? this[name].valueAt(0) : this[name])
+      return Field.from(
+        prop.field,
+        this[name] instanceof Property ? this[name].valueAt(0) : this[name]
+      )
     })
   }
 
@@ -14120,65 +14107,15 @@ export interface PointSpriteParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Unknown integer.
    * 
@@ -14572,57 +14509,13 @@ class PointSprite extends DataAction {
    */
   alphaMultiplier: ScalarValue
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   unk_ds3_f1_2: number
   unk_ds3_f1_3: number
   unk_ds3_f1_4: number
@@ -14839,65 +14732,15 @@ export interface LineParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Unknown integer.
    * 
@@ -15294,57 +15137,13 @@ class Line extends DataAction {
    */
   alphaMultiplier: ScalarValue
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   unk_ds3_f1_1: number
   unk_ds3_f2_0: number
   unk_ds3_f2_1: number
@@ -15581,65 +15380,15 @@ export interface QuadLineParams {
    */
   alphaMultiplier?: ScalarValue
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Unknown integer.
    * 
@@ -16051,57 +15800,13 @@ class QuadLine extends DataAction {
    */
   alphaMultiplier: ScalarValue
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   unk_ds3_f1_1: number
   unk_ds3_f2_0: number
   unk_ds3_f2_1: number
@@ -16556,65 +16261,15 @@ export interface BillboardExParams {
    */
   interpolateFrames?: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Controls how dark shaded parts of the particle are.
    * 
@@ -17310,57 +16965,13 @@ class BillboardEx extends DataAction {
    */
   interpolateFrames: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Controls how dark shaded parts of the particle are.
    */
@@ -17622,65 +17233,15 @@ export interface MultiTextureBillboardExParams {
    */
   octagonal?: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Controls how dark shaded parts of the particle are.
    * 
@@ -18525,57 +18086,13 @@ class MultiTextureBillboardEx extends DataAction {
    */
   octagonal: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Controls how dark shaded parts of the particle are.
    */
@@ -19087,65 +18604,15 @@ export interface ModelParams {
    */
   totalFrames?: number
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Model ID.
    * 
@@ -19929,57 +19396,13 @@ class Model extends DataAction {
    */
   totalFrames: number
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Model ID.
    * 
@@ -20448,65 +19871,15 @@ export interface TracerParams {
    */
   attachedUV?: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Controls how dark shaded parts of the trail are.
    * 
@@ -21081,57 +20454,13 @@ class Tracer extends DataAction {
    */
   attachedUV: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Controls how dark shaded parts of the trail are.
    */
@@ -21494,65 +20823,15 @@ export interface DistortionParams {
    */
   uniformScale?: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Blend mode.
    * 
@@ -22141,57 +21420,13 @@ class Distortion extends DataAction {
    */
   uniformScale: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Blend mode.
    * 
@@ -22468,65 +21703,15 @@ export interface RadialBlurParams {
    */
   iterations?: number
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Blend mode.
    * 
@@ -22936,57 +22121,13 @@ class RadialBlur extends DataAction {
    */
   iterations: number
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Blend mode.
    * 
@@ -24823,53 +23964,17 @@ export interface GPUStandardParticleParams {
    */
   alphaMultiplier?: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  redMin?: number
+  colorMin?: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  greenMin?: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMin?: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMin?: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  redMax?: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  greenMax?: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMax?: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMax?: number
+  colorMax?: Vector4
   /**
    * Blend mode.
    * 
@@ -25212,60 +24317,22 @@ export interface GPUStandardParticleParams {
    * **Default**: `false`
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom?: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
-   * **Default**: `1`
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomRed?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomGreen?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
    * 
@@ -26240,37 +25307,13 @@ class GPUStandardParticle extends DataAction {
    */
   alphaMultiplier: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  redMin: number
+  colorMin: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  greenMin: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   */
-  blueMin: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   */
-  alphaMin: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   */
-  redMax: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   */
-  greenMax: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   */
-  blueMax: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   */
-  alphaMax: number
+  colorMax: Vector4
   /**
    * Blend mode.
    */
@@ -26412,52 +25455,20 @@ class GPUStandardParticle extends DataAction {
    * Controls whether or not the particles have a bloom effect.
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
    */
@@ -27378,53 +26389,17 @@ export interface GPUStandardCorrectParticleParams {
    */
   alphaMultiplier?: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  redMin?: number
+  colorMin?: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  greenMin?: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMin?: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMin?: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  redMax?: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  greenMax?: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMax?: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMax?: number
+  colorMax?: Vector4
   /**
    * Blend mode.
    * 
@@ -27767,60 +26742,22 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `false`
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom?: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
-   * **Default**: `1`
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomRed?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomGreen?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Unknown float.
    * 
@@ -28789,37 +27726,13 @@ class GPUStandardCorrectParticle extends DataAction {
    */
   alphaMultiplier: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  redMin: number
+  colorMin: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  greenMin: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   */
-  blueMin: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   */
-  alphaMin: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   */
-  redMax: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   */
-  greenMax: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   */
-  blueMax: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   */
-  alphaMax: number
+  colorMax: Vector4
   /**
    * Blend mode.
    */
@@ -28961,52 +27874,20 @@ class GPUStandardCorrectParticle extends DataAction {
    * Controls whether or not the particles have a bloom effect.
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   unk_sdt_f1_160: number
   unk_sdt_f1_161: number
   unk_sdt_f1_162: number
@@ -29889,53 +28770,17 @@ export interface GPUSparkParticleParams {
    */
   alphaMultiplier?: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  redMin?: number
+  colorMin?: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  greenMin?: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMin?: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMin?: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  redMax?: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  greenMax?: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMax?: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMax?: number
+  colorMax?: Vector4
   /**
    * Blend mode.
    * 
@@ -30190,60 +29035,22 @@ export interface GPUSparkParticleParams {
    * **Default**: `false`
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom?: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
-   * **Default**: `1`
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomRed?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomGreen?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Unknown float.
    * 
@@ -30911,37 +29718,13 @@ class GPUSparkParticle extends DataAction {
    */
   alphaMultiplier: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  redMin: number
+  colorMin: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  greenMin: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   */
-  blueMin: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   */
-  alphaMin: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   */
-  redMax: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   */
-  greenMax: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   */
-  blueMax: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   */
-  alphaMax: number
+  colorMax: Vector4
   /**
    * Blend mode.
    */
@@ -31030,52 +29813,20 @@ class GPUSparkParticle extends DataAction {
    * Controls whether or not the particles have a bloom effect.
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   unk_ac6_f1_101: number
   unk_ac6_f1_102: number
   unk_ac6_f1_103: number
@@ -31594,53 +30345,17 @@ export interface GPUSparkCorrectParticleParams {
    */
   alphaMultiplier?: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  redMin?: number
+  colorMin?: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0, 0]`
    */
-  greenMin?: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMin?: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMin?: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  redMax?: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  greenMax?: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  blueMax?: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   * 
-   * **Default**: `0`
-   */
-  alphaMax?: number
+  colorMax?: Vector4
   /**
    * Blend mode.
    * 
@@ -31895,60 +30610,22 @@ export interface GPUSparkCorrectParticleParams {
    * **Default**: `false`
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom?: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
-   * **Default**: `1`
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomRed?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomGreen?: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Unknown float.
    * 
@@ -32617,37 +31294,13 @@ class GPUSparkCorrectParticle extends DataAction {
    */
   alphaMultiplier: number
   /**
-   * Minimum random variation for the red value of the particle color. A random value between this and {@link redMax} will be added to the color.
+   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  redMin: number
+  colorMin: Vector4
   /**
-   * Minimum random variation for the green value of the particle color. A random value between this and {@link greenMax} will be added to the color.
+   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
    */
-  greenMin: number
-  /**
-   * Minimum random variation for the blue value of the particle color. A random value between this and {@link blueMax} will be added to the color.
-   */
-  blueMin: number
-  /**
-   * Minimum random variation for the alpha value of the particle color. A random value between this and {@link alphaMax} will be added to the color.
-   */
-  alphaMin: number
-  /**
-   * Maximum random variation for the red value of the particle color. A random value between this and {@link redMin} will be added to the color.
-   */
-  redMax: number
-  /**
-   * Maximum random variation for the green value of the particle color. A random value between this and {@link greenMin} will be added to the color.
-   */
-  greenMax: number
-  /**
-   * Maximum random variation for the blue value of the particle color. A random value between this and {@link blueMin} will be added to the color.
-   */
-  blueMax: number
-  /**
-   * Maximum random variation for the alpha value of the particle color. A random value between this and {@link alphaMin} will be added to the color.
-   */
-  alphaMax: number
+  colorMax: Vector4
   /**
    * Blend mode.
    */
@@ -32736,52 +31389,20 @@ class GPUSparkCorrectParticle extends DataAction {
    * Controls whether or not the particles have a bloom effect.
    * 
    * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * - {@link bloomColor}
    */
   bloom: boolean
   /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the red value of the bloom color.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * 
+   * Note:
+   * - This has no effect if the "Effects Quality" setting is set to "Low".
+   * - This does not affect the natural bloom effect from high color values.
    * 
    * See also:
    * - {@link bloom}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the green value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * The bloom color is based on the color of the particle, and this is a multiplier for the blue value of the bloom color.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * This controls the intensity of the bloom effect.
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   unk_ac6_f1_101: number
   unk_ac6_f1_102: number
   unk_ac6_f1_103: number
@@ -33028,65 +31649,15 @@ export interface DynamicTracerParams {
    */
   attachedUV?: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Controls how dark shaded parts of the trail are.
    * 
@@ -33705,57 +32276,13 @@ class DynamicTracer extends DataAction {
    */
   attachedUV: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Controls how dark shaded parts of the trail are.
    */
@@ -35890,65 +34417,15 @@ export interface RichModelParams {
    */
   uniformScale?: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
+   * **Default**: `[1, 1, 1, 0]`
    */
-  bloomRed?: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen?: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue?: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength?: number
+  bloomColor?: Vector4
   /**
    * Model ID.
    * 
@@ -36768,57 +35245,13 @@ class RichModel extends DataAction {
    */
   uniformScale: boolean
   /**
-   * Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
    * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
    */
-  bloomRed: number
-  /**
-   * Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomBlue}
-   * - {@link bloomStrength}
-   */
-  bloomGreen: number
-  /**
-   * Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomStrength}
-   */
-  bloomBlue: number
-  /**
-   * Controls the strength of the additional bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * See also:
-   * - {@link bloomRed}
-   * - {@link bloomGreen}
-   * - {@link bloomBlue}
-   */
-  bloomStrength: number
+  bloomColor: Vector4
   /**
    * Model ID.
    * 
@@ -40346,76 +38779,84 @@ const DataActions = {
 }
 
 //#region Field
-class Field {
+abstract class Field<T extends FieldType> {
+  constructor(
+    public readonly type: T,
+    public value: TypeMap.FieldValue[T]
+  ) {}
 
-  type: FieldType
-  value: number | boolean
-
-  constructor(type: FieldType = FieldType.Integer, value: number | boolean = 0) {
-    this.type = type
-    this.value = value
+  static from<T extends FieldType>(type: T, value: TypeMap.FieldValue[T]) {
+    switch (type) {
+      case FieldType.Boolean: return new BoolField(value as boolean)
+      case FieldType.Integer: return new IntField(value as number)
+      case FieldType.Float: return new FloatField(value as number)
+      case FieldType.Vector2: return new Vec2Field(value as Vector2)
+      case FieldType.Vector3: return new Vec3Field(value as Vector3)
+      case FieldType.Vector4: return new Vec4Field(value as Vector4)
+    }
   }
 
-  /**
-   * Creates a copy of a field.
-   * @param field The field to copy.
-   * @returns The copy.
-   */
-  static copy<T extends Field>(field: T): T {
-    return new Field(field.type, field.value) as T
-  }
-
-  static fromJSON({
-    type,
-    value
-  }: {
-    type: string
-    value: number
+  static fromJSON<T extends FieldType>({ type, value }: {
+    type: TypeMap.FieldTypeName[T],
+    value: TypeMap.FieldValue[T]
   }) {
-    return new Field(FieldType[type], value)
+    switch (type) {
+      case 'Boolean': return new BoolField(value as boolean)
+      case 'Integer': return new IntField(value as number)
+      case 'Float': return new FloatField(value as number)
+      case 'Vector2': return new Vec2Field(value as Vector2)
+      case 'Vector3': return new Vec3Field(value as Vector3)
+      case 'Vector4': return new Vec4Field(value as Vector4)
+    }
   }
 
-  toJSON() {
+  toJSON(): {
+    type: TypeMap.FieldTypeName[T],
+    value: TypeMap.FieldValue[T]
+  } {
     return {
-      type: FieldType[this.type],
+      type: FieldType[this.type] as TypeMap.FieldTypeName[T],
       value: this.value
     }
   }
 
+  abstract clone(): Field<T>
 }
 
-export interface NumericalField extends Field {
-  value: number
+class BoolField extends Field<FieldType.Boolean> {
+  declare readonly type = FieldType.Boolean
+  constructor(value: boolean = false) { super(FieldType.Boolean, value) }
+  clone(): Field<FieldType.Boolean> { return new BoolField(this.value) }
 }
 
-class BoolField extends Field {
-
-  declare value: boolean
-
-  constructor(value: boolean = false) {
-    super(FieldType.Boolean, value)
-  }
-
+class IntField extends Field<FieldType.Integer> {
+  declare readonly type = FieldType.Integer
+  constructor(value: number = 0) { super(FieldType.Integer, value) }
+  clone(): Field<FieldType.Integer> { return new IntField(this.value) }
 }
 
-class IntField extends Field implements NumericalField {
-
-  declare value: number
-
-  constructor(value: number = 0) {
-    super(FieldType.Integer, value)
-  }
-
+class FloatField extends Field<FieldType.Float> {
+  declare readonly type = FieldType.Float
+  constructor(value: number = 0) { super(FieldType.Float, value) }
+  clone(): Field<FieldType.Float> { return new FloatField(this.value) }
 }
 
-class FloatField extends Field implements NumericalField {
+class Vec2Field extends Field<FieldType.Vector2> {
+  declare readonly type = FieldType.Vector2
+  constructor(value: Vector2 = [0, 0]) { super(FieldType.Vector2, value) }
+  clone(): Field<FieldType.Vector2> { return new Vec2Field(this.value.slice() as Vector2) }
+}
 
-  declare value: number
+class Vec3Field extends Field<FieldType.Vector3> {
+  declare readonly type = FieldType.Vector3
+  constructor(value: Vector3 = [0, 0, 0]) { super(FieldType.Vector3, value) }
+  clone(): Field<FieldType.Vector3> { return new Vec3Field(this.value.slice() as Vector3) }
+}
 
-  constructor(value: number = 0) {
-    super(FieldType.Float, value)
-  }
-
+class Vec4Field extends Field<FieldType.Vector4> {
+  declare readonly type = FieldType.Vector4
+  constructor(value: Vector4 = [0, 0, 0, 0]) { super(FieldType.Vector4, value) }
+  clone(): Field<FieldType.Vector4> { return new Vec4Field(this.value.slice() as Vector4) }
 }
 
 //#region Keyframe
@@ -41521,7 +39962,10 @@ namespace Modifier {
       return new GenericModifier(
         obj.type,
         obj.valueType,
-        obj.fields.map((e: { type: string; value: number }) => Field.fromJSON(e)),
+        obj.fields.map((e: {
+          type: TypeMap.FieldTypeName[FieldType.Integer | FieldType.Float],
+          value: number
+        }) => Field.fromJSON<FieldType.Integer | FieldType.Float>(e)),
         obj.properties.map((e: any) => Property.fromJSON(e)),
       )
     }
@@ -41663,15 +40107,15 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
   constructor(
     public readonly type: ModifierType,
     public readonly valueType: T,
-    public fields: NumericalField[],
+    public fields: Field<FieldType>[],
     public properties: IProperty<T, PropertyFunction>[],
   ) {}
 
   getFieldCount(): number {
-    return this.fields.length
+    return fieldsCount(this.fields)
   }
 
-  getFields(): NumericalField[] {
+  getFields(): Field<FieldType>[] {
     return this.fields
   }
 
@@ -41706,7 +40150,7 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
     return new GenericModifier(
       this.type,
       this.valueType,
-      this.fields.map(e => Field.copy(e)),
+      this.fields.map(e => e.clone()),
       this.properties.map(e => e.clone())
     )
   }
@@ -42247,6 +40691,9 @@ export {
   BoolField,
   IntField,
   FloatField,
+  Vec2Field,
+  Vec3Field,
+  Vec4Field,
 
   Keyframe,
   BezierKeyframe,

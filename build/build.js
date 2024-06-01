@@ -10,21 +10,30 @@ const distDir = path.join(projectDir, 'dist')
 const actionsDir = path.join(srcDir, 'actions')
 
 const typeMap = {
+  bool: 'boolean',
   int: 'number',
   float: 'number',
-  bool: 'boolean'
+  vec2: 'Vector2',
+  vec3: 'Vector3',
+  vec4: 'Vector4',
 }
 
 const fieldMap = {
+  bool: 0,
   int: 1,
   float: 2,
-  bool: 0
+  vec2: 3,
+  vec3: 4,
+  vec4: 5
 }
 
 const fieldTypeNameMap = {
+  bool: 'boolean',
   int: 'integer',
   float: 'float',
-  bool: 'boolean'
+  vec2: 'vector2',
+  vec3: 'vector3',
+  vec4: 'vector4'
 }
 
 const gameMap = {
