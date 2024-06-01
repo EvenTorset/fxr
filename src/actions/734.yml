@@ -1,36 +1,36 @@
 type: 734
-name: ParticleWindAcceleration
-slot: ParticleWind
+name: ParticleForceAcceleration
+slot: ParticleForceMovement
 desc: |
-  Controls how effective the wind is at accelerating the particles emitted from the node.
-
-  Acceleration requires slot 10 to have an action that enables acceleration of the particles.
+  Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+  - {@link ActionType.CancelForce CancelForce}
+  - {@link ActionType.WindForce WindForce}
+  - {@link ActionType.GravityForce GravityForce}
+  - {@link ActionType.ForceCollision ForceCollision}
+  - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
 properties:
   acceleration:
     type: ScalarValue
     argument: EffectAge
     desc: |
-      The acceleration in the direction of the wind.
+      The acceleration in the direction of the force.
   accelerationMultiplier:
     type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
-      A multiplier for {@link acceleration the acceleration in the direction of the wind}.
-  enabled:
-    field: bool
-    default: true
-    desc: |
-      Controls whether the wind should have any effect at all or not.
+      A multiplier for {@link acceleration}.
+  unk_sdt_f1_0:
+    field: int
+    default: 1
   unk_sdt_f1_1:
     field: int
     desc: |
       Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
 games:
-  DS3: fallback
   SDT:
     fields1:
-      - enabled
+      - unk_sdt_f1_0
       - unk_sdt_f1_1
     properties1:
       - acceleration

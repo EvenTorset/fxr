@@ -123,9 +123,6 @@ enum ActionType {
   None = 0,
   Unk10002_Fluid = 10002,
   Unk10010_Tracer = 10010,
-  Unk10200_ForceFieldCancelArea = 10200,
-  Unk10301_ForceFieldGravityArea = 10301,
-  Unk10302_CollisionFieldArea = 10302,
   Unk10303_ForceFieldTurbulenceArea = 10303,
 
   // Data Actions
@@ -640,46 +637,64 @@ enum ActionType {
    */
   Unk702 = 702,
   /**
-   * ### Action 731 - NodeWindSpeed
-   * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+   * ### Action 731 - NodeForceSpeed
+   * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
    * 
-   * Controls how effective the wind is at pushing the node.
+   * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+   * - {@link ActionType.CancelForce CancelForce}
+   * - {@link ActionType.WindForce WindForce}
+   * - {@link ActionType.GravityForce GravityForce}
+   * - {@link ActionType.ForceCollision ForceCollision}
+   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
    * 
-   * This action type has a specialized subclass: {@link NodeWindSpeed}
+   * This action type has a specialized subclass: {@link NodeForceSpeed}
    */
-  NodeWindSpeed = 731,
+  NodeForceSpeed = 731,
   /**
-   * ### Action 732 - ParticleWindSpeed
-   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * ### Action 732 - ParticleForceSpeed
+   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
    * 
-   * Controls how effective the wind is at pushing the particles emitted from the node.
+   * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+   * - {@link ActionType.CancelForce CancelForce}
+   * - {@link ActionType.WindForce WindForce}
+   * - {@link ActionType.GravityForce GravityForce}
+   * - {@link ActionType.ForceCollision ForceCollision}
+   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
    * 
-   * This action type has a specialized subclass: {@link ParticleWindSpeed}
+   * This action type has a specialized subclass: {@link ParticleForceSpeed}
    */
-  ParticleWindSpeed = 732,
+  ParticleForceSpeed = 732,
   /**
-   * ### Action 733 - NodeWindAcceleration
-   * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+   * ### Action 733 - NodeForceAcceleration
+   * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
    * 
-   * Controls how effective the wind is at accelerating the node.
+   * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+   * - {@link ActionType.CancelForce CancelForce}
+   * - {@link ActionType.WindForce WindForce}
+   * - {@link ActionType.GravityForce GravityForce}
+   * - {@link ActionType.ForceCollision ForceCollision}
+   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
    * 
-   * This action type has a specialized subclass: {@link NodeWindAcceleration}
+   * This action type has a specialized subclass: {@link NodeForceAcceleration}
    */
-  NodeWindAcceleration = 733,
+  NodeForceAcceleration = 733,
   /**
-   * ### Action 734 - ParticleWindAcceleration
-   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * ### Action 734 - ParticleForceAcceleration
+   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
    * 
-   * Controls how effective the wind is at accelerating the particles emitted from the node.
+   * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+   * - {@link ActionType.CancelForce CancelForce}
+   * - {@link ActionType.WindForce WindForce}
+   * - {@link ActionType.GravityForce GravityForce}
+   * - {@link ActionType.ForceCollision ForceCollision}
+   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
    * 
-   * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleWindAcceleration}
+   * This action type has a specialized subclass: {@link ParticleForceAcceleration}
    */
-  ParticleWindAcceleration = 734,
+  ParticleForceAcceleration = 734,
   /**
    * ### Action 800 - Unk800
-   * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
    * 
    * Unknown action that was added in Armored Core 6.
    * 
@@ -802,14 +817,52 @@ enum ActionType {
    */
   Unk10100 = 10100,
   /**
+   * ### Action 10200 - CancelForce
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
+   * - {@link ActionType.WindForce WindForce}
+   * - {@link ActionType.GravityForce GravityForce}
+   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+   * 
+   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+   * 
+   * This action type has a specialized subclass: {@link CancelForce}
+   */
+  CancelForce = 10200,
+  /**
    * ### Action 10300 - WindForce
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * 
-   * Creates a wind force in a volume.
+   * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+   * 
+   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
    * 
    * This action type has a specialized subclass: {@link WindForce}
    */
   WindForce = 10300,
+  /**
+   * ### Action 10301 - GravityForce
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+   * 
+   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+   * 
+   * This action type has a specialized subclass: {@link GravityForce}
+   */
+  GravityForce = 10301,
+  /**
+   * ### Action 10302 - ForceCollision
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Controls the volume used to detect whether or not the node is inside a force volume.
+   * 
+   * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+   * 
+   * This action type has a specialized subclass: {@link ForceCollision}
+   */
+  ForceCollision = 10302,
   /**
    * ### Action 10400 - Unk10400
    * **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
@@ -1442,6 +1495,14 @@ enum ResourceType {
   Sound = 3,
 }
 
+enum ForceVolumeShape {
+  Boundless = 0,
+  Sphere = 1,
+  Box = 2,
+  Cylinder = 3,
+  SquarePrism = 4,
+}
+
 //#region Types / Interfaces
 export type AnyExternalValue =
   | ExternalValue.DarkSouls3
@@ -1639,7 +1700,10 @@ export namespace ActionSlots {
     | WaterInteraction
     | LensFlare
     | RichModel
+    | CancelForce
     | WindForce
+    | GravityForce
+    | ForceCollision
     | SpotLight
     | Action
 
@@ -1677,6 +1741,11 @@ export namespace ActionSlots {
     | NodeSound
     | Action
 
+  export type NodeForceMovementAction =
+    | NodeForceSpeed
+    | NodeForceAcceleration
+    | Action
+
   export type NodeMovementAction =
     | NodeAcceleration
     | NodeTranslation
@@ -1701,13 +1770,14 @@ export namespace ActionSlots {
     | RandomNodeTransform
     | Action
 
-  export type NodeWindAction =
-    | NodeWindSpeed
-    | NodeWindAcceleration
-    | Action
-
   export type ParticleAttributesAction =
     | ParticleAttributes
+    | Action
+
+  export type ParticleForceMovementAction =
+    | ParticleForceSpeed
+    | ParticleForceAcceleration
+    | Unk800
     | Action
 
   export type ParticleModifierAction =
@@ -1721,12 +1791,6 @@ export namespace ActionSlots {
     | ParticleSpeedPartialFollow
     | ParticleAccelerationRandomTurns
     | ParticleAccelerationPartialFollow
-    | Action
-
-  export type ParticleWindAction =
-    | ParticleWindSpeed
-    | ParticleWindAcceleration
-    | Unk800
     | Action
 
   export type Unknown70xAction =
@@ -3550,66 +3614,62 @@ const ActionData: {
     }
   },
   [ActionType.Unk702]: {},
-  [ActionType.NodeWindSpeed]: {
+  [ActionType.NodeForceSpeed]: {
     props: {
       speed: { default: 0 },
       speedMultiplier: { default: 1 },
-      enabled: { default: true, field: 0 },
+      unk_sdt_f1_0: { default: 1, field: 1 },
     },
     games: {
-      [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
-        fields1: ['enabled'],
+        fields1: ['unk_sdt_f1_0'],
         properties1: ['speed','speedMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.ParticleWindSpeed]: {
+  [ActionType.ParticleForceSpeed]: {
     props: {
       speed: { default: 0 },
       speedMultiplier: { default: 1 },
-      enabled: { default: true, field: 0 },
+      unk_sdt_f1_0: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
     },
     games: {
-      [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
-        fields1: ['enabled','unk_sdt_f1_1'],
+        fields1: ['unk_sdt_f1_0','unk_sdt_f1_1'],
         properties1: ['speed','speedMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.NodeWindAcceleration]: {
+  [ActionType.NodeForceAcceleration]: {
     props: {
       acceleration: { default: 0 },
       accelerationMultiplier: { default: 1 },
-      enabled: { default: true, field: 0 },
+      unk_sdt_f1_0: { default: 1, field: 1 },
     },
     games: {
-      [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
-        fields1: ['enabled'],
+        fields1: ['unk_sdt_f1_0'],
         properties1: ['acceleration','accelerationMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.ParticleWindAcceleration]: {
+  [ActionType.ParticleForceAcceleration]: {
     props: {
       acceleration: { default: 0 },
       accelerationMultiplier: { default: 1 },
-      enabled: { default: true, field: 0 },
+      unk_sdt_f1_0: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
     },
     games: {
-      [Game.DarkSouls3]: -2,
       [Game.Sekiro]: {
-        fields1: ['enabled','unk_sdt_f1_1'],
+        fields1: ['unk_sdt_f1_0','unk_sdt_f1_1'],
         properties1: ['acceleration','accelerationMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -5026,18 +5086,39 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
+  [ActionType.CancelForce]: {
+    props: {
+      shape: { default: ForceVolumeShape.Sphere, field: 1 },
+      sphereRadius: { default: 10, field: 2 },
+      boxSizeX: { default: 0, field: 2 },
+      boxSizeY: { default: 0, field: 2 },
+      boxSizeZ: { default: 0, field: 2 },
+      cylinderHeight: { default: 0, field: 2 },
+      cylinderRadius: { default: 0, field: 2 },
+      squarePrismHeight: { default: 0, field: 2 },
+      squarePrismApothem: { default: 0, field: 2 },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.WindForce]: {
     props: {
-      intensity: { default: 1, field: 2 },
-      unk_ds3_f1_0: { default: 1, field: 1 },
-      radius: { default: 10, field: 2 },
-      unk_ds3_f1_2: { default: 0, field: 2 },
-      unk_ds3_f1_3: { default: 0, field: 2 },
-      unk_ds3_f1_4: { default: 0, field: 2 },
-      unk_ds3_f1_5: { default: 0, field: 2 },
-      unk_ds3_f1_6: { default: 0, field: 2 },
-      unk_ds3_f1_7: { default: 0, field: 2 },
-      unk_ds3_f1_8: { default: 0, field: 2 },
+      force: { default: 1 },
+      shape: { default: ForceVolumeShape.Sphere, field: 1 },
+      sphereRadius: { default: 10, field: 2 },
+      boxSizeX: { default: 0, field: 2 },
+      boxSizeY: { default: 0, field: 2 },
+      boxSizeZ: { default: 0, field: 2 },
+      cylinderHeight: { default: 0, field: 2 },
+      cylinderRadius: { default: 0, field: 2 },
+      squarePrismHeight: { default: 0, field: 2 },
+      squarePrismApothem: { default: 0, field: 2 },
       unk_ds3_f1_9: { default: 0, field: 1 },
       unk_ds3_f1_10: { default: 0, field: 1 },
       unk_ds3_f1_11: { default: 0, field: 1 },
@@ -5067,15 +5148,15 @@ const ActionData: {
       unk_ds3_f1_35: { default: 0, field: 2 },
       unk_ds3_f1_36: { default: 0, field: 2 },
       unk_ds3_f1_37: { default: 0, field: 2 },
-      unk_ds3_f1_38: { default: 10, field: 2 },
-      unk_ds3_f1_39: { default: 10, field: 2 },
+      forceRandomMultiplierMin: { default: 1, field: 2 },
+      forceRandomMultiplierMax: { default: 1, field: 2 },
       unk_ds3_f1_40: { default: 1, field: 2 },
       unk_ds3_f1_41: { default: 1, field: 2 },
       unk_ds3_f1_42: { default: 1, field: 2 },
-      unk_ds3_f1_43: { default: 1, field: 1 },
+      unk_ds3_f1_43: { default: 1, field: 2 },
       unk_ds3_f1_44: { default: 1, field: 2 },
       unk_ds3_f1_45: { default: 1, field: 2 },
-      unk_ds3_f1_46: { default: 1, field: 2 },
+      forceMultiplier: { default: 1, field: 2 },
       unk_ds3_f1_47: { default: 1, field: 2 },
       unk_ds3_f1_48: { default: 1, field: 2 },
       unk_sdt_f1_48: { default: 1, field: 2 },
@@ -5083,7 +5164,7 @@ const ActionData: {
       unk_sdt_f1_50: { default: 1, field: 2 },
       unk_sdt_f1_51: { default: 0, field: 2 },
       unk_sdt_f1_52: { default: 0, field: 2 },
-      fadeOutTime: { default: 2, field: 1 },
+      fadeOutTime: { default: 0, field: 1 },
       unk_sdt_f1_54: { default: 0, field: 2 },
       unk_sdt_f1_55: { default: 0, field: 2 },
       unk_sdt_f1_56: { default: 1, field: 2 },
@@ -5094,15 +5175,87 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
-        properties1: ['intensity']
+        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
+        properties1: ['force']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','radius','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','unk_ds3_f1_38','unk_ds3_f1_39','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','unk_ds3_f1_46','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
+        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
         properties1: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
+    }
+  },
+  [ActionType.GravityForce]: {
+    props: {
+      force: { default: 1 },
+      shape: { default: ForceVolumeShape.Sphere, field: 1 },
+      sphereRadius: { default: 10, field: 2 },
+      boxSizeX: { default: 0, field: 2 },
+      boxSizeY: { default: 0, field: 2 },
+      boxSizeZ: { default: 0, field: 2 },
+      cylinderHeight: { default: 0, field: 2 },
+      cylinderRadius: { default: 0, field: 2 },
+      squarePrismHeight: { default: 0, field: 2 },
+      squarePrismApothem: { default: 0, field: 2 },
+      unk_ds3_f1_9: { default: 0, field: 1 },
+      unk_ds3_f1_10: { default: 0, field: 1 },
+      unk_ds3_f1_11: { default: 0, field: 1 },
+      unk_ds3_f1_12: { default: 0, field: 1 },
+      unk_ds3_f1_13: { default: 0, field: 1 },
+      unk_ds3_f1_14: { default: 0, field: 1 },
+      unk_ds3_f1_15: { default: 0, field: 1 },
+      unk_ds3_f1_16: { default: 0, field: 1 },
+      unk_ds3_f1_17: { default: 0, field: 1 },
+      unk_ds3_f1_18: { default: 0, field: 1 },
+      unk_ds3_f1_19: { default: 0, field: 1 },
+      unk_ds3_f1_20: { default: 0, field: 1 },
+      unk_ds3_f1_21: { default: 0, field: 1 },
+      unk_ds3_f1_22: { default: 0, field: 1 },
+      unk_ds3_f1_23: { default: 0, field: 1 },
+      unk_ds3_f1_24: { default: 0, field: 1 },
+      unk_ds3_f1_25: { default: 0, field: 1 },
+      unk_ds3_f1_26: { default: 0, field: 1 },
+      unk_ds3_f1_27: { default: 0, field: 1 },
+      forceRandomMultiplierMin: { default: 1, field: 2 },
+      forceRandomMultiplierMax: { default: 1, field: 2 },
+      unk_ds3_f1_30: { default: 1, field: 2 },
+      unk_ds3_f1_31: { default: 0, field: 1 },
+      unk_ds3_f1_32: { default: 0, field: 1 },
+      unk_ds3_f1_33: { default: 1, field: 2 },
+      unk_ds3_f1_34: { default: 3, field: 1 },
+      forceMultiplier: { default: 1, field: 2 },
+      unk_ds3_f1_36: { default: 1, field: 2 },
+      unk_ds3_f1_37: { default: 1, field: 2 },
+      fadeOutTime: { default: 0, field: 1 },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','forceMultiplier','unk_ds3_f1_36','unk_ds3_f1_37','fadeOutTime'],
+        properties1: ['force']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
+  [ActionType.ForceCollision]: {
+    props: {
+      shape: { default: ForceVolumeShape.Sphere, field: 1 },
+      sphereRadius: { default: 10, field: 2 },
+      boxSizeX: { default: 0, field: 2 },
+      boxSizeY: { default: 0, field: 2 },
+      boxSizeZ: { default: 0, field: 2 },
+      cylinderHeight: { default: 0, field: 2 },
+      cylinderRadius: { default: 0, field: 2 },
+    },
+    games: {
+      [Game.DarkSouls3]: {
+        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius']
+      },
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
   [ActionType.Unk10400]: {
@@ -5367,10 +5520,10 @@ const EffectActionSlots = {
       ActionType.WaterInteraction,
       ActionType.LensFlare,
       ActionType.RichModel,
-      ActionType.Unk10200_ForceFieldCancelArea,
+      ActionType.CancelForce,
       ActionType.WindForce,
-      ActionType.Unk10301_ForceFieldGravityArea,
-      ActionType.Unk10302_CollisionFieldArea,
+      ActionType.GravityForce,
+      ActionType.ForceCollision,
       ActionType.Unk10303_ForceFieldTurbulenceArea,
       ActionType.SpotLight
     ],
@@ -5389,12 +5542,12 @@ const EffectActionSlots = {
       ActionType.Unk130
     ],
     [
-      ActionType.NodeWindSpeed,
-      ActionType.NodeWindAcceleration
+      ActionType.NodeForceSpeed,
+      ActionType.NodeForceAcceleration
     ],
     [
-      ActionType.ParticleWindSpeed,
-      ActionType.ParticleWindAcceleration,
+      ActionType.ParticleForceSpeed,
+      ActionType.ParticleForceAcceleration,
       ActionType.Unk800
     ]
   ],
@@ -5448,8 +5601,8 @@ const EffectActionSlots = {
       ActionType.EmissionSound
     ],
     [
-      ActionType.NodeWindSpeed,
-      ActionType.NodeWindAcceleration
+      ActionType.NodeForceSpeed,
+      ActionType.NodeForceAcceleration
     ]
   ]
 }
@@ -9026,12 +9179,14 @@ abstract class Node {
           slot9.jitterY *= factor
           slot9.jitterZ *= factor
         } else if (slot9 instanceof WindForce) {
-          slot9.radius *= factor
-          slot9.unk_ds3_f1_2 *= factor
-          slot9.unk_ds3_f1_3 *= factor
-          slot9.unk_ds3_f1_4 *= factor
-          slot9.unk_ds3_f1_7 *= factor
-          slot9.unk_ds3_f1_8 *= factor
+          slot9.sphereRadius *= factor
+          slot9.boxSizeX *= factor
+          slot9.boxSizeY *= factor
+          slot9.boxSizeZ *= factor
+          slot9.cylinderHeight *= factor
+          slot9.cylinderRadius *= factor
+          slot9.squarePrismHeight *= factor
+          slot9.squarePrismApothem *= factor
         } else if (
           slot9 instanceof GPUStandardParticle ||
           slot9 instanceof GPUStandardCorrectParticle
@@ -9201,24 +9356,24 @@ abstract class Node {
           slot10.speed = anyValueMult(factor, slot10.speed)
         }
 
-        const slot13 = effect.nodeWind
-        if (slot13 instanceof NodeWindAcceleration) {
+        const slot13 = effect.nodeForceMovement
+        if (slot13 instanceof NodeForceAcceleration) {
           slot13.acceleration = anyValueMult(factor, slot13.acceleration)
-        } else if (slot13 instanceof NodeWindSpeed) {
+        } else if (slot13 instanceof NodeForceSpeed) {
           slot13.speed = anyValueMult(factor, slot13.speed)
         }
 
-        const slot14 = effect.particleWind
-        if (slot14 instanceof ParticleWindAcceleration) {
+        const slot14 = effect.particleForceMovement
+        if (slot14 instanceof ParticleForceAcceleration) {
           slot14.acceleration = anyValueMult(factor, slot14.acceleration)
-        } else if (slot14 instanceof ParticleWindSpeed) {
+        } else if (slot14 instanceof ParticleForceSpeed) {
           slot14.speed = anyValueMult(factor, slot14.speed)
         }
       } else { // Node emitter effect
-        const slot9 = effect.nodeWind
-        if (slot9 instanceof NodeWindAcceleration) {
+        const slot9 = effect.nodeForceMovement
+        if (slot9 instanceof NodeForceAcceleration) {
           slot9.acceleration = anyValueMult(factor, slot9.acceleration)
-        } else if (slot9 instanceof NodeWindSpeed) {
+        } else if (slot9 instanceof NodeForceSpeed) {
           slot9.speed = anyValueMult(factor, slot9.speed)
         }
       }
@@ -9810,8 +9965,8 @@ class Effect implements IEffect {
         if ('particleMovement' in obj) params.particleMovement = Action.fromJSON(obj.particleMovement)
         if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
         if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
-        if ('nodeWind' in obj) params.nodeWind = Action.fromJSON(obj.nodeWind)
-        if ('particleWind' in obj) params.particleWind = Action.fromJSON(obj.particleWind)
+        if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
+        if ('particleForceMovement' in obj) params.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
         return new BasicEffect(params)
       }
       case EffectType.NodeEmitter: {
@@ -9825,7 +9980,7 @@ class Effect implements IEffect {
         if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
         if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
         if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
-        if ('nodeWind' in obj) params.nodeWind = Action.fromJSON(obj.nodeWind)
+        if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
         return new NodeEmitterEffect(params)
       }
     }
@@ -9900,8 +10055,8 @@ export interface BasicEffectParams {
   particleMovement?: ActionSlots.ParticleMovementAction
   emissionAudio?: ActionSlots.EmissionAudioAction
   slot12?: ActionSlots.Unknown130Action
-  nodeWind?: ActionSlots.NodeWindAction
-  particleWind?: ActionSlots.ParticleWindAction
+  nodeForceMovement?: ActionSlots.NodeForceMovementAction
+  particleForceMovement?: ActionSlots.ParticleForceMovementAction
 }
 
 /**
@@ -9924,8 +10079,8 @@ export interface BasicEffectParams {
  * 10    | {@link ActionSlots.ParticleMovementAction ParticleMovement} | {@link ActionType.None None}
  * 11    | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 12    | {@link ActionSlots.Unknown130Action Unknown130} | {@link ActionType.Unk130 Unk130}
- * 13    | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
- * 14    | {@link ActionSlots.ParticleWindAction ParticleWind} | {@link ActionType.None None}
+ * 13    | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
+ * 14    | {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement} | {@link ActionType.None None}
  */
 class BasicEffect implements IEffect {
   readonly type = EffectType.Basic
@@ -9943,29 +10098,29 @@ class BasicEffect implements IEffect {
   particleMovement: ActionSlots.ParticleMovementAction = new Action
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   slot12: ActionSlots.Unknown130Action = new Unk130
-  nodeWind: ActionSlots.NodeWindAction = new Action
-  particleWind: ActionSlots.ParticleWindAction = new Action
+  nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
+  particleForceMovement: ActionSlots.ParticleForceMovementAction = new Action
 
   constructor(params: BasicEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
         switch (index) {
-          case 0:  this.nodeAttributes     = action as Action; break;
-          case 1:  this.nodeTransform      = action as Action; break;
-          case 2:  this.nodeMovement       = action as Action; break;
-          case 3:  this.nodeAudio          = action as Action; break;
-          case 4:  this.emitter            = action as Action; break;
-          case 5:  this.emitterShape       = action as Action; break;
-          case 6:  this.directionSpread    = action as Action; break;
-          case 7:  this.particleModifier   = action as Action; break;
-          case 8:  this.particleAttributes = action as Action; break;
-          case 9:  this.appearance         = action as Action; break;
-          case 10: this.particleMovement   = action as Action; break;
-          case 11: this.emissionAudio      = action as Action; break;
-          case 12: this.slot12             = action as Action; break;
-          case 13: this.nodeWind           = action as Action; break;
-          case 14: this.particleWind       = action as Action; break;
+          case 0:  this.nodeAttributes        = action as Action; break;
+          case 1:  this.nodeTransform         = action as Action; break;
+          case 2:  this.nodeMovement          = action as Action; break;
+          case 3:  this.nodeAudio             = action as Action; break;
+          case 4:  this.emitter               = action as Action; break;
+          case 5:  this.emitterShape          = action as Action; break;
+          case 6:  this.directionSpread       = action as Action; break;
+          case 7:  this.particleModifier      = action as Action; break;
+          case 8:  this.particleAttributes    = action as Action; break;
+          case 9:  this.appearance            = action as Action; break;
+          case 10: this.particleMovement      = action as Action; break;
+          case 11: this.emissionAudio         = action as Action; break;
+          case 12: this.slot12                = action as Action; break;
+          case 13: this.nodeForceMovement     = action as Action; break;
+          case 14: this.particleForceMovement = action as Action; break;
         }
       }
     } else {
@@ -9982,8 +10137,8 @@ class BasicEffect implements IEffect {
       if ('particleMovement' in params) this.particleMovement = params.particleMovement
       if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
       if ('slot12' in params) this.slot12 = params.slot12
-      if ('nodeWind' in params) this.nodeWind = params.nodeWind
-      if ('particleWind' in params) this.particleWind = params.particleWind
+      if ('nodeForceMovement' in params) this.nodeForceMovement = params.nodeForceMovement
+      if ('particleForceMovement' in params) this.particleForceMovement = params.particleForceMovement
     }
   }
 
@@ -10007,8 +10162,8 @@ class BasicEffect implements IEffect {
       this.emissionAudio,
       this.slot12,
       game === Game.DarkSouls3 ? [] : [
-        this.nodeWind,
-        this.particleWind,
+        this.nodeForceMovement,
+        this.particleForceMovement,
       ]
     ].flat()
   }
@@ -10029,8 +10184,8 @@ class BasicEffect implements IEffect {
       particleMovement: this.particleMovement.toJSON(),
       emissionAudio: this.emissionAudio.toJSON(),
       slot12: this.slot12.toJSON(),
-      nodeWind: this.nodeWind.toJSON(),
-      particleWind: this.particleWind.toJSON(),
+      nodeForceMovement: this.nodeForceMovement.toJSON(),
+      particleForceMovement: this.particleForceMovement.toJSON(),
     }
   }
 
@@ -10048,8 +10203,8 @@ class BasicEffect implements IEffect {
     this.particleMovement = this.particleMovement.minify()
     this.emissionAudio = this.emissionAudio.minify()
     this.slot12 = this.slot12.minify()
-    this.nodeWind = this.nodeWind.minify()
-    this.particleWind = this.particleWind.minify()
+    this.nodeForceMovement = this.nodeForceMovement.minify()
+    this.particleForceMovement = this.particleForceMovement.minify()
     return this
   }
 
@@ -10067,8 +10222,8 @@ class BasicEffect implements IEffect {
     yield this.particleMovement
     yield this.emissionAudio
     yield this.slot12
-    yield this.nodeWind
-    yield this.particleWind
+    yield this.nodeForceMovement
+    yield this.particleForceMovement
   }
 
 }
@@ -10083,7 +10238,7 @@ export interface NodeEmitterEffectParams {
   directionSpread?: ActionSlots.DirectionSpreadAction
   nodeSelector?: ActionSlots.NodeSelectorAction
   emissionAudio?: ActionSlots.EmissionAudioAction
-  nodeWind?: ActionSlots.NodeWindAction
+  nodeForceMovement?: ActionSlots.NodeForceMovementAction
 }
 
 /**
@@ -10102,7 +10257,7 @@ export interface NodeEmitterEffectParams {
  * 6     | {@link ActionSlots.DirectionSpreadAction DirectionSpread} | {@link ActionType.NoSpread NoSpread}
  * 7     | {@link ActionSlots.NodeSelectorAction NodeSelector} | {@link ActionType.SelectAllNodes SelectAllNodes}
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
- * 9     | {@link ActionSlots.NodeWindAction NodeWind} | {@link ActionType.None None}
+ * 9     | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  */
 class NodeEmitterEffect implements IEffect {
   readonly type = EffectType.NodeEmitter
@@ -10116,23 +10271,23 @@ class NodeEmitterEffect implements IEffect {
   directionSpread: ActionSlots.DirectionSpreadAction = new NoSpread
   nodeSelector: ActionSlots.NodeSelectorAction = new SelectAllNodes
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
-  nodeWind: ActionSlots.NodeWindAction = new Action
+  nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
 
   constructor(params: NodeEmitterEffectParams | AnyAction[]) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = EffectActionSlots[EffectType.NodeEmitter].findIndex(a => a.includes(action.type))
         switch (index) {
-          case 0: this.nodeAttributes  = action as Action; break;
-          case 1: this.nodeTransform   = action as Action; break;
-          case 2: this.nodeMovement    = action as Action; break;
-          case 3: this.nodeAudio       = action as Action; break;
-          case 4: this.emitter         = action as Action; break;
-          case 5: this.emitterShape    = action as Action; break;
-          case 6: this.directionSpread = action as Action; break;
-          case 7: this.nodeSelector    = action as Action; break;
-          case 8: this.emissionAudio   = action as Action; break;
-          case 9: this.nodeWind        = action as Action; break;
+          case 0: this.nodeAttributes    = action as Action; break;
+          case 1: this.nodeTransform     = action as Action; break;
+          case 2: this.nodeMovement      = action as Action; break;
+          case 3: this.nodeAudio         = action as Action; break;
+          case 4: this.emitter           = action as Action; break;
+          case 5: this.emitterShape      = action as Action; break;
+          case 6: this.directionSpread   = action as Action; break;
+          case 7: this.nodeSelector      = action as Action; break;
+          case 8: this.emissionAudio     = action as Action; break;
+          case 9: this.nodeForceMovement = action as Action; break;
         }
       }
     } else {
@@ -10145,7 +10300,7 @@ class NodeEmitterEffect implements IEffect {
       if ('directionSpread' in params) this.directionSpread = params.directionSpread
       if ('nodeSelector' in params) this.nodeSelector = params.nodeSelector
       if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
-      if ('nodeWind' in params) this.nodeWind = params.nodeWind
+      if ('nodeForceMovement' in params) this.nodeForceMovement = params.nodeForceMovement
     }
   }
 
@@ -10165,7 +10320,7 @@ class NodeEmitterEffect implements IEffect {
       this.nodeSelector,
       this.emissionAudio,
       game === Game.DarkSouls3 ? [] : [
-        this.nodeWind,
+        this.nodeForceMovement,
       ]
     ].flat()
   }
@@ -10182,7 +10337,7 @@ class NodeEmitterEffect implements IEffect {
       directionSpread: this.directionSpread.toJSON(),
       nodeSelector: this.nodeSelector.toJSON(),
       emissionAudio: this.emissionAudio.toJSON(),
-      nodeWind: this.nodeWind.toJSON(),
+      nodeForceMovement: this.nodeForceMovement.toJSON(),
     }
   }
 
@@ -10196,7 +10351,7 @@ class NodeEmitterEffect implements IEffect {
     this.directionSpread = this.directionSpread.minify()
     this.nodeSelector = this.nodeSelector.minify()
     this.emissionAudio = this.emissionAudio.minify()
-    this.nodeWind = this.nodeWind.minify()
+    this.nodeForceMovement = this.nodeForceMovement.minify()
     return this
   }
 
@@ -10210,7 +10365,7 @@ class NodeEmitterEffect implements IEffect {
     yield this.directionSpread
     yield this.nodeSelector
     yield this.emissionAudio
-    yield this.nodeWind
+    yield this.nodeForceMovement
   }
 
 }
@@ -23973,9 +24128,9 @@ class Unk702 extends DataAction {
   }
 }
 
-export interface NodeWindSpeedParams {
+export interface NodeForceSpeedParams {
   /**
-   * The speed in the direction of the wind.
+   * The speed in the direction of the force.
    * 
    * **Default**: `0`
    * 
@@ -23983,7 +24138,7 @@ export interface NodeWindSpeedParams {
    */
   speed?: ScalarValue
   /**
-   * A multiplier for {@link speed the speed in the direction of the wind}.
+   * A multiplier for {@link speed}.
    * 
    * **Default**: `1`
    * 
@@ -23991,46 +24146,48 @@ export interface NodeWindSpeedParams {
    */
   speedMultiplier?: ScalarValue
   /**
-   * Controls whether the wind should have any effect at all or not.
+   * Unknown integer.
    * 
-   * **Default**: `true`
+   * **Default**: `1`
    */
-  enabled?: boolean
+  unk_sdt_f1_0?: number
 }
 
 /**
- * ### {@link ActionType.NodeWindSpeed Action 731 - NodeWindSpeed}
- * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+ * ### {@link ActionType.NodeForceSpeed Action 731 - NodeForceSpeed}
+ * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
  * 
- * Controls how effective the wind is at pushing the node.
+ * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+ * - {@link ActionType.CancelForce CancelForce}
+ * - {@link ActionType.WindForce WindForce}
+ * - {@link ActionType.GravityForce GravityForce}
+ * - {@link ActionType.ForceCollision ForceCollision}
+ * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
  */
-class NodeWindSpeed extends DataAction {
-  declare type: ActionType.NodeWindSpeed
+class NodeForceSpeed extends DataAction {
+  declare type: ActionType.NodeForceSpeed
   /**
-   * The speed in the direction of the wind.
+   * The speed in the direction of the force.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   speed: ScalarValue
   /**
-   * A multiplier for {@link speed the speed in the direction of the wind}.
+   * A multiplier for {@link speed}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   speedMultiplier: ScalarValue
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  enabled: boolean
-  constructor(props: NodeWindSpeedParams = {}) {
-    super(ActionType.NodeWindSpeed)
+  unk_sdt_f1_0: number
+  constructor(props: NodeForceSpeedParams = {}) {
+    super(ActionType.NodeForceSpeed)
     this.assign(props)
   }
 }
 
-export interface ParticleWindSpeedParams {
+export interface ParticleForceSpeedParams {
   /**
-   * The speed in the direction of the wind.
+   * The speed in the direction of the force.
    * 
    * **Default**: `0`
    * 
@@ -24038,7 +24195,7 @@ export interface ParticleWindSpeedParams {
    */
   speed?: ScalarValue
   /**
-   * A multiplier for {@link speed the speed in the direction of the wind}.
+   * A multiplier for {@link speed}.
    * 
    * **Default**: `1`
    * 
@@ -24046,11 +24203,11 @@ export interface ParticleWindSpeedParams {
    */
   speedMultiplier?: ScalarValue
   /**
-   * Controls whether the wind should have any effect at all or not.
+   * Unknown integer.
    * 
-   * **Default**: `true`
+   * **Default**: `1`
    */
-  enabled?: boolean
+  unk_sdt_f1_0?: number
   /**
    * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
    * 
@@ -24060,42 +24217,44 @@ export interface ParticleWindSpeedParams {
 }
 
 /**
- * ### {@link ActionType.ParticleWindSpeed Action 732 - ParticleWindSpeed}
- * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * ### {@link ActionType.ParticleForceSpeed Action 732 - ParticleForceSpeed}
+ * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
  * 
- * Controls how effective the wind is at pushing the particles emitted from the node.
+ * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+ * - {@link ActionType.CancelForce CancelForce}
+ * - {@link ActionType.WindForce WindForce}
+ * - {@link ActionType.GravityForce GravityForce}
+ * - {@link ActionType.ForceCollision ForceCollision}
+ * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
  */
-class ParticleWindSpeed extends DataAction {
-  declare type: ActionType.ParticleWindSpeed
+class ParticleForceSpeed extends DataAction {
+  declare type: ActionType.ParticleForceSpeed
   /**
-   * The speed in the direction of the wind.
+   * The speed in the direction of the force.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   speed: ScalarValue
   /**
-   * A multiplier for {@link speed the speed in the direction of the wind}.
+   * A multiplier for {@link speed}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   speedMultiplier: ScalarValue
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  enabled: boolean
+  unk_sdt_f1_0: number
   /**
    * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
    */
   unk_sdt_f1_1: number
-  constructor(props: ParticleWindSpeedParams = {}) {
-    super(ActionType.ParticleWindSpeed)
+  constructor(props: ParticleForceSpeedParams = {}) {
+    super(ActionType.ParticleForceSpeed)
     this.assign(props)
   }
 }
 
-export interface NodeWindAccelerationParams {
+export interface NodeForceAccelerationParams {
   /**
-   * The acceleration in the direction of the wind.
+   * The acceleration in the direction of the force.
    * 
    * **Default**: `0`
    * 
@@ -24103,7 +24262,7 @@ export interface NodeWindAccelerationParams {
    */
   acceleration?: ScalarValue
   /**
-   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration}.
    * 
    * **Default**: `1`
    * 
@@ -24111,46 +24270,48 @@ export interface NodeWindAccelerationParams {
    */
   accelerationMultiplier?: ScalarValue
   /**
-   * Controls whether the wind should have any effect at all or not.
+   * Unknown integer.
    * 
-   * **Default**: `true`
+   * **Default**: `1`
    */
-  enabled?: boolean
+  unk_sdt_f1_0?: number
 }
 
 /**
- * ### {@link ActionType.NodeWindAcceleration Action 733 - NodeWindAcceleration}
- * **Slot**: {@link ActionSlots.NodeWindAction NodeWind}
+ * ### {@link ActionType.NodeForceAcceleration Action 733 - NodeForceAcceleration}
+ * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
  * 
- * Controls how effective the wind is at accelerating the node.
+ * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+ * - {@link ActionType.CancelForce CancelForce}
+ * - {@link ActionType.WindForce WindForce}
+ * - {@link ActionType.GravityForce GravityForce}
+ * - {@link ActionType.ForceCollision ForceCollision}
+ * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
  */
-class NodeWindAcceleration extends DataAction {
-  declare type: ActionType.NodeWindAcceleration
+class NodeForceAcceleration extends DataAction {
+  declare type: ActionType.NodeForceAcceleration
   /**
-   * The acceleration in the direction of the wind.
+   * The acceleration in the direction of the force.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   acceleration: ScalarValue
   /**
-   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   accelerationMultiplier: ScalarValue
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  enabled: boolean
-  constructor(props: NodeWindAccelerationParams = {}) {
-    super(ActionType.NodeWindAcceleration)
+  unk_sdt_f1_0: number
+  constructor(props: NodeForceAccelerationParams = {}) {
+    super(ActionType.NodeForceAcceleration)
     this.assign(props)
   }
 }
 
-export interface ParticleWindAccelerationParams {
+export interface ParticleForceAccelerationParams {
   /**
-   * The acceleration in the direction of the wind.
+   * The acceleration in the direction of the force.
    * 
    * **Default**: `0`
    * 
@@ -24158,7 +24319,7 @@ export interface ParticleWindAccelerationParams {
    */
   acceleration?: ScalarValue
   /**
-   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration}.
    * 
    * **Default**: `1`
    * 
@@ -24166,11 +24327,11 @@ export interface ParticleWindAccelerationParams {
    */
   accelerationMultiplier?: ScalarValue
   /**
-   * Controls whether the wind should have any effect at all or not.
+   * Unknown integer.
    * 
-   * **Default**: `true`
+   * **Default**: `1`
    */
-  enabled?: boolean
+  unk_sdt_f1_0?: number
   /**
    * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
    * 
@@ -24180,37 +24341,37 @@ export interface ParticleWindAccelerationParams {
 }
 
 /**
- * ### {@link ActionType.ParticleWindAcceleration Action 734 - ParticleWindAcceleration}
- * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * ### {@link ActionType.ParticleForceAcceleration Action 734 - ParticleForceAcceleration}
+ * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
  * 
- * Controls how effective the wind is at accelerating the particles emitted from the node.
- * 
- * Acceleration requires slot 10 to have an action that enables acceleration of the particles.
+ * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+ * - {@link ActionType.CancelForce CancelForce}
+ * - {@link ActionType.WindForce WindForce}
+ * - {@link ActionType.GravityForce GravityForce}
+ * - {@link ActionType.ForceCollision ForceCollision}
+ * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
  */
-class ParticleWindAcceleration extends DataAction {
-  declare type: ActionType.ParticleWindAcceleration
+class ParticleForceAcceleration extends DataAction {
+  declare type: ActionType.ParticleForceAcceleration
   /**
-   * The acceleration in the direction of the wind.
+   * The acceleration in the direction of the force.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   acceleration: ScalarValue
   /**
-   * A multiplier for {@link acceleration the acceleration in the direction of the wind}.
+   * A multiplier for {@link acceleration}.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   accelerationMultiplier: ScalarValue
-  /**
-   * Controls whether the wind should have any effect at all or not.
-   */
-  enabled: boolean
+  unk_sdt_f1_0: number
   /**
    * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
    */
   unk_sdt_f1_1: number
-  constructor(props: ParticleWindAccelerationParams = {}) {
-    super(ActionType.ParticleWindAcceleration)
+  constructor(props: ParticleForceAccelerationParams = {}) {
+    super(ActionType.ParticleForceAcceleration)
     this.assign(props)
   }
 }
@@ -24238,7 +24399,7 @@ export interface Unk800Params {
 
 /**
  * ### {@link ActionType.Unk800 Action 800 - Unk800}
- * **Slot**: {@link ActionSlots.ParticleWindAction ParticleWind}
+ * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
  * 
  * Unknown action that was added in Armored Core 6.
  */
@@ -37711,69 +37872,315 @@ class Unk10100 extends DataAction {
   }
 }
 
+export interface CancelForceParams {
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume:
+   * | Shape | Fields | Origin |
+   * |-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
+   */
+  shape?: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius?: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY?: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight?: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius?: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight?: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem?: number
+}
+
+/**
+ * ### {@link ActionType.CancelForce Action 10200 - CancelForce}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
+ * - {@link ActionType.WindForce WindForce}
+ * - {@link ActionType.GravityForce GravityForce}
+ * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+ * 
+ * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+ */
+class CancelForce extends DataAction {
+  declare type: ActionType.CancelForce
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume:
+   * | Shape | Fields | Origin |
+   * |-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   */
+  shape: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem: number
+  constructor(props: CancelForceParams = {}) {
+    super(ActionType.CancelForce)
+    this.assign(props)
+  }
+}
+
 export interface WindForceParams {
   /**
-   * The intensity of the wind in the volume.
+   * The strength of the force applied in the volume.
    * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
-   */
-  intensity?: ScalarValue
-  /**
-   * Unknown integer.
    * 
-   * **Default**: `1`
+   * See also:
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
    */
-  unk_ds3_f1_0?: number
+  force?: ScalarValue
   /**
-   * The radius of the sphere where the wind force is active.
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume:
+   * | Shape | Fields | Origin |
+   * |-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
+   */
+  shape?: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
    * 
    * **Default**: `10`
+   * 
+   * See also:
+   * - {@link shape}
    */
-  radius?: number
+  sphereRadius?: number
   /**
-   * Unknown float.
+   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
    */
-  unk_ds3_f1_2?: number
+  boxSizeX?: number
   /**
-   * Unknown float.
+   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
    */
-  unk_ds3_f1_3?: number
+  boxSizeY?: number
   /**
-   * Unknown float.
+   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
    */
-  unk_ds3_f1_4?: number
+  boxSizeZ?: number
   /**
-   * Unknown float.
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
    */
-  unk_ds3_f1_5?: number
+  cylinderHeight?: number
   /**
-   * Unknown float.
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
    */
-  unk_ds3_f1_6?: number
+  cylinderRadius?: number
   /**
-   * Unknown float.
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
    */
-  unk_ds3_f1_7?: number
+  squarePrismHeight?: number
   /**
-   * Unknown float.
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
    * 
    * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
    */
-  unk_ds3_f1_8?: number
+  squarePrismApothem?: number
   /**
    * Unknown integer.
    * 
@@ -37953,17 +38360,31 @@ export interface WindForceParams {
    */
   unk_ds3_f1_37?: number
   /**
-   * Unknown float.
+   * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
    * 
-   * **Default**: `10`
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
    */
-  unk_ds3_f1_38?: number
+  forceRandomMultiplierMin?: number
   /**
-   * Unknown float.
+   * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
    * 
-   * **Default**: `10`
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceMultiplier}
    */
-  unk_ds3_f1_39?: number
+  forceRandomMultiplierMax?: number
   /**
    * Unknown float.
    * 
@@ -37983,7 +38404,7 @@ export interface WindForceParams {
    */
   unk_ds3_f1_42?: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `1`
    */
@@ -38001,11 +38422,18 @@ export interface WindForceParams {
    */
   unk_ds3_f1_45?: number
   /**
-   * Unknown float.
+   * A multiplier for {@link force}.
+   * 
+   * This is multiplicative with both the base force and the random multiplier.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
    */
-  unk_ds3_f1_46?: number
+  forceMultiplier?: number
   /**
    * Unknown float.
    * 
@@ -38051,7 +38479,7 @@ export interface WindForceParams {
   /**
    * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
-   * **Default**: `2`
+   * **Default**: `0`
    */
   fadeOutTime?: number
   /**
@@ -38102,28 +38530,102 @@ export interface WindForceParams {
  * ### {@link ActionType.WindForce Action 10300 - WindForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a wind force in a volume.
+ * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+ * 
+ * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
  */
 class WindForce extends DataAction {
   declare type: ActionType.WindForce
   /**
-   * The intensity of the wind in the volume.
+   * The strength of the force applied in the volume.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
    */
-  intensity: ScalarValue
-  unk_ds3_f1_0: number
+  force: ScalarValue
   /**
-   * The radius of the sphere where the wind force is active.
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume:
+   * | Shape | Fields | Origin |
+   * |-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
-  radius: number
-  unk_ds3_f1_2: number
-  unk_ds3_f1_3: number
-  unk_ds3_f1_4: number
-  unk_ds3_f1_5: number
-  unk_ds3_f1_6: number
-  unk_ds3_f1_7: number
-  unk_ds3_f1_8: number
+  shape: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem: number
   unk_ds3_f1_9: number
   unk_ds3_f1_10: number
   unk_ds3_f1_11: number
@@ -38160,15 +38662,45 @@ class WindForce extends DataAction {
   unk_ds3_f1_35: number
   unk_ds3_f1_36: number
   unk_ds3_f1_37: number
-  unk_ds3_f1_38: number
-  unk_ds3_f1_39: number
+  /**
+   * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
+   * 
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
+   */
+  forceRandomMultiplierMin: number
+  /**
+   * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
+   * 
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceMultiplier}
+   */
+  forceRandomMultiplierMax: number
   unk_ds3_f1_40: number
   unk_ds3_f1_41: number
   unk_ds3_f1_42: number
   unk_ds3_f1_43: number
   unk_ds3_f1_44: number
   unk_ds3_f1_45: number
-  unk_ds3_f1_46: number
+  /**
+   * A multiplier for {@link force}.
+   * 
+   * This is multiplicative with both the base force and the random multiplier.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   */
+  forceMultiplier: number
   unk_ds3_f1_47: number
   unk_ds3_f1_48: number
   unk_sdt_f1_48: number
@@ -38189,6 +38721,650 @@ class WindForce extends DataAction {
   unk_ds3_f1_50: number
   constructor(props: WindForceParams = {}) {
     super(ActionType.WindForce)
+    this.assign(props)
+  }
+}
+
+export interface GravityForceParams {
+  /**
+   * The strength of the force applied in the volume.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
+   */
+  force?: ScalarValue
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
+   * | Shape | Fields | Origin | Center of mass |
+   * |-|-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
+   */
+  shape?: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius?: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY?: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight?: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius?: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight?: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_23?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_24?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_25?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_26?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_27?: number
+  /**
+   * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
+   * 
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
+   */
+  forceRandomMultiplierMin?: number
+  /**
+   * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
+   * 
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceMultiplier}
+   */
+  forceRandomMultiplierMax?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_30?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_32?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_33?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `3`
+   */
+  unk_ds3_f1_34?: number
+  /**
+   * A multiplier for {@link force}.
+   * 
+   * This is multiplicative with both the base force and the "random" multiplier.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   */
+  forceMultiplier?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_36?: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_37?: number
+  /**
+   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
+   */
+  fadeOutTime?: number
+}
+
+/**
+ * ### {@link ActionType.GravityForce Action 10301 - GravityForce}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+ * 
+ * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+ */
+class GravityForce extends DataAction {
+  declare type: ActionType.GravityForce
+  /**
+   * The strength of the force applied in the volume.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
+   */
+  force: ScalarValue
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
+   * | Shape | Fields | Origin | Center of mass |
+   * |-|-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
+   */
+  shape: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem: number
+  unk_ds3_f1_9: number
+  unk_ds3_f1_10: number
+  unk_ds3_f1_11: number
+  unk_ds3_f1_12: number
+  unk_ds3_f1_13: number
+  unk_ds3_f1_14: number
+  unk_ds3_f1_15: number
+  unk_ds3_f1_16: number
+  unk_ds3_f1_17: number
+  unk_ds3_f1_18: number
+  unk_ds3_f1_19: number
+  unk_ds3_f1_20: number
+  unk_ds3_f1_21: number
+  unk_ds3_f1_22: number
+  unk_ds3_f1_23: number
+  unk_ds3_f1_24: number
+  unk_ds3_f1_25: number
+  unk_ds3_f1_26: number
+  unk_ds3_f1_27: number
+  /**
+   * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
+   * 
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMax}
+   * - {@link forceMultiplier}
+   */
+  forceRandomMultiplierMin: number
+  /**
+   * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
+   * 
+   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceMultiplier}
+   */
+  forceRandomMultiplierMax: number
+  unk_ds3_f1_30: number
+  unk_ds3_f1_31: number
+  unk_ds3_f1_32: number
+  unk_ds3_f1_33: number
+  unk_ds3_f1_34: number
+  /**
+   * A multiplier for {@link force}.
+   * 
+   * This is multiplicative with both the base force and the "random" multiplier.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   */
+  forceMultiplier: number
+  unk_ds3_f1_36: number
+  unk_ds3_f1_37: number
+  /**
+   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   */
+  fadeOutTime: number
+  constructor(props: GravityForceParams = {}) {
+    super(ActionType.GravityForce)
+    this.assign(props)
+  }
+}
+
+export interface ForceCollisionParams {
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume:
+   * | Shape | Fields |
+   * |-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
+   * 
+   * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
+   */
+  shape?: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius?: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY?: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight?: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius?: number
+}
+
+/**
+ * ### {@link ActionType.ForceCollision Action 10302 - ForceCollision}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Controls the volume used to detect whether or not the node is inside a force volume.
+ * 
+ * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+ */
+class ForceCollision extends DataAction {
+  declare type: ActionType.ForceCollision
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume:
+   * | Shape | Fields |
+   * |-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
+   * 
+   * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
+   */
+  shape: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius: number
+  constructor(props: ForceCollisionParams = {}) {
+    super(ActionType.ForceCollision)
     this.assign(props)
   }
 }
@@ -39408,10 +40584,10 @@ const DataActions = {
   [ActionType.Unk700]: Unk700, Unk700,
   [ActionType.Unk701]: Unk701, Unk701,
   [ActionType.Unk702]: Unk702, Unk702,
-  [ActionType.NodeWindSpeed]: NodeWindSpeed, NodeWindSpeed,
-  [ActionType.ParticleWindSpeed]: ParticleWindSpeed, ParticleWindSpeed,
-  [ActionType.NodeWindAcceleration]: NodeWindAcceleration, NodeWindAcceleration,
-  [ActionType.ParticleWindAcceleration]: ParticleWindAcceleration, ParticleWindAcceleration,
+  [ActionType.NodeForceSpeed]: NodeForceSpeed, NodeForceSpeed,
+  [ActionType.ParticleForceSpeed]: ParticleForceSpeed, ParticleForceSpeed,
+  [ActionType.NodeForceAcceleration]: NodeForceAcceleration, NodeForceAcceleration,
+  [ActionType.ParticleForceAcceleration]: ParticleForceAcceleration, ParticleForceAcceleration,
   [ActionType.Unk800]: Unk800, Unk800,
   [ActionType.GPUStandardParticle]: GPUStandardParticle, GPUStandardParticle,
   [ActionType.GPUStandardCorrectParticle]: GPUStandardCorrectParticle, GPUStandardCorrectParticle,
@@ -39423,7 +40599,10 @@ const DataActions = {
   [ActionType.LensFlare]: LensFlare, LensFlare,
   [ActionType.RichModel]: RichModel, RichModel,
   [ActionType.Unk10100]: Unk10100, Unk10100,
+  [ActionType.CancelForce]: CancelForce, CancelForce,
   [ActionType.WindForce]: WindForce, WindForce,
+  [ActionType.GravityForce]: GravityForce, GravityForce,
+  [ActionType.ForceCollision]: ForceCollision, ForceCollision,
   [ActionType.Unk10400]: Unk10400, Unk10400,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
@@ -41304,10 +42483,10 @@ export {
   Unk700,
   Unk701,
   Unk702,
-  NodeWindSpeed,
-  ParticleWindSpeed,
-  NodeWindAcceleration,
-  ParticleWindAcceleration,
+  NodeForceSpeed,
+  ParticleForceSpeed,
+  NodeForceAcceleration,
+  ParticleForceAcceleration,
   Unk800,
   GPUStandardParticle,
   GPUStandardCorrectParticle,
@@ -41319,7 +42498,10 @@ export {
   LensFlare,
   RichModel,
   Unk10100,
+  CancelForce,
   WindForce,
+  GravityForce,
+  ForceCollision,
   Unk10400,
   Unk10500,
   SpotLight,
