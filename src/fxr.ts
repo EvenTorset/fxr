@@ -10305,6 +10305,7 @@ class DataAction implements IAction {
         }
       }
     }
+    return this
   }
 
 }
@@ -39898,7 +39899,7 @@ function RainbowProperty(duration: number = 4, loop: boolean = true) {
     new Keyframe(unit * 3, [0, 1, 1, 1]),
     new Keyframe(unit * 4, [0, 1, 0, 1]),
     new Keyframe(unit * 5, [1, 1, 0, 1]),
-    new Keyframe(unit * 6, [1, 0, 0, 1]),
+    new Keyframe(duration, [1, 0, 0, 1]),
   ])
 }
 
