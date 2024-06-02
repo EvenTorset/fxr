@@ -40544,6 +40544,7 @@ export {
   InitialDirection,
   EmitterShape,
   ResourceType,
+  ForceVolumeShape,
 
   Nodes,
   EffectActionSlots,
