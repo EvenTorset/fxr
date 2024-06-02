@@ -39788,6 +39788,8 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param min The value used when the sine wave is at its minimum.
    * @param max The value used when the sine wave is at its maximum.
    * @param period The period of the sine wave.
+   * @param phaseShift The pahse shift of the sine wave. 1 shifts it by one
+   * period.
    * @param stops The number of stops to use to approximate the sine wave.
    * Higher values result in a smoother curve. Defaults to 21.
    * @returns The new linear property.
@@ -39796,17 +39798,22 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
     min: TypeMap.PropertyValue[T],
     max: TypeMap.PropertyValue[T],
     period: number,
+    phaseShift: number = 0,
     stops: number = 21
   ): LinearProperty<T> {
     if (Array.isArray(min) && Array.isArray(max)) {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
-        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2)) as TypeMap.PropertyValue[T]
+        min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(
+          (i / (stops - 1) + phaseShift) * Math.PI * 2
+        )) as TypeMap.PropertyValue[T]
       )))
     } else if (typeof min === 'number' && typeof max === 'number') {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
-        (max + min) / 2 + (max - min) / 2 * Math.sin(i / (stops - 1) * Math.PI * 2) as TypeMap.PropertyValue[T]
+        (max + min) / 2 + (max - min) / 2 * Math.sin(
+          (i / (stops - 1) + phaseShift) * Math.PI * 2
+        ) as TypeMap.PropertyValue[T]
       )))
     } else {
       throw new Error('min and max must be of the same type.')
