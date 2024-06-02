@@ -7476,7 +7476,7 @@ const fieldCompCount = [
 
 function fieldsCount(fields: Field<FieldType>[]) {
   let count = 0
-  for (const field of fields) count += field.type[field.type]
+  for (const field of fields) count += fieldCompCount[field.type]
   return count
 }
 
