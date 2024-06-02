@@ -412,6 +412,7 @@ properties:
   bloomColor:
     field: vec4
     default: [1, 1, 1, 0]
+    color: true
     desc: |
       Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
@@ -625,6 +626,8 @@ properties:
   color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    argument: ParticleAge
+    color: true
     desc: |
       Color multiplier.
   particleLength:

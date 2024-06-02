@@ -26,6 +26,7 @@ properties:
   layer1Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 1 color.
   layer1Count:
@@ -168,6 +169,7 @@ properties:
   layer2Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 2 color.
   layer2Count:
@@ -310,6 +312,7 @@ properties:
   layer3Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 3 color.
   layer3Count:
@@ -454,6 +457,7 @@ properties:
   layer4Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 4 color.
   layer4Count:

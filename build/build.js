@@ -184,6 +184,8 @@ export default async function(writeToDist = true) {
               'textureType' in v ? `, textureType: '${v.textureType}'` : ''
             }${
               'scale' in v ? `, scale: ${scaleMap[v.scale]}` : ''
+            }${
+              'color' in v ? `, color: 1` : ''
             } },`
           }).join('\n          ')}
         },

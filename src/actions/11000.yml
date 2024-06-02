@@ -8,6 +8,7 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Controls the diffuse color of the light.
 
@@ -16,6 +17,7 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Controls the specular color of the light.
 

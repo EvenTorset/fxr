@@ -31,18 +31,21 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: ParticleAge
+    color: true
     desc: |
       Color multiplier.
   color2:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EmissionTime
+    color: true
     desc: |
       Color multiplier.
   color3:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Color multiplier.
   rgbMultiplier:
@@ -60,6 +63,7 @@ properties:
   bloomColor:
     field: vec4
     default: [1, 1, 1, 0]
+    color: true
     desc: |
       Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 

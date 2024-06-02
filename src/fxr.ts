@@ -1872,6 +1872,7 @@ const ActionData: {
         resource?: ResourceType
         textureType?: string
         scale?: ScaleCondition
+        color?: 1
         paths?: {
           [game: string]: [string, number]
         }
@@ -2369,7 +2370,7 @@ const ActionData: {
       scaleX: { default: 1 },
       scaleY: { default: 1 },
       scaleZ: { default: 1 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2642,12 +2643,12 @@ const ActionData: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       size: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       unk_ds3_f1_2: { default: -2, field: 1 },
       unk_ds3_f1_3: { default: -2, field: 1 },
       unk_ds3_f1_4: { default: 0, field: 1 },
@@ -2721,15 +2722,15 @@ const ActionData: {
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       length: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      startColor: { default: [1, 1, 1, 1] },
-      endColor: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      startColor: { default: [1, 1, 1, 1], color: 1 },
+      endColor: { default: [1, 1, 1, 1], color: 1 },
       lengthMultiplier: { default: 1 },
-      color3: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       unk_ds3_f1_1: { default: -1, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
       unk_ds3_f2_1: { default: 0, field: 1 },
@@ -2802,16 +2803,16 @@ const ActionData: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       length: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      startColor: { default: [1, 1, 1, 1] },
-      endColor: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      startColor: { default: [1, 1, 1, 1], color: 1 },
+      endColor: { default: [1, 1, 1, 1], color: 1 },
       widthMultiplier: { default: 1 },
       lengthMultiplier: { default: 1 },
-      color3: { default: [1, 1, 1, 1] },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       unk_ds3_f1_1: { default: -1, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
       unk_ds3_f2_1: { default: 0, field: 1 },
@@ -2888,9 +2889,9 @@ const ActionData: {
       offsetZ: { default: 0, scale: 1 },
       width: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
@@ -2914,7 +2915,7 @@ const ActionData: {
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       interpolateFrames: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -3009,7 +3010,7 @@ const ActionData: {
       interpolateFrames: { default: true, field: 0 },
       depthBlend: { default: true, field: 0 },
       octagonal: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -3030,12 +3031,12 @@ const ActionData: {
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
-      layersColor: { default: [1, 1, 1, 1] },
-      layer1Color: { default: [1, 1, 1, 1] },
-      layer2Color: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
+      layersColor: { default: [1, 1, 1, 1], color: 1 },
+      layer1Color: { default: [1, 1, 1, 1], color: 1 },
+      layer2Color: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
@@ -3146,7 +3147,7 @@ const ActionData: {
       uniformScale: { default: false, field: 0 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       model: { default: 80201, field: 1, resource: 1 },
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
@@ -3161,9 +3162,9 @@ const ActionData: {
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       offsetU: { default: 0 },
@@ -3269,7 +3270,7 @@ const ActionData: {
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -3279,9 +3280,9 @@ const ActionData: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       widthMultiplier: { default: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
@@ -3373,7 +3374,7 @@ const ActionData: {
       scaleVariationY: { default: 1, field: 2 },
       scaleVariationZ: { default: 1, field: 2 },
       uniformScale: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
@@ -3381,7 +3382,7 @@ const ActionData: {
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
       sizeZ: { default: 1, scale: 1 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
       intensity: { default: 1 },
       stirSpeed: { default: 60 },
       radius: { default: 1 },
@@ -3466,7 +3467,7 @@ const ActionData: {
     props: {
       uniformScale: { default: false, field: 0 },
       iterations: { default: 1, field: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       blendMode: { default: BlendMode.Normal, field: 1 },
       mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
       offsetX: { default: 0, scale: 1 },
@@ -3474,7 +3475,7 @@ const ActionData: {
       offsetZ: { default: 0, scale: 1 },
       width: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
       blurRadius: { default: 0.5 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -3539,8 +3540,8 @@ const ActionData: {
   },
   [ActionType.PointLight]: {
     props: {
-      diffuseColor: { default: [1, 1, 1, 1] },
-      specularColor: { default: [1, 1, 1, 1] },
+      diffuseColor: { default: [1, 1, 1, 1], color: 1 },
+      specularColor: { default: [1, 1, 1, 1], color: 1 },
       radius: { default: 10, scale: 1 },
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
@@ -3852,7 +3853,7 @@ const ActionData: {
       unk_ds3_f1_153: { default: 0, field: 1 },
       unk_ds3_f1_154: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       desaturate: { default: 0, field: 2 },
       unk_sdt_f1_160: { default: 1, field: 2 },
       unk_sdt_f1_161: { default: 0, field: 1 },
@@ -3915,7 +3916,7 @@ const ActionData: {
       particleGrowthRateX: { default: 0, scale: 1 },
       particleGrowthRateY: { default: 0, scale: 1 },
       unk_ds3_p1_12: { default: 0 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
       unk_ds3_p1_15: { default: 0 },
       unkParticleAcceleration: { default: 0, scale: 1 },
@@ -4105,7 +4106,7 @@ const ActionData: {
       unk_ds3_f1_153: { default: 0, field: 1 },
       unk_ds3_f1_154: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       unk_sdt_f1_160: { default: 1, field: 2 },
       unk_sdt_f1_161: { default: 0, field: 1 },
       unk_sdt_f1_162: { default: 1, field: 2 },
@@ -4167,7 +4168,7 @@ const ActionData: {
       particleGrowthRateX: { default: 0, scale: 1 },
       particleGrowthRateY: { default: 0, scale: 1 },
       unk_ds3_p1_12: { default: 0 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
       unk_ds3_p1_15: { default: 0 },
       unkParticleAcceleration: { default: 0, scale: 1 },
@@ -4229,9 +4230,9 @@ const ActionData: {
       unk_ds3_f1_29: { default: 0, field: 1 },
       width: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_5: { default: 0 },
       unk_ds3_p1_6: { default: 0 },
       unk_ds3_p1_7: { default: 0 },
@@ -4339,7 +4340,7 @@ const ActionData: {
       unk_ac6_f1_94: { default: 0, field: 1 },
       unk_ac6_f1_95: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       unk_ac6_f1_101: { default: 1, field: 2 },
       unk_ac6_f1_102: { default: 0, field: 1 },
       unk_ac6_f1_103: { default: 1, field: 2 },
@@ -4390,7 +4391,7 @@ const ActionData: {
       particleAccelerationX: { default: 0, scale: 1 },
       particleAccelerationY: { default: 0, scale: 1 },
       particleAccelerationZ: { default: 0, scale: 1 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
       particleLength: { default: 1 },
       particleWidth: { default: 0.1 },
       unkParticleAcceleration: { default: 0, scale: 1 },
@@ -4509,7 +4510,7 @@ const ActionData: {
       unk_ac6_f1_94: { default: 0, field: 1 },
       unk_ac6_f1_95: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       unk_ac6_f1_101: { default: 1, field: 2 },
       unk_ac6_f1_102: { default: 0, field: 1 },
       unk_ac6_f1_103: { default: 1, field: 2 },
@@ -4560,7 +4561,7 @@ const ActionData: {
       particleAccelerationX: { default: 0, scale: 1 },
       particleAccelerationY: { default: 0, scale: 1 },
       particleAccelerationZ: { default: 0, scale: 1 },
-      color: { default: [1, 1, 1, 1] },
+      color: { default: [1, 1, 1, 1], color: 1 },
       particleLength: { default: 1 },
       particleWidth: { default: 0.1 },
       unkParticleAcceleration: { default: 0, scale: 1 },
@@ -4595,7 +4596,7 @@ const ActionData: {
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       shadowDarkness: { default: 0, field: 2 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -4605,9 +4606,9 @@ const ActionData: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       widthMultiplier: { default: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
@@ -4720,7 +4721,7 @@ const ActionData: {
       layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer1Width: { default: 1, scale: 1 },
       layer1Height: { default: 1, scale: 1 },
-      layer1Color: { default: [1, 1, 1, 1] },
+      layer1Color: { default: [1, 1, 1, 1], color: 1 },
       layer1Count: { default: 1, field: 1 },
       layer1ScaleVariationX: { default: 1, field: 2 },
       layer1ScaleVariationY: { default: 1, field: 2 },
@@ -4736,7 +4737,7 @@ const ActionData: {
       layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer2Width: { default: 1, scale: 1 },
       layer2Height: { default: 1, scale: 1 },
-      layer2Color: { default: [1, 1, 1, 1] },
+      layer2Color: { default: [1, 1, 1, 1], color: 1 },
       layer2Count: { default: 1, field: 1 },
       layer2ScaleVariationX: { default: 1, field: 2 },
       layer2ScaleVariationY: { default: 1, field: 2 },
@@ -4752,7 +4753,7 @@ const ActionData: {
       layer3: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer3Width: { default: 1, scale: 1 },
       layer3Height: { default: 1, scale: 1 },
-      layer3Color: { default: [1, 1, 1, 1] },
+      layer3Color: { default: [1, 1, 1, 1], color: 1 },
       layer3Count: { default: 1, field: 1 },
       layer3ScaleVariationX: { default: 1, field: 2 },
       layer3ScaleVariationY: { default: 1, field: 2 },
@@ -4768,7 +4769,7 @@ const ActionData: {
       layer4: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer4Width: { default: 1, scale: 1 },
       layer4Height: { default: 1, scale: 1 },
-      layer4Color: { default: [1, 1, 1, 1] },
+      layer4Color: { default: [1, 1, 1, 1], color: 1 },
       layer4Count: { default: 1, field: 1 },
       layer4ScaleVariationX: { default: 1, field: 2 },
       layer4ScaleVariationY: { default: 1, field: 2 },
@@ -4868,7 +4869,7 @@ const ActionData: {
       scaleVariationY: { default: 1, field: 2 },
       scaleVariationZ: { default: 1, field: 2 },
       uniformScale: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
       model: { default: 80201, field: 1, resource: 1 },
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
@@ -4882,9 +4883,9 @@ const ActionData: {
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
-      color1: { default: [1, 1, 1, 1] },
-      color2: { default: [1, 1, 1, 1] },
-      color3: { default: [1, 1, 1, 1] },
+      color1: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 1 },
       uOffset: { default: 0 },
       vOffset: { default: 0 },
       uSpeed: { default: 0 },
@@ -5339,8 +5340,8 @@ const ActionData: {
   },
   [ActionType.SpotLight]: {
     props: {
-      diffuseColor: { default: [1, 1, 1, 1] },
-      specularColor: { default: [1, 1, 1, 1] },
+      diffuseColor: { default: [1, 1, 1, 1], color: 1 },
+      specularColor: { default: [1, 1, 1, 1], color: 1 },
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
       near: { default: 0.01, scale: 1 },
@@ -9098,111 +9099,14 @@ abstract class Node {
 
   /**
    * Recolors the entire branch by modifying color properties and fields using
-   * a function.
-   * @param func The function used to recolor the branch. It is passed the
-   * original color and should return the color to replace it with.
+   * a given function.
+   * @param func A function used to remap color values.
    */
   recolor(func: (color: Vector4) => Vector4) {
-    const procProp = (container: Property<ValueType.Vector4, any>[] | DataAction | IModifier<ValueType.Vector4>, key: number | string) => {
-      let prop = container[key]
-      if (prop instanceof ComponentSequenceProperty) {
-        prop = container[key] = prop.combineComponents()
-      }
-      if (prop instanceof ValueProperty) {
-        prop.value = func(prop.value)
-      } else if (prop instanceof SequenceProperty) {
-        for (const keyframe of prop.keyframes) {
-          keyframe.value = func(keyframe.value as Vector4)
-        }
-      }
-      if ('modifiers' in prop) {
-        for (const mod of (prop as Property<ValueType.Vector4, any>).modifiers) {
-          if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
-            mod.max = func(mod.max)
-          } else if (mod instanceof RandomRangeModifier) {
-            mod.min = func(mod.min)
-            mod.max = func(mod.max)
-          } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
-            procVec4Value(mod, 'factor')
-          }
-        }
-      }
+    for (const action of this.walkActions()) if (action instanceof DataAction) {
+      action.recolor(func)
     }
-    const procVec4Value = (action: DataAction | IModifier<ValueType.Vector4>, prop: string) => {
-      if (action[prop] instanceof Property) {
-        procProp(action, prop)
-      } else if (Array.isArray(action[prop])) {
-        action[prop] = func(action[prop])
-      }
-    }
-    for (const effect of this.walkEffects()) if (effect instanceof BasicEffect) {
-      if (effect.particleModifier instanceof ParticleModifier) {
-        procVec4Value(effect.particleModifier, 'color')
-      }
-      const slot9 = effect.appearance
-      if (
-        slot9 instanceof PointSprite ||
-        slot9 instanceof BillboardEx ||
-        slot9 instanceof Model ||
-        slot9 instanceof Tracer ||
-        slot9 instanceof LightShaft ||
-        slot9 instanceof DynamicTracer ||
-        slot9 instanceof RichModel
-      ) {
-        procVec4Value(slot9, 'color1')
-        procVec4Value(slot9, 'color2')
-        procVec4Value(slot9, 'color3')
-      } else if (slot9 instanceof Line || slot9 instanceof QuadLine) {
-        procVec4Value(slot9, 'color1')
-        procVec4Value(slot9, 'color2')
-        procVec4Value(slot9, 'startColor')
-        procVec4Value(slot9, 'endColor')
-        procVec4Value(slot9, 'color3')
-      } else if (slot9 instanceof MultiTextureBillboardEx) {
-        procVec4Value(slot9, 'color1')
-        procVec4Value(slot9, 'color2')
-        procVec4Value(slot9, 'color3')
-        procVec4Value(slot9, 'layersColor')
-        procVec4Value(slot9, 'layer1Color')
-        procVec4Value(slot9, 'layer2Color')
-      } else if (
-        slot9 instanceof Distortion ||
-        slot9 instanceof RadialBlur ||
-        slot9 instanceof GPUStandardParticle ||
-        slot9 instanceof GPUStandardCorrectParticle ||
-        slot9 instanceof GPUSparkParticle ||
-        slot9 instanceof GPUSparkCorrectParticle
-      ) {
-        procVec4Value(slot9, 'color')
-      } else if (slot9 instanceof LensFlare) {
-        procVec4Value(slot9, 'layer1Color')
-        procVec4Value(slot9, 'layer2Color')
-        procVec4Value(slot9, 'layer3Color')
-        procVec4Value(slot9, 'layer4Color')
-      } else if (slot9 instanceof PointLight || slot9 instanceof SpotLight) {
-        procVec4Value(slot9, 'diffuseColor')
-        procVec4Value(slot9, 'specularColor')
-      }
-      if (
-        slot9 instanceof PointSprite ||
-        slot9 instanceof Line ||
-        slot9 instanceof QuadLine ||
-        slot9 instanceof BillboardEx ||
-        slot9 instanceof MultiTextureBillboardEx ||
-        slot9 instanceof Model ||
-        slot9 instanceof Tracer ||
-        slot9 instanceof Distortion ||
-        slot9 instanceof RadialBlur ||
-        slot9 instanceof GPUStandardParticle ||
-        slot9 instanceof GPUStandardCorrectParticle ||
-        slot9 instanceof GPUSparkParticle ||
-        slot9 instanceof GPUSparkCorrectParticle ||
-        slot9 instanceof DynamicTracer ||
-        slot9 instanceof RichModel
-      ) {
-        slot9.bloomColor = func(slot9.bloomColor)
-      }
-    }
+    return this
   }
 
   /**
@@ -10352,6 +10256,55 @@ class DataAction implements IAction {
       }
     }
     return this
+  }
+
+  /**
+   * Modifies any color properties or fields using a given function.
+   * @param func A function used to remap color values.
+   */
+  recolor(func: (color: Vector4) => Vector4) {
+    if ('props' in ActionData[this.type]) {
+      const procProp = (
+        container: DataAction | IModifier<ValueType.Vector4>,
+        key: number | string
+      ) => {
+        let prop = container[key]
+        if (prop instanceof ComponentSequenceProperty) {
+          prop = container[key] = prop.combineComponents()
+        }
+        if (prop instanceof ValueProperty) {
+          prop.value = func(prop.value)
+        } else if (prop instanceof SequenceProperty) {
+          for (const keyframe of prop.keyframes) {
+            keyframe.value = func(keyframe.value as Vector4)
+          }
+        }
+        if ('modifiers' in prop) {
+          for (const mod of (prop as Property<ValueType.Vector4, any>).modifiers) {
+            if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+              mod.max = func(mod.max)
+            } else if (mod instanceof RandomRangeModifier) {
+              mod.min = func(mod.min)
+              mod.max = func(mod.max)
+            } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+              procVec4Value(mod, 'factor')
+            }
+          }
+        }
+      }
+      const procVec4Value = (action: DataAction | IModifier<ValueType.Vector4>, prop: string) => {
+        if (action[prop] instanceof Property) {
+          procProp(action, prop)
+        } else if (Array.isArray(action[prop])) {
+          action[prop] = func(action[prop])
+        }
+      }
+      for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+        if ('color' in v) {
+          procVec4Value(this, k)
+        }
+      }
+    }
   }
 
 }
@@ -24800,6 +24753,8 @@ export interface GPUStandardParticleParams {
    * Color multiplier.
    * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color?: Vector4Value
   /**
@@ -25681,6 +25636,8 @@ class GPUStandardParticle extends DataAction {
   unk_ds3_p1_12: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
   unk_ds3_p1_14: ScalarValue
@@ -27219,6 +27176,8 @@ export interface GPUStandardCorrectParticleParams {
    * Color multiplier.
    * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color?: Vector4Value
   /**
@@ -28096,6 +28055,8 @@ class GPUStandardCorrectParticle extends DataAction {
   unk_ds3_p1_12: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
   unk_ds3_p1_14: ScalarValue
@@ -29409,6 +29370,8 @@ export interface GPUSparkParticleParams {
    * Color multiplier.
    * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color?: Vector4Value
   /**
@@ -29969,6 +29932,8 @@ class GPUSparkParticle extends DataAction {
   particleAccelerationZ: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
   particleLength: ScalarValue
@@ -30984,6 +30949,8 @@ export interface GPUSparkCorrectParticleParams {
    * Color multiplier.
    * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color?: Vector4Value
   /**
@@ -31545,6 +31512,8 @@ class GPUSparkCorrectParticle extends DataAction {
   particleAccelerationZ: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
   particleLength: ScalarValue
