@@ -301,5 +301,5 @@ games:
       - noiseOffsetY
       - noiseOffsetZ
       - force
-  ER: DS3
-  AC6: DS3
+  ER: SDT
+  AC6: SDT

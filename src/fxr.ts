@@ -5304,8 +5304,8 @@ const ActionData: {
         fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_unk_f1_9','unk_unk_f1_10','unk_unk_f1_11','unk_unk_f1_12','unk_unk_f1_13','unk_unk_f1_14','unk_unk_f1_15','unk_unk_f1_16','unk_unk_f1_17','unk_unk_f1_18','unk_unk_f1_19','unk_unk_f1_20','unk_unk_f1_21','unk_unk_f1_22','unk_unk_f1_23','forceRandomMultiplierMin','forceRandomMultiplierMax','noiseScale','unk_unk_f1_27','unk_unk_f1_28','enableSoftRadius','softRadius','unk_unk_f1_31','unk_unk_f1_32','unk_unk_f1_33','unk_unk_f1_34','unk_unk_f1_35','unk_unk_f1_36','unk_unk_f1_37','unk_unk_f1_38','unk_unk_f1_39','fadeOutTime','unk_unk_f1_41','unk_unk_f1_42','unk_unk_f1_43','unk_unk_f1_44','unk_unk_f1_45','unk_unk_f1_46','unk_unk_f1_47','unk_unk_f1_48','unk_unk_f1_49','unk_unk_f1_50','unk_unk_f1_51'],
         properties1: ['noiseOffsetX','noiseOffsetY','noiseOffsetZ','force']
       },
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro
     }
   },
   [ActionType.Unk10400]: {
