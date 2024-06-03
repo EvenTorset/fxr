@@ -1868,8 +1868,8 @@ export namespace ActionSlots {
 
 //#region Action Data
 export type ActionGameDataEntry = {
-  fields1?: string[] | Game
-  fields2?: string[] | Game
+  fields1?: Game | (string[] & { fieldsCount?: number })
+  fields2?: Game | (string[] & { fieldsCount?: number })
   properties1?: string[] | Game
   properties2?: string[] | Game
   section10s?: string[] | Game
@@ -5481,6 +5481,14 @@ const ActionData: {
   }
   /*#ActionData end*/
 }
+const fieldCompCount = [
+  1, // Boolean
+  1, // Integer
+  1, // Float
+  2, // Vector2
+  3, // Vector3
+  4, // Vector4
+]
 for (const [type, action] of Object.entries(ActionData)) {
   if (!('props' in action)) continue;
   for (const game of Object.keys(action.games)) {
@@ -5493,6 +5501,19 @@ for (const [type, action] of Object.entries(ActionData)) {
           prop.paths[game] = [k, i]
           break
         }
+      }
+    }
+    const rawGameData = action.games[game]
+    if (typeof rawGameData === 'object' && 'fields1' in rawGameData && Array.isArray(rawGameData.fields1)) {
+      rawGameData.fields1.fieldsCount = 0
+      for (const name of gameData.fields1) {
+        rawGameData.fields1.fieldsCount += fieldCompCount[action.props[name].field]
+      }
+    }
+    if (typeof rawGameData === 'object' && 'fields2' in rawGameData && Array.isArray(rawGameData.fields2)) {
+      rawGameData.fields2.fieldsCount = 0
+      for (const name of gameData.fields2) {
+        rawGameData.fields2.fieldsCount += fieldCompCount[action.props[name].field]
       }
     }
   }
@@ -5661,8 +5682,8 @@ function getActionGameData(type: ActionType, game: Game) {
   const adt = ActionData[type]
   if (!('props' in adt)) {
     return {
-      fields1: [],
-      fields2: [],
+      fields1: Object.assign([], { fieldsCount: 0 }),
+      fields2: Object.assign([], { fieldsCount: 0 }),
       properties1: [],
       properties2: [],
       section10s: [],
@@ -5672,8 +5693,8 @@ function getActionGameData(type: ActionType, game: Game) {
     throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
   }
   const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
-  data.fields1 ??= []
-  data.fields2 ??= []
+  data.fields1 ??= Object.assign([], { fieldsCount: 0 })
+  data.fields2 ??= Object.assign([], { fieldsCount: 0 })
   data.properties1 ??= []
   data.properties2 ??= []
   data.section10s ??= []
@@ -5693,8 +5714,8 @@ function getActionGameData(type: ActionType, game: Game) {
     data.section10s = (adt.games[data.section10s] as ActionGameDataEntry).section10s
   }
   return data as {
-    fields1: string[]
-    fields2: string[]
+    fields1: string[] & { fieldsCount: number }
+    fields2: string[] & { fieldsCount: number }
     properties1: string[]
     properties2: string[]
     section10s: string[]
@@ -6108,13 +6129,13 @@ function readAnyAction(br: BinaryReader, game: Game): AnyAction {
     const data = getActionGameData(type, game)
     if (
       section10Count <= data.section10s.length &&
-      fieldCount1 <= data.fields1.length &&
+      fieldCount1 <= data.fields1.fieldsCount &&
       ( // Deal with DS3's action 10012 special case where it has 1 extra field
         // that is skipped while reading
         game === Game.DarkSouls3 && type === ActionType.DynamicTracer ?
         fieldCount2 - 1 :
         fieldCount2
-      ) <= data.fields2.length &&
+      ) <= data.fields2.fieldsCount &&
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
@@ -7543,15 +7564,6 @@ function separateComponents(value: VectorValue): ScalarValue[] {
     return value
   }
 }
-
-const fieldCompCount = [
-  1, // Boolean
-  1, // Integer
-  1, // Float
-  2, // Vector2
-  3, // Vector3
-  4, // Vector4
-]
 
 function fieldsCount(fields: Field<FieldType>[]) {
   let count = 0
