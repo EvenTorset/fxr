@@ -11,10 +11,15 @@ properties:
     argument: EffectAge
     desc: |
       Controls how fast time passes for the entire effect.
-  unk_ds3_f1_0:
-    field: int
-  unk_ds3_f1_1:
+  limitViewDistance:
+    field: bool
+    default: false
+    desc: |
+      When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
+  maxViewDistance:
     field: float
+    desc: |
+      All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
   unk_ds3_f1_2:
     field: float
   unk_ds3_f1_3:
@@ -36,8 +41,8 @@ properties:
 games:
   DS3:
     fields1:
-      - unk_ds3_f1_0
-      - unk_ds3_f1_1
+      - limitViewDistance
+      - maxViewDistance
       - unk_ds3_f1_2
       - unk_ds3_f1_3
       - unk_ds3_f1_4
@@ -47,8 +52,8 @@ games:
       - unk_ds3_f1_8
   SDT:
     fields1:
-      - unk_ds3_f1_0
-      - unk_ds3_f1_1
+      - limitViewDistance
+      - maxViewDistance
       - unk_ds3_f1_2
       - unk_ds3_f1_3
       - unk_ds3_f1_4
@@ -60,8 +65,8 @@ games:
       - rateOfTime
   ER:
     fields1:
-      - unk_ds3_f1_0
-      - unk_ds3_f1_1
+      - limitViewDistance
+      - maxViewDistance
       - unk_ds3_f1_2
       - unk_ds3_f1_3
       - unk_ds3_f1_4
@@ -74,8 +79,8 @@ games:
       - rateOfTime
   AC6:
     fields1:
-      - unk_ds3_f1_0
-      - unk_ds3_f1_1
+      - limitViewDistance
+      - maxViewDistance
       - unk_ds3_f1_2
       - unk_ds3_f1_3
       - unk_ds3_f1_4

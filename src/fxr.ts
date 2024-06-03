@@ -5309,8 +5309,8 @@ const ActionData: {
   [ActionType.Unk10500]: {
     props: {
       rateOfTime: { default: 1, field: 2 },
-      unk_ds3_f1_0: { default: 0, field: 1 },
-      unk_ds3_f1_1: { default: 0, field: 2 },
+      limitViewDistance: { default: false, field: 0 },
+      maxViewDistance: { default: 0, field: 2 },
       unk_ds3_f1_2: { default: 0, field: 2 },
       unk_ds3_f1_3: { default: 0, field: 2 },
       unk_ds3_f1_4: { default: 0, field: 2 },
@@ -5323,17 +5323,17 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8']
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
       },
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
         properties1: ['rateOfTime']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ac6_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ac6_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
         properties1: Game.EldenRing
       }
     }
@@ -37990,17 +37990,17 @@ export interface Unk10500Params {
    */
   rateOfTime?: ScalarValue
   /**
-   * Unknown integer.
+   * When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_ds3_f1_0?: number
+  limitViewDistance?: boolean
   /**
-   * Unknown float.
+   * All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_1?: number
+  maxViewDistance?: number
   /**
    * Unknown float.
    * 
@@ -38071,8 +38071,14 @@ class Unk10500 extends DataAction {
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   rateOfTime: ScalarValue
-  unk_ds3_f1_0: number
-  unk_ds3_f1_1: number
+  /**
+   * When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
+   */
+  limitViewDistance: boolean
+  /**
+   * All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
+   */
+  maxViewDistance: number
   unk_ds3_f1_2: number
   unk_ds3_f1_3: number
   unk_ds3_f1_4: number
