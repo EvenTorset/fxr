@@ -7899,6 +7899,26 @@ const ActionDataConversion = {
       return props
     }
   },
+  [ActionType.GravityForce]: {
+    read(props: GravityForceParams, game: Game) {
+      props.fadeOutTime = props.fadeOutTime / 30
+      return props
+    },
+    write(props: GravityForceParams, game: Game) {
+      props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      return props
+    }
+  },
+  [ActionType.TurbulenceForce]: {
+    read(props: TurbulenceForceParams, game: Game) {
+      props.fadeOutTime = props.fadeOutTime / 30
+      return props
+    },
+    write(props: TurbulenceForceParams, game: Game) {
+      props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      return props
+    }
+  },
   [ActionType.SpotLight]: {
     read(props: SpotLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
