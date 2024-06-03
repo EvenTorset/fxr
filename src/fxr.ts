@@ -123,7 +123,6 @@ enum ActionType {
   None = 0,
   Unk10002_Fluid = 10002,
   Unk10010_Tracer = 10010,
-  Unk10303_ForceFieldTurbulenceArea = 10303,
 
   // Data Actions
   /*#ActionType start*/
@@ -863,6 +862,17 @@ enum ActionType {
    * This action type has a specialized subclass: {@link ForceCollision}
    */
   ForceCollision = 10302,
+  /**
+   * ### Action 10303 - TurbulenceForce
+   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * 
+   * Creates a chaotic force in a volume.
+   * 
+   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+   * 
+   * This action type has a specialized subclass: {@link TurbulenceForce}
+   */
+  TurbulenceForce = 10303,
   /**
    * ### Action 10400 - Unk10400
    * **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
@@ -1742,6 +1752,7 @@ export namespace ActionSlots {
     | WindForce
     | GravityForce
     | ForceCollision
+    | TurbulenceForce
     | SpotLight
     | Action
 
@@ -5229,6 +5240,74 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.DarkSouls3
     }
   },
+  [ActionType.TurbulenceForce]: {
+    props: {
+      noiseOffsetX: { default: 0, scale: 1 },
+      noiseOffsetY: { default: 0, scale: 1 },
+      noiseOffsetZ: { default: 0, scale: 1 },
+      force: { default: 1 },
+      shape: { default: ForceVolumeShape.Sphere, field: 1 },
+      sphereRadius: { default: 10, field: 2, scale: 1 },
+      boxSizeX: { default: 0, field: 2, scale: 1 },
+      boxSizeY: { default: 0, field: 2, scale: 1 },
+      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      cylinderHeight: { default: 0, field: 2, scale: 1 },
+      cylinderRadius: { default: 0, field: 2, scale: 1 },
+      squarePrismHeight: { default: 0, field: 2, scale: 1 },
+      squarePrismApothem: { default: 0, field: 2, scale: 1 },
+      unk_unk_f1_9: { default: 0, field: 1 },
+      unk_unk_f1_10: { default: 0, field: 1 },
+      unk_unk_f1_11: { default: 0, field: 1 },
+      unk_unk_f1_12: { default: 0, field: 1 },
+      unk_unk_f1_13: { default: 0, field: 1 },
+      unk_unk_f1_14: { default: 0, field: 1 },
+      unk_unk_f1_15: { default: 0, field: 1 },
+      unk_unk_f1_16: { default: 0, field: 1 },
+      unk_unk_f1_17: { default: 0, field: 1 },
+      unk_unk_f1_18: { default: 0, field: 1 },
+      unk_unk_f1_19: { default: 0, field: 1 },
+      unk_unk_f1_20: { default: 0, field: 1 },
+      unk_unk_f1_21: { default: 0, field: 1 },
+      unk_unk_f1_22: { default: 0, field: 1 },
+      unk_unk_f1_23: { default: 0, field: 1 },
+      forceRandomMultiplierMin: { default: 1, field: 2 },
+      forceRandomMultiplierMax: { default: 1, field: 2 },
+      noiseScale: { default: 1, field: 2, scale: 1 },
+      unk_unk_f1_27: { default: 0, field: 1 },
+      unk_unk_f1_28: { default: 0, field: 1 },
+      enableSoftRadius: { default: false, field: 0 },
+      softRadius: { default: 1, field: 2, scale: 1 },
+      unk_unk_f1_31: { default: 0, field: 1 },
+      unk_unk_f1_32: { default: 0, field: 1 },
+      unk_unk_f1_33: { default: 0, field: 1 },
+      unk_unk_f1_34: { default: 0, field: 1 },
+      unk_unk_f1_35: { default: 0, field: 1 },
+      unk_unk_f1_36: { default: 0, field: 1 },
+      unk_unk_f1_37: { default: 0, field: 1 },
+      unk_unk_f1_38: { default: 0, field: 1 },
+      unk_unk_f1_39: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1 },
+      unk_unk_f1_41: { default: 0, field: 1 },
+      unk_unk_f1_42: { default: 0, field: 1 },
+      unk_unk_f1_43: { default: 0, field: 1 },
+      unk_unk_f1_44: { default: 0, field: 1 },
+      unk_unk_f1_45: { default: 0, field: 1 },
+      unk_unk_f1_46: { default: 0, field: 1 },
+      unk_unk_f1_47: { default: 0, field: 1 },
+      unk_unk_f1_48: { default: 0, field: 1 },
+      unk_unk_f1_49: { default: 0, field: 1 },
+      unk_unk_f1_50: { default: 0, field: 1 },
+      unk_unk_f1_51: { default: 0, field: 1 },
+    },
+    games: {
+      [Game.Sekiro]: {
+        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_unk_f1_9','unk_unk_f1_10','unk_unk_f1_11','unk_unk_f1_12','unk_unk_f1_13','unk_unk_f1_14','unk_unk_f1_15','unk_unk_f1_16','unk_unk_f1_17','unk_unk_f1_18','unk_unk_f1_19','unk_unk_f1_20','unk_unk_f1_21','unk_unk_f1_22','unk_unk_f1_23','forceRandomMultiplierMin','forceRandomMultiplierMax','noiseScale','unk_unk_f1_27','unk_unk_f1_28','enableSoftRadius','softRadius','unk_unk_f1_31','unk_unk_f1_32','unk_unk_f1_33','unk_unk_f1_34','unk_unk_f1_35','unk_unk_f1_36','unk_unk_f1_37','unk_unk_f1_38','unk_unk_f1_39','fadeOutTime','unk_unk_f1_41','unk_unk_f1_42','unk_unk_f1_43','unk_unk_f1_44','unk_unk_f1_45','unk_unk_f1_46','unk_unk_f1_47','unk_unk_f1_48','unk_unk_f1_49','unk_unk_f1_50','unk_unk_f1_51'],
+        properties1: ['noiseOffsetX','noiseOffsetY','noiseOffsetZ','force']
+      },
+      [Game.EldenRing]: Game.DarkSouls3,
+      [Game.ArmoredCore6]: Game.DarkSouls3
+    }
+  },
   [ActionType.Unk10400]: {
     props: {
       unk_ds3_f1_0: { default: 1, field: 1 },
@@ -5495,7 +5574,7 @@ const EffectActionSlots = {
       ActionType.WindForce,
       ActionType.GravityForce,
       ActionType.ForceCollision,
-      ActionType.Unk10303_ForceFieldTurbulenceArea,
+      ActionType.TurbulenceForce,
       ActionType.SpotLight
     ],
     [
@@ -36616,7 +36695,7 @@ export interface WindForceParams {
    */
   unk_sdt_f1_52?: number
   /**
-   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -36848,7 +36927,7 @@ class WindForce extends DataAction {
   unk_sdt_f1_51: number
   unk_sdt_f1_52: number
   /**
-   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   unk_sdt_f1_54: number
@@ -37171,7 +37250,7 @@ export interface GravityForceParams {
    */
   unk_ds3_f1_37?: number
   /**
-   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -37338,7 +37417,7 @@ class GravityForce extends DataAction {
   unk_ds3_f1_36: number
   unk_ds3_f1_37: number
   /**
-   * The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   constructor(props: GravityForceParams = {}) {
@@ -37504,6 +37583,640 @@ class ForceCollision extends DataAction {
   cylinderRadius: number
   constructor(props: ForceCollisionParams = {}) {
     super(ActionType.ForceCollision)
+    this.assign(props)
+  }
+}
+
+export interface TurbulenceForceParams {
+  /**
+   * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link noiseOffsetY}
+   * - {@link noiseOffsetZ}
+   */
+  noiseOffsetX?: ScalarValue
+  /**
+   * Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link noiseOffsetX}
+   * - {@link noiseOffsetZ}
+   */
+  noiseOffsetY?: ScalarValue
+  /**
+   * Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link noiseOffsetX}
+   * - {@link noiseOffsetY}
+   */
+  noiseOffsetZ?: ScalarValue
+  /**
+   * The strength of the force applied in the volume.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   */
+  force?: ScalarValue
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
+   * | Shape | Fields | Origin |
+   * |-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
+   */
+  shape?: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * **Default**: `10`
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius?: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY?: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ?: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight?: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius?: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight?: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_9?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_10?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_11?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_12?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_13?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_14?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_15?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_16?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_17?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_18?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_19?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_20?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_21?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_22?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_23?: number
+  /**
+   * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMax}
+   */
+  forceRandomMultiplierMin?: number
+  /**
+   * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   */
+  forceRandomMultiplierMax?: number
+  /**
+   * The scale of the 3D noise used to control the strength and direction of the force in the volume. Lower values makes it more noisy, with small vortices forming everywhere. Higher values makes the noise smoother.
+   * 
+   * **Default**: `1`
+   */
+  noiseScale?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_27?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_28?: number
+  /**
+   * Controls whether or not {@link softRadius} is effective.
+   * 
+   * **Default**: `false`
+   * 
+   * See also:
+   * - {@link softRadius}
+   */
+  enableSoftRadius?: boolean
+  /**
+   * The radius of a sphere where the force gets weaker with the distance from the origin. Very similar to the {@link sphereRadius sphere radius} when the {@link shape} of the volume is a sphere, but this has a smooth transition from inside the radius to the outside.
+   * 
+   * This requires {@link enableSoftRadius} to be enabled.
+   * 
+   * **Default**: `1`
+   * 
+   * See also:
+   * - {@link enableSoftRadius}
+   */
+  softRadius?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_31?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_32?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_33?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_34?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_35?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_36?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_37?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_38?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_39?: number
+  /**
+   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
+   */
+  fadeOutTime?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_41?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_42?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_43?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_44?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_45?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_46?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_47?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_48?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_49?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_50?: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_unk_f1_51?: number
+}
+
+/**
+ * ### {@link ActionType.TurbulenceForce Action 10303 - TurbulenceForce}
+ * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+ * 
+ * Creates a chaotic force in a volume.
+ * 
+ * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+ */
+class TurbulenceForce extends DataAction {
+  declare type: ActionType.TurbulenceForce
+  /**
+   * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link noiseOffsetY}
+   * - {@link noiseOffsetZ}
+   */
+  noiseOffsetX: ScalarValue
+  /**
+   * Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link noiseOffsetX}
+   * - {@link noiseOffsetZ}
+   */
+  noiseOffsetY: ScalarValue
+  /**
+   * Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link noiseOffsetX}
+   * - {@link noiseOffsetY}
+   */
+  noiseOffsetZ: ScalarValue
+  /**
+   * The strength of the force applied in the volume.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link forceRandomMultiplierMin}
+   * - {@link forceRandomMultiplierMax}
+   */
+  force: ScalarValue
+  /**
+   * The shape of the volume.
+   * 
+   * Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
+   * | Shape | Fields | Origin |
+   * |-|-|-|
+   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
+   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   */
+  shape: ForceVolumeShape
+  /**
+   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   */
+  sphereRadius: number
+  /**
+   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeY}
+   * - {@link boxSizeZ}
+   */
+  boxSizeX: number
+  /**
+   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeZ}
+   */
+  boxSizeY: number
+  /**
+   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link boxSizeX}
+   * - {@link boxSizeY}
+   */
+  boxSizeZ: number
+  /**
+   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderRadius}
+   */
+  cylinderHeight: number
+  /**
+   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link cylinderHeight}
+   */
+  cylinderRadius: number
+  /**
+   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismApothem}
+   */
+  squarePrismHeight: number
+  /**
+   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * See also:
+   * - {@link shape}
+   * - {@link squarePrismHeight}
+   */
+  squarePrismApothem: number
+  unk_unk_f1_9: number
+  unk_unk_f1_10: number
+  unk_unk_f1_11: number
+  unk_unk_f1_12: number
+  unk_unk_f1_13: number
+  unk_unk_f1_14: number
+  unk_unk_f1_15: number
+  unk_unk_f1_16: number
+  unk_unk_f1_17: number
+  unk_unk_f1_18: number
+  unk_unk_f1_19: number
+  unk_unk_f1_20: number
+  unk_unk_f1_21: number
+  unk_unk_f1_22: number
+  unk_unk_f1_23: number
+  /**
+   * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMax}
+   */
+  forceRandomMultiplierMin: number
+  /**
+   * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
+   * 
+   * See also:
+   * - {@link force}
+   * - {@link forceRandomMultiplierMin}
+   */
+  forceRandomMultiplierMax: number
+  /**
+   * The scale of the 3D noise used to control the strength and direction of the force in the volume. Lower values makes it more noisy, with small vortices forming everywhere. Higher values makes the noise smoother.
+   */
+  noiseScale: number
+  unk_unk_f1_27: number
+  unk_unk_f1_28: number
+  /**
+   * Controls whether or not {@link softRadius} is effective.
+   * 
+   * See also:
+   * - {@link softRadius}
+   */
+  enableSoftRadius: boolean
+  /**
+   * The radius of a sphere where the force gets weaker with the distance from the origin. Very similar to the {@link sphereRadius sphere radius} when the {@link shape} of the volume is a sphere, but this has a smooth transition from inside the radius to the outside.
+   * 
+   * This requires {@link enableSoftRadius} to be enabled.
+   * 
+   * See also:
+   * - {@link enableSoftRadius}
+   */
+  softRadius: number
+  unk_unk_f1_31: number
+  unk_unk_f1_32: number
+  unk_unk_f1_33: number
+  unk_unk_f1_34: number
+  unk_unk_f1_35: number
+  unk_unk_f1_36: number
+  unk_unk_f1_37: number
+  unk_unk_f1_38: number
+  unk_unk_f1_39: number
+  /**
+   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   */
+  fadeOutTime: number
+  unk_unk_f1_41: number
+  unk_unk_f1_42: number
+  unk_unk_f1_43: number
+  unk_unk_f1_44: number
+  unk_unk_f1_45: number
+  unk_unk_f1_46: number
+  unk_unk_f1_47: number
+  unk_unk_f1_48: number
+  unk_unk_f1_49: number
+  unk_unk_f1_50: number
+  unk_unk_f1_51: number
+  constructor(props: TurbulenceForceParams = {}) {
+    super(ActionType.TurbulenceForce)
     this.assign(props)
   }
 }
@@ -38748,6 +39461,7 @@ const DataActions = {
   [ActionType.WindForce]: WindForce, WindForce,
   [ActionType.GravityForce]: GravityForce, GravityForce,
   [ActionType.ForceCollision]: ForceCollision, ForceCollision,
+  [ActionType.TurbulenceForce]: TurbulenceForce, TurbulenceForce,
   [ActionType.Unk10400]: Unk10400, Unk10400,
   [ActionType.Unk10500]: Unk10500, Unk10500,
   [ActionType.SpotLight]: SpotLight, SpotLight,
@@ -40666,6 +41380,7 @@ export {
   WindForce,
   GravityForce,
   ForceCollision,
+  TurbulenceForce,
   Unk10400,
   Unk10500,
   SpotLight,
