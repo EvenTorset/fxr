@@ -1024,8 +1024,9 @@ namespace ExternalValue {
   export enum DarkSouls3 {
     /**
      * This value will be set to 1 when the effect is meant to end due to the
-     * source of the effect going away, for example when a fire pot explodes and
-     * disappears. The value is otherwise 0.
+     * source of the effect going away, for example when the SpawnOneShotFFX
+     * event ends and it has IsRestrictToDummyPoly enabled. The value is
+     * otherwise 0.
      */
     Terminate = 0,
     /**
@@ -1039,8 +1040,9 @@ namespace ExternalValue {
   export enum Sekiro {
     /**
      * This value will be set to 1 when the effect is meant to end due to the
-     * source of the effect going away, for example when a fire pot explodes and
-     * disappears. The value is otherwise 0.
+     * source of the effect going away, for example when the SpawnOneShotFFX
+     * event ends and it has IsRestrictToDummyPoly enabled. The value is
+     * otherwise 0.
      */
     Terminate = 0,
     /**
@@ -1054,8 +1056,9 @@ namespace ExternalValue {
   export enum EldenRing {
     /**
      * This value will be set to 1 when the effect is meant to end due to the
-     * source of the effect going away, for example when a fire pot explodes and
-     * disappears. The value is otherwise 0.
+     * source of the effect going away, for example when the SpawnOneShotFFX
+     * event ends and it has IsRestrictToDummyPoly enabled. The value is
+     * otherwise 0.
      */
     Terminate = 0,
     /**
@@ -1094,20 +1097,27 @@ namespace ExternalValue {
   export enum ArmoredCore6 {
     /**
      * This value will be set to 1 when the effect is meant to end due to the
-     * source of the effect going away, for example when a fire pot explodes and
-     * disappears. The value is otherwise 0.
+     * source of the effect going away, for example when the SpawnOneShotFFX
+     * event ends and it has IsRestrictToDummyPoly enabled. The value is
+     * otherwise 0.
      */
     Terminate = 0,
     Unk1 = 1,
     Unk3 = 3,
     Unk1000 = 1000,
-    Unk2000 = 2000,
+    /**
+     * The distance from the camera to the SFX in meters.
+     */
+    SFXDistance = 2000,
     Unk20000 = 20000,
     Unk40000 = 40000,
     Unk70000 = 70000,
     Unk70010 = 70010,
     Unk70020 = 70020,
-    Unk70200 = 70200,
+    /**
+     * The "Scan Distance" value on your AC's currently equipped head part.
+     */
+    ScanDistance = 70200,
   }
 }
 
