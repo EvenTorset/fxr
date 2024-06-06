@@ -2785,7 +2785,7 @@ const ActionData: {
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
       alphaThreshold: { default: 0 },
       unk_sdt_f2_30: { default: 0, field: 1 },
-      hideIndoors: { default: 0, field: 0 },
+      unkHideIndoors: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
@@ -2806,7 +2806,7 @@ const ActionData: {
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','hideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','unk_sdt_f2_30','unkHideIndoors','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39'],
         properties1: ['blendMode','length','color1','color2','startColor','endColor','lengthMultiplier','color3'],
         properties2: Game.DarkSouls3
       },
@@ -2985,7 +2985,7 @@ const ActionData: {
       unk_sdt_f1_15: { default: 1, field: 1 },
       unk_sdt_f1_16: { default: 1, field: 1 },
       unk_sdt_f1_17: { default: 0, field: 1 },
-      hideIndoors: { default: 0, field: 0 },
+      unkHideIndoors: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
@@ -3006,14 +3006,14 @@ const ActionData: {
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','scaleVariationX','scaleVariationY','uniformScale','unk_ds3_f1_7','columns','totalFrames','interpolateFrames','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','depthBlend','octagonal','unk_ds3_f1_16','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44'],
         properties1: ['texture','blendMode','offsetX','offsetY','offsetZ','width','height','color1','color2','color3','alphaFadeThreshold','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','depthOffset','frameIndex','frameIndexOffset','unk_ds3_p1_21','unk_ds3_p1_22'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: {
         fields1: Game.Sekiro,
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       }
@@ -3915,7 +3915,7 @@ const ActionData: {
       unk_ds3_f2_28: { default: 0, field: 1 },
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
-      hideIndoors: { default: 0, field: 0 },
+      unkHideIndoors: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 1, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -3962,13 +3962,13 @@ const ActionData: {
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
@@ -4167,7 +4167,7 @@ const ActionData: {
       unk_ds3_f2_28: { default: 0, field: 1 },
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
-      hideIndoors: { default: 0, field: 0 },
+      unkHideIndoors: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 1, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
@@ -4210,7 +4210,7 @@ const ActionData: {
       [Game.Sekiro]: -2,
       [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
-        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','hideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
+        fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
@@ -4396,7 +4396,7 @@ const ActionData: {
       unk_ac6_f2_28: { default: 0, field: 1 },
       unk_ac6_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 1, field: 2 },
-      hideIndoors: { default: 0, field: 0 },
+      unkHideIndoors: { default: 0, field: 1 },
       unk_ac6_f2_32: { default: 0, field: 1 },
       unk_ac6_f2_33: { default: 0, field: 1 },
       unk_ac6_f2_34: { default: 0.5, field: 2 },
@@ -4432,7 +4432,7 @@ const ActionData: {
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
         fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
-        fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','hideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
+        fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
       }
@@ -4566,7 +4566,7 @@ const ActionData: {
       unk_ac6_f2_28: { default: 0, field: 1 },
       unk_ac6_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 1, field: 2 },
-      hideIndoors: { default: 0, field: 0 },
+      unkHideIndoors: { default: 0, field: 1 },
       unk_ac6_f2_32: { default: 0, field: 1 },
       unk_ac6_f2_33: { default: 0, field: 1 },
       unk_ac6_f2_34: { default: 0.5, field: 2 },
@@ -4601,7 +4601,7 @@ const ActionData: {
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
         fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
-        fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','hideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
+        fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
       }
@@ -15073,11 +15073,13 @@ export interface LineParams {
    */
   unk_sdt_f2_30?: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    * 
    * **Default**: `0`
    */
-  hideIndoors?: boolean
+  unkHideIndoors?: number
   /**
    * Unknown integer.
    * 
@@ -15332,9 +15334,11 @@ class Line extends DataAction {
   alphaThreshold: ScalarValue
   unk_sdt_f2_30: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    */
-  hideIndoors: boolean
+  unkHideIndoors: number
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -16707,11 +16711,13 @@ export interface BillboardExParams {
    */
   unk_sdt_f1_17?: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    * 
    * **Default**: `0`
    */
-  hideIndoors?: boolean
+  unkHideIndoors?: number
   /**
    * Unknown integer.
    * 
@@ -17211,9 +17217,11 @@ class BillboardEx extends DataAction {
   unk_sdt_f1_16: number
   unk_sdt_f1_17: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    */
-  hideIndoors: boolean
+  unkHideIndoors: number
   unk_sdt_f2_32: number
   unk_sdt_f2_36: number
   unk_sdt_f2_37: number
@@ -24703,11 +24711,13 @@ export interface GPUStandardParticleParams {
    */
   shadowDarkness?: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    * 
    * **Default**: `0`
    */
-  hideIndoors?: boolean
+  unkHideIndoors?: number
   /**
    * Unknown integer.
    * 
@@ -25665,9 +25675,11 @@ class GPUStandardParticle extends DataAction {
    */
   shadowDarkness: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    */
-  hideIndoors: boolean
+  unkHideIndoors: number
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -27126,11 +27138,13 @@ export interface GPUStandardCorrectParticleParams {
    */
   shadowDarkness?: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    * 
    * **Default**: `0`
    */
-  hideIndoors?: boolean
+  unkHideIndoors?: number
   /**
    * Unknown integer.
    * 
@@ -28084,9 +28098,11 @@ class GPUStandardCorrectParticle extends DataAction {
    */
   shadowDarkness: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    */
-  hideIndoors: boolean
+  unkHideIndoors: number
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -29393,11 +29409,13 @@ export interface GPUSparkParticleParams {
    */
   shadowDarkness?: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    * 
    * **Default**: `0`
    */
-  hideIndoors?: boolean
+  unkHideIndoors?: number
   /**
    * Unknown integer.
    * 
@@ -30022,9 +30040,11 @@ class GPUSparkParticle extends DataAction {
    */
   shadowDarkness: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    */
-  hideIndoors: boolean
+  unkHideIndoors: number
   unk_ac6_f2_32: number
   unk_ac6_f2_33: number
   unk_ac6_f2_34: number
@@ -30972,11 +30992,13 @@ export interface GPUSparkCorrectParticleParams {
    */
   shadowDarkness?: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    * 
    * **Default**: `0`
    */
-  hideIndoors?: boolean
+  unkHideIndoors?: number
   /**
    * Unknown integer.
    * 
@@ -31602,9 +31624,11 @@ class GPUSparkCorrectParticle extends DataAction {
    */
   shadowDarkness: number
   /**
-   * When enabled, this stops the particles from being shown indoors.
+   * When set to 1, this stops the particles from being shown indoors.
+   * 
+   * Other values are used in AC6, but what they do is unknown.
    */
-  hideIndoors: boolean
+  unkHideIndoors: number
   unk_ac6_f2_32: number
   unk_ac6_f2_33: number
   unk_ac6_f2_34: number

@@ -874,10 +874,12 @@ properties:
     field: float
     desc: |
       Controls how dark shaded parts of the particle are.
-  hideIndoors:
-    field: bool
+  unkHideIndoors:
+    field: int
     desc: |
-      When enabled, this stops the particles from being shown indoors.
+      When set to 1, this stops the particles from being shown indoors.
+
+      Other values are used in AC6, but what they do is unknown.
   unk_sdt_f2_32:
     field: int
     default: 1
@@ -1238,7 +1240,7 @@ games:
       - unk_ds3_f2_28
       - unk_sdt_f2_29
       - shadowDarkness
-      - hideIndoors
+      - unkHideIndoors
       - unk_sdt_f2_32
       - specular
       - glossiness

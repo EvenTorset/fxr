@@ -574,10 +574,12 @@ properties:
     default: 1
     desc: |
       Controls how dark shaded parts of the particle are.
-  hideIndoors:
-    field: bool
+  unkHideIndoors:
+    field: int
     desc: |
-      When enabled, this stops the particles from being shown indoors.
+      When set to 1, this stops the particles from being shown indoors.
+
+      Other values are used in AC6, but what they do is unknown.
   unk_ac6_f2_32:
     field: int
   unk_ac6_f2_33:
@@ -827,7 +829,7 @@ games:
       - unk_ac6_f2_28
       - unk_ac6_f2_29
       - shadowDarkness
-      - hideIndoors
+      - unkHideIndoors
       - unk_ac6_f2_32
       - unk_ac6_f2_33
       - unk_ac6_f2_34
