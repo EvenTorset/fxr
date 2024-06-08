@@ -19,8 +19,10 @@ import {
   Property,
   QuadLine,
   RadialBlur,
-  ParticleSystem,
-  ParticleSystem2,
+  GPUStandardParticle,
+  GPUStandardCorrectParticle,
+  GPUSparkParticle,
+  GPUSparkCorrectParticle,
   LensFlare,
   RichModel,
   SpotLight,
@@ -128,8 +130,10 @@ while (ids.length) {
     } else if (
       action instanceof Distortion ||
       action instanceof RadialBlur ||
-      action instanceof ParticleSystem ||
-      action instanceof ParticleSystem2
+      action instanceof GPUStandardParticle ||
+      action instanceof GPUStandardCorrectParticle ||
+      action instanceof GPUSparkParticle ||
+      action instanceof GPUSparkCorrectParticle
     ) {
       procProp(action, 'color')
     } else if (action instanceof LensFlare) {

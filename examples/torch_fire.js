@@ -9,7 +9,7 @@ import {
   NodeTransform,
   ParticleAttributes,
   ParticleMovement,
-  ParticleWindAcceleration,
+  ParticleForceAcceleration,
   PeriodicEmitter,
   PointLight,
   QuadLine,
@@ -31,7 +31,7 @@ fxr.root.nodes = [
       gravity: -0.1,
       followFactor: LinearProperty.basic(false, 1, 1, 0),
     }),
-    new ParticleWindAcceleration({ acceleration: 0.085 }),
+    new ParticleForceAcceleration({ acceleration: 0.085 }),
     new MultiTextureBillboardEx({
       mask: 31001,
       layer1: 34060,
@@ -53,10 +53,7 @@ fxr.root.nodes = [
       rgbMultiplier: 400,
       offsetY: 0.3,
       unkDepthBlend2: 0.25,
-      bloomStrength: 0.3,
-      bloomRed: 1,
-      bloomGreen: 0.7,
-      bloomBlue: 0.5
+      bloomColor: [1, 0.7, 0.5, 0.3],
     }),
   ]),
   new BasicNode([
@@ -73,7 +70,7 @@ fxr.root.nodes = [
       followFactor: LinearProperty.basic(false, 0.75, 1, 0),
       followRotation: false,
     }),
-    new ParticleWindAcceleration({ acceleration: 0.03 }),
+    new ParticleForceAcceleration({ acceleration: 0.03 }),
     new QuadLine({
       blendMode: BlendMode.Add,
       startColor: [1, 0.15, 0.025, 1],
@@ -86,10 +83,7 @@ fxr.root.nodes = [
         new Keyframe(2, [0, 0, 0, 1]),
       ]),
       rgbMultiplier: 20,
-      bloomStrength: 0.8,
-      bloomRed: 1,
-      bloomGreen: 0.7,
-      bloomBlue: 0.5
+      bloomColor: [1, 0.7, 0.5, 0.8],
     })
   ]),
   new BasicNode([

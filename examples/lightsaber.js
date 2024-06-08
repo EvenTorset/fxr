@@ -15,7 +15,7 @@ import {
   OrientationMode,
   ParticleAttributes,
   ParticleMovement,
-  ParticleWindAcceleration,
+  ParticleForceAcceleration,
   PeriodicEmitter,
   PointLight,
   RandomRangeProperty,
@@ -60,10 +60,7 @@ function crossguardSide(position) {
       height: 0.0225,
       width: 0.15,
       rgbMultiplier: 7.5,
-      bloomRed: color[0],
-      bloomGreen: color[1],
-      bloomBlue: color[2],
-      bloomStrength: bloomMultiplier * 0.5,
+      bloomColor: [...color, bloomMultiplier * 0.5],
       octagonal: true,
       depthBlend: false
     })
@@ -87,10 +84,7 @@ function bladeCap(position) {
       uniformScale: true,
       rgbMultiplier: 1,
       alphaMultiplier: 100,
-      bloomRed: color[0],
-      bloomGreen: color[1],
-      bloomBlue: color[2],
-      bloomStrength: bloomMultiplier * 0.5,
+      bloomColor: [...color, bloomMultiplier * 0.5],
       depthOffset: 0.04,
     })
   ]).mapStates(0, 0)
@@ -116,7 +110,7 @@ fxr.root.nodes = [
         gravity: -0.1,
         followFactor: LinearProperty.basic(false, 0.25, 1, 0),
       }),
-      new ParticleWindAcceleration({ acceleration: 0.02 }),
+      new ParticleForceAcceleration({ acceleration: 0.02 }),
       new BillboardEx({
         texture: 21021,
         columns: 8,
@@ -159,10 +153,7 @@ fxr.root.nodes = [
         blendMode: BlendMode.Add,
         height: 0.03,
         rgbMultiplier: 10,
-        bloomRed: color[0],
-        bloomGreen: color[1],
-        bloomBlue: color[2],
-        bloomStrength: bloomMultiplier * 0.5,
+        bloomColor: [...color, bloomMultiplier * 0.5],
       })
     ]).mapStates(0, 0),
     bladeCap(-1), // Blade tip cap
@@ -187,10 +178,7 @@ fxr.root.nodes = [
         height: 0.08,
         width: RandomRangeProperty(0.2, 0.5),
         rgbMultiplier: 7.5,
-        bloomRed: color[0],
-        bloomGreen: color[1],
-        bloomBlue: color[2],
-        bloomStrength: bloomMultiplier * 0.5,
+        bloomColor: [...color, bloomMultiplier * 0.5],
         alphaFadeThreshold: new LinearProperty(false, [
           new Keyframe(0, 255),
           new Keyframe(0.25, 0),
@@ -207,10 +195,7 @@ fxr.root.nodes = [
         width: 0.5,
         segmentDuration: 0.06,
         rgbMultiplier: 7.5,
-        bloomRed: color[0],
-        bloomGreen: color[1],
-        bloomBlue: color[2],
-        bloomStrength: bloomMultiplier * 1,
+        bloomColor: [...color, bloomMultiplier],
       }),
     ]).mapStates(0, 0),
 
@@ -226,7 +211,7 @@ fxr.root.nodes = [
         gravity: 2,
         speed: 0.3,
       }),
-      new ParticleWindAcceleration({ acceleration: 0.02 }),
+      new ParticleForceAcceleration({ acceleration: 0.02 }),
       new BillboardEx({
         texture: 10020,
         blendMode: BlendMode.Add,
@@ -235,10 +220,7 @@ fxr.root.nodes = [
         alphaFadeThreshold: LinearProperty.basic(false, 2, 0, 255),
         alphaMultiplier: 2,
         rgbMultiplier: 20,
-        bloomRed: color[0],
-        bloomGreen: color[1],
-        bloomBlue: color[2],
-        bloomStrength: bloomMultiplier * 0.5,
+        bloomColor: [...color, bloomMultiplier * 0.5],
       })
     ]).mapStates(0, 0),
   ])
