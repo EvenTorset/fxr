@@ -9,6 +9,8 @@ properties:
     field: int
     default: 1
     argument: Constant0
+    resource: texture
+    textureType: a
     desc: |
       Texture ID.
   blendMode:
@@ -21,22 +23,26 @@ properties:
   offsetX:
     type: ScalarValue
     argument: ParticleAge
+    scale: true
     desc: |
       X position offset.
   offsetY:
     type: ScalarValue
     argument: ParticleAge
+    scale: true
     desc: |
       Y position offset.
   offsetZ:
     type: ScalarValue
     argument: ParticleAge
+    scale: true
     desc: |
       Z position offset.
   width:
     type: ScalarValue
     default: 1
     argument: ParticleAge
+    scale: true
     desc: |
       The width of the particle.
 
@@ -47,6 +53,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
+    scale: true
     desc: |
       The height of the particle.
 
@@ -57,18 +64,21 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: ParticleAge
+    color: true
     desc: |
       Color multiplier.
   color2:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EmissionTime
+    color: true
     desc: |
       Color multiplier.
   color3:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: ParticleAge
+    color: true
     desc: |
       Color multiplier.
   alphaFadeThreshold:
@@ -153,6 +163,7 @@ properties:
   depthOffset:
     type: ScalarValue
     argument: ParticleAge
+    scale: true
     desc: |
       Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
   frameIndex:
@@ -187,6 +198,8 @@ properties:
       Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
   normalMap:
     field: int
+    resource: texture
+    textureType: 'n'
     desc: |
       Normal map texture ID.
   scaleVariationX:
@@ -241,63 +254,24 @@ properties:
     see:
       - frameIndex
       - frameIndexOffset
-  bloomRed:
-    field: float
-    default: 1
+  bloomColor:
+    field: vec4
+    default: [1, 1, 1, 0]
+    color: true
     desc: |
-      Controls the redness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
       Note:
       - This has no effect if the "Effects Quality" setting is set to "Low".
       - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
-  bloomGreen:
-    field: float
-    default: 1
-    desc: |
-      Controls the greenness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomRed
-      - bloomBlue
-      - bloomStrength
-  bloomBlue:
-    field: float
-    default: 1
-    desc: |
-      Controls the blueness of the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomRed
-      - bloomGreen
-      - bloomStrength
-  bloomStrength:
-    field: float
-    desc: |
-      Controls the strength of the additional bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-    see:
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
   shadowDarkness:
     field: float
     desc: |
       Controls how dark shaded parts of the particle are.
   specular:
     field: int
+    resource: texture
+    textureType: 3m
     desc: |
       Specular texture ID.
     see:
@@ -374,6 +348,7 @@ properties:
   minDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -389,6 +364,7 @@ properties:
   minFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -402,6 +378,7 @@ properties:
   maxFadeDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -415,6 +392,7 @@ properties:
   maxDistance:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -430,6 +408,7 @@ properties:
   minDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -441,6 +420,7 @@ properties:
   maxDistanceThreshold:
     field: float
     default: -1
+    scale: ifNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -464,6 +444,7 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
+    scale: true
   unk_ds3_f2_27:
     field: int
     default: 1
@@ -502,10 +483,12 @@ properties:
     default: 1
   unk_sdt_f1_17:
     field: int
-  hideIndoors:
-    field: bool
+  unkHideIndoors:
+    field: int
     desc: |
-      When enabled, this stops the particles from being shown indoors.
+      When set to 1, this stops the particles from being shown indoors.
+
+      Other values are used in AC6, but what they do is unknown.
   unk_sdt_f2_32:
     field: int
     default: 1
@@ -555,10 +538,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11
@@ -638,10 +621,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11
@@ -664,7 +647,7 @@ games:
       - unk_ds3_f2_28
       - unk_ds3_f2_29
       - shadowDarkness
-      - hideIndoors
+      - unkHideIndoors
       - unk_sdt_f2_32
       - specular
       - glossiness
@@ -714,10 +697,10 @@ games:
       - unk_ds3_f2_2
       - unk_ds3_f2_3
       - unk_ds3_f2_4
-      - bloomRed
-      - bloomGreen
-      - bloomBlue
-      - bloomStrength
+      - bloomColor
+      #
+      #
+      #
       - unk_ds3_f2_9
       - unk_ds3_f2_10
       - unk_ds3_f2_11
@@ -740,7 +723,7 @@ games:
       - unk_ds3_f2_28
       - unk_ds3_f2_29
       - shadowDarkness
-      - hideIndoors
+      - unkHideIndoors
       - unk_sdt_f2_32
       - specular
       - glossiness

@@ -13,6 +13,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    scale: true
     desc: |
       Radius of the sphere.
 games:

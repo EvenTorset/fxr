@@ -8,6 +8,7 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Controls the diffuse color of the light.
 
@@ -16,6 +17,7 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Controls the specular color of the light.
 
@@ -40,24 +42,28 @@ properties:
     type: ScalarValue
     default: 0.01
     argument: EffectAge
+    scale: true
     desc: |
       Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
   far:
     type: ScalarValue
     default: 50
     argument: EffectAge
+    scale: true
     desc: |
       Controls how far away the base of the cone is from the light source.
   radiusX:
     type: ScalarValue
     default: 50
     argument: EffectAge
+    scale: true
     desc: |
       The X radius for the elliptic base of the cone.
   radiusY:
     type: ScalarValue
     default: 50
     argument: EffectAge
+    scale: true
     desc: |
       The Y radius for the elliptic base of the cone.
   jitterAndFlicker:
@@ -76,6 +82,7 @@ properties:
   jitterAcceleration:
     field: float
     default: 1
+    scale: true
     desc: |
       Controls the acceleration of the jittering.
     see:
@@ -85,6 +92,7 @@ properties:
       - jitterZ
   jitterX:
     field: float
+    scale: true
     desc: |
       Controls how much the light should move around randomly on the X-axis.
     see:
@@ -94,6 +102,7 @@ properties:
       - jitterZ
   jitterY:
     field: float
+    scale: true
     desc: |
       Controls how much the light should move around randomly on the Y-axis.
     see:
@@ -103,6 +112,7 @@ properties:
       - jitterZ
   jitterZ:
     field: float
+    scale: true
     desc: |
       Controls how much the light should move around randomly on the Z-axis.
     see:

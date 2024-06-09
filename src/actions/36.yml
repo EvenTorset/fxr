@@ -6,14 +6,17 @@ desc: |
 properties:
   offsetX:
     field: float
+    scale: true
     desc: |
       Translation of the node along the local X-axis.
   offsetY:
     field: float
+    scale: true
     desc: |
       Translation of the node along the local Y-axis.
   offsetZ:
     field: float
+    scale: true
     desc: |
       Translation of the node along the local Z-axis.
   rotationX:
@@ -30,14 +33,17 @@ properties:
       The rotation of the node around the local Z-axis in degrees.
   offsetVarianceX:
     field: float
+    scale: true
     desc: |
       The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
   offsetVarianceY:
     field: float
+    scale: true
     desc: |
       The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
   offsetVarianceZ:
     field: float
+    scale: true
     desc: |
       The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
   rotationVarianceX:

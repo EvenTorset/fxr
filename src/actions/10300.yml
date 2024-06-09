@@ -2,37 +2,102 @@ type: 10300
 name: WindForce
 slot: Appearance
 desc: |
-  Creates a wind force in a volume.
+  Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+
+  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
 properties:
-  intensity:
+  force:
     type: ScalarValue
-    field: float
     default: 1
     argument: EffectAge
     desc: |
-      The intensity of the wind in the volume.
-  unk_ds3_f1_0:
+      The strength of the force applied in the volume.
+    see:
+      - forceRandomMultiplierMin
+      - forceRandomMultiplierMax
+      - forceMultiplier
+  shape:
+    type: ForceVolumeShape
     field: int
-    default: 1
-  radius:
+    default: ForceVolumeShape.Sphere
+    desc: |
+      The shape of the volume.
+
+      Each shape has different fields controlling the size of the volume:
+      | Shape | Fields | Origin |
+      |-|-|-|
+      | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+      | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+      | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+      | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
+      | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+  sphereRadius:
     field: float
     default: 10
+    scale: true
     desc: |
-      The radius of the sphere where the wind force is active.
-  unk_ds3_f1_2:
+      The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+    see:
+      - shape
+  boxSizeX:
     field: float
-  unk_ds3_f1_3:
+    scale: true
+    desc: |
+      The width of the {@link ForceVolumeShape.Box box} where the force is active.
+    see:
+      - shape
+      - boxSizeY
+      - boxSizeZ
+  boxSizeY:
     field: float
-  unk_ds3_f1_4:
+    scale: true
+    desc: |
+      The height of the {@link ForceVolumeShape.Box box} where the force is active.
+    see:
+      - shape
+      - boxSizeX
+      - boxSizeZ
+  boxSizeZ:
     field: float
-  unk_ds3_f1_5:
+    scale: true
+    desc: |
+      The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+    see:
+      - shape
+      - boxSizeX
+      - boxSizeY
+  cylinderHeight:
     field: float
-  unk_ds3_f1_6:
+    scale: true
+    desc: |
+      The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+    see:
+      - shape
+      - cylinderRadius
+  cylinderRadius:
     field: float
-  unk_ds3_f1_7:
+    scale: true
+    desc: |
+      The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+    see:
+      - shape
+      - cylinderHeight
+  squarePrismHeight:
     field: float
-  unk_ds3_f1_8:
+    scale: true
+    desc: |
+      The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+    see:
+      - shape
+      - squarePrismApothem
+  squarePrismApothem:
     field: float
+    scale: true
+    desc: |
+      The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+    see:
+      - shape
+      - squarePrismHeight
   unk_ds3_f1_9:
     field: int
   unk_ds3_f1_10:
@@ -99,12 +164,28 @@ properties:
     field: float
   unk_ds3_f1_37:
     field: float
-  unk_ds3_f1_38:
+  forceRandomMultiplierMin:
     field: float
-    default: 10
-  unk_ds3_f1_39:
+    default: 1
+    desc: |
+      The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
+
+      This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+    see:
+      - force
+      - forceRandomMultiplierMax
+      - forceMultiplier
+  forceRandomMultiplierMax:
     field: float
-    default: 10
+    default: 1
+    desc: |
+      The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
+
+      This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+    see:
+      - force
+      - forceRandomMultiplierMin
+      - forceMultiplier
   unk_ds3_f1_40:
     field: float
     default: 1
@@ -115,7 +196,7 @@ properties:
     field: float
     default: 1
   unk_ds3_f1_43:
-    field: int
+    field: float
     default: 1
   unk_ds3_f1_44:
     field: float
@@ -123,9 +204,17 @@ properties:
   unk_ds3_f1_45:
     field: float
     default: 1
-  unk_ds3_f1_46:
+  forceMultiplier:
     field: float
     default: 1
+    desc: |
+      A multiplier for {@link force}.
+
+      This is multiplicative with both the base force and the random multiplier.
+    see:
+      - force
+      - forceRandomMultiplierMin
+      - forceRandomMultiplierMax
   unk_ds3_f1_47:
     field: float
     default: 1
@@ -147,9 +236,8 @@ properties:
     field: float
   fadeOutTime:
     field: int
-    default: 2
     desc: |
-      The time it takes for the wind to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+      The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
   unk_sdt_f1_54:
     field: float
   unk_sdt_f1_55:
@@ -172,15 +260,15 @@ properties:
 games:
   DS3:
     fields1:
-      - unk_ds3_f1_0
-      - radius
-      - unk_ds3_f1_2
-      - unk_ds3_f1_3
-      - unk_ds3_f1_4
-      - unk_ds3_f1_5
-      - unk_ds3_f1_6
-      - unk_ds3_f1_7
-      - unk_ds3_f1_8
+      - shape
+      - sphereRadius
+      - boxSizeX
+      - boxSizeY
+      - boxSizeZ
+      - cylinderHeight
+      - cylinderRadius
+      - squarePrismHeight
+      - squarePrismApothem
       - unk_ds3_f1_9
       - unk_ds3_f1_10
       - unk_ds3_f1_11
@@ -210,33 +298,33 @@ games:
       - unk_ds3_f1_35
       - unk_ds3_f1_36
       - unk_ds3_f1_37
-      - unk_ds3_f1_38
-      - unk_ds3_f1_39
+      - forceRandomMultiplierMin
+      - forceRandomMultiplierMax
       - unk_ds3_f1_40
       - unk_ds3_f1_41
       - unk_ds3_f1_42
       - unk_ds3_f1_43
       - unk_ds3_f1_44
       - unk_ds3_f1_45
-      - unk_ds3_f1_46
+      - forceMultiplier
       - unk_ds3_f1_47
       - unk_ds3_f1_48
       - unk_ds3_f1_49
       - unk_ds3_f1_50
       - fadeOutTime
     properties1:
-      - intensity
+      - force
   SDT:
     fields1:
-      - unk_ds3_f1_0
-      - radius
-      - unk_ds3_f1_2
-      - unk_ds3_f1_3
-      - unk_ds3_f1_4
-      - unk_ds3_f1_5
-      - unk_ds3_f1_6
-      - unk_ds3_f1_7
-      - unk_ds3_f1_8
+      - shape
+      - sphereRadius
+      - boxSizeX
+      - boxSizeY
+      - boxSizeZ
+      - cylinderHeight
+      - cylinderRadius
+      - squarePrismHeight
+      - squarePrismApothem
       - unk_ds3_f1_9
       - unk_ds3_f1_10
       - unk_ds3_f1_11
@@ -266,14 +354,14 @@ games:
       - unk_ds3_f1_35
       - unk_ds3_f1_36
       - unk_ds3_f1_37
-      - unk_ds3_f1_38
-      - unk_ds3_f1_39
+      - forceRandomMultiplierMin
+      - forceRandomMultiplierMax
       - unk_ds3_f1_40
       - unk_ds3_f1_41
       - unk_ds3_f1_42
       - unk_ds3_f1_44
       - unk_ds3_f1_45
-      - unk_ds3_f1_46
+      - forceMultiplier
       - unk_ds3_f1_47
       - unk_ds3_f1_48
       - unk_sdt_f1_48

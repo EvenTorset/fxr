@@ -6,14 +6,17 @@ desc: |
 properties:
   offsetX:
     field: float
+    scale: true
     desc: |
       Translation of the node along the local X-axis.
   offsetY:
     field: float
+    scale: true
     desc: |
       Translation of the node along the local Y-axis.
   offsetZ:
     field: float
+    scale: true
     desc: |
       Translation of the node along the local Z-axis.
   rotationX:

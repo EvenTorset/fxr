@@ -8,6 +8,7 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Controls the diffuse color of the light.
 
@@ -18,6 +19,7 @@ properties:
     type: Vector4Value
     default: [1, 1, 1, 1]
     argument: EffectAge
+    color: true
     desc: |
       Controls the specular color of the light.
 
@@ -26,6 +28,7 @@ properties:
     type: ScalarValue
     default: 10
     argument: EffectAge
+    scale: true
     desc: |
       The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
   diffuseMultiplier:
@@ -60,6 +63,7 @@ properties:
   jitterAcceleration:
     field: float
     default: 1
+    scale: true
     desc: |
       Controls the acceleration of the jittering.
     see:
@@ -69,6 +73,7 @@ properties:
       - jitterZ
   jitterX:
     field: float
+    scale: true
     desc: |
       Controls how much the light should move around randomly on the X-axis.
     see:
@@ -78,6 +83,7 @@ properties:
       - jitterZ
   jitterY:
     field: float
+    scale: true
     desc: |
       Controls how much the light should move around randomly on the Y-axis.
     see:
@@ -87,6 +93,7 @@ properties:
       - jitterZ
   jitterZ:
     field: float
+    scale: true
     desc: |
       Controls how much the light should move around randomly on the Z-axis.
     see:

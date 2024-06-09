@@ -1,0 +1,305 @@
+type: 10303
+name: TurbulenceForce
+slot: Appearance
+desc: |
+  Creates a chaotic force in a volume.
+
+  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+properties:
+  noiseOffsetX:
+    type: ScalarValue
+    argument: EffectAge
+    scale: true
+    desc: |
+      Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
+    see:
+      - noiseOffsetY
+      - noiseOffsetZ
+  noiseOffsetY:
+    type: ScalarValue
+    argument: EffectAge
+    scale: true
+    desc: |
+      Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
+    see:
+      - noiseOffsetX
+      - noiseOffsetZ
+  noiseOffsetZ:
+    type: ScalarValue
+    argument: EffectAge
+    scale: true
+    desc: |
+      Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
+    see:
+      - noiseOffsetX
+      - noiseOffsetY
+  force:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      The strength of the force applied in the volume.
+    see:
+      - forceRandomMultiplierMin
+      - forceRandomMultiplierMax
+  shape:
+    type: ForceVolumeShape
+    field: int
+    default: ForceVolumeShape.Sphere
+    desc: |
+      The shape of the volume.
+
+      Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
+      | Shape | Fields | Origin |
+      |-|-|-|
+      | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+      | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+      | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+      | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
+      | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+  sphereRadius:
+    field: float
+    default: 10
+    scale: true
+    desc: |
+      The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+    see:
+      - shape
+  boxSizeX:
+    field: float
+    scale: true
+    desc: |
+      The width of the {@link ForceVolumeShape.Box box} where the force is active.
+    see:
+      - shape
+      - boxSizeY
+      - boxSizeZ
+  boxSizeY:
+    field: float
+    scale: true
+    desc: |
+      The height of the {@link ForceVolumeShape.Box box} where the force is active.
+    see:
+      - shape
+      - boxSizeX
+      - boxSizeZ
+  boxSizeZ:
+    field: float
+    scale: true
+    desc: |
+      The depth of the {@link ForceVolumeShape.Box box} where the force is active.
+    see:
+      - shape
+      - boxSizeX
+      - boxSizeY
+  cylinderHeight:
+    field: float
+    scale: true
+    desc: |
+      The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+    see:
+      - shape
+      - cylinderRadius
+  cylinderRadius:
+    field: float
+    scale: true
+    desc: |
+      The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+    see:
+      - shape
+      - cylinderHeight
+  squarePrismHeight:
+    field: float
+    scale: true
+    desc: |
+      The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+    see:
+      - shape
+      - squarePrismApothem
+  squarePrismApothem:
+    field: float
+    scale: true
+    desc: |
+      The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+    see:
+      - shape
+      - squarePrismHeight
+  unk_unk_f1_9:
+    field: int
+  unk_unk_f1_10:
+    field: int
+  unk_unk_f1_11:
+    field: int
+  unk_unk_f1_12:
+    field: int
+  unk_unk_f1_13:
+    field: int
+  unk_unk_f1_14:
+    field: int
+  unk_unk_f1_15:
+    field: int
+  unk_unk_f1_16:
+    field: int
+  unk_unk_f1_17:
+    field: int
+  unk_unk_f1_18:
+    field: int
+  unk_unk_f1_19:
+    field: int
+  unk_unk_f1_20:
+    field: int
+  unk_unk_f1_21:
+    field: int
+  unk_unk_f1_22:
+    field: int
+  unk_unk_f1_23:
+    field: int
+  forceRandomMultiplierMin:
+    field: float
+    default: 1
+    desc: |
+      The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
+    see:
+      - force
+      - forceRandomMultiplierMax
+  forceRandomMultiplierMax:
+    field: float
+    default: 1
+    desc: |
+      The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
+    see:
+      - force
+      - forceRandomMultiplierMin
+  noiseScale:
+    field: float
+    default: 1
+    scale: true
+    desc: |
+      The scale of the 3D noise used to control the strength and direction of the force in the volume. Lower values makes it more noisy, with small vortices forming everywhere. Higher values makes the noise smoother.
+  unk_unk_f1_27:
+    field: int
+  unk_unk_f1_28:
+    field: int
+  enableSoftRadius:
+    field: bool
+    default: false
+    desc: |
+      Controls whether or not {@link softRadius} is effective.
+    see:
+      - softRadius
+  softRadius:
+    field: float
+    default: 1
+    scale: true
+    desc: |
+      The radius of a sphere where the force gets weaker with the distance from the origin. Very similar to the {@link sphereRadius sphere radius} when the {@link shape} of the volume is a sphere, but this has a smooth transition from inside the radius to the outside.
+
+      This requires {@link enableSoftRadius} to be enabled.
+    see:
+      - enableSoftRadius
+  unk_unk_f1_31:
+    field: int
+  unk_unk_f1_32:
+    field: int
+  unk_unk_f1_33:
+    field: int
+  unk_unk_f1_34:
+    field: int
+  unk_unk_f1_35:
+    field: int
+  unk_unk_f1_36:
+    field: int
+  unk_unk_f1_37:
+    field: int
+  unk_unk_f1_38:
+    field: int
+  unk_unk_f1_39:
+    field: int
+  fadeOutTime:
+    field: int
+    desc: |
+      The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+  unk_unk_f1_41:
+    field: int
+  unk_unk_f1_42:
+    field: int
+  unk_unk_f1_43:
+    field: int
+  unk_unk_f1_44:
+    field: int
+  unk_unk_f1_45:
+    field: int
+  unk_unk_f1_46:
+    field: int
+  unk_unk_f1_47:
+    field: int
+  unk_unk_f1_48:
+    field: int
+  unk_unk_f1_49:
+    field: int
+  unk_unk_f1_50:
+    field: int
+  unk_unk_f1_51:
+    field: int
+games:
+  SDT:
+    fields1:
+      - shape
+      - sphereRadius
+      - boxSizeX
+      - boxSizeY
+      - boxSizeZ
+      - cylinderHeight
+      - cylinderRadius
+      - squarePrismHeight
+      - squarePrismApothem
+      - unk_unk_f1_9
+      - unk_unk_f1_10
+      - unk_unk_f1_11
+      - unk_unk_f1_12
+      - unk_unk_f1_13
+      - unk_unk_f1_14
+      - unk_unk_f1_15
+      - unk_unk_f1_16
+      - unk_unk_f1_17
+      - unk_unk_f1_18
+      - unk_unk_f1_19
+      - unk_unk_f1_20
+      - unk_unk_f1_21
+      - unk_unk_f1_22
+      - unk_unk_f1_23
+      - forceRandomMultiplierMin
+      - forceRandomMultiplierMax
+      - noiseScale
+      - unk_unk_f1_27
+      - unk_unk_f1_28
+      - enableSoftRadius
+      - softRadius
+      - unk_unk_f1_31
+      - unk_unk_f1_32
+      - unk_unk_f1_33
+      - unk_unk_f1_34
+      - unk_unk_f1_35
+      - unk_unk_f1_36
+      - unk_unk_f1_37
+      - unk_unk_f1_38
+      - unk_unk_f1_39
+      - fadeOutTime
+      - unk_unk_f1_41
+      - unk_unk_f1_42
+      - unk_unk_f1_43
+      - unk_unk_f1_44
+      - unk_unk_f1_45
+      - unk_unk_f1_46
+      - unk_unk_f1_47
+      - unk_unk_f1_48
+      - unk_unk_f1_49
+      - unk_unk_f1_50
+      - unk_unk_f1_51
+    properties1:
+      - noiseOffsetX
+      - noiseOffsetY
+      - noiseOffsetZ
+      - force
+  ER: SDT
+  AC6: SDT

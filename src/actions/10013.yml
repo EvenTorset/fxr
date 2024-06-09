@@ -7,16 +7,20 @@ properties:
   texture:
     field: int
     default: 50004
+    resource: texture
+    textureType: d
     desc: |
       The ID for a texture that controls the shape of the interaction.
   depth:
     field: float
     default: 1
+    scale: true
     desc: |
       Controls how deep to push the water, or how intense the ripples caused by the interaction are.
-  scale:
+  size:
     field: float
     default: 1
+    scale: true
     desc: |
       Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
   descent:
@@ -34,7 +38,7 @@ games:
     fields1:
       - texture
       - depth
-      - scale
+      - size
       - descent
       - duration
   ER: SDT

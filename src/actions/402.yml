@@ -14,12 +14,14 @@ properties:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    scale: true
     desc: |
       Width of the rectangle.
   sizeY:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    scale: true
     desc: |
       Height of the rectangle.
   distribution:

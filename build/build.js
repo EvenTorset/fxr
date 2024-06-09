@@ -10,21 +10,30 @@ const distDir = path.join(projectDir, 'dist')
 const actionsDir = path.join(srcDir, 'actions')
 
 const typeMap = {
+  bool: 'boolean',
   int: 'number',
   float: 'number',
-  bool: 'boolean'
+  vec2: 'Vector2',
+  vec3: 'Vector3',
+  vec4: 'Vector4',
 }
 
 const fieldMap = {
-  int: 'FieldType.Integer',
-  float: 'FieldType.Float',
-  bool: 'FieldType.Boolean'
+  bool: 0,
+  int: 1,
+  float: 2,
+  vec2: 3,
+  vec3: 4,
+  vec4: 5
 }
 
 const fieldTypeNameMap = {
+  bool: 'boolean',
   int: 'integer',
   float: 'float',
-  bool: 'boolean'
+  vec2: 'vector2',
+  vec3: 'vector3',
+  vec4: 'vector4'
 }
 
 const gameMap = {
@@ -39,6 +48,18 @@ const argumentNames = {
   ParticleAge: 'Particle age',
   EmissionTime: 'Emission time',
   EffectAge: 'Effect age',
+}
+
+const resourceMap = {
+  texture: 0,
+  model: 1,
+  anibnd: 2,
+  sound: 3,
+}
+
+const scaleMap = {
+  true: 1,
+  ifNotMinusOne: 2,
 }
 
 function naturalSorter(as, bs) {
@@ -125,12 +146,29 @@ export default async function(writeToDist = true) {
         if (!found) {
           console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is not used by any games.`)
         }
+        if ('field' in data.properties[prop]) {
+          let usedAsField = false
+          for (const game of Object.values(data.games)) if (typeof game === 'object') {
+            if (
+              'fields1' in game && Array.isArray(game.fields1) && game.fields1.includes(prop) ||
+              'fields2' in game && Array.isArray(game.fields2) && game.fields2.includes(prop)
+            ) {
+              usedAsField = true
+              break
+            }
+          }
+          if (!usedAsField) {
+            console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) has a field type, but is not used as a field.`)
+          }
+        }
       }
       for (const game of Object.values(data.games)) if (typeof game === 'object') {
-        for (const list of Object.values(game)) if (Array.isArray(list)) {
+        for (const [listName, list] of Object.entries(game)) if (Array.isArray(list)) {
           for (const prop of list) {
             if (!(prop in data.properties)) {
               console.warn(`YAML Warning: Action ${data.type} (${data.name}) is missing the '${prop}' class property.`)
+            } else if ((listName === 'fields1' || listName === 'fields2') && !('field' in data.properties[prop])) {
+              console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is missing a field type.`)
             }
           }
         }
@@ -155,7 +193,17 @@ export default async function(writeToDist = true) {
       [ActionType.${data.name}]: {${'properties' in data ? `
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
-            return `${k}: { default: ${defValTS(v)}${'field' in v ? `, field: ${fieldMap[v.field]}` : ''}${'read' in v ? `, read: value => ${v.read}` : ''}${'write' in v ? `, write: value => ${v.write}` : ''} },`
+            return `${k}: { default: ${defValTS(v)}${
+              'field' in v ? `, field: ${fieldMap[v.field]}` : ''
+            }${
+              'resource' in v ? `, resource: ${resourceMap[v.resource]}` : ''
+            }${
+              'textureType' in v ? `, textureType: '${v.textureType}'` : ''
+            }${
+              'scale' in v ? `, scale: ${scaleMap[v.scale]}` : ''
+            }${
+              'color' in v ? `, color: 1` : ''
+            } },`
           }).join('\n          ')}
         },
         games: {
@@ -222,7 +270,7 @@ export default async function(writeToDist = true) {
          * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
          * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
          * 
-         * ${data.desc.trim().replace(/\n/g, '\n   * ')}
+         * ${data.desc.trim().replace(/\n/g, '\n * ')}
          */
         class ${data.name} extends DataAction {
           declare type: ActionType.${data.name}

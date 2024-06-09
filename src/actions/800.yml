@@ -1,6 +1,6 @@
 type: 800
 name: Unk800
-slot: ParticleWind
+slot: ParticleForceMovement
 desc: |
   Unknown action that was added in Armored Core 6.
 properties:

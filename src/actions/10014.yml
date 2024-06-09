@@ -7,21 +7,26 @@ properties:
   layer1:
     field: int
     default: 1
+    resource: texture
+    textureType: a
     desc: |
       Layer 1 texture ID.
   layer1Width:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 1 width.
   layer1Height:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 1 height.
   layer1Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 1 color.
   layer1Count:
@@ -145,21 +150,26 @@ properties:
   layer2:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Layer 2 texture ID.
   layer2Width:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 2 width.
   layer2Height:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 2 height.
   layer2Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 2 color.
   layer2Count:
@@ -283,21 +293,26 @@ properties:
   layer3:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Layer 3 texture ID.
   layer3Width:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 3 width.
   layer3Height:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 3 height.
   layer3Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 3 color.
   layer3Count:
@@ -421,6 +436,8 @@ properties:
   layer4:
     field: int
     default: 0
+    resource: texture
+    textureType: a
     desc: |
       Layer 4 texture ID.
 
@@ -428,16 +445,19 @@ properties:
   layer4Width:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 4 width.
   layer4Height:
     type: ScalarValue
     default: 1
+    scale: true
     desc: |
       Layer 4 height.
   layer4Color:
     type: Vector4Value
     default: [1, 1, 1, 1]
+    color: true
     desc: |
       Layer 4 color.
   layer4Count:

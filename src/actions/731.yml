@@ -1,30 +1,33 @@
 type: 731
-name: NodeWindSpeed
-slot: NodeWind
+name: NodeForceSpeed
+slot: NodeForceMovement
 desc: |
-  Controls how effective the wind is at pushing the node.
+  Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+  - {@link ActionType.CancelForce CancelForce}
+  - {@link ActionType.WindForce WindForce}
+  - {@link ActionType.GravityForce GravityForce}
+  - {@link ActionType.ForceCollision ForceCollision}
+  - {@link ActionType.TurbulenceForce TurbulenceForce}
 properties:
   speed:
     type: ScalarValue
     argument: EffectAge
+    scale: true
     desc: |
-      The speed in the direction of the wind.
+      The speed in the direction of the force.
   speedMultiplier:
     type: ScalarValue
     default: 1
     argument: EffectAge
     desc: |
-      A multiplier for {@link speed the speed in the direction of the wind}.
-  enabled:
-    field: bool
-    default: true
-    desc: |
-      Controls whether the wind should have any effect at all or not.
+      A multiplier for {@link speed}.
+  unk_sdt_f1_0:
+    field: int
+    default: 1
 games:
-  DS3: fallback
   SDT:
     fields1:
-      - enabled
+      - unk_sdt_f1_0
     properties1:
       - speed
       - speedMultiplier

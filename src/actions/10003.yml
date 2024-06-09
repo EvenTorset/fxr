@@ -1,0 +1,175 @@
+type: 10003
+name: LightShaft
+slot: Appearance
+desc: |
+  A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+properties:
+  texture:
+    field: int
+    resource: texture
+    textureType: a
+    desc: |
+      Texture ID.
+  blendMode:
+    type: BlendMode
+    field: int
+    default: BlendMode.Add
+    desc: |
+      Blend mode.
+  unk_ds3_f1_2:
+    field: float
+    default: 0.75
+  unk_ds3_f1_3:
+    field: float
+    default: 0.75
+  unk_ds3_f1_4:
+    field: float
+    default: 2
+  unk_ds3_f1_5:
+    field: float
+    default: 0.1
+  unk_ds3_f1_6:
+    field: float
+    default: 1
+  unk_ds3_f1_7:
+    field: float
+    default: 1
+  layers:
+    field: int
+    default: 30
+    desc: |
+      The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
+  unk_ds3_f1_9:
+    field: float
+    default: 1
+  unk_ds3_f1_10:
+    field: float
+    default: 1
+  unk_ds3_f1_11:
+    field: float
+    default: 1
+  unk_ds3_f1_12:
+    field: int
+  unk_ds3_f1_13:
+    field: int
+  unk_ds3_f1_14:
+    field: int
+  unk_ds3_f1_15:
+    field: float
+    default: 1
+  unk_ds3_f1_16:
+    field: int
+    default: 1
+  unk_ds3_f1_17:
+    field: int
+  unk_ds3_f1_18:
+    field: float
+    default: 1
+  unk_ds3_f1_19:
+    field: float
+    default: 1
+  unk_ds3_f1_20:
+    field: float
+    default: 1
+  unk_ds3_f1_21:
+    field: float
+    default: 1
+  unk_ds3_f1_22:
+    field: float
+    default: -1
+  unk_ds3_f1_23:
+    field: float
+    default: -1
+  unk_ds3_f1_24:
+    field: int
+  unk_ds3_f1_25:
+    field: float
+    default: 1
+  unk_ds3_f1_26:
+    field: float
+    default: 1
+  unk_ds3_f1_27:
+    field: float
+    default: 1
+  unk_ds3_f1_28:
+    field: float
+    default: -1
+  unk_ds3_f1_29:
+    field: int
+  width:
+    type: ScalarValue
+    default: 1
+    scale: true
+  height:
+    type: ScalarValue
+    default: 1
+    scale: true
+  color1:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+  color2:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+  color3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+  unk_ds3_p1_5:
+    type: ScalarValue
+  unk_ds3_p1_6:
+    type: ScalarValue
+  unk_ds3_p1_7:
+    type: ScalarValue
+  unk_ds3_p1_8:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p1_9:
+    type: ScalarValue
+    default: 1
+games:
+  DS3:
+    fields1:
+      - texture
+      - blendMode
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - unk_ds3_f1_7
+      - layers
+      - unk_ds3_f1_9
+      - unk_ds3_f1_10
+      - unk_ds3_f1_11
+      - unk_ds3_f1_12
+      - unk_ds3_f1_13
+      - unk_ds3_f1_14
+      - unk_ds3_f1_15
+      - unk_ds3_f1_16
+      - unk_ds3_f1_17
+      - unk_ds3_f1_18
+      - unk_ds3_f1_19
+      - unk_ds3_f1_20
+      - unk_ds3_f1_21
+      - unk_ds3_f1_22
+      - unk_ds3_f1_23
+      - unk_ds3_f1_24
+      - unk_ds3_f1_25
+      - unk_ds3_f1_26
+      - unk_ds3_f1_27
+      - unk_ds3_f1_28
+      - unk_ds3_f1_29
+    properties1:
+      - width
+      - height
+      - color1
+      - color2
+      - color3
+      - unk_ds3_p1_5
+      - unk_ds3_p1_6
+      - unk_ds3_p1_7
+      - unk_ds3_p1_8
+      - unk_ds3_p1_9
+  SDT: DS3

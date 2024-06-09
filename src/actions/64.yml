@@ -7,6 +7,7 @@ properties:
   gravity:
     type: ScalarValue
     argument: ParticleAge
+    scale: true
     desc: |
       Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
 
@@ -14,6 +15,7 @@ properties:
   speed:
     type: ScalarValue
     argument: ParticleAge
+    scale: true
     desc: |
       The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
   speedMultiplier:
