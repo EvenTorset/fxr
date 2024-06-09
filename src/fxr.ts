@@ -644,7 +644,7 @@ enum ActionType {
    * - {@link ActionType.WindForce WindForce}
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
-   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+   * - {@link ActionType.TurbulenceForce TurbulenceForce}
    * 
    * This action type has a specialized subclass: {@link NodeForceSpeed}
    */
@@ -658,7 +658,7 @@ enum ActionType {
    * - {@link ActionType.WindForce WindForce}
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
-   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+   * - {@link ActionType.TurbulenceForce TurbulenceForce}
    * 
    * This action type has a specialized subclass: {@link ParticleForceSpeed}
    */
@@ -672,7 +672,7 @@ enum ActionType {
    * - {@link ActionType.WindForce WindForce}
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
-   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+   * - {@link ActionType.TurbulenceForce TurbulenceForce}
    * 
    * This action type has a specialized subclass: {@link NodeForceAcceleration}
    */
@@ -686,7 +686,7 @@ enum ActionType {
    * - {@link ActionType.WindForce WindForce}
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
-   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+   * - {@link ActionType.TurbulenceForce TurbulenceForce}
    * 
    * This action type has a specialized subclass: {@link ParticleForceAcceleration}
    */
@@ -822,7 +822,7 @@ enum ActionType {
    * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
    * - {@link ActionType.WindForce WindForce}
    * - {@link ActionType.GravityForce GravityForce}
-   * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+   * - {@link ActionType.TurbulenceForce TurbulenceForce}
    * 
    * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
    * 
@@ -23122,7 +23122,7 @@ export interface NodeForceSpeedParams {
  * - {@link ActionType.WindForce WindForce}
  * - {@link ActionType.GravityForce GravityForce}
  * - {@link ActionType.ForceCollision ForceCollision}
- * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+ * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class NodeForceSpeed extends DataAction {
   declare type: ActionType.NodeForceSpeed
@@ -23185,7 +23185,7 @@ export interface ParticleForceSpeedParams {
  * - {@link ActionType.WindForce WindForce}
  * - {@link ActionType.GravityForce GravityForce}
  * - {@link ActionType.ForceCollision ForceCollision}
- * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+ * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class ParticleForceSpeed extends DataAction {
   declare type: ActionType.ParticleForceSpeed
@@ -23246,7 +23246,7 @@ export interface NodeForceAccelerationParams {
  * - {@link ActionType.WindForce WindForce}
  * - {@link ActionType.GravityForce GravityForce}
  * - {@link ActionType.ForceCollision ForceCollision}
- * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+ * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class NodeForceAcceleration extends DataAction {
   declare type: ActionType.NodeForceAcceleration
@@ -23309,7 +23309,7 @@ export interface ParticleForceAccelerationParams {
  * - {@link ActionType.WindForce WindForce}
  * - {@link ActionType.GravityForce GravityForce}
  * - {@link ActionType.ForceCollision ForceCollision}
- * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+ * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class ParticleForceAcceleration extends DataAction {
   declare type: ActionType.ParticleForceAcceleration
@@ -36263,7 +36263,7 @@ export interface CancelForceParams {
  * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
  * - {@link ActionType.WindForce WindForce}
  * - {@link ActionType.GravityForce GravityForce}
- * - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+ * - {@link ActionType.TurbulenceForce TurbulenceForce}
  * 
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
  */

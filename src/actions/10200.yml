@@ -5,7 +5,7 @@ desc: |
   Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
   - {@link ActionType.WindForce WindForce}
   - {@link ActionType.GravityForce GravityForce}
-  - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+  - {@link ActionType.TurbulenceForce TurbulenceForce}
 
   The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
 properties:

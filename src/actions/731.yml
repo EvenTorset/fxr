@@ -7,7 +7,7 @@ desc: |
   - {@link ActionType.WindForce WindForce}
   - {@link ActionType.GravityForce GravityForce}
   - {@link ActionType.ForceCollision ForceCollision}
-  - {@link ActionType.Unk10303_ForceFieldTurbulenceArea Unk10303_ForceFieldTurbulenceArea}
+  - {@link ActionType.TurbulenceForce TurbulenceForce}
 properties:
   speed:
     type: ScalarValue
