@@ -2490,7 +2490,7 @@ const ActionData: {
   [ActionType.EqualDistanceEmitter]: {
     props: {
       threshold: { default: 0.1, scale: 1 },
-      maxConcurrent: { default: -1 },
+      maxConcurrent: { default: -1, field: 1 },
       unk_ds3_f1_1: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
       unk_ds3_p1_1: { default: 1 },
@@ -4891,7 +4891,7 @@ const ActionData: {
       scaleVariationZ: { default: 1, field: 2 },
       uniformScale: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
-      model: { default: 80201, field: 1, resource: 1 },
+      model: { default: 80201, resource: 1 },
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
       sizeZ: { default: 1, scale: 1 },

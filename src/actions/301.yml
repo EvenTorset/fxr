@@ -13,6 +13,7 @@ properties:
       How much the emitter must move to trigger emission.
   maxConcurrent:
     type: ScalarValue
+    field: int
     default: -1
     argument: EffectAge
     desc: >

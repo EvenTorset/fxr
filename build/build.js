@@ -146,12 +146,29 @@ export default async function(writeToDist = true) {
         if (!found) {
           console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is not used by any games.`)
         }
+        if ('field' in data.properties[prop]) {
+          let usedAsField = false
+          for (const game of Object.values(data.games)) if (typeof game === 'object') {
+            if (
+              'fields1' in game && Array.isArray(game.fields1) && game.fields1.includes(prop) ||
+              'fields2' in game && Array.isArray(game.fields2) && game.fields2.includes(prop)
+            ) {
+              usedAsField = true
+              break
+            }
+          }
+          if (!usedAsField) {
+            console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) has a field type, but is not used as a field.`)
+          }
+        }
       }
       for (const game of Object.values(data.games)) if (typeof game === 'object') {
-        for (const list of Object.values(game)) if (Array.isArray(list)) {
+        for (const [listName, list] of Object.entries(game)) if (Array.isArray(list)) {
           for (const prop of list) {
             if (!(prop in data.properties)) {
               console.warn(`YAML Warning: Action ${data.type} (${data.name}) is missing the '${prop}' class property.`)
+            } else if ((listName === 'fields1' || listName === 'fields2') && !('field' in data.properties[prop])) {
+              console.warn(`YAML Warning: Class property '${prop}' in action ${data.type} (${data.name}) is missing a field type.`)
             }
           }
         }

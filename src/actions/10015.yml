@@ -66,7 +66,6 @@ properties:
       - This does not affect the natural bloom effect from high color values.
   model:
     type: ScalarValue
-    field: int
     default: 80201
     argument: Constant0
     resource: model
