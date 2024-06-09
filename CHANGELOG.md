@@ -32,3 +32,5 @@
 - The LinearProperty.sine function now has a parameter for the phase shift.
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
+
+[11.0.0]: https://github.com/EvenTorset/fxr/compare/v10.0.1...v11.0.0
