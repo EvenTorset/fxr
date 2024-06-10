@@ -1,7 +1,7 @@
 # FXR
-This is a JavaScript library for creating and editing FXR files (particle effects, lights, etc.) for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6. It does not require any dependencies, and works in both the browser and in Node.
+This is a JavaScript library for creating and editing FXR files (particle effects, lights, etc.) for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6. It does not require any dependencies, and works in both the browser and in Node.js.
 
-It includes classes for most known structures in the file format that makes it relatively very easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in different ways: scaling, recoloring, converting between games, and more.
+It includes classes for all known structures in the file format that makes it relatively very easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in many different ways: scaling, recoloring, converting between games, and more.
 
 ## Installation
 The library is available on [npm](https://www.npmjs.com/package/@cccode/fxr), so you can use a package manager like npm, yarn or pnpm to install it.
@@ -24,7 +24,11 @@ The library has the ability to deserialize FXR files into JSON objects and it ca
 This can be useful to see what existing effects do, or to copy parts of existing effects to use in your own, like in [the example script about this](https://github.com/EvenTorset/fxr/blob/main/examples/from_json.js). The JSON files can also be edited manually and converted back to FXR after using fxrjson again.
 
 ## Editing FXR files
-To edit existing FXR files, all you need is an ArrayBuffer or typed array with the file's content. The example below is written for Node, but by replacing how you get the buffer and what you do with the output it should also work fine in the browser.
+To edit existing FXR files, you need to first have the library read the file. When using Node.js, you can simply give it the file path and await the result. If you need to do it in the browser, you can give it an ArrayBuffer or typed array instead of a file path.
+
+Once it has been read, you can change things in the FXR object to whatever you need. The library also provides useful functions for common actions like scaling or recoloring effects.
+
+Once you have made your changes to the FXR object, you can write it to a file if you're using Node.js, or you can generate an ArrayBuffer with the file's content if you need it to run in the browser.
 ```js
 import { FXR, Game } from '@cccode/fxr'
 
@@ -77,7 +81,7 @@ fxr.root.recolor(([r, g, b, a]) => {
 await fxr.saveAs('f000450360_edit.fxr', Game.EldenRing)
 ```
 ## Creating new FXR files
-Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume
+Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume.
 ```js
 import {
   FXR,
