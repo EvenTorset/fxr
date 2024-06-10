@@ -25,7 +25,7 @@ This is using npm to install the library (`@cccode/fxr`) without including the d
 If everything worked correctly, a new folder called `node_modules` and two new files called `package.json` and `package-lock.json` should have shown up in the folder. Those three should so far be the only things in the folder.
 
 # Modules
-Node can run JS code as either CommonJS scripts or ECMAScript modules (ESM). CommonJS is an old, outdated module system that should only be used if it's required by dependencies or for backwards compatiblity. ESM is newer and it is actually part of the JS language specification, unlike CommonJS. This library uses ESM and can not be used from CommonJS (without weird workarounds).
+Node can run JS code as either CommonJS scripts or ECMAScript modules (ESM). CommonJS is an old, outdated module system that should only be used if it's required by dependencies or for backwards compatiblity. ESM is newer and it is actually part of the JS language specification, unlike CommonJS. This library can be used with either, but I very strongly suggest sticking to ESM unless you absolutely know what you're doing (why are you reading this guide, if that's the case?) and your project requires CommonJS for some reason. None of the official examples or guides for the library will use CommonJS, so if you use it, you're on your own.
 
 Node runs JS code as CommonJS scripts by default, so you must tell it that your code is a module. To do that, you have two options (actually more options, but two easy ones that should be preferred):
 1. You can make a single file act as a module by using the `.mjs` file extension instead of `.js`. For example, if you put your code in a file called `example.mjs`, it will always be run as a module.
@@ -34,7 +34,7 @@ Node runs JS code as CommonJS scripts by default, so you must tell it that your 
 {
   "type": "module",
   "dependencies": {
-    "@cccode/fxr": "^10.0.0"
+    "@cccode/fxr": "^11.0.0"
   }
 }
 ```
@@ -59,7 +59,7 @@ fxr.root.nodes = [
 
 await fxr.saveAs('example.fxr', Game.EldenRing)
 ```
-This creates a new FXR file with the ID 300 and sets up a single red square as the effect. It then uses the Node file system module to write the file to the folder as `example.fxr`.
+This creates a new FXR file with the ID 300 and sets up a single red square as the effect. It then writes the file to the folder as `example.fxr`.
 
 To run the example script, use this command:
 ```
@@ -109,9 +109,9 @@ Note that this will even update to new major releases, so there might be breakin
 ```text
 npm ls @cccode/fxr
 ```
-If an update has broken your scripts or if you just want to go back to an older version of the library, you can install any specific version by putting the version number after `@` at the end of the package name in the install command. For example, this is how you would install version 3.0.0:
+If an update has broken your scripts or if you just want to go back to an older version of the library, you can install any specific version by putting the version number after `@` at the end of the package name in the install command. For example, this is how you would install version 10.0.0:
 ```text
-npm i @cccode/fxr@3.0.0 --omit=dev
+npm i @cccode/fxr@10.0.0 --omit=dev
 ```
 
 <br>
