@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Highlights
+- The ComponentSequenceProperty.combineComponents method has been improved so that it should now return an equal HermiteProperty if all of the components have the same number of keyframes and keyframe positions. This method is used internally to, for example, enable correct recoloring of these properties, so the output structure of recolored AC6 effects should now look a lot nicer if they were originally of this type.
+- Added .minify methods to all types of properties.
+  - ValueProperty.minify simply returns the same property. These properties can not be minified in any way, they are as compact as they can be.
+  - SequenceProperty.minify returns a ConstantProperty with the same value if the property only has a single keyframe. Otherwise, it returns the same property.
+  - ComponentSequenceProperty returns a ConstantProperty with the same value if all components only have a single keyframe each, and it returns a HermiteProperty if an equivalent one can be constructed. Otherwise, it returns the same property.
+- The Action.minify and DataAction.minify methods now also minify all properties.
+
 ## [11.0.0] - 2024-06-09
 
 ### Highlights
@@ -33,4 +43,5 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v11.0.0...HEAD
 [11.0.0]: https://github.com/EvenTorset/fxr/compare/v10.0.1...v11.0.0

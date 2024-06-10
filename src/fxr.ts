@@ -1647,6 +1647,7 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   for(game: Game): IProperty<T, F>
   min(): TypeMap.PropertyValue[T]
   max(): TypeMap.PropertyValue[T]
+  minify(): IProperty<T, PropertyFunction>
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -1656,6 +1657,14 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 export interface IAction {
   readonly type: ActionType
   toJSON(): any
+  /**
+   * Creates a minified version of this action.
+   * 
+   * Some actions can be minified to make the output smaller. This is done by
+   * creating a simpler action that is functionally equivalent to this action.
+   * 
+   * Actions that can not be minified will not be changed.
+   */
   minify(): AnyAction
 }
 
@@ -10229,16 +10238,15 @@ class Action implements IAction {
     return o
   }
 
-  /**
-   * Creates a minified version of this action.
-   * 
-   * Some actions can be minified to make the output smaller. This is done by
-   * creating a simpler action that is functionally equivalent to this action.
-   * 
-   * Actions that can not be minified will not be changed.
-   */
   minify(): Action {
-    return this
+    return new Action(
+      this.type,
+      this.fields1,
+      this.fields2,
+      this.properties1.map(e => e.minify()),
+      this.properties2.map(e => e.minify()),
+      this.section10s,
+    )
   }
 
 }
@@ -10284,10 +10292,25 @@ class DataAction implements IAction {
   }
 
   minify() {
+    let minified: DataAction = this
     if (this.type in ActionDataConversion && 'minify' in ActionDataConversion[this.type]) {
-      return ActionDataConversion[this.type].minify.call(this)
+      minified = ActionDataConversion[this.type].minify.call(this)
     }
-    return this
+    if (minified instanceof DataAction && 'props' in ActionData[minified.type]) {
+      const propNames = Object.keys(ActionData[minified.type].props)
+      if (propNames.length === 1) {
+        return new (minified.constructor as any)(
+          minified[propNames[0]] instanceof Property ? minified[propNames[0]].minify() : minified[propNames[0]]
+        )
+      }
+      return new (minified.constructor as any)(Object.fromEntries(
+        propNames.map(prop => [
+          prop,
+          minified[prop] instanceof Property ? minified[prop].minify() : minified[prop]
+        ])
+      ))
+    }
+    return minified
   }
 
   getFields(game: Game, list: 'fields1' | 'fields2'): Field<FieldType>[] {
@@ -39805,6 +39828,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract separateComponents(): Property<ValueType.Scalar, F>[]
   abstract min(): TypeMap.PropertyValue[T]
   abstract max(): TypeMap.PropertyValue[T]
+  abstract minify(): Property<T, PropertyFunction>
 
 }
 
@@ -39944,6 +39968,10 @@ class ValueProperty<T extends ValueType>
 
   max(): TypeMap.PropertyValue[T] {
     return this.value
+  }
+
+  minify(): this {
+    return this
   }
 
 }
@@ -40264,6 +40292,21 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
+  minify(): Property<T, PropertyFunction> {
+    if (this.keyframes.length === 1) {
+      if (this.valueType === ValueType.Scalar) {
+        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
+          ...this.modifiers
+        )
+      } else {
+        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(
+          ...this.modifiers
+        )
+      }
+    }
+    return this
+  }
+
   get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
@@ -40430,6 +40473,23 @@ class ComponentSequenceProperty<T extends ValueType>
   }
 
   /**
+   * If all components have the same number of keyframes and keyframe
+   * positions, the property can be converted to a {@link HermiteProperty}
+   * without losing any information or functionality.
+   * 
+   * This method performs these checks and returns a boolean indicating if the
+   * property can be simplified this way or not.
+   */
+  canBeSimplified(): boolean {
+    const kfs = this.components[0].keyframes
+    const l = kfs.length
+    return this.valueType === ValueType.Scalar || this.components.slice(1).every(c =>
+      c.keyframes.length === l &&
+      c.keyframes.every((e, i) => e.position === kfs[i].position)
+    )
+  }
+
+  /**
    * Combines the components to form a new {@link SequenceProperty} with
    * roughly the same values and the same modifiers.
    * 
@@ -40438,6 +40498,19 @@ class ComponentSequenceProperty<T extends ValueType>
    * non-linear curves used are lost in this conversion.
    */
   combineComponents() {
+    if (this.canBeSimplified()) {
+      if (this.valueType === ValueType.Scalar) {
+        return new HermiteProperty(this.loop, this.components[0].keyframes).withModifiers(
+          ...(this.modifiers as IModifier<ValueType.Scalar>[])
+        ) as HermiteProperty<T>
+      }
+      return new HermiteProperty(this.loop, arrayOf(this.components[0].keyframes.length, i => new HermiteKeyframe(
+        this.components[0].keyframes[i].position,
+        this.components.map(c => c.keyframes[i].value) as Vector,
+        this.components.map(c => c.keyframes[i].tangent1) as Vector,
+        this.components.map(c => c.keyframes[i].tangent2) as Vector,
+      ))).withModifiers(...this.modifiers) as HermiteProperty<T>
+    }
     const positions = new Set<number>
     for (const comp of this.components) {
       for (const keyframe of comp.keyframes) {
@@ -40463,6 +40536,18 @@ class ComponentSequenceProperty<T extends ValueType>
     } else {
       return this.components.map(c => c.max()) as TypeMap.PropertyValue[T]
     }
+  }
+
+  minify(): Property<T, PropertyFunction> {
+    if (this.components.every(c => c.keyframes.length === 1)) {
+      return new ConstantProperty<T>(
+        ...this.components.map(c => c.keyframes[0].value)
+      ).withModifiers(
+        ...this.modifiers
+      )
+    }
+    if (this.canBeSimplified()) return this.combineComponents()
+    return this
   }
 
   get duration() { return Math.max(0, ...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
