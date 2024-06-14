@@ -27,9 +27,12 @@
     "/dist"
   ],
   "keywords": [
+    "elden-ring",
+    "sekiro",
+    "dark-souls-3",
+    "armoredcore6",
     "typescript",
-    "souls",
-    "modding"
+    "modding-tools"
   ],
   "repository": {
     "type": "git",
