@@ -1709,19 +1709,6 @@ export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 export type NumericalField = Field<FieldType.Integer | FieldType.Float>
 
-export type TypedArray =
-  | Int8Array
-  | Uint8Array
-  | Uint8ClampedArray
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Float32Array
-  | Float64Array
-  | BigInt64Array
-  | BigUint64Array
-
 export type NodeMovementParams =
   | NodeSpinParams
   | NodeAccelerationParams
@@ -8360,27 +8347,31 @@ class FXR {
    * 
    * This uses the fs module from Node.js to read the file. If you are
    * targeting browers, pass an {@link ArrayBuffer} or
-   * {@link TypedArray typed array} with the contents of the file instead.
+   * {@link ArrayBufferView} of the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
    */
   static read(filePath: string, game?: Game): Promise<FXR>
 
   /**
    * Parses an FXR file.
-   * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file to parse.
+   * @param buffer {@link ArrayBuffer} or {@link ArrayBufferView} of the
+   * contents of the FXR file to parse.
    */
-  static read(buffer: ArrayBuffer | TypedArray, game?: Game): FXR
+  static read(buffer: ArrayBuffer | ArrayBufferView, game?: Game): FXR
 
   /**
    * Parses an FXR file.
-   * @param input A path to the FXR file to parse, or an ArrayBuffer or TypedArray containing the contents of the FXR file.
+   * @param input A path to the FXR file to parse, or an {@link ArrayBuffer} or
+   * {@link ArrayBufferView} of the contents of the FXR file.
    */
-  static read(input: string | ArrayBuffer | TypedArray, game: Game = Game.EldenRing): Promise<FXR> | FXR {
+  static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing): Promise<FXR> | FXR {
     if (typeof input === 'string') {
       return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game))
     }
-    if (!(input instanceof ArrayBuffer)) {
+    if (ArrayBuffer.isView(input)) {
       input = input.buffer
+    } else if (!(input instanceof ArrayBuffer)) {
+      throw new Error('Invalid input type. Input must be a file path string, or an ArrayBuffer or ArrayBufferView of the file contents.')
     }
     const br = new BinaryReader(input)
 
