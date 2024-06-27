@@ -1,6 +1,12 @@
 import type { PathLike } from 'node:fs'
 import type { FileHandle } from 'node:fs/promises'
 
+declare global {
+  interface Array<T> {
+    with(index: number, value: T): Array<T>
+  }
+}
+
 enum Game {
   /**
    * Does not represent any specific game.
@@ -1647,6 +1653,7 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   for(game: Game): IProperty<T, F>
   min(): TypeMap.PropertyValue[T]
   max(): TypeMap.PropertyValue[T]
+  minify(): IProperty<T, PropertyFunction>
 }
 
 export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
@@ -1656,6 +1663,14 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 export interface IAction {
   readonly type: ActionType
   toJSON(): any
+  /**
+   * Creates a minified version of this action.
+   * 
+   * Some actions can be minified to make the output smaller. This is done by
+   * creating a simpler action that is functionally equivalent to this action.
+   * 
+   * Actions that can not be minified will not be changed.
+   */
   minify(): AnyAction
 }
 
@@ -1699,19 +1714,11 @@ export type Vector3Value = Vector3 | Vector3Property
 export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 export type NumericalField = Field<FieldType.Integer | FieldType.Float>
+export type VectorValueType = Exclude<ValueType, ValueType.Scalar>
 
-export type TypedArray =
-  | Int8Array
-  | Uint8Array
-  | Uint8ClampedArray
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Float32Array
-  | Float64Array
-  | BigInt64Array
-  | BigUint64Array
+export type GenComponents<T, V extends ValueType> = [
+  [T], [T, T], [T, T, T], [T, T, T, T]
+][V]
 
 export type NodeMovementParams =
   | NodeSpinParams
@@ -1894,6 +1901,7 @@ const ActionData: {
         textureType?: string
         scale?: ScaleCondition
         color?: 1
+        omit?: 1
         paths?: {
           [game: string]: [string, number]
         }
@@ -4907,12 +4915,12 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 1 },
       color3: { default: [1, 1, 1, 1], color: 1 },
-      uOffset: { default: 0 },
-      vOffset: { default: 0 },
-      uSpeed: { default: 0 },
-      uSpeedMultiplier: { default: 0 },
-      vSpeed: { default: 0 },
-      vSpeedMultiplier: { default: 0 },
+      uOffset: { default: 0, omit: 1 },
+      vOffset: { default: 0, omit: 1 },
+      uSpeed: { default: 0, omit: 1 },
+      uSpeedMultiplier: { default: 0, omit: 1 },
+      vSpeed: { default: 0, omit: 1 },
+      vSpeedMultiplier: { default: 0, omit: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       anibnd: { default: 0, field: 1, resource: 2 },
@@ -5996,9 +6004,7 @@ function readDataAction(
   br.stepIn(fieldOffset)
   const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
-    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), null)
-  } else {
-    c.fields1 = readFields(br, fieldCount1, null)
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map((e: string) => adt.props[e].field), null)
   }
   if ('fields2' in gameData) {
 
@@ -6007,19 +6013,12 @@ function readDataAction(
       list, which shifts all of the other indices. This checks for that value
       and just skips past it if it's there.
     */
-    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer) {
-      const beforeF2Pos = br.position
-      const field = readField(br, null, 0)
-      if (field.type === FieldType.Integer && field.value === -2) {
-        fieldCount2--
-      } else {
-        br.position = beforeF2Pos
-      }
+    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer && br.getInt32(br.position) === -2) {
+      fieldCount2--
+      br.position += 4
     }
 
-    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), null)
-  } else {
-    c.fields2 = readFields(br, fieldCount2, null)
+    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map((e: string) => adt.props[e].field), null)
   }
   br.stepOut()
   let params = Object.fromEntries(
@@ -6028,7 +6027,7 @@ function readDataAction(
       if (v instanceof Field) {
         return [name, v.value]
       } else {
-        return [name, v]
+        return [name, v ?? prop.default]
       }
     })
   )
@@ -6740,12 +6739,6 @@ function readField(br: BinaryReader, context: any, index: number) {
     } else if (context[0] !== PropertyFunction.Constant) {
       isInt = !index
     }
-  } else if (context instanceof StateCondition) {
-    if (index === 0) {
-      isInt = (context.leftOperandType & 3) > 0
-    } else {
-      isInt = (context.rightOperandType & 3) > 0
-    }
   } else {
     const single = br.getFloat32(br.position)
     if (single >=  9.99999974737875E-05 && single <  1000000.0 ||
@@ -6785,22 +6778,43 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
 }
 
 function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field<FieldType>[] {
-  return arrayOf(count, i => {
-    switch (types[i]) {
-      case FieldType.Boolean: return new BoolField(!!br.assertInt32(0, 1))
-      case FieldType.Integer: return new IntField(br.readInt32())
-      case FieldType.Float: return new FloatField(br.readFloat32())
-      case FieldType.Vector2: return new Vec2Field([ br.readFloat32(), br.readFloat32() ])
-      case FieldType.Vector3: return new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ])
-      case FieldType.Vector4: return new Vec4Field([
-        br.readFloat32(),
-        br.readFloat32(),
-        br.readFloat32(),
-        br.readFloat32()
-      ])
-      default: return readField(br, context, 0)
+  const fields: Field<FieldType>[] = []
+  for (let i = 0, j = 0; i < count; j++) {
+    switch (types[j]) {
+      case FieldType.Boolean:
+        i++
+        fields.push(new BoolField(!!br.assertInt32(0, 1)))
+        break
+      case FieldType.Integer:
+        i++
+        fields.push(new IntField(br.readInt32()))
+        break
+      case FieldType.Float:
+        i++
+        fields.push(new FloatField(br.readFloat32()))
+        break
+      case FieldType.Vector2:
+        i += 2
+        fields.push(new Vec2Field([ br.readFloat32(), br.readFloat32() ]))
+        break
+      case FieldType.Vector3:
+        i += 3
+        fields.push(new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
+        break
+      case FieldType.Vector4:
+        i += 4
+        fields.push(new Vec4Field([
+          br.readFloat32(),
+          br.readFloat32(),
+          br.readFloat32(),
+          br.readFloat32()
+        ]))
+        break
+      default:
+        fields.push(readField(br, context, 0))
     }
-  })
+  }
+  return fields
 }
 
 function readFieldsWithTypesAt(
@@ -7172,11 +7186,10 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       } else {
         const cav2 = av2
         return new ComponentSequenceProperty(
-          av1.length - 1,
           av2.loop,
           av1.map((c, i) => cav2.components[cav2.components.length === 1 ? 0 : i].keyframes
             .map(kf => Keyframe.scale(Keyframe.copy(kf), c))
-          ),
+          ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
           mods.map(mod => Modifier.multPropertyValue(mod, av1))
         ) as unknown as T
       }
@@ -7233,11 +7246,10 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ComponentSequenceProperty(
-        vt,
         av2.loop,
         arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value))
-        ),
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         [
           ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
           ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
@@ -7333,9 +7345,10 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       ) as unknown as T
     } else if (av2 instanceof ComponentSequenceProperty) {
       return new ComponentSequenceProperty(
-        av2.valueType,
         av2.loop,
-        av2.components.map(c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))),
+        av2.components.map(
+          c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         av2.modifiers.map(mod => mod.clone())
       ) as unknown as T
     }
@@ -7371,11 +7384,10 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new ComponentSequenceProperty(
-        av1.length - 1,
         cav2.loop,
         av1.map((c, i) => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.add(Keyframe.copy(kf), c))
-        ),
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         mods.map(mod => mod.clone())
       ) as unknown as T
     }
@@ -7427,11 +7439,10 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ComponentSequenceProperty(
-        vt,
         cav2.loop,
         arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.add(Keyframe.copy(kf), cav1.value))
-        ),
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         [
           ...av1Mods.map(mod => mod.clone()),
           ...av2Mods.map(mod => mod.clone()),
@@ -7517,40 +7528,119 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
     }
   }
   function combineModifiers() {
-    const cc = comps.length
-    return comps.flatMap((c, i) => {
-      if (typeof c === 'number') {
-        return []
-      }
-      return c.modifiers.map(mod => {
-        if (mod instanceof RandomDeltaModifier) {
-          return new RandomDeltaModifier(
-            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-          )
-        } else if (mod instanceof RandomRangeModifier) {
-          return new RandomRangeModifier(
-            arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-          )
-        } else if (mod instanceof RandomFractionModifier) {
-          return new RandomFractionModifier(
-            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-          )
-        } else if (mod instanceof ExternalValue1Modifier) {
-          return new ExternalValue1Modifier(mod.externalValue,
-            combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-          )
-        } else if (mod instanceof ExternalValue2Modifier) {
-          return new ExternalValue2Modifier(mod.externalValue,
-            combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-          )
+    const origMods = comps.map(c => c instanceof Property ? c.modifiers : [])
+    const mappedComps = new Set
+    const out: (IModifier<ValueType.Scalar>[] | IModifier<ValueType>)[] = []
+    const max = origMods.reduce((a, e) => Math.max(a, e.length), 0)
+    for (let i = 0; i < max; i++) {
+      for (const [j, a] of origMods.entries()) {
+        const mod = a[i]
+        if (!(i in a) || mappedComps.has(mod)) continue;
+        mappedComps.add(mod)
+        if (
+          mod instanceof ExternalValue1Modifier ||
+          mod instanceof ExternalValue2Modifier
+        ) {
+          out.push(Modifier.vectorFromScalar(mod, comps.length - 1))
+          continue
         }
-      })
+        const o = Array(origMods.length).with(j, mod)
+        out.push(o)
+        for (let k = i; k < max; k++) {
+          for (const [l, b] of origMods.entries()) {
+            if (
+              !(k in b) || 
+              l === j ||
+              b[k].type !== mod.type ||
+              o[l] !== undefined ||
+              mappedComps.has(b[k])
+            ) continue;
+            o[l] = b[k]
+            mappedComps.add(b[k])
+          }
+        }
+      }
+    }
+    for (const o of out) {
+      if (!Array.isArray(o)) continue;
+      let type: ModifierType
+      for (const m of o) {
+        if (m !== undefined) {
+          type = m.type
+          break
+        }
+      }
+      for (let i = origMods.length - 1; i >= 0; i--) {
+        if (o[i] === undefined) switch (type) {
+          case ModifierType.RandomDelta:
+            o[i] = new RandomDeltaModifier(0, 0)
+            break
+          case ModifierType.RandomRange:
+            o[i] = new RandomRangeModifier(0, 0, 0)
+            break
+          case ModifierType.RandomFraction:
+            o[i] = new RandomFractionModifier(0, 0)
+            break
+        }
+      }
+    }
+    return out.map(e => {
+      if (!Array.isArray(e)) return e
+      switch (e[0].type) {
+        case ModifierType.RandomDelta:
+          return new RandomDeltaModifier(
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as Vector,
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as Vector
+          )
+        case ModifierType.RandomRange:
+          return new RandomRangeModifier(
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as Vector,
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as Vector,
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as Vector
+          )
+        case ModifierType.RandomFraction:
+          return new RandomFractionModifier(
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as Vector,
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as Vector
+          )
+      }
     })
   }
+  // function combineModifiers() {
+  //   const cc = comps.length
+  //   return comps.flatMap((c, i) => {
+  //     if (typeof c === 'number') {
+  //       return []
+  //     }
+  //     return c.modifiers.map(mod => {
+  //       if (mod instanceof RandomDeltaModifier) {
+  //         return new RandomDeltaModifier(
+  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+  //         )
+  //       } else if (mod instanceof RandomRangeModifier) {
+  //         return new RandomRangeModifier(
+  //           arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+  //         )
+  //       } else if (mod instanceof RandomFractionModifier) {
+  //         return new RandomFractionModifier(
+  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+  //         )
+  //       } else if (mod instanceof ExternalValue1Modifier) {
+  //         return new ExternalValue1Modifier(mod.externalValue,
+  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
+  //         )
+  //       } else if (mod instanceof ExternalValue2Modifier) {
+  //         return new ExternalValue2Modifier(mod.externalValue,
+  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
+  //         )
+  //       }
+  //     })
+  //   })
+  // }
   if (positions.size >= 2) {
     const keyframes = (hasCurveComp ?
       interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40) :
@@ -7959,11 +8049,7 @@ const ActionDataConversion = {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
         props.diffuseColor = anyValueMult(anyValueMult(100, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
-        if (!props.separateSpecular) {
-          props.specularColor = props.diffuseColor instanceof Property ? props.diffuseColor.clone() : props.diffuseColor
-        } else {
-          props.specularColor = anyValueMult(anyValueMult(100, props.specularMultiplier), props.specularColor) as Vector4Value
-        }
+        props.specularColor = anyValueMult(anyValueMult(100, props.specularMultiplier), props.specularColor) as Vector4Value
       } else {
         props.diffuseMultiplier = anyValueMult(100, props.diffuseMultiplier) as ScalarValue
         props.specularMultiplier = anyValueMult(100, props.specularMultiplier) as ScalarValue
@@ -7978,6 +8064,7 @@ class BinaryReader extends DataView {
 
   position: number = 0
   littleEndian: boolean = true
+  round: boolean = false
   steps: number[] = []
 
   getInt16(offset: number) {
@@ -7997,7 +8084,11 @@ class BinaryReader extends DataView {
   }
 
   getFloat32(offset: number) {
-    return super.getFloat32(offset, this.littleEndian)
+    if (this.round) {
+      return +super.getFloat32(offset, this.littleEndian).toPrecision(7)
+    } else {
+      return super.getFloat32(offset, this.littleEndian)
+    }
   }
 
   getFloat64(offset: number) {
@@ -8313,6 +8404,14 @@ class BinaryWriter {
 }
 
 //#region FXR
+export interface FXRReadOptions {
+  /**
+   * This can be enabled to round floats to 7 significant digits. It defaults
+   * to false.
+   */
+  round?: boolean
+}
+
 class FXR {
 
   id: number
@@ -8351,29 +8450,38 @@ class FXR {
    * 
    * This uses the fs module from Node.js to read the file. If you are
    * targeting browers, pass an {@link ArrayBuffer} or
-   * {@link TypedArray typed array} with the contents of the file instead.
+   * {@link ArrayBufferView} of the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
+   * @param game The game the FXR file is for.
    */
-  static read(filePath: string, game?: Game): Promise<FXR>
+  static read(filePath: string, game?: Game, { round }?: FXRReadOptions): Promise<FXR>
 
   /**
    * Parses an FXR file.
-   * @param buffer ArrayBuffer or TypedArray containing the contents of the FXR file to parse.
+   * @param buffer {@link ArrayBuffer} or {@link ArrayBufferView} of the
+   * contents of the FXR file to parse.
+   * @param game The game the FXR file is for.
    */
-  static read(buffer: ArrayBuffer | TypedArray, game?: Game): FXR
+  static read(buffer: ArrayBuffer | ArrayBufferView, game?: Game, { round }?: FXRReadOptions): FXR
 
   /**
    * Parses an FXR file.
-   * @param input A path to the FXR file to parse, or an ArrayBuffer or TypedArray containing the contents of the FXR file.
+   * @param input A path to the FXR file to parse, or an {@link ArrayBuffer} or
+   * {@link ArrayBufferView} of the contents of the FXR file.
+   * @param game The game the FXR file is for.
    */
-  static read(input: string | ArrayBuffer | TypedArray, game: Game = Game.EldenRing): Promise<FXR> | FXR {
+  static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing, { round }: FXRReadOptions = {}): Promise<FXR> | FXR {
+    round ??= false
     if (typeof input === 'string') {
-      return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game))
+      return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game, { round }))
     }
-    if (!(input instanceof ArrayBuffer)) {
+    if (ArrayBuffer.isView(input)) {
       input = input.buffer
+    } else if (!(input instanceof ArrayBuffer)) {
+      throw new Error('Invalid input type. Input must be a file path string, or an ArrayBuffer or ArrayBufferView of the file contents.')
     }
     const br = new BinaryReader(input)
+    br.round = round
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
@@ -10229,16 +10337,15 @@ class Action implements IAction {
     return o
   }
 
-  /**
-   * Creates a minified version of this action.
-   * 
-   * Some actions can be minified to make the output smaller. This is done by
-   * creating a simpler action that is functionally equivalent to this action.
-   * 
-   * Actions that can not be minified will not be changed.
-   */
   minify(): Action {
-    return this
+    return new Action(
+      this.type,
+      this.fields1,
+      this.fields2,
+      this.properties1.map(e => e.minify()),
+      this.properties2.map(e => e.minify()),
+      this.section10s,
+    )
   }
 
 }
@@ -10260,6 +10367,9 @@ class DataAction implements IAction {
 
   assign(props: any = {}) {
     for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+      if ('omit' in v) {
+        continue
+      }
       this[k] = props[k] ?? v.default
     }
     return this
@@ -10272,22 +10382,39 @@ class DataAction implements IAction {
     return {
       type: this.type,
       ...Object.fromEntries(
-        Object.keys(ActionData[this.type].props).filter(prop => prop in this).map(prop => {
-          const v = this[prop]
-          if (v instanceof Property) {
-            return [prop, v.toJSON()]
-          }
-          return [prop, v]
-        })
+        Object.entries(ActionData[this.type].props)
+          .filter(([_, prop]) => !('omit' in prop))
+          .map(([prop]) => {
+            const v = this[prop]
+            if (v instanceof Property) {
+              return [prop, v.toJSON()]
+            }
+            return [prop, v]
+          })
       )
     }
   }
 
   minify() {
+    let minified: DataAction = this
     if (this.type in ActionDataConversion && 'minify' in ActionDataConversion[this.type]) {
-      return ActionDataConversion[this.type].minify.call(this)
+      minified = ActionDataConversion[this.type].minify.call(this)
     }
-    return this
+    if (minified instanceof DataAction && 'props' in ActionData[minified.type]) {
+      const propNames = Object.keys(ActionData[minified.type].props)
+      if (propNames.length === 1) {
+        return new (minified.constructor as any)(
+          minified[propNames[0]] instanceof Property ? minified[propNames[0]].minify() : minified[propNames[0]]
+        )
+      }
+      return new (minified.constructor as any)(Object.fromEntries(
+        propNames.map(prop => [
+          prop,
+          minified[prop] instanceof Property ? minified[prop].minify() : minified[prop]
+        ])
+      ))
+    }
+    return minified
   }
 
   getFields(game: Game, list: 'fields1' | 'fields2'): Field<FieldType>[] {
@@ -10417,7 +10544,7 @@ class DataAction implements IAction {
         if (action[prop] instanceof Property) {
           procProp(action, prop)
         } else if (Array.isArray(action[prop])) {
-          action[prop] = func(action[prop])
+          action[prop] = func(action[prop] as Vector4)
         }
       }
       for (const [k, v] of Object.entries(ActionData[this.type].props)) {
@@ -39805,6 +39932,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract separateComponents(): Property<ValueType.Scalar, F>[]
   abstract min(): TypeMap.PropertyValue[T]
   abstract max(): TypeMap.PropertyValue[T]
+  abstract minify(): Property<T, PropertyFunction>
 
 }
 
@@ -39933,7 +40061,7 @@ class ValueProperty<T extends ValueType>
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
       return (this.value as Vector).map((e, i) => new ConstantProperty<ValueType.Scalar>(e).withModifiers(
-        ...mods.map(comps => comps[i])
+        ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
       ))
     }
   }
@@ -39944,6 +40072,12 @@ class ValueProperty<T extends ValueType>
 
   max(): TypeMap.PropertyValue[T] {
     return this.value
+  }
+
+  minify(): ValueProperty<T> {
+    const clone = this.clone()
+    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    return clone
   }
 
 }
@@ -40240,7 +40374,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         this.loop,
         this.keyframes.map(kf => Keyframe.component(kf, i) as TypeMap.Keyframe<ValueType.Scalar>[F])
       ).withModifiers(
-          ...mods.map(comps => comps[i])
+          ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
         )
       )
     }
@@ -40264,6 +40398,23 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
+  minify(): Property<T, PropertyFunction> {
+    if (this.keyframes.length === 1) {
+      if (this.valueType === ValueType.Scalar) {
+        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
+          ...this.modifiers.filter(Modifier.isEffective)
+        )
+      } else {
+        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(
+          ...this.modifiers.filter(Modifier.isEffective)
+        )
+      }
+    }
+    const clone = this.clone()
+    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    return clone
+  }
+
   get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
   set duration(value: number) {
     const factor = value / this.duration
@@ -40280,16 +40431,17 @@ class ComponentSequenceProperty<T extends ValueType>
 
   declare function: PropertyFunction.ComponentHermite
 
-  components: SequenceProperty<ValueType.Scalar, PropertyFunction.Hermite>[]
+  components: GenComponents<HermiteProperty<ValueType.Scalar>, T>
 
   constructor(
-    valueType: T,
     public loop: boolean = false,
-    components: IHermiteKeyframe<ValueType.Scalar>[][],
+    components: GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>,
     modifiers: IModifier<T>[] = []
   ) {
-    super(valueType, PropertyFunction.ComponentHermite, modifiers)
-    this.components = components.map(e => new HermiteProperty(false, e))
+    super(components.length - 1 as T, PropertyFunction.ComponentHermite, modifiers)
+    this.components = components.map(
+      e => new HermiteProperty(false, e)
+    ) as GenComponents<HermiteProperty<ValueType.Scalar>, T>
   }
 
   sortComponentKeyframes() {
@@ -40325,12 +40477,12 @@ class ComponentSequenceProperty<T extends ValueType>
     fieldValues: number[]
   ): ComponentSequenceProperty<T> {
     let offset = 1 + 3 * (valueType + 1)
-    return new ComponentSequenceProperty(valueType, loop, arrayOf(valueType + 1, i => {
+    return new ComponentSequenceProperty(loop, arrayOf(valueType + 1, i => {
       return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Hermite, false, [], [
         fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
       ]).keyframes
-    }), modifiers)
+    }) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>, modifiers)
   }
 
   toJSON() {
@@ -40358,12 +40510,11 @@ class ComponentSequenceProperty<T extends ValueType>
     loop = false,
     modifiers = []
   }: {
-    components: IHermiteKeyframe<ValueType.Scalar>[][]
+    components: GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>
     loop: boolean
     modifiers?: any[]
   }): ComponentSequenceProperty<T> {
     return new ComponentSequenceProperty(
-      components.length - 1 as T,
       loop,
       components,
       (modifiers ?? []).map(mod => Modifier.fromJSON(mod) as IModifier<T>)
@@ -40408,9 +40559,10 @@ class ComponentSequenceProperty<T extends ValueType>
 
   clone(): ComponentSequenceProperty<T> {
     return new ComponentSequenceProperty(
-      this.valueType,
       this.loop,
-      this.components.map(e => e.keyframes.map(f => Keyframe.copy(f))),
+      this.components.map(
+        e => e.keyframes.map(f => Keyframe.copy(f))
+      ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>,
       this.modifiers.map(e => e.clone())
     )
   }
@@ -40421,12 +40573,28 @@ class ComponentSequenceProperty<T extends ValueType>
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
       return arrayOf(this.componentCount, i => new ComponentSequenceProperty(
-        ValueType.Scalar,
         this.loop,
         [this.components[i].keyframes],
-        mods.map(comps => comps[i])
+        mods.map(comps => comps[i]).filter(Modifier.isEffective)
       ))
     }
+  }
+
+  /**
+   * If all components have the same number of keyframes and keyframe
+   * positions, the property can be converted to a {@link HermiteProperty}
+   * without losing any information or functionality.
+   * 
+   * This method performs these checks and returns a boolean indicating if the
+   * property can be simplified this way or not.
+   */
+  canBeSimplified(): boolean {
+    const kfs = this.components[0].keyframes
+    const l = kfs.length
+    return this.valueType === ValueType.Scalar || this.components.slice(1).every(c =>
+      c.keyframes.length === l &&
+      c.keyframes.every((e, i) => e.position === kfs[i].position)
+    )
   }
 
   /**
@@ -40438,6 +40606,19 @@ class ComponentSequenceProperty<T extends ValueType>
    * non-linear curves used are lost in this conversion.
    */
   combineComponents() {
+    if (this.canBeSimplified()) {
+      if (this.valueType === ValueType.Scalar) {
+        return new HermiteProperty(this.loop, this.components[0].keyframes).withModifiers(
+          ...(this.modifiers as IModifier<ValueType.Scalar>[])
+        ) as HermiteProperty<T>
+      }
+      return new HermiteProperty(this.loop, arrayOf(this.components[0].keyframes.length, i => new HermiteKeyframe(
+        this.components[0].keyframes[i].position,
+        this.components.map(c => c.keyframes[i].value) as Vector,
+        this.components.map(c => c.keyframes[i].tangent1) as Vector,
+        this.components.map(c => c.keyframes[i].tangent2) as Vector,
+      ))).withModifiers(...this.modifiers) as HermiteProperty<T>
+    }
     const positions = new Set<number>
     for (const comp of this.components) {
       for (const keyframe of comp.keyframes) {
@@ -40463,6 +40644,20 @@ class ComponentSequenceProperty<T extends ValueType>
     } else {
       return this.components.map(c => c.max()) as TypeMap.PropertyValue[T]
     }
+  }
+
+  minify(): Property<T, PropertyFunction> {
+    if (this.components.every(c => c.keyframes.length === 1)) {
+      return new ConstantProperty<T>(
+        ...this.components.map(c => c.keyframes[0].value)
+      ).withModifiers(
+        ...this.modifiers.filter(Modifier.isEffective)
+      )
+    }
+    if (this.canBeSimplified()) return this.combineComponents().minify()
+    const clone = this.clone()
+    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    return clone
   }
 
   get duration() { return Math.max(0, ...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
@@ -40811,8 +41006,10 @@ namespace Modifier {
           new Keyframe(kf.position, arrayOf(cc, () => kf.value) as TypeMap.PropertyValue[T])
         ))
       } else if (prop instanceof ComponentSequenceProperty) {
-        prop = new ComponentSequenceProperty(vt, prop.loop,
-          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].keyframes.map(kf => Keyframe.copy(kf)))
+        prop = new ComponentSequenceProperty(prop.loop,
+          arrayOf(cc,
+            () => (prop as ComponentSequenceProperty<any>).components[0].keyframes.map(kf => Keyframe.copy(kf))
+          ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>
         )
       }
       return new (mod.constructor as any)(mod.externalValue, prop)
@@ -40855,6 +41052,51 @@ namespace Modifier {
       }
     }
     return mod
+  }
+
+  export function isEffective(mod: IModifier<ValueType>): boolean {
+    if (mod instanceof GenericModifier) {
+      return true
+    }
+    if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+      if (mod.valueType === ValueType.Scalar) {
+        return mod.max !== 0 && mod.seed !== 0
+      } else {
+        type T = RandomDeltaModifier<VectorValueType> | RandomFractionModifier<VectorValueType>
+        return (
+          (mod as T).max.some(e => e !== 0) &&
+          (mod as T).seed.some(e => e !== 0)
+        )
+      }
+    }
+    if (mod instanceof RandomRangeModifier) {
+      if (mod.valueType === ValueType.Scalar) {
+        return (mod.min !== 0 || mod.max !== 0) && mod.seed !== 0
+      } else {
+        type T = RandomRangeModifier<VectorValueType>
+        return (
+          (
+            (mod as T).min.some(e => e !== 0) ||
+            (mod as T).max.some(e => e !== 0)
+          ) &&
+          (mod as T).seed.some(e => e !== 0)
+        )
+      }
+    }
+    if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+      if (mod.factor instanceof ValueProperty) {
+        return !mod.factor.isOne
+      }
+      if (mod.factor instanceof SequenceProperty) {
+        switch (mod.factor.function) {
+          case PropertyFunction.Stepped:
+          case PropertyFunction.Linear:
+          case PropertyFunction.Hermite:
+            return mod.factor.keyframes.some(e => e.value !== 1)
+        }
+      }
+      return mod.factor !== 1
+    }
   }
 
 }
