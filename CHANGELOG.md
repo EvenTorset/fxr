@@ -1,14 +1,23 @@
 # Changelog
 
-## [Unreleased]
+## [12.0.0] - 2024-06-27
 
 ### Highlights
 - The ComponentSequenceProperty.combineComponents method has been improved so that it should now return an equal HermiteProperty if all of the components have the same number of keyframes and keyframe positions. This method is used internally to, for example, enable correct recoloring of these properties, so the output structure of recolored AC6 effects should now look a lot nicer if they were originally of this type.
 - Added .minify methods to all types of properties.
-  - ValueProperty.minify simply returns the same property. These properties can not be minified in any way, they are as compact as they can be.
-  - SequenceProperty.minify returns a ConstantProperty with the same value if the property only has a single keyframe. Otherwise, it returns the same property.
-  - ComponentSequenceProperty returns a ConstantProperty with the same value if all components only have a single keyframe each, and it returns a HermiteProperty if an equivalent one can be constructed. Otherwise, it returns the same property.
+  - Modifiers for all properties will be filtered to remove ones that are ineffective, i.e. modifiers that don't change anything about the property, for example a random range modifier with 0 as both the min and max values.
+  - ValueProperty.minify simply returns a clone of the property with the modifiers filtered.
+  - SequenceProperty.minify returns a ConstantProperty with the same value and filtered modifiers if the property only has a single keyframe. Otherwise, it returns a clone of the property with the modifiers filtered.
+  - ComponentSequenceProperty returns a ConstantProperty with the same value and filtered modifiers if all components only have a single keyframe each, and it returns a HermiteProperty if an equivalent one can be constructed with filtered modifiers. Otherwise, it returns a clone of the property with the modifiers filtered.
 - The Action.minify and DataAction.minify methods now also minify all properties.
+- The FXR.read method now gives a much better error message if given some invalid input.
+- Fixed vector fields causing problems in some cases due to not being counted properly. This primarily fixes reading the GPU particle actions, but might have also fixed some other actions.
+- Omitted class properties in actions are now handled in a much better way. They will no longer be in the JSON structure for the action class, and they don't cause read actions to end up with some nullish properties.
+- Improved how modifiers are combined from or separated into components. This fixes a couple of issues with the combined properties in action 10015.
+- Fixed the specular color of spot lights being handled differently depending on the value of the separateSpecular property when writing it for DS3.
+- Added an option to the FXR.read method to automatically round floats to 7 significant digits, which should make most floats a lot easier to read for humans.
+- Added some missing documentation for the game parameter in the FXR.read function.
+- Added a Modifier.isEffective function that can be used to check if a given modifier would have any effect if applied to a property. This is never useful for most people, but it is used internally to filter modifiers when splitting a vector property into its components and when minifying properties.
 
 ## [11.0.0] - 2024-06-09
 
@@ -43,5 +52,5 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
-[Unreleased]: https://github.com/EvenTorset/fxr/compare/v11.0.0...HEAD
+[12.0.0]: https://github.com/EvenTorset/fxr/compare/v11.0.0...v12.0.0
 [11.0.0]: https://github.com/EvenTorset/fxr/compare/v10.0.1...v11.0.0
