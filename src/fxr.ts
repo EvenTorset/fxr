@@ -8064,7 +8064,7 @@ class BinaryReader extends DataView {
 
   position: number = 0
   littleEndian: boolean = true
-  round: boolean = true
+  round: boolean = false
   steps: number[] = []
 
   getInt16(offset: number) {
@@ -8406,9 +8406,8 @@ class BinaryWriter {
 //#region FXR
 export interface FXRReadOptions {
   /**
-   * By default, floats are rounded to 7 significant digits, which makes most
-   * values much nicer, but it can in some cases cause problems due to the loss
-   * in precision. Set this to false to disable this rounding.
+   * This can be enabled to round floats to 7 significant digits. It defaults
+   * to false.
    */
   round?: boolean
 }
@@ -8472,7 +8471,7 @@ class FXR {
    * @param game The game the FXR file is for.
    */
   static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing, { round }: FXRReadOptions = {}): Promise<FXR> | FXR {
-    round ??= true
+    round ??= false
     if (typeof input === 'string') {
       return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game, { round }))
     }
