@@ -1,6 +1,12 @@
 import type { PathLike } from 'node:fs'
 import type { FileHandle } from 'node:fs/promises'
 
+declare global {
+  interface Array<T> {
+    with(index: number, value: T): Array<T>
+  }
+}
+
 enum Game {
   /**
    * Does not represent any specific game.
@@ -1708,6 +1714,7 @@ export type Vector3Value = Vector3 | Vector3Property
 export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 export type NumericalField = Field<FieldType.Integer | FieldType.Float>
+export type VectorValueType = Exclude<ValueType, ValueType.Scalar>
 
 export type NodeMovementParams =
   | NodeSpinParams
@@ -1890,6 +1897,7 @@ const ActionData: {
         textureType?: string
         scale?: ScaleCondition
         color?: 1
+        omit?: 1
         paths?: {
           [game: string]: [string, number]
         }
@@ -4903,12 +4911,12 @@ const ActionData: {
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 1 },
       color3: { default: [1, 1, 1, 1], color: 1 },
-      uOffset: { default: 0 },
-      vOffset: { default: 0 },
-      uSpeed: { default: 0 },
-      uSpeedMultiplier: { default: 0 },
-      vSpeed: { default: 0 },
-      vSpeedMultiplier: { default: 0 },
+      uOffset: { default: 0, omit: 1 },
+      vOffset: { default: 0, omit: 1 },
+      uSpeed: { default: 0, omit: 1 },
+      uSpeedMultiplier: { default: 0, omit: 1 },
+      vSpeed: { default: 0, omit: 1 },
+      vSpeedMultiplier: { default: 0, omit: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       anibnd: { default: 0, field: 1, resource: 2 },
@@ -5992,9 +6000,7 @@ function readDataAction(
   br.stepIn(fieldOffset)
   const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
-    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map(e => adt.props[e].field), null)
-  } else {
-    c.fields1 = readFields(br, fieldCount1, null)
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map((e: string) => adt.props[e].field), null)
   }
   if ('fields2' in gameData) {
 
@@ -6003,19 +6009,12 @@ function readDataAction(
       list, which shifts all of the other indices. This checks for that value
       and just skips past it if it's there.
     */
-    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer) {
-      const beforeF2Pos = br.position
-      const field = readField(br, null, 0)
-      if (field.type === FieldType.Integer && field.value === -2) {
-        fieldCount2--
-      } else {
-        br.position = beforeF2Pos
-      }
+    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer && br.getInt32(br.position) === -2) {
+      fieldCount2--
+      br.position += 4
     }
 
-    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map(e => adt.props[e].field), null)
-  } else {
-    c.fields2 = readFields(br, fieldCount2, null)
+    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map((e: string) => adt.props[e].field), null)
   }
   br.stepOut()
   let params = Object.fromEntries(
@@ -6024,7 +6023,7 @@ function readDataAction(
       if (v instanceof Field) {
         return [name, v.value]
       } else {
-        return [name, v]
+        return [name, v ?? prop.default]
       }
     })
   )
@@ -6736,12 +6735,6 @@ function readField(br: BinaryReader, context: any, index: number) {
     } else if (context[0] !== PropertyFunction.Constant) {
       isInt = !index
     }
-  } else if (context instanceof StateCondition) {
-    if (index === 0) {
-      isInt = (context.leftOperandType & 3) > 0
-    } else {
-      isInt = (context.rightOperandType & 3) > 0
-    }
   } else {
     const single = br.getFloat32(br.position)
     if (single >=  9.99999974737875E-05 && single <  1000000.0 ||
@@ -6781,22 +6774,43 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
 }
 
 function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field<FieldType>[] {
-  return arrayOf(count, i => {
-    switch (types[i]) {
-      case FieldType.Boolean: return new BoolField(!!br.assertInt32(0, 1))
-      case FieldType.Integer: return new IntField(br.readInt32())
-      case FieldType.Float: return new FloatField(br.readFloat32())
-      case FieldType.Vector2: return new Vec2Field([ br.readFloat32(), br.readFloat32() ])
-      case FieldType.Vector3: return new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ])
-      case FieldType.Vector4: return new Vec4Field([
-        br.readFloat32(),
-        br.readFloat32(),
-        br.readFloat32(),
-        br.readFloat32()
-      ])
-      default: return readField(br, context, 0)
+  const fields: Field<FieldType>[] = []
+  for (let i = 0, j = 0; i < count; j++) {
+    switch (types[j]) {
+      case FieldType.Boolean:
+        i++
+        fields.push(new BoolField(!!br.assertInt32(0, 1)))
+        break
+      case FieldType.Integer:
+        i++
+        fields.push(new IntField(br.readInt32()))
+        break
+      case FieldType.Float:
+        i++
+        fields.push(new FloatField(br.readFloat32()))
+        break
+      case FieldType.Vector2:
+        i += 2
+        fields.push(new Vec2Field([ br.readFloat32(), br.readFloat32() ]))
+        break
+      case FieldType.Vector3:
+        i += 3
+        fields.push(new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
+        break
+      case FieldType.Vector4:
+        i += 4
+        fields.push(new Vec4Field([
+          br.readFloat32(),
+          br.readFloat32(),
+          br.readFloat32(),
+          br.readFloat32()
+        ]))
+        break
+      default:
+        fields.push(readField(br, context, 0))
     }
-  })
+  }
+  return fields
 }
 
 function readFieldsWithTypesAt(
@@ -7513,40 +7527,119 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
     }
   }
   function combineModifiers() {
-    const cc = comps.length
-    return comps.flatMap((c, i) => {
-      if (typeof c === 'number') {
-        return []
-      }
-      return c.modifiers.map(mod => {
-        if (mod instanceof RandomDeltaModifier) {
-          return new RandomDeltaModifier(
-            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-          )
-        } else if (mod instanceof RandomRangeModifier) {
-          return new RandomRangeModifier(
-            arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-          )
-        } else if (mod instanceof RandomFractionModifier) {
-          return new RandomFractionModifier(
-            arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-            arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-          )
-        } else if (mod instanceof ExternalValue1Modifier) {
-          return new ExternalValue1Modifier(mod.externalValue,
-            combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-          )
-        } else if (mod instanceof ExternalValue2Modifier) {
-          return new ExternalValue2Modifier(mod.externalValue,
-            combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-          )
+    const origMods = comps.map(c => c instanceof Property ? c.modifiers : [])
+    const mappedComps = new Set
+    const out: (IModifier<ValueType.Scalar>[] | IModifier<ValueType>)[] = []
+    const max = origMods.reduce((a, e) => Math.max(a, e.length), 0)
+    for (let i = 0; i < max; i++) {
+      for (const [j, a] of origMods.entries()) {
+        const mod = a[i]
+        if (!(i in a) || mappedComps.has(mod)) continue;
+        mappedComps.add(mod)
+        if (
+          mod instanceof ExternalValue1Modifier ||
+          mod instanceof ExternalValue2Modifier
+        ) {
+          out.push(Modifier.vectorFromScalar(mod, comps.length - 1))
+          continue
         }
-      })
+        const o = Array(origMods.length).with(j, mod)
+        out.push(o)
+        for (let k = i; k < max; k++) {
+          for (const [l, b] of origMods.entries()) {
+            if (
+              !(k in b) || 
+              l === j ||
+              b[k].type !== mod.type ||
+              o[l] !== undefined ||
+              mappedComps.has(b[k])
+            ) continue;
+            o[l] = b[k]
+            mappedComps.add(b[k])
+          }
+        }
+      }
+    }
+    for (const o of out) {
+      if (!Array.isArray(o)) continue;
+      let type: ModifierType
+      for (const m of o) {
+        if (m !== undefined) {
+          type = m.type
+          break
+        }
+      }
+      for (let i = origMods.length - 1; i >= 0; i--) {
+        if (o[i] === undefined) switch (type) {
+          case ModifierType.RandomDelta:
+            o[i] = new RandomDeltaModifier(0, 0)
+            break
+          case ModifierType.RandomRange:
+            o[i] = new RandomRangeModifier(0, 0, 0)
+            break
+          case ModifierType.RandomFraction:
+            o[i] = new RandomFractionModifier(0, 0)
+            break
+        }
+      }
+    }
+    return out.map(e => {
+      if (!Array.isArray(e)) return e
+      switch (e[0].type) {
+        case ModifierType.RandomDelta:
+          return new RandomDeltaModifier(
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as Vector,
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as Vector
+          )
+        case ModifierType.RandomRange:
+          return new RandomRangeModifier(
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as Vector,
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as Vector,
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as Vector
+          )
+        case ModifierType.RandomFraction:
+          return new RandomFractionModifier(
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as Vector,
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as Vector
+          )
+      }
     })
   }
+  // function combineModifiers() {
+  //   const cc = comps.length
+  //   return comps.flatMap((c, i) => {
+  //     if (typeof c === 'number') {
+  //       return []
+  //     }
+  //     return c.modifiers.map(mod => {
+  //       if (mod instanceof RandomDeltaModifier) {
+  //         return new RandomDeltaModifier(
+  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+  //         )
+  //       } else if (mod instanceof RandomRangeModifier) {
+  //         return new RandomRangeModifier(
+  //           arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+  //         )
+  //       } else if (mod instanceof RandomFractionModifier) {
+  //         return new RandomFractionModifier(
+  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
+  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
+  //         )
+  //       } else if (mod instanceof ExternalValue1Modifier) {
+  //         return new ExternalValue1Modifier(mod.externalValue,
+  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
+  //         )
+  //       } else if (mod instanceof ExternalValue2Modifier) {
+  //         return new ExternalValue2Modifier(mod.externalValue,
+  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
+  //         )
+  //       }
+  //     })
+  //   })
+  // }
   if (positions.size >= 2) {
     const keyframes = (hasCurveComp ?
       interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40) :
@@ -7955,11 +8048,7 @@ const ActionDataConversion = {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
         props.diffuseColor = anyValueMult(anyValueMult(100, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
-        if (!props.separateSpecular) {
-          props.specularColor = props.diffuseColor instanceof Property ? props.diffuseColor.clone() : props.diffuseColor
-        } else {
-          props.specularColor = anyValueMult(anyValueMult(100, props.specularMultiplier), props.specularColor) as Vector4Value
-        }
+        props.specularColor = anyValueMult(anyValueMult(100, props.specularMultiplier), props.specularColor) as Vector4Value
       } else {
         props.diffuseMultiplier = anyValueMult(100, props.diffuseMultiplier) as ScalarValue
         props.specularMultiplier = anyValueMult(100, props.specularMultiplier) as ScalarValue
@@ -7974,6 +8063,7 @@ class BinaryReader extends DataView {
 
   position: number = 0
   littleEndian: boolean = true
+  round: boolean = true
   steps: number[] = []
 
   getInt16(offset: number) {
@@ -7993,7 +8083,11 @@ class BinaryReader extends DataView {
   }
 
   getFloat32(offset: number) {
-    return super.getFloat32(offset, this.littleEndian)
+    if (this.round) {
+      return +super.getFloat32(offset, this.littleEndian).toPrecision(7)
+    } else {
+      return super.getFloat32(offset, this.littleEndian)
+    }
   }
 
   getFloat64(offset: number) {
@@ -8309,6 +8403,15 @@ class BinaryWriter {
 }
 
 //#region FXR
+export interface FXRReadOptions {
+  /**
+   * By default, floats are rounded to 7 significant digits, which makes most
+   * values much nicer, but it can in some cases cause problems due to the loss
+   * in precision. Set this to false to disable this rounding.
+   */
+  round?: boolean
+}
+
 class FXR {
 
   id: number
@@ -8349,24 +8452,28 @@ class FXR {
    * targeting browers, pass an {@link ArrayBuffer} or
    * {@link ArrayBufferView} of the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
+   * @param game The game the FXR file is for.
    */
-  static read(filePath: string, game?: Game): Promise<FXR>
+  static read(filePath: string, game?: Game, { round }?: FXRReadOptions): Promise<FXR>
 
   /**
    * Parses an FXR file.
    * @param buffer {@link ArrayBuffer} or {@link ArrayBufferView} of the
    * contents of the FXR file to parse.
+   * @param game The game the FXR file is for.
    */
-  static read(buffer: ArrayBuffer | ArrayBufferView, game?: Game): FXR
+  static read(buffer: ArrayBuffer | ArrayBufferView, game?: Game, { round }?: FXRReadOptions): FXR
 
   /**
    * Parses an FXR file.
    * @param input A path to the FXR file to parse, or an {@link ArrayBuffer} or
    * {@link ArrayBufferView} of the contents of the FXR file.
+   * @param game The game the FXR file is for.
    */
-  static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing): Promise<FXR> | FXR {
+  static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing, { round }: FXRReadOptions = {}): Promise<FXR> | FXR {
+    round ??= true
     if (typeof input === 'string') {
-      return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game))
+      return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game, { round }))
     }
     if (ArrayBuffer.isView(input)) {
       input = input.buffer
@@ -8374,6 +8481,7 @@ class FXR {
       throw new Error('Invalid input type. Input must be a file path string, or an ArrayBuffer or ArrayBufferView of the file contents.')
     }
     const br = new BinaryReader(input)
+    br.round = round
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
@@ -10259,6 +10367,9 @@ class DataAction implements IAction {
 
   assign(props: any = {}) {
     for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+      if ('omit' in v) {
+        continue
+      }
       this[k] = props[k] ?? v.default
     }
     return this
@@ -10271,13 +10382,15 @@ class DataAction implements IAction {
     return {
       type: this.type,
       ...Object.fromEntries(
-        Object.keys(ActionData[this.type].props).filter(prop => prop in this).map(prop => {
-          const v = this[prop]
-          if (v instanceof Property) {
-            return [prop, v.toJSON()]
-          }
-          return [prop, v]
-        })
+        Object.entries(ActionData[this.type].props)
+          .filter(([_, prop]) => !('omit' in prop))
+          .map(([prop]) => {
+            const v = this[prop]
+            if (v instanceof Property) {
+              return [prop, v.toJSON()]
+            }
+            return [prop, v]
+          })
       )
     }
   }
@@ -10431,7 +10544,7 @@ class DataAction implements IAction {
         if (action[prop] instanceof Property) {
           procProp(action, prop)
         } else if (Array.isArray(action[prop])) {
-          action[prop] = func(action[prop])
+          action[prop] = func(action[prop] as Vector4)
         }
       }
       for (const [k, v] of Object.entries(ActionData[this.type].props)) {
@@ -39948,7 +40061,7 @@ class ValueProperty<T extends ValueType>
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
       return (this.value as Vector).map((e, i) => new ConstantProperty<ValueType.Scalar>(e).withModifiers(
-        ...mods.map(comps => comps[i])
+        ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
       ))
     }
   }
@@ -40259,7 +40372,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         this.loop,
         this.keyframes.map(kf => Keyframe.component(kf, i) as TypeMap.Keyframe<ValueType.Scalar>[F])
       ).withModifiers(
-          ...mods.map(comps => comps[i])
+          ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
         )
       )
     }
@@ -40458,7 +40571,7 @@ class ComponentSequenceProperty<T extends ValueType>
         ValueType.Scalar,
         this.loop,
         [this.components[i].keyframes],
-        mods.map(comps => comps[i])
+        mods.map(comps => comps[i]).filter(Modifier.isEffective)
       ))
     }
   }
@@ -40931,6 +41044,51 @@ namespace Modifier {
       }
     }
     return mod
+  }
+
+  export function isEffective(mod: IModifier<ValueType>): boolean {
+    if (mod instanceof GenericModifier) {
+      return true
+    }
+    if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+      if (mod.valueType === ValueType.Scalar) {
+        return mod.max !== 0 && mod.seed !== 0
+      } else {
+        type T = RandomDeltaModifier<VectorValueType> | RandomFractionModifier<VectorValueType>
+        return (
+          (mod as T).max.some(e => e !== 0) &&
+          (mod as T).seed.some(e => e !== 0)
+        )
+      }
+    }
+    if (mod instanceof RandomRangeModifier) {
+      if (mod.valueType === ValueType.Scalar) {
+        return (mod.min !== 0 || mod.max !== 0) && mod.seed !== 0
+      } else {
+        type T = RandomRangeModifier<VectorValueType>
+        return (
+          (
+            (mod as T).min.some(e => e !== 0) ||
+            (mod as T).max.some(e => e !== 0)
+          ) &&
+          (mod as T).seed.some(e => e !== 0)
+        )
+      }
+    }
+    if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+      if (mod.factor instanceof ValueProperty) {
+        return !mod.factor.isOne
+      }
+      if (mod.factor instanceof SequenceProperty) {
+        switch (mod.factor.function) {
+          case PropertyFunction.Stepped:
+          case PropertyFunction.Linear:
+          case PropertyFunction.Hermite:
+            return mod.factor.keyframes.some(e => e.value !== 1)
+        }
+      }
+      return mod.factor !== 1
+    }
   }
 
 }

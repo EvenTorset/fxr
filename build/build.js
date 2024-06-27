@@ -203,6 +203,8 @@ export default async function(writeToDist = true) {
               'scale' in v ? `, scale: ${scaleMap[v.scale]}` : ''
             }${
               'color' in v ? `, color: 1` : ''
+            }${
+              v.omitClassProp ? `, omit: 1` : ''
             } },`
           }).join('\n          ')}
         },
