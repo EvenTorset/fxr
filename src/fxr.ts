@@ -1716,6 +1716,10 @@ export type VectorValue = Vector | VectorProperty
 export type NumericalField = Field<FieldType.Integer | FieldType.Float>
 export type VectorValueType = Exclude<ValueType, ValueType.Scalar>
 
+export type GenComponents<T, V extends ValueType> = [
+  [T], [T, T], [T, T, T], [T, T, T, T]
+][V]
+
 export type NodeMovementParams =
   | NodeSpinParams
   | NodeAccelerationParams
@@ -7182,11 +7186,10 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       } else {
         const cav2 = av2
         return new ComponentSequenceProperty(
-          av1.length - 1,
           av2.loop,
           av1.map((c, i) => cav2.components[cav2.components.length === 1 ? 0 : i].keyframes
             .map(kf => Keyframe.scale(Keyframe.copy(kf), c))
-          ),
+          ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
           mods.map(mod => Modifier.multPropertyValue(mod, av1))
         ) as unknown as T
       }
@@ -7243,11 +7246,10 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ComponentSequenceProperty(
-        vt,
         av2.loop,
         arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value))
-        ),
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         [
           ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
           ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
@@ -7343,9 +7345,10 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       ) as unknown as T
     } else if (av2 instanceof ComponentSequenceProperty) {
       return new ComponentSequenceProperty(
-        av2.valueType,
         av2.loop,
-        av2.components.map(c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))),
+        av2.components.map(
+          c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         av2.modifiers.map(mod => mod.clone())
       ) as unknown as T
     }
@@ -7381,11 +7384,10 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
       }
       return new ComponentSequenceProperty(
-        av1.length - 1,
         cav2.loop,
         av1.map((c, i) => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.add(Keyframe.copy(kf), c))
-        ),
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         mods.map(mod => mod.clone())
       ) as unknown as T
     }
@@ -7437,11 +7439,10 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ComponentSequenceProperty(
-        vt,
         cav2.loop,
         arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.add(Keyframe.copy(kf), cav1.value))
-        ),
+        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         [
           ...av1Mods.map(mod => mod.clone()),
           ...av2Mods.map(mod => mod.clone()),
@@ -40074,8 +40075,10 @@ class ValueProperty<T extends ValueType>
     return this.value
   }
 
-  minify(): this {
-    return this
+  minify(): ValueProperty<T> {
+    const clone = this.clone()
+    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    return clone
   }
 
 }
@@ -40400,15 +40403,17 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     if (this.keyframes.length === 1) {
       if (this.valueType === ValueType.Scalar) {
         return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
-          ...this.modifiers
+          ...this.modifiers.filter(Modifier.isEffective)
         )
       } else {
         return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(
-          ...this.modifiers
+          ...this.modifiers.filter(Modifier.isEffective)
         )
       }
     }
-    return this
+    const clone = this.clone()
+    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    return clone
   }
 
   get duration() { return Math.max(0, ...this.keyframes.map(kf => kf.position)) }
@@ -40427,16 +40432,17 @@ class ComponentSequenceProperty<T extends ValueType>
 
   declare function: PropertyFunction.ComponentHermite
 
-  components: SequenceProperty<ValueType.Scalar, PropertyFunction.Hermite>[]
+  components: GenComponents<HermiteProperty<ValueType.Scalar>, T>
 
   constructor(
-    valueType: T,
     public loop: boolean = false,
-    components: IHermiteKeyframe<ValueType.Scalar>[][],
+    components: GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>,
     modifiers: IModifier<T>[] = []
   ) {
-    super(valueType, PropertyFunction.ComponentHermite, modifiers)
-    this.components = components.map(e => new HermiteProperty(false, e))
+    super(components.length - 1 as T, PropertyFunction.ComponentHermite, modifiers)
+    this.components = components.map(
+      e => new HermiteProperty(false, e)
+    ) as GenComponents<HermiteProperty<ValueType.Scalar>, T>
   }
 
   sortComponentKeyframes() {
@@ -40472,12 +40478,12 @@ class ComponentSequenceProperty<T extends ValueType>
     fieldValues: number[]
   ): ComponentSequenceProperty<T> {
     let offset = 1 + 3 * (valueType + 1)
-    return new ComponentSequenceProperty(valueType, loop, arrayOf(valueType + 1, i => {
+    return new ComponentSequenceProperty(loop, arrayOf(valueType + 1, i => {
       return SequenceProperty.fromFields(ValueType.Scalar, PropertyFunction.Hermite, false, [], [
         fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
       ]).keyframes
-    }), modifiers)
+    }) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>, modifiers)
   }
 
   toJSON() {
@@ -40505,12 +40511,11 @@ class ComponentSequenceProperty<T extends ValueType>
     loop = false,
     modifiers = []
   }: {
-    components: IHermiteKeyframe<ValueType.Scalar>[][]
+    components: GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>
     loop: boolean
     modifiers?: any[]
   }): ComponentSequenceProperty<T> {
     return new ComponentSequenceProperty(
-      components.length - 1 as T,
       loop,
       components,
       (modifiers ?? []).map(mod => Modifier.fromJSON(mod) as IModifier<T>)
@@ -40555,9 +40560,10 @@ class ComponentSequenceProperty<T extends ValueType>
 
   clone(): ComponentSequenceProperty<T> {
     return new ComponentSequenceProperty(
-      this.valueType,
       this.loop,
-      this.components.map(e => e.keyframes.map(f => Keyframe.copy(f))),
+      this.components.map(
+        e => e.keyframes.map(f => Keyframe.copy(f))
+      ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>,
       this.modifiers.map(e => e.clone())
     )
   }
@@ -40568,7 +40574,6 @@ class ComponentSequenceProperty<T extends ValueType>
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
       return arrayOf(this.componentCount, i => new ComponentSequenceProperty(
-        ValueType.Scalar,
         this.loop,
         [this.components[i].keyframes],
         mods.map(comps => comps[i]).filter(Modifier.isEffective)
@@ -40647,11 +40652,13 @@ class ComponentSequenceProperty<T extends ValueType>
       return new ConstantProperty<T>(
         ...this.components.map(c => c.keyframes[0].value)
       ).withModifiers(
-        ...this.modifiers
+        ...this.modifiers.filter(Modifier.isEffective)
       )
     }
-    if (this.canBeSimplified()) return this.combineComponents()
-    return this
+    if (this.canBeSimplified()) return this.combineComponents().minify()
+    const clone = this.clone()
+    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    return clone
   }
 
   get duration() { return Math.max(0, ...this.components.flatMap(c => c.keyframes.map(kf => kf.position))) }
@@ -41000,8 +41007,10 @@ namespace Modifier {
           new Keyframe(kf.position, arrayOf(cc, () => kf.value) as TypeMap.PropertyValue[T])
         ))
       } else if (prop instanceof ComponentSequenceProperty) {
-        prop = new ComponentSequenceProperty(vt, prop.loop,
-          arrayOf(cc, () => (prop as ComponentSequenceProperty<any>).components[0].keyframes.map(kf => Keyframe.copy(kf)))
+        prop = new ComponentSequenceProperty(prop.loop,
+          arrayOf(cc,
+            () => (prop as ComponentSequenceProperty<any>).components[0].keyframes.map(kf => Keyframe.copy(kf))
+          ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>
         )
       }
       return new (mod.constructor as any)(mod.externalValue, prop)
