@@ -8470,7 +8470,11 @@ class FXR {
    * {@link ArrayBufferView} of the contents of the FXR file.
    * @param game The game the FXR file is for.
    */
-  static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing, { round }: FXRReadOptions = {}): Promise<FXR> | FXR {
+  static read(
+    input: string | ArrayBuffer | ArrayBufferView,
+    game: Game = Game.EldenRing,
+    { round }: FXRReadOptions = {}
+  ): Promise<FXR> | FXR {
     round ??= false
     if (typeof input === 'string') {
       return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game, { round }))
@@ -9259,9 +9263,11 @@ abstract class Node {
 
   /**
    * Yields all effects in this branch.
+   * @param recurse Controls whether or not to yield effects in descendant
+   * nodes. Defaults to true.
    */
-  *walkEffects() {
-    for (const node of this.walk()) {
+  *walkEffects(recurse: boolean = true) {
+    for (const node of recurse ? this.walk() : [this]) {
       if (node instanceof NodeWithEffects || node instanceof GenericNode) {
         yield* node.effects
       }
@@ -9272,9 +9278,11 @@ abstract class Node {
    * Yields all actions in this branch, excluding node actions from
    * {@link NodeWithEffects nodes with effects}, as those are not stored as
    * actions internally.
+   * @param recurse Controls whether or not to yield actions in descendant
+   * nodes. Defaults to true.
    */
-  *walkActions() {
-    for (const node of this.walk()) {
+  *walkActions(recurse: boolean = true) {
+    for (const node of recurse ? this.walk() : [this]) {
       if (node instanceof GenericNode) {
         yield* node.actions
       } else if (node instanceof RootNode) {
@@ -9295,9 +9303,11 @@ abstract class Node {
    * Yields all properties in this branch, excluding properties inside
    * modifiers and properties in the form of {@link PropertyValue}s in
    * {@link DataAction}s.
+   * @param recurse Controls whether or not to yield properties in descendant
+   * nodes. Defaults to true.
    */
-  *walkProperties(): Generator<AnyProperty, void, undefined> {
-    for (const action of this.walkActions()) {
+  *walkProperties(recurse: boolean = true): Generator<AnyProperty, void, undefined> {
+    for (const action of this.walkActions(recurse)) {
       if (action instanceof Action) {
         yield* action.properties1
         yield* action.properties2
@@ -9318,9 +9328,11 @@ abstract class Node {
    * lengths, and radii of the actions in the branch, except certain
    * multiplicative fields and properties.
    * @param factor The factor to scale the branch with.
+   * @param recurse Controls whether or not the scaling should be applied to
+   * all descendant nodes. Defaults to true.
    */
-  scale(factor: number) {
-    for (const action of this.walkActions()) if (action instanceof DataAction) {
+  scale(factor: number, recurse: boolean = true) {
+    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
       action.scale(factor)
     }
     return this
@@ -9330,9 +9342,11 @@ abstract class Node {
    * Recolors the entire branch by modifying color properties and fields using
    * a given function.
    * @param func A function used to remap color values.
+   * @param recurse Controls whether or not the recoloring should be applied to
+   * all descendant nodes. Defaults to true.
    */
-  recolor(func: (color: Vector4) => Vector4) {
-    for (const action of this.walkActions()) if (action instanceof DataAction) {
+  recolor(func: (color: Vector4) => Vector4, recurse: boolean = true) {
+    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
       action.recolor(func)
     }
     return this
@@ -9340,10 +9354,13 @@ abstract class Node {
 
   /**
    * Remaps all resource IDs in the entire branch.
-   * @param func The function that is used to map the old resource IDs to the new ones.
+   * @param func The function that is used to map the old resource IDs to the
+   * new ones.
+   * @param recurse Controls whether or not the remapping should be applied to
+   * all descendant nodes. Defaults to true.
    */
-  remapResources(func: (type: ResourceType, resource: number, textureType?: string) => number) {
-    for (const action of this.walkActions()) {
+  remapResources(func: (type: ResourceType, resource: number, textureType?: string) => number, recurse: boolean = true) {
+    for (const action of this.walkActions(recurse)) {
       if (action instanceof DataAction) {
         for (const res of action.getResourceProperties()) {
           switch (res.type) {

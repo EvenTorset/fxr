@@ -45,3 +45,45 @@ for await (const filePath of getFiles('docs')) {
     content.replace(/;base64,(.*)"/, ';base64,'+zlib.gzipSync(Buffer.from(json)).toString('base64')+'"')
   )
 }
+
+await fs.mkdir('docs/q', { recursive: true })
+await fs.writeFile('docs/q/index.html', /*html*/`
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loading...</title>
+    <script src="/assets/navigation.js"></script>
+    <script type="module">
+      const navData = await new Response(
+        new Blob([
+          await(await fetch(window.navigationData)).arrayBuffer()
+        ]).stream().pipeThrough(new DecompressionStream('gzip'))
+      ).json()
+      const linkMap = {}
+      for (const entry of navData) {
+        linkMap[entry.text] = entry.path
+        if ('children' in entry) for (const child of entry.children) {
+          linkMap[entry.text + '.' + child.text] = child.path
+        }
+      }
+      const parts = location.hash.slice(1).split('.')
+      if (parts.slice(0, 2).join('.') in linkMap) {
+        if (parts.length > 2) {
+          location.href = '/' + linkMap[parts.slice(0, 2).join('.')] + '#' + parts[2]
+        } else {
+          location.href = '/' + linkMap[parts.slice(0, 2).join('.')]
+        }
+      } else if (parts[0] in linkMap) {
+        if (parts.length > 1) {
+          location.href = '/' + linkMap[parts[0]] + '#' + parts[1]
+        } else {
+          location.href = '/' + linkMap[parts[0]]
+        }
+      }
+    </script>
+  </head>
+  <body>
+    Loading...
+  </body>
+</html>
+`)
