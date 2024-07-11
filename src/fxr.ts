@@ -8470,7 +8470,11 @@ class FXR {
    * {@link ArrayBufferView} of the contents of the FXR file.
    * @param game The game the FXR file is for.
    */
-  static read(input: string | ArrayBuffer | ArrayBufferView, game: Game = Game.EldenRing, { round }: FXRReadOptions = {}): Promise<FXR> | FXR {
+  static read(
+    input: string | ArrayBuffer | ArrayBufferView,
+    game: Game = Game.EldenRing,
+    { round }: FXRReadOptions = {}
+  ): Promise<FXR> | FXR {
     round ??= false
     if (typeof input === 'string') {
       return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game, { round }))
