@@ -8412,38 +8412,22 @@ export interface FXRReadOptions {
   round?: boolean
 }
 
+/**
+ * An effects resource (FXR, version 4 or 5) for FromSoftware's game engine.
+ * Used in Dark Souls III, Sekiro: Shadows Die Twice, Elden Ring, and Armored
+ * Core VI Fires of Rubicon.
+ */
 class FXR {
 
-  id: number
-
-  states: State[]
-  root: RootNode | GenericNode
-
-  // sfxReferences: number[]
-  // externalValues1: number[]
-  // externalValues2: number[]
-  // unkEmpty: number[]
-
-  /**
-   * Creates a new effects resource (FXR) for FromSoftware's game engine.
-   */
   constructor(
-    id: number,
-    root: RootNode | GenericNode = new RootNode,
-    states: State[] = [ new State ],
+    public id: number,
+    public root: RootNode | GenericNode = new RootNode,
+    public states: State[] = [ new State ],
     // sfxReferences: number[] = [],
     // externalValues1: number[] = [],
     // externalValues2: number[] = [],
     // unkEmpty: number[] = [],
-  ) {
-    this.id = id
-    this.root = root
-    this.states = states
-    // this.sfxReferences = sfxReferences
-    // this.externalValues1 = externalValues1
-    // this.externalValues2 = externalValues2
-    // this.unkEmpty = unkEmpty
-  }
+  ) {}
 
   /**
    * Parses an FXR file.
@@ -8454,7 +8438,12 @@ class FXR {
    * @param filePath A path to the FXR file to parse.
    * @param game The game the FXR file is for.
    */
-  static read(filePath: string, game?: Game, { round }?: FXRReadOptions): Promise<FXR>
+  static read<T extends typeof FXR>(
+    this: T,
+    filePath: string,
+    game?: Game,
+    { round }?: FXRReadOptions
+  ): Promise<InstanceType<T>>
 
   /**
    * Parses an FXR file.
@@ -8462,7 +8451,12 @@ class FXR {
    * contents of the FXR file to parse.
    * @param game The game the FXR file is for.
    */
-  static read(buffer: ArrayBuffer | ArrayBufferView, game?: Game, { round }?: FXRReadOptions): FXR
+  static read<T extends typeof FXR>(
+    this: T,
+    buffer: ArrayBuffer | ArrayBufferView,
+    game?: Game,
+    { round }?: FXRReadOptions
+  ): InstanceType<T>
 
   /**
    * Parses an FXR file.
@@ -8470,14 +8464,15 @@ class FXR {
    * {@link ArrayBufferView} of the contents of the FXR file.
    * @param game The game the FXR file is for.
    */
-  static read(
+  static read<T extends typeof FXR>(
+    this: T,
     input: string | ArrayBuffer | ArrayBufferView,
     game: Game = Game.EldenRing,
     { round }: FXRReadOptions = {}
-  ): Promise<FXR> | FXR {
+  ): Promise<InstanceType<T>> | InstanceType<T> {
     round ??= false
     if (typeof input === 'string') {
-      return import('node:fs/promises').then(async fs => FXR.read((await fs.readFile(input as string)).buffer, game, { round }))
+      return import('node:fs/promises').then(async fs => this.read((await fs.readFile(input as string)).buffer, game, { round }))
     }
     if (ArrayBuffer.isView(input)) {
       input = input.buffer
@@ -8564,7 +8559,7 @@ class FXR {
     br.position = nodeOffset
     const rootNode = readNode(br, game) as RootNode | GenericNode
 
-    return new FXR(
+    return new this(
       id,
       rootNode,
       states,
@@ -8572,7 +8567,7 @@ class FXR {
       // externalValues1,
       // externalValues2,
       // unkEmpty,
-    )
+    ) as InstanceType<T>
   }
 
   /**
