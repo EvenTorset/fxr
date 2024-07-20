@@ -4755,14 +4755,8 @@ const ActionData: {
       layer1ScaleVariationX: { default: 1, field: 2 },
       layer1ScaleVariationY: { default: 1, field: 2 },
       layer1UniformScale: { default: false, field: 0 },
-      layer1RedMultiplier: { default: 1, field: 2 },
-      layer1GreenMultiplier: { default: 1, field: 2 },
-      layer1BlueMultiplier: { default: 1, field: 2 },
-      layer1AlphaMultiplier: { default: 1, field: 2 },
-      layer1BloomRed: { default: 1, field: 2 },
-      layer1BloomGreen: { default: 1, field: 2 },
-      layer1BloomBlue: { default: 1, field: 2 },
-      layer1BloomAlpha: { default: 1, field: 2 },
+      layer1ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer2Width: { default: 1, scale: 1 },
       layer2Height: { default: 1, scale: 1 },
@@ -4771,14 +4765,8 @@ const ActionData: {
       layer2ScaleVariationX: { default: 1, field: 2 },
       layer2ScaleVariationY: { default: 1, field: 2 },
       layer2UniformScale: { default: false, field: 0 },
-      layer2RedMultiplier: { default: 1, field: 2 },
-      layer2GreenMultiplier: { default: 1, field: 2 },
-      layer2BlueMultiplier: { default: 1, field: 2 },
-      layer2AlphaMultiplier: { default: 1, field: 2 },
-      layer2BloomRed: { default: 1, field: 2 },
-      layer2BloomGreen: { default: 1, field: 2 },
-      layer2BloomBlue: { default: 1, field: 2 },
-      layer2BloomAlpha: { default: 1, field: 2 },
+      layer2ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       layer3: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer3Width: { default: 1, scale: 1 },
       layer3Height: { default: 1, scale: 1 },
@@ -4787,14 +4775,8 @@ const ActionData: {
       layer3ScaleVariationX: { default: 1, field: 2 },
       layer3ScaleVariationY: { default: 1, field: 2 },
       layer3UniformScale: { default: false, field: 0 },
-      layer3RedMultiplier: { default: 1, field: 2 },
-      layer3GreenMultiplier: { default: 1, field: 2 },
-      layer3BlueMultiplier: { default: 1, field: 2 },
-      layer3AlphaMultiplier: { default: 1, field: 2 },
-      layer3BloomRed: { default: 1, field: 2 },
-      layer3BloomGreen: { default: 1, field: 2 },
-      layer3BloomBlue: { default: 1, field: 2 },
-      layer3BloomAlpha: { default: 1, field: 2 },
+      layer3ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer3BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       layer4: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer4Width: { default: 1, scale: 1 },
       layer4Height: { default: 1, scale: 1 },
@@ -4803,14 +4785,8 @@ const ActionData: {
       layer4ScaleVariationX: { default: 1, field: 2 },
       layer4ScaleVariationY: { default: 1, field: 2 },
       layer4UniformScale: { default: false, field: 0 },
-      layer4RedMultiplier: { default: 1, field: 2 },
-      layer4GreenMultiplier: { default: 1, field: 2 },
-      layer4BlueMultiplier: { default: 1, field: 2 },
-      layer4AlphaMultiplier: { default: 1, field: 2 },
-      layer4BloomRed: { default: 1, field: 2 },
-      layer4BloomGreen: { default: 1, field: 2 },
-      layer4BloomBlue: { default: 1, field: 2 },
-      layer4BloomAlpha: { default: 1, field: 2 },
+      layer4ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer4BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       blendMode: { default: BlendMode.Add, field: 1 },
       sourceSize: { default: 1, field: 2 },
       opacityTransitionDuration: { default: 1, field: 2 },
@@ -4880,12 +4856,12 @@ const ActionData: {
     games: {
       [Game.Sekiro]: Game.EldenRing,
       [Game.EldenRing]: {
-        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1RedMultiplier','layer1GreenMultiplier','layer1BlueMultiplier','layer1AlphaMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2RedMultiplier','layer2GreenMultiplier','layer2BlueMultiplier','layer2AlphaMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3RedMultiplier','layer3GreenMultiplier','layer3BlueMultiplier','layer3AlphaMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4RedMultiplier','layer4GreenMultiplier','layer4BlueMultiplier','layer4AlphaMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomRed','layer1BloomGreen','layer1BloomBlue','layer1BloomAlpha','layer2BloomRed','layer2BloomGreen','layer2BloomBlue','layer2BloomAlpha','layer3BloomRed','layer3BloomGreen','layer3BloomBlue','layer3BloomAlpha','layer4BloomRed','layer4BloomGreen','layer4BloomBlue','layer4BloomAlpha'],
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36'],
         properties1: ['layer1Width','layer1Height','layer1Color','layer2Width','layer2Height','layer2Color','layer3Width','layer3Height','layer3Color','layer4Width','layer4Height','layer4Color']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1RedMultiplier','layer1GreenMultiplier','layer1BlueMultiplier','layer1AlphaMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2RedMultiplier','layer2GreenMultiplier','layer2BlueMultiplier','layer2AlphaMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3RedMultiplier','layer3GreenMultiplier','layer3BlueMultiplier','layer3AlphaMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4RedMultiplier','layer4GreenMultiplier','layer4BlueMultiplier','layer4AlphaMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomRed','layer1BloomGreen','layer1BloomBlue','layer1BloomAlpha','layer2BloomRed','layer2BloomGreen','layer2BloomBlue','layer2BloomAlpha','layer3BloomRed','layer3BloomGreen','layer3BloomBlue','layer3BloomAlpha','layer4BloomRed','layer4BloomGreen','layer4BloomBlue','layer4BloomAlpha','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
         fields2: Game.EldenRing,
         properties1: Game.EldenRing
       }
@@ -32953,101 +32929,24 @@ export interface LensFlareParams {
    */
   layer1UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer1Color layer's color}.
+   * Multiplier for the {@link layer1Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer1Color}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1RedMultiplier?: number
+  layer1ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer1Color layer's color}.
+   * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
-   */
-  layer1GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer1Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer1Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   */
-  layer1AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   */
-  layer1BloomAlpha?: number
+  layer1BloomColor?: Vector4
   /**
    * Layer 2 texture ID.
    * 
@@ -33119,101 +33018,24 @@ export interface LensFlareParams {
    */
   layer2UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer2Color layer's color}.
+   * Multiplier for the {@link layer2Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer2Color}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2RedMultiplier?: number
+  layer2ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer2Color layer's color}.
+   * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
-   */
-  layer2GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer2Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer2Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   */
-  layer2AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   */
-  layer2BloomAlpha?: number
+  layer2BloomColor?: Vector4
   /**
    * Layer 3 texture ID.
    * 
@@ -33285,101 +33107,24 @@ export interface LensFlareParams {
    */
   layer3UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer3Color layer's color}.
+   * Multiplier for the {@link layer3Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer3Color}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3RedMultiplier?: number
+  layer3ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer3Color layer's color}.
+   * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
-   */
-  layer3GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer3Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer3Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   */
-  layer3AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   */
-  layer3BloomAlpha?: number
+  layer3BloomColor?: Vector4
   /**
    * Layer 4 texture ID.
    * 
@@ -33453,101 +33198,24 @@ export interface LensFlareParams {
    */
   layer4UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer4Color layer's color}.
+   * Multiplier for the {@link layer4Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer4Color}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4RedMultiplier?: number
+  layer4ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer4Color layer's color}.
+   * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
-   */
-  layer4GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer4Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer4Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   */
-  layer4AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   */
-  layer4BloomAlpha?: number
+  layer4BloomColor?: Vector4
   /**
    * Blend mode.
    * 
@@ -33576,22 +33244,10 @@ export interface LensFlareParams {
    * **Default**: `false`
    * 
    * See also:
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
+   * - {@link layer1BloomColor}
+   * - {@link layer2BloomColor}
+   * - {@link layer3BloomColor}
+   * - {@link layer4BloomColor}
    */
   bloom?: boolean
   /**
@@ -34025,85 +33681,20 @@ class LensFlare extends DataAction {
    */
   layer1UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer1Color layer's color}.
+   * Multiplier for the {@link layer1Color layer's color}.
    * 
    * See also:
    * - {@link layer1Color}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1RedMultiplier: number
+  layer1ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer1Color layer's color}.
+   * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer1Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1AlphaMultiplier}
-   */
-  layer1BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer1Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   */
-  layer1AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomRed: number
-  /**
-   * The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   */
-  layer1BloomAlpha: number
+  layer1BloomColor: Vector4
   /**
    * Layer 2 texture ID.
    */
@@ -34159,85 +33750,20 @@ class LensFlare extends DataAction {
    */
   layer2UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer2Color layer's color}.
+   * Multiplier for the {@link layer2Color layer's color}.
    * 
    * See also:
    * - {@link layer2Color}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2RedMultiplier: number
+  layer2ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer2Color layer's color}.
+   * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer2Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2AlphaMultiplier}
-   */
-  layer2BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer2Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   */
-  layer2AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomRed: number
-  /**
-   * The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   */
-  layer2BloomAlpha: number
+  layer2BloomColor: Vector4
   /**
    * Layer 3 texture ID.
    */
@@ -34293,85 +33819,20 @@ class LensFlare extends DataAction {
    */
   layer3UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer3Color layer's color}.
+   * Multiplier for the {@link layer3Color layer's color}.
    * 
    * See also:
    * - {@link layer3Color}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3RedMultiplier: number
+  layer3ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer3Color layer's color}.
+   * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer3Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3AlphaMultiplier}
-   */
-  layer3BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer3Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   */
-  layer3AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomRed: number
-  /**
-   * The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   */
-  layer3BloomAlpha: number
+  layer3BloomColor: Vector4
   /**
    * Layer 4 texture ID.
    * 
@@ -34429,85 +33890,20 @@ class LensFlare extends DataAction {
    */
   layer4UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer4Color layer's color}.
+   * Multiplier for the {@link layer4Color layer's color}.
    * 
    * See also:
    * - {@link layer4Color}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4RedMultiplier: number
+  layer4ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer4Color layer's color}.
+   * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer4Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4AlphaMultiplier}
-   */
-  layer4BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer4Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   */
-  layer4AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomRed: number
-  /**
-   * The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   */
-  layer4BloomAlpha: number
+  layer4BloomColor: Vector4
   /**
    * Blend mode.
    */
@@ -34528,22 +33924,10 @@ class LensFlare extends DataAction {
    * Does not seem to work in Sekiro.
    * 
    * See also:
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
+   * - {@link layer1BloomColor}
+   * - {@link layer2BloomColor}
+   * - {@link layer3BloomColor}
+   * - {@link layer4BloomColor}
    */
   bloom: boolean
   unk_er_f1_4: number
