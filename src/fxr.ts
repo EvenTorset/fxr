@@ -39204,6 +39204,21 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
     return kf as T
   }
 
+  static equal<T extends ValueType, K extends IBasicKeyframe<T> | IBezierKeyframe<T>>(kf1: K, kf2: K) {
+    return (
+      Array.isArray(kf1.value) && kf1.value.every((e, i) => e === kf2.value[i]) ||
+      kf1.value === kf2.value
+    ) && (
+      !('p1' in kf1 && 'p1' in kf2) || (
+        Array.isArray(kf1.p1) && kf1.p1.every((e, i) => e === 0 && kf2.p1[i] === 0) ||
+        kf1.p1 === 0 && kf2.p1 === 0
+      ) && (
+        Array.isArray(kf1.p2) && kf1.p2.every((e, i) => e === 0 && kf2.p2[i] === 0) ||
+        kf1.p2 === 0 && kf2.p2 === 0
+      )
+    )
+  }
+
 }
 
 class BezierKeyframe<T extends ValueType> extends Keyframe<T> implements IBezierKeyframe<T> {
@@ -39795,7 +39810,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   }
 
   minify(): Property<T, PropertyFunction> {
-    if (this.keyframes.length === 1) {
+    if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
       if (this.valueType === ValueType.Scalar) {
         return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
           ...this.modifiers.filter(Modifier.isEffective)
@@ -40043,7 +40058,12 @@ class ComponentSequenceProperty<T extends ValueType>
   }
 
   minify(): Property<T, PropertyFunction> {
-    if (this.components.every(c => c.keyframes.length === 1)) {
+    if (
+      this.components.every(c =>
+        c.keyframes.length === 1 ||
+        c.keyframes.slice(1).every(kf => Keyframe.equal(c.keyframes[0], kf))
+      )
+    ) {
       return new ConstantProperty<T>(
         ...this.components.map(c => c.keyframes[0].value)
       ).withModifiers(
