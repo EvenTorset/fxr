@@ -1695,6 +1695,48 @@ export interface IModifier<T extends ValueType> {
   separateComponents(): IModifier<ValueType.Scalar>[]
 }
 
+export interface FXRColorPalette {
+  commonParticle?: {
+    modifier: any
+    color1: any
+    color2: any
+    color3: any
+    rgbMultiplier: any
+    bloomColor: any
+  }
+  distortionParticle?: {
+    modifier: any
+    color: any
+    rgbMultiplier: any
+    bloomColor: any
+  }
+  blurParticle?: {
+    modifier: any
+    color: any
+    rgbMultiplier: any
+    bloomColor: any
+  }
+  light?: {
+    diffuseColor: any
+    diffuseMultiplier: any
+    specularColor?: any
+    specularMultiplier?: any
+  }
+  gpuParticle?: {
+    color: any
+    rgbMultiplier: any
+    colorMin: any
+    colorMax: any
+    bloomColor?: any
+  }
+  lensFlare?: {
+    color: any
+    colorMultiplier: any
+    bloomColor: any
+  }
+}
+
+export type RecolorFunction = (color: Vector4) => Vector4
 export type AnyAction = Action | DataAction
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
@@ -7104,6 +7146,32 @@ const hermiteInterpKeyframes = (() => {
   }
 })()
 
+function filterMillisecondDiffs(nums: Iterable<number>) {
+  const a = Array.from(nums)
+  const result: number[] = []
+  const visited = new Set<number>()
+
+  for (let i = 0; i < a.length; i++) if (!visited.has(a[i])) {
+    const ai = a[i]
+    let sum = ai
+    let count = 1
+    visited.add(ai)
+
+    for (let j = i + 1; j < a.length; j++) {
+      const aj = a[j]
+      if (Math.abs(ai - aj) < 0.001) {
+        sum += aj
+        count++
+        visited.add(aj)
+      }
+    }
+
+    result.push(sum / count)
+  }
+
+  return result
+}
+
 /**
  * Multiplies one number, vector, or a property of either kind by another
  * number, vector, or property.
@@ -7243,14 +7311,15 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       av2 = av2.combineComponents()
     }
     const cav1 = av1 as SequenceProperty<any, any>
-    const cav2 = av1 as SequenceProperty<any, any>
-    const positions = new Set<number>
+    const cav2 = av2 as SequenceProperty<any, any>
+    const posSet = new Set<number>()
     for (const keyframe of cav1.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
     for (const keyframe of cav2.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
+    const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
     let av1Mods = cav1.modifiers
     let av2Mods = cav2.modifiers
     const vt = Math.max(cav1.valueType, cav2.valueType)
@@ -7263,8 +7332,8 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     return new LinearProperty(
       cav1.loop && cav2.loop,
       (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
-        Array.from(positions).sort((a, b) => a - b) :
-        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+        positions :
+        filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
       ).map(e => new Keyframe(e,
         anyValueMult(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
       ))
@@ -7297,7 +7366,7 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     Array.isArray(av2) ||
     av2 instanceof Property
   )) {
-    throw new Error('Invalid operand for anyValueMult: ' + av2)
+    throw new Error('Invalid operand for anyValueSum: ' + av2)
   }
 
   if (typeof av1 === 'number') {
@@ -7436,14 +7505,15 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       av2 = av2.combineComponents()
     }
     const cav1 = av1 as SequenceProperty<any, any>
-    const cav2 = av1 as SequenceProperty<any, any>
-    const positions = new Set<number>
+    const cav2 = av2 as SequenceProperty<any, any>
+    const posSet = new Set<number>()
     for (const keyframe of cav1.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
     for (const keyframe of cav2.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
+    const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
     let av1Mods = cav1.modifiers
     let av2Mods = cav2.modifiers
     const vt = Math.max(cav1.valueType, cav2.valueType)
@@ -7456,8 +7526,8 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     return new LinearProperty(
       cav1.loop && cav2.loop,
       (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
-        Array.from(positions).sort((a, b) => a - b) :
-        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+        positions :
+        filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
       ).map(e => new Keyframe(e,
         anyValueSum(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
       ))
@@ -7582,44 +7652,9 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
       }
     })
   }
-  // function combineModifiers() {
-  //   const cc = comps.length
-  //   return comps.flatMap((c, i) => {
-  //     if (typeof c === 'number') {
-  //       return []
-  //     }
-  //     return c.modifiers.map(mod => {
-  //       if (mod instanceof RandomDeltaModifier) {
-  //         return new RandomDeltaModifier(
-  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-  //         )
-  //       } else if (mod instanceof RandomRangeModifier) {
-  //         return new RandomRangeModifier(
-  //           arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-  //         )
-  //       } else if (mod instanceof RandomFractionModifier) {
-  //         return new RandomFractionModifier(
-  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-  //         )
-  //       } else if (mod instanceof ExternalValue1Modifier) {
-  //         return new ExternalValue1Modifier(mod.externalValue,
-  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-  //         )
-  //       } else if (mod instanceof ExternalValue2Modifier) {
-  //         return new ExternalValue2Modifier(mod.externalValue,
-  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-  //         )
-  //       }
-  //     })
-  //   })
-  // }
   if (positions.size >= 2) {
     const keyframes = (hasCurveComp ?
-      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40) :
+      filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)) :
       Array.from(positions).sort((a, b) => a - b)
     ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
     return new LinearProperty(
@@ -7645,6 +7680,99 @@ function fieldsCount(fields: Field<FieldType>[]) {
   let count = 0
   for (const field of fields) count += fieldCompCount[field.type]
   return count
+}
+
+function getComponentCount(v: AnyValue): number {
+  return isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
+}
+
+function setVectorComponent(vec: VectorValue, componentIndex: number, value: ScalarValue): VectorValue {
+  const cc = getComponentCount(vec)
+  return anyValueSum(
+    combineComponents(...Array(cc).fill(0).with(componentIndex, value)),
+    anyValueMult(
+      Array(cc).fill(1).with(componentIndex, 0) as VectorValue,
+      vec
+    )
+  )
+}
+
+function isVector(v: any): v is Vector {
+  return Array.isArray(v) && v.length > 1 && v.length <= 4
+}
+
+function isScalarValue(v: any): v is ScalarValue {
+  return (
+    typeof v === 'number' ||
+    v instanceof Property && v.valueType === ValueType.Scalar
+  )
+}
+
+function isVectorValue(v: any): v is VectorValue {
+  return (
+    (Array.isArray(v) && v.length > 1 && v.length <= 4) ||
+    v instanceof Property && v.valueType !== ValueType.Scalar
+  )
+}
+
+function mod(n: number, d: number) {
+  return ((n % d) + d) % d
+}
+
+function rgbToHsv(r: number, g: number, b: number): Vector3 {
+  const min = Math.min(r, g, b)
+  const max = Math.max(r, g, b)
+  const delta = max - min
+  let h: number = 0, s: number = 0
+  if (delta !== 0) {
+    s = delta / max
+    const dr = (((max - r) / 6) + (delta / 2)) / delta
+    const dg = (((max - g) / 6) + (delta / 2)) / delta
+    const db = (((max - b) / 6) + (delta / 2)) / delta
+    switch (max) {
+      case r: h = db - dg; break;
+      case g: h = (1 / 3) + dr - db; break;
+      case b: h = (2 / 3) + dg - dr; break;
+    }
+    h = mod(h, 1)
+  }
+  return [h, s, max]
+}
+
+function hsvToRgb(h: number, s: number, v: number): Vector3 {
+  let r: number = v, g: number = v, b: number = v
+  if (s !== 0) {
+    const vh = mod(h * 6, 6)
+    const ih = Math.floor(vh)
+    const v1 = v * (1 - s)
+    const v2 = v * (1 - s * (vh - ih))
+    const v3 = v * (1 - s * (1 - (vh - ih)))
+    switch (ih) {
+      case 0: r = v  ; g = v3 ; b = v1; break;
+      case 1: r = v2 ; g = v  ; b = v1; break;
+      case 2: r = v1 ; g = v  ; b = v3; break;
+      case 3: r = v1 ; g = v2 ; b = v ; break;
+      case 4: r = v3 ; g = v1 ; b = v ; break;
+      case 5: r = v  ; g = v1 ; b = v2; break;
+    }
+  }
+  return [r, g, b]
+}
+
+function hex(strings: TemplateStringsArray, ...values: any[]): number[] {
+  let hexStr = strings.reduce((result, str, i) => result + str + (values[i] || ''), '')
+  if (hexStr.length === 3) {
+    hexStr = hexStr.split('').map(char => char + char).join('')
+  } else if (hexStr.length === 4) {
+    hexStr = hexStr.split('').map(char => char + char).join('')
+  } else if (hexStr.length !== 6 && hexStr.length !== 8) {
+    throw new Error(`Invalid hex color string length: ${hexStr}`)
+  }
+  const r = parseInt(hexStr.slice(0, 2), 16) / 255
+  const g = parseInt(hexStr.slice(2, 4), 16) / 255
+  const b = parseInt(hexStr.slice(4, 6), 16) / 255
+  const a = hexStr.length === 8 ? parseInt(hexStr.slice(6, 8), 16) / 255 : 1
+  return [r, g, b, a]
 }
 
 const ActionDataConversion = {
@@ -9310,15 +9438,266 @@ abstract class Node {
   }
 
   /**
-   * Recolors the entire branch by modifying color properties and fields using
-   * a given function.
-   * @param func A function used to remap color values.
+   * Recolors the entire branch, or optionally just this node, by modifying
+   * color properties and fields using a given function.
+   * @param func A function used to remap color values. For some easy pre-made
+   * recolor functions, see the {@link Recolor} namespace.
    * @param recurse Controls whether or not the recoloring should be applied to
    * all descendant nodes. Defaults to true.
    */
-  recolor(func: (color: Vector4) => Vector4, recurse: boolean = true) {
-    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
-      action.recolor(func)
+  recolor(func: RecolorFunction, recurse?: boolean): this
+
+  /**
+   * Recolors the entire branch, or optionally just this node, to fit a given
+   * color palette.
+   * @param palette The color palette to apply. This can be generated from
+   * existing FXR branches using the {@link generateColorPalette} method.
+   * @param recurse Controls whether or not the recoloring should be applied to
+   * all descendant nodes. Defaults to true.
+   */
+  recolor(palette: FXRColorPalette, recurse?: boolean): this
+
+  recolor(funcOrPalette: RecolorFunction | FXRColorPalette, recurse: boolean = true) {
+    if (typeof funcOrPalette === 'function') {
+      for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
+        action.recolor(funcOrPalette)
+      }
+    } else {
+      const palette: FXRColorPalette = {}
+      if ('commonParticle' in funcOrPalette) {
+        palette.commonParticle = {
+          modifier: Property.fromJSON(funcOrPalette.commonParticle.modifier),
+          color1: Property.fromJSON(funcOrPalette.commonParticle.color1),
+          color2: Property.fromJSON(funcOrPalette.commonParticle.color2),
+          color3: Property.fromJSON(funcOrPalette.commonParticle.color3),
+          rgbMultiplier: Property.fromJSON(funcOrPalette.commonParticle.rgbMultiplier),
+          bloomColor: funcOrPalette.commonParticle.bloomColor,
+        }
+      }
+      if ('distortionParticle' in funcOrPalette) {
+        palette.distortionParticle = {
+          modifier: Property.fromJSON(funcOrPalette.distortionParticle.modifier),
+          color: Property.fromJSON(funcOrPalette.distortionParticle.color),
+          rgbMultiplier: Property.fromJSON(funcOrPalette.distortionParticle.rgbMultiplier),
+          bloomColor: funcOrPalette.distortionParticle.bloomColor,
+        }
+      }
+      if ('blurParticle' in funcOrPalette) {
+        palette.blurParticle = {
+          modifier: Property.fromJSON(funcOrPalette.blurParticle.modifier),
+          color: Property.fromJSON(funcOrPalette.blurParticle.color),
+          rgbMultiplier: Property.fromJSON(funcOrPalette.blurParticle.rgbMultiplier),
+          bloomColor: funcOrPalette.blurParticle.bloomColor,
+        }
+      }
+      if ('light' in funcOrPalette) {
+        palette.light = {
+          diffuseColor: Property.fromJSON(funcOrPalette.light.diffuseColor),
+          diffuseMultiplier: Property.fromJSON(funcOrPalette.light.diffuseMultiplier),
+        }
+        if ('specularColor' in funcOrPalette.light) {
+          palette.light.specularColor = Property.fromJSON(funcOrPalette.light.specularColor)
+          palette.light.specularMultiplier = Property.fromJSON(funcOrPalette.light.specularMultiplier)
+        }
+      }
+      if ('gpuParticle' in funcOrPalette) {
+        palette.gpuParticle = {
+          color: Property.fromJSON(funcOrPalette.gpuParticle.color),
+          rgbMultiplier: funcOrPalette.gpuParticle.rgbMultiplier,
+          colorMin: funcOrPalette.gpuParticle.colorMin,
+          colorMax: funcOrPalette.gpuParticle.colorMax,
+        }
+        if ('bloomColor' in funcOrPalette.gpuParticle) {
+          palette.gpuParticle.bloomColor = funcOrPalette.gpuParticle.bloomColor
+        }
+      }
+      if ('lensFlare' in funcOrPalette) {
+        palette.lensFlare = {
+          color: Property.fromJSON(funcOrPalette.lensFlare.color),
+          colorMultiplier: funcOrPalette.lensFlare.colorMultiplier,
+          bloomColor: funcOrPalette.lensFlare.bloomColor,
+        }
+      }
+      function durationFallback(action: any, secondary?: any) {
+        if (!(action instanceof NodeAttributes || action instanceof ParticleAttributes)) {
+          action = { duration: 1 }
+        }
+        if (!(secondary instanceof NodeAttributes || secondary instanceof ParticleAttributes)) {
+          secondary = { duration: 1 }
+        }
+        return () => {
+          let d = action.duration instanceof Property ?
+            action.duration.valueAt(0) :
+            action.duration
+          if (d <= 0) {
+            d = secondary.duration instanceof Property ?
+              secondary.duration.valueAt(0) :
+              secondary.duration
+          }
+          if (d <= 0) {
+            d = 1
+          }
+          return d
+        }
+      }
+      function proc<T>(
+        paletteProp: AnyValue,
+        c: T,
+        k: keyof T,
+        durationFallback: () => number = () => 1
+      ) {
+        if (
+          paletteProp instanceof SequenceProperty ||
+          paletteProp instanceof ComponentSequenceProperty
+        ) {
+          const d = (
+            c[k] instanceof SequenceProperty ||
+            c[k] instanceof ComponentSequenceProperty ?
+              c[k].duration :
+              durationFallback()
+          )
+          let alpha: ScalarValue
+          if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+            alpha = separateComponents(c[k])[3]
+          }
+          ;(c[k] as any) = paletteProp.clone()
+          ;(c[k] as any).duration = d
+          if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+            ;(c[k] as any) = setVectorComponent(c[k] as any, 3, alpha)
+          }
+        } else {
+          if (isVectorValue(c[k])) {
+            ;(c[k] as VectorValue) = setVectorComponent(
+              (
+                paletteProp instanceof Property ? paletteProp.clone() :
+                (paletteProp as Vector).slice()
+              ) as VectorValue,
+              3, separateComponents(c[k])[3]
+            )
+          } else {
+            ;(c[k] as any) = (
+              paletteProp instanceof Property ? paletteProp.clone() :
+              paletteProp
+            )
+          }
+        }
+      }
+      for (const effect of this.walkEffects(recurse)) if (effect instanceof BasicEffect) {
+        const a = effect.appearance
+        if (
+          a instanceof PointSprite ||
+          a instanceof Line ||
+          a instanceof QuadLine ||
+          a instanceof BillboardEx ||
+          a instanceof MultiTextureBillboardEx ||
+          a instanceof Model ||
+          a instanceof RichModel ||
+          a instanceof Tracer ||
+          a instanceof DynamicTracer ||
+          a instanceof DynamicTracer
+        ) {
+          if (!('commonParticle' in palette)) {
+            console.warn('Color palette is missing the common particle entry. Parts of this type will not be recolored.')
+            continue
+          }
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (a instanceof MultiTextureBillboardEx) {
+            a.recolorProperty('layersColor', Recolor.grayscale)
+            a.recolorProperty('layer1Color', Recolor.grayscale)
+            a.recolorProperty('layer2Color', Recolor.grayscale)
+          } else if (a instanceof Line || a instanceof QuadLine) {
+            a.recolorProperty('startColor', Recolor.grayscale)
+            a.recolorProperty('endColor', Recolor.grayscale)
+          }
+          const pc = palette.commonParticle
+          const ndf = durationFallback(effect.nodeAttributes)
+          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
+          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          proc(pc.color1, a, 'color1', pdf)
+          proc(pc.color2, a, 'color2', ndf)
+          proc(pc.color3, a, 'color3', pdf)
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+          proc(pc.bloomColor, a, 'bloomColor')
+        } else if (a instanceof Distortion) {
+          if (!('distortionParticle' in palette)) {
+            console.warn('Color palette is missing the distortion particle entry. Parts of this type will not be recolored.')
+            continue
+          }
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          const pc = palette.distortionParticle
+          const ndf = durationFallback(effect.nodeAttributes)
+          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
+          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          proc(pc.color, a, 'color', pdf)
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+          proc(pc.bloomColor, a, 'bloomColor')
+        } else if (a instanceof RadialBlur) {
+          if (!('blurParticle' in palette)) {
+            console.warn('Color palette is missing the blur particle entry. Parts of this type will not be recolored.')
+            continue
+          }
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          const pc = palette.blurParticle
+          const ndf = durationFallback(effect.nodeAttributes)
+          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
+          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          proc(pc.color, a, 'color', pdf)
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+          proc(pc.bloomColor, a, 'bloomColor')
+        } else if (a instanceof PointLight || a instanceof SpotLight) {
+          if (!('light' in palette)) {
+            console.warn('Color palette is missing the light entry. Parts of this type will not be recolored.')
+            continue
+          }
+          const pc = palette.light
+          const df = durationFallback(effect.nodeAttributes)
+          proc(pc.diffuseColor, a, 'diffuseColor', df)
+          proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
+          a.separateSpecular = 'specularColor' in pc
+          if ('specularColor' in pc) {
+            proc(pc.specularColor, a, 'specularColor', df)
+            proc(pc.specularMultiplier, a, 'specularMultiplier', df)
+          }
+        } else if (
+          a instanceof GPUStandardParticle ||
+          a instanceof GPUStandardCorrectParticle ||
+          a instanceof GPUSparkParticle ||
+          a instanceof GPUSparkCorrectParticle
+        ) {
+          if (!('gpuParticle' in palette)) {
+            console.warn('Color palette is missing the GPU particle entry. Parts of this type will not be recolored.')
+            continue
+          }
+          const pc = palette.gpuParticle
+          proc(pc.color, a, 'color', durationFallback(effect.nodeAttributes))
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier')
+          proc(pc.colorMin, a, 'colorMin')
+          proc(pc.colorMax, a, 'colorMax')
+          if ('bloomColor' in pc) {
+            a.bloom = true
+            proc(pc.bloomColor, a, 'bloomColor')
+          }
+        } else if ('lensFlare' in palette && a instanceof LensFlare) {
+          if (!('lensFlare' in palette)) {
+            console.warn('Color palette is missing the lens flare entry. Parts of this type will not be recolored.')
+            continue
+          }
+          const pc = palette.lensFlare
+          const df = durationFallback(effect.nodeAttributes)
+          proc(pc.color, a, 'layer1Color', df)
+          proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer1BloomColor', df)
+          proc(pc.color, a, 'layer2Color', df)
+          proc(pc.colorMultiplier, a, 'layer2ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer2BloomColor', df)
+          proc(pc.color, a, 'layer3Color', df)
+          proc(pc.colorMultiplier, a, 'layer3ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer3BloomColor', df)
+          proc(pc.color, a, 'layer4Color', df)
+          proc(pc.colorMultiplier, a, 'layer4ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer4BloomColor', df)
+        }
+      }
     }
     return this
   }
@@ -9354,6 +9733,18 @@ abstract class Node {
         }
       }
     }
+  }
+
+  /**
+   * Generates a color palette that can be used to recolor other nodes based on
+   * the colors in this branch.
+   * @param average If enabled, this will average all colors that fit in the
+   * same slot. If disabled, a slot will be based only on the first effect that
+   * fits, and subsequent effects that fit the slot will be ignored. Defaults
+   * to false.
+   */
+  generateColorPalette(average: boolean = false): FXRColorPalette {
+    return Recolor.generatePalette([this], average)
   }
 
 }
@@ -10495,49 +10886,68 @@ class DataAction implements IAction {
   }
 
   /**
-   * Modifies any color properties or fields using a given function.
+   * Modifies a single color property of the action using a recolor function.
+   * For some easy pre-made recolor functions, see the {@link Recolor}
+   * namespace.
+   * @param key The name of the property.
+   * @param func The function used to recolor the property.
+   */
+  recolorProperty(key: string, func: RecolorFunction) {
+    let prop: Vector4Value = this[key]
+    if (
+      prop instanceof Property && prop.valueType !== ValueType.Vector4 ||
+      Array.isArray(prop) && prop.length !== 4
+    ) {
+      throw new Error('Cannot recolor non-color property: ' + key)
+    }
+    if (Array.isArray(prop)) {
+      this[key] = func(prop)
+      return this
+    }
+    if (prop instanceof ComponentSequenceProperty) {
+      prop = this[key] = prop.combineComponents()
+    }
+    if (prop instanceof ValueProperty) {
+      prop.value = func(prop.value)
+    } else if (prop instanceof SequenceProperty) {
+      for (const keyframe of prop.keyframes) {
+        keyframe.value = func(keyframe.value as Vector4)
+      }
+    }
+    for (const mod of prop.modifiers) {
+      if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+        mod.max = func(mod.max)
+      } else if (mod instanceof RandomRangeModifier) {
+        mod.min = func(mod.min)
+        mod.max = func(mod.max)
+      } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+        if (mod.factor instanceof ComponentSequenceProperty) {
+          mod.factor = mod.factor.combineComponents()
+        }
+        if (mod.factor instanceof ValueProperty) {
+          mod.factor.value = func(mod.factor.value)
+        } else if (mod.factor instanceof SequenceProperty) {
+          for (const keyframe of mod.factor.keyframes) {
+            keyframe.value = func(keyframe.value as Vector4)
+          }
+        } else {
+          mod.factor = func(mod.factor)
+        }
+      }
+    }
+    return this
+  }
+
+  /**
+   * Modifies all color properties using a recolor function. For some easy
+   * pre-made recolor functions, see the {@link Recolor} namespace.
    * @param func A function used to remap color values.
    */
   recolor(func: (color: Vector4) => Vector4) {
     if ('props' in ActionData[this.type]) {
-      const procProp = (
-        container: DataAction | IModifier<ValueType.Vector4>,
-        key: number | string
-      ) => {
-        let prop = container[key]
-        if (prop instanceof ComponentSequenceProperty) {
-          prop = container[key] = prop.combineComponents()
-        }
-        if (prop instanceof ValueProperty) {
-          prop.value = func(prop.value)
-        } else if (prop instanceof SequenceProperty) {
-          for (const keyframe of prop.keyframes) {
-            keyframe.value = func(keyframe.value as Vector4)
-          }
-        }
-        if ('modifiers' in prop) {
-          for (const mod of (prop as Property<ValueType.Vector4, any>).modifiers) {
-            if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
-              mod.max = func(mod.max)
-            } else if (mod instanceof RandomRangeModifier) {
-              mod.min = func(mod.min)
-              mod.max = func(mod.max)
-            } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
-              procVec4Value(mod, 'factor')
-            }
-          }
-        }
-      }
-      const procVec4Value = (action: DataAction | IModifier<ValueType.Vector4>, prop: string) => {
-        if (action[prop] instanceof Property) {
-          procProp(action, prop)
-        } else if (Array.isArray(action[prop])) {
-          action[prop] = func(action[prop] as Vector4)
-        }
-      }
       for (const [k, v] of Object.entries(ActionData[this.type].props)) {
         if ('color' in v) {
-          procVec4Value(this, k)
+          this.recolorProperty(k, func)
         }
       }
     }
@@ -40036,7 +40446,7 @@ class ComponentSequenceProperty<T extends ValueType>
         positions.add(keyframe.position)
       }
     }
-    const keyframes = interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+    const keyframes = filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40))
       .map(e => new Keyframe(e, this.valueAt(e)))
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
   }
@@ -40970,6 +41380,447 @@ function PrecipitationModifier<T extends ValueType>(
   ]) as unknown as TypeMap.Property[T])
 }
 
+//#region Recolor
+/**
+ * Contains various functions related to recoloring effects.
+ */
+namespace Recolor {
+
+  /**
+   * Generates a color palette that can be used to recolor other nodes based on
+   * the colors in the given nodes and their descendants.
+   * @param sources An array of FXRs or nodes to sample colors from.
+   * @param average If enabled, this will average all colors that fit in the
+   * same slot. If disabled, a slot will be based only on the first effect that
+   * fits, and subsequent effects that fit the slot will be ignored. Defaults
+   * to false.
+   */
+  export function generatePalette(sources: (FXR | Node)[], average: boolean = true) {
+    const palette: FXRColorPalette = {}
+    function normalize<T>(val: AnyValue): T {
+      if (val instanceof SequenceProperty || val instanceof ComponentSequenceProperty) {
+        let clone = val.clone().minify()
+        const extValMods = clone.modifiers.filter(mod => 
+          mod instanceof ExternalValue1Modifier ||
+          mod instanceof ExternalValue2Modifier
+        )
+        clone.modifiers = clone.modifiers.filter(mod => !(
+          mod instanceof ExternalValue1Modifier ||
+          mod instanceof ExternalValue2Modifier
+        ))
+        for (const mod of extValMods) {
+          clone = anyValueMult(mod.factor.valueAt(0), clone as AnyValue)
+        }
+        if (clone instanceof SequenceProperty || clone instanceof ComponentSequenceProperty) {
+          clone.duration = 1
+        }
+        return clone as T
+      }
+      return (val instanceof Property ? val.clone().minify() : val) as T
+    }
+    function sum<T extends { [x: string]: AnyValue }>(p: T, n: keyof T, o: AnyValue) {
+      p[n] = anyValueSum(p[n], normalize(o))
+    }
+    function nonWhiteVisible(color: Vector4Value) {
+      return (
+        color instanceof SequenceProperty ||
+        color instanceof ComponentSequenceProperty ||
+        (
+          Array.isArray(color) &&
+          color[3] !== 0 &&
+          color.some(e => e !== 1)
+        ) ||
+        (
+          color instanceof ValueProperty &&
+          (color.value as Vector4)[3] !== 0 &&
+          (color.value as Vector4).some(e => e !== 1)
+        )
+      )
+    }
+    const counter = {
+      commonParticle: 0,
+      distortionParticle: 0,
+      blurParticle: 0,
+      light: 0,
+      gpuParticle: 0,
+      lensFlare: 0,
+    }
+    function *walkEffects(sources: (FXR | Node)[]) {
+      for (const src of sources) {
+        if (src instanceof FXR) {
+          yield* src.root.walkEffects()
+        } else {
+          yield* src.walkEffects()
+        }
+      }
+    }
+    for (const effect of walkEffects(sources)) {
+      if (effect instanceof BasicEffect) {
+        const a = effect.appearance
+        if (
+          a instanceof PointSprite ||
+          a instanceof Line ||
+          a instanceof QuadLine ||
+          a instanceof BillboardEx ||
+          a instanceof MultiTextureBillboardEx ||
+          a instanceof Model ||
+          a instanceof RichModel ||
+          a instanceof Tracer ||
+          a instanceof DynamicTracer
+        ) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          counter.commonParticle++
+          if ('commonParticle' in palette) {
+            if (!average) continue
+            sum(palette.commonParticle, 'modifier', effect.particleModifier.color)
+            sum(palette.commonParticle, 'color1', a.color1)
+            sum(palette.commonParticle, 'color2', a.color2)
+            sum(palette.commonParticle, 'color3', a.color3)
+            sum(palette.commonParticle, 'rgbMultiplier', a.rgbMultiplier)
+            sum(palette.commonParticle, 'bloomColor', a.bloomColor)
+          } else {
+            palette.commonParticle = {
+              modifier: normalize(effect.particleModifier.color),
+              color1: normalize(a.color1),
+              color2: normalize(a.color2),
+              color3: normalize(a.color3),
+              rgbMultiplier: normalize(a.rgbMultiplier),
+              bloomColor: normalize(a.bloomColor),
+            }
+          }
+        } else if (a instanceof Distortion) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          counter.distortionParticle++
+          if ('distortionParticle' in palette) {
+            if (!average) continue
+            sum(palette.distortionParticle, 'modifier', effect.particleModifier.color)
+            sum(palette.distortionParticle, 'color', a.color)
+            sum(palette.distortionParticle, 'rgbMultiplier', a.rgbMultiplier)
+            sum(palette.distortionParticle, 'bloomColor', a.bloomColor)
+          } else {
+            palette.distortionParticle = {
+              modifier: normalize(effect.particleModifier.color),
+              color: normalize(a.color),
+              rgbMultiplier: normalize(a.rgbMultiplier),
+              bloomColor: normalize(a.bloomColor),
+            }
+          }
+        } else if (a instanceof RadialBlur) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          counter.blurParticle++
+          if ('blurParticle' in palette) {
+            if (!average) continue
+            sum(palette.blurParticle, 'modifier', effect.particleModifier.color)
+            sum(palette.blurParticle, 'color', a.color)
+            sum(palette.blurParticle, 'rgbMultiplier', a.rgbMultiplier)
+            sum(palette.blurParticle, 'bloomColor', a.bloomColor)
+          } else {
+            palette.blurParticle = {
+              modifier: normalize(effect.particleModifier.color),
+              color: normalize(a.color),
+              rgbMultiplier: normalize(a.rgbMultiplier),
+              bloomColor: normalize(a.bloomColor),
+            }
+          }
+        } else if (a instanceof PointLight || a instanceof SpotLight) {
+          counter.light++
+          if ('light' in palette) {
+            if (!average) continue
+            sum(palette.light, 'diffuseColor', a.diffuseColor)
+            sum(palette.light, 'diffuseMultiplier', a.diffuseMultiplier)
+            if (a.separateSpecular) {
+              if ('specularColor' in palette.light && 'specularMultiplier' in palette.light) {
+                sum(palette.light, 'specularColor', a.specularColor)
+                sum(palette.light, 'specularMultiplier', a.specularMultiplier)
+              } else {
+                palette.light.specularColor = anyValueMult(counter.light, normalize(a.specularColor))
+                palette.light.specularMultiplier = anyValueMult(counter.light, normalize(a.specularMultiplier))
+              }
+            }
+          } else {
+            palette.light = {
+              diffuseColor: normalize(a.diffuseColor),
+              diffuseMultiplier: normalize(a.diffuseMultiplier),
+            }
+            if (a.separateSpecular) {
+              palette.light.specularColor = normalize(a.specularColor)
+              palette.light.specularMultiplier = normalize(a.specularMultiplier)
+            }
+          }
+        } else if (
+          a instanceof GPUStandardParticle ||
+          a instanceof GPUStandardCorrectParticle ||
+          a instanceof GPUSparkParticle ||
+          a instanceof GPUSparkCorrectParticle
+        ) {
+          counter.gpuParticle++
+          if ('gpuParticle' in palette) {
+            if (!average) continue
+            sum(palette.gpuParticle, 'color', a.color)
+            sum(palette.gpuParticle, 'rgbMultiplier', a.rgbMultiplier)
+            sum(palette.gpuParticle, 'colorMin', a.colorMin)
+            sum(palette.gpuParticle, 'colorMax', a.colorMax)
+            if (a.bloom) {
+              if ('bloomColor' in palette.gpuParticle) {
+                sum(palette.gpuParticle, 'bloomColor', a.bloomColor)
+              } else {
+                palette.gpuParticle.bloomColor = anyValueMult(counter.gpuParticle, normalize(a.bloomColor))
+              }
+            }
+          } else {
+            palette.gpuParticle = {
+              color: normalize(a.color),
+              rgbMultiplier: normalize(a.rgbMultiplier),
+              colorMin: normalize(a.colorMin),
+              colorMax: normalize(a.colorMax),
+            }
+            if (a.bloom) {
+              palette.gpuParticle.bloomColor = normalize(a.bloomColor)
+            }
+          }
+        } else if (a instanceof LensFlare) {
+          if ('lensFlare' in palette && !average) continue
+          interface LensFlareLayer {
+            color: 'layer1Color' | 'layer2Color' | 'layer3Color' | 'layer4Color'
+            mult: 'layer1ColorMultiplier' | 'layer2ColorMultiplier' | 'layer3ColorMultiplier' | 'layer4ColorMultiplier'
+            bloom: 'layer1BloomColor' | 'layer2BloomColor' | 'layer3BloomColor' | 'layer4BloomColor'
+          }
+          const layers = arrayOf(4, i => ({
+            color: `layer${i+1}Color`,
+            mult: `layer${i+1}ColorMultiplier`,
+            bloom: `layer${i+1}BloomColor`,
+          })) as LensFlareLayer[]
+          let color: LensFlareLayer["color"], mult: LensFlareLayer["mult"], bloom: LensFlareLayer["bloom"]
+          for ({ color, mult, bloom } of layers) {
+            if (nonWhiteVisible(a[color]) || nonWhiteVisible(a[mult]) || nonWhiteVisible(a[bloom])) {
+              break
+            }
+          }
+          counter.lensFlare++
+          if ('lensFlare' in palette) {
+            sum(palette.lensFlare, 'color', a[color])
+            sum(palette.lensFlare, 'colorMultiplier', a[mult])
+            sum(palette.lensFlare, 'bloomColor', a[bloom])
+          } else {
+            palette.lensFlare = {
+              color: normalize(a[color]),
+              colorMultiplier: normalize(a[mult]),
+              bloomColor: normalize(a[bloom]),
+            }
+          }
+        }
+      }
+    }
+    if (average) {
+      for (const [k, count] of Object.entries(counter)) if (count > 0) {
+        for (const p of Object.keys(palette[k])) {
+          palette[k][p] = anyValueMult(1/count, palette[k][p])
+        }
+      }
+    }
+    for (const o of Object.values(palette)) {
+      for (const [k, v] of Object.entries(o)) {
+        o[k] = v instanceof Property ? v.minify().toJSON() : v
+      }
+    }
+    return palette
+  }
+
+  /**
+   * Creates a recolor function that preserves original colors with low
+   * saturation. This has the downside that it is unable to recolor grayscale
+   * effects, but it is probably the most useful recolor function due to how
+   * well it keeps the overall look of the original effect while changing its
+   * colors.
+   * @param targetColor The target color.
+   */
+  export function standardBlend(targetColor: Vector3): RecolorFunction {
+    return ([r, g, b, a]: Vector4): Vector4 => {
+      // Colors in FXRs are allowed to go above 1, and it usually just adds a bloom
+      // effect to the particles. We need to scale it back down to the 0-1 range
+      // for these calculations, and then scale it back to what it was after.
+      const scale = Math.max(r, g, b, 1)
+      r /= scale
+      g /= scale
+      b /= scale
+
+      // Calculate HSV value and saturation
+      const min = Math.min(r, g, b)
+      const max = Math.max(r, g, b)
+      let s = max > 0 ? (max - min) / max : 0
+
+      // Linear interpolation between the HSV "value" (max) and the target color
+      // based on the saturation of the original color.
+      r = max * (1 - s) + targetColor[0] * s
+      g = max * (1 - s) + targetColor[1] * s
+      b = max * (1 - s) + targetColor[2] * s
+
+      // Scale the values to match the original brightness of the effect.
+      r *= scale
+      g *= scale
+      b *= scale
+
+      // Return the modified color with the original alpha.
+      return [r, g, b, a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that simply replaces colors with the given
+   * color.
+   * @param targetColor The target color.
+   */
+  export function replace(targetColor: Vector4): RecolorFunction {
+    const [r, g, b, a] = targetColor
+    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r ?? r2, g ?? g2, b ?? b2, a ?? a2]
+  }
+
+  /**
+   * Creates a recolor function that multiplies the original color by the
+   * given color.
+   * @param targetColor The target color.
+   */
+  export function multiply(targetColor: Vector4): RecolorFunction {
+    const [r, g, b, a] = targetColor
+    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r * r2, g * g2, b * b2, a * a2]
+  }
+
+  /**
+   * Creates a recolor function that adds the given color to the original
+   * color.
+   * @param targetColor The target color.
+   */
+  export function add([r, g, b, a]: Vector4): RecolorFunction {
+    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r + r2, g + g2, b + b2, a + a2]
+  }
+
+  /**
+   * Recolor function that simply inverts colors.
+   */
+  export function invert([r, g, b, a]: Vector4): Vector4 {
+    const scale = Math.max(r, g, b, 1)
+    return [
+      (1 - (r / scale)) * scale,
+      (1 - (g / scale)) * scale,
+      (1 - (b / scale)) * scale,
+      a
+    ]
+  }
+
+  /**
+   * Recolor function that makes colors grayscale.
+   */
+  export function grayscale([r, g, b, a]: Vector4): Vector4 {
+    const l = r * 0.21 + g * 0.72 + b * 0.07
+    return [l, l, l, a]
+  }
+
+  /**
+   * Creates a recolor function that modifies the original color by using it to
+   * sample values from a given property. This works in a very similar way to
+   * the "Curves" tool in many image editing apps.
+   * @param curves The property to sample color values from.
+   */
+  export function curves(curves: Vector4Property): RecolorFunction {
+    return ([r, g, b, a]) => [
+      curves.valueAt(r)[0],
+      curves.valueAt(g)[1],
+      curves.valueAt(b)[2],
+      curves.valueAt(a)[3],
+    ]
+  }
+
+  /**
+   * Creates a recolor function that linearly interpolates between the original
+   * color and the given color using the interpolation factor `t`.
+   * @param color The target color to interpolate towards.
+   * @param t The interpolation factor. At t=0, the colors will not be modified
+   * at all. At t=1, the colors will be replaced with the target color. At
+   * t=0.5, the color will be the average of the original color and the target
+   * color.
+   */
+  export function mix(color: Vector4, t: number): RecolorFunction {
+    const [r, g, b, a] = color
+    return ([r2, g2, b2, a2]) => [
+      lerp(r2, r, t),
+      lerp(g2, g, t),
+      lerp(b2, b, t),
+      lerp(a2, a, t),
+    ]
+  }
+
+  /**
+   * Creates a recolor function that hue-shifts colors by a given angle in
+   * degrees.
+   * @param angle The angle in degrees to shift the hue.
+   */
+  export function hueShift(angle: number): RecolorFunction {
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ h, s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(mod(h + angle, 360) / 360, s, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that replaces the hue of the original color
+   * with that of a given color.
+   * @param color The color whose hue will be used.
+   */
+  export function replaceHue(color: Vector4): RecolorFunction {
+    const [ th ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ , s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(th, s, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that replaces the saturation of the original
+   * color with that of a given color.
+   * @param color The color whose saturation will be used.
+   */
+  export function replaceSaturation(color: Vector4): RecolorFunction {
+    const [ , ts ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ h,, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(h, ts, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that replaces the hue and saturation of the
+   * original color with that of a given color.
+   * @param color The color whose hue and saturation will be used.
+   */
+  export function colorBlend(color: Vector4): RecolorFunction {
+    const rgb = color.slice(0, 3) as Vector3
+    const inputScale = Math.max(...rgb, 1)
+    const [ th, ts ] = rgbToHsv(...(rgb.map(e => e / inputScale) as Vector3))
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ ,, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(th, ts, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that scales the saturation of the colors by a
+   * given factor.
+   * @param factor The saturation scaling factor.
+   */
+  export function scaleSaturation(factor: number): RecolorFunction {
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ h, s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(h, s * factor, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+}
+
 export {
   Game,
   FXRVersion,
@@ -41139,6 +41990,7 @@ export {
   anyValueSum,
   combineComponents,
   separateComponents,
+  setVectorComponent,
 
   Modifier,
   GenericModifier,
@@ -41149,4 +42001,7 @@ export {
   ExternalValue2Modifier,
   BloodVisibilityModifier,
   PrecipitationModifier,
+
+  Recolor,
+  hex,
 }

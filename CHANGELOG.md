@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased]
+
+### Highlights
+- Many new recolor-related features have been added to make recoloring even easier.
+  - There is now a template tag for converting hex color strings into color vectors for FXRs. This tag is simply called `hex`, so it is now possible to do something like ``hex`5588ff` `` and it would be equivalent to `[0.333, 0.533, 1, 1]`. It supports 3-, 4-, 6-, and 8-digit hex values. This can be used anywhere where you would normally put colors vectors.
+  - There are now two new functions for generating a color palette from existing effects:
+    - Node.generateColorPalette - Generates a palette from the node it is called on.
+    - Recolor.generatePalette - Generates a palette from an array of nodes or FXR objects.
+  - The Node.recolor method can now also take a color palette generated from the two functions above. This will apply the palette to the node it is called on, effectively allowing you to copy a set of colors from one effect and apply them to another. This can be very useful if you want to make an effect fit an existing theme or set of effects.
+  - Many recolor functions have been added that can be used with the Node.recolor and DataAction.recolor methods:
+    - Recolor.standardBlend
+    - Recolor.replace
+    - Recolor.multiply
+    - Recolor.add
+    - Recolor.invert
+    - Recolor.grayscale
+    - Recolor.curves
+    - Recolor.mix
+    - Recolor.hueShift
+    - Recolor.replaceHue
+    - Recolor.replaceSaturation
+    - Recolor.colorBlend
+    - Recolor.scaleSaturation
+  - There is now also a DataAction.recolorProperty method that can be used to apply a recolor function to a single color property or color vector field.
+- The color multiplier and bloom color fields in the LensFlare action have been converted to vector fields.
+  - These fields will now be recolored properly by the recolor functions in the library. They weren't recolored at all before, which was a bug that's now fixed.
+  - This greatly simplifies the class by getting rid of 24 fields (~30% of fields1 fields in this class), which makes it much easier to both create and edit these actions.
+- Various functions that combine properties will now filter out some keyframes if they are less than a millisecond apart.
+- Sequence properties and component sequence properties can now be minified to constant properties if all of their keyframes are the same.
+- Some bugs have been fixed, and some improvements have been made to the anyValueSum and anyValueMult functions.
+
 ## [12.2.0] - 2024-07-14
 
 ### Highlights
@@ -70,6 +101,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v12.2.0...HEAD
 [12.2.0]: https://github.com/EvenTorset/fxr/compare/v12.1.0...v12.2.0
 [12.1.0]: https://github.com/EvenTorset/fxr/compare/v12.0.0...v12.1.0
 [12.0.0]: https://github.com/EvenTorset/fxr/compare/v11.0.0...v12.0.0
