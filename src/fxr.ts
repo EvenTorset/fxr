@@ -1550,7 +1550,36 @@ export enum ScaleCondition {
   IfNotMinusOne = 2,
 }
 
+/**
+ * Controls the sampling behavior of functions used to generate color palettes.
+ */
+export enum PaletteMode {
+  /**
+   * Only add the first set of colors found for each palette slot.
+   */
+  First,
+  /**
+   * Average all sets of colors found that fit the same palette slot into a
+   * single entry for the slot. This effectively creates a palette that will
+   * recolor effects to match a kind of average of the sampled effects.
+   */
+  Average,
+  /**
+   * Add all sets of colors found for all slots. This will create a palette
+   * that recolors effects randomly based on the colors in the sampled effects.
+   */
+  Random,
+}
+
 //#region Types / Interfaces
+type KeysOfType<T, U> = {
+  [K in keyof T]: T[K] extends U ? K : never
+}[keyof T]
+
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T][]
+
 export type AnyExternalValue =
   | ExternalValue.DarkSouls3
   | ExternalValue.Sekiro
@@ -1695,48 +1724,6 @@ export interface IModifier<T extends ValueType> {
   separateComponents(): IModifier<ValueType.Scalar>[]
 }
 
-export interface FXRColorPalette {
-  commonParticle?: {
-    modifier: any
-    color1: any
-    color2: any
-    color3: any
-    rgbMultiplier: any
-    bloomColor: any
-  }
-  distortionParticle?: {
-    modifier: any
-    color: any
-    rgbMultiplier: any
-    bloomColor: any
-  }
-  blurParticle?: {
-    modifier: any
-    color: any
-    rgbMultiplier: any
-    bloomColor: any
-  }
-  light?: {
-    diffuseColor: any
-    diffuseMultiplier: any
-    specularColor?: any
-    specularMultiplier?: any
-  }
-  gpuParticle?: {
-    color: any
-    rgbMultiplier: any
-    colorMin: any
-    colorMax: any
-    bloomColor?: any
-  }
-  lensFlare?: {
-    color: any
-    colorMultiplier: any
-    bloomColor: any
-  }
-}
-
-export type RecolorFunction = (color: Vector4) => Vector4
 export type AnyAction = Action | DataAction
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
@@ -7194,7 +7181,9 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   }
 
   if (typeof av1 === 'number') {
-    if (typeof av2 === 'number') {
+    if (av1 === 1) {
+      return (av2 instanceof Property ? av2.clone() : Array.isArray(av2) ? av2.slice() : av2) as T
+    } else if (typeof av2 === 'number') {
       return av1 * av2 as T
     } else if (Array.isArray(av2)) {
       return av2.map(e => e * (av1 as number)) as unknown as T
@@ -7370,7 +7359,9 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   }
 
   if (typeof av1 === 'number') {
-    if (typeof av2 === 'number') {
+    if (av1 === 0) {
+      return (av2 instanceof Property ? av2.clone() : Array.isArray(av2) ? av2.slice() : av2) as T
+    } else if (typeof av2 === 'number') {
       return av1 + av2 as T
     } else if (Array.isArray(av2)) {
       return av2.map(e => e + (av1 as number)) as unknown as T
@@ -7773,6 +7764,26 @@ function hex(strings: TemplateStringsArray, ...values: any[]): number[] {
   const b = parseInt(hexStr.slice(4, 6), 16) / 255
   const a = hexStr.length === 8 ? parseInt(hexStr.slice(6, 8), 16) / 255 : 1
   return [r, g, b, a]
+}
+
+function randomItem<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+function averagePaletteEntries<T extends Recolor.ColorPalette[keyof Recolor.ColorPalette]>(entries: T): T {
+  if (entries.length === 1) {
+    return entries
+  }
+  const obj: { [x: string]: any } = {}
+  for (const entry of entries) {
+    for (const p of Object.keys(entry)) {
+      obj[p] = anyValueSum(obj[p] ?? 0, entry[p])
+    }
+  }
+  for (const p of Object.keys(obj)) {
+    obj[p] = anyValueMult(1 / entries.length, obj[p])
+  }
+  return [obj] as T
 }
 
 const ActionDataConversion = {
@@ -9445,7 +9456,7 @@ abstract class Node {
    * @param recurse Controls whether or not the recoloring should be applied to
    * all descendant nodes. Defaults to true.
    */
-  recolor(func: RecolorFunction, recurse?: boolean): this
+  recolor(func: Recolor.RecolorFunction, recurse?: boolean): this
 
   /**
    * Recolors the entire branch, or optionally just this node, to fit a given
@@ -9455,69 +9466,208 @@ abstract class Node {
    * @param recurse Controls whether or not the recoloring should be applied to
    * all descendant nodes. Defaults to true.
    */
-  recolor(palette: FXRColorPalette, recurse?: boolean): this
+  recolor(palette: Recolor.ColorPalette, recurse?: boolean): this
 
-  recolor(funcOrPalette: RecolorFunction | FXRColorPalette, recurse: boolean = true) {
+  recolor(funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette, recurse: boolean = true) {
     if (typeof funcOrPalette === 'function') {
       for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
         action.recolor(funcOrPalette)
       }
     } else {
-      const palette: FXRColorPalette = {}
-      if ('commonParticle' in funcOrPalette) {
-        palette.commonParticle = {
-          modifier: Property.fromJSON(funcOrPalette.commonParticle.modifier),
-          color1: Property.fromJSON(funcOrPalette.commonParticle.color1),
-          color2: Property.fromJSON(funcOrPalette.commonParticle.color2),
-          color3: Property.fromJSON(funcOrPalette.commonParticle.color3),
-          rgbMultiplier: Property.fromJSON(funcOrPalette.commonParticle.rgbMultiplier),
-          bloomColor: funcOrPalette.commonParticle.bloomColor,
+      if (!(
+        'commonParticleNormal' in funcOrPalette ||
+        'commonParticleMultiply' in funcOrPalette ||
+        'commonParticleAdd' in funcOrPalette ||
+        'commonParticleSubtract' in funcOrPalette ||
+        'distortionParticle' in funcOrPalette ||
+        'blurParticle' in funcOrPalette ||
+        'light' in funcOrPalette ||
+        'gpuParticle' in funcOrPalette ||
+        'lensFlare' in funcOrPalette
+      )) {
+        throw new Error('Invalid color palette.')
+      }
+      const palette: Recolor.ColorPalette = {}
+      for (const [k, v] of Object.entries(funcOrPalette) as Entries<Recolor.ColorPalette>) switch (k) {
+        case 'commonParticleNormal':
+        case 'commonParticleMultiply':
+        case 'commonParticleAdd':
+        case 'commonParticleSubtract':
+          palette[k] = v.map(e => ({
+            modifier: Property.fromJSON(e.modifier),
+            color1: Property.fromJSON(e.color1),
+            color2: Property.fromJSON(e.color2),
+            color3: Property.fromJSON(e.color3),
+            rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
+            bloomColor: e.bloomColor,
+          }))
+          break
+        case 'distortionParticle':
+        case 'blurParticle':
+          palette[k] = v.map(e => ({
+            modifier: Property.fromJSON(e.modifier),
+            color: Property.fromJSON(e.color),
+            rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
+            bloomColor: e.bloomColor,
+          }))
+          break
+        case 'light':
+          palette[k] = v.map(e => ({
+            diffuseColor: Property.fromJSON(e.diffuseColor),
+            diffuseMultiplier: Property.fromJSON(e.diffuseMultiplier),
+            ...'specularColor' in e && {
+              specularColor: Property.fromJSON(e.specularColor),
+              specularMultiplier: Property.fromJSON(e.specularMultiplier),
+            }
+          }))
+          break
+        case 'gpuParticle':
+          palette[k] = v.map(e => ({
+            color: Property.fromJSON(e.color),
+            rgbMultiplier: e.rgbMultiplier,
+            colorMin: e.colorMin,
+            colorMax: e.colorMax,
+            ...'bloomColor' in e && {
+              bloomColor: e.bloomColor
+            }
+          }))
+          break
+        case 'lensFlare':
+          palette[k] = v.map(e => ({
+            color: Property.fromJSON(e.color),
+            colorMultiplier: e.colorMultiplier,
+            bloomColor: e.bloomColor,
+          }))
+          break
+      }
+
+      // Set up fallbacks for missing palette entries
+      if (!('commonParticleNormal' in palette)) {
+        if (
+          'commonParticleMultiply' in palette ||
+          'commonParticleAdd' in palette ||
+          'commonParticleSubtract' in palette
+        ) {
+          palette.commonParticleNormal =
+            palette.commonParticleMultiply ??
+            palette.commonParticleAdd ??
+            palette.commonParticleSubtract
+        } else if ('gpuParticle' in palette) {
+          const e = averagePaletteEntries(palette.gpuParticle)[0]
+          palette.commonParticleNormal = [{
+            modifier: new ConstantProperty(1, 1, 1, 1),
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor ?? [1, 1, 1, 1],
+            rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
+          }]
+        } else if ('lensFlare' in palette) {
+          const e = averagePaletteEntries(palette.lensFlare)[0]
+          palette.commonParticleNormal = [{
+            modifier: new ConstantProperty(1, 1, 1, 1),
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor,
+            rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
+          }]
+        } else if ('distortionParticle' in palette) {
+          const e = averagePaletteEntries(palette.distortionParticle)[0]
+          palette.commonParticleNormal = [{
+            modifier: e.modifier,
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor,
+            rgbMultiplier: e.rgbMultiplier,
+          }]
+        } else if ('blurParticle' in palette) {
+          const e = averagePaletteEntries(palette.blurParticle)[0]
+          palette.commonParticleNormal = [{
+            modifier: e.modifier,
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor,
+            rgbMultiplier: e.rgbMultiplier,
+          }]
+        } else if ('light' in palette) {
+          const e = averagePaletteEntries(palette.light)[0]
+          palette.commonParticleNormal = [{
+            modifier: new ConstantProperty(1, 1, 1, 1),
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.diffuseColor,
+            bloomColor: [1, 1, 1, 0],
+            rgbMultiplier: e.diffuseMultiplier,
+          }]
         }
       }
-      if ('distortionParticle' in funcOrPalette) {
-        palette.distortionParticle = {
-          modifier: Property.fromJSON(funcOrPalette.distortionParticle.modifier),
-          color: Property.fromJSON(funcOrPalette.distortionParticle.color),
-          rgbMultiplier: Property.fromJSON(funcOrPalette.distortionParticle.rgbMultiplier),
-          bloomColor: funcOrPalette.distortionParticle.bloomColor,
-        }
+      palette.commonParticleMultiply ??= palette.commonParticleNormal
+      palette.commonParticleAdd ??= palette.commonParticleNormal
+      palette.commonParticleSubtract ??= palette.commonParticleNormal
+      let avgCommonNormal: Recolor.PaletteSlots['CommonParticle']
+      if (!('distortionParticle' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.distortionParticle = [{
+          modifier: avgCommonNormal.modifier,
+          color: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          rgbMultiplier: avgCommonNormal.rgbMultiplier,
+          bloomColor: avgCommonNormal.bloomColor
+        }]
       }
-      if ('blurParticle' in funcOrPalette) {
-        palette.blurParticle = {
-          modifier: Property.fromJSON(funcOrPalette.blurParticle.modifier),
-          color: Property.fromJSON(funcOrPalette.blurParticle.color),
-          rgbMultiplier: Property.fromJSON(funcOrPalette.blurParticle.rgbMultiplier),
-          bloomColor: funcOrPalette.blurParticle.bloomColor,
-        }
+      palette.blurParticle ??= palette.distortionParticle
+      if (!('light' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.light = [{
+          diffuseColor: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          diffuseMultiplier: avgCommonNormal.rgbMultiplier,
+        }]
       }
-      if ('light' in funcOrPalette) {
-        palette.light = {
-          diffuseColor: Property.fromJSON(funcOrPalette.light.diffuseColor),
-          diffuseMultiplier: Property.fromJSON(funcOrPalette.light.diffuseMultiplier),
-        }
-        if ('specularColor' in funcOrPalette.light) {
-          palette.light.specularColor = Property.fromJSON(funcOrPalette.light.specularColor)
-          palette.light.specularMultiplier = Property.fromJSON(funcOrPalette.light.specularMultiplier)
-        }
+      if (!('gpuParticle' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.gpuParticle = [{
+          color: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          rgbMultiplier: avgCommonNormal.rgbMultiplier.valueAt(0),
+          colorMin: [0, 0, 0, 0],
+          colorMax: [0, 0, 0, 0],
+          bloomColor: avgCommonNormal.bloomColor,
+        }]
       }
-      if ('gpuParticle' in funcOrPalette) {
-        palette.gpuParticle = {
-          color: Property.fromJSON(funcOrPalette.gpuParticle.color),
-          rgbMultiplier: funcOrPalette.gpuParticle.rgbMultiplier,
-          colorMin: funcOrPalette.gpuParticle.colorMin,
-          colorMax: funcOrPalette.gpuParticle.colorMax,
-        }
-        if ('bloomColor' in funcOrPalette.gpuParticle) {
-          palette.gpuParticle.bloomColor = funcOrPalette.gpuParticle.bloomColor
-        }
+      if (!('lensFlare' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.lensFlare = [{
+          color: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          colorMultiplier: [1, 1, 1, 1],
+          bloomColor: avgCommonNormal.bloomColor,
+        }]
       }
-      if ('lensFlare' in funcOrPalette) {
-        palette.lensFlare = {
-          color: Property.fromJSON(funcOrPalette.lensFlare.color),
-          colorMultiplier: funcOrPalette.lensFlare.colorMultiplier,
-          bloomColor: funcOrPalette.lensFlare.bloomColor,
-        }
-      }
+
       function durationFallback(action: any, secondary?: any) {
         if (!(action instanceof NodeAttributes || action instanceof ParticleAttributes)) {
           action = { duration: 1 }
@@ -9546,7 +9696,9 @@ abstract class Node {
         k: keyof T,
         durationFallback: () => number = () => 1
       ) {
-        if (
+        if (k === 'bloomColor') {
+          ;(c[k] as any) = (paletteProp as Vector4).with(3, Math.min(1, paletteProp[3]) * c[k][3]) as Vector4
+        } else if (
           paletteProp instanceof SequenceProperty ||
           paletteProp instanceof ComponentSequenceProperty
         ) {
@@ -9593,13 +9745,8 @@ abstract class Node {
           a instanceof Model ||
           a instanceof RichModel ||
           a instanceof Tracer ||
-          a instanceof DynamicTracer ||
           a instanceof DynamicTracer
         ) {
-          if (!('commonParticle' in palette)) {
-            console.warn('Color palette is missing the common particle entry. Parts of this type will not be recolored.')
-            continue
-          }
           if (!(effect.particleModifier instanceof ParticleModifier)) continue
           if (a instanceof MultiTextureBillboardEx) {
             a.recolorProperty('layersColor', Recolor.grayscale)
@@ -9609,7 +9756,20 @@ abstract class Node {
             a.recolorProperty('startColor', Recolor.grayscale)
             a.recolorProperty('endColor', Recolor.grayscale)
           }
-          const pc = palette.commonParticle
+          let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
+          if (blendMode instanceof Property) {
+            blendMode = blendMode.valueAt(0)
+          }
+          if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
+            blendMode = BlendMode.Normal
+          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Screen) {
+            blendMode = BlendMode.Add
+          }
+          const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+            Recolor.ColorPalette,
+            Recolor.PaletteSlots['CommonParticle'][]
+          >
+          const pc = randomItem(palette[key])
           const ndf = durationFallback(effect.nodeAttributes)
           const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
           proc(pc.modifier, effect.particleModifier, 'color', ndf)
@@ -9619,12 +9779,8 @@ abstract class Node {
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof Distortion) {
-          if (!('distortionParticle' in palette)) {
-            console.warn('Color palette is missing the distortion particle entry. Parts of this type will not be recolored.')
-            continue
-          }
           if (!(effect.particleModifier instanceof ParticleModifier)) continue
-          const pc = palette.distortionParticle
+          const pc = randomItem(palette.distortionParticle)
           const ndf = durationFallback(effect.nodeAttributes)
           const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
           proc(pc.modifier, effect.particleModifier, 'color', ndf)
@@ -9632,12 +9788,8 @@ abstract class Node {
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof RadialBlur) {
-          if (!('blurParticle' in palette)) {
-            console.warn('Color palette is missing the blur particle entry. Parts of this type will not be recolored.')
-            continue
-          }
           if (!(effect.particleModifier instanceof ParticleModifier)) continue
-          const pc = palette.blurParticle
+          const pc = randomItem(palette.blurParticle)
           const ndf = durationFallback(effect.nodeAttributes)
           const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
           proc(pc.modifier, effect.particleModifier, 'color', ndf)
@@ -9645,11 +9797,7 @@ abstract class Node {
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof PointLight || a instanceof SpotLight) {
-          if (!('light' in palette)) {
-            console.warn('Color palette is missing the light entry. Parts of this type will not be recolored.')
-            continue
-          }
-          const pc = palette.light
+          const pc = randomItem(palette.light)
           const df = durationFallback(effect.nodeAttributes)
           proc(pc.diffuseColor, a, 'diffuseColor', df)
           proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
@@ -9664,25 +9812,17 @@ abstract class Node {
           a instanceof GPUSparkParticle ||
           a instanceof GPUSparkCorrectParticle
         ) {
-          if (!('gpuParticle' in palette)) {
-            console.warn('Color palette is missing the GPU particle entry. Parts of this type will not be recolored.')
-            continue
-          }
-          const pc = palette.gpuParticle
+          const pc = randomItem(palette.gpuParticle)
           proc(pc.color, a, 'color', durationFallback(effect.nodeAttributes))
           proc(pc.rgbMultiplier, a, 'rgbMultiplier')
           proc(pc.colorMin, a, 'colorMin')
           proc(pc.colorMax, a, 'colorMax')
+          a.bloom = 'bloomColor' in pc
           if ('bloomColor' in pc) {
-            a.bloom = true
             proc(pc.bloomColor, a, 'bloomColor')
           }
         } else if ('lensFlare' in palette && a instanceof LensFlare) {
-          if (!('lensFlare' in palette)) {
-            console.warn('Color palette is missing the lens flare entry. Parts of this type will not be recolored.')
-            continue
-          }
-          const pc = palette.lensFlare
+          const pc = randomItem(palette.lensFlare)
           const df = durationFallback(effect.nodeAttributes)
           proc(pc.color, a, 'layer1Color', df)
           proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
@@ -9738,13 +9878,11 @@ abstract class Node {
   /**
    * Generates a color palette that can be used to recolor other nodes based on
    * the colors in this branch.
-   * @param average If enabled, this will average all colors that fit in the
-   * same slot. If disabled, a slot will be based only on the first effect that
-   * fits, and subsequent effects that fit the slot will be ignored. Defaults
-   * to false.
+   * @param mode Controls the behavior of the color sampler. See
+   * {@link PaletteMode} for more information.
    */
-  generateColorPalette(average: boolean = false): FXRColorPalette {
-    return Recolor.generatePalette([this], average)
+  generateColorPalette(mode: PaletteMode = PaletteMode.Average): Recolor.ColorPalette {
+    return Recolor.generatePalette([this], mode)
   }
 
 }
@@ -10892,7 +11030,7 @@ class DataAction implements IAction {
    * @param key The name of the property.
    * @param func The function used to recolor the property.
    */
-  recolorProperty(key: string, func: RecolorFunction) {
+  recolorProperty(key: string, func: Recolor.RecolorFunction) {
     let prop: Vector4Value = this[key]
     if (
       prop instanceof Property && prop.valueType !== ValueType.Vector4 ||
@@ -41386,17 +41524,70 @@ function PrecipitationModifier<T extends ValueType>(
  */
 namespace Recolor {
 
+  export type RecolorFunction = (color: Vector4) => Vector4
+
+  export type PaletteSlots = {
+    CommonParticle: {
+      modifier: any
+      color1: any
+      color2: any
+      color3: any
+      rgbMultiplier: any
+      bloomColor: any
+    }
+    DistortionParticle: {
+      modifier: any
+      color: any
+      rgbMultiplier: any
+      bloomColor: any
+    }
+    BlurParticle: {
+      modifier: any
+      color: any
+      rgbMultiplier: any
+      bloomColor: any
+    }
+    Light: {
+      diffuseColor: any
+      diffuseMultiplier: any
+      specularColor?: any
+      specularMultiplier?: any
+    }
+    GPUParticle: {
+      color: any
+      rgbMultiplier: any
+      colorMin: any
+      colorMax: any
+      bloomColor?: any
+    }
+    LensFlare: {
+      color: any
+      colorMultiplier: any
+      bloomColor: any
+    }
+  }
+
+  export interface ColorPalette {
+    commonParticleNormal?: PaletteSlots['CommonParticle'][]
+    commonParticleMultiply?: PaletteSlots['CommonParticle'][]
+    commonParticleAdd?: PaletteSlots['CommonParticle'][]
+    commonParticleSubtract?: PaletteSlots['CommonParticle'][]
+    distortionParticle?: PaletteSlots['DistortionParticle'][]
+    blurParticle?: PaletteSlots['BlurParticle'][]
+    light?: PaletteSlots['Light'][]
+    gpuParticle?: PaletteSlots['GPUParticle'][]
+    lensFlare?: PaletteSlots['LensFlare'][]
+  }
+
   /**
    * Generates a color palette that can be used to recolor other nodes based on
    * the colors in the given nodes and their descendants.
    * @param sources An array of FXRs or nodes to sample colors from.
-   * @param average If enabled, this will average all colors that fit in the
-   * same slot. If disabled, a slot will be based only on the first effect that
-   * fits, and subsequent effects that fit the slot will be ignored. Defaults
-   * to false.
+   * @param mode Controls the behavior of the color sampler. See
+   * {@link PaletteMode} for more information.
    */
-  export function generatePalette(sources: (FXR | Node)[], average: boolean = true) {
-    const palette: FXRColorPalette = {}
+  export function generatePalette(sources: (FXR | Node)[], mode: PaletteMode = PaletteMode.Average) {
+    const palette: Recolor.ColorPalette = {}
     function normalize<T>(val: AnyValue): T {
       if (val instanceof SequenceProperty || val instanceof ComponentSequenceProperty) {
         let clone = val.clone().minify()
@@ -41418,8 +41609,8 @@ namespace Recolor {
       }
       return (val instanceof Property ? val.clone().minify() : val) as T
     }
-    function sum<T extends { [x: string]: AnyValue }>(p: T, n: keyof T, o: AnyValue) {
-      p[n] = anyValueSum(p[n], normalize(o))
+    function sum<T extends PaletteSlots[keyof PaletteSlots]>(p: T, n: keyof T, o: AnyValue) {
+      ;(p[n] as AnyValue) = anyValueSum(p[n] as AnyValue, normalize(o))
     }
     function nonWhiteVisible(color: Vector4Value) {
       return (
@@ -41436,14 +41627,6 @@ namespace Recolor {
           (color.value as Vector4).some(e => e !== 1)
         )
       )
-    }
-    const counter = {
-      commonParticle: 0,
-      distortionParticle: 0,
-      blurParticle: 0,
-      light: 0,
-      gpuParticle: 0,
-      lensFlare: 0,
     }
     function *walkEffects(sources: (FXR | Node)[]) {
       for (const src of sources) {
@@ -41469,117 +41652,79 @@ namespace Recolor {
           a instanceof DynamicTracer
         ) {
           if (!(effect.particleModifier instanceof ParticleModifier)) continue
-          counter.commonParticle++
-          if ('commonParticle' in palette) {
-            if (!average) continue
-            sum(palette.commonParticle, 'modifier', effect.particleModifier.color)
-            sum(palette.commonParticle, 'color1', a.color1)
-            sum(palette.commonParticle, 'color2', a.color2)
-            sum(palette.commonParticle, 'color3', a.color3)
-            sum(palette.commonParticle, 'rgbMultiplier', a.rgbMultiplier)
-            sum(palette.commonParticle, 'bloomColor', a.bloomColor)
-          } else {
-            palette.commonParticle = {
-              modifier: normalize(effect.particleModifier.color),
-              color1: normalize(a.color1),
-              color2: normalize(a.color2),
-              color3: normalize(a.color3),
-              rgbMultiplier: normalize(a.rgbMultiplier),
-              bloomColor: normalize(a.bloomColor),
-            }
+          let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
+          if (blendMode instanceof Property) {
+            blendMode = blendMode.valueAt(0)
           }
+          if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
+            blendMode = BlendMode.Normal
+          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Screen) {
+            blendMode = BlendMode.Add
+          }
+          const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+            ColorPalette,
+            PaletteSlots['CommonParticle'][]
+          >
+          if (key in palette && mode === PaletteMode.First) continue
+          palette[key] ??= []
+          palette[key].push({
+            modifier: normalize(effect.particleModifier.color),
+            color1: normalize(a.color1),
+            color2: normalize(a.color2),
+            color3: normalize(a.color3),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            bloomColor: normalize(a.bloomColor),
+          })
         } else if (a instanceof Distortion) {
           if (!(effect.particleModifier instanceof ParticleModifier)) continue
-          counter.distortionParticle++
-          if ('distortionParticle' in palette) {
-            if (!average) continue
-            sum(palette.distortionParticle, 'modifier', effect.particleModifier.color)
-            sum(palette.distortionParticle, 'color', a.color)
-            sum(palette.distortionParticle, 'rgbMultiplier', a.rgbMultiplier)
-            sum(palette.distortionParticle, 'bloomColor', a.bloomColor)
-          } else {
-            palette.distortionParticle = {
-              modifier: normalize(effect.particleModifier.color),
-              color: normalize(a.color),
-              rgbMultiplier: normalize(a.rgbMultiplier),
-              bloomColor: normalize(a.bloomColor),
-            }
-          }
+          if ('distortionParticle' in palette && mode === PaletteMode.First) continue
+          palette.distortionParticle ??= []
+          palette.distortionParticle.push({
+            modifier: normalize(effect.particleModifier.color),
+            color: normalize(a.color),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            bloomColor: normalize(a.bloomColor),
+          })
         } else if (a instanceof RadialBlur) {
           if (!(effect.particleModifier instanceof ParticleModifier)) continue
-          counter.blurParticle++
-          if ('blurParticle' in palette) {
-            if (!average) continue
-            sum(palette.blurParticle, 'modifier', effect.particleModifier.color)
-            sum(palette.blurParticle, 'color', a.color)
-            sum(palette.blurParticle, 'rgbMultiplier', a.rgbMultiplier)
-            sum(palette.blurParticle, 'bloomColor', a.bloomColor)
-          } else {
-            palette.blurParticle = {
-              modifier: normalize(effect.particleModifier.color),
-              color: normalize(a.color),
-              rgbMultiplier: normalize(a.rgbMultiplier),
-              bloomColor: normalize(a.bloomColor),
-            }
-          }
+          if ('blurParticle' in palette && mode === PaletteMode.First) continue
+          palette.blurParticle ??= []
+          palette.blurParticle.push({
+            modifier: normalize(effect.particleModifier.color),
+            color: normalize(a.color),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            bloomColor: normalize(a.bloomColor),
+          })
         } else if (a instanceof PointLight || a instanceof SpotLight) {
-          counter.light++
-          if ('light' in palette) {
-            if (!average) continue
-            sum(palette.light, 'diffuseColor', a.diffuseColor)
-            sum(palette.light, 'diffuseMultiplier', a.diffuseMultiplier)
-            if (a.separateSpecular) {
-              if ('specularColor' in palette.light && 'specularMultiplier' in palette.light) {
-                sum(palette.light, 'specularColor', a.specularColor)
-                sum(palette.light, 'specularMultiplier', a.specularMultiplier)
-              } else {
-                palette.light.specularColor = anyValueMult(counter.light, normalize(a.specularColor))
-                palette.light.specularMultiplier = anyValueMult(counter.light, normalize(a.specularMultiplier))
-              }
+          if ('light' in palette && mode === PaletteMode.First) continue
+          palette.light ??= []
+          palette.light.push({
+            diffuseColor: normalize(a.diffuseColor),
+            diffuseMultiplier: normalize(a.diffuseMultiplier),
+            ...a.separateSpecular && {
+              specularColor: normalize(a.specularColor),
+              specularMultiplier: normalize(a.specularMultiplier),
             }
-          } else {
-            palette.light = {
-              diffuseColor: normalize(a.diffuseColor),
-              diffuseMultiplier: normalize(a.diffuseMultiplier),
-            }
-            if (a.separateSpecular) {
-              palette.light.specularColor = normalize(a.specularColor)
-              palette.light.specularMultiplier = normalize(a.specularMultiplier)
-            }
-          }
+          })
         } else if (
           a instanceof GPUStandardParticle ||
           a instanceof GPUStandardCorrectParticle ||
           a instanceof GPUSparkParticle ||
           a instanceof GPUSparkCorrectParticle
         ) {
-          counter.gpuParticle++
-          if ('gpuParticle' in palette) {
-            if (!average) continue
-            sum(palette.gpuParticle, 'color', a.color)
-            sum(palette.gpuParticle, 'rgbMultiplier', a.rgbMultiplier)
-            sum(palette.gpuParticle, 'colorMin', a.colorMin)
-            sum(palette.gpuParticle, 'colorMax', a.colorMax)
-            if (a.bloom) {
-              if ('bloomColor' in palette.gpuParticle) {
-                sum(palette.gpuParticle, 'bloomColor', a.bloomColor)
-              } else {
-                palette.gpuParticle.bloomColor = anyValueMult(counter.gpuParticle, normalize(a.bloomColor))
-              }
+          if ('gpuParticle' in palette && mode === PaletteMode.First) continue
+          palette.gpuParticle ??= []
+          palette.gpuParticle.push({
+            color: normalize(a.color),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            colorMin: normalize(a.colorMin),
+            colorMax: normalize(a.colorMax),
+            ...a.bloom && {
+              bloomColor: normalize(a.bloomColor)
             }
-          } else {
-            palette.gpuParticle = {
-              color: normalize(a.color),
-              rgbMultiplier: normalize(a.rgbMultiplier),
-              colorMin: normalize(a.colorMin),
-              colorMax: normalize(a.colorMax),
-            }
-            if (a.bloom) {
-              palette.gpuParticle.bloomColor = normalize(a.bloomColor)
-            }
-          }
+          })
         } else if (a instanceof LensFlare) {
-          if ('lensFlare' in palette && !average) continue
+          if ('lensFlare' in palette && mode === PaletteMode.First) continue
           interface LensFlareLayer {
             color: 'layer1Color' | 'layer2Color' | 'layer3Color' | 'layer4Color'
             mult: 'layer1ColorMultiplier' | 'layer2ColorMultiplier' | 'layer3ColorMultiplier' | 'layer4ColorMultiplier'
@@ -41596,26 +41741,18 @@ namespace Recolor {
               break
             }
           }
-          counter.lensFlare++
-          if ('lensFlare' in palette) {
-            sum(palette.lensFlare, 'color', a[color])
-            sum(palette.lensFlare, 'colorMultiplier', a[mult])
-            sum(palette.lensFlare, 'bloomColor', a[bloom])
-          } else {
-            palette.lensFlare = {
-              color: normalize(a[color]),
-              colorMultiplier: normalize(a[mult]),
-              bloomColor: normalize(a[bloom]),
-            }
-          }
+          palette.lensFlare ??= []
+          palette.lensFlare.push({
+            color: normalize(a[color]),
+            colorMultiplier: normalize(a[mult]),
+            bloomColor: normalize(a[bloom]),
+          })
         }
       }
     }
-    if (average) {
-      for (const [k, count] of Object.entries(counter)) if (count > 0) {
-        for (const p of Object.keys(palette[k])) {
-          palette[k][p] = anyValueMult(1/count, palette[k][p])
-        }
+    if (mode === PaletteMode.Average) {
+      for (const [k, v] of Object.entries(palette)) {
+        palette[k] = averagePaletteEntries(v)
       }
     }
     for (const o of Object.values(palette)) {
@@ -41697,7 +41834,7 @@ namespace Recolor {
   /**
    * Recolor function that simply inverts colors.
    */
-  export function invert([r, g, b, a]: Vector4): Vector4 {
+  export const invert: RecolorFunction = ([r, g, b, a]) => {
     const scale = Math.max(r, g, b, 1)
     return [
       (1 - (r / scale)) * scale,
@@ -41710,7 +41847,7 @@ namespace Recolor {
   /**
    * Recolor function that makes colors grayscale.
    */
-  export function grayscale([r, g, b, a]: Vector4): Vector4 {
+  export const grayscale: RecolorFunction = ([r, g, b, a]) => {
     const l = r * 0.21 + g * 0.72 + b * 0.07
     return [l, l, l, a]
   }
