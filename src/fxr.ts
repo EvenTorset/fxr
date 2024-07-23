@@ -7977,10 +7977,18 @@ const ActionDataConversion = {
   [ActionType.PointLight]: {
     read(props: PointLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
+      if (game === Game.DarkSouls3) {
+        props.diffuseMultiplier = 10
+        props.specularMultiplier = 10
+      }
       return props
     },
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      if (game === Game.DarkSouls3) {
+        props.diffuseColor = anyValueMult(anyValueMult(1/10, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
+        props.specularColor = anyValueMult(anyValueMult(1/10, props.specularMultiplier), props.specularColor) as Vector4Value
+      }
       return props
     }
   },
