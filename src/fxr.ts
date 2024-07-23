@@ -7750,6 +7750,33 @@ function hsvToRgb(h: number, s: number, v: number): Vector3 {
   return [r, g, b]
 }
 
+/**
+ * A template tag function for converting hexadecimal color codes to
+ * {@link Vector4} colors. Here are some examples of how it can be used:
+ * ```js
+ * // Regular 6-digit format:
+ * hex`FF0000` // Red, is converted to [1, 0, 0, 1]
+ * 
+ * // Short 3-digit format:
+ * hex`F00` // Red, equivalent to FF0000
+ * 
+ * // 8- and 4-digit formats for controlling the alpha value:
+ * hex`00FF007F` // Half-transparent green
+ * hex`FF0F` // Opaque yellow, equivalent to FFFF00
+ * 
+ * // The color codes are case-insensitive:
+ * hex`58f` // Sky blue, equivalent to 5588FF
+ * hex`fF0eaB` // Magenta, equivalent to FF0EAB
+ * 
+ * // Usage in properties:
+ * new LinearProperty(true, [
+ *   new Keyframe(0, hex`f00`),
+ *   new Keyframe(1, hex`0f0`),
+ *   new Keyframe(2, hex`00f`),
+ *   new Keyframe(3, hex`f00`),
+ * ])
+ * ```
+ */
 function hex(strings: TemplateStringsArray, ...values: any[]): number[] {
   let hexStr = strings.reduce((result, str, i) => result + str + (values[i] || ''), '')
   if (hexStr.length === 3) {
