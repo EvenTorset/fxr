@@ -41994,6 +41994,9 @@ namespace Recolor {
 }
 
 //#region FXRUtility
+/**
+ * Contains utility functions that may be useful when creating new effects.
+ */
 namespace FXRUtility {
 
   type Glyph = [Vector2, Vector2][]
@@ -42572,13 +42575,28 @@ namespace FXRUtility {
     return rad * 180 / Math.PI
   }
 
-  export function line(
+  /**
+   * Creates a node with an attached particle that forms a line between two
+   * given points.
+   * @param p1 The first point.
+   * @param p2 The second point.
+   * @param color Line color.
+   * @param width Line width.
+   * @param orientation Particle orientation mode.
+   * @param args Extra arguments for the particle action constructor.
+   * @param actionClass The particle action constructor to use.
+   */
+  export function line<
+    T extends new (...args: any) => InstanceType<Q>,
+    Q extends typeof BillboardEx | typeof MultiTextureBillboardEx
+  >(
     p1: Vector3,
     p2: Vector3,
     color: Vector4Value = [1, 1, 1, 1],
     width: ScalarValue = 0.02,
     orientation: OrientationMode.LocalSouth | OrientationMode.LocalYaw = OrientationMode.LocalYaw,
-    params: MultiTextureBillboardExParams = {},
+    args?: ConstructorParameters<T>[0],
+    actionClass: Q = BillboardEx as Q
   ) {
     const dx = p2[0] - p1[0]
     const dy = p2[1] - p1[1]
@@ -42597,19 +42615,30 @@ namespace FXRUtility {
     ], [
       new BasicNode([
         ...orientation === OrientationMode.LocalYaw ? [NodeTransform({ rotationY: 90 })] : [],
-        new MultiTextureBillboardEx({
+        new actionClass({
           blendMode: BlendMode.Source,
           rgbMultiplier: 0.6,
-          ...params,
+          ...args,
           color3: color,
           width: Math.sqrt(dx * dx + dy * dy + dz * dz),
           height: width,
-          orientation: orientation,
+          orientation,
         })
       ])
     ])
   }
 
+  /**
+   * Creates a node that represents a string, which contains nodes that
+   * represent characters. This can be very useful for displaying text in an
+   * effect, which is often useful to, for example, debug or test things.
+   * 
+   * Note: This generates a *lot* of nodes depending on the text. Avoid using
+   * it to display very long strings. That can be done better using a custom
+   * texture on a single particle instead.
+   * @param text The text to convert.
+   * @param options Alignment, size, and other options for the text.
+   */
   export function text(
     text: string,
     options: {
@@ -42617,7 +42646,7 @@ namespace FXRUtility {
       originY?: 'baseline' | 'top' | 'middle' | 'bottom'
       fontSize?: number
       color?: Vector4Value
-      params?: MultiTextureBillboardExParams
+      args?: BillboardExParams
     } = {}
   ): BasicNode {
     const lines = text.split('\n')
@@ -42646,7 +42675,7 @@ namespace FXRUtility {
         options.color,
         1,
         OrientationMode.LocalSouth,
-        options.params
+        options.args
       ))))
       offset[0] += glyphWidth(glyph) + 1
     }
