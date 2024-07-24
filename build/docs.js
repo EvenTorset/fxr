@@ -26,8 +26,13 @@ for await (const filePath of getFiles('docs')) {
 {
   const content = await fs.readFile('docs/assets/navigation.js', 'utf-8')
   const list = JSON.parse(zlib.gunzipSync(Buffer.from(content.match(/;base64,(.*)"/)[1], 'base64')).toString('utf-8'))
-  for (const e of list) {
+  const todo = list.slice()
+  while (todo.length > 0) {
+    const e = todo.shift()
     e.path = e.path.replace(/^functions/, 'funcs')
+    if ('children' in e) {
+      todo.push(...e.children)
+    }
   }
   await fs.writeFile(
     'docs/assets/navigation.js',
