@@ -8,6 +8,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: EffectAge
+    time: inv
     desc: >
       Time between emitting new particles in seconds.
   perInterval:

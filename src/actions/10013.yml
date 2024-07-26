@@ -26,11 +26,13 @@ properties:
   descent:
     field: float
     default: 0.15
+    time: inv
     desc: |
       The time it takes for the water to be pushed down to the {@link depth} in seconds.
   duration:
     field: float
     default: 0.15
+    time: inv
     desc: |
       The duration of the interaction in seconds. Basically how long to hold the water pressed down.
 games:

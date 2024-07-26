@@ -7,6 +7,7 @@ properties:
   angularSpeedX:
     type: ScalarValue
     argument: EffectAge
+    time: true
     desc: |
       The node's angular speed around its local X-axis in degrees per second.
     see:
@@ -20,6 +21,7 @@ properties:
   angularSpeedY:
     type: ScalarValue
     argument: EffectAge
+    time: true
     desc: |
       The node's angular speed around its local Y-axis in degrees per second.
     see:
@@ -33,6 +35,7 @@ properties:
   angularSpeedZ:
     type: ScalarValue
     argument: EffectAge
+    time: true
     desc: |
       The node's angular speed around its local Z-axis in degrees per second.
     see:

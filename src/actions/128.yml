@@ -14,6 +14,7 @@ properties:
     type: ScalarValue
     default: -1
     argument: Constant0
+    time: invIfPositive
     desc: |
       The node duration in seconds. Can be set to -1 to make the node last forever.
   delay:

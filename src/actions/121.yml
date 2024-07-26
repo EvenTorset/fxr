@@ -8,6 +8,7 @@ properties:
     type: ScalarValue
     argument: Constant0
     scale: true
+    time: true
     desc: |
       Controls the speed of the node along its Z-axis.
   speedMultiplierZ:
@@ -20,6 +21,7 @@ properties:
     type: ScalarValue
     argument: EffectAge
     scale: true
+    time: sq
     desc: |
       Controls the acceleration of the node along its Y-axis.
   maxTurnAngle:
@@ -35,6 +37,7 @@ properties:
     field: int
   turnInterval:
     field: int
+    time: inv
     desc: |
       The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
 games:

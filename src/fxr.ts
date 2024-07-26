@@ -1551,6 +1551,20 @@ export enum ScaleCondition {
 }
 
 /**
+ * This represents an operation to use when modifying values that depend on
+ * time.
+ * 
+ * Used internally to track how time-based values should be scaled by
+ * {@link DataAction.prototype.scaleRateOfTime}.
+ */
+export enum TimeOperation {
+  Multiply = 1,
+  Divide = 2,
+  DivideIfPositive = 3,
+  Square = 4,
+}
+
+/**
  * Controls the sampling behavior of functions used to generate color palettes.
  */
 export enum PaletteMode {
@@ -1701,6 +1715,7 @@ export interface IAction {
    * Actions that can not be minified will not be changed.
    */
   minify(): AnyAction
+  clone(): IAction
 }
 
 export interface IEffect {
@@ -1710,6 +1725,7 @@ export interface IEffect {
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<AnyAction>
+  clone(): IEffect
 }
 
 export interface IModifier<T extends ValueType> {
@@ -1929,6 +1945,7 @@ const ActionData: {
         resource?: ResourceType
         textureType?: string
         scale?: ScaleCondition
+        time?: TimeOperation
         color?: 1
         omit?: 1
         paths?: {
@@ -1944,10 +1961,10 @@ const ActionData: {
   /*#ActionData start*/
   [ActionType.NodeAcceleration]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_2: { default: 0, field: 2 },
@@ -1981,11 +1998,11 @@ const ActionData: {
   },
   [ActionType.NodeSpin]: {
     props: {
-      angularSpeedX: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
-      angularSpeedY: { default: 0 },
+      angularSpeedY: { default: 0, time: 1 },
       angularSpeedMultiplierY: { default: 1 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
     },
@@ -2057,8 +2074,8 @@ const ActionData: {
   },
   [ActionType.ParticleAcceleration]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      acceleration: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
@@ -2075,8 +2092,8 @@ const ActionData: {
   },
   [ActionType.ParticleSpeed]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      speed: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
@@ -2093,12 +2110,12 @@ const ActionData: {
   },
   [ActionType.ParticleSpeedRandomTurns]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      speed: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2112,13 +2129,13 @@ const ActionData: {
   },
   [ActionType.ParticleSpeedPartialFollow]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      speed: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2162,14 +2179,14 @@ const ActionData: {
   },
   [ActionType.NodeAccelerationRandomTurns]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2183,12 +2200,12 @@ const ActionData: {
   },
   [ActionType.ParticleAccelerationRandomTurns]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      acceleration: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2202,13 +2219,13 @@ const ActionData: {
   },
   [ActionType.ParticleAccelerationPartialFollow]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      acceleration: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2223,15 +2240,15 @@ const ActionData: {
   },
   [ActionType.NodeAccelerationPartialFollow]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2246,15 +2263,15 @@ const ActionData: {
   },
   [ActionType.NodeAccelerationSpin]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
-      angularSpeedX: { default: 0 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
+      angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
-      angularSpeedY: { default: 0 },
+      angularSpeedY: { default: 0, time: 1 },
       angularSpeedMultiplierY: { default: 1 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
@@ -2273,9 +2290,9 @@ const ActionData: {
   },
   [ActionType.NodeSpeed]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_2: { default: 0, field: 1 },
@@ -2292,13 +2309,13 @@ const ActionData: {
   },
   [ActionType.NodeSpeedRandomTurns]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2312,14 +2329,14 @@ const ActionData: {
   },
   [ActionType.NodeSpeedPartialFollow]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2334,14 +2351,14 @@ const ActionData: {
   },
   [ActionType.NodeSpeedSpin]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
-      angularSpeedX: { default: 0 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
+      angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
-      angularSpeedY: { default: 0 },
+      angularSpeedY: { default: 0, time: 1 },
       angularSpeedMultiplierY: { default: 1 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
@@ -2361,7 +2378,7 @@ const ActionData: {
   [ActionType.NodeAttributes]: {
     props: {
       attachment: { default: AttachMode.Parent, field: 1 },
-      duration: { default: -1 },
+      duration: { default: -1, time: 3 },
       delay: { default: 0, field: 2 },
       unk_ds3_f1_1: { default: 1, field: 1 },
       unk_ds3_f1_3: { default: 0, field: 2 },
@@ -2379,7 +2396,7 @@ const ActionData: {
   [ActionType.ParticleAttributes]: {
     props: {
       attachment: { default: AttachMode.Parent, field: 1 },
-      duration: { default: -1 },
+      duration: { default: -1, time: 3 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2424,7 +2441,7 @@ const ActionData: {
   [ActionType.ParticleModifier]: {
     props: {
       uniformScale: { default: false, field: 0 },
-      speed: { default: 0, scale: 1 },
+      speed: { default: 0, scale: 1, time: 1 },
       scaleX: { default: 1 },
       scaleY: { default: 1 },
       scaleZ: { default: 1 },
@@ -2455,7 +2472,7 @@ const ActionData: {
   },
   [ActionType.LevelsOfDetailThresholds]: {
     props: {
-      duration: { default: -1 },
+      duration: { default: -1, time: 3 },
       threshold0: { default: 10000, field: 1 },
       threshold1: { default: 10000, field: 1 },
       threshold2: { default: 10000, field: 1 },
@@ -2505,7 +2522,7 @@ const ActionData: {
   },
   [ActionType.PeriodicEmitter]: {
     props: {
-      interval: { default: 1 },
+      interval: { default: 1, time: 2 },
       perInterval: { default: 1 },
       totalIntervals: { default: -1 },
       maxConcurrent: { default: -1, field: 1 },
@@ -2954,9 +2971,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -3083,9 +3100,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -3213,9 +3230,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -3227,9 +3244,9 @@ const ActionData: {
       frameIndexOffset: { default: 0 },
       offsetU: { default: 0 },
       offsetV: { default: 0 },
-      speedU: { default: 0 },
+      speedU: { default: 0, time: 1 },
       speedMultiplierU: { default: 0 },
-      speedV: { default: 0 },
+      speedV: { default: 0, time: 1 },
       speedMultiplierV: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -3241,7 +3258,7 @@ const ActionData: {
       anibnd: { default: 0, field: 1, resource: 2 },
       animation: { default: 0, field: 1 },
       loopAnimation: { default: true, field: 0 },
-      animationSpeed: { default: 1, field: 2 },
+      animationSpeed: { default: 1, field: 2, time: 1 },
       unk_ds3_f1_18: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
       unk_ds3_f2_1: { default: 0, field: 1 },
@@ -3322,8 +3339,8 @@ const ActionData: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
-      segmentInterval: { default: 0, field: 2 },
-      segmentDuration: { default: 1, field: 2 },
+      segmentInterval: { default: 0, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -3345,7 +3362,7 @@ const ActionData: {
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
-      speedU: { default: 0 },
+      speedU: { default: 0, time: 1 },
       varianceV: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -3442,12 +3459,12 @@ const ActionData: {
       sizeZ: { default: 1, scale: 1 },
       color: { default: [1, 1, 1, 1], color: 1 },
       intensity: { default: 1 },
-      stirSpeed: { default: 60 },
+      stirSpeed: { default: 60, time: 1 },
       radius: { default: 1 },
       normalMapOffsetU: { default: 0 },
       normalMapOffsetV: { default: 0 },
-      normalMapSpeedU: { default: 0 },
-      normalMapSpeedV: { default: 0 },
+      normalMapSpeedU: { default: 0, time: 1 },
+      normalMapSpeedV: { default: 0, time: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_f1_11: { default: -2, field: 1 },
@@ -3604,16 +3621,16 @@ const ActionData: {
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
       jitterAndFlicker: { default: false, field: 0 },
-      jitterAcceleration: { default: 1, field: 2, scale: 1 },
+      jitterAcceleration: { default: 1, field: 2, scale: 1, time: 4 },
       jitterX: { default: 0, field: 2, scale: 1 },
       jitterY: { default: 0, field: 2, scale: 1 },
       jitterZ: { default: 0, field: 2, scale: 1 },
-      flickerIntervalMin: { default: 0, field: 2 },
-      flickerIntervalMax: { default: 1, field: 2 },
+      flickerIntervalMin: { default: 0, field: 2, time: 2 },
+      flickerIntervalMax: { default: 1, field: 2, time: 2 },
       flickerBrightness: { default: 0.5, field: 2 },
       shadows: { default: false, field: 0 },
       separateSpecular: { default: false, field: 0 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       shadowDarkness: { default: 1, field: 2 },
       volumeDensity: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -3687,7 +3704,7 @@ const ActionData: {
   [ActionType.Unk702]: {},
   [ActionType.NodeForceSpeed]: {
     props: {
-      speed: { default: 0, scale: 1 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
     },
@@ -3702,7 +3719,7 @@ const ActionData: {
   },
   [ActionType.ParticleForceSpeed]: {
     props: {
-      speed: { default: 0, scale: 1 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
@@ -3718,7 +3735,7 @@ const ActionData: {
   },
   [ActionType.NodeForceAcceleration]: {
     props: {
-      acceleration: { default: 0, scale: 1 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
     },
@@ -3733,7 +3750,7 @@ const ActionData: {
   },
   [ActionType.ParticleForceAcceleration]: {
     props: {
-      acceleration: { default: 0, scale: 1 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
@@ -3787,12 +3804,12 @@ const ActionData: {
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
       unk_ds3_f1_25: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 1, field: 1 },
-      emissionIntervalMax: { default: 1, field: 1 },
+      emissionIntervalMin: { default: 1, field: 1, time: 2 },
+      emissionIntervalMax: { default: 1, field: 1, time: 2 },
       limitEmissionCount: { default: false, field: 0 },
       emissionCountLimit: { default: 0, field: 1 },
       unk_ds3_f1_30: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -3804,33 +3821,33 @@ const ActionData: {
       particleOffsetXMax: { default: 0, field: 2, scale: 1 },
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1 },
+      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
       particleRotationVarianceX: { default: 0, field: 2 },
       particleRotationVarianceY: { default: 0, field: 2 },
       particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2 },
-      particleAngularAccelerationXMin: { default: 0, field: 2 },
-      particleAngularAccelerationYMin: { default: 0, field: 2 },
-      particleAngularAccelerationZMin: { default: 0, field: 2 },
-      particleAngularAccelerationXMax: { default: 0, field: 2 },
-      particleAngularAccelerationYMax: { default: 0, field: 2 },
-      particleAngularAccelerationZMax: { default: 0, field: 2 },
+      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
+      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -3841,20 +3858,20 @@ const ActionData: {
       particleSizeXMax: { default: 0, field: 2, scale: 1 },
       particleSizeYMax: { default: 0, field: 2, scale: 1 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -3902,10 +3919,10 @@ const ActionData: {
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
       particleRandomTurns: { default: false, field: 0 },
-      particleRandomTurnIntervalMax: { default: 1, field: 1 },
+      particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1 },
+      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -3965,21 +3982,21 @@ const ActionData: {
       unk_ds3_p1_1: { default: 0 },
       unk_ds3_p1_2: { default: 0 },
       unk_ds3_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
-      particleAngularAccelerationZ: { default: 0 },
-      particleGrowthRateX: { default: 0, scale: 1 },
-      particleGrowthRateY: { default: 0, scale: 1 },
+      particleAngularAccelerationZ: { default: 0, time: 4 },
+      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
       unk_ds3_p1_15: { default: 0 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_17: { default: 0 },
-      particleGravity: { default: 0, scale: 1 },
+      particleGravity: { default: 0, scale: 1, time: 4 },
       particleRandomTurnAngle: { default: 0 },
       unk_ds3_p1_20: { default: 0 },
       unk_ds3_p2_0: { default: 1 },
@@ -4040,12 +4057,12 @@ const ActionData: {
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
       unk_ds3_f1_25: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 1, field: 1 },
-      emissionIntervalMax: { default: 1, field: 1 },
+      emissionIntervalMin: { default: 1, field: 1, time: 2 },
+      emissionIntervalMax: { default: 1, field: 1, time: 2 },
       limitEmissionCount: { default: false, field: 0 },
       emissionCountLimit: { default: 0, field: 1 },
       unk_ds3_f1_30: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -4057,33 +4074,33 @@ const ActionData: {
       particleOffsetXMax: { default: 0, field: 2, scale: 1 },
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1 },
+      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
       particleRotationVarianceX: { default: 0, field: 2 },
       particleRotationVarianceY: { default: 0, field: 2 },
       particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2 },
-      particleAngularAccelerationXMin: { default: 0, field: 2 },
-      particleAngularAccelerationYMin: { default: 0, field: 2 },
-      particleAngularAccelerationZMin: { default: 0, field: 2 },
-      particleAngularAccelerationXMax: { default: 0, field: 2 },
-      particleAngularAccelerationYMax: { default: 0, field: 2 },
-      particleAngularAccelerationZMax: { default: 0, field: 2 },
+      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
+      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -4094,20 +4111,20 @@ const ActionData: {
       particleSizeXMax: { default: 0, field: 2, scale: 1 },
       particleSizeYMax: { default: 0, field: 2, scale: 1 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4155,10 +4172,10 @@ const ActionData: {
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
       particleRandomTurns: { default: false, field: 0 },
-      particleRandomTurnIntervalMax: { default: 1, field: 1 },
+      particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1 },
+      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4217,21 +4234,21 @@ const ActionData: {
       unk_ds3_p1_1: { default: 0 },
       unk_ds3_p1_2: { default: 0 },
       unk_ds3_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
-      particleAngularAccelerationZ: { default: 0 },
-      particleGrowthRateX: { default: 0, scale: 1 },
-      particleGrowthRateY: { default: 0, scale: 1 },
+      particleAngularAccelerationZ: { default: 0, time: 4 },
+      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
       unk_ds3_p1_15: { default: 0 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_17: { default: 0 },
-      particleGravity: { default: 0, scale: 1 },
+      particleGravity: { default: 0, scale: 1, time: 4 },
       particleRandomTurnAngle: { default: 0 },
       unk_ds3_p1_20: { default: 0 },
       unk_ds3_p2_0: { default: 1 },
@@ -4328,13 +4345,13 @@ const ActionData: {
       emissionParticleCount: { default: 10, field: 1 },
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
-      emissionInterval: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 0, field: 1 },
-      emissionIntervalMax: { default: 0, field: 1 },
+      emissionInterval: { default: 0, field: 1, time: 2 },
+      emissionIntervalMin: { default: 0, field: 1, time: 2 },
+      emissionIntervalMax: { default: 0, field: 1, time: 2 },
       limitConcurrentEmissions: { default: false, field: 0 },
       concurrentEmissionsLimit: { default: 0, field: 1 },
       unk_ac6_f1_26: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -4347,12 +4364,12 @@ const ActionData: {
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1 },
+      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
@@ -4385,8 +4402,8 @@ const ActionData: {
       unk_ac6_f1_81: { default: 0, field: 1 },
       unk_ac6_f1_82: { default: 0, field: 1 },
       unk_ac6_f1_83: { default: 0, field: 1 },
-      unk_ac6_f1_84: { default: 0, field: 2, scale: 1 },
-      unk_ac6_f1_85: { default: 0, field: 2, scale: 1 },
+      unk_ac6_f1_84: { default: 0, field: 2, scale: 1, time: 1 },
+      unk_ac6_f1_85: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ac6_f1_86: { default: 0, field: 1 },
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
@@ -4446,15 +4463,15 @@ const ActionData: {
       unk_ac6_p1_1: { default: 0 },
       unk_ac6_p1_2: { default: 0 },
       unk_ac6_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       color: { default: [1, 1, 1, 1], color: 1 },
-      particleLength: { default: 1 },
+      particleLength: { default: 1, time: 2 },
       particleWidth: { default: 0.1 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ac6_p1_11: { default: 0 },
-      particleGravity: { default: 1, scale: 1 },
+      particleGravity: { default: 1, scale: 1, time: 4 },
       unk_ac6_p1_13: { default: 0 },
       unk_ac6_p2_0: { default: 1 },
       unk_ac6_p2_1: { default: 1 },
@@ -4498,13 +4515,13 @@ const ActionData: {
       emissionParticleCount: { default: 10, field: 1 },
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
-      emissionInterval: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 0, field: 1 },
-      emissionIntervalMax: { default: 0, field: 1 },
+      emissionInterval: { default: 0, field: 1, time: 2 },
+      emissionIntervalMin: { default: 0, field: 1, time: 2 },
+      emissionIntervalMax: { default: 0, field: 1, time: 2 },
       limitConcurrentEmissions: { default: false, field: 0 },
       concurrentEmissionsLimit: { default: 0, field: 1 },
       unk_ac6_f1_26: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -4517,12 +4534,12 @@ const ActionData: {
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1 },
+      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
@@ -4555,8 +4572,8 @@ const ActionData: {
       unk_ac6_f1_81: { default: 0, field: 1 },
       unk_ac6_f1_82: { default: 0, field: 1 },
       unk_ac6_f1_83: { default: 0, field: 1 },
-      unk_ac6_f1_84: { default: 0, field: 2, scale: 1 },
-      unk_ac6_f1_85: { default: 0, field: 2, scale: 1 },
+      unk_ac6_f1_84: { default: 0, field: 2, scale: 1, time: 1 },
+      unk_ac6_f1_85: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ac6_f1_86: { default: 0, field: 1 },
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
@@ -4616,15 +4633,15 @@ const ActionData: {
       unk_ac6_p1_1: { default: 0 },
       unk_ac6_p1_2: { default: 0 },
       unk_ac6_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       color: { default: [1, 1, 1, 1], color: 1 },
-      particleLength: { default: 1 },
+      particleLength: { default: 1, time: 2 },
       particleWidth: { default: 0.1 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ac6_p1_11: { default: 0 },
-      particleGravity: { default: 1, scale: 1 },
+      particleGravity: { default: 1, scale: 1, time: 4 },
       unk_ac6_p1_13: { default: 0 },
       unk_ac6_p2_0: { default: 1 },
       unk_ac6_p2_1: { default: 1 },
@@ -4648,8 +4665,8 @@ const ActionData: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
-      segmentInterval: { default: 0, field: 2 },
-      segmentDuration: { default: 1, field: 2 },
+      segmentInterval: { default: 0, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -4671,7 +4688,7 @@ const ActionData: {
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
-      speedU: { default: 0 },
+      speedU: { default: 0, time: 1 },
       varianceV: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -4763,8 +4780,8 @@ const ActionData: {
       texture: { default: 50004, field: 1, resource: 0, textureType: 'd' },
       depth: { default: 1, field: 2, scale: 1 },
       size: { default: 1, field: 2, scale: 1 },
-      descent: { default: 0.15, field: 2 },
-      duration: { default: 0.15, field: 2 },
+      descent: { default: 0.15, field: 2, time: 2 },
+      duration: { default: 0.15, field: 2, time: 2 },
     },
     games: {
       [Game.Sekiro]: {
@@ -4911,9 +4928,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -4931,7 +4948,7 @@ const ActionData: {
       anibnd: { default: 0, field: 1, resource: 2 },
       animation: { default: 0, field: 1 },
       loopAnimation: { default: true, field: 0 },
-      animationSpeed: { default: 1, field: 2 },
+      animationSpeed: { default: 1, field: 2, time: 1 },
       unk_er_f1_5: { default: 1, field: 1 },
       unk_er_f1_6: { default: 1, field: 1 },
       unk_er_f1_7: { default: 0, field: 1 },
@@ -5005,7 +5022,7 @@ const ActionData: {
       unk_ac6_f1_33: { default: 1, field: 1 },
       unk_ac6_f1_34: { default: 0, field: 1 },
       uvOffset: { default: [0, 0] },
-      uvSpeed: { default: [0, 0] },
+      uvSpeed: { default: [0, 0], time: 1 },
       uvSpeedMultiplier: { default: [1, 1] },
     },
     games: {
@@ -5114,7 +5131,7 @@ const ActionData: {
   },
   [ActionType.WindForce]: {
     props: {
-      force: { default: 1 },
+      force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
       boxSizeX: { default: 0, field: 2, scale: 1 },
@@ -5169,7 +5186,7 @@ const ActionData: {
       unk_sdt_f1_50: { default: 1, field: 2 },
       unk_sdt_f1_51: { default: 0, field: 2 },
       unk_sdt_f1_52: { default: 0, field: 2 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       unk_sdt_f1_54: { default: 0, field: 2 },
       unk_sdt_f1_55: { default: 0, field: 2 },
       unk_sdt_f1_56: { default: 1, field: 2 },
@@ -5193,7 +5210,7 @@ const ActionData: {
   },
   [ActionType.GravityForce]: {
     props: {
-      force: { default: 1 },
+      force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
       boxSizeX: { default: 0, field: 2, scale: 1 },
@@ -5232,7 +5249,7 @@ const ActionData: {
       forceMultiplier: { default: 1, field: 2 },
       unk_ds3_f1_36: { default: 1, field: 2 },
       unk_ds3_f1_37: { default: 1, field: 2 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -5268,7 +5285,7 @@ const ActionData: {
       noiseOffsetX: { default: 0, scale: 1 },
       noiseOffsetY: { default: 0, scale: 1 },
       noiseOffsetZ: { default: 0, scale: 1 },
-      force: { default: 1 },
+      force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
       boxSizeX: { default: 0, field: 2, scale: 1 },
@@ -5309,7 +5326,7 @@ const ActionData: {
       unk_unk_f1_37: { default: 0, field: 1 },
       unk_unk_f1_38: { default: 0, field: 1 },
       unk_unk_f1_39: { default: 0, field: 1 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       unk_unk_f1_41: { default: 0, field: 1 },
       unk_unk_f1_42: { default: 0, field: 1 },
       unk_unk_f1_43: { default: 0, field: 1 },
@@ -5451,16 +5468,16 @@ const ActionData: {
       radiusX: { default: 50, scale: 1 },
       radiusY: { default: 50, scale: 1 },
       jitterAndFlicker: { default: false, field: 0 },
-      jitterAcceleration: { default: 1, field: 2, scale: 1 },
+      jitterAcceleration: { default: 1, field: 2, scale: 1, time: 4 },
       jitterX: { default: 0, field: 2, scale: 1 },
       jitterY: { default: 0, field: 2, scale: 1 },
       jitterZ: { default: 0, field: 2, scale: 1 },
-      flickerIntervalMin: { default: 0, field: 2 },
-      flickerIntervalMax: { default: 1, field: 2 },
+      flickerIntervalMin: { default: 0, field: 2, time: 2 },
+      flickerIntervalMax: { default: 1, field: 2, time: 2 },
       flickerBrightness: { default: 0.5, field: 2 },
       shadows: { default: false, field: 0 },
       separateSpecular: { default: false, field: 0 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       shadowDarkness: { default: 1, field: 2 },
       volumeDensity: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -8798,8 +8815,14 @@ class FXR {
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    writeNode(this.root, bw, game, nodes)
-    writeNodeChildren(this.root, bw, game, nodes)
+    const root = game === Game.DarkSouls3 && this.root instanceof RootNode ?
+      this.root.scaleRateOfTime(
+        this.root.rateOfTime instanceof Property ?
+          this.root.rateOfTime.valueAt(0) : this.root.rateOfTime
+      ) :
+      this.root
+    writeNode(root, bw, game, nodes)
+    writeNodeChildren(root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
@@ -9080,6 +9103,14 @@ class FXR {
       anibnds: number[],
       sounds: number[]
     }
+  }
+
+  clone(): FXR {
+    return new FXR(
+      this.id,
+      this.root.clone(),
+      this.states.map(e => State.from(e.toJSON()))
+    )
   }
 
 }
@@ -9369,6 +9400,7 @@ abstract class Node {
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
+  abstract clone(): Node
 
   static fromJSON(obj: any): Node {
     if (obj instanceof Node) {
@@ -9920,6 +9952,28 @@ abstract class Node {
     return Recolor.generatePalette([this], mode)
   }
 
+  /**
+   * Scale the rate of time for the branch, or optionally just the node. If you
+   * want to change the rate of time for the entire effect, set the
+   * {@link RootNode.prototype.rateOfTime} property instead of using this
+   * method.
+   * 
+   * This method's main purpose is to serve as a fallback for changing the rate
+   * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
+   * property. The rate of time is automatically scaled when writing effects
+   * for DS3, you do not need to do this yourself. As such, this method is only
+   * useful if you want to scale the rate of time for parts of an effect.
+   * @param factor The factor to scale the rate of time by. Setting this to 2
+   * will make the node play twice as fast. Setting it to 0.5 will make it
+   * play half as fast.
+   */
+  scaleRateOfTime(factor: number, recurse: boolean = true) {
+    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
+      action.scaleRateOfTime(factor)
+    }
+    return this
+  }
+
 }
 
 /**
@@ -9977,6 +10031,15 @@ class GenericNode extends Node {
       this.actions.map(action => action.minify()),
       this.effects.map(effect => effect.minify()),
       this.nodes.map(node => node.minify())
+    )
+  }
+
+  clone(): GenericNode {
+    return new GenericNode(
+      this.type,
+      this.actions.map(e => e.clone()),
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
     )
   }
 
@@ -10059,6 +10122,21 @@ class RootNode extends Node {
     }
   }
 
+  clone(): RootNode {
+    return new RootNode(
+      this.nodes.map(e => e.clone()),
+      this.unk70x.clone() as ActionSlots.Unknown70xAction,
+      this.unk10100.clone() as ActionSlots.Unknown10100Action,
+      this.unk10400.clone() as ActionSlots.Unknown10400Action,
+      this.unk10500.clone() as ActionSlots.Unknown10500Action,
+    )
+  }
+
+  /**
+   * Controls how fast time passes for the entire effect.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get rateOfTime() {
     if (this.unk10500 instanceof Unk10500) {
       return this.unk10500.rateOfTime
@@ -10103,12 +10181,16 @@ class ProxyNode extends Node {
     }
   }
 
+  clone(): ProxyNode {
+    return new ProxyNode(this.sfx)
+  }
+
 }
 
 /**
  * Super class for any type of node that contains {@link EffectType effects}.
  */
-class NodeWithEffects extends Node {
+abstract class NodeWithEffects extends Node {
 
   stateEffectMap: number[] = [0]
 
@@ -10194,6 +10276,13 @@ class LevelsOfDetailNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
+  clone(): LevelsOfDetailNode {
+    return new LevelsOfDetailNode(
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
+    )
+  }
+
 }
 
 /**
@@ -10247,6 +10336,13 @@ class BasicNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
+  clone(): BasicNode {
+    return new BasicNode(
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
+    )
+  }
+
 }
 
 /**
@@ -10287,11 +10383,18 @@ class NodeEmitterNode extends NodeWithEffects {
     return node
   }
 
-  minify(): Node {
+  minify(): NodeEmitterNode {
     return new NodeEmitterNode(
       this.effects.map(e => e.minify()),
       this.nodes.map(e => e.minify())
     ).mapStates(...this.stateEffectMap)
+  }
+
+  clone(): NodeEmitterNode {
+    return new NodeEmitterNode(
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
+    )
   }
 
 }
@@ -10385,6 +10488,14 @@ class Effect implements IEffect {
     }
     throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
   }
+
+  clone(): Effect {
+    return new Effect(
+      this.type,
+      this.actions.map(e => e.clone()),
+    )
+  }
+
 }
 
 /**
@@ -10437,6 +10548,14 @@ class LevelsOfDetailEffect implements IEffect {
   }
 
   *walkActions() {}
+
+  clone(): LevelsOfDetailEffect {
+    return new LevelsOfDetailEffect(
+      this.duration,
+      this.thresholds.slice(),
+      this.unk_ac6_f1_5,
+    )
+  }
 
 }
 
@@ -10625,6 +10744,26 @@ class BasicEffect implements IEffect {
     yield this.particleForceMovement
   }
 
+  clone(): BasicEffect {
+    return new BasicEffect({
+      nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
+      nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
+      nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
+      nodeAudio: this.nodeAudio.clone() as ActionSlots.NodeAudioAction,
+      emitter: this.emitter.clone() as ActionSlots.EmitterAction,
+      emitterShape: this.emitterShape.clone() as ActionSlots.EmitterShapeAction,
+      directionSpread: this.directionSpread.clone() as ActionSlots.DirectionSpreadAction,
+      particleModifier: this.particleModifier.clone() as ActionSlots.ParticleModifierAction,
+      particleAttributes: this.particleAttributes.clone() as ActionSlots.ParticleAttributesAction,
+      appearance: this.appearance.clone() as ActionSlots.AppearanceAction,
+      particleMovement: this.particleMovement.clone() as ActionSlots.ParticleMovementAction,
+      emissionAudio: this.emissionAudio.clone() as ActionSlots.EmissionAudioAction,
+      slot12: this.slot12.clone() as ActionSlots.Unknown130Action,
+      nodeForceMovement: this.nodeForceMovement.clone() as ActionSlots.NodeForceMovementAction,
+      particleForceMovement: this.particleForceMovement.clone() as ActionSlots.ParticleForceMovementAction,
+    })
+  }
+
 }
 
 export interface NodeEmitterEffectParams {
@@ -10767,6 +10906,21 @@ class NodeEmitterEffect implements IEffect {
     yield this.nodeForceMovement
   }
 
+  clone(): NodeEmitterEffect {
+    return new NodeEmitterEffect({
+      nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
+      nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
+      nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
+      nodeAudio: this.nodeAudio.clone() as ActionSlots.NodeAudioAction,
+      emitter: this.emitter.clone() as ActionSlots.EmitterAction,
+      emitterShape: this.emitterShape.clone() as ActionSlots.EmitterShapeAction,
+      directionSpread: this.directionSpread.clone() as ActionSlots.DirectionSpreadAction,
+      nodeSelector: this.nodeSelector.clone() as ActionSlots.NodeSelectorAction,
+      emissionAudio: this.emissionAudio.clone() as ActionSlots.EmissionAudioAction,
+      nodeForceMovement: this.nodeForceMovement.clone() as ActionSlots.NodeForceMovementAction,
+    })
+  }
+
 }
 
 //#region Action
@@ -10897,6 +11051,17 @@ class Action implements IAction {
       this.properties1.map(e => e.minify()),
       this.properties2.map(e => e.minify()),
       this.section10s,
+    )
+  }
+
+  clone(): Action {
+    return new Action(
+      this.type,
+      this.fields1.map(e => e.clone()),
+      this.fields2.map(e => e.clone()),
+      this.properties1.map(e => e.clone()),
+      this.properties2.map(e => e.clone()),
+      this.section10s.map(e => e.slice()),
     )
   }
 
@@ -11125,6 +11290,71 @@ class DataAction implements IAction {
       }
     }
     return this
+  }
+
+  /**
+   * Scale the rate of time for the action. If you want to change the rate of
+   * time for the entire effect, set the {@link RootNode.prototype.rateOfTime}
+   * property instead of using this method.
+   * 
+   * This method's main purpose is to serve as a fallback for changing the rate
+   * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
+   * property. The rate of time is automatically scaled when writing effects
+   * for DS3, you do not need to do this yourself. As such, this method is only
+   * useful if you want to scale the rate of time for a single action.
+   * @param factor The factor to scale the rate of time by. Setting this to 2
+   * will make the action play twice as fast. Setting it to 0.5 will make it
+   * play half as fast.
+   */
+  scaleRateOfTime(factor: number) {
+    const inv = 1 / factor
+    const sq = factor * factor
+    if ('props' in ActionData[this.type]) {
+      for (const [name, prop] of Object.entries(ActionData[this.type].props)) {
+        if (
+          this[name] instanceof SequenceProperty ||
+          this[name] instanceof ComponentSequenceProperty
+        ) {
+          this[name].duration = this[name].duration * inv
+        }
+        switch (prop.time) {
+          case TimeOperation.Multiply:
+            this[name] = anyValueMult(factor, this[name])
+            break
+          case TimeOperation.Divide:
+            this[name] = anyValueMult(inv, this[name])
+            break
+          case TimeOperation.DivideIfPositive:
+            if (this[name] instanceof Property) {
+              if (this[name].valueAt(0) > 0) {
+                this[name] = anyValueMult(inv, this[name])
+              }
+            } else {
+              if (this[name] > 0) {
+                this[name] *= inv
+              }
+            }
+            break
+          case TimeOperation.Square:
+            this[name] = anyValueMult(sq, this[name])
+            break
+        }
+      }
+    }
+    return this
+  }
+
+  clone(): DataAction {
+    if ('props' in ActionData[this.type]) {
+      const props = Object.keys(ActionData[this.type].props).map(k => [
+        k,
+        this[k] instanceof Property ? this[k].clone() :
+          Array.isArray(this[k]) ? this[k].slice() : this[k]
+      ])
+      return new (this.constructor as any)(props.length === 1 ? props[0][1] : Object.fromEntries(props))
+    } else {
+      return new (this.constructor as any)()
+    }
   }
 
 }

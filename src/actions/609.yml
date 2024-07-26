@@ -64,6 +64,7 @@ properties:
     field: float
     default: 1
     scale: true
+    time: sq
     desc: |
       Controls the acceleration of the jittering.
     see:
@@ -103,6 +104,7 @@ properties:
       - jitterY
   flickerIntervalMin:
     field: float
+    time: inv
     desc: |
       Controls the minimum interval for flickering.
     see:
@@ -112,6 +114,7 @@ properties:
   flickerIntervalMax:
     field: float
     default: 1
+    time: inv
     desc: |
       Controls the maximum interval for flickering.
     see:
@@ -147,6 +150,7 @@ properties:
   fadeOutTime:
     field: int
     default: 0
+    time: inv
     desc: |
       The number of seconds the light takes to fade to nothing after being destroyed.
 

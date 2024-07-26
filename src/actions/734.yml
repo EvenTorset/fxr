@@ -13,6 +13,7 @@ properties:
     type: ScalarValue
     argument: EffectAge
     scale: true
+    time: sq
     desc: |
       The acceleration in the direction of the force.
   accelerationMultiplier:
