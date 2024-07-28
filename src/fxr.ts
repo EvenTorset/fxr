@@ -6602,10 +6602,10 @@ function writeState(state: State, bw: BinaryWriter, index: number) {
   bw.writeInt32(0)
 }
 
-function writeStateConditions(state: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
+function writeStateConditions(conditions: StateCondition[], bw: BinaryWriter, index: number, acc: StateCondition[]) {
   bw.fill(`StateConditionsOffset${index}`, bw.position)
-  for (const condition of (state as State).conditions) {
-    writeStateCondition(condition, bw, conditions)
+  for (const condition of conditions) {
+    writeStateCondition(condition, bw, acc)
   }
 }
 
@@ -6682,8 +6682,8 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
   }
 }
 
-function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
-  const count = conditions.length
+function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, acc: StateCondition[]) {
+  const count = acc.length
   bw.writeInt16(con.operator | con.unk1 << 2)
   bw.writeUint8(0)
   bw.writeUint8(1)
@@ -6714,11 +6714,11 @@ function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, con
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  conditions.push(con)
+  acc.push(con)
 }
 
-function writeStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
-  writeFormattedStateCondition((con as StateCondition).formatCondition(), bw, conditions)
+function writeStateCondition(con: StateCondition, bw: BinaryWriter, acc: StateCondition[]) {
+  writeFormattedStateCondition(con.formatCondition(), bw, acc)
 }
 
 function writeStateConditionFields(con: StateCondition, bw: BinaryWriter, index: number): number {
@@ -8793,6 +8793,15 @@ class FXR {
       bw.writeInt32(0)
     }
 
+    let rateOfTime = 1
+    if (this.root instanceof RootNode) {
+      if (this.root.rateOfTime instanceof Property) {
+        rateOfTime = this.root.rateOfTime.valueAt(0)
+      } else {
+        rateOfTime = this.root.rateOfTime
+      }
+    }
+
     bw.fill('StateListOffset', bw.position)
     bw.writeInt32(0)
     bw.writeInt32(this.states.length)
@@ -8809,17 +8818,39 @@ class FXR {
     bw.fill('ConditionOffset', bw.position)
     const conditions: StateCondition[] = []
     for (let i = 0; i < this.states.length; ++i) {
-      writeStateConditions(this.states[i], bw, i, conditions)
+      const cons = game === Game.DarkSouls3 ? this.states[i].conditions.map(c => {
+        if (c.leftOperandType === OperandType.StateTime && c.rightOperandType === OperandType.Literal) {
+          return new StateCondition(
+            c.operator,
+            c.unk1,
+            c.nextState,
+            c.leftOperandType,
+            c.leftOperandValue,
+            c.rightOperandType,
+            c.rightOperandValue / rateOfTime,
+          )
+        } else if (c.rightOperandType === OperandType.StateTime && c.leftOperandType === OperandType.Literal) {
+          return new StateCondition(
+            c.operator,
+            c.unk1,
+            c.nextState,
+            c.leftOperandType,
+            c.leftOperandValue / rateOfTime,
+            c.rightOperandType,
+            c.rightOperandValue,
+          )
+        } else {
+          return c
+        }
+      }) : this.states[i].conditions
+      writeStateConditions(cons, bw, i, conditions)
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
     const root = game === Game.DarkSouls3 && this.root instanceof RootNode ?
-      this.root.scaleRateOfTime(
-        this.root.rateOfTime instanceof Property ?
-          this.root.rateOfTime.valueAt(0) : this.root.rateOfTime
-      ) :
+      this.root.scaleRateOfTime(rateOfTime) :
       this.root
     writeNode(root, bw, game, nodes)
     writeNodeChildren(root, bw, game, nodes)
@@ -9164,8 +9195,8 @@ class StateCondition {
    * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
    * to make the condition always true.
    * @param nextState If the condition is false, the state at this index will
-   * be checked instead. Set it to -1 to disable the node if the condition
-   * is false.
+   * be checked next. Set it to -1 to disable the sfx if the condition is
+   * false.
    * @param leftOperandType Controls what type of value the operand to the left
    * of the operator should be.
    * @param leftOperandValue This does different things depending on the
@@ -10141,7 +10172,7 @@ class RootNode extends Node {
     if (this.unk10500 instanceof Unk10500) {
       return this.unk10500.rateOfTime
     } else {
-      return null
+      return 1
     }
   }
   set rateOfTime(value: ScalarValue) {
