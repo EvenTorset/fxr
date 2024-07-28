@@ -41,6 +41,8 @@
 - Sequence properties and component sequence properties can now be minified to constant properties if all of their keyframes are the same.
 - Some bugs have been fixed, and some improvements have been made to the anyValueSum and anyValueMult functions.
 - Various broken links on the documentation site have been fixed.
+- The Node.js setup guide has been updated to use the new `@cccode/create-fxr` module to set up the project folder, which eliminates some manual steps that are important to get right.
+- The editing example in the readme has been updated to use some of the new recolor features instead of doing it the old way.
 
 ## [12.2.0] - 2024-07-14
 

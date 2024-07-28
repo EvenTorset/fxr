@@ -1,17 +1,19 @@
 # FXR
 This is a JavaScript library for creating and editing FXR files (particle effects, lights, etc.) for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6. It does not require any dependencies, and works in both the browser and in Node.js.
 
-It includes classes for all known structures in the file format that makes it relatively very easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in many different ways: scaling, recoloring, converting between games, and more.
+It includes classes for all known structures in the file format that makes it relatively easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in many different ways: scaling, recoloring, converting between games, and more.
 
 ## Installation
 The library is available on [npm](https://www.npmjs.com/package/@cccode/fxr), so you can use a package manager like npm, yarn or pnpm to install it.
 
-While the library does not have any dependencies, it *does* have some dev dependencies for compiling TypeScript and generating docs. To avoid installing those with npm, include `--omit=dev` when running the installation command:
+**I highly recommend checking out [the setup guide for Node.js here](https://github.com/EvenTorset/fxr/blob/main/NODE.md) if you are not familiar with JS or Node.js.**
+
+<br>
+
+If you *are* familiar with JS and Node.js, you can install the library with this command:
 ```
 npm i @cccode/fxr --omit=dev
 ```
-
-If you are new to using Node.js and want to use the library locally, check out [the Node.js guide here](https://github.com/EvenTorset/fxr/blob/main/NODE.md). It goes over the basics and can help you set everything up and get started.
 
 ## Documentation
 Check out the auto-generated docs at https://fxr-docs.pages.dev/ to find more information about the specialized action classes and other things. Also check out the [example directory](https://github.com/EvenTorset/fxr/tree/main/examples) in the GitHub repo, it includes examples for creating new effects as well as editing existing effects in various ways.
@@ -30,50 +32,18 @@ Once it has been read, you can change things in the FXR object to whatever you n
 
 Once you have made your changes to the FXR object, you can write it to a file if you're using Node.js, or you can generate an ArrayBuffer with the file's content if you need it to run in the browser.
 ```js
-import { FXR, Game } from '@cccode/fxr'
+import { FXR, Game, Recolor, hex } from '@cccode/fxr'
 
 // Parse file
 const fxr = await FXR.read('f000450360.fxr', Game.EldenRing)
 
-// Make changes to the FXR, for example scaling it so it's half as big:
+// Make some changes to the FXR here.
+
+// For example, you can scale the effect to be half as big as the original:
 fxr.root.scale(0.5)
 
-// Let's also recolor this effect. This is the color we want to change this to,
-// a red-ish orange.
-const targetColor = [1, 0.3, 0]
-
-// This function takes a function that remaps colors passed to it. You can use
-// any remapping method you like, but here is one that works pretty well in
-// most cases and only requires small tweaks depending on the FXR it's used
-// with and what your target color is.
-fxr.root.recolor(([r, g, b, a]) => {
-  // Colors in FXRs are allowed to go above 1, and it usually just adds a bloom
-  // effect to the particles. We need to scale it back down to the 0-1 range
-  // for these calculations, and then scale it back to what it was after.
-  const scale = Math.max(r, g, b, 1)
-  r /= scale
-  g /= scale
-  b /= scale
-
-  // Calculate HSV value and saturation
-  const min = Math.min(r, g, b)
-  const max = Math.max(r, g, b)
-  let s = max > 0 ? (max - min) / max : 0
-
-  // Linear interpolation between the HSV "value" (max) and the target color
-  // based on the saturation of the original color.
-  r = max * (1 - s) + targetColor[0] * s
-  g = max * (1 - s) + targetColor[1] * s
-  b = max * (1 - s) + targetColor[2] * s
-
-  // Scale the values to match the original brightness of the effect.
-  r *= scale
-  g *= scale
-  b *= scale
-
-  // Return the modified color with the original alpha.
-  return [r, g, b, a]
-})
+// Or you can recolor the effect:
+fxr.root.recolor(Recolor.standardBlend(hex`ff4d00`))
 
 // Write the modified file. Note that you may change the game to output this
 // for to any of the four supported games, as long as the game supports all
