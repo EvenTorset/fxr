@@ -4,32 +4,39 @@
 
 ### Highlights
 - Many new recolor-related features have been added to make recoloring even easier.
-  - There is now a template tag for converting hex color strings into color vectors for FXRs. This tag is simply called `hex`, so it is now possible to do something like ``hex`5588ff` `` and it would be equivalent to `[0.333, 0.533, 1, 1]`. It supports 3-, 4-, 6-, and 8-digit hex values. This can be used anywhere where you would normally put colors vectors.
+  - There is now a template tag for converting hex color strings into color vectors for FXRs. This tag is simply called `hex`, so it is now possible to do something like `` hex`5588ff` `` and it would be equivalent to `[0.333, 0.533, 1, 1]`. It supports 3-, 4-, 6-, and 8-digit hex values. This can be used anywhere where you would normally put color vectors.
   - There are now two new functions for generating a color palette from existing effects:
-    - Node.generateColorPalette - Generates a palette from the node it is called on.
-    - Recolor.generatePalette - Generates a palette from an array of nodes or FXR objects.
-  - The Node.recolor method can now also take a color palette generated from the two functions above. This will apply the palette to the node it is called on, effectively allowing you to copy a set of colors from one effect and apply them to another. This can be very useful if you want to make an effect fit an existing theme or set of effects.
-  - Many recolor functions have been added that can be used with the Node.recolor and DataAction.recolor methods:
-    - Recolor.standardBlend
-    - Recolor.replace
-    - Recolor.multiply
-    - Recolor.add
-    - Recolor.invert
-    - Recolor.grayscale
-    - Recolor.curves
-    - Recolor.mix
-    - Recolor.hueShift
-    - Recolor.replaceHue
-    - Recolor.replaceSaturation
-    - Recolor.colorBlend
-    - Recolor.scaleSaturation
+    - `Node.generateColorPalette` - Generates a palette from the node it is called on.
+    - `Recolor.generatePalette` - Generates a palette from an array of nodes or FXR objects.
+  - The `Node.recolor` method can now also take a color palette generated from the two functions above. This will apply the palette to the node it is called on, allowing you to copy a set of colors from one effect and apply them to another. This can be very useful if you want to make an effect fit an existing theme or set of effects.
+  - Added a new `Recolor` namespace, which contains many different recolor functions that can be used with the `Node.recolor` and `DataAction.recolor` methods:
+    - `Recolor.standardBlend`
+    - `Recolor.replace`
+    - `Recolor.multiply`
+    - `Recolor.add`
+    - `Recolor.invert`
+    - `Recolor.grayscale`
+    - `Recolor.curves`
+    - `Recolor.mix`
+    - `Recolor.hueShift`
+    - `Recolor.replaceHue`
+    - `Recolor.replaceSaturation`
+    - `Recolor.colorBlend`
+    - `Recolor.scaleSaturation`
   - There is now also a DataAction.recolorProperty method that can be used to apply a recolor function to a single color property or color vector field.
+- Added a new `FXRUtility` namespace, which contains methods to simplify various things when creating new effects.
+  - `FXRUtility.line` - Creates a node with a particle attached that forms a line between two points you give it. This has options for line width, color, and more.
+  - `FXRUtility.text` - Converts a given string to a node that looks like that string. This has options for font size, text alignment, and more.
 - The color multiplier and bloom color fields in the LensFlare action have been converted to vector fields.
   - These fields will now be recolored properly by the recolor functions in the library. They weren't recolored at all before, which was a bug that's now fixed.
   - This greatly simplifies the class by getting rid of 24 fields (~30% of fields1 fields in this class), which makes it much easier to both create and edit these actions.
+- Converting point lights between DS3 and the other games should now keep the brightness more like the original. DS3 point lights seem to work a bit differently, so it stil won't be perfectly accurate, but it should be much closer than before.
+- The rate of time can now be adjusted on nodes or actions using the new scaleRateOfTime method.
+- The rate of time in action 10500 is now automatically applied to everything when writing to DS3. This fixes converting effects from newer games to DS3 causing them to play at a different rate than the original effect if the original had a non-unit value for the rate of time.
 - Various functions that combine properties will now filter out some keyframes if they are less than a millisecond apart.
 - Sequence properties and component sequence properties can now be minified to constant properties if all of their keyframes are the same.
 - Some bugs have been fixed, and some improvements have been made to the anyValueSum and anyValueMult functions.
+- Various broken links on the documentation site have been fixed.
 
 ## [12.2.0] - 2024-07-14
 
