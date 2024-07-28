@@ -33,6 +33,10 @@
 - Converting point lights between DS3 and the other games should now keep the brightness more like the original. DS3 point lights seem to work a bit differently, so it stil won't be perfectly accurate, but it should be much closer than before.
 - The rate of time can now be adjusted on nodes or actions using the new scaleRateOfTime method.
 - The rate of time in action 10500 is now automatically applied to everything when writing to DS3. This fixes converting effects from newer games to DS3 causing them to play at a different rate than the original effect if the original had a non-unit value for the rate of time.
+- The `FXR.toArrayBuffer` method will now throw if the FXR's ID is invalid.
+- Added an `FXR.name` getter function to FXR objects, which returns a file name for the FXR based on its ID.
+  - For example, an FXR with 1 as the ID would return `f000000001.fxr`.
+  - This is very useful when saving an effect to a file, as now you can just do `await fxr.saveAs(fxr.name, Game.EldenRing)`, for example.
 - Various functions that combine properties will now filter out some keyframes if they are less than a millisecond apart.
 - Sequence properties and component sequence properties can now be minified to constant properties if all of their keyframes are the same.
 - Some bugs have been fixed, and some improvements have been made to the anyValueSum and anyValueMult functions.

@@ -7830,6 +7830,19 @@ function averagePaletteEntries<T extends Recolor.ColorPalette[keyof Recolor.Colo
   return [obj] as T
 }
 
+function assertValidFXRID(id: number) {
+  if (id < 0 || id >= 1e9) {
+    throw new Error(
+      `FXR ID out of range: ${id} - The ID must be a positive integer less than ${1e9.toLocaleString()}.`
+    )
+  }
+  if (id !== Math.trunc(id)) {
+    throw new Error(
+      `Non-integer FXR ID: ${id} - The ID must be a positive integer less than ${1e9.toLocaleString()}.`
+    )
+  }
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
@@ -8743,6 +8756,7 @@ class FXR {
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
   toArrayBuffer(game: Game = Game.EldenRing) {
+    assertValidFXRID(this.id)
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
     bw.writeString('FXR\0')
@@ -9142,6 +9156,19 @@ class FXR {
       this.root.clone(),
       this.states.map(e => State.from(e.toJSON()))
     )
+  }
+
+  /**
+   * File name for this FXR.
+   * 
+   * Note that this is not necessarily the name of the file that was parsed. It
+   * generates a new name based on the ID of the FXR. This follows the naming
+   * convention used by the games (`f<0-padded ID>.fxr`), so an FXR with 1 as
+   * the ID would be `f000000001.fxr`, for example.
+   */
+  get name() {
+    assertValidFXRID(this.id)
+    return `f${this.id.toString().padStart(9, '0')}.fxr`
   }
 
 }
