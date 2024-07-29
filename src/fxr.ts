@@ -42094,33 +42094,21 @@ namespace Recolor {
    * colors.
    * @param targetColor The target color.
    */
-  export function standardBlend(targetColor: Vector3): RecolorFunction {
+  export function standardBlend(targetColor: Vector3 | Vector4): RecolorFunction {
     return ([r, g, b, a]: Vector4): Vector4 => {
-      // Colors in FXRs are allowed to go above 1, and it usually just adds a bloom
-      // effect to the particles. We need to scale it back down to the 0-1 range
-      // for these calculations, and then scale it back to what it was after.
       const scale = Math.max(r, g, b, 1)
       r /= scale
       g /= scale
       b /= scale
 
-      // Calculate HSV value and saturation
       const min = Math.min(r, g, b)
       const max = Math.max(r, g, b)
-      let s = max > 0 ? (max - min) / max : 0
+      const s = max > 0 ? (max - min) / max : 0
 
-      // Linear interpolation between the HSV "value" (max) and the target color
-      // based on the saturation of the original color.
-      r = max * (1 - s) + targetColor[0] * s
-      g = max * (1 - s) + targetColor[1] * s
-      b = max * (1 - s) + targetColor[2] * s
+      r = lerp(max, targetColor[0], s) * scale
+      g = lerp(max, targetColor[1], s) * scale
+      b = lerp(max, targetColor[2], s) * scale
 
-      // Scale the values to match the original brightness of the effect.
-      r *= scale
-      g *= scale
-      b *= scale
-
-      // Return the modified color with the original alpha.
       return [r, g, b, a]
     }
   }
