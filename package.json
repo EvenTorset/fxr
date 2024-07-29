@@ -44,7 +44,7 @@
   },
   "homepage": "https://fxr-docs.pages.dev/",
   "devDependencies": {
-    "@types/node": "^20.14.9",
+    "@types/node": "^22.0.0",
     "chokidar": "^3.6.0",
     "cpy-cli": "^5.0.0",
     "npm-run-all2": "^6.2.0",
