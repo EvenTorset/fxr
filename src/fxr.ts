@@ -42206,7 +42206,7 @@ namespace Recolor {
     return ([r, g, b, a]) => {
       const scale = Math.max(r, g, b, 1)
       const [ h, s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
-      return [...(hsvToRgb(mod(h + angle, 360) / 360, s, v).map(e => e * scale) as Vector3), a]
+      return [...(hsvToRgb(mod(h * 360 + angle, 360) / 360, s, v).map(e => e * scale) as Vector3), a]
     }
   }
 
