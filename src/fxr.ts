@@ -42215,7 +42215,7 @@ namespace Recolor {
    * with that of a given color.
    * @param color The color whose hue will be used.
    */
-  export function replaceHue(color: Vector4): RecolorFunction {
+  export function replaceHue(color: Vector3 | Vector4): RecolorFunction {
     const [ th ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
     return ([r, g, b, a]) => {
       const scale = Math.max(r, g, b, 1)
@@ -42229,7 +42229,7 @@ namespace Recolor {
    * color with that of a given color.
    * @param color The color whose saturation will be used.
    */
-  export function replaceSaturation(color: Vector4): RecolorFunction {
+  export function replaceSaturation(color: Vector3 | Vector4): RecolorFunction {
     const [ , ts ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
     return ([r, g, b, a]) => {
       const scale = Math.max(r, g, b, 1)
@@ -42243,7 +42243,7 @@ namespace Recolor {
    * original color with that of a given color.
    * @param color The color whose hue and saturation will be used.
    */
-  export function colorBlend(color: Vector4): RecolorFunction {
+  export function colorBlend(color: Vector3 | Vector4): RecolorFunction {
     const rgb = color.slice(0, 3) as Vector3
     const inputScale = Math.max(...rgb, 1)
     const [ th, ts ] = rgbToHsv(...(rgb.map(e => e / inputScale) as Vector3))
