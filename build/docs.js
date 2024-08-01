@@ -71,7 +71,7 @@ await fs.writeFile('docs/q/index.html', /*html*/`
           linkMap[entry.text + '.' + child.text] = child.path
         }
       }
-      const parts = location.hash.slice(1).split('.')
+      const parts = location.hash.slice(1).replace(/\.prototype(?=\.)/, '').split('.')
       if (parts.slice(0, 2).join('.') in linkMap) {
         if (parts.length > 2) {
           location.href = '/' + linkMap[parts.slice(0, 2).join('.')] + '#' + parts[2]
