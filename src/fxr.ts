@@ -8951,7 +8951,7 @@ class FXR {
    */
   async saveAs(path: PathLike | FileHandle, game: Game) {
     const fs = await import('node:fs/promises')
-    await fs.writeFile(path, Buffer.from(this.toArrayBuffer(game)))
+    await fs.writeFile(path, new Uint8Array(this.toArrayBuffer(game)))
   }
 
   static fromJSON(obj: {
