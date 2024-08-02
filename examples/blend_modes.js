@@ -42,7 +42,7 @@ fxr.root.nodes = [
     // can see it.
     new NodeAttachToCamera,
     NodeTransform({
-      offsetZ: 1,
+      offset: [0, 0, 1],
     })
   ],
 
@@ -53,8 +53,11 @@ fxr.root.nodes = [
     const y = Math.floor(i / blendModes.length)
     return new BasicNode([
       NodeTransform({
-        offsetX: w / blendModes.length * x - w / 2 + w / blendModes.length / 2,
-        offsetY: -h / colors.length * y + h / 2 - h / colors.length / 2,
+        offset: [
+          w / blendModes.length * x - w / 2 + w / blendModes.length / 2,
+          -h / colors.length * y + h / 2 - h / colors.length / 2,
+          0
+        ]
       }),
       new BillboardEx({
         blendMode: blendModes[x],

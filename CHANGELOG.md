@@ -27,9 +27,9 @@
 - Added a new `FXRUtility` namespace, which contains methods to simplify various things when creating new effects.
   - `FXRUtility.line` - Creates a node with a particle attached that forms a line between two points you give it. This has options for line width, color, and more.
   - `FXRUtility.text` - Converts a given string to a node that looks like that string. This has options for font size, text alignment, and more.
-- The color multiplier and bloom color fields in the LensFlare action have been converted to vector fields.
-  - These fields will now be recolored properly by the recolor functions in the library. They weren't recolored at all before, which was a bug that's now fixed.
-  - This greatly simplifies the class by getting rid of 24 fields (~30% of fields1 fields in this class), which makes it much easier to both create and edit these actions.
+- The offset and rotation fields in the node transform actions (35 and 36) have been converted to vector fields.
+- The color multiplier and bloom color fields in the LensFlare action (10014) have been converted to vector fields.
+  - This fixes a bug where these fields were not changed by the recolor functions in the library.
 - Converting point lights between DS3 and the other games should now keep the brightness more like the original. DS3 point lights seem to work a bit differently, so it stil won't be perfectly accurate, but it should be much closer than before.
 - The rate of time can now be adjusted on nodes or actions using the new scaleRateOfTime method.
 - The rate of time in action 10500 is now automatically applied to everything when writing to DS3. This fixes converting effects from newer games to DS3 causing them to play at a different rate than the original effect if the original had a non-unit value for the rate of time.

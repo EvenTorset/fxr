@@ -50,9 +50,8 @@ fxr.states = [
 function crossguardSide(position) {
   return new BasicNode([
     NodeTransform({
-      rotationY: 90,
-      offsetY: 0.54,
-      offsetX: 0.135 * position
+      offset: [0.135 * position, 0.54, 0],
+      rotation: [0, 90, 0],
     }),
     new MultiTextureBillboardEx({
       orientation: OrientationMode.LocalYaw,
@@ -72,9 +71,8 @@ function crossguardSide(position) {
 function bladeCap(position) {
   return new BasicNode([
     NodeTransform({
-      rotationX: 90,
-      rotationZ: 90,
-      offsetY: 0.5 * position,
+      rotation: [90, 0, 90],
+      offset: [0, 0.5 * position, 0],
     }),
     new BillboardEx({
       texture: 10011,
@@ -94,8 +92,8 @@ fxr.root.nodes = [
   new BasicNode([
     // This is used to position the entire effect
     NodeTransform({
-      rotationX: -90,
-      offsetZ: 0.55
+      rotation: [-90, 0, 0],
+      offset: [0, 0, 0.55]
     })
   ], [
     // Steam during rain/snow
@@ -147,7 +145,7 @@ fxr.root.nodes = [
 
     // Blade
     new BasicNode([
-      NodeTransform({ rotationX: 90 }),
+      NodeTransform({ rotation: [90, 0, 0] }),
       new BillboardEx({
         orientation: OrientationMode.LocalYaw,
         blendMode: BlendMode.Add,
@@ -189,7 +187,7 @@ fxr.root.nodes = [
 
     // Trail
     new BasicNode([
-      NodeTransform({ rotationX: 90 }),
+      NodeTransform({ rotation: [90, 0, 0] }),
       new Tracer({
         blendMode: BlendMode.Add,
         width: 0.5,

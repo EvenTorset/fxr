@@ -41,7 +41,7 @@ fxr.root.nodes = [
     // Offset the node slightly so that it's in front of the camera instead of
     // being at the exact same position as the camera.
     NodeTransform({
-      offsetZ: distance
+      offset: [0, 0, distance]
     }),
     /*
       Use any particle type you'd like here. RadialBlur and Distortion are

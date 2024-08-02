@@ -94,10 +94,11 @@ fxr.root.nodes = [
 
     // Most actions have their own subclasses that make them easier to create.
     // You can always use the generic Action class, but the subclasses are
-    // better for readability and they are a lot easier to create.
+    // better for readability, are a lot easier to create, and allows various
+    // utility functions in the library to work with them.
 
     // This is equivalent to the action created above:
-    new StaticNodeTransform({ offsetY: 0.5 }),
+    new StaticNodeTransform({ offset: [0, 0.5, 0] }),
 
 
     new PeriodicEmitter({ interval: 0.1, perInterval: 10 }), // Action 300

@@ -57,7 +57,7 @@ fxr.root.nodes = [
     }),
   ]),
   new BasicNode([
-    NodeTransform({ rotationX: 90 }),
+    NodeTransform({ rotation: [90, 0, 0] }),
     new PeriodicEmitter({ interval: 0.1, perInterval: 2 }),
     new SphereEmitterShape({ radius: 0.075 }),
     new ParticleAttributes({
@@ -87,7 +87,7 @@ fxr.root.nodes = [
     })
   ]),
   new BasicNode([
-    NodeTransform({ offsetY: 0.15 }),
+    NodeTransform({ offset: [0, 0.15, 0] }),
     new PointLight({
       diffuseColor: [1, 0.65, 0.475, 1],
       radius: 20,
