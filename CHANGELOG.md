@@ -23,7 +23,8 @@
     - `Recolor.replaceSaturation`
     - `Recolor.colorBlend`
     - `Recolor.scaleSaturation`
-  - There is now also a DataAction.recolorProperty method that can be used to apply a recolor function to a single color property or color vector field.
+  - There is now also a `DataAction.recolorProperty` method that can be used to apply a recolor function to a single color property or color vector field.
+  - Added `Node.colors` and `DataAction.colors` generator methods, which yield all unique color values in the node/action.
 - Added a new `FXRUtility` namespace, which contains methods to simplify various things when creating new effects.
   - `FXRUtility.line` - Creates a node with a particle attached that forms a line between two points you give it. This has options for line width, color, and more.
   - `FXRUtility.text` - Converts a given string to a node that looks like that string. This has options for font size, text alignment, and more.

@@ -9539,6 +9539,25 @@ abstract class Node {
   }
 
   /**
+   * Yields all unique color values in the branch, or optionally only ones in
+   * the node.
+   * @param [recurse=true] Controls whether or not to yield colors in
+   * descendant nodes. Defaults to true.
+   */
+  *colors(recurse: boolean = true) {
+    const colors = new Set<string>()
+    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
+      for (const color of action.colors()) {
+        const cs = color.join(',')
+        if (!colors.has(cs)) {
+          colors.add(cs)
+          yield color
+        }
+      }
+    }
+  }
+
+  /**
    * Scales the entire branch by a factor. This updates all sizes, offsets,
    * lengths, and radii of the actions in the branch, except certain
    * multiplicative fields and properties.
@@ -11328,6 +11347,66 @@ class DataAction implements IAction {
       }
     }
     return this
+  }
+
+  *#colors(): Generator<Vector4> {
+    if ('props' in ActionData[this.type]) {
+      for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+        if ('color' in v) {
+          let prop: Vector4Value = this[k]
+          if (Array.isArray(prop)) {
+            yield prop
+            continue
+          }
+          if (prop instanceof ComponentSequenceProperty) {
+            prop = prop.combineComponents()
+          }
+          if (prop instanceof ValueProperty) {
+            yield prop.value
+          } else if (prop instanceof SequenceProperty) {
+            for (const keyframe of prop.keyframes) {
+              yield keyframe.value
+            }
+          }
+          for (const mod of prop.modifiers) {
+            if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+              yield mod.max
+            } else if (mod instanceof RandomRangeModifier) {
+              yield mod.min
+              yield mod.max
+            } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+              let factor = mod.factor
+              if (factor instanceof ComponentSequenceProperty) {
+                factor.combineComponents()
+              }
+              if (factor instanceof ValueProperty) {
+                yield factor.value
+              } else if (factor instanceof SequenceProperty) {
+                for (const keyframe of factor.keyframes) {
+                  yield keyframe.value
+                }
+              } else {
+                yield factor
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Yields all unique color values in the action.
+   */
+  *colors() {
+    const colors = new Set<string>()
+    for (const color of this.#colors()) {
+      const cs = color.join(',')
+      if (!colors.has(cs)) {
+        colors.add(cs)
+        yield color
+      }
+    }
   }
 
   /**
