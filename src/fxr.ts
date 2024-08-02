@@ -2018,16 +2018,12 @@ const ActionData: {
   },
   [ActionType.StaticNodeTransform]: {
     props: {
-      offsetX: { default: 0, field: 2, scale: 1 },
-      offsetY: { default: 0, field: 2, scale: 1 },
-      offsetZ: { default: 0, field: 2, scale: 1 },
-      rotationX: { default: 0, field: 2 },
-      rotationY: { default: 0, field: 2 },
-      rotationZ: { default: 0, field: 2 },
+      offset: { default: [0, 0, 0], field: 4, scale: 1 },
+      rotation: { default: [0, 0, 0], field: 4 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ']
+        fields1: ['offset','rotation']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -2036,22 +2032,14 @@ const ActionData: {
   },
   [ActionType.RandomNodeTransform]: {
     props: {
-      offsetX: { default: 0, field: 2, scale: 1 },
-      offsetY: { default: 0, field: 2, scale: 1 },
-      offsetZ: { default: 0, field: 2, scale: 1 },
-      rotationX: { default: 0, field: 2 },
-      rotationY: { default: 0, field: 2 },
-      rotationZ: { default: 0, field: 2 },
-      offsetVarianceX: { default: 0, field: 2, scale: 1 },
-      offsetVarianceY: { default: 0, field: 2, scale: 1 },
-      offsetVarianceZ: { default: 0, field: 2, scale: 1 },
-      rotationVarianceX: { default: 0, field: 2 },
-      rotationVarianceY: { default: 0, field: 2 },
-      rotationVarianceZ: { default: 0, field: 2 },
+      offset: { default: [0, 0, 0], field: 4, scale: 1 },
+      rotation: { default: [0, 0, 0], field: 4 },
+      offsetVariance: { default: [0, 0, 0], field: 4, scale: 1 },
+      rotationVariance: { default: [0, 0, 0], field: 4 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ','offsetVarianceX','offsetVarianceY','offsetVarianceZ','rotationVarianceX','rotationVarianceY','rotationVarianceZ']
+        fields1: ['offset','rotation','offsetVariance','rotationVariance']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -7846,23 +7834,19 @@ function assertValidFXRID(id: number) {
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
-      props.offsetX *= -1
-      props.rotationX *= -1
+      props.offset[0] *= -1
+      props.rotation[0] *= -1
       return props
     },
     write(props: StaticNodeTransformParams, game: Game) {
-      props.offsetX *= -1
-      props.rotationX *= -1
+      props.offset[0] *= -1
+      props.rotation[0] *= -1
       return props
     },
     minify(this: StaticNodeTransform): AnyAction {
       if (
-        this.offsetX === 0 &&
-        this.offsetY === 0 &&
-        this.offsetZ === 0 &&
-        this.rotationX === 0 &&
-        this.rotationY === 0 &&
-        this.rotationZ === 0
+        this.offset.every(e => e === 0) &&
+        this.rotation.every(e => e === 0)
       ) {
         return new Action
       }
@@ -7871,27 +7855,23 @@ const ActionDataConversion = {
   },
   [ActionType.RandomNodeTransform]: {
     read(props: RandomNodeTransformParams, game: Game) {
-      props.offsetX *= -1
+      props.offset[0] *= -1
       return props
     },
     write(props: RandomNodeTransformParams, game: Game) {
-      props.offsetX *= -1
+      props.offset[0] *= -1
       return props
     },
     minify(this: RandomNodeTransform): AnyAction {
       if (
-        this.offsetVarianceX === 0 &&
-        this.offsetVarianceY === 0 &&
-        this.offsetVarianceZ === 0 &&
-        this.rotationVarianceX === 0 &&
-        this.rotationVarianceY === 0 &&
-        this.rotationVarianceZ === 0
+        this.offsetVariance.every(e => e === 0) &&
+        this.rotationVariance.every(e => e === 0)
       ) {
         return ActionDataConversion[ActionType.StaticNodeTransform].minify.call(
           new StaticNodeTransform(this).assign({
             // For some reason, StaticNodeTransform flips the X rotation, but
             // this one doesn't, even though the X offset is flipped in both.
-            rotationX: -this.rotationX
+            rotation: [-this.rotation[0], this.rotation[1], this.rotation[2]]
           })
         )
       }
@@ -11501,21 +11481,13 @@ function NodeMovement(params: NodeMovementParams = {}) {
  */
 function NodeTransform(params: NodeTransformParams = {}) {
   if (
-    'offsetVarianceX' in params ||
-    'offsetVarianceY' in params ||
-    'offsetVarianceZ' in params ||
-    'rotationVarianceX' in params ||
-    'rotationVarianceY' in params ||
-    'rotationVarianceZ' in params
+    'offsetVariance' in params ||
+    'rotationVariance' in params
   ) {
     return new RandomNodeTransform(params)
   } else if (
-    'offsetX' in params ||
-    'offsetY' in params ||
-    'offsetZ' in params ||
-    'rotationX' in params ||
-    'rotationY' in params ||
-    'rotationZ' in params
+    'offset' in params ||
+    'rotation' in params
   ) {
     return new StaticNodeTransform(params)
   }
@@ -11845,41 +11817,17 @@ class NodeSpin extends DataAction {
 
 export interface StaticNodeTransformParams {
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetX?: number
+  offset?: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetY?: number
-  /**
-   * Translation of the node along the local Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  offsetZ?: number
-  /**
-   * The rotation of the node around the local X-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationX?: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationY?: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationZ?: number
+  rotation?: Vector3
 }
 
 /**
@@ -11891,29 +11839,13 @@ export interface StaticNodeTransformParams {
 class StaticNodeTransform extends DataAction {
   declare type: ActionType.StaticNodeTransform
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    */
-  offsetX: number
+  offset: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    */
-  offsetY: number
-  /**
-   * Translation of the node along the local Z-axis.
-   */
-  offsetZ: number
-  /**
-   * The rotation of the node around the local X-axis in degrees.
-   */
-  rotationX: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   */
-  rotationY: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   */
-  rotationZ: number
+  rotation: Vector3
   constructor(props: StaticNodeTransformParams = {}) {
     super(ActionType.StaticNodeTransform)
     this.assign(props)
@@ -11922,77 +11854,29 @@ class StaticNodeTransform extends DataAction {
 
 export interface RandomNodeTransformParams {
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetX?: number
+  offset?: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetY?: number
+  rotation?: Vector3
   /**
-   * Translation of the node along the local Z-axis.
+   * The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetZ?: number
+  offsetVariance?: Vector3
   /**
-   * The rotation of the node around the local X-axis in degrees.
+   * The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  rotationX?: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationY?: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationZ?: number
-  /**
-   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `0`
-   */
-  offsetVarianceX?: number
-  /**
-   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `0`
-   */
-  offsetVarianceY?: number
-  /**
-   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `0`
-   */
-  offsetVarianceZ?: number
-  /**
-   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `0`
-   */
-  rotationVarianceX?: number
-  /**
-   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `0`
-   */
-  rotationVarianceY?: number
-  /**
-   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `0`
-   */
-  rotationVarianceZ?: number
+  rotationVariance?: Vector3
 }
 
 /**
@@ -12004,53 +11888,21 @@ export interface RandomNodeTransformParams {
 class RandomNodeTransform extends DataAction {
   declare type: ActionType.RandomNodeTransform
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    */
-  offsetX: number
+  offset: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    */
-  offsetY: number
+  rotation: Vector3
   /**
-   * Translation of the node along the local Z-axis.
+   * The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
    */
-  offsetZ: number
+  offsetVariance: Vector3
   /**
-   * The rotation of the node around the local X-axis in degrees.
+   * The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
    */
-  rotationX: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   */
-  rotationY: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   */
-  rotationZ: number
-  /**
-   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
-   */
-  offsetVarianceX: number
-  /**
-   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
-   */
-  offsetVarianceY: number
-  /**
-   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
-   */
-  offsetVarianceZ: number
-  /**
-   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
-   */
-  rotationVarianceX: number
-  /**
-   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
-   */
-  rotationVarianceY: number
-  /**
-   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
-   */
-  rotationVarianceZ: number
+  rotationVariance: Vector3
   constructor(props: RandomNodeTransformParams = {}) {
     super(ActionType.RandomNodeTransform)
     this.assign(props)
@@ -42881,16 +42733,19 @@ namespace FXRUtility {
     const cy = p1[1] + dy * 0.5
     const cz = p1[2] + dz * 0.5
     return new BasicNode([
-      NodeTransform({
-        offsetX: cx,
-        offsetY: cy,
-        offsetZ: cz,
-        rotationY: -rad2deg(Math.atan2(dz, dx)),
-        rotationZ: rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
+      new StaticNodeTransform({
+        offset: [cx, cy, cz],
+        rotation: [
+          0,
+          -rad2deg(Math.atan2(dz, dx)),
+          rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
+        ]
       })
     ], [
       new BasicNode([
-        ...orientation === OrientationMode.LocalYaw ? [NodeTransform({ rotationY: 90 })] : [],
+        ...orientation === OrientationMode.LocalYaw ? [
+          new StaticNodeTransform({ rotation: [0, 90, 0] })
+        ] : [],
         new actionClass({
           blendMode: BlendMode.Source,
           rgbMultiplier: 0.6,
@@ -42941,9 +42796,8 @@ namespace FXRUtility {
     }
     function addGlyph(glyph: Glyph) {
       nodes.push(new BasicNode([
-        NodeTransform({
-          offsetX: offset[0],
-          offsetY: offset[1],
+        new StaticNodeTransform({
+          offset: [...offset, 0]
         })
       ], glyph.map(([p1, p2]) => line(
         vec3(p1),

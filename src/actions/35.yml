@@ -4,42 +4,26 @@ slot: NodeTransform
 desc: |
   Controls the translation and rotation of a node.
 properties:
-  offsetX:
-    field: float
+  offset:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      Translation of the node along the local X-axis.
-  offsetY:
-    field: float
-    scale: true
+      Translation of the node.
+  rotation:
+    field: vec3
+    default: [0, 0, 0]
     desc: |
-      Translation of the node along the local Y-axis.
-  offsetZ:
-    field: float
-    scale: true
-    desc: |
-      Translation of the node along the local Z-axis.
-  rotationX:
-    field: float
-    desc: |
-      The rotation of the node around the local X-axis in degrees.
-  rotationY:
-    field: float
-    desc: |
-      The rotation of the node around the local Y-axis in degrees.
-  rotationZ:
-    field: float
-    desc: |
-      The rotation of the node around the local Z-axis in degrees.
+      The rotation of the node.
 games:
   DS3:
     fields1:
-      - offsetX
-      - offsetY
-      - offsetZ
-      - rotationX
-      - rotationY
-      - rotationZ
+      - offset
+      #
+      #
+      - rotation
+      #
+      #
   SDT: DS3
   ER: DS3
   AC6: DS3
