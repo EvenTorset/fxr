@@ -57,6 +57,7 @@ await fs.writeFile('docs/q/index.html', /*html*/`
 <html>
   <head>
     <title>Loading...</title>
+    <style>:root{color-scheme:dark;}</style>
     <script src="/assets/navigation.js"></script>
     <script type="module">
       const navData = await new Response(
