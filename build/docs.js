@@ -85,6 +85,8 @@ await fs.writeFile('docs/q/index.html', /*html*/`
         } else {
           location.href = '/' + linkMap[parts[0]]
         }
+      } else {
+        location.href = '/'
       }
     </script>
   </head>
