@@ -1,6 +1,6 @@
 {
   "name": "@cccode/fxr",
-  "version": "12.2.0",
+  "version": "13.0.0",
   "description": "JavaScript library for creating and editing FXR files for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
@@ -16,8 +16,7 @@
     "build:ts:esm": "npx tsc --p tsconfig-esm.json",
     "build:ts:cjs": "npx tsc --p tsconfig-cjs.json && echo {\"type\":\"commonjs\"} > dist/cjs/package.json",
     "build:ts": "npm-run-all --parallel build:ts:*",
-    "build:minify": "npx terser dist/esm/fxr.js -o dist/esm/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='dist/esm/fxr.js.map',filename='dist/esm/fxr.min.js.map'\" && npx cpy dist/esm/fxr.d.ts --rename=fxr.min.d.ts --flat dist/esm && npx terser dist/cjs/fxr.js -o dist/cjs/fxr.min.js --ecma 2020 -m \"module\" -c \"keep_fargs,keep_infinity,passes=2,module\" --source-map \"content='dist/cjs/fxr.js.map',filename='dist/cjs/fxr.min.js.map'\" && npx cpy dist/cjs/fxr.d.ts --rename=fxr.min.d.ts --flat dist/cjs",
-    "build": "npm-run-all build:yaml build:ts build:minify",
+    "build": "npm-run-all build:yaml build:ts",
     "watch:dist": "npx tsc --p tsconfig-esm.json --watch",
     "watch:src": "node build/watch.js",
     "watch": "npm-run-all --parallel watch:*",
@@ -46,9 +45,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "chokidar": "^3.6.0",
-    "cpy-cli": "^5.0.0",
     "npm-run-all2": "^6.2.0",
-    "terser": "^5.31.1",
     "typedoc": "^0.26.2",
     "typescript": "^5.5.2",
     "yaml": "^2.4.5"
