@@ -123,10 +123,12 @@ fxr.root.nodes = [
   ])
 ]
 
-// Write the new file. Note that you may change the game to output this for to
-// any of the four supported games, as long as the game supports all of the
-// features used in the effect.
-await fxr.saveAs('f000402030.fxr', Game.EldenRing)
+// Write the new file. `fxr.name` here is equivalent to 'f000402030.fxr',
+// `fxr.name` simply generates the file name based on the FXR's ID.
+// Also note that you may change the game to output this for to any of the four
+// supported games, as long as the game supports all of the features used in
+// the effect.
+await fxr.saveAs(fxr.name, Game.EldenRing)
 ```
 
 ## Thanks
