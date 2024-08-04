@@ -3,6 +3,9 @@ This is a JavaScript library for creating and editing FXR files (particle effect
 
 It includes classes for all known structures in the file format that makes it relatively easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in many different ways: scaling, recoloring, converting between games, and more.
 
+## Try it out
+The library can be used without needing to install anything at the [FXR Playground](https://fxr-playground.pages.dev). Installing it may be more convenient in some cases, but the playground is great for trying it out and also includes a UI for some simple actions, such as recoloring or resizing effects.
+
 ## Installation
 The library is available on [npm](https://www.npmjs.com/package/@cccode/fxr), so you can use a package manager like npm, yarn or pnpm to install it.
 

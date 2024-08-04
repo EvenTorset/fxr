@@ -1,3 +1,8 @@
+# Before you continue
+Just in case you happened upon this page before finding out about it: The [FXR Playground](https://fxr-playground.pages.dev) is website where you can use the library without having to install anything. It is recommended that you check it out before continuing to find out if you really need to install the library locally.
+
+The playground includes a UI for performing simple actions such as recoloring or resizing existing effects, as well as things to simplify manual edits and running scripts that perform more advanced or bulk edits, or create entirely new effects from scratch.
+
 # About this page
 This page is for those that are not already familiar with Node.js and want to run scripts using the library locally. It goes over the basics, so that you can better understand how it works, and to get you started.
 
