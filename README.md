@@ -34,6 +34,8 @@ To edit existing FXR files, you need to first have the library read the file. Wh
 Once it has been read, you can change things in the FXR object to whatever you need. The library also provides useful functions for common actions like scaling or recoloring effects.
 
 Once you have made your changes to the FXR object, you can write it to a file if you're using Node.js, or you can generate an ArrayBuffer with the file's content if you need it to run in the browser.
+
+[Open in FXR Playground](https://fxr-playground.pages.dev/#examples/readme/edit)
 ```js
 import { FXR, Game, Recolor, hex } from '@cccode/fxr'
 
@@ -55,6 +57,8 @@ await fxr.saveAs('f000450360_edit.fxr', Game.EldenRing)
 ```
 ## Creating new FXR files
 Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume.
+
+[Open in FXR Playground](https://fxr-playground.pages.dev/#examples/readme/create)
 ```js
 import {
   FXR,
