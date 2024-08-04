@@ -8,6 +8,7 @@ properties:
     type: ScalarValue
     argument: ParticleAge
     scale: true
+    time: sq
     desc: |
       Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
 
@@ -16,6 +17,7 @@ properties:
     type: ScalarValue
     argument: ParticleAge
     scale: true
+    time: sq
     desc: |
       The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
   accelerationMultiplier:
@@ -42,6 +44,7 @@ properties:
     field: float
   turnInterval:
     field: int
+    time: inv
     desc: |
       The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
 

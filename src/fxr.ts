@@ -1550,7 +1550,50 @@ export enum ScaleCondition {
   IfNotMinusOne = 2,
 }
 
+/**
+ * This represents an operation to use when modifying values that depend on
+ * time.
+ * 
+ * Used internally to track how time-based values should be scaled by
+ * {@link DataAction.prototype.scaleRateOfTime}.
+ */
+export enum TimeOperation {
+  Multiply = 1,
+  Divide = 2,
+  DivideIfPositive = 3,
+  Square = 4,
+}
+
+/**
+ * Controls the sampling behavior of functions used to generate color palettes.
+ */
+export enum PaletteMode {
+  /**
+   * Only add the first set of colors found for each palette slot.
+   */
+  First,
+  /**
+   * Average all sets of colors found that fit the same palette slot into a
+   * single entry for the slot. This effectively creates a palette that will
+   * recolor effects to match a kind of average of the sampled effects.
+   */
+  Average,
+  /**
+   * Add all sets of colors found for all slots. This will create a palette
+   * that recolors effects randomly based on the colors in the sampled effects.
+   */
+  Random,
+}
+
 //#region Types / Interfaces
+type KeysOfType<T, U> = {
+  [K in keyof T]: T[K] extends U ? K : never
+}[keyof T]
+
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T][]
+
 export type AnyExternalValue =
   | ExternalValue.DarkSouls3
   | ExternalValue.Sekiro
@@ -1672,6 +1715,7 @@ export interface IAction {
    * Actions that can not be minified will not be changed.
    */
   minify(): AnyAction
+  clone(): IAction
 }
 
 export interface IEffect {
@@ -1681,6 +1725,7 @@ export interface IEffect {
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<AnyAction>
+  clone(): IEffect
 }
 
 export interface IModifier<T extends ValueType> {
@@ -1900,6 +1945,7 @@ const ActionData: {
         resource?: ResourceType
         textureType?: string
         scale?: ScaleCondition
+        time?: TimeOperation
         color?: 1
         omit?: 1
         paths?: {
@@ -1915,10 +1961,10 @@ const ActionData: {
   /*#ActionData start*/
   [ActionType.NodeAcceleration]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_2: { default: 0, field: 2 },
@@ -1952,11 +1998,11 @@ const ActionData: {
   },
   [ActionType.NodeSpin]: {
     props: {
-      angularSpeedX: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
-      angularSpeedY: { default: 0 },
+      angularSpeedY: { default: 0, time: 1 },
       angularSpeedMultiplierY: { default: 1 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
     },
@@ -1972,16 +2018,12 @@ const ActionData: {
   },
   [ActionType.StaticNodeTransform]: {
     props: {
-      offsetX: { default: 0, field: 2, scale: 1 },
-      offsetY: { default: 0, field: 2, scale: 1 },
-      offsetZ: { default: 0, field: 2, scale: 1 },
-      rotationX: { default: 0, field: 2 },
-      rotationY: { default: 0, field: 2 },
-      rotationZ: { default: 0, field: 2 },
+      offset: { default: [0, 0, 0], field: 4, scale: 1 },
+      rotation: { default: [0, 0, 0], field: 4 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ']
+        fields1: ['offset','rotation']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -1990,22 +2032,14 @@ const ActionData: {
   },
   [ActionType.RandomNodeTransform]: {
     props: {
-      offsetX: { default: 0, field: 2, scale: 1 },
-      offsetY: { default: 0, field: 2, scale: 1 },
-      offsetZ: { default: 0, field: 2, scale: 1 },
-      rotationX: { default: 0, field: 2 },
-      rotationY: { default: 0, field: 2 },
-      rotationZ: { default: 0, field: 2 },
-      offsetVarianceX: { default: 0, field: 2, scale: 1 },
-      offsetVarianceY: { default: 0, field: 2, scale: 1 },
-      offsetVarianceZ: { default: 0, field: 2, scale: 1 },
-      rotationVarianceX: { default: 0, field: 2 },
-      rotationVarianceY: { default: 0, field: 2 },
-      rotationVarianceZ: { default: 0, field: 2 },
+      offset: { default: [0, 0, 0], field: 4, scale: 1 },
+      rotation: { default: [0, 0, 0], field: 4 },
+      offsetVariance: { default: [0, 0, 0], field: 4, scale: 1 },
+      rotationVariance: { default: [0, 0, 0], field: 4 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['offsetX','offsetY','offsetZ','rotationX','rotationY','rotationZ','offsetVarianceX','offsetVarianceY','offsetVarianceZ','rotationVarianceX','rotationVarianceY','rotationVarianceZ']
+        fields1: ['offset','rotation','offsetVariance','rotationVariance']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -2028,8 +2062,8 @@ const ActionData: {
   },
   [ActionType.ParticleAcceleration]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      acceleration: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
@@ -2046,8 +2080,8 @@ const ActionData: {
   },
   [ActionType.ParticleSpeed]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      speed: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
@@ -2064,12 +2098,12 @@ const ActionData: {
   },
   [ActionType.ParticleSpeedRandomTurns]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      speed: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2083,13 +2117,13 @@ const ActionData: {
   },
   [ActionType.ParticleSpeedPartialFollow]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      speed: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2133,14 +2167,14 @@ const ActionData: {
   },
   [ActionType.NodeAccelerationRandomTurns]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2154,12 +2188,12 @@ const ActionData: {
   },
   [ActionType.ParticleAccelerationRandomTurns]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      acceleration: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2173,13 +2207,13 @@ const ActionData: {
   },
   [ActionType.ParticleAccelerationPartialFollow]: {
     props: {
-      gravity: { default: 0, scale: 1 },
-      acceleration: { default: 0, scale: 1 },
+      gravity: { default: 0, scale: 1, time: 4 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       unk_ds3_f1_0: { default: 0, field: 2 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2194,15 +2228,15 @@ const ActionData: {
   },
   [ActionType.NodeAccelerationPartialFollow]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2217,15 +2251,15 @@ const ActionData: {
   },
   [ActionType.NodeAccelerationSpin]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
-      accelerationZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
+      accelerationZ: { default: 0, scale: 1, time: 4 },
       accelerationMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
-      angularSpeedX: { default: 0 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
+      angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
-      angularSpeedY: { default: 0 },
+      angularSpeedY: { default: 0, time: 1 },
       angularSpeedMultiplierY: { default: 1 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
@@ -2244,9 +2278,9 @@ const ActionData: {
   },
   [ActionType.NodeSpeed]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_2: { default: 0, field: 1 },
@@ -2263,13 +2297,13 @@ const ActionData: {
   },
   [ActionType.NodeSpeedRandomTurns]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2283,14 +2317,14 @@ const ActionData: {
   },
   [ActionType.NodeSpeedPartialFollow]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
       alignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      turnInterval: { default: 0, field: 1 },
+      turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
@@ -2305,14 +2339,14 @@ const ActionData: {
   },
   [ActionType.NodeSpeedSpin]: {
     props: {
-      speedZ: { default: 0, scale: 1 },
+      speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
-      accelerationY: { default: 0, scale: 1 },
-      angularSpeedX: { default: 0 },
+      accelerationY: { default: 0, scale: 1, time: 4 },
+      angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
-      angularSpeedY: { default: 0 },
+      angularSpeedY: { default: 0, time: 1 },
       angularSpeedMultiplierY: { default: 1 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
@@ -2332,7 +2366,7 @@ const ActionData: {
   [ActionType.NodeAttributes]: {
     props: {
       attachment: { default: AttachMode.Parent, field: 1 },
-      duration: { default: -1 },
+      duration: { default: -1, time: 3 },
       delay: { default: 0, field: 2 },
       unk_ds3_f1_1: { default: 1, field: 1 },
       unk_ds3_f1_3: { default: 0, field: 2 },
@@ -2350,7 +2384,7 @@ const ActionData: {
   [ActionType.ParticleAttributes]: {
     props: {
       attachment: { default: AttachMode.Parent, field: 1 },
-      duration: { default: -1 },
+      duration: { default: -1, time: 3 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2395,7 +2429,7 @@ const ActionData: {
   [ActionType.ParticleModifier]: {
     props: {
       uniformScale: { default: false, field: 0 },
-      speed: { default: 0, scale: 1 },
+      speed: { default: 0, scale: 1, time: 1 },
       scaleX: { default: 1 },
       scaleY: { default: 1 },
       scaleZ: { default: 1 },
@@ -2426,7 +2460,7 @@ const ActionData: {
   },
   [ActionType.LevelsOfDetailThresholds]: {
     props: {
-      duration: { default: -1 },
+      duration: { default: -1, time: 3 },
       threshold0: { default: 10000, field: 1 },
       threshold1: { default: 10000, field: 1 },
       threshold2: { default: 10000, field: 1 },
@@ -2476,7 +2510,7 @@ const ActionData: {
   },
   [ActionType.PeriodicEmitter]: {
     props: {
-      interval: { default: 1 },
+      interval: { default: 1, time: 2 },
       perInterval: { default: 1 },
       totalIntervals: { default: -1 },
       maxConcurrent: { default: -1, field: 1 },
@@ -2925,9 +2959,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -3054,9 +3088,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -3184,9 +3218,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -3198,9 +3232,9 @@ const ActionData: {
       frameIndexOffset: { default: 0 },
       offsetU: { default: 0 },
       offsetV: { default: 0 },
-      speedU: { default: 0 },
+      speedU: { default: 0, time: 1 },
       speedMultiplierU: { default: 0 },
-      speedV: { default: 0 },
+      speedV: { default: 0, time: 1 },
       speedMultiplierV: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -3212,7 +3246,7 @@ const ActionData: {
       anibnd: { default: 0, field: 1, resource: 2 },
       animation: { default: 0, field: 1 },
       loopAnimation: { default: true, field: 0 },
-      animationSpeed: { default: 1, field: 2 },
+      animationSpeed: { default: 1, field: 2, time: 1 },
       unk_ds3_f1_18: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
       unk_ds3_f2_1: { default: 0, field: 1 },
@@ -3293,8 +3327,8 @@ const ActionData: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
-      segmentInterval: { default: 0, field: 2 },
-      segmentDuration: { default: 1, field: 2 },
+      segmentInterval: { default: 0, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -3316,7 +3350,7 @@ const ActionData: {
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
-      speedU: { default: 0 },
+      speedU: { default: 0, time: 1 },
       varianceV: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -3413,12 +3447,12 @@ const ActionData: {
       sizeZ: { default: 1, scale: 1 },
       color: { default: [1, 1, 1, 1], color: 1 },
       intensity: { default: 1 },
-      stirSpeed: { default: 60 },
+      stirSpeed: { default: 60, time: 1 },
       radius: { default: 1 },
       normalMapOffsetU: { default: 0 },
       normalMapOffsetV: { default: 0 },
-      normalMapSpeedU: { default: 0 },
-      normalMapSpeedV: { default: 0 },
+      normalMapSpeedU: { default: 0, time: 1 },
+      normalMapSpeedV: { default: 0, time: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_f1_11: { default: -2, field: 1 },
@@ -3575,16 +3609,16 @@ const ActionData: {
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
       jitterAndFlicker: { default: false, field: 0 },
-      jitterAcceleration: { default: 1, field: 2, scale: 1 },
+      jitterAcceleration: { default: 1, field: 2, scale: 1, time: 4 },
       jitterX: { default: 0, field: 2, scale: 1 },
       jitterY: { default: 0, field: 2, scale: 1 },
       jitterZ: { default: 0, field: 2, scale: 1 },
-      flickerIntervalMin: { default: 0, field: 2 },
-      flickerIntervalMax: { default: 1, field: 2 },
+      flickerIntervalMin: { default: 0, field: 2, time: 2 },
+      flickerIntervalMax: { default: 1, field: 2, time: 2 },
       flickerBrightness: { default: 0.5, field: 2 },
       shadows: { default: false, field: 0 },
       separateSpecular: { default: false, field: 0 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       shadowDarkness: { default: 1, field: 2 },
       volumeDensity: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -3658,7 +3692,7 @@ const ActionData: {
   [ActionType.Unk702]: {},
   [ActionType.NodeForceSpeed]: {
     props: {
-      speed: { default: 0, scale: 1 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
     },
@@ -3673,7 +3707,7 @@ const ActionData: {
   },
   [ActionType.ParticleForceSpeed]: {
     props: {
-      speed: { default: 0, scale: 1 },
+      speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
@@ -3689,7 +3723,7 @@ const ActionData: {
   },
   [ActionType.NodeForceAcceleration]: {
     props: {
-      acceleration: { default: 0, scale: 1 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
     },
@@ -3704,7 +3738,7 @@ const ActionData: {
   },
   [ActionType.ParticleForceAcceleration]: {
     props: {
-      acceleration: { default: 0, scale: 1 },
+      acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
       unk_sdt_f1_0: { default: 1, field: 1 },
       unk_sdt_f1_1: { default: 0, field: 1 },
@@ -3758,12 +3792,12 @@ const ActionData: {
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
       unk_ds3_f1_25: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 1, field: 1 },
-      emissionIntervalMax: { default: 1, field: 1 },
+      emissionIntervalMin: { default: 1, field: 1, time: 2 },
+      emissionIntervalMax: { default: 1, field: 1, time: 2 },
       limitEmissionCount: { default: false, field: 0 },
       emissionCountLimit: { default: 0, field: 1 },
       unk_ds3_f1_30: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -3775,33 +3809,33 @@ const ActionData: {
       particleOffsetXMax: { default: 0, field: 2, scale: 1 },
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1 },
+      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
       particleRotationVarianceX: { default: 0, field: 2 },
       particleRotationVarianceY: { default: 0, field: 2 },
       particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2 },
-      particleAngularAccelerationXMin: { default: 0, field: 2 },
-      particleAngularAccelerationYMin: { default: 0, field: 2 },
-      particleAngularAccelerationZMin: { default: 0, field: 2 },
-      particleAngularAccelerationXMax: { default: 0, field: 2 },
-      particleAngularAccelerationYMax: { default: 0, field: 2 },
-      particleAngularAccelerationZMax: { default: 0, field: 2 },
+      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
+      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -3812,20 +3846,20 @@ const ActionData: {
       particleSizeXMax: { default: 0, field: 2, scale: 1 },
       particleSizeYMax: { default: 0, field: 2, scale: 1 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -3873,10 +3907,10 @@ const ActionData: {
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
       particleRandomTurns: { default: false, field: 0 },
-      particleRandomTurnIntervalMax: { default: 1, field: 1 },
+      particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1 },
+      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -3936,21 +3970,21 @@ const ActionData: {
       unk_ds3_p1_1: { default: 0 },
       unk_ds3_p1_2: { default: 0 },
       unk_ds3_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
-      particleAngularAccelerationZ: { default: 0 },
-      particleGrowthRateX: { default: 0, scale: 1 },
-      particleGrowthRateY: { default: 0, scale: 1 },
+      particleAngularAccelerationZ: { default: 0, time: 4 },
+      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
       unk_ds3_p1_15: { default: 0 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_17: { default: 0 },
-      particleGravity: { default: 0, scale: 1 },
+      particleGravity: { default: 0, scale: 1, time: 4 },
       particleRandomTurnAngle: { default: 0 },
       unk_ds3_p1_20: { default: 0 },
       unk_ds3_p2_0: { default: 1 },
@@ -4011,12 +4045,12 @@ const ActionData: {
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
       unk_ds3_f1_25: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 1, field: 1 },
-      emissionIntervalMax: { default: 1, field: 1 },
+      emissionIntervalMin: { default: 1, field: 1, time: 2 },
+      emissionIntervalMax: { default: 1, field: 1, time: 2 },
       limitEmissionCount: { default: false, field: 0 },
       emissionCountLimit: { default: 0, field: 1 },
       unk_ds3_f1_30: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -4028,33 +4062,33 @@ const ActionData: {
       particleOffsetXMax: { default: 0, field: 2, scale: 1 },
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1 },
+      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
       particleRotationVarianceX: { default: 0, field: 2 },
       particleRotationVarianceY: { default: 0, field: 2 },
       particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2 },
-      particleAngularAccelerationXMin: { default: 0, field: 2 },
-      particleAngularAccelerationYMin: { default: 0, field: 2 },
-      particleAngularAccelerationZMin: { default: 0, field: 2 },
-      particleAngularAccelerationXMax: { default: 0, field: 2 },
-      particleAngularAccelerationYMax: { default: 0, field: 2 },
-      particleAngularAccelerationZMax: { default: 0, field: 2 },
+      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
+      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
+      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
+      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -4065,20 +4099,20 @@ const ActionData: {
       particleSizeXMax: { default: 0, field: 2, scale: 1 },
       particleSizeYMax: { default: 0, field: 2, scale: 1 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4126,10 +4160,10 @@ const ActionData: {
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
       particleRandomTurns: { default: false, field: 0 },
-      particleRandomTurnIntervalMax: { default: 1, field: 1 },
+      particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1 },
+      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4188,21 +4222,21 @@ const ActionData: {
       unk_ds3_p1_1: { default: 0 },
       unk_ds3_p1_2: { default: 0 },
       unk_ds3_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
-      particleAngularAccelerationZ: { default: 0 },
-      particleGrowthRateX: { default: 0, scale: 1 },
-      particleGrowthRateY: { default: 0, scale: 1 },
+      particleAngularAccelerationZ: { default: 0, time: 4 },
+      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
       unk_ds3_p1_15: { default: 0 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ds3_p1_17: { default: 0 },
-      particleGravity: { default: 0, scale: 1 },
+      particleGravity: { default: 0, scale: 1, time: 4 },
       particleRandomTurnAngle: { default: 0 },
       unk_ds3_p1_20: { default: 0 },
       unk_ds3_p2_0: { default: 1 },
@@ -4299,13 +4333,13 @@ const ActionData: {
       emissionParticleCount: { default: 10, field: 1 },
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
-      emissionInterval: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 0, field: 1 },
-      emissionIntervalMax: { default: 0, field: 1 },
+      emissionInterval: { default: 0, field: 1, time: 2 },
+      emissionIntervalMin: { default: 0, field: 1, time: 2 },
+      emissionIntervalMax: { default: 0, field: 1, time: 2 },
       limitConcurrentEmissions: { default: false, field: 0 },
       concurrentEmissionsLimit: { default: 0, field: 1 },
       unk_ac6_f1_26: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -4318,12 +4352,12 @@ const ActionData: {
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1 },
+      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
@@ -4356,8 +4390,8 @@ const ActionData: {
       unk_ac6_f1_81: { default: 0, field: 1 },
       unk_ac6_f1_82: { default: 0, field: 1 },
       unk_ac6_f1_83: { default: 0, field: 1 },
-      unk_ac6_f1_84: { default: 0, field: 2, scale: 1 },
-      unk_ac6_f1_85: { default: 0, field: 2, scale: 1 },
+      unk_ac6_f1_84: { default: 0, field: 2, scale: 1, time: 1 },
+      unk_ac6_f1_85: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ac6_f1_86: { default: 0, field: 1 },
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
@@ -4417,15 +4451,15 @@ const ActionData: {
       unk_ac6_p1_1: { default: 0 },
       unk_ac6_p1_2: { default: 0 },
       unk_ac6_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       color: { default: [1, 1, 1, 1], color: 1 },
-      particleLength: { default: 1 },
+      particleLength: { default: 1, time: 2 },
       particleWidth: { default: 0.1 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ac6_p1_11: { default: 0 },
-      particleGravity: { default: 1, scale: 1 },
+      particleGravity: { default: 1, scale: 1, time: 4 },
       unk_ac6_p1_13: { default: 0 },
       unk_ac6_p2_0: { default: 1 },
       unk_ac6_p2_1: { default: 1 },
@@ -4469,13 +4503,13 @@ const ActionData: {
       emissionParticleCount: { default: 10, field: 1 },
       emissionParticleCountMin: { default: 0, field: 1 },
       emissionParticleCountMax: { default: 0, field: 1 },
-      emissionInterval: { default: 0, field: 1 },
-      emissionIntervalMin: { default: 0, field: 1 },
-      emissionIntervalMax: { default: 0, field: 1 },
+      emissionInterval: { default: 0, field: 1, time: 2 },
+      emissionIntervalMin: { default: 0, field: 1, time: 2 },
+      emissionIntervalMax: { default: 0, field: 1, time: 2 },
       limitConcurrentEmissions: { default: false, field: 0 },
       concurrentEmissionsLimit: { default: 0, field: 1 },
       unk_ac6_f1_26: { default: 0, field: 1 },
-      particleDuration: { default: 1, field: 1 },
+      particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
       particleOffsetX: { default: 0, field: 2, scale: 1 },
@@ -4488,12 +4522,12 @@ const ActionData: {
       particleOffsetYMax: { default: 0, field: 2, scale: 1 },
       particleOffsetZMax: { default: 0, field: 2, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1 },
+      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
@@ -4526,8 +4560,8 @@ const ActionData: {
       unk_ac6_f1_81: { default: 0, field: 1 },
       unk_ac6_f1_82: { default: 0, field: 1 },
       unk_ac6_f1_83: { default: 0, field: 1 },
-      unk_ac6_f1_84: { default: 0, field: 2, scale: 1 },
-      unk_ac6_f1_85: { default: 0, field: 2, scale: 1 },
+      unk_ac6_f1_84: { default: 0, field: 2, scale: 1, time: 1 },
+      unk_ac6_f1_85: { default: 0, field: 2, scale: 1, time: 1 },
       unk_ac6_f1_86: { default: 0, field: 1 },
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
@@ -4587,15 +4621,15 @@ const ActionData: {
       unk_ac6_p1_1: { default: 0 },
       unk_ac6_p1_2: { default: 0 },
       unk_ac6_p1_3: { default: 0 },
-      particleAccelerationX: { default: 0, scale: 1 },
-      particleAccelerationY: { default: 0, scale: 1 },
-      particleAccelerationZ: { default: 0, scale: 1 },
+      particleAccelerationX: { default: 0, scale: 1, time: 4 },
+      particleAccelerationY: { default: 0, scale: 1, time: 4 },
+      particleAccelerationZ: { default: 0, scale: 1, time: 4 },
       color: { default: [1, 1, 1, 1], color: 1 },
-      particleLength: { default: 1 },
+      particleLength: { default: 1, time: 2 },
       particleWidth: { default: 0.1 },
-      unkParticleAcceleration: { default: 0, scale: 1 },
+      unkParticleAcceleration: { default: 0, scale: 1, time: 4 },
       unk_ac6_p1_11: { default: 0 },
-      particleGravity: { default: 1, scale: 1 },
+      particleGravity: { default: 1, scale: 1, time: 4 },
       unk_ac6_p1_13: { default: 0 },
       unk_ac6_p2_0: { default: 1 },
       unk_ac6_p2_1: { default: 1 },
@@ -4619,8 +4653,8 @@ const ActionData: {
     props: {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
-      segmentInterval: { default: 0, field: 2 },
-      segmentDuration: { default: 1, field: 2 },
+      segmentInterval: { default: 0, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
@@ -4642,7 +4676,7 @@ const ActionData: {
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
       textureFraction: { default: 0.1 },
-      speedU: { default: 0 },
+      speedU: { default: 0, time: 1 },
       varianceV: { default: 0 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -4734,8 +4768,8 @@ const ActionData: {
       texture: { default: 50004, field: 1, resource: 0, textureType: 'd' },
       depth: { default: 1, field: 2, scale: 1 },
       size: { default: 1, field: 2, scale: 1 },
-      descent: { default: 0.15, field: 2 },
-      duration: { default: 0.15, field: 2 },
+      descent: { default: 0.15, field: 2, time: 2 },
+      duration: { default: 0.15, field: 2, time: 2 },
     },
     games: {
       [Game.Sekiro]: {
@@ -4755,14 +4789,8 @@ const ActionData: {
       layer1ScaleVariationX: { default: 1, field: 2 },
       layer1ScaleVariationY: { default: 1, field: 2 },
       layer1UniformScale: { default: false, field: 0 },
-      layer1RedMultiplier: { default: 1, field: 2 },
-      layer1GreenMultiplier: { default: 1, field: 2 },
-      layer1BlueMultiplier: { default: 1, field: 2 },
-      layer1AlphaMultiplier: { default: 1, field: 2 },
-      layer1BloomRed: { default: 1, field: 2 },
-      layer1BloomGreen: { default: 1, field: 2 },
-      layer1BloomBlue: { default: 1, field: 2 },
-      layer1BloomAlpha: { default: 1, field: 2 },
+      layer1ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer2Width: { default: 1, scale: 1 },
       layer2Height: { default: 1, scale: 1 },
@@ -4771,14 +4799,8 @@ const ActionData: {
       layer2ScaleVariationX: { default: 1, field: 2 },
       layer2ScaleVariationY: { default: 1, field: 2 },
       layer2UniformScale: { default: false, field: 0 },
-      layer2RedMultiplier: { default: 1, field: 2 },
-      layer2GreenMultiplier: { default: 1, field: 2 },
-      layer2BlueMultiplier: { default: 1, field: 2 },
-      layer2AlphaMultiplier: { default: 1, field: 2 },
-      layer2BloomRed: { default: 1, field: 2 },
-      layer2BloomGreen: { default: 1, field: 2 },
-      layer2BloomBlue: { default: 1, field: 2 },
-      layer2BloomAlpha: { default: 1, field: 2 },
+      layer2ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       layer3: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer3Width: { default: 1, scale: 1 },
       layer3Height: { default: 1, scale: 1 },
@@ -4787,14 +4809,8 @@ const ActionData: {
       layer3ScaleVariationX: { default: 1, field: 2 },
       layer3ScaleVariationY: { default: 1, field: 2 },
       layer3UniformScale: { default: false, field: 0 },
-      layer3RedMultiplier: { default: 1, field: 2 },
-      layer3GreenMultiplier: { default: 1, field: 2 },
-      layer3BlueMultiplier: { default: 1, field: 2 },
-      layer3AlphaMultiplier: { default: 1, field: 2 },
-      layer3BloomRed: { default: 1, field: 2 },
-      layer3BloomGreen: { default: 1, field: 2 },
-      layer3BloomBlue: { default: 1, field: 2 },
-      layer3BloomAlpha: { default: 1, field: 2 },
+      layer3ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer3BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       layer4: { default: 0, field: 1, resource: 0, textureType: 'a' },
       layer4Width: { default: 1, scale: 1 },
       layer4Height: { default: 1, scale: 1 },
@@ -4803,14 +4819,8 @@ const ActionData: {
       layer4ScaleVariationX: { default: 1, field: 2 },
       layer4ScaleVariationY: { default: 1, field: 2 },
       layer4UniformScale: { default: false, field: 0 },
-      layer4RedMultiplier: { default: 1, field: 2 },
-      layer4GreenMultiplier: { default: 1, field: 2 },
-      layer4BlueMultiplier: { default: 1, field: 2 },
-      layer4AlphaMultiplier: { default: 1, field: 2 },
-      layer4BloomRed: { default: 1, field: 2 },
-      layer4BloomGreen: { default: 1, field: 2 },
-      layer4BloomBlue: { default: 1, field: 2 },
-      layer4BloomAlpha: { default: 1, field: 2 },
+      layer4ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer4BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
       blendMode: { default: BlendMode.Add, field: 1 },
       sourceSize: { default: 1, field: 2 },
       opacityTransitionDuration: { default: 1, field: 2 },
@@ -4880,12 +4890,12 @@ const ActionData: {
     games: {
       [Game.Sekiro]: Game.EldenRing,
       [Game.EldenRing]: {
-        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1RedMultiplier','layer1GreenMultiplier','layer1BlueMultiplier','layer1AlphaMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2RedMultiplier','layer2GreenMultiplier','layer2BlueMultiplier','layer2AlphaMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3RedMultiplier','layer3GreenMultiplier','layer3BlueMultiplier','layer3AlphaMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4RedMultiplier','layer4GreenMultiplier','layer4BlueMultiplier','layer4AlphaMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomRed','layer1BloomGreen','layer1BloomBlue','layer1BloomAlpha','layer2BloomRed','layer2BloomGreen','layer2BloomBlue','layer2BloomAlpha','layer3BloomRed','layer3BloomGreen','layer3BloomBlue','layer3BloomAlpha','layer4BloomRed','layer4BloomGreen','layer4BloomBlue','layer4BloomAlpha'],
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36'],
         properties1: ['layer1Width','layer1Height','layer1Color','layer2Width','layer2Height','layer2Color','layer3Width','layer3Height','layer3Color','layer4Width','layer4Height','layer4Color']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1RedMultiplier','layer1GreenMultiplier','layer1BlueMultiplier','layer1AlphaMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2RedMultiplier','layer2GreenMultiplier','layer2BlueMultiplier','layer2AlphaMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3RedMultiplier','layer3GreenMultiplier','layer3BlueMultiplier','layer3AlphaMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4RedMultiplier','layer4GreenMultiplier','layer4BlueMultiplier','layer4AlphaMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomRed','layer1BloomGreen','layer1BloomBlue','layer1BloomAlpha','layer2BloomRed','layer2BloomGreen','layer2BloomBlue','layer2BloomAlpha','layer3BloomRed','layer3BloomGreen','layer3BloomBlue','layer3BloomAlpha','layer4BloomRed','layer4BloomGreen','layer4BloomBlue','layer4BloomAlpha','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
         fields2: Game.EldenRing,
         properties1: Game.EldenRing
       }
@@ -4906,9 +4916,9 @@ const ActionData: {
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
-      angularSpeedX: { default: 0 },
-      angularSpeedY: { default: 0 },
-      angularSpeedZ: { default: 0 },
+      angularSpeedX: { default: 0, time: 1 },
+      angularSpeedY: { default: 0, time: 1 },
+      angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedMultiplierZ: { default: 1 },
@@ -4926,7 +4936,7 @@ const ActionData: {
       anibnd: { default: 0, field: 1, resource: 2 },
       animation: { default: 0, field: 1 },
       loopAnimation: { default: true, field: 0 },
-      animationSpeed: { default: 1, field: 2 },
+      animationSpeed: { default: 1, field: 2, time: 1 },
       unk_er_f1_5: { default: 1, field: 1 },
       unk_er_f1_6: { default: 1, field: 1 },
       unk_er_f1_7: { default: 0, field: 1 },
@@ -5000,7 +5010,7 @@ const ActionData: {
       unk_ac6_f1_33: { default: 1, field: 1 },
       unk_ac6_f1_34: { default: 0, field: 1 },
       uvOffset: { default: [0, 0] },
-      uvSpeed: { default: [0, 0] },
+      uvSpeed: { default: [0, 0], time: 1 },
       uvSpeedMultiplier: { default: [1, 1] },
     },
     games: {
@@ -5109,7 +5119,7 @@ const ActionData: {
   },
   [ActionType.WindForce]: {
     props: {
-      force: { default: 1 },
+      force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
       boxSizeX: { default: 0, field: 2, scale: 1 },
@@ -5164,7 +5174,7 @@ const ActionData: {
       unk_sdt_f1_50: { default: 1, field: 2 },
       unk_sdt_f1_51: { default: 0, field: 2 },
       unk_sdt_f1_52: { default: 0, field: 2 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       unk_sdt_f1_54: { default: 0, field: 2 },
       unk_sdt_f1_55: { default: 0, field: 2 },
       unk_sdt_f1_56: { default: 1, field: 2 },
@@ -5188,7 +5198,7 @@ const ActionData: {
   },
   [ActionType.GravityForce]: {
     props: {
-      force: { default: 1 },
+      force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
       boxSizeX: { default: 0, field: 2, scale: 1 },
@@ -5227,7 +5237,7 @@ const ActionData: {
       forceMultiplier: { default: 1, field: 2 },
       unk_ds3_f1_36: { default: 1, field: 2 },
       unk_ds3_f1_37: { default: 1, field: 2 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -5263,7 +5273,7 @@ const ActionData: {
       noiseOffsetX: { default: 0, scale: 1 },
       noiseOffsetY: { default: 0, scale: 1 },
       noiseOffsetZ: { default: 0, scale: 1 },
-      force: { default: 1 },
+      force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
       boxSizeX: { default: 0, field: 2, scale: 1 },
@@ -5304,7 +5314,7 @@ const ActionData: {
       unk_unk_f1_37: { default: 0, field: 1 },
       unk_unk_f1_38: { default: 0, field: 1 },
       unk_unk_f1_39: { default: 0, field: 1 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       unk_unk_f1_41: { default: 0, field: 1 },
       unk_unk_f1_42: { default: 0, field: 1 },
       unk_unk_f1_43: { default: 0, field: 1 },
@@ -5446,16 +5456,16 @@ const ActionData: {
       radiusX: { default: 50, scale: 1 },
       radiusY: { default: 50, scale: 1 },
       jitterAndFlicker: { default: false, field: 0 },
-      jitterAcceleration: { default: 1, field: 2, scale: 1 },
+      jitterAcceleration: { default: 1, field: 2, scale: 1, time: 4 },
       jitterX: { default: 0, field: 2, scale: 1 },
       jitterY: { default: 0, field: 2, scale: 1 },
       jitterZ: { default: 0, field: 2, scale: 1 },
-      flickerIntervalMin: { default: 0, field: 2 },
-      flickerIntervalMax: { default: 1, field: 2 },
+      flickerIntervalMin: { default: 0, field: 2, time: 2 },
+      flickerIntervalMax: { default: 1, field: 2, time: 2 },
       flickerBrightness: { default: 0.5, field: 2 },
       shadows: { default: false, field: 0 },
       separateSpecular: { default: false, field: 0 },
-      fadeOutTime: { default: 0, field: 1 },
+      fadeOutTime: { default: 0, field: 1, time: 2 },
       shadowDarkness: { default: 1, field: 2 },
       volumeDensity: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -6580,10 +6590,10 @@ function writeState(state: State, bw: BinaryWriter, index: number) {
   bw.writeInt32(0)
 }
 
-function writeStateConditions(state: State, bw: BinaryWriter, index: number, conditions: StateCondition[]) {
+function writeStateConditions(conditions: StateCondition[], bw: BinaryWriter, index: number, acc: StateCondition[]) {
   bw.fill(`StateConditionsOffset${index}`, bw.position)
-  for (const condition of (state as State).conditions) {
-    writeStateCondition(condition, bw, conditions)
+  for (const condition of conditions) {
+    writeStateCondition(condition, bw, acc)
   }
 }
 
@@ -6660,8 +6670,8 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
   }
 }
 
-function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
-  const count = conditions.length
+function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, acc: StateCondition[]) {
+  const count = acc.length
   bw.writeInt16(con.operator | con.unk1 << 2)
   bw.writeUint8(0)
   bw.writeUint8(1)
@@ -6692,11 +6702,11 @@ function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, con
   bw.writeInt32(0)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  conditions.push(con)
+  acc.push(con)
 }
 
-function writeStateCondition(con: StateCondition, bw: BinaryWriter, conditions: StateCondition[]) {
-  writeFormattedStateCondition((con as StateCondition).formatCondition(), bw, conditions)
+function writeStateCondition(con: StateCondition, bw: BinaryWriter, acc: StateCondition[]) {
+  writeFormattedStateCondition(con.formatCondition(), bw, acc)
 }
 
 function writeStateConditionFields(con: StateCondition, bw: BinaryWriter, index: number): number {
@@ -7128,6 +7138,32 @@ const hermiteInterpKeyframes = (() => {
   }
 })()
 
+function filterMillisecondDiffs(nums: Iterable<number>) {
+  const a = Array.from(nums)
+  const result: number[] = []
+  const visited = new Set<number>()
+
+  for (let i = 0; i < a.length; i++) if (!visited.has(a[i])) {
+    const ai = a[i]
+    let sum = ai
+    let count = 1
+    visited.add(ai)
+
+    for (let j = i + 1; j < a.length; j++) {
+      const aj = a[j]
+      if (Math.abs(ai - aj) < 0.001) {
+        sum += aj
+        count++
+        visited.add(aj)
+      }
+    }
+
+    result.push(sum / count)
+  }
+
+  return result
+}
+
 /**
  * Multiplies one number, vector, or a property of either kind by another
  * number, vector, or property.
@@ -7150,7 +7186,9 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   }
 
   if (typeof av1 === 'number') {
-    if (typeof av2 === 'number') {
+    if (av1 === 1) {
+      return (av2 instanceof Property ? av2.clone() : Array.isArray(av2) ? av2.slice() : av2) as T
+    } else if (typeof av2 === 'number') {
       return av1 * av2 as T
     } else if (Array.isArray(av2)) {
       return av2.map(e => e * (av1 as number)) as unknown as T
@@ -7267,14 +7305,15 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       av2 = av2.combineComponents()
     }
     const cav1 = av1 as SequenceProperty<any, any>
-    const cav2 = av1 as SequenceProperty<any, any>
-    const positions = new Set<number>
+    const cav2 = av2 as SequenceProperty<any, any>
+    const posSet = new Set<number>()
     for (const keyframe of cav1.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
     for (const keyframe of cav2.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
+    const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
     let av1Mods = cav1.modifiers
     let av2Mods = cav2.modifiers
     const vt = Math.max(cav1.valueType, cav2.valueType)
@@ -7287,8 +7326,8 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     return new LinearProperty(
       cav1.loop && cav2.loop,
       (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
-        Array.from(positions).sort((a, b) => a - b) :
-        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+        positions :
+        filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
       ).map(e => new Keyframe(e,
         anyValueMult(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
       ))
@@ -7321,11 +7360,13 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     Array.isArray(av2) ||
     av2 instanceof Property
   )) {
-    throw new Error('Invalid operand for anyValueMult: ' + av2)
+    throw new Error('Invalid operand for anyValueSum: ' + av2)
   }
 
   if (typeof av1 === 'number') {
-    if (typeof av2 === 'number') {
+    if (av1 === 0) {
+      return (av2 instanceof Property ? av2.clone() : Array.isArray(av2) ? av2.slice() : av2) as T
+    } else if (typeof av2 === 'number') {
       return av1 + av2 as T
     } else if (Array.isArray(av2)) {
       return av2.map(e => e + (av1 as number)) as unknown as T
@@ -7460,14 +7501,15 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       av2 = av2.combineComponents()
     }
     const cav1 = av1 as SequenceProperty<any, any>
-    const cav2 = av1 as SequenceProperty<any, any>
-    const positions = new Set<number>
+    const cav2 = av2 as SequenceProperty<any, any>
+    const posSet = new Set<number>()
     for (const keyframe of cav1.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
     for (const keyframe of cav2.keyframes) {
-      positions.add(keyframe.position)
+      posSet.add(keyframe.position)
     }
+    const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
     let av1Mods = cav1.modifiers
     let av2Mods = cav2.modifiers
     const vt = Math.max(cav1.valueType, cav2.valueType)
@@ -7480,8 +7522,8 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
     return new LinearProperty(
       cav1.loop && cav2.loop,
       (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
-        Array.from(positions).sort((a, b) => a - b) :
-        interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+        positions :
+        filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
       ).map(e => new Keyframe(e,
         anyValueSum(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
       ))
@@ -7606,44 +7648,9 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
       }
     })
   }
-  // function combineModifiers() {
-  //   const cc = comps.length
-  //   return comps.flatMap((c, i) => {
-  //     if (typeof c === 'number') {
-  //       return []
-  //     }
-  //     return c.modifiers.map(mod => {
-  //       if (mod instanceof RandomDeltaModifier) {
-  //         return new RandomDeltaModifier(
-  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-  //         )
-  //       } else if (mod instanceof RandomRangeModifier) {
-  //         return new RandomRangeModifier(
-  //           arrayOf(cc, j => j === i ? mod.min : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-  //         )
-  //       } else if (mod instanceof RandomFractionModifier) {
-  //         return new RandomFractionModifier(
-  //           arrayOf(cc, j => j === i ? mod.max : 0) as Vector,
-  //           arrayOf(cc, j => j === i ? mod.seed : 0) as Vector,
-  //         )
-  //       } else if (mod instanceof ExternalValue1Modifier) {
-  //         return new ExternalValue1Modifier(mod.externalValue,
-  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-  //         )
-  //       } else if (mod instanceof ExternalValue2Modifier) {
-  //         return new ExternalValue2Modifier(mod.externalValue,
-  //           combineComponents(...arrayOf(cc, j => j === i ? mod.factor : 1)) as VectorProperty
-  //         )
-  //       }
-  //     })
-  //   })
-  // }
   if (positions.size >= 2) {
     const keyframes = (hasCurveComp ?
-      interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40) :
+      filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)) :
       Array.from(positions).sort((a, b) => a - b)
     ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
     return new LinearProperty(
@@ -7671,26 +7678,175 @@ function fieldsCount(fields: Field<FieldType>[]) {
   return count
 }
 
+function getComponentCount(v: AnyValue): number {
+  return isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
+}
+
+function setVectorComponent(vec: VectorValue, componentIndex: number, value: ScalarValue): VectorValue {
+  const cc = getComponentCount(vec)
+  return anyValueSum(
+    combineComponents(...Array(cc).fill(0).with(componentIndex, value)),
+    anyValueMult(
+      Array(cc).fill(1).with(componentIndex, 0) as VectorValue,
+      vec
+    )
+  )
+}
+
+function isVector(v: any): v is Vector {
+  return Array.isArray(v) && v.length > 1 && v.length <= 4
+}
+
+function isScalarValue(v: any): v is ScalarValue {
+  return (
+    typeof v === 'number' ||
+    v instanceof Property && v.valueType === ValueType.Scalar
+  )
+}
+
+function isVectorValue(v: any): v is VectorValue {
+  return (
+    (Array.isArray(v) && v.length > 1 && v.length <= 4) ||
+    v instanceof Property && v.valueType !== ValueType.Scalar
+  )
+}
+
+function mod(n: number, d: number) {
+  return ((n % d) + d) % d
+}
+
+function rgbToHsv(r: number, g: number, b: number): Vector3 {
+  const min = Math.min(r, g, b)
+  const max = Math.max(r, g, b)
+  const delta = max - min
+  let h: number = 0, s: number = 0
+  if (delta !== 0) {
+    s = delta / max
+    const dr = (((max - r) / 6) + (delta / 2)) / delta
+    const dg = (((max - g) / 6) + (delta / 2)) / delta
+    const db = (((max - b) / 6) + (delta / 2)) / delta
+    switch (max) {
+      case r: h = db - dg; break;
+      case g: h = (1 / 3) + dr - db; break;
+      case b: h = (2 / 3) + dg - dr; break;
+    }
+    h = mod(h, 1)
+  }
+  return [h, s, max]
+}
+
+function hsvToRgb(h: number, s: number, v: number): Vector3 {
+  let r: number = v, g: number = v, b: number = v
+  if (s !== 0) {
+    const vh = mod(h * 6, 6)
+    const ih = Math.floor(vh)
+    const v1 = v * (1 - s)
+    const v2 = v * (1 - s * (vh - ih))
+    const v3 = v * (1 - s * (1 - (vh - ih)))
+    switch (ih) {
+      case 0: r = v  ; g = v3 ; b = v1; break;
+      case 1: r = v2 ; g = v  ; b = v1; break;
+      case 2: r = v1 ; g = v  ; b = v3; break;
+      case 3: r = v1 ; g = v2 ; b = v ; break;
+      case 4: r = v3 ; g = v1 ; b = v ; break;
+      case 5: r = v  ; g = v1 ; b = v2; break;
+    }
+  }
+  return [r, g, b]
+}
+
+/**
+ * A template tag function for converting hexadecimal color codes to
+ * {@link Vector4} colors. Here are some examples of how it can be used:
+ * ```js
+ * // Regular 6-digit format:
+ * hex`FF0000` // Red, is converted to [1, 0, 0, 1]
+ * 
+ * // Short 3-digit format:
+ * hex`F00` // Red, equivalent to FF0000
+ * 
+ * // 8- and 4-digit formats for controlling the alpha value:
+ * hex`00FF007F` // Half-transparent green
+ * hex`FF0F` // Opaque yellow, equivalent to FFFF00
+ * 
+ * // The color codes are case-insensitive:
+ * hex`58f` // Sky blue, equivalent to 5588FF
+ * hex`fF0eaB` // Magenta, equivalent to FF0EAB
+ * 
+ * // Usage in properties:
+ * new LinearProperty(true, [
+ *   new Keyframe(0, hex`f00`),
+ *   new Keyframe(1, hex`0f0`),
+ *   new Keyframe(2, hex`00f`),
+ *   new Keyframe(3, hex`f00`),
+ * ])
+ * ```
+ */
+function hex(strings: TemplateStringsArray, ...values: any[]): number[] {
+  let hexStr = strings.reduce((result, str, i) => result + str + (values[i] || ''), '')
+  if (hexStr.length === 3) {
+    hexStr = hexStr.split('').map(char => char + char).join('')
+  } else if (hexStr.length === 4) {
+    hexStr = hexStr.split('').map(char => char + char).join('')
+  } else if (hexStr.length !== 6 && hexStr.length !== 8) {
+    throw new Error(`Invalid hex color string length: ${hexStr}`)
+  }
+  const r = parseInt(hexStr.slice(0, 2), 16) / 255
+  const g = parseInt(hexStr.slice(2, 4), 16) / 255
+  const b = parseInt(hexStr.slice(4, 6), 16) / 255
+  const a = hexStr.length === 8 ? parseInt(hexStr.slice(6, 8), 16) / 255 : 1
+  return [r, g, b, a]
+}
+
+function randomItem<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+function averagePaletteEntries<T extends Recolor.ColorPalette[keyof Recolor.ColorPalette]>(entries: T): T {
+  if (entries.length === 1) {
+    return entries
+  }
+  const obj: { [x: string]: any } = {}
+  for (const entry of entries) {
+    for (const p of Object.keys(entry)) {
+      obj[p] = anyValueSum(obj[p] ?? 0, entry[p])
+    }
+  }
+  for (const p of Object.keys(obj)) {
+    obj[p] = anyValueMult(1 / entries.length, obj[p])
+  }
+  return [obj] as T
+}
+
+function assertValidFXRID(id: number) {
+  if (id < 0 || id >= 1e9) {
+    throw new Error(
+      `FXR ID out of range: ${id} - The ID must be a positive integer less than ${1e9.toLocaleString()}.`
+    )
+  }
+  if (id !== Math.trunc(id)) {
+    throw new Error(
+      `Non-integer FXR ID: ${id} - The ID must be a positive integer less than ${1e9.toLocaleString()}.`
+    )
+  }
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
-      props.offsetX *= -1
-      props.rotationX *= -1
+      props.offset[0] *= -1
+      props.rotation[0] *= -1
       return props
     },
     write(props: StaticNodeTransformParams, game: Game) {
-      props.offsetX *= -1
-      props.rotationX *= -1
+      props.offset[0] *= -1
+      props.rotation[0] *= -1
       return props
     },
     minify(this: StaticNodeTransform): AnyAction {
       if (
-        this.offsetX === 0 &&
-        this.offsetY === 0 &&
-        this.offsetZ === 0 &&
-        this.rotationX === 0 &&
-        this.rotationY === 0 &&
-        this.rotationZ === 0
+        this.offset.every(e => e === 0) &&
+        this.rotation.every(e => e === 0)
       ) {
         return new Action
       }
@@ -7699,27 +7855,23 @@ const ActionDataConversion = {
   },
   [ActionType.RandomNodeTransform]: {
     read(props: RandomNodeTransformParams, game: Game) {
-      props.offsetX *= -1
+      props.offset[0] *= -1
       return props
     },
     write(props: RandomNodeTransformParams, game: Game) {
-      props.offsetX *= -1
+      props.offset[0] *= -1
       return props
     },
     minify(this: RandomNodeTransform): AnyAction {
       if (
-        this.offsetVarianceX === 0 &&
-        this.offsetVarianceY === 0 &&
-        this.offsetVarianceZ === 0 &&
-        this.rotationVarianceX === 0 &&
-        this.rotationVarianceY === 0 &&
-        this.rotationVarianceZ === 0
+        this.offsetVariance.every(e => e === 0) &&
+        this.rotationVariance.every(e => e === 0)
       ) {
         return ActionDataConversion[ActionType.StaticNodeTransform].minify.call(
           new StaticNodeTransform(this).assign({
             // For some reason, StaticNodeTransform flips the X rotation, but
             // this one doesn't, even though the X offset is flipped in both.
-            rotationX: -this.rotationX
+            rotation: [-this.rotation[0], this.rotation[1], this.rotation[2]]
           })
         )
       }
@@ -7835,10 +7987,18 @@ const ActionDataConversion = {
   [ActionType.PointLight]: {
     read(props: PointLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
+      if (game === Game.DarkSouls3) {
+        props.diffuseMultiplier = 10
+        props.specularMultiplier = 10
+      }
       return props
     },
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      if (game === Game.DarkSouls3) {
+        props.diffuseColor = anyValueMult(anyValueMult(1/10, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
+        props.specularColor = anyValueMult(anyValueMult(1/10, props.specularMultiplier), props.specularColor) as Vector4Value
+      }
       return props
     }
   },
@@ -8576,6 +8736,7 @@ class FXR {
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
   toArrayBuffer(game: Game = Game.EldenRing) {
+    assertValidFXRID(this.id)
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
     bw.writeString('FXR\0')
@@ -8626,6 +8787,15 @@ class FXR {
       bw.writeInt32(0)
     }
 
+    let rateOfTime = 1
+    if (this.root instanceof RootNode) {
+      if (this.root.rateOfTime instanceof Property) {
+        rateOfTime = this.root.rateOfTime.valueAt(0)
+      } else {
+        rateOfTime = this.root.rateOfTime
+      }
+    }
+
     bw.fill('StateListOffset', bw.position)
     bw.writeInt32(0)
     bw.writeInt32(this.states.length)
@@ -8642,14 +8812,42 @@ class FXR {
     bw.fill('ConditionOffset', bw.position)
     const conditions: StateCondition[] = []
     for (let i = 0; i < this.states.length; ++i) {
-      writeStateConditions(this.states[i], bw, i, conditions)
+      const cons = game === Game.DarkSouls3 ? this.states[i].conditions.map(c => {
+        if (c.leftOperandType === OperandType.StateTime && c.rightOperandType === OperandType.Literal) {
+          return new StateCondition(
+            c.operator,
+            c.unk1,
+            c.nextState,
+            c.leftOperandType,
+            c.leftOperandValue,
+            c.rightOperandType,
+            c.rightOperandValue / rateOfTime,
+          )
+        } else if (c.rightOperandType === OperandType.StateTime && c.leftOperandType === OperandType.Literal) {
+          return new StateCondition(
+            c.operator,
+            c.unk1,
+            c.nextState,
+            c.leftOperandType,
+            c.leftOperandValue / rateOfTime,
+            c.rightOperandType,
+            c.rightOperandValue,
+          )
+        } else {
+          return c
+        }
+      }) : this.states[i].conditions
+      writeStateConditions(cons, bw, i, conditions)
     }
     bw.fill('ConditionCount', conditions.length)
     bw.pad(16)
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
-    writeNode(this.root, bw, game, nodes)
-    writeNodeChildren(this.root, bw, game, nodes)
+    const root = game === Game.DarkSouls3 && this.root instanceof RootNode ?
+      this.root.scaleRateOfTime(rateOfTime) :
+      this.root
+    writeNode(root, bw, game, nodes)
+    writeNodeChildren(root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('EffectOffset', bw.position)
@@ -8753,7 +8951,7 @@ class FXR {
    */
   async saveAs(path: PathLike | FileHandle, game: Game) {
     const fs = await import('node:fs/promises')
-    await fs.writeFile(path, Buffer.from(this.toArrayBuffer(game)))
+    await fs.writeFile(path, new Uint8Array(this.toArrayBuffer(game)))
   }
 
   static fromJSON(obj: {
@@ -8932,6 +9130,27 @@ class FXR {
     }
   }
 
+  clone(): FXR {
+    return new FXR(
+      this.id,
+      this.root.clone(),
+      this.states.map(e => State.from(e.toJSON()))
+    )
+  }
+
+  /**
+   * File name for this FXR.
+   * 
+   * Note that this is not necessarily the name of the file that was parsed. It
+   * generates a new name based on the ID of the FXR. This follows the naming
+   * convention used by the games (`f<0-padded ID>.fxr`), so an FXR with 1 as
+   * the ID would be `f000000001.fxr`, for example.
+   */
+  get name() {
+    assertValidFXRID(this.id)
+    return `f${this.id.toString().padStart(9, '0')}.fxr`
+  }
+
 }
 
 //#region State
@@ -8983,8 +9202,8 @@ class StateCondition {
    * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
    * to make the condition always true.
    * @param nextState If the condition is false, the state at this index will
-   * be checked instead. Set it to -1 to disable the node if the condition
-   * is false.
+   * be checked next. Set it to -1 to disable the sfx if the condition is
+   * false.
    * @param leftOperandType Controls what type of value the operand to the left
    * of the operator should be.
    * @param leftOperandValue This does different things depending on the
@@ -9219,6 +9438,7 @@ abstract class Node {
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
+  abstract clone(): Node
 
   static fromJSON(obj: any): Node {
     if (obj instanceof Node) {
@@ -9319,6 +9539,25 @@ abstract class Node {
   }
 
   /**
+   * Yields all unique color values in the branch, or optionally only ones in
+   * the node.
+   * @param [recurse=true] Controls whether or not to yield colors in
+   * descendant nodes. Defaults to true.
+   */
+  *colors(recurse: boolean = true) {
+    const colors = new Set<string>()
+    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
+      for (const color of action.colors()) {
+        const cs = color.join(',')
+        if (!colors.has(cs)) {
+          colors.add(cs)
+          yield color
+        }
+      }
+    }
+  }
+
+  /**
    * Scales the entire branch by a factor. This updates all sizes, offsets,
    * lengths, and radii of the actions in the branch, except certain
    * multiplicative fields and properties.
@@ -9334,15 +9573,395 @@ abstract class Node {
   }
 
   /**
-   * Recolors the entire branch by modifying color properties and fields using
-   * a given function.
-   * @param func A function used to remap color values.
+   * Recolors the entire branch, or optionally just this node, by modifying
+   * color properties and fields using a given function.
+   * @param func A function used to remap color values. For some easy pre-made
+   * recolor functions, see the {@link Recolor} namespace.
    * @param recurse Controls whether or not the recoloring should be applied to
    * all descendant nodes. Defaults to true.
    */
-  recolor(func: (color: Vector4) => Vector4, recurse: boolean = true) {
-    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
-      action.recolor(func)
+  recolor(func: Recolor.RecolorFunction, recurse?: boolean): this
+
+  /**
+   * Recolors the entire branch, or optionally just this node, to fit a given
+   * color palette.
+   * @param palette The color palette to apply. This can be generated from
+   * existing FXR branches using the {@link generateColorPalette} method.
+   * @param recurse Controls whether or not the recoloring should be applied to
+   * all descendant nodes. Defaults to true.
+   */
+  recolor(palette: Recolor.ColorPalette, recurse?: boolean): this
+
+  recolor(funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette, recurse: boolean = true) {
+    if (typeof funcOrPalette === 'function') {
+      for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
+        action.recolor(funcOrPalette)
+      }
+    } else {
+      if (!(
+        'commonParticleNormal' in funcOrPalette ||
+        'commonParticleMultiply' in funcOrPalette ||
+        'commonParticleAdd' in funcOrPalette ||
+        'commonParticleSubtract' in funcOrPalette ||
+        'distortionParticle' in funcOrPalette ||
+        'blurParticle' in funcOrPalette ||
+        'light' in funcOrPalette ||
+        'gpuParticle' in funcOrPalette ||
+        'lensFlare' in funcOrPalette
+      )) {
+        throw new Error('Invalid color palette.')
+      }
+      const palette: Recolor.ColorPalette = {}
+      for (const [k, v] of Object.entries(funcOrPalette) as Entries<Recolor.ColorPalette>) switch (k) {
+        case 'commonParticleNormal':
+        case 'commonParticleMultiply':
+        case 'commonParticleAdd':
+        case 'commonParticleSubtract':
+          palette[k] = v.map(e => ({
+            modifier: Property.fromJSON(e.modifier),
+            color1: Property.fromJSON(e.color1),
+            color2: Property.fromJSON(e.color2),
+            color3: Property.fromJSON(e.color3),
+            rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
+            bloomColor: e.bloomColor,
+          }))
+          break
+        case 'distortionParticle':
+        case 'blurParticle':
+          palette[k] = v.map(e => ({
+            modifier: Property.fromJSON(e.modifier),
+            color: Property.fromJSON(e.color),
+            rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
+            bloomColor: e.bloomColor,
+          }))
+          break
+        case 'light':
+          palette[k] = v.map(e => ({
+            diffuseColor: Property.fromJSON(e.diffuseColor),
+            diffuseMultiplier: Property.fromJSON(e.diffuseMultiplier),
+            ...'specularColor' in e && {
+              specularColor: Property.fromJSON(e.specularColor),
+              specularMultiplier: Property.fromJSON(e.specularMultiplier),
+            }
+          }))
+          break
+        case 'gpuParticle':
+          palette[k] = v.map(e => ({
+            color: Property.fromJSON(e.color),
+            rgbMultiplier: e.rgbMultiplier,
+            colorMin: e.colorMin,
+            colorMax: e.colorMax,
+            ...'bloomColor' in e && {
+              bloomColor: e.bloomColor
+            }
+          }))
+          break
+        case 'lensFlare':
+          palette[k] = v.map(e => ({
+            color: Property.fromJSON(e.color),
+            colorMultiplier: e.colorMultiplier,
+            bloomColor: e.bloomColor,
+          }))
+          break
+      }
+
+      // Set up fallbacks for missing palette entries
+      if (!('commonParticleNormal' in palette)) {
+        if (
+          'commonParticleMultiply' in palette ||
+          'commonParticleAdd' in palette ||
+          'commonParticleSubtract' in palette
+        ) {
+          palette.commonParticleNormal =
+            palette.commonParticleMultiply ??
+            palette.commonParticleAdd ??
+            palette.commonParticleSubtract
+        } else if ('gpuParticle' in palette) {
+          const e = averagePaletteEntries(palette.gpuParticle)[0]
+          palette.commonParticleNormal = [{
+            modifier: new ConstantProperty(1, 1, 1, 1),
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor ?? [1, 1, 1, 1],
+            rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
+          }]
+        } else if ('lensFlare' in palette) {
+          const e = averagePaletteEntries(palette.lensFlare)[0]
+          palette.commonParticleNormal = [{
+            modifier: new ConstantProperty(1, 1, 1, 1),
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor,
+            rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
+          }]
+        } else if ('distortionParticle' in palette) {
+          const e = averagePaletteEntries(palette.distortionParticle)[0]
+          palette.commonParticleNormal = [{
+            modifier: e.modifier,
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor,
+            rgbMultiplier: e.rgbMultiplier,
+          }]
+        } else if ('blurParticle' in palette) {
+          const e = averagePaletteEntries(palette.blurParticle)[0]
+          palette.commonParticleNormal = [{
+            modifier: e.modifier,
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.color,
+            bloomColor: e.bloomColor,
+            rgbMultiplier: e.rgbMultiplier,
+          }]
+        } else if ('light' in palette) {
+          const e = averagePaletteEntries(palette.light)[0]
+          palette.commonParticleNormal = [{
+            modifier: new ConstantProperty(1, 1, 1, 1),
+            color1: new ConstantProperty(1, 1, 1, 1),
+            color2: new ConstantProperty(1, 1, 1, 1),
+            color3: e.diffuseColor,
+            bloomColor: [1, 1, 1, 0],
+            rgbMultiplier: e.diffuseMultiplier,
+          }]
+        }
+      }
+      palette.commonParticleMultiply ??= palette.commonParticleNormal
+      palette.commonParticleAdd ??= palette.commonParticleNormal
+      palette.commonParticleSubtract ??= palette.commonParticleNormal
+      let avgCommonNormal: Recolor.PaletteSlots['CommonParticle']
+      if (!('distortionParticle' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.distortionParticle = [{
+          modifier: avgCommonNormal.modifier,
+          color: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          rgbMultiplier: avgCommonNormal.rgbMultiplier,
+          bloomColor: avgCommonNormal.bloomColor
+        }]
+      }
+      palette.blurParticle ??= palette.distortionParticle
+      if (!('light' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.light = [{
+          diffuseColor: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          diffuseMultiplier: avgCommonNormal.rgbMultiplier,
+        }]
+      }
+      if (!('gpuParticle' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.gpuParticle = [{
+          color: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          rgbMultiplier: avgCommonNormal.rgbMultiplier.valueAt(0),
+          colorMin: [0, 0, 0, 0],
+          colorMax: [0, 0, 0, 0],
+          bloomColor: avgCommonNormal.bloomColor,
+        }]
+      }
+      if (!('lensFlare' in palette)) {
+        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+        palette.lensFlare = [{
+          color: anyValueMult(
+            anyValueMult(
+              avgCommonNormal.color1,
+              avgCommonNormal.color2
+            ),
+            avgCommonNormal.color3,
+          ),
+          colorMultiplier: [1, 1, 1, 1],
+          bloomColor: avgCommonNormal.bloomColor,
+        }]
+      }
+
+      function durationFallback(action: any, secondary?: any) {
+        if (!(action instanceof NodeAttributes || action instanceof ParticleAttributes)) {
+          action = { duration: 1 }
+        }
+        if (!(secondary instanceof NodeAttributes || secondary instanceof ParticleAttributes)) {
+          secondary = { duration: 1 }
+        }
+        return () => {
+          let d = action.duration instanceof Property ?
+            action.duration.valueAt(0) :
+            action.duration
+          if (d <= 0) {
+            d = secondary.duration instanceof Property ?
+              secondary.duration.valueAt(0) :
+              secondary.duration
+          }
+          if (d <= 0) {
+            d = 1
+          }
+          return d
+        }
+      }
+      function proc<T>(
+        paletteProp: AnyValue,
+        c: T,
+        k: keyof T,
+        durationFallback: () => number = () => 1
+      ) {
+        if (k === 'bloomColor') {
+          ;(c[k] as any) = (paletteProp as Vector4).with(3, Math.min(1, paletteProp[3]) * c[k][3]) as Vector4
+        } else if (
+          paletteProp instanceof SequenceProperty ||
+          paletteProp instanceof ComponentSequenceProperty
+        ) {
+          const d = (
+            c[k] instanceof SequenceProperty ||
+            c[k] instanceof ComponentSequenceProperty ?
+              c[k].duration :
+              durationFallback()
+          )
+          let alpha: ScalarValue
+          if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+            alpha = separateComponents(c[k])[3]
+          }
+          ;(c[k] as any) = paletteProp.clone()
+          ;(c[k] as any).duration = d
+          if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+            ;(c[k] as any) = setVectorComponent(c[k] as any, 3, alpha)
+          }
+        } else {
+          if (isVectorValue(c[k])) {
+            ;(c[k] as VectorValue) = setVectorComponent(
+              (
+                paletteProp instanceof Property ? paletteProp.clone() :
+                (paletteProp as Vector).slice()
+              ) as VectorValue,
+              3, separateComponents(c[k])[3]
+            )
+          } else {
+            ;(c[k] as any) = (
+              paletteProp instanceof Property ? paletteProp.clone() :
+              paletteProp
+            )
+          }
+        }
+      }
+      for (const effect of this.walkEffects(recurse)) if (effect instanceof BasicEffect) {
+        const a = effect.appearance
+        if (
+          a instanceof PointSprite ||
+          a instanceof Line ||
+          a instanceof QuadLine ||
+          a instanceof BillboardEx ||
+          a instanceof MultiTextureBillboardEx ||
+          a instanceof Model ||
+          a instanceof RichModel ||
+          a instanceof Tracer ||
+          a instanceof DynamicTracer
+        ) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (a instanceof MultiTextureBillboardEx) {
+            a.recolorProperty('layersColor', Recolor.grayscale)
+            a.recolorProperty('layer1Color', Recolor.grayscale)
+            a.recolorProperty('layer2Color', Recolor.grayscale)
+          } else if (a instanceof Line || a instanceof QuadLine) {
+            a.recolorProperty('startColor', Recolor.grayscale)
+            a.recolorProperty('endColor', Recolor.grayscale)
+          }
+          let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
+          if (blendMode instanceof Property) {
+            blendMode = blendMode.valueAt(0)
+          }
+          if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
+            blendMode = BlendMode.Normal
+          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Screen) {
+            blendMode = BlendMode.Add
+          }
+          const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+            Recolor.ColorPalette,
+            Recolor.PaletteSlots['CommonParticle'][]
+          >
+          const pc = randomItem(palette[key])
+          const ndf = durationFallback(effect.nodeAttributes)
+          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
+          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          proc(pc.color1, a, 'color1', pdf)
+          proc(pc.color2, a, 'color2', ndf)
+          proc(pc.color3, a, 'color3', pdf)
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+          proc(pc.bloomColor, a, 'bloomColor')
+        } else if (a instanceof Distortion) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          const pc = randomItem(palette.distortionParticle)
+          const ndf = durationFallback(effect.nodeAttributes)
+          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
+          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          proc(pc.color, a, 'color', pdf)
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+          proc(pc.bloomColor, a, 'bloomColor')
+        } else if (a instanceof RadialBlur) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          const pc = randomItem(palette.blurParticle)
+          const ndf = durationFallback(effect.nodeAttributes)
+          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
+          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          proc(pc.color, a, 'color', pdf)
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+          proc(pc.bloomColor, a, 'bloomColor')
+        } else if (a instanceof PointLight || a instanceof SpotLight) {
+          const pc = randomItem(palette.light)
+          const df = durationFallback(effect.nodeAttributes)
+          proc(pc.diffuseColor, a, 'diffuseColor', df)
+          proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
+          a.separateSpecular = 'specularColor' in pc
+          if ('specularColor' in pc) {
+            proc(pc.specularColor, a, 'specularColor', df)
+            proc(pc.specularMultiplier, a, 'specularMultiplier', df)
+          }
+        } else if (
+          a instanceof GPUStandardParticle ||
+          a instanceof GPUStandardCorrectParticle ||
+          a instanceof GPUSparkParticle ||
+          a instanceof GPUSparkCorrectParticle
+        ) {
+          const pc = randomItem(palette.gpuParticle)
+          proc(pc.color, a, 'color', durationFallback(effect.nodeAttributes))
+          proc(pc.rgbMultiplier, a, 'rgbMultiplier')
+          proc(pc.colorMin, a, 'colorMin')
+          proc(pc.colorMax, a, 'colorMax')
+          a.bloom = 'bloomColor' in pc
+          if ('bloomColor' in pc) {
+            proc(pc.bloomColor, a, 'bloomColor')
+          }
+        } else if ('lensFlare' in palette && a instanceof LensFlare) {
+          const pc = randomItem(palette.lensFlare)
+          const df = durationFallback(effect.nodeAttributes)
+          proc(pc.color, a, 'layer1Color', df)
+          proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer1BloomColor', df)
+          proc(pc.color, a, 'layer2Color', df)
+          proc(pc.colorMultiplier, a, 'layer2ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer2BloomColor', df)
+          proc(pc.color, a, 'layer3Color', df)
+          proc(pc.colorMultiplier, a, 'layer3ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer3BloomColor', df)
+          proc(pc.color, a, 'layer4Color', df)
+          proc(pc.colorMultiplier, a, 'layer4ColorMultiplier', df)
+          proc(pc.bloomColor, a, 'layer4BloomColor', df)
+        }
+      }
     }
     return this
   }
@@ -9378,6 +9997,38 @@ abstract class Node {
         }
       }
     }
+  }
+
+  /**
+   * Generates a color palette that can be used to recolor other nodes based on
+   * the colors in this branch.
+   * @param mode Controls the behavior of the color sampler. See
+   * {@link PaletteMode} for more information.
+   */
+  generateColorPalette(mode: PaletteMode = PaletteMode.Average): Recolor.ColorPalette {
+    return Recolor.generatePalette([this], mode)
+  }
+
+  /**
+   * Scale the rate of time for the branch, or optionally just the node. If you
+   * want to change the rate of time for the entire effect, set the
+   * {@link RootNode.prototype.rateOfTime} property instead of using this
+   * method.
+   * 
+   * This method's main purpose is to serve as a fallback for changing the rate
+   * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
+   * property. The rate of time is automatically scaled when writing effects
+   * for DS3, you do not need to do this yourself. As such, this method is only
+   * useful if you want to scale the rate of time for parts of an effect.
+   * @param factor The factor to scale the rate of time by. Setting this to 2
+   * will make the node play twice as fast. Setting it to 0.5 will make it
+   * play half as fast.
+   */
+  scaleRateOfTime(factor: number, recurse: boolean = true) {
+    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
+      action.scaleRateOfTime(factor)
+    }
+    return this
   }
 
 }
@@ -9437,6 +10088,15 @@ class GenericNode extends Node {
       this.actions.map(action => action.minify()),
       this.effects.map(effect => effect.minify()),
       this.nodes.map(node => node.minify())
+    )
+  }
+
+  clone(): GenericNode {
+    return new GenericNode(
+      this.type,
+      this.actions.map(e => e.clone()),
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
     )
   }
 
@@ -9519,11 +10179,26 @@ class RootNode extends Node {
     }
   }
 
+  clone(): RootNode {
+    return new RootNode(
+      this.nodes.map(e => e.clone()),
+      this.unk70x.clone() as ActionSlots.Unknown70xAction,
+      this.unk10100.clone() as ActionSlots.Unknown10100Action,
+      this.unk10400.clone() as ActionSlots.Unknown10400Action,
+      this.unk10500.clone() as ActionSlots.Unknown10500Action,
+    )
+  }
+
+  /**
+   * Controls how fast time passes for the entire effect.
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
   get rateOfTime() {
     if (this.unk10500 instanceof Unk10500) {
       return this.unk10500.rateOfTime
     } else {
-      return null
+      return 1
     }
   }
   set rateOfTime(value: ScalarValue) {
@@ -9563,12 +10238,16 @@ class ProxyNode extends Node {
     }
   }
 
+  clone(): ProxyNode {
+    return new ProxyNode(this.sfx)
+  }
+
 }
 
 /**
  * Super class for any type of node that contains {@link EffectType effects}.
  */
-class NodeWithEffects extends Node {
+abstract class NodeWithEffects extends Node {
 
   stateEffectMap: number[] = [0]
 
@@ -9654,6 +10333,13 @@ class LevelsOfDetailNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
+  clone(): LevelsOfDetailNode {
+    return new LevelsOfDetailNode(
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
+    )
+  }
+
 }
 
 /**
@@ -9707,6 +10393,13 @@ class BasicNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
+  clone(): BasicNode {
+    return new BasicNode(
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
+    )
+  }
+
 }
 
 /**
@@ -9747,11 +10440,18 @@ class NodeEmitterNode extends NodeWithEffects {
     return node
   }
 
-  minify(): Node {
+  minify(): NodeEmitterNode {
     return new NodeEmitterNode(
       this.effects.map(e => e.minify()),
       this.nodes.map(e => e.minify())
     ).mapStates(...this.stateEffectMap)
+  }
+
+  clone(): NodeEmitterNode {
+    return new NodeEmitterNode(
+      this.effects.map(e => e.clone()),
+      this.nodes.map(e => e.clone()),
+    )
   }
 
 }
@@ -9845,6 +10545,14 @@ class Effect implements IEffect {
     }
     throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
   }
+
+  clone(): Effect {
+    return new Effect(
+      this.type,
+      this.actions.map(e => e.clone()),
+    )
+  }
+
 }
 
 /**
@@ -9897,6 +10605,14 @@ class LevelsOfDetailEffect implements IEffect {
   }
 
   *walkActions() {}
+
+  clone(): LevelsOfDetailEffect {
+    return new LevelsOfDetailEffect(
+      this.duration,
+      this.thresholds.slice(),
+      this.unk_ac6_f1_5,
+    )
+  }
 
 }
 
@@ -10085,6 +10801,26 @@ class BasicEffect implements IEffect {
     yield this.particleForceMovement
   }
 
+  clone(): BasicEffect {
+    return new BasicEffect({
+      nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
+      nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
+      nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
+      nodeAudio: this.nodeAudio.clone() as ActionSlots.NodeAudioAction,
+      emitter: this.emitter.clone() as ActionSlots.EmitterAction,
+      emitterShape: this.emitterShape.clone() as ActionSlots.EmitterShapeAction,
+      directionSpread: this.directionSpread.clone() as ActionSlots.DirectionSpreadAction,
+      particleModifier: this.particleModifier.clone() as ActionSlots.ParticleModifierAction,
+      particleAttributes: this.particleAttributes.clone() as ActionSlots.ParticleAttributesAction,
+      appearance: this.appearance.clone() as ActionSlots.AppearanceAction,
+      particleMovement: this.particleMovement.clone() as ActionSlots.ParticleMovementAction,
+      emissionAudio: this.emissionAudio.clone() as ActionSlots.EmissionAudioAction,
+      slot12: this.slot12.clone() as ActionSlots.Unknown130Action,
+      nodeForceMovement: this.nodeForceMovement.clone() as ActionSlots.NodeForceMovementAction,
+      particleForceMovement: this.particleForceMovement.clone() as ActionSlots.ParticleForceMovementAction,
+    })
+  }
+
 }
 
 export interface NodeEmitterEffectParams {
@@ -10227,6 +10963,21 @@ class NodeEmitterEffect implements IEffect {
     yield this.nodeForceMovement
   }
 
+  clone(): NodeEmitterEffect {
+    return new NodeEmitterEffect({
+      nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
+      nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
+      nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
+      nodeAudio: this.nodeAudio.clone() as ActionSlots.NodeAudioAction,
+      emitter: this.emitter.clone() as ActionSlots.EmitterAction,
+      emitterShape: this.emitterShape.clone() as ActionSlots.EmitterShapeAction,
+      directionSpread: this.directionSpread.clone() as ActionSlots.DirectionSpreadAction,
+      nodeSelector: this.nodeSelector.clone() as ActionSlots.NodeSelectorAction,
+      emissionAudio: this.emissionAudio.clone() as ActionSlots.EmissionAudioAction,
+      nodeForceMovement: this.nodeForceMovement.clone() as ActionSlots.NodeForceMovementAction,
+    })
+  }
+
 }
 
 //#region Action
@@ -10357,6 +11108,17 @@ class Action implements IAction {
       this.properties1.map(e => e.minify()),
       this.properties2.map(e => e.minify()),
       this.section10s,
+    )
+  }
+
+  clone(): Action {
+    return new Action(
+      this.type,
+      this.fields1.map(e => e.clone()),
+      this.fields2.map(e => e.clone()),
+      this.properties1.map(e => e.clone()),
+      this.properties2.map(e => e.clone()),
+      this.section10s.map(e => e.slice()),
     )
   }
 
@@ -10519,53 +11281,197 @@ class DataAction implements IAction {
   }
 
   /**
-   * Modifies any color properties or fields using a given function.
-   * @param func A function used to remap color values.
+   * Modifies a single color property of the action using a recolor function.
+   * For some easy pre-made recolor functions, see the {@link Recolor}
+   * namespace.
+   * @param key The name of the property.
+   * @param func The function used to recolor the property.
    */
-  recolor(func: (color: Vector4) => Vector4) {
-    if ('props' in ActionData[this.type]) {
-      const procProp = (
-        container: DataAction | IModifier<ValueType.Vector4>,
-        key: number | string
-      ) => {
-        let prop = container[key]
-        if (prop instanceof ComponentSequenceProperty) {
-          prop = container[key] = prop.combineComponents()
+  recolorProperty(key: string, func: Recolor.RecolorFunction) {
+    let prop: Vector4Value = this[key]
+    if (
+      prop instanceof Property && prop.valueType !== ValueType.Vector4 ||
+      Array.isArray(prop) && prop.length !== 4
+    ) {
+      throw new Error('Cannot recolor non-color property: ' + key)
+    }
+    if (Array.isArray(prop)) {
+      this[key] = func(prop)
+      return this
+    }
+    if (prop instanceof ComponentSequenceProperty) {
+      prop = this[key] = prop.combineComponents()
+    }
+    if (prop instanceof ValueProperty) {
+      prop.value = func(prop.value)
+    } else if (prop instanceof SequenceProperty) {
+      for (const keyframe of prop.keyframes) {
+        keyframe.value = func(keyframe.value as Vector4)
+      }
+    }
+    for (const mod of prop.modifiers) {
+      if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+        mod.max = func(mod.max)
+      } else if (mod instanceof RandomRangeModifier) {
+        mod.min = func(mod.min)
+        mod.max = func(mod.max)
+      } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+        if (mod.factor instanceof ComponentSequenceProperty) {
+          mod.factor = mod.factor.combineComponents()
         }
-        if (prop instanceof ValueProperty) {
-          prop.value = func(prop.value)
-        } else if (prop instanceof SequenceProperty) {
-          for (const keyframe of prop.keyframes) {
+        if (mod.factor instanceof ValueProperty) {
+          mod.factor.value = func(mod.factor.value)
+        } else if (mod.factor instanceof SequenceProperty) {
+          for (const keyframe of mod.factor.keyframes) {
             keyframe.value = func(keyframe.value as Vector4)
           }
-        }
-        if ('modifiers' in prop) {
-          for (const mod of (prop as Property<ValueType.Vector4, any>).modifiers) {
-            if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
-              mod.max = func(mod.max)
-            } else if (mod instanceof RandomRangeModifier) {
-              mod.min = func(mod.min)
-              mod.max = func(mod.max)
-            } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
-              procVec4Value(mod, 'factor')
-            }
-          }
-        }
-      }
-      const procVec4Value = (action: DataAction | IModifier<ValueType.Vector4>, prop: string) => {
-        if (action[prop] instanceof Property) {
-          procProp(action, prop)
-        } else if (Array.isArray(action[prop])) {
-          action[prop] = func(action[prop] as Vector4)
-        }
-      }
-      for (const [k, v] of Object.entries(ActionData[this.type].props)) {
-        if ('color' in v) {
-          procVec4Value(this, k)
+        } else {
+          mod.factor = func(mod.factor)
         }
       }
     }
     return this
+  }
+
+  /**
+   * Modifies all color properties using a recolor function. For some easy
+   * pre-made recolor functions, see the {@link Recolor} namespace.
+   * @param func A function used to remap color values.
+   */
+  recolor(func: (color: Vector4) => Vector4) {
+    if ('props' in ActionData[this.type]) {
+      for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+        if ('color' in v) {
+          this.recolorProperty(k, func)
+        }
+      }
+    }
+    return this
+  }
+
+  *#colors(): Generator<Vector4> {
+    if ('props' in ActionData[this.type]) {
+      for (const [k, v] of Object.entries(ActionData[this.type].props)) {
+        if ('color' in v) {
+          let prop: Vector4Value = this[k]
+          if (Array.isArray(prop)) {
+            yield prop
+            continue
+          }
+          if (prop instanceof ComponentSequenceProperty) {
+            prop = prop.combineComponents()
+          }
+          if (prop instanceof ValueProperty) {
+            yield prop.value
+          } else if (prop instanceof SequenceProperty) {
+            for (const keyframe of prop.keyframes) {
+              yield keyframe.value
+            }
+          }
+          for (const mod of prop.modifiers) {
+            if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+              yield mod.max
+            } else if (mod instanceof RandomRangeModifier) {
+              yield mod.min
+              yield mod.max
+            } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+              let factor = mod.factor
+              if (factor instanceof ComponentSequenceProperty) {
+                factor.combineComponents()
+              }
+              if (factor instanceof ValueProperty) {
+                yield factor.value
+              } else if (factor instanceof SequenceProperty) {
+                for (const keyframe of factor.keyframes) {
+                  yield keyframe.value
+                }
+              } else {
+                yield factor
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Yields all unique color values in the action.
+   */
+  *colors() {
+    const colors = new Set<string>()
+    for (const color of this.#colors()) {
+      const cs = color.join(',')
+      if (!colors.has(cs)) {
+        colors.add(cs)
+        yield color
+      }
+    }
+  }
+
+  /**
+   * Scale the rate of time for the action. If you want to change the rate of
+   * time for the entire effect, set the {@link RootNode.prototype.rateOfTime}
+   * property instead of using this method.
+   * 
+   * This method's main purpose is to serve as a fallback for changing the rate
+   * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
+   * property. The rate of time is automatically scaled when writing effects
+   * for DS3, you do not need to do this yourself. As such, this method is only
+   * useful if you want to scale the rate of time for a single action.
+   * @param factor The factor to scale the rate of time by. Setting this to 2
+   * will make the action play twice as fast. Setting it to 0.5 will make it
+   * play half as fast.
+   */
+  scaleRateOfTime(factor: number) {
+    const inv = 1 / factor
+    const sq = factor * factor
+    if ('props' in ActionData[this.type]) {
+      for (const [name, prop] of Object.entries(ActionData[this.type].props)) {
+        if (
+          this[name] instanceof SequenceProperty ||
+          this[name] instanceof ComponentSequenceProperty
+        ) {
+          this[name].duration = this[name].duration * inv
+        }
+        switch (prop.time) {
+          case TimeOperation.Multiply:
+            this[name] = anyValueMult(factor, this[name])
+            break
+          case TimeOperation.Divide:
+            this[name] = anyValueMult(inv, this[name])
+            break
+          case TimeOperation.DivideIfPositive:
+            if (this[name] instanceof Property) {
+              if (this[name].valueAt(0) > 0) {
+                this[name] = anyValueMult(inv, this[name])
+              }
+            } else {
+              if (this[name] > 0) {
+                this[name] *= inv
+              }
+            }
+            break
+          case TimeOperation.Square:
+            this[name] = anyValueMult(sq, this[name])
+            break
+        }
+      }
+    }
+    return this
+  }
+
+  clone(): DataAction {
+    if ('props' in ActionData[this.type]) {
+      const props = Object.keys(ActionData[this.type].props).map(k => [
+        k,
+        this[k] instanceof Property ? this[k].clone() :
+          Array.isArray(this[k]) ? this[k].slice() : this[k]
+      ])
+      return new (this.constructor as any)(props.length === 1 ? props[0][1] : Object.fromEntries(props))
+    } else {
+      return new (this.constructor as any)()
+    }
   }
 
 }
@@ -10654,21 +11560,13 @@ function NodeMovement(params: NodeMovementParams = {}) {
  */
 function NodeTransform(params: NodeTransformParams = {}) {
   if (
-    'offsetVarianceX' in params ||
-    'offsetVarianceY' in params ||
-    'offsetVarianceZ' in params ||
-    'rotationVarianceX' in params ||
-    'rotationVarianceY' in params ||
-    'rotationVarianceZ' in params
+    'offsetVariance' in params ||
+    'rotationVariance' in params
   ) {
     return new RandomNodeTransform(params)
   } else if (
-    'offsetX' in params ||
-    'offsetY' in params ||
-    'offsetZ' in params ||
-    'rotationX' in params ||
-    'rotationY' in params ||
-    'rotationZ' in params
+    'offset' in params ||
+    'rotation' in params
   ) {
     return new StaticNodeTransform(params)
   }
@@ -10998,41 +11896,17 @@ class NodeSpin extends DataAction {
 
 export interface StaticNodeTransformParams {
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetX?: number
+  offset?: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetY?: number
-  /**
-   * Translation of the node along the local Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  offsetZ?: number
-  /**
-   * The rotation of the node around the local X-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationX?: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationY?: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationZ?: number
+  rotation?: Vector3
 }
 
 /**
@@ -11044,29 +11918,13 @@ export interface StaticNodeTransformParams {
 class StaticNodeTransform extends DataAction {
   declare type: ActionType.StaticNodeTransform
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    */
-  offsetX: number
+  offset: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    */
-  offsetY: number
-  /**
-   * Translation of the node along the local Z-axis.
-   */
-  offsetZ: number
-  /**
-   * The rotation of the node around the local X-axis in degrees.
-   */
-  rotationX: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   */
-  rotationY: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   */
-  rotationZ: number
+  rotation: Vector3
   constructor(props: StaticNodeTransformParams = {}) {
     super(ActionType.StaticNodeTransform)
     this.assign(props)
@@ -11075,77 +11933,29 @@ class StaticNodeTransform extends DataAction {
 
 export interface RandomNodeTransformParams {
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetX?: number
+  offset?: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetY?: number
+  rotation?: Vector3
   /**
-   * Translation of the node along the local Z-axis.
+   * The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  offsetZ?: number
+  offsetVariance?: Vector3
   /**
-   * The rotation of the node around the local X-axis in degrees.
+   * The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  rotationX?: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationY?: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  rotationZ?: number
-  /**
-   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `0`
-   */
-  offsetVarianceX?: number
-  /**
-   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `0`
-   */
-  offsetVarianceY?: number
-  /**
-   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `0`
-   */
-  offsetVarianceZ?: number
-  /**
-   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `0`
-   */
-  rotationVarianceX?: number
-  /**
-   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `0`
-   */
-  rotationVarianceY?: number
-  /**
-   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `0`
-   */
-  rotationVarianceZ?: number
+  rotationVariance?: Vector3
 }
 
 /**
@@ -11157,53 +11967,21 @@ export interface RandomNodeTransformParams {
 class RandomNodeTransform extends DataAction {
   declare type: ActionType.RandomNodeTransform
   /**
-   * Translation of the node along the local X-axis.
+   * Translation of the node.
    */
-  offsetX: number
+  offset: Vector3
   /**
-   * Translation of the node along the local Y-axis.
+   * The rotation of the node.
    */
-  offsetY: number
+  rotation: Vector3
   /**
-   * Translation of the node along the local Z-axis.
+   * The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
    */
-  offsetZ: number
+  offsetVariance: Vector3
   /**
-   * The rotation of the node around the local X-axis in degrees.
+   * The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
    */
-  rotationX: number
-  /**
-   * The rotation of the node around the local Y-axis in degrees.
-   */
-  rotationY: number
-  /**
-   * The rotation of the node around the local Z-axis in degrees.
-   */
-  rotationZ: number
-  /**
-   * The maximum random change in translation of the node along the local X-axis. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final offset used.
-   */
-  offsetVarianceX: number
-  /**
-   * The maximum random change in translation of the node along the local Y-axis. A random value between the {@link offsetY base value} minus this and the base value plus this will be the final offset used.
-   */
-  offsetVarianceY: number
-  /**
-   * The maximum random change in translation of the node along the local Z-axis. A random value between the {@link offsetZ base value} minus this and the base value plus this will be the final offset used.
-   */
-  offsetVarianceZ: number
-  /**
-   * The maximum random change in rotation of the node around the local X-axis in degrees. A random value between the {@link offsetX base value} minus this and the base value plus this will be the final rotation used.
-   */
-  rotationVarianceX: number
-  /**
-   * The maximum random change in rotation of the node around the local Y-axis in degrees. A random value between the {@link rotationY base value} minus this and the base value plus this will be the final rotation used.
-   */
-  rotationVarianceY: number
-  /**
-   * The maximum random change in rotation of the node around the local Z-axis in degrees. A random value between the {@link rotationZ base value} minus this and the base value plus this will be the final rotation used.
-   */
-  rotationVarianceZ: number
+  rotationVariance: Vector3
   constructor(props: RandomNodeTransformParams = {}) {
     super(ActionType.RandomNodeTransform)
     this.assign(props)
@@ -32953,101 +33731,24 @@ export interface LensFlareParams {
    */
   layer1UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer1Color layer's color}.
+   * Multiplier for the {@link layer1Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer1Color}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1RedMultiplier?: number
+  layer1ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer1Color layer's color}.
+   * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
-   */
-  layer1GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer1Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer1Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   */
-  layer1AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   */
-  layer1BloomAlpha?: number
+  layer1BloomColor?: Vector4
   /**
    * Layer 2 texture ID.
    * 
@@ -33119,101 +33820,24 @@ export interface LensFlareParams {
    */
   layer2UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer2Color layer's color}.
+   * Multiplier for the {@link layer2Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer2Color}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2RedMultiplier?: number
+  layer2ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer2Color layer's color}.
+   * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
-   */
-  layer2GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer2Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer2Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   */
-  layer2AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   */
-  layer2BloomAlpha?: number
+  layer2BloomColor?: Vector4
   /**
    * Layer 3 texture ID.
    * 
@@ -33285,101 +33909,24 @@ export interface LensFlareParams {
    */
   layer3UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer3Color layer's color}.
+   * Multiplier for the {@link layer3Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer3Color}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3RedMultiplier?: number
+  layer3ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer3Color layer's color}.
+   * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
-   */
-  layer3GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer3Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer3Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   */
-  layer3AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   */
-  layer3BloomAlpha?: number
+  layer3BloomColor?: Vector4
   /**
    * Layer 4 texture ID.
    * 
@@ -33453,101 +34000,24 @@ export interface LensFlareParams {
    */
   layer4UniformScale?: boolean
   /**
-   * Multiplier for the red value of the {@link layer4Color layer's color}.
+   * Multiplier for the {@link layer4Color layer's color}.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link layer4Color}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4RedMultiplier?: number
+  layer4ColorMultiplier?: Vector4
   /**
-   * Multiplier for the green value of the {@link layer4Color layer's color}.
+   * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
-   */
-  layer4GreenMultiplier?: number
-  /**
-   * Multiplier for the blue value of the {@link layer4Color layer's color}.
-   * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4BlueMultiplier?: number
-  /**
-   * Multiplier for the alpha value of the {@link layer4Color layer's color}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   */
-  layer4AlphaMultiplier?: number
-  /**
-   * The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomRed?: number
-  /**
-   * The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomGreen?: number
-  /**
-   * The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomBlue?: number
-  /**
-   * The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   */
-  layer4BloomAlpha?: number
+  layer4BloomColor?: Vector4
   /**
    * Blend mode.
    * 
@@ -33576,22 +34046,10 @@ export interface LensFlareParams {
    * **Default**: `false`
    * 
    * See also:
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
+   * - {@link layer1BloomColor}
+   * - {@link layer2BloomColor}
+   * - {@link layer3BloomColor}
+   * - {@link layer4BloomColor}
    */
   bloom?: boolean
   /**
@@ -34025,85 +34483,20 @@ class LensFlare extends DataAction {
    */
   layer1UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer1Color layer's color}.
+   * Multiplier for the {@link layer1Color layer's color}.
    * 
    * See also:
    * - {@link layer1Color}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1RedMultiplier: number
+  layer1ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer1Color layer's color}.
+   * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1BlueMultiplier}
-   * - {@link layer1AlphaMultiplier}
    */
-  layer1GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer1Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1AlphaMultiplier}
-   */
-  layer1BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer1Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1RedMultiplier}
-   * - {@link layer1GreenMultiplier}
-   * - {@link layer1BlueMultiplier}
-   */
-  layer1AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomRed: number
-  /**
-   * The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomAlpha}
-   */
-  layer1BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer1Color}
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   */
-  layer1BloomAlpha: number
+  layer1BloomColor: Vector4
   /**
    * Layer 2 texture ID.
    */
@@ -34159,85 +34552,20 @@ class LensFlare extends DataAction {
    */
   layer2UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer2Color layer's color}.
+   * Multiplier for the {@link layer2Color layer's color}.
    * 
    * See also:
    * - {@link layer2Color}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2RedMultiplier: number
+  layer2ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer2Color layer's color}.
+   * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2BlueMultiplier}
-   * - {@link layer2AlphaMultiplier}
    */
-  layer2GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer2Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2AlphaMultiplier}
-   */
-  layer2BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer2Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2RedMultiplier}
-   * - {@link layer2GreenMultiplier}
-   * - {@link layer2BlueMultiplier}
-   */
-  layer2AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomRed: number
-  /**
-   * The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomAlpha}
-   */
-  layer2BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer2Color}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   */
-  layer2BloomAlpha: number
+  layer2BloomColor: Vector4
   /**
    * Layer 3 texture ID.
    */
@@ -34293,85 +34621,20 @@ class LensFlare extends DataAction {
    */
   layer3UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer3Color layer's color}.
+   * Multiplier for the {@link layer3Color layer's color}.
    * 
    * See also:
    * - {@link layer3Color}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3RedMultiplier: number
+  layer3ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer3Color layer's color}.
+   * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3BlueMultiplier}
-   * - {@link layer3AlphaMultiplier}
    */
-  layer3GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer3Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3AlphaMultiplier}
-   */
-  layer3BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer3Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3RedMultiplier}
-   * - {@link layer3GreenMultiplier}
-   * - {@link layer3BlueMultiplier}
-   */
-  layer3AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomRed: number
-  /**
-   * The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomAlpha}
-   */
-  layer3BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer3Color}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   */
-  layer3BloomAlpha: number
+  layer3BloomColor: Vector4
   /**
    * Layer 4 texture ID.
    * 
@@ -34429,85 +34692,20 @@ class LensFlare extends DataAction {
    */
   layer4UniformScale: boolean
   /**
-   * Multiplier for the red value of the {@link layer4Color layer's color}.
+   * Multiplier for the {@link layer4Color layer's color}.
    * 
    * See also:
    * - {@link layer4Color}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4RedMultiplier: number
+  layer4ColorMultiplier: Vector4
   /**
-   * Multiplier for the green value of the {@link layer4Color layer's color}.
+   * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
    * See also:
+   * - {@link bloom}
    * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4BlueMultiplier}
-   * - {@link layer4AlphaMultiplier}
    */
-  layer4GreenMultiplier: number
-  /**
-   * Multiplier for the blue value of the {@link layer4Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4AlphaMultiplier}
-   */
-  layer4BlueMultiplier: number
-  /**
-   * Multiplier for the alpha value of the {@link layer4Color layer's color}.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4RedMultiplier}
-   * - {@link layer4GreenMultiplier}
-   * - {@link layer4BlueMultiplier}
-   */
-  layer4AlphaMultiplier: number
-  /**
-   * The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomRed: number
-  /**
-   * The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomGreen: number
-  /**
-   * The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomAlpha}
-   */
-  layer4BloomBlue: number
-  /**
-   * The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * See also:
-   * - {@link layer4Color}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   */
-  layer4BloomAlpha: number
+  layer4BloomColor: Vector4
   /**
    * Blend mode.
    */
@@ -34528,22 +34726,10 @@ class LensFlare extends DataAction {
    * Does not seem to work in Sekiro.
    * 
    * See also:
-   * - {@link layer1BloomRed}
-   * - {@link layer1BloomGreen}
-   * - {@link layer1BloomBlue}
-   * - {@link layer1BloomAlpha}
-   * - {@link layer2BloomRed}
-   * - {@link layer2BloomGreen}
-   * - {@link layer2BloomBlue}
-   * - {@link layer2BloomAlpha}
-   * - {@link layer3BloomRed}
-   * - {@link layer3BloomGreen}
-   * - {@link layer3BloomBlue}
-   * - {@link layer3BloomAlpha}
-   * - {@link layer4BloomRed}
-   * - {@link layer4BloomGreen}
-   * - {@link layer4BloomBlue}
-   * - {@link layer4BloomAlpha}
+   * - {@link layer1BloomColor}
+   * - {@link layer2BloomColor}
+   * - {@link layer3BloomColor}
+   * - {@link layer4BloomColor}
    */
   bloom: boolean
   unk_er_f1_4: number
@@ -39820,6 +40006,21 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
     return kf as T
   }
 
+  static equal<T extends ValueType, K extends IBasicKeyframe<T> | IBezierKeyframe<T>>(kf1: K, kf2: K) {
+    return (
+      Array.isArray(kf1.value) && kf1.value.every((e, i) => e === kf2.value[i]) ||
+      kf1.value === kf2.value
+    ) && (
+      !('p1' in kf1 && 'p1' in kf2) || (
+        Array.isArray(kf1.p1) && kf1.p1.every((e, i) => e === 0 && kf2.p1[i] === 0) ||
+        kf1.p1 === 0 && kf2.p1 === 0
+      ) && (
+        Array.isArray(kf1.p2) && kf1.p2.every((e, i) => e === 0 && kf2.p2[i] === 0) ||
+        kf1.p2 === 0 && kf2.p2 === 0
+      )
+    )
+  }
+
 }
 
 class BezierKeyframe<T extends ValueType> extends Keyframe<T> implements IBezierKeyframe<T> {
@@ -40411,7 +40612,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   }
 
   minify(): Property<T, PropertyFunction> {
-    if (this.keyframes.length === 1) {
+    if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
       if (this.valueType === ValueType.Scalar) {
         return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
           ...this.modifiers.filter(Modifier.isEffective)
@@ -40637,7 +40838,7 @@ class ComponentSequenceProperty<T extends ValueType>
         positions.add(keyframe.position)
       }
     }
-    const keyframes = interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)
+    const keyframes = filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40))
       .map(e => new Keyframe(e, this.valueAt(e)))
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
   }
@@ -40659,7 +40860,12 @@ class ComponentSequenceProperty<T extends ValueType>
   }
 
   minify(): Property<T, PropertyFunction> {
-    if (this.components.every(c => c.keyframes.length === 1)) {
+    if (
+      this.components.every(c =>
+        c.keyframes.length === 1 ||
+        c.keyframes.slice(1).every(kf => Keyframe.equal(c.keyframes[0], kf))
+      )
+    ) {
       return new ConstantProperty<T>(
         ...this.components.map(c => c.keyframes[0].value)
       ).withModifiers(
@@ -41566,6 +41772,1150 @@ function PrecipitationModifier<T extends ValueType>(
   ]) as unknown as TypeMap.Property[T])
 }
 
+//#region Recolor
+/**
+ * Contains various functions related to recoloring effects.
+ */
+namespace Recolor {
+
+  export type RecolorFunction = (color: Vector4) => Vector4
+
+  export type PaletteSlots = {
+    CommonParticle: {
+      modifier: any
+      color1: any
+      color2: any
+      color3: any
+      rgbMultiplier: any
+      bloomColor: any
+    }
+    DistortionParticle: {
+      modifier: any
+      color: any
+      rgbMultiplier: any
+      bloomColor: any
+    }
+    BlurParticle: {
+      modifier: any
+      color: any
+      rgbMultiplier: any
+      bloomColor: any
+    }
+    Light: {
+      diffuseColor: any
+      diffuseMultiplier: any
+      specularColor?: any
+      specularMultiplier?: any
+    }
+    GPUParticle: {
+      color: any
+      rgbMultiplier: any
+      colorMin: any
+      colorMax: any
+      bloomColor?: any
+    }
+    LensFlare: {
+      color: any
+      colorMultiplier: any
+      bloomColor: any
+    }
+  }
+
+  export interface ColorPalette {
+    commonParticleNormal?: PaletteSlots['CommonParticle'][]
+    commonParticleMultiply?: PaletteSlots['CommonParticle'][]
+    commonParticleAdd?: PaletteSlots['CommonParticle'][]
+    commonParticleSubtract?: PaletteSlots['CommonParticle'][]
+    distortionParticle?: PaletteSlots['DistortionParticle'][]
+    blurParticle?: PaletteSlots['BlurParticle'][]
+    light?: PaletteSlots['Light'][]
+    gpuParticle?: PaletteSlots['GPUParticle'][]
+    lensFlare?: PaletteSlots['LensFlare'][]
+  }
+
+  /**
+   * Generates a color palette that can be used to recolor other nodes based on
+   * the colors in the given nodes and their descendants.
+   * @param sources An array of FXRs or nodes to sample colors from.
+   * @param mode Controls the behavior of the color sampler. See
+   * {@link PaletteMode} for more information.
+   */
+  export function generatePalette(sources: (FXR | Node)[], mode: PaletteMode = PaletteMode.Average) {
+    const palette: Recolor.ColorPalette = {}
+    function normalize<T>(val: AnyValue): T {
+      if (val instanceof SequenceProperty || val instanceof ComponentSequenceProperty) {
+        let clone = val.clone().minify()
+        const extValMods = clone.modifiers.filter(mod => 
+          mod instanceof ExternalValue1Modifier ||
+          mod instanceof ExternalValue2Modifier
+        )
+        clone.modifiers = clone.modifiers.filter(mod => !(
+          mod instanceof ExternalValue1Modifier ||
+          mod instanceof ExternalValue2Modifier
+        ))
+        for (const mod of extValMods) {
+          clone = anyValueMult(mod.factor.valueAt(0), clone as AnyValue)
+        }
+        if (clone instanceof SequenceProperty || clone instanceof ComponentSequenceProperty) {
+          clone.duration = 1
+        }
+        return clone as T
+      }
+      return (val instanceof Property ? val.clone().minify() : val) as T
+    }
+    function sum<T extends PaletteSlots[keyof PaletteSlots]>(p: T, n: keyof T, o: AnyValue) {
+      ;(p[n] as AnyValue) = anyValueSum(p[n] as AnyValue, normalize(o))
+    }
+    function nonWhiteVisible(color: Vector4Value) {
+      return (
+        color instanceof SequenceProperty ||
+        color instanceof ComponentSequenceProperty ||
+        (
+          Array.isArray(color) &&
+          color[3] !== 0 &&
+          color.some(e => e !== 1)
+        ) ||
+        (
+          color instanceof ValueProperty &&
+          (color.value as Vector4)[3] !== 0 &&
+          (color.value as Vector4).some(e => e !== 1)
+        )
+      )
+    }
+    function *walkEffects(sources: (FXR | Node)[]) {
+      for (const src of sources) {
+        if (src instanceof FXR) {
+          yield* src.root.walkEffects()
+        } else {
+          yield* src.walkEffects()
+        }
+      }
+    }
+    for (const effect of walkEffects(sources)) {
+      if (effect instanceof BasicEffect) {
+        const a = effect.appearance
+        if (
+          a instanceof PointSprite ||
+          a instanceof Line ||
+          a instanceof QuadLine ||
+          a instanceof BillboardEx ||
+          a instanceof MultiTextureBillboardEx ||
+          a instanceof Model ||
+          a instanceof RichModel ||
+          a instanceof Tracer ||
+          a instanceof DynamicTracer
+        ) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
+          if (blendMode instanceof Property) {
+            blendMode = blendMode.valueAt(0)
+          }
+          if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
+            blendMode = BlendMode.Normal
+          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Screen) {
+            blendMode = BlendMode.Add
+          }
+          const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+            ColorPalette,
+            PaletteSlots['CommonParticle'][]
+          >
+          if (key in palette && mode === PaletteMode.First) continue
+          palette[key] ??= []
+          palette[key].push({
+            modifier: normalize(effect.particleModifier.color),
+            color1: normalize(a.color1),
+            color2: normalize(a.color2),
+            color3: normalize(a.color3),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            bloomColor: normalize(a.bloomColor),
+          })
+        } else if (a instanceof Distortion) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if ('distortionParticle' in palette && mode === PaletteMode.First) continue
+          palette.distortionParticle ??= []
+          palette.distortionParticle.push({
+            modifier: normalize(effect.particleModifier.color),
+            color: normalize(a.color),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            bloomColor: normalize(a.bloomColor),
+          })
+        } else if (a instanceof RadialBlur) {
+          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if ('blurParticle' in palette && mode === PaletteMode.First) continue
+          palette.blurParticle ??= []
+          palette.blurParticle.push({
+            modifier: normalize(effect.particleModifier.color),
+            color: normalize(a.color),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            bloomColor: normalize(a.bloomColor),
+          })
+        } else if (a instanceof PointLight || a instanceof SpotLight) {
+          if ('light' in palette && mode === PaletteMode.First) continue
+          palette.light ??= []
+          palette.light.push({
+            diffuseColor: normalize(a.diffuseColor),
+            diffuseMultiplier: normalize(a.diffuseMultiplier),
+            ...a.separateSpecular && {
+              specularColor: normalize(a.specularColor),
+              specularMultiplier: normalize(a.specularMultiplier),
+            }
+          })
+        } else if (
+          a instanceof GPUStandardParticle ||
+          a instanceof GPUStandardCorrectParticle ||
+          a instanceof GPUSparkParticle ||
+          a instanceof GPUSparkCorrectParticle
+        ) {
+          if ('gpuParticle' in palette && mode === PaletteMode.First) continue
+          palette.gpuParticle ??= []
+          palette.gpuParticle.push({
+            color: normalize(a.color),
+            rgbMultiplier: normalize(a.rgbMultiplier),
+            colorMin: normalize(a.colorMin),
+            colorMax: normalize(a.colorMax),
+            ...a.bloom && {
+              bloomColor: normalize(a.bloomColor)
+            }
+          })
+        } else if (a instanceof LensFlare) {
+          if ('lensFlare' in palette && mode === PaletteMode.First) continue
+          interface LensFlareLayer {
+            color: 'layer1Color' | 'layer2Color' | 'layer3Color' | 'layer4Color'
+            mult: 'layer1ColorMultiplier' | 'layer2ColorMultiplier' | 'layer3ColorMultiplier' | 'layer4ColorMultiplier'
+            bloom: 'layer1BloomColor' | 'layer2BloomColor' | 'layer3BloomColor' | 'layer4BloomColor'
+          }
+          const layers = arrayOf(4, i => ({
+            color: `layer${i+1}Color`,
+            mult: `layer${i+1}ColorMultiplier`,
+            bloom: `layer${i+1}BloomColor`,
+          })) as LensFlareLayer[]
+          let color: LensFlareLayer["color"], mult: LensFlareLayer["mult"], bloom: LensFlareLayer["bloom"]
+          for ({ color, mult, bloom } of layers) {
+            if (nonWhiteVisible(a[color]) || nonWhiteVisible(a[mult]) || nonWhiteVisible(a[bloom])) {
+              break
+            }
+          }
+          palette.lensFlare ??= []
+          palette.lensFlare.push({
+            color: normalize(a[color]),
+            colorMultiplier: normalize(a[mult]),
+            bloomColor: normalize(a[bloom]),
+          })
+        }
+      }
+    }
+    if (mode === PaletteMode.Average) {
+      for (const [k, v] of Object.entries(palette)) {
+        palette[k] = averagePaletteEntries(v)
+      }
+    }
+    for (const o of Object.values(palette)) {
+      for (const [k, v] of Object.entries(o)) {
+        o[k] = v instanceof Property ? v.minify().toJSON() : v
+      }
+    }
+    return palette
+  }
+
+  /**
+   * Creates a recolor function that preserves original colors with low
+   * saturation. This has the downside that it is unable to recolor grayscale
+   * effects, but it is probably the most useful recolor function due to how
+   * well it keeps the overall look of the original effect while changing its
+   * colors.
+   * @param targetColor The target color.
+   */
+  export function standardBlend(targetColor: Vector3 | Vector4): RecolorFunction {
+    return ([r, g, b, a]: Vector4): Vector4 => {
+      const scale = Math.max(r, g, b, 1)
+      r /= scale
+      g /= scale
+      b /= scale
+
+      const min = Math.min(r, g, b)
+      const max = Math.max(r, g, b)
+      const s = max > 0 ? (max - min) / max : 0
+
+      r = lerp(max, targetColor[0], s) * scale
+      g = lerp(max, targetColor[1], s) * scale
+      b = lerp(max, targetColor[2], s) * scale
+
+      return [r, g, b, a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that simply replaces colors with the given
+   * color.
+   * @param targetColor The target color.
+   */
+  export function replace(targetColor: Vector4): RecolorFunction {
+    const [r, g, b, a] = targetColor
+    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r ?? r2, g ?? g2, b ?? b2, a ?? a2]
+  }
+
+  /**
+   * Creates a recolor function that multiplies the original color by the
+   * given color.
+   * @param targetColor The target color.
+   */
+  export function multiply(targetColor: Vector4): RecolorFunction {
+    const [r, g, b, a] = targetColor
+    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r * r2, g * g2, b * b2, a * a2]
+  }
+
+  /**
+   * Creates a recolor function that adds the given color to the original
+   * color.
+   * @param targetColor The target color.
+   */
+  export function add([r, g, b, a]: Vector4): RecolorFunction {
+    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r + r2, g + g2, b + b2, a + a2]
+  }
+
+  /**
+   * Recolor function that simply inverts colors.
+   */
+  export const invert: RecolorFunction = ([r, g, b, a]) => {
+    const scale = Math.max(r, g, b, 1)
+    return [
+      (1 - (r / scale)) * scale,
+      (1 - (g / scale)) * scale,
+      (1 - (b / scale)) * scale,
+      a
+    ]
+  }
+
+  /**
+   * Recolor function that makes colors grayscale.
+   */
+  export const grayscale: RecolorFunction = ([r, g, b, a]) => {
+    const l = r * 0.21 + g * 0.72 + b * 0.07
+    return [l, l, l, a]
+  }
+
+  /**
+   * Creates a recolor function that modifies the original color by using it to
+   * sample values from a given property. This works in a very similar way to
+   * the "Curves" tool in many image editing apps.
+   * @param curves The property to sample color values from.
+   */
+  export function curves(curves: Vector4Property): RecolorFunction {
+    return ([r, g, b, a]) => [
+      curves.valueAt(r)[0],
+      curves.valueAt(g)[1],
+      curves.valueAt(b)[2],
+      curves.valueAt(a)[3],
+    ]
+  }
+
+  /**
+   * Creates a recolor function that linearly interpolates between the original
+   * color and the given color using the interpolation factor `t`.
+   * @param color The target color to interpolate towards.
+   * @param t The interpolation factor. At t=0, the colors will not be modified
+   * at all. At t=1, the colors will be replaced with the target color. At
+   * t=0.5, the color will be the average of the original color and the target
+   * color.
+   */
+  export function mix(color: Vector4, t: number): RecolorFunction {
+    const [r, g, b, a] = color
+    return ([r2, g2, b2, a2]) => [
+      lerp(r2, r, t),
+      lerp(g2, g, t),
+      lerp(b2, b, t),
+      lerp(a2, a, t),
+    ]
+  }
+
+  /**
+   * Creates a recolor function that hue-shifts colors by a given angle in
+   * degrees.
+   * @param angle The angle in degrees to shift the hue.
+   */
+  export function hueShift(angle: number): RecolorFunction {
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ h, s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(mod(h * 360 + angle, 360) / 360, s, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that replaces the hue of the original color
+   * with that of a given color.
+   * @param color The color whose hue will be used.
+   */
+  export function replaceHue(color: Vector3 | Vector4): RecolorFunction {
+    const [ th ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ , s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(th, s, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that replaces the saturation of the original
+   * color with that of a given color.
+   * @param color The color whose saturation will be used.
+   */
+  export function replaceSaturation(color: Vector3 | Vector4): RecolorFunction {
+    const [ , ts ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ h,, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(h, ts, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that replaces the hue and saturation of the
+   * original color with that of a given color.
+   * @param color The color whose hue and saturation will be used.
+   */
+  export function colorBlend(color: Vector3 | Vector4): RecolorFunction {
+    const rgb = color.slice(0, 3) as Vector3
+    const inputScale = Math.max(...rgb, 1)
+    const [ th, ts ] = rgbToHsv(...(rgb.map(e => e / inputScale) as Vector3))
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ ,, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(th, ts, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+  /**
+   * Creates a recolor function that scales the saturation of the colors by a
+   * given factor.
+   * @param factor The saturation scaling factor.
+   */
+  export function scaleSaturation(factor: number): RecolorFunction {
+    return ([r, g, b, a]) => {
+      const scale = Math.max(r, g, b, 1)
+      const [ h, s, v ] = rgbToHsv(r / scale, g / scale, b / scale)
+      return [...(hsvToRgb(h, s * factor, v).map(e => e * scale) as Vector3), a]
+    }
+  }
+
+}
+
+//#region FXRUtility
+/**
+ * Contains utility functions that may be useful when creating new effects.
+ */
+namespace FXRUtility {
+
+  type Glyph = [Vector2, Vector2][]
+  const font: { [char: string]: Glyph } = {
+    'A': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[0.5, 1], [0.5, 7]],
+      [[4.5, 1], [4.5, 7]],
+    ],
+    'B': [
+      [[0, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 7]],
+      [[4.5, 1], [4.5, 3]],
+      [[4.5, 4], [4.5, 6]],
+    ],
+    'C': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[4.5, 1], [4.5, 2]],
+      [[4.5, 5], [4.5, 6]],
+    ],
+    'D': [
+      [[0, 0.5], [4, 0.5]],
+      [[0, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[4.5, 1], [4.5, 6]],
+    ],
+    'E': [
+      [[0, 0.5], [5, 0.5]],
+      [[1, 3.5], [3, 3.5]],
+      [[0, 6.5], [5, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+    ],
+    'F': [
+      [[0, 0.5], [5, 0.5]],
+      [[1, 3.5], [3, 3.5]],
+      [[0.5, 1], [0.5, 7]],
+    ],
+    'G': [
+      [[1, 0.5], [4, 0.5]],
+      [[2, 3.5], [5, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[4.5, 1], [4.5, 2]],
+      [[4.5, 4], [4.5, 6]],
+    ],
+    'H': [
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 0], [4.5, 7]],
+      [[1, 3.5], [4, 3.5]],
+    ],
+    'I': [
+      [[0, 0.5], [5, 0.5]],
+      [[0, 6.5], [5, 6.5]],
+      [[2.5, 1], [2.5, 6]],
+    ],
+    'J': [
+      [[0.5, 4], [0.5, 6]],
+      [[4.5, 0], [4.5, 6]],
+      [[1, 6.5], [4, 6.5]],
+    ],
+    'K': [
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 0], [4.5, 1]],
+      [[3.5, 1], [3.5, 2]],
+      [[2.5, 2], [2.5, 3]],
+      [[1.5, 3], [1.5, 4]],
+      [[2.5, 4], [2.5, 5]],
+      [[3.5, 5], [3.5, 6]],
+      [[4.5, 6], [4.5, 7]],
+    ],
+    'L': [
+      [[1, 6.5], [5, 6.5]],
+      [[0.5, 0], [0.5, 7]],
+    ],
+    'M': [
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 0], [4.5, 7]],
+      [[1.5, 1], [1.5, 2]],
+      [[2.5, 2], [2.5, 3]],
+      [[3.5, 1], [3.5, 2]],
+    ],
+    'N': [
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 0], [4.5, 7]],
+      [[1.5, 2], [1.5, 3]],
+      [[2.5, 3], [2.5, 4]],
+      [[3.5, 4], [3.5, 5]],
+    ],
+    'O': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[4.5, 1], [4.5, 6]],
+    ],
+    'P': [
+      [[0, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[0.5, 1], [0.5, 7]],
+      [[4.5, 1], [4.5, 3]],
+    ],
+    'Q': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[4.5, 1], [4.5, 6]],
+      [[3, 7.5], [5, 7.5]],
+    ],
+    'R': [
+      [[0, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[0.5, 1], [0.5, 7]],
+      [[4.5, 1], [4.5, 3]],
+      [[4.5, 4], [4.5, 7]],
+    ],
+    'S': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 3]],
+      [[0.5, 5], [0.5, 6]],
+      [[4.5, 1], [4.5, 2]],
+      [[4.5, 4], [4.5, 6]],
+    ],
+    'T': [
+      [[0, 0.5], [5, 0.5]],
+      [[2.5, 1], [2.5, 7]],
+    ],
+    'U': [
+      [[0.5, 0], [0.5, 6]],
+      [[4.5, 0], [4.5, 6]],
+      [[1, 6.5], [4, 6.5]],
+    ],
+    'V': [
+      [[0.5, 0], [0.5, 4]],
+      [[1.5, 4], [1.5, 6]],
+      [[2.5, 6], [2.5, 7]],
+      [[3.5, 4], [3.5, 6]],
+      [[4.5, 0], [4.5, 4]],
+    ],
+    'W': [
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 0], [4.5, 7]],
+      [[1.5, 5], [1.5, 6]],
+      [[2.5, 4], [2.5, 5]],
+      [[3.5, 5], [3.5, 6]],
+    ],
+    'X': [
+      [[0.5, 0], [0.5, 2]],
+      [[4.5, 0], [4.5, 2]],
+      [[0.5, 5], [0.5, 7]],
+      [[4.5, 5], [4.5, 7]],
+      [[1.5, 2], [1.5, 3]],
+      [[1.5, 4], [1.5, 5]],
+      [[2.5, 3], [2.5, 4]],
+      [[3.5, 2], [3.5, 3]],
+      [[3.5, 4], [3.5, 5]],
+    ],
+    'Y': [
+      [[0.5, 0], [0.5, 2]],
+      [[4.5, 0], [4.5, 2]],
+      [[1.5, 2], [1.5, 3]],
+      [[2.5, 3], [2.5, 7]],
+      [[3.5, 2], [3.5, 3]],
+    ],
+    'Z': [
+      [[0, 0.5], [5, 0.5]],
+      [[4.5, 1], [4.5, 2]],
+      [[3.5, 2], [3.5, 3]],
+      [[2.5, 3], [2.5, 4]],
+      [[1.5, 4], [1.5, 5]],
+      [[0.5, 5], [0.5, 6]],
+      [[0, 6.5], [5, 6.5]],
+    ],
+    'a': [
+      [[1, 2.5], [5, 2.5]],
+      [[1, 6.5], [5, 6.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 3], [4.5, 6]],
+    ],
+    'b': [
+      [[1, 2.5], [4, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 3], [4.5, 6]],
+    ],
+    'c': [
+      [[1, 2.5], [4, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 3], [4.5, 4]],
+      [[4.5, 5], [4.5, 6]],
+    ],
+    'd': [
+      [[1, 2.5], [4, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 0], [4.5, 7]],
+    ],
+    'e': [
+      [[1, 2.5], [4, 2.5]],
+      [[1, 4.5], [4, 4.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 3], [4.5, 5]],
+    ],
+    'f': [
+      [[2, 0.5], [4, 0.5]],
+      [[0, 3.5], [1, 3.5]],
+      [[2, 3.5], [4, 3.5]],
+      [[1.5, 1], [1.5, 7]],
+      [[4.5, 1], [4.5, 2]],
+    ],
+    'g': [
+      [[1, 2.5], [5, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[1, 8.5], [4, 8.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 3], [4.5, 8]],
+    ],
+    'h': [
+      [[1, 2.5], [4, 2.5]],
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 3], [4.5, 7]],
+    ],
+    'i': [
+      [[1, 2.5], [3, 2.5]],
+      [[0, 6.5], [5, 6.5]],
+      [[2.5, 0], [2.5, 1]],
+      [[2.5, 3], [2.5, 6]],
+    ],
+    'j': [
+      [[3, 2.5], [5, 2.5]],
+      [[1, 8.5], [4, 8.5]],
+      [[0.5, 7], [0.5, 8]],
+      [[4.5, 0], [4.5, 1]],
+      [[4.5, 3], [4.5, 8]],
+    ],
+    'k': [
+      [[0.5, 0], [0.5, 7]],
+      [[4.5, 2], [4.5, 3]],
+      [[3.5, 3], [3.5, 4]],
+      [[1, 4.5], [3, 4.5]],
+      [[3.5, 5], [3.5, 6]],
+      [[4.5, 6], [4.5, 7]],
+    ],
+    'l': [
+      [[0, 0.5], [1, 0.5]],
+      [[2, 6.5], [5, 6.5]],
+      [[1.5, 0], [1.5, 6]],
+    ],
+    'm': [
+      [[0, 2.5], [4, 2.5]],
+      [[0.5, 3], [0.5, 7]],
+      [[2.5, 3], [2.5, 7]],
+      [[4.5, 3], [4.5, 7]],
+    ],
+    'n': [
+      [[0, 2.5], [4, 2.5]],
+      [[0.5, 3], [0.5, 7]],
+      [[4.5, 3], [4.5, 7]],
+    ],
+    'o': [
+      [[1, 2.5], [4, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 3], [4.5, 6]],
+    ],
+    'p': [
+      [[0, 2.5], [4, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 9]],
+      [[4.5, 3], [4.5, 6]],
+    ],
+    'q': [
+      [[1, 2.5], [5, 2.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 6]],
+      [[4.5, 3], [4.5, 9]],
+    ],
+    'r': [
+      [[1, 3.5], [2, 3.5]],
+      [[2, 2.5], [4, 2.5]],
+      [[4, 3.5], [5, 3.5]],
+      [[0.5, 2], [0.5, 7]],
+    ],
+    's': [
+      [[1, 2.5], [5, 2.5]],
+      [[1, 4.5], [4, 4.5]],
+      [[0, 6.5], [4, 6.5]],
+      [[0.5, 3], [0.5, 4]],
+      [[4.5, 5], [4.5, 6]],
+    ],
+    't': [
+      [[0, 2.5], [1, 2.5]],
+      [[2, 2.5], [4, 2.5]],
+      [[2, 6.5], [5, 6.5]],
+      [[1.5, 0], [1.5, 6]],
+    ],
+    'u': [
+      [[1, 6.5], [5, 6.5]],
+      [[0.5, 2], [0.5, 6]],
+      [[4.5, 2], [4.5, 6]],
+    ],
+    'v': [
+      [[0.5, 2], [0.5, 5]],
+      [[1.5, 5], [1.5, 6]],
+      [[2.5, 6], [2.5, 7]],
+      [[3.5, 5], [3.5, 6]],
+      [[4.5, 2], [4.5, 5]],
+    ],
+    'w': [
+      [[0.5, 2], [0.5, 6]],
+      [[1.5, 6], [1.5, 7]],
+      [[2.5, 4], [2.5, 6]],
+      [[3.5, 6], [3.5, 7]],
+      [[4.5, 2], [4.5, 6]],
+    ],
+    'x': [
+      [[0.5, 2], [0.5, 3]],
+      [[0.5, 6], [0.5, 7]],
+      [[1.5, 3], [1.5, 4]],
+      [[1.5, 5], [1.5, 6]],
+      [[2.5, 4], [2.5, 5]],
+      [[3.5, 3], [3.5, 4]],
+      [[3.5, 5], [3.5, 6]],
+      [[4.5, 2], [4.5, 3]],
+      [[4.5, 6], [4.5, 7]],
+    ],
+    'y': [
+      [[1, 6.5], [4, 6.5]],
+      [[1, 8.5], [4, 8.5]],
+      [[0.5, 2], [0.5, 6]],
+      [[4.5, 2], [4.5, 8]],
+    ],
+    'z': [
+      [[0, 2.5], [5, 2.5]],
+      [[1.5, 5], [1.5, 6]],
+      [[2.5, 4], [2.5, 5]],
+      [[3.5, 3], [3.5, 4]],
+      [[0, 6.5], [5, 6.5]],
+    ],
+    '0': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[2.5, 3], [2.5, 4]],
+      [[4.5, 1], [4.5, 6]],
+    ],
+    '1': [
+      [[1, 1.5], [2, 1.5]],
+      [[0, 6.5], [5, 6.5]],
+      [[2.5, 0], [2.5, 6]],
+    ],
+    '2': [
+      [[1, 0.5], [4, 0.5]],
+      [[0.5, 1], [0.5, 2]],
+      [[4.5, 1], [4.5, 3]],
+      [[3.5, 3], [3.5, 4]],
+      [[2.5, 4], [2.5, 5]],
+      [[1.5, 5], [1.5, 6]],
+      [[0, 6.5], [5, 6.5]],
+    ],
+    '3': [
+      [[1, 0.5], [4, 0.5]],
+      [[0.5, 1], [0.5, 2]],
+      [[4.5, 1], [4.5, 3]],
+      [[2, 3.5], [4, 3.5]],
+      [[4.5, 4], [4.5, 6]],
+      [[0.5, 5], [0.5, 6]],
+      [[1, 6.5], [4, 6.5]],
+    ],
+    '4': [
+      [[0, 3.5], [4, 3.5]],
+      [[1.5, 0], [1.5, 2]],
+      [[0.5, 2], [0.5, 3]],
+      [[4.5, 0], [4.5, 7]],
+    ],
+    '5': [
+      [[0, 0.5], [5, 0.5]],
+      [[0, 3.5], [4, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 3]],
+      [[0.5, 5], [0.5, 6]],
+      [[4.5, 4], [4.5, 6]],
+    ],
+    '6': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 6]],
+      [[4.5, 1], [4.5, 2]],
+      [[4.5, 4], [4.5, 6]],
+    ],
+    '7': [
+      [[0, 0.5], [5, 0.5]],
+      [[4.5, 1], [4.5, 3]],
+      [[3.5, 3], [3.5, 4]],
+      [[2.5, 4], [2.5, 7]],
+    ],
+    '8': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 3]],
+      [[0.5, 4], [0.5, 6]],
+      [[4.5, 1], [4.5, 3]],
+      [[4.5, 4], [4.5, 6]],
+    ],
+    '9': [
+      [[1, 0.5], [4, 0.5]],
+      [[1, 3.5], [4, 3.5]],
+      [[1, 6.5], [4, 6.5]],
+      [[0.5, 1], [0.5, 3]],
+      [[0.5, 5], [0.5, 6]],
+      [[4.5, 1], [4.5, 6]],
+    ],
+    '.': [
+      [[0.5, 5], [0.5, 7]],
+    ],
+    ',': [
+      [[1.5, 5], [1.5, 7]],
+      [[0.5, 7], [0.5, 8]],
+    ],
+    ':': [
+      [[0.5, 1], [0.5, 3]],
+      [[0.5, 5], [0.5, 7]],
+    ],
+    ';': [
+      [[1.5, 1], [1.5, 3]],
+      [[1.5, 5], [1.5, 7]],
+      [[0.5, 7], [0.5, 8]],
+    ],
+    '_': [
+      [[0, 6.5], [5, 6.5]],
+    ],
+    '-': [
+      [[0, 3.5], [5, 3.5]],
+    ],
+    '+': [
+      [[0, 3.5], [5, 3.5]],
+      [[2.5, 1], [2.5, 3]],
+      [[2.5, 4], [2.5, 6]],
+    ],
+    '*': [
+      [[1, 2.5], [4, 2.5]],
+      [[2.5, 0], [2.5, 2]],
+      [[2.5, 3], [2.5, 5]],
+      [[0.5, 1], [0.5, 2]],
+      [[4.5, 1], [4.5, 2]],
+      [[0.5, 3], [0.5, 4]],
+      [[4.5, 3], [4.5, 4]],
+    ],
+    '=': [
+      [[0, 2.5], [5, 2.5]],
+      [[0, 4.5], [5, 4.5]],
+    ],
+    '<': [
+      [[3, 2.5], [5, 2.5]],
+      [[1, 3.5], [3, 3.5]],
+      [[0, 4.5], [1, 4.5]],
+      [[1, 5.5], [3, 5.5]],
+      [[3, 6.5], [5, 6.5]],
+    ],
+    '>': [
+      [[0, 2.5], [1, 2.5]],
+      [[1, 3.5], [3, 3.5]],
+      [[3, 4.5], [5, 4.5]],
+      [[1, 5.5], [3, 5.5]],
+      [[0, 6.5], [1, 6.5]],
+    ],
+    '/': [
+      [[4.5, 0], [4.5, 2]],
+      [[3.5, 2], [3.5, 3]],
+      [[2.5, 3], [2.5, 4]],
+      [[1.5, 4], [1.5, 5]],
+      [[0.5, 5], [0.5, 7]],
+    ],
+    '\\': [
+      [[0.5, 0], [0.5, 2]],
+      [[1.5, 2], [1.5, 3]],
+      [[2.5, 3], [2.5, 4]],
+      [[3.5, 4], [3.5, 5]],
+      [[4.5, 5], [4.5, 7]],
+    ],
+    '#': [
+      [[0, 2.5], [5, 2.5]],
+      [[0, 5.5], [5, 5.5]],
+      [[1.5, 1], [1.5, 2]],
+      [[3.5, 1], [3.5, 2]],
+      [[1.5, 3], [1.5, 5]],
+      [[3.5, 3], [3.5, 5]],
+      [[1.5, 6], [1.5, 7]],
+      [[3.5, 6], [3.5, 7]],
+    ],
+    '(': [
+      [[1.5, 0], [1.5, 1]],
+      [[0.5, 1], [0.5, 6]],
+      [[1.5, 6], [1.5, 7]],
+    ],
+    ')': [
+      [[0.5, 0], [0.5, 1]],
+      [[1.5, 1], [1.5, 6]],
+      [[0.5, 6], [0.5, 7]],
+    ],
+    '[': [
+      [[1.5, 0], [1.5, 1]],
+      [[0.5, 0], [0.5, 7]],
+      [[1.5, 6], [1.5, 7]],
+    ],
+    ']': [
+      [[0.5, 0], [0.5, 1]],
+      [[1.5, 0], [1.5, 7]],
+      [[0.5, 6], [0.5, 7]],
+    ],
+    '{': [
+      [[2.5, 0], [2.5, 1]],
+      [[1.5, 1], [1.5, 3]],
+      [[0.5, 3], [0.5, 4]],
+      [[1.5, 4], [1.5, 6]],
+      [[2.5, 6], [2.5, 7]],
+    ],
+    '}': [
+      [[0.5, 0], [0.5, 1]],
+      [[1.5, 1], [1.5, 3]],
+      [[2.5, 3], [2.5, 4]],
+      [[1.5, 4], [1.5, 6]],
+      [[0.5, 6], [0.5, 7]],
+    ],
+    '\'': [
+      [[0.5, 0], [0.5, 3]],
+    ],
+    '"': [
+      [[0.5, 0], [0.5, 3]],
+      [[2.5, 0], [2.5, 3]],
+    ],
+    '!': [
+      [[0.5, 0], [0.5, 5]],
+      [[0.5, 6], [0.5, 7]],
+    ],
+    '?': [
+      [[1, 0.5], [4, 0.5]],
+      [[0.5, 1], [0.5, 2]],
+      [[4.5, 1], [4.5, 3]],
+      [[3.5, 3], [3.5, 4]],
+      [[2.5, 4], [2.5, 5]],
+      [[2.5, 6], [2.5, 7]],
+    ],
+    '%': [
+      [[0.5, 0], [0.5, 2]],
+      [[4.5, 0], [4.5, 2]],
+      [[0.5, 5], [0.5, 7]],
+      [[4.5, 5], [4.5, 7]],
+      [[1.5, 4], [1.5, 5]],
+      [[2.5, 3], [2.5, 4]],
+      [[3.5, 2], [3.5, 3]],
+    ],
+    '&': [
+      [[1, 0.5], [3, 0.5]],
+      [[1, 3.5], [3, 3.5]],
+      [[1, 6.5], [3, 6.5]],
+      [[0.5, 1], [0.5, 3]],
+      [[0.5, 4], [0.5, 6]],
+      [[3.5, 1], [3.5, 2]],
+      [[3.5, 4], [3.5, 6]],
+      [[4.5, 3], [4.5, 4]],
+      [[4.5, 6], [4.5, 7]],
+    ],
+  }
+
+  function rad2deg(rad: number) {
+    return rad * 180 / Math.PI
+  }
+
+  /**
+   * Creates a node with an attached particle that forms a line between two
+   * given points.
+   * @param p1 The first point.
+   * @param p2 The second point.
+   * @param color Line color.
+   * @param width Line width.
+   * @param orientation Particle orientation mode.
+   * @param args Extra arguments for the particle action constructor.
+   * @param actionClass The particle action constructor to use.
+   */
+  export function line<
+    T extends new (...args: any) => InstanceType<Q>,
+    Q extends typeof BillboardEx | typeof MultiTextureBillboardEx
+  >(
+    p1: Vector3,
+    p2: Vector3,
+    color: Vector4Value = [1, 1, 1, 1],
+    width: ScalarValue = 0.02,
+    orientation: OrientationMode.LocalSouth | OrientationMode.LocalYaw = OrientationMode.LocalYaw,
+    args?: ConstructorParameters<T>[0],
+    actionClass: Q = BillboardEx as Q
+  ) {
+    const dx = p2[0] - p1[0]
+    const dy = p2[1] - p1[1]
+    const dz = p2[2] - p1[2]
+    const cx = p1[0] + dx * 0.5
+    const cy = p1[1] + dy * 0.5
+    const cz = p1[2] + dz * 0.5
+    return new BasicNode([
+      new StaticNodeTransform({
+        offset: [cx, cy, cz],
+        rotation: [
+          0,
+          -rad2deg(Math.atan2(dz, dx)),
+          rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
+        ]
+      })
+    ], [
+      new BasicNode([
+        ...orientation === OrientationMode.LocalYaw ? [
+          new StaticNodeTransform({ rotation: [0, 90, 0] })
+        ] : [],
+        new actionClass({
+          blendMode: BlendMode.Source,
+          rgbMultiplier: 0.6,
+          ...args,
+          color3: color,
+          width: Math.sqrt(dx * dx + dy * dy + dz * dz),
+          height: width,
+          orientation,
+        })
+      ])
+    ])
+  }
+
+  /**
+   * Creates a node that represents a string, which contains nodes that
+   * represent characters. This can be very useful for displaying text in an
+   * effect, which is often useful to, for example, debug or test things.
+   * 
+   * Note: This generates a *lot* of nodes depending on the text. Avoid using
+   * it to display very long strings. That can be done better using a custom
+   * texture on a single particle instead.
+   * @param text The text to convert.
+   * @param options Alignment, size, and other options for the text.
+   */
+  export function text(
+    text: string,
+    options: {
+      originX?: 'left' | 'center' | 'right'
+      originY?: 'baseline' | 'top' | 'middle' | 'bottom'
+      fontSize?: number
+      color?: Vector4Value
+      args?: BillboardExParams
+    } = {}
+  ): BasicNode {
+    const lines = text.split('\n')
+    const nodes: Node[] = []
+    let offset: Vector2 = [0, {
+      baseline: 10 * (lines.length - 1) - 3,
+      top: -7,
+      middle: (10 * (lines.length - 1) - 3) / 2,
+      bottom: 10 * (lines.length - 1),
+    }[options.originY ?? 'baseline'] ?? 10 * lines.length - 3]
+    function vec3(v2: Vector2): Vector3 {
+      return [v2[0], 7 - v2[1], 0]
+    }
+    function glyphWidth(glyph: Glyph) {
+      return Math.ceil(glyph.reduce((a, e) => Math.max(a, e[0][0], e[1][0]), 0))
+    }
+    function addGlyph(glyph: Glyph) {
+      nodes.push(new BasicNode([
+        new StaticNodeTransform({
+          offset: [...offset, 0]
+        })
+      ], glyph.map(([p1, p2]) => line(
+        vec3(p1),
+        vec3(p2),
+        options.color,
+        1,
+        OrientationMode.LocalSouth,
+        options.args
+      ))))
+      offset[0] += glyphWidth(glyph) + 1
+    }
+    for (const line of lines) {
+      const w = Array.from(line).reduce((a, e) => {
+        if (e === ' ') return a + 3
+        if (!(e in font)) return a
+        return a + glyphWidth(font[e]) + 1
+      }, -1)
+      offset[0] = {
+        left: 0,
+        center: -w/2,
+        right: -w,
+      }[options.originX ?? 'left'] ?? 0
+      for (const char of line) {
+        if (char === ' ') {
+          offset[0] += 3
+          continue
+        }
+        if (!(char in font)) {
+          continue
+        }
+        addGlyph(font[char])
+      }
+      offset[1] -= 10
+    }
+    return new BasicNode([], nodes).scale((options.fontSize ?? 1) / 7)
+  }
+
+}
+
 export {
   Game,
   FXRVersion,
@@ -41735,6 +43085,7 @@ export {
   anyValueSum,
   combineComponents,
   separateComponents,
+  setVectorComponent,
 
   Modifier,
   GenericModifier,
@@ -41745,4 +43096,9 @@ export {
   ExternalValue2Modifier,
   BloodVisibilityModifier,
   PrecipitationModifier,
+
+  Recolor,
+  hex,
+
+  FXRUtility,
 }

@@ -67,86 +67,23 @@ properties:
       - layer1Height
       - layer1ScaleVariationX
       - layer1ScaleVariationX
-  layer1RedMultiplier:
-    field: float
-    default: 1
+  layer1ColorMultiplier:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the red value of the {@link layer1Color layer's color}.
+      Multiplier for the {@link layer1Color layer's color}.
     see:
       - layer1Color
-      - layer1GreenMultiplier
-      - layer1BlueMultiplier
-      - layer1AlphaMultiplier
-  layer1GreenMultiplier:
-    field: float
-    default: 1
+  layer1BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the green value of the {@link layer1Color layer's color}.
+       The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
     see:
+      - bloom
       - layer1Color
-      - layer1RedMultiplier
-      - layer1BlueMultiplier
-      - layer1AlphaMultiplier
-  layer1BlueMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the blue value of the {@link layer1Color layer's color}.
-    see:
-      - layer1Color
-      - layer1RedMultiplier
-      - layer1GreenMultiplier
-      - layer1AlphaMultiplier
-  layer1AlphaMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the alpha value of the {@link layer1Color layer's color}.
-    see:
-      - layer1Color
-      - layer1RedMultiplier
-      - layer1GreenMultiplier
-      - layer1BlueMultiplier
-  layer1BloomRed:
-    field: float
-    default: 1
-    desc: |
-      The red value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-    see:
-      - layer1Color
-      - layer1BloomGreen
-      - layer1BloomBlue
-      - layer1BloomAlpha
-  layer1BloomGreen:
-    field: float
-    default: 1
-    desc: |
-      The green value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-    see:
-      - layer1Color
-      - layer1BloomRed
-      - layer1BloomBlue
-      - layer1BloomAlpha
-  layer1BloomBlue:
-    field: float
-    default: 1
-    desc: |
-      The blue value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-    see:
-      - layer1Color
-      - layer1BloomRed
-      - layer1BloomGreen
-      - layer1BloomAlpha
-  layer1BloomAlpha:
-    field: float
-    default: 1
-    desc: |
-      The alpha value of the bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-    see:
-      - layer1Color
-      - layer1BloomRed
-      - layer1BloomGreen
-      - layer1BloomBlue
   layer2:
     field: int
     default: 0
@@ -210,86 +147,23 @@ properties:
       - layer2Height
       - layer2ScaleVariationX
       - layer2ScaleVariationX
-  layer2RedMultiplier:
-    field: float
-    default: 1
+  layer2ColorMultiplier:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the red value of the {@link layer2Color layer's color}.
+      Multiplier for the {@link layer2Color layer's color}.
     see:
       - layer2Color
-      - layer2GreenMultiplier
-      - layer2BlueMultiplier
-      - layer2AlphaMultiplier
-  layer2GreenMultiplier:
-    field: float
-    default: 1
+  layer2BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the green value of the {@link layer2Color layer's color}.
+      The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
     see:
+      - bloom
       - layer2Color
-      - layer2RedMultiplier
-      - layer2BlueMultiplier
-      - layer2AlphaMultiplier
-  layer2BlueMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the blue value of the {@link layer2Color layer's color}.
-    see:
-      - layer2Color
-      - layer2RedMultiplier
-      - layer2GreenMultiplier
-      - layer2AlphaMultiplier
-  layer2AlphaMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the alpha value of the {@link layer2Color layer's color}.
-    see:
-      - layer2Color
-      - layer2RedMultiplier
-      - layer2GreenMultiplier
-      - layer2BlueMultiplier
-  layer2BloomRed:
-    field: float
-    default: 1
-    desc: |
-      The red value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-    see:
-      - layer2Color
-      - layer2BloomGreen
-      - layer2BloomBlue
-      - layer2BloomAlpha
-  layer2BloomGreen:
-    field: float
-    default: 1
-    desc: |
-      The green value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-    see:
-      - layer2Color
-      - layer2BloomRed
-      - layer2BloomBlue
-      - layer2BloomAlpha
-  layer2BloomBlue:
-    field: float
-    default: 1
-    desc: |
-      The blue value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-    see:
-      - layer2Color
-      - layer2BloomRed
-      - layer2BloomGreen
-      - layer2BloomAlpha
-  layer2BloomAlpha:
-    field: float
-    default: 1
-    desc: |
-      The alpha value of the bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-    see:
-      - layer2Color
-      - layer2BloomRed
-      - layer2BloomGreen
-      - layer2BloomBlue
   layer3:
     field: int
     default: 0
@@ -353,86 +227,23 @@ properties:
       - layer3Height
       - layer3ScaleVariationX
       - layer3ScaleVariationX
-  layer3RedMultiplier:
-    field: float
-    default: 1
+  layer3ColorMultiplier:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the red value of the {@link layer3Color layer's color}.
+      Multiplier for the {@link layer3Color layer's color}.
     see:
       - layer3Color
-      - layer3GreenMultiplier
-      - layer3BlueMultiplier
-      - layer3AlphaMultiplier
-  layer3GreenMultiplier:
-    field: float
-    default: 1
+  layer3BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the green value of the {@link layer3Color layer's color}.
+      The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
     see:
+      - bloom
       - layer3Color
-      - layer3RedMultiplier
-      - layer3BlueMultiplier
-      - layer3AlphaMultiplier
-  layer3BlueMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the blue value of the {@link layer3Color layer's color}.
-    see:
-      - layer3Color
-      - layer3RedMultiplier
-      - layer3GreenMultiplier
-      - layer3AlphaMultiplier
-  layer3AlphaMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the alpha value of the {@link layer3Color layer's color}.
-    see:
-      - layer3Color
-      - layer3RedMultiplier
-      - layer3GreenMultiplier
-      - layer3BlueMultiplier
-  layer3BloomRed:
-    field: float
-    default: 1
-    desc: |
-      The red value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-    see:
-      - layer3Color
-      - layer3BloomGreen
-      - layer3BloomBlue
-      - layer3BloomAlpha
-  layer3BloomGreen:
-    field: float
-    default: 1
-    desc: |
-      The green value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-    see:
-      - layer3Color
-      - layer3BloomRed
-      - layer3BloomBlue
-      - layer3BloomAlpha
-  layer3BloomBlue:
-    field: float
-    default: 1
-    desc: |
-      The blue value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-    see:
-      - layer3Color
-      - layer3BloomRed
-      - layer3BloomGreen
-      - layer3BloomAlpha
-  layer3BloomAlpha:
-    field: float
-    default: 1
-    desc: |
-      The alpha value of the bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-    see:
-      - layer3Color
-      - layer3BloomRed
-      - layer3BloomGreen
-      - layer3BloomBlue
   layer4:
     field: int
     default: 0
@@ -498,86 +309,23 @@ properties:
       - layer4Height
       - layer4ScaleVariationX
       - layer4ScaleVariationX
-  layer4RedMultiplier:
-    field: float
-    default: 1
+  layer4ColorMultiplier:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the red value of the {@link layer4Color layer's color}.
+      Multiplier for the {@link layer4Color layer's color}.
     see:
       - layer4Color
-      - layer4GreenMultiplier
-      - layer4BlueMultiplier
-      - layer4AlphaMultiplier
-  layer4GreenMultiplier:
-    field: float
-    default: 1
+  layer4BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
     desc: |
-      Multiplier for the green value of the {@link layer4Color layer's color}.
+      The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
     see:
+      - bloom
       - layer4Color
-      - layer4RedMultiplier
-      - layer4BlueMultiplier
-      - layer4AlphaMultiplier
-  layer4BlueMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the blue value of the {@link layer4Color layer's color}.
-    see:
-      - layer4Color
-      - layer4RedMultiplier
-      - layer4GreenMultiplier
-      - layer4AlphaMultiplier
-  layer4AlphaMultiplier:
-    field: float
-    default: 1
-    desc: |
-      Multiplier for the alpha value of the {@link layer4Color layer's color}.
-    see:
-      - layer4Color
-      - layer4RedMultiplier
-      - layer4GreenMultiplier
-      - layer4BlueMultiplier
-  layer4BloomRed:
-    field: float
-    default: 1
-    desc: |
-      The red value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-    see:
-      - layer4Color
-      - layer4BloomGreen
-      - layer4BloomBlue
-      - layer4BloomAlpha
-  layer4BloomGreen:
-    field: float
-    default: 1
-    desc: |
-      The green value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-    see:
-      - layer4Color
-      - layer4BloomRed
-      - layer4BloomBlue
-      - layer4BloomAlpha
-  layer4BloomBlue:
-    field: float
-    default: 1
-    desc: |
-      The blue value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-    see:
-      - layer4Color
-      - layer4BloomRed
-      - layer4BloomGreen
-      - layer4BloomAlpha
-  layer4BloomAlpha:
-    field: float
-    default: 1
-    desc: |
-      The alpha value of the bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-    see:
-      - layer4Color
-      - layer4BloomRed
-      - layer4BloomGreen
-      - layer4BloomBlue
   blendMode:
     type: BlendMode
     field: int
@@ -604,22 +352,10 @@ properties:
 
       Does not seem to work in Sekiro.
     see:
-      - layer1BloomRed
-      - layer1BloomGreen
-      - layer1BloomBlue
-      - layer1BloomAlpha
-      - layer2BloomRed
-      - layer2BloomGreen
-      - layer2BloomBlue
-      - layer2BloomAlpha
-      - layer3BloomRed
-      - layer3BloomGreen
-      - layer3BloomBlue
-      - layer3BloomAlpha
-      - layer4BloomRed
-      - layer4BloomGreen
-      - layer4BloomBlue
-      - layer4BloomAlpha
+      - layer1BloomColor
+      - layer2BloomColor
+      - layer3BloomColor
+      - layer4BloomColor
   unk_er_f1_4:
     field: int
   unk_er_f1_8:
@@ -774,10 +510,10 @@ games:
       - layer1ScaleVariationX
       - layer1ScaleVariationY
       - layer1UniformScale
-      - layer1RedMultiplier
-      - layer1GreenMultiplier
-      - layer1BlueMultiplier
-      - layer1AlphaMultiplier
+      - layer1ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_17
       - unk_er_f1_18
       - unk_er_f1_19
@@ -786,10 +522,10 @@ games:
       - layer2ScaleVariationX
       - layer2ScaleVariationY
       - layer2UniformScale
-      - layer2RedMultiplier
-      - layer2GreenMultiplier
-      - layer2BlueMultiplier
-      - layer2AlphaMultiplier
+      - layer2ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_29
       - unk_er_f1_30
       - unk_er_f1_31
@@ -798,10 +534,10 @@ games:
       - layer3ScaleVariationX
       - layer3ScaleVariationY
       - layer3UniformScale
-      - layer3RedMultiplier
-      - layer3GreenMultiplier
-      - layer3BlueMultiplier
-      - layer3AlphaMultiplier
+      - layer3ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_41
       - unk_er_f1_42
       - unk_er_f1_43
@@ -810,32 +546,32 @@ games:
       - layer4ScaleVariationX
       - layer4ScaleVariationY
       - layer4UniformScale
-      - layer4RedMultiplier
-      - layer4GreenMultiplier
-      - layer4BlueMultiplier
-      - layer4AlphaMultiplier
+      - layer4ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_53
       - unk_er_f1_54
       - unk_er_f1_55
       - unk_er_f1_56
       - unk_er_f1_57
       - bloom
-      - layer1BloomRed
-      - layer1BloomGreen
-      - layer1BloomBlue
-      - layer1BloomAlpha
-      - layer2BloomRed
-      - layer2BloomGreen
-      - layer2BloomBlue
-      - layer2BloomAlpha
-      - layer3BloomRed
-      - layer3BloomGreen
-      - layer3BloomBlue
-      - layer3BloomAlpha
-      - layer4BloomRed
-      - layer4BloomGreen
-      - layer4BloomBlue
-      - layer4BloomAlpha
+      - layer1BloomColor
+      #
+      #
+      #
+      - layer2BloomColor
+      #
+      #
+      #
+      - layer3BloomColor
+      #
+      #
+      #
+      - layer4BloomColor
+      #
+      #
+      #
     fields2:
       - unk_er_f2_0
       - unk_er_f2_1
@@ -902,10 +638,10 @@ games:
       - layer1ScaleVariationX
       - layer1ScaleVariationY
       - layer1UniformScale
-      - layer1RedMultiplier
-      - layer1GreenMultiplier
-      - layer1BlueMultiplier
-      - layer1AlphaMultiplier
+      - layer1ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_17
       - unk_er_f1_18
       - unk_er_f1_19
@@ -914,10 +650,10 @@ games:
       - layer2ScaleVariationX
       - layer2ScaleVariationY
       - layer2UniformScale
-      - layer2RedMultiplier
-      - layer2GreenMultiplier
-      - layer2BlueMultiplier
-      - layer2AlphaMultiplier
+      - layer2ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_29
       - unk_er_f1_30
       - unk_er_f1_31
@@ -926,10 +662,10 @@ games:
       - layer3ScaleVariationX
       - layer3ScaleVariationY
       - layer3UniformScale
-      - layer3RedMultiplier
-      - layer3GreenMultiplier
-      - layer3BlueMultiplier
-      - layer3AlphaMultiplier
+      - layer3ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_41
       - unk_er_f1_42
       - unk_er_f1_43
@@ -938,32 +674,32 @@ games:
       - layer4ScaleVariationX
       - layer4ScaleVariationY
       - layer4UniformScale
-      - layer4RedMultiplier
-      - layer4GreenMultiplier
-      - layer4BlueMultiplier
-      - layer4AlphaMultiplier
+      - layer4ColorMultiplier
+      #
+      #
+      #
       - unk_er_f1_53
       - unk_er_f1_54
       - unk_er_f1_55
       - unk_er_f1_56
       - unk_er_f1_57
       - bloom
-      - layer1BloomRed
-      - layer1BloomGreen
-      - layer1BloomBlue
-      - layer1BloomAlpha
-      - layer2BloomRed
-      - layer2BloomGreen
-      - layer2BloomBlue
-      - layer2BloomAlpha
-      - layer3BloomRed
-      - layer3BloomGreen
-      - layer3BloomBlue
-      - layer3BloomAlpha
-      - layer4BloomRed
-      - layer4BloomGreen
-      - layer4BloomBlue
-      - layer4BloomAlpha
+      - layer1BloomColor
+      #
+      #
+      #
+      - layer2BloomColor
+      #
+      #
+      #
+      - layer3BloomColor
+      #
+      #
+      #
+      - layer4BloomColor
+      #
+      #
+      #
       - unk_ac6_f1_75
       - unk_ac6_f1_76
       - unk_ac6_f1_77

@@ -62,6 +62,13 @@ const scaleMap = {
   ifNotMinusOne: 2,
 }
 
+const timeMap = {
+  true: 1,
+  inv: 2,
+  invIfPositive: 3,
+  sq: 4,
+}
+
 function naturalSorter(as, bs) {
   let a, b, a1, b1, i = 0, n, L,
   rx = /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
@@ -201,6 +208,8 @@ export default async function(writeToDist = true) {
               'textureType' in v ? `, textureType: '${v.textureType}'` : ''
             }${
               'scale' in v ? `, scale: ${scaleMap[v.scale]}` : ''
+            }${
+              'time' in v ? `, time: ${timeMap[v.time]}` : ''
             }${
               'color' in v ? `, color: 1` : ''
             }${

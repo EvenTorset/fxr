@@ -19,15 +19,20 @@ await fs.rename('docs/functions', 'docs/funcs')
 for await (const filePath of getFiles('docs')) {
   if (filePath.endsWith('.html')) {
     const content = await fs.readFile(filePath, 'utf-8')
-    await fs.writeFile(filePath, content.replace(/href="functions/g, 'href="funcs'))
+    await fs.writeFile(filePath, content.replace(/href="((?:..\/)*)functions/g, 'href="$1funcs'))
   }
 }
 
 {
   const content = await fs.readFile('docs/assets/navigation.js', 'utf-8')
   const list = JSON.parse(zlib.gunzipSync(Buffer.from(content.match(/;base64,(.*)"/)[1], 'base64')).toString('utf-8'))
-  for (const e of list) {
+  const todo = list.slice()
+  while (todo.length > 0) {
+    const e = todo.shift()
     e.path = e.path.replace(/^functions/, 'funcs')
+    if ('children' in e) {
+      todo.push(...e.children)
+    }
   }
   await fs.writeFile(
     'docs/assets/navigation.js',
@@ -52,6 +57,7 @@ await fs.writeFile('docs/q/index.html', /*html*/`
 <html>
   <head>
     <title>Loading...</title>
+    <style>:root{color-scheme:dark;}</style>
     <script src="/assets/navigation.js"></script>
     <script type="module">
       const navData = await new Response(
@@ -66,7 +72,7 @@ await fs.writeFile('docs/q/index.html', /*html*/`
           linkMap[entry.text + '.' + child.text] = child.path
         }
       }
-      const parts = location.hash.slice(1).split('.')
+      const parts = location.hash.slice(1).replace(/\.prototype(?=\.)/, '').split('.')
       if (parts.slice(0, 2).join('.') in linkMap) {
         if (parts.length > 2) {
           location.href = '/' + linkMap[parts.slice(0, 2).join('.')] + '#' + parts[2]
@@ -79,6 +85,8 @@ await fs.writeFile('docs/q/index.html', /*html*/`
         } else {
           location.href = '/' + linkMap[parts[0]]
         }
+      } else {
+        location.href = '/'
       }
     </script>
   </head>

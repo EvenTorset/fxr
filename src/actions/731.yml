@@ -13,6 +13,7 @@ properties:
     type: ScalarValue
     argument: EffectAge
     scale: true
+    time: true
     desc: |
       The speed in the direction of the force.
   speedMultiplier:

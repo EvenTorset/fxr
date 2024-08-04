@@ -8,12 +8,14 @@ properties:
     type: ScalarValue
     argument: Constant0
     scale: true
+    time: true
     desc: |
       Controls the speed of the node along its Z-axis.
   accelerationZ:
     type: ScalarValue
     argument: EffectAge
     scale: true
+    time: sq
     desc: |
       Controls the acceleration of the node along its Z-axis. This value cannot be negative.
   accelerationMultiplierZ:
@@ -26,11 +28,13 @@ properties:
     type: ScalarValue
     argument: EffectAge
     scale: true
+    time: sq
     desc: |
       Controls the acceleration of the node along its Y-axis.
   angularSpeedX:
     type: ScalarValue
     argument: EffectAge
+    time: true
     desc: |
       The node's angular speed around its local X-axis in degrees per second.
     see:
@@ -44,6 +48,7 @@ properties:
   angularSpeedY:
     type: ScalarValue
     argument: EffectAge
+    time: true
     desc: |
       The node's angular speed around its local Y-axis in degrees per second.
     see:
@@ -57,6 +62,7 @@ properties:
   angularSpeedZ:
     type: ScalarValue
     argument: EffectAge
+    time: true
     desc: |
       The node's angular speed around its local Z-axis in degrees per second.
     see:

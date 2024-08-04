@@ -184,6 +184,7 @@ properties:
     type: ScalarValue
     default: 60
     argument: ParticleAge
+    time: true
     desc: |
       Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
   radius:
@@ -205,11 +206,13 @@ properties:
   normalMapSpeedU:
     type: ScalarValue
     argument: ParticleAge
+    time: true
     desc: |
       Horizontal offset speed for the {@link normalMap normal map}.
   normalMapSpeedV:
     type: ScalarValue
     argument: ParticleAge
+    time: true
     desc: |
       Vertical offset speed for the {@link normalMap normal map}.
   rgbMultiplier:

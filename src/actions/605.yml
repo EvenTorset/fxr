@@ -152,6 +152,7 @@ properties:
   angularSpeedX:
     type: ScalarValue
     argument: ParticleAge
+    time: true
     desc: |
       Angular speed around the X-axis in degrees per second.
     see:
@@ -160,6 +161,7 @@ properties:
   angularSpeedY:
     type: ScalarValue
     argument: ParticleAge
+    time: true
     desc: |
       Angular speed around the Y-axis in degrees per second.
     see:
@@ -168,6 +170,7 @@ properties:
   angularSpeedZ:
     type: ScalarValue
     argument: ParticleAge
+    time: true
     desc: |
       Angular speed around the Z-axis in degrees per second.
     see:
@@ -262,6 +265,7 @@ properties:
     type: ScalarValue
     default: 0
     argument: ParticleAge
+    time: true
     desc: |
       Horiztonal scroll speed for the model's texture.
 
@@ -279,6 +283,7 @@ properties:
     type: ScalarValue
     default: 0
     argument: ParticleAge
+    time: true
     desc: |
       Vertical scroll speed for the model's texture.
 
@@ -348,6 +353,7 @@ properties:
   animationSpeed:
     field: float
     default: 1
+    time: true
     desc: |
       Controls the speed at which the {@link animation} plays.
     see:

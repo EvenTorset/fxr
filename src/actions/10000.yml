@@ -123,6 +123,7 @@ properties:
   emissionIntervalMin:
     field: int
     default: 1
+    time: inv
     desc: |
       The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
     see:
@@ -130,6 +131,7 @@ properties:
   emissionIntervalMax:
     field: int
     default: 1
+    time: inv
     desc: |
       The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
     see:
@@ -148,6 +150,7 @@ properties:
   particleDuration:
     field: int
     default: 1
+    time: inv
     desc: |
       The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
   unk_ds3_f1_32:
@@ -211,6 +214,7 @@ properties:
   particleSpeedX:
     field: float
     scale: true
+    time: true
     desc: |
       Particle speed along the X-axis.
     see:
@@ -219,6 +223,7 @@ properties:
   particleSpeedY:
     field: float
     scale: true
+    time: true
     desc: |
       Particle speed along the Y-axis.
     see:
@@ -227,6 +232,7 @@ properties:
   particleSpeedZ:
     field: float
     scale: true
+    time: true
     desc: |
       Particle speed along the Z-axis.
     see:
@@ -235,61 +241,73 @@ properties:
   particleSpeedXMin:
     field: float
     scale: true
+    time: true
     desc: |
       Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
   particleSpeedYMin:
     field: float
     scale: true
+    time: true
     desc: |
       Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
   particleSpeedZMin:
     field: float
     scale: true
+    time: true
     desc: |
       Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
   particleSpeedXMax:
     field: float
     scale: true
+    time: true
     desc: |
       Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
   particleSpeedYMax:
     field: float
     scale: true
+    time: true
     desc: |
       Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
   particleSpeedZMax:
     field: float
     scale: true
+    time: true
     desc: |
       Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
   particleAccelerationXMin:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
   particleAccelerationYMin:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
   particleAccelerationZMin:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
   particleAccelerationXMax:
     field: float
     scale: true
+    time: sq
     desc: |
       Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
   particleAccelerationYMax:
     field: float
     scale: true
+    time: sq
     desc: |
       Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
   particleAccelerationZMax:
     field: float
     scale: true
+    time: sq
     desc: |
       Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
   particleRotationVarianceX:
@@ -306,48 +324,57 @@ properties:
       Maximum amount of random rotation each particle will have around the Z-axis in degrees.
   particleAngularSpeedVarianceX:
     field: float
+    time: true
     desc: |
       Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
   particleAngularSpeedVarianceY:
     field: float
+    time: true
     desc: |
       Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
   particleAngularSpeedVarianceZ:
     field: float
+    time: true
     desc: |
       Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
   particleAngularAccelerationXMin:
     field: float
+    time: sq
     desc: |
       Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
     see:
       - particleAngularAccelerationXMax
   particleAngularAccelerationYMin:
     field: float
+    time: sq
     desc: |
       Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
     see:
       - particleAngularAccelerationYMax
   particleAngularAccelerationZMin:
     field: float
+    time: sq
     desc: |
       Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
     see:
       - particleAngularAccelerationZMax
   particleAngularAccelerationXMax:
     field: float
+    time: sq
     desc: |
       Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
     see:
       - particleAngularAccelerationXMin
   particleAngularAccelerationYMax:
     field: float
+    time: sq
     desc: |
       Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
     see:
       - particleAngularAccelerationYMin
   particleAngularAccelerationZMax:
     field: float
+    time: sq
     desc: |
       Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
     see:
@@ -414,6 +441,7 @@ properties:
   particleGrowthRateXStatic:
     field: float
     scale: true
+    time: true
     desc: |
       The rate of change for the width of the particles.
     see:
@@ -421,6 +449,7 @@ properties:
   particleGrowthRateYStatic:
     field: float
     scale: true
+    time: true
     desc: |
       The rate of change for the height of the particles.
     see:
@@ -430,11 +459,13 @@ properties:
   particleGrowthRateXMin:
     field: float
     scale: true
+    time: true
     desc: |
       Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
   particleGrowthRateYMin:
     field: float
     scale: true
+    time: true
     desc: |
       Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
   unk_ds3_f1_85:
@@ -442,11 +473,13 @@ properties:
   particleGrowthRateXMax:
     field: float
     scale: true
+    time: true
     desc: |
       Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
   particleGrowthRateYMax:
     field: float
     scale: true
+    time: true
     desc: |
       Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
   unk_ds3_f1_88:
@@ -454,11 +487,13 @@ properties:
   particleGrowthAccelerationXMin:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
   particleGrowthAccelerationYMin:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
   unk_ds3_f1_91:
@@ -466,11 +501,13 @@ properties:
   particleGrowthAccelerationXMax:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
   particleGrowthAccelerationYMax:
     field: float
     scale: true
+    time: sq
     desc: |
       Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
   unk_ds3_f1_94:
@@ -653,6 +690,7 @@ properties:
   particleRandomTurnIntervalMax:
     field: int
     default: 1
+    time: inv
     desc: |
       The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
     see:
@@ -672,6 +710,7 @@ properties:
     field: float
     default: 1
     scale: true
+    time: inv
     desc: |
       Controls how much the particles are stretched when {@link traceParticles} is enabled.
   traceParticlesThreshold:
@@ -939,6 +978,7 @@ properties:
   particleAccelerationX:
     type: ScalarValue
     scale: true
+    time: sq
     desc: |
       Particle acceleration along the X-axis.
     see:
@@ -947,6 +987,7 @@ properties:
   particleAccelerationY:
     type: ScalarValue
     scale: true
+    time: sq
     desc: |
       Particle acceleration along the Y-axis.
     see:
@@ -955,6 +996,7 @@ properties:
   particleAccelerationZ:
     type: ScalarValue
     scale: true
+    time: sq
     desc: |
       Particle acceleration along the Z-axis.
     see:
@@ -966,6 +1008,7 @@ properties:
     type: ScalarValue
   particleAngularAccelerationZ:
     type: ScalarValue
+    time: sq
     desc: |
       Angular acceleration for particles around the Z-axis in degrees per second squared.
     see:
@@ -974,6 +1017,7 @@ properties:
   particleGrowthRateX:
     type: ScalarValue
     scale: true
+    time: true
     desc: |
       The rate of change for the width of the particles.
     see:
@@ -981,6 +1025,7 @@ properties:
   particleGrowthRateY:
     type: ScalarValue
     scale: true
+    time: true
     desc: |
       The rate of change for the height of the particles.
     see:
@@ -1002,6 +1047,7 @@ properties:
   unkParticleAcceleration:
     type: ScalarValue
     scale: true
+    time: sq
     desc: |
       Seemingly identical to {@link particleAccelerationZ}?
   unk_ds3_p1_17:
@@ -1009,6 +1055,7 @@ properties:
   particleGravity:
     type: ScalarValue
     scale: true
+    time: sq
     desc: |
       Downwards acceleration for particles.
   particleRandomTurnAngle:
