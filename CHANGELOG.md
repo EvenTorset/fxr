@@ -3,8 +3,9 @@
 ## [Unreleased]
 
 ### Highlights
-- Added `FXRUtility.box`, which is a function that can be useful to visualize box volumes for emitters, for example.
-- Added `anyValueDiff`, which is a function that subtracts one `AnyValue` from another. (An `AnyValue` is any scalar or vector value, including all types of properties.) This function simply uses the existing `anyValueSum` and `anyValueMult` functions to do this, so it works very similarly to those.
+- Added `NodeAnimatedRotation` - A function that creates a `NodeSpin` action from a rotation property. Animating the rotation directly is not normally possible, it can only be done by controlling the angular speed. This function makes it possible by converting a rotation property to an angular speed property.
+- Added `FXRUtility.box` - A function that can be useful to visualize box volumes for emitters, for example.
+- Added `anyValueDiff` - A function that subtracts one `AnyValue` from another. (An `AnyValue` is any scalar or vector value, including all types of properties.) This function simply uses the existing `anyValueSum` and `anyValueMult` functions to do this, so it works very similarly to those.
 - The three box size fields in the force volume actions have been converted to a single vector field.
 
 ## [13.0.0] - 2024-08-04
