@@ -42609,6 +42609,34 @@ namespace FXRUtility {
   }
 
   /**
+   * Creates a node with a box shape. This can be useful for visualizing box
+   * volumes.
+   * @param p1 A point representing one of the corners of the box.
+   * @param p2 The opposite corner from {@link p1}.
+   * @param color The color of the box outline.
+   * @param lineWidth The width of the box outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function box(p1: Vector3, p2: Vector3, color?: Vector4Value, lineWidth?: ScalarValue, args?: BillboardExParams) {
+    return new BasicNode([], [
+      line([p1[0], p1[1], p1[2]], [p1[0], p1[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p1[0], p1[1], p2[2]], [p1[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p1[0], p1[1], p1[2]], [p1[0], p2[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p1[0], p2[1], p1[2]], [p1[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+
+      line([p2[0], p1[1], p1[2]], [p2[0], p1[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p2[0], p1[1], p2[2]], [p2[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p2[0], p1[1], p1[2]], [p2[0], p2[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p2[0], p2[1], p1[2]], [p2[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+
+      line([p1[0], p1[1], p1[2]], [p2[0], p1[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p1[0], p1[1], p2[2]], [p2[0], p1[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p1[0], p2[1], p1[2]], [p2[0], p2[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([p1[0], p2[1], p2[2]], [p2[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+    ])
+  }
+
+  /**
    * Creates a node that represents a string, which contains nodes that
    * represent characters. This can be very useful for displaying text in an
    * effect, which is often useful to, for example, debug or test things.
