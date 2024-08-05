@@ -7160,9 +7160,8 @@ function filterMillisecondDiffs(nums: Iterable<number>) {
  * 
  * Multiplying two vectors of different dimensionalities is not supported, but
  * a vector and a scalar will work.
- * @param av1 
- * @param av2 
- * @returns 
+ * @param av1 Left operand.
+ * @param av2 Right operand.
  */
 function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If p2 is none of these, it's invalid, likely undefined or null, it must
@@ -7338,9 +7337,8 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
  * 
  * Adding two vectors of different dimensionalities is not supported, but
  * a vector and a scalar will work.
- * @param av1 
- * @param av2 
- * @returns 
+ * @param av1 Left operand.
+ * @param av2 Right operand.
  */
 function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If p2 is none of these, it's invalid, likely undefined or null, it must
@@ -7526,6 +7524,19 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
   return anyValueSum(av2, av1)
+}
+
+/**
+ * Subtracts one number, vector, or a property of either kind to another
+ * number, vector, or property.
+ * 
+ * Subtracting two vectors of different dimensionalities is not supported, but
+ * a vector and a scalar will work.
+ * @param av1 Left operand.
+ * @param av2 Right operand.
+ */
+function anyValueDiff<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
+  return anyValueSum(av1, anyValueMult(-1, av2))
 }
 
 function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
@@ -42887,6 +42898,7 @@ export {
   BloodVisibilityProperty,
   anyValueMult,
   anyValueSum,
+  anyValueDiff,
   combineComponents,
   separateComponents,
   setVectorComponent,
