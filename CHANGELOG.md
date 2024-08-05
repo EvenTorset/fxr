@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Highlights
+- The three box size fields in the force volume actions have been converted to a single vector field.
+
 ## [13.0.0] - 2024-08-04
 
 ### Highlights
@@ -115,6 +120,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v13.0.0...HEAD
 [13.0.0]: https://github.com/EvenTorset/fxr/compare/v12.2.0...v13.0.0
 [12.2.0]: https://github.com/EvenTorset/fxr/compare/v12.1.0...v12.2.0
 [12.1.0]: https://github.com/EvenTorset/fxr/compare/v12.0.0...v12.1.0
