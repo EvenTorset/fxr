@@ -32,33 +32,14 @@ properties:
       The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
     see:
       - shape
-  boxSizeX:
-    field: float
+  boxSize:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      The width of the {@link ForceVolumeShape.Box box} volume.
+      The size of the {@link ForceVolumeShape.Box box} volume.
     see:
       - shape
-      - boxSizeY
-      - boxSizeZ
-  boxSizeY:
-    field: float
-    scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.Box box} volume.
-    see:
-      - shape
-      - boxSizeX
-      - boxSizeZ
-  boxSizeZ:
-    field: float
-    scale: true
-    desc: |
-      The depth of the {@link ForceVolumeShape.Box box} volume.
-    see:
-      - shape
-      - boxSizeX
-      - boxSizeY
   cylinderHeight:
     field: float
     scale: true
@@ -96,9 +77,9 @@ games:
     fields1:
       - shape
       - sphereRadius
-      - boxSizeX
-      - boxSizeY
-      - boxSizeZ
+      - boxSize
+      #
+      #
       - cylinderHeight
       - cylinderRadius
       - squarePrismHeight

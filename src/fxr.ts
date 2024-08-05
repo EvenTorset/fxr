@@ -5100,9 +5100,7 @@ const ActionData: {
     props: {
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5110,7 +5108,7 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem']
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5122,9 +5120,7 @@ const ActionData: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5185,11 +5181,11 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
         properties1: ['force']
       },
       [Game.Sekiro]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
         properties1: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -5201,9 +5197,7 @@ const ActionData: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5241,7 +5235,7 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','forceMultiplier','unk_ds3_f1_36','unk_ds3_f1_37','fadeOutTime'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','forceMultiplier','unk_ds3_f1_36','unk_ds3_f1_37','fadeOutTime'],
         properties1: ['force']
       },
       [Game.Sekiro]: Game.DarkSouls3,
@@ -5253,15 +5247,13 @@ const ActionData: {
     props: {
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius']
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5276,9 +5268,7 @@ const ActionData: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5329,7 +5319,7 @@ const ActionData: {
     },
     games: {
       [Game.Sekiro]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_unk_f1_9','unk_unk_f1_10','unk_unk_f1_11','unk_unk_f1_12','unk_unk_f1_13','unk_unk_f1_14','unk_unk_f1_15','unk_unk_f1_16','unk_unk_f1_17','unk_unk_f1_18','unk_unk_f1_19','unk_unk_f1_20','unk_unk_f1_21','unk_unk_f1_22','unk_unk_f1_23','forceRandomMultiplierMin','forceRandomMultiplierMax','noiseScale','unk_unk_f1_27','unk_unk_f1_28','enableSoftRadius','softRadius','unk_unk_f1_31','unk_unk_f1_32','unk_unk_f1_33','unk_unk_f1_34','unk_unk_f1_35','unk_unk_f1_36','unk_unk_f1_37','unk_unk_f1_38','unk_unk_f1_39','fadeOutTime','unk_unk_f1_41','unk_unk_f1_42','unk_unk_f1_43','unk_unk_f1_44','unk_unk_f1_45','unk_unk_f1_46','unk_unk_f1_47','unk_unk_f1_48','unk_unk_f1_49','unk_unk_f1_50','unk_unk_f1_51'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_unk_f1_9','unk_unk_f1_10','unk_unk_f1_11','unk_unk_f1_12','unk_unk_f1_13','unk_unk_f1_14','unk_unk_f1_15','unk_unk_f1_16','unk_unk_f1_17','unk_unk_f1_18','unk_unk_f1_19','unk_unk_f1_20','unk_unk_f1_21','unk_unk_f1_22','unk_unk_f1_23','forceRandomMultiplierMin','forceRandomMultiplierMax','noiseScale','unk_unk_f1_27','unk_unk_f1_28','enableSoftRadius','softRadius','unk_unk_f1_31','unk_unk_f1_32','unk_unk_f1_33','unk_unk_f1_34','unk_unk_f1_35','unk_unk_f1_36','unk_unk_f1_37','unk_unk_f1_38','unk_unk_f1_39','fadeOutTime','unk_unk_f1_41','unk_unk_f1_42','unk_unk_f1_43','unk_unk_f1_44','unk_unk_f1_45','unk_unk_f1_46','unk_unk_f1_47','unk_unk_f1_48','unk_unk_f1_49','unk_unk_f1_50','unk_unk_f1_51'],
         properties1: ['noiseOffsetX','noiseOffsetY','noiseOffsetZ','force']
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -36507,38 +36497,14 @@ export interface CancelForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -36615,32 +36581,12 @@ class CancelForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -36718,38 +36664,14 @@ export interface WindForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37177,32 +37099,12 @@ class WindForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37373,38 +37275,14 @@ export interface GravityForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37690,32 +37568,12 @@ class GravityForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37844,38 +37702,14 @@ export interface ForceCollisionParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -37930,32 +37764,12 @@ class ForceCollision extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -38052,38 +37866,14 @@ export interface TurbulenceForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -38471,32 +38261,12 @@ class TurbulenceForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
