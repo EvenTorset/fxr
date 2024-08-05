@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Highlights
+- Added `FXRUtility.box`, which is a function that can be useful to visualize box volumes for emitters, for example.
 - The three box size fields in the force volume actions have been converted to a single vector field.
 
 ## [13.0.0] - 2024-08-04
@@ -37,7 +38,7 @@
 - The color multiplier and bloom color fields in the LensFlare action (10014) have been converted to vector fields.
   - This fixes a bug where these fields were not changed by the recolor functions in the library.
 - Converting point lights between DS3 and the other games should now keep the brightness more like the original. DS3 point lights seem to work a bit differently, so it stil won't be perfectly accurate, but it should be much closer than before.
-- The rate of time can now be adjusted on nodes or actions using the new scaleRateOfTime method.
+- The rate of time can now be adjusted on nodes or actions using the new `scaleRateOfTime` method.
 - The rate of time in action 10500 is now automatically applied to everything when writing to DS3. This fixes converting effects from newer games to DS3 causing them to play at a different rate than the original effect if the original had a non-unit value for the rate of time.
 - The `FXR.toArrayBuffer` method will now throw if the FXR's ID is invalid.
 - Added an `FXR.name` getter function to FXR objects, which returns a file name for the FXR based on its ID.
