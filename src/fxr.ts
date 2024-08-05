@@ -42611,28 +42611,34 @@ namespace FXRUtility {
   /**
    * Creates a node with a box shape. This can be useful for visualizing box
    * volumes.
-   * @param p1 A point representing one of the corners of the box.
-   * @param p2 The opposite corner from {@link p1}.
+   * @param pos The center point of the box.
+   * @param size The size of the box.
    * @param color The color of the box outline.
    * @param lineWidth The width of the box outline.
    * @param args Extra arguments for the particle action constructor.
    */
-  export function box(p1: Vector3, p2: Vector3, color?: Vector4Value, lineWidth?: ScalarValue, args?: BillboardExParams) {
+  export function box(pos: Vector3, size: Vector3, color?: Vector4Value, lineWidth?: ScalarValue, args?: BillboardExParams) {
+    const x1 = pos[0] - size[0] * 0.5
+    const y1 = pos[1] - size[1] * 0.5
+    const z1 = pos[2] - size[2] * 0.5
+    const x2 = pos[0] + size[0] * 0.5
+    const y2 = pos[1] + size[1] * 0.5
+    const z2 = pos[2] + size[2] * 0.5
     return new BasicNode([], [
-      line([p1[0], p1[1], p1[2]], [p1[0], p1[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p1[0], p1[1], p2[2]], [p1[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p1[0], p1[1], p1[2]], [p1[0], p2[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p1[0], p2[1], p1[2]], [p1[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z1], [x1, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z2], [x1, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z1], [x1, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y2, z1], [x1, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
 
-      line([p2[0], p1[1], p1[2]], [p2[0], p1[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p2[0], p1[1], p2[2]], [p2[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p2[0], p1[1], p1[2]], [p2[0], p2[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p2[0], p2[1], p1[2]], [p2[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y1, z1], [x2, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y1, z2], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y1, z1], [x2, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y2, z1], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
 
-      line([p1[0], p1[1], p1[2]], [p2[0], p1[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p1[0], p1[1], p2[2]], [p2[0], p1[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p1[0], p2[1], p1[2]], [p2[0], p2[1], p1[2]], color, lineWidth, OrientationMode.LocalYaw, args),
-      line([p1[0], p2[1], p2[2]], [p2[0], p2[1], p2[2]], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z1], [x2, y1, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z2], [x2, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y2, z1], [x2, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y2, z2], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
     ])
   }
 
