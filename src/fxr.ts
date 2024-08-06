@@ -7832,6 +7832,15 @@ function assertValidFXRID(id: number) {
   }
 }
 
+function normalizeVector3([x, y, z]: Vector3): Vector3 {
+  const l = Math.sqrt(x * x + y * y + z * z)
+  return [
+    x / l,
+    y / l,
+    z / l,
+  ]
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
@@ -42680,7 +42689,7 @@ namespace FXRUtility {
   }
 
   /**
-   * Creates a node with a box shape. This can be useful for visualizing box
+   * Creates a node with a box outline. This can be useful for visualizing box
    * volumes.
    * @param pos The center point of the box.
    * @param size The size of the box.
@@ -42688,7 +42697,13 @@ namespace FXRUtility {
    * @param lineWidth The width of the box outline.
    * @param args Extra arguments for the particle action constructor.
    */
-  export function box(pos: Vector3, size: Vector3, color?: Vector4Value, lineWidth?: ScalarValue, args?: BillboardExParams) {
+  export function box(
+    pos: Vector3,
+    size: Vector3,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams
+  ) {
     const x1 = pos[0] - size[0] * 0.5
     const y1 = pos[1] - size[1] * 0.5
     const z1 = pos[2] - size[2] * 0.5
@@ -42710,6 +42725,56 @@ namespace FXRUtility {
       line([x1, y1, z2], [x2, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
       line([x1, y2, z1], [x2, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
       line([x1, y2, z2], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+    ])
+  }
+
+  /**
+   * Creates a node with an elliptical outline.
+   * @param center The center point of the ellipse.
+   * @param axis A direction representing the axis of the ellipse.
+   * @param radiusX The X radius of the ellipse.
+   * @param radiusY The Y radius of the ellipse.
+   * @param segments The number of line segments to use to approximate the ellipse.
+   * @param color The color of the outline.
+   * @param lineWidth The width of the outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function ellipse(
+    center: Vector3,
+    axis: Vector3 = [0, 1, 0],
+    radiusX: number = 1,
+    radiusY: number = radiusX,
+    segments: number = 40,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams,
+  ) {
+    axis = normalizeVector3(axis)
+    const yaw = -Math.atan2(axis[1], axis[2]) * 180 / Math.PI
+    const pitch = -Math.asin(axis[0]) * 180 / Math.PI
+    const angleInc = 2 * Math.PI / segments
+    return new BasicNode([
+      NodeTransform({
+        offset: center,
+        rotation: [yaw, 0, 0]
+      })
+    ], [
+      new BasicNode([
+        NodeTransform({
+          rotation: [0, pitch, 0]
+        }),
+      ], arrayOf(segments, i => {
+        const a1 = i * angleInc
+        const a2 = (i + 1) * angleInc
+        return line(
+          [radiusX * Math.cos(a1), radiusY * Math.sin(a1), 0],
+          [radiusX * Math.cos(a2), radiusY * Math.sin(a2), 0],
+          color,
+          lineWidth,
+          OrientationMode.LocalYaw,
+          args,
+        )
+      }))
     ])
   }
 
