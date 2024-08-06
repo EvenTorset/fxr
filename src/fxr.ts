@@ -42721,8 +42721,8 @@ namespace FXRUtility {
    * @param args Extra arguments for the particle action constructor.
    */
   export function box(
-    pos: Vector3,
-    size: Vector3,
+    pos: Vector3 = [0, 0, 0],
+    size: Vector3 = [1, 1, 1],
     color?: Vector4Value,
     lineWidth?: ScalarValue,
     args?: BillboardExParams
@@ -42748,6 +42748,31 @@ namespace FXRUtility {
       line([x1, y1, z2], [x2, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
       line([x1, y2, z1], [x2, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
       line([x1, y2, z2], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+    ])
+  }
+
+  /**
+   * Creates a node with a rectangular outline.
+   * @param width The width of the rectangle.
+   * @param height The height of the rectangle.
+   * @param color The color of the outline.
+   * @param lineWidth The width of the outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function rect(
+    width: number = 1,
+    height: number = 1,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams
+  ) {
+    const w = width * 0.5
+    const h = height * 0.5
+    return new BasicNode([], [
+      line([-w, -h, 0], [ w, -h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([-w,  h, 0], [ w,  h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([-w, -h, 0], [-w,  h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([ w, -h, 0], [ w,  h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
     ])
   }
 
