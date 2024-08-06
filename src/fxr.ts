@@ -7841,6 +7841,10 @@ function normalizeVector3([x, y, z]: Vector3): Vector3 {
   ]
 }
 
+function constantValueOf(v: AnyValue) {
+  return v instanceof Property ? v.valueAt(0) : v
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
@@ -42865,6 +42869,58 @@ namespace FXRUtility {
       line([0,  radiusY, -height * 0.5], [0,  radiusY, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
       line([0, -radiusY, -height * 0.5], [0, -radiusY, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
     ])
+  }
+
+  /**
+   * Adds outlines for all particle and node emitters in the node.
+   * 
+   * GPU particle emitters are not outlined, as they work very differently, and
+   * adding child nodes to the node with the emitter can seemingly sometimes
+   * affect the rotation of the GPU particle emitter somehow.
+   * @param node The node to add the emitter outlines to.
+   * @param recurse Controls if the outlines should be added to the entire
+   * branch or only to the {@link node}. Defaults to `true`.
+   * @param color The color of the outlines.
+   * @param lineWidth The width of the outlines.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function outlineEmitters(
+    node: Node,
+    recurse: boolean = true,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams
+  ) {
+    const nodes = recurse ? Array.from(node.walk()) : [node]
+    for (const n of nodes) {
+      if (n instanceof BasicNode || n instanceof NodeEmitterNode) {
+        for (const effect of n.walkEffects(false)) {
+          if (effect instanceof BasicEffect || effect instanceof NodeEmitterEffect) {
+            const emShape = effect.emitterShape
+            if (emShape instanceof DiskEmitterShape) {
+              const radius = constantValueOf(emShape.radius)
+              n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
+            } else if (emShape instanceof RectangleEmitterShape) {
+              const width = constantValueOf(emShape.sizeX)
+              const height = constantValueOf(emShape.sizeX)
+              n.nodes.push(rect(width, height, color, lineWidth, args))
+            } else if (emShape instanceof SphereEmitterShape) {
+              const radius = constantValueOf(emShape.radius)
+              n.nodes.push(ellipsoid(radius, radius, radius, 16, color, lineWidth, args))
+            } else if (emShape instanceof BoxEmitterShape) {
+              const x = constantValueOf(emShape.sizeX)
+              const y = constantValueOf(emShape.sizeY)
+              const z = constantValueOf(emShape.sizeZ)
+              n.nodes.push(box([0, 0, 0], [x, y, z], color, lineWidth, args))
+            } else if (emShape instanceof CylinderEmitterShape) {
+              const radius = constantValueOf(emShape.radius)
+              const height = constantValueOf(emShape.height)
+              n.nodes.push(cylinder(radius, radius, height, 16, color, lineWidth, args))
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
