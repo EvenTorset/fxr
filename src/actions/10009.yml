@@ -26,37 +26,17 @@ properties:
       Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
   unk_ac6_f1_1:
     field: int
-    default: 0
-  emitterSizeX:
-    field: float
-    default: 1
+  emitterSize:
+    field: vec3
+    default: [1, 1, 1]
     scale: true
     desc: |
-      The width of the emitter.
-  emitterSizeY:
-    field: float
-    default: 1
-    scale: true
+      The size of the emitter.
+  emitterRotation:
+    field: vec3
+    default: [0, 0, 0]
     desc: |
-      The height of the emitter.
-  emitterSizeZ:
-    field: float
-    default: 1
-    scale: true
-    desc: |
-      The depth of the emitter.
-  emitterRotationX:
-    field: float
-    desc: |
-      The rotation of the emitter around the X-axis.
-  emitterRotationY:
-    field: float
-    desc: |
-      The rotation of the emitter around the Y-axis.
-  emitterRotationZ:
-    field: float
-    desc: |
-      The rotation of the emitter around the Z-axis.
+      The rotation of the emitter.
   unk_ac6_f1_9:
     field: float
     default: 1
@@ -714,12 +694,12 @@ games:
       - texture
       - emitterShape
       - unk_ac6_f1_1
-      - emitterSizeX
-      - emitterSizeY
-      - emitterSizeZ
-      - emitterRotationX
-      - emitterRotationY
-      - emitterRotationZ
+      - emitterSize
+      #
+      #
+      - emitterRotation
+      #
+      #
       - unk_ac6_f1_9
       - unk_ac6_f1_10
       - unk_ac6_f1_11
