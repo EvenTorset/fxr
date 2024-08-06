@@ -7,6 +7,7 @@
 - Added `FXRUtility.box` - A function that can be useful to visualize box volumes for emitters, for example.
 - Added `anyValueDiff` - A function that subtracts one `AnyValue` from another. (An `AnyValue` is any scalar or vector value, including all types of properties.) This function simply uses the existing `anyValueSum` and `anyValueMult` functions to do this, so it works very similarly to those.
 - The three box size fields in the force volume actions have been converted to a single vector field.
+- The fallback for distortion and blur colors when applying a color palette has been changed to just white. This fixes partial palettes making some effects have strange-looking, bright or dark rectangles floating around.
 
 ## [13.0.0] - 2024-08-04
 
