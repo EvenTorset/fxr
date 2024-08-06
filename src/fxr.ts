@@ -42632,6 +42632,29 @@ namespace FXRUtility {
     return rad * 180 / Math.PI
   }
 
+  export function transform(center: Vector3, axis: Vector3, roll: number, nodes: Node[]) {
+    if (axis[0] === 0 && axis[1] === 0 && axis[2] === 0 && roll === 0) {
+      return new BasicNode([
+        NodeTransform({ offset: center })
+      ], nodes)
+    }
+    axis = normalizeVector3(axis)
+    const yaw = -Math.atan2(axis[1], axis[2]) * 180 / Math.PI
+    const pitch = -Math.asin(axis[0]) * 180 / Math.PI
+    return new BasicNode([
+      NodeTransform({
+        offset: center,
+        rotation: [yaw, 0, 0]
+      })
+    ], [
+      new BasicNode([
+        NodeTransform({
+          rotation: [0, pitch, roll]
+        }),
+      ], nodes)
+    ])
+  }
+
   /**
    * Creates a node with an attached particle that forms a line between two
    * given points.
@@ -42730,51 +42753,92 @@ namespace FXRUtility {
 
   /**
    * Creates a node with an elliptical outline.
-   * @param center The center point of the ellipse.
-   * @param axis A direction representing the axis of the ellipse.
    * @param radiusX The X radius of the ellipse.
    * @param radiusY The Y radius of the ellipse.
-   * @param segments The number of line segments to use to approximate the ellipse.
+   * @param segments The number of line segments to use to approximate the
+   * ellipse.
    * @param color The color of the outline.
    * @param lineWidth The width of the outline.
    * @param args Extra arguments for the particle action constructor.
    */
   export function ellipse(
-    center: Vector3,
-    axis: Vector3 = [0, 1, 0],
     radiusX: number = 1,
     radiusY: number = radiusX,
-    segments: number = 40,
+    segments: number = 16,
     color?: Vector4Value,
     lineWidth?: ScalarValue,
     args?: BillboardExParams,
   ) {
-    axis = normalizeVector3(axis)
-    const yaw = -Math.atan2(axis[1], axis[2]) * 180 / Math.PI
-    const pitch = -Math.asin(axis[0]) * 180 / Math.PI
     const angleInc = 2 * Math.PI / segments
-    return new BasicNode([
-      NodeTransform({
-        offset: center,
-        rotation: [yaw, 0, 0]
-      })
-    ], [
-      new BasicNode([
-        NodeTransform({
-          rotation: [0, pitch, 0]
-        }),
-      ], arrayOf(segments, i => {
-        const a1 = i * angleInc
-        const a2 = (i + 1) * angleInc
-        return line(
-          [radiusX * Math.cos(a1), radiusY * Math.sin(a1), 0],
-          [radiusX * Math.cos(a2), radiusY * Math.sin(a2), 0],
-          color,
-          lineWidth,
-          OrientationMode.LocalYaw,
-          args,
-        )
-      }))
+    return new BasicNode([], arrayOf(segments, i => {
+      const a1 = i * angleInc
+      const a2 = (i + 1) * angleInc
+      return line(
+        [radiusX * Math.cos(a1), radiusY * Math.sin(a1), 0],
+        [radiusX * Math.cos(a2), radiusY * Math.sin(a2), 0],
+        color,
+        lineWidth,
+        OrientationMode.LocalYaw,
+        args,
+      )
+    }))
+  }
+
+  /**
+   * Creates a node with three elliptical outlines forming an ellipsoid.
+   * @param radiusX The X radius of the ellipsoid.
+   * @param radiusY The Y radius of the ellipsoid.
+   * @param radiusY The Z radius of the ellipsoid.
+   * @param segments The number of line segments to use to approximate the
+   * ellipses.
+   * @param color The color of the outline.
+   * @param lineWidth The width of the outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function ellipsoid(
+    radiusX: number = 1,
+    radiusY: number = radiusX,
+    radiusZ: number = radiusX,
+    segments: number = 16,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams,
+  ) {
+    return new BasicNode([], [
+      ellipse(radiusX, radiusY, segments, color, lineWidth, args),
+      transform([0, 0, 0], [0, 1, 0], 0, ellipse(radiusX, radiusZ, segments, color, lineWidth, args).nodes),
+      transform([0, 0, 0], [1, 0, 0], 0, ellipse(radiusZ, radiusY, segments, color, lineWidth, args).nodes)
+    ])
+  }
+
+  /**
+   * Creates a node with two elliptical outlines and four line segments
+   * connecting them, forming a cylinder.
+   * @param radiusX The X radius of the cylinder.
+   * @param radiusY The Y radius of the cylinder.
+   * @param height The height of the cylinder.
+   * @param segments The number of line segments to use to approximate the
+   * ellipses.
+   * @param color The color of the lines.
+   * @param lineWidth The width of the lines.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function cylinder(
+    radiusX: number = 1,
+    radiusY: number = radiusX,
+    height: number = 1,
+    segments: number = 16,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams,
+  ) {
+    return new BasicNode([], [
+      transform([0, 0, -height * 0.5], [0, 0, 0], 0, ellipse(radiusX, radiusY, segments, color, lineWidth, args).nodes),
+      transform([0, 0,  height * 0.5], [0, 0, 0], 0, ellipse(radiusX, radiusY, segments, color, lineWidth, args).nodes),
+      line([ radiusX, 0, -height * 0.5], [ radiusX, 0, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([-radiusX, 0, -height * 0.5], [-radiusX, 0, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([0,  radiusY, -height * 0.5], [0,  radiusY, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([0, -radiusY, -height * 0.5], [0, -radiusY, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
     ])
   }
 
