@@ -9736,16 +9736,10 @@ abstract class Node {
       if (!('distortionParticle' in palette)) {
         avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
         palette.distortionParticle = [{
-          modifier: avgCommonNormal.modifier,
-          color: anyValueMult(
-            anyValueMult(
-              avgCommonNormal.color1,
-              avgCommonNormal.color2
-            ),
-            avgCommonNormal.color3,
-          ),
-          rgbMultiplier: avgCommonNormal.rgbMultiplier,
-          bloomColor: avgCommonNormal.bloomColor
+          modifier: new ConstantProperty(1, 1, 1, 1),
+          color: new ConstantProperty(1, 1, 1, 1),
+          rgbMultiplier: 1,
+          bloomColor: [1, 1, 1, 0]
         }]
       }
       palette.blurParticle ??= palette.distortionParticle
