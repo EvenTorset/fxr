@@ -6795,15 +6795,15 @@ function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[]
         break
       case FieldType.Vector2:
         i += 2
-        fields.push(new Vec2Field([ br.readFloat32(), br.readFloat32() ]))
+        fields.push(new Vector2Field([ br.readFloat32(), br.readFloat32() ]))
         break
       case FieldType.Vector3:
         i += 3
-        fields.push(new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
+        fields.push(new Vector3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
         break
       case FieldType.Vector4:
         i += 4
-        fields.push(new Vec4Field([
+        fields.push(new Vector4Field([
           br.readFloat32(),
           br.readFloat32(),
           br.readFloat32(),
@@ -39712,9 +39712,9 @@ abstract class Field<T extends FieldType> {
       case FieldType.Boolean: return new BoolField(value as boolean)
       case FieldType.Integer: return new IntField(value as number)
       case FieldType.Float: return new FloatField(value as number)
-      case FieldType.Vector2: return new Vec2Field(value as Vector2)
-      case FieldType.Vector3: return new Vec3Field(value as Vector3)
-      case FieldType.Vector4: return new Vec4Field(value as Vector4)
+      case FieldType.Vector2: return new Vector2Field(value as Vector2)
+      case FieldType.Vector3: return new Vector3Field(value as Vector3)
+      case FieldType.Vector4: return new Vector4Field(value as Vector4)
     }
   }
 
@@ -39726,9 +39726,9 @@ abstract class Field<T extends FieldType> {
       case 'Boolean': return new BoolField(value as boolean)
       case 'Integer': return new IntField(value as number)
       case 'Float': return new FloatField(value as number)
-      case 'Vector2': return new Vec2Field(value as Vector2)
-      case 'Vector3': return new Vec3Field(value as Vector3)
-      case 'Vector4': return new Vec4Field(value as Vector4)
+      case 'Vector2': return new Vector2Field(value as Vector2)
+      case 'Vector3': return new Vector3Field(value as Vector3)
+      case 'Vector4': return new Vector4Field(value as Vector4)
     }
   }
 
@@ -39763,22 +39763,22 @@ class FloatField extends Field<FieldType.Float> {
   clone(): Field<FieldType.Float> { return new FloatField(this.value) }
 }
 
-class Vec2Field extends Field<FieldType.Vector2> {
+class Vector2Field extends Field<FieldType.Vector2> {
   declare readonly type = FieldType.Vector2
   constructor(value: Vector2 = [0, 0]) { super(FieldType.Vector2, value) }
-  clone(): Field<FieldType.Vector2> { return new Vec2Field(this.value.slice() as Vector2) }
+  clone(): Field<FieldType.Vector2> { return new Vector2Field(this.value.slice() as Vector2) }
 }
 
-class Vec3Field extends Field<FieldType.Vector3> {
+class Vector3Field extends Field<FieldType.Vector3> {
   declare readonly type = FieldType.Vector3
   constructor(value: Vector3 = [0, 0, 0]) { super(FieldType.Vector3, value) }
-  clone(): Field<FieldType.Vector3> { return new Vec3Field(this.value.slice() as Vector3) }
+  clone(): Field<FieldType.Vector3> { return new Vector3Field(this.value.slice() as Vector3) }
 }
 
-class Vec4Field extends Field<FieldType.Vector4> {
+class Vector4Field extends Field<FieldType.Vector4> {
   declare readonly type = FieldType.Vector4
   constructor(value: Vector4 = [0, 0, 0, 0]) { super(FieldType.Vector4, value) }
-  clone(): Field<FieldType.Vector4> { return new Vec4Field(this.value.slice() as Vector4) }
+  clone(): Field<FieldType.Vector4> { return new Vector4Field(this.value.slice() as Vector4) }
 }
 
 //#region Keyframe
@@ -42936,9 +42936,9 @@ export {
   BoolField,
   IntField,
   FloatField,
-  Vec2Field,
-  Vec3Field,
-  Vec4Field,
+  Vector2Field,
+  Vector3Field,
+  Vector4Field,
 
   Keyframe,
   BezierKeyframe,
