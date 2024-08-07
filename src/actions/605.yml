@@ -1,6 +1,9 @@
 type: 605
 name: Model
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Particle with a 3D model.
 

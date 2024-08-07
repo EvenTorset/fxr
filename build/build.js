@@ -69,6 +69,13 @@ const timeMap = {
   sq: 4,
 }
 
+function toTSString(v) {
+  if (typeof v === 'string' || Array.isArray(v)) {
+    return JSON.stringify(v)
+  }
+  return v.toString()
+}
+
 function naturalSorter(as, bs) {
   let a, b, a1, b1, i = 0, n, L,
   rx = /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g
@@ -130,6 +137,10 @@ export default async function(writeToDist = true) {
 
   for (const fn of fs.readdirSync(actionsDir).sort(naturalSorter)) {
     const data = yaml.parse(await fs.promises.readFile(path.join(actionsDir, fn), 'utf-8'))
+
+    if (!('meta' in data)) {
+      throw new Error('Missing meta object in action data: ' + fn)
+    }
 
     if ('slot' in data) {
       if (!actionSlots.has(data.slot)) {
@@ -284,7 +295,8 @@ export default async function(writeToDist = true) {
          * ${data.desc.trim().replace(/\n/g, '\n * ')}
          */
         class ${data.name} extends DataAction {
-          declare type: ActionType.${data.name}
+          declare readonly type: ActionType.${data.name}
+          declare readonly meta: ActionMeta & {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}}
           ${Object.entries(data.properties ?? {}).filter(e => !e[1].omitClassProp).map(([k, v]) => {
             return (
               'desc' in v ? `
@@ -326,7 +338,7 @@ export default async function(writeToDist = true) {
               propNames.length > 1 ? `props: ${data.name}Params = {}` :
               `${propNames[0]}: ${data.properties[propNames[0]].type ?? typeMap[data.properties[propNames[0]].field]} = ${defValTS(firstProp)}`
             : ''}) {
-            super(ActionType.${data.name})${'properties' in data ? `
+            super(ActionType.${data.name}, {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}})${'properties' in data ? `
             this.assign(${propNames.length > 1 ? 'props' : `{ ${propNames[0]} }`})` : ''}
           }
         }

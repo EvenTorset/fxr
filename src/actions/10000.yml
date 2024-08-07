@@ -1,6 +1,9 @@
 type: 10000
 name: GPUStandardParticle
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
 
@@ -32,36 +35,17 @@ properties:
       Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
   unk_ds3_f1_5:
     field: int
-  emitterSizeX:
-    field: float
-    default: 1
+  emitterSize:
+    field: vec3
+    default: [1, 1, 1]
     scale: true
     desc: |
-      The width of the emitter.
-  emitterSizeY:
-    field: float
-    default: 1
-    scale: true
+      The size of the emitter.
+  emitterRotation:
+    field: vec3
+    default: [0, 0, 0]
     desc: |
-      The height of the emitter.
-  emitterSizeZ:
-    field: float
-    default: 1
-    scale: true
-    desc: |
-      The depth of the emitter.
-  emitterRotationX:
-    field: float
-    desc: |
-      The rotation of the emitter around the X-axis.
-  emitterRotationY:
-    field: float
-    desc: |
-      The rotation of the emitter around the Y-axis.
-  emitterRotationZ:
-    field: float
-    desc: |
-      The rotation of the emitter around the Z-axis.
+      The rotation of the emitter.
   unk_ds3_f1_12:
     field: float
     default: 1
@@ -157,228 +141,100 @@ properties:
     field: int
   unk_ds3_f1_33:
     field: int
-  particleOffsetX:
-    field: float
+  particleOffset:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      Particle position offset along the X-axis.
+      Particle position offset.
     see:
-      - particleOffsetXMin
-      - particleOffsetXMax
-  particleOffsetY:
-    field: float
+      - particleOffsetMin
+      - particleOffsetMax
+  particleOffsetMin:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      Particle position offset along the Y-axis.
-    see:
-      - particleOffsetYMin
-      - particleOffsetYMax
-  particleOffsetZ:
-    field: float
+      Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+  particleOffsetMax:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      Particle position offset along the Z-axis.
-    see:
-      - particleOffsetZMin
-      - particleOffsetZMax
-  particleOffsetXMin:
-    field: float
-    scale: true
-    desc: |
-      Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-  particleOffsetYMin:
-    field: float
-    scale: true
-    desc: |
-      Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-  particleOffsetZMin:
-    field: float
-    scale: true
-    desc: |
-      Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-  particleOffsetXMax:
-    field: float
-    scale: true
-    desc: |
-      Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-  particleOffsetYMax:
-    field: float
-    scale: true
-    desc: |
-      Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-  particleOffsetZMax:
-    field: float
-    scale: true
-    desc: |
-      Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-  particleSpeedX:
-    field: float
+      Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+  particleSpeed:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     time: true
     desc: |
-      Particle speed along the X-axis.
+      Particle speed.
     see:
-      - particleSpeedXMin
-      - particleSpeedXMax
-  particleSpeedY:
-    field: float
+      - particleSpeedMin
+      - particleSpeedMax
+  particleSpeedMin:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     time: true
     desc: |
-      Particle speed along the Y-axis.
+      Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+  particleSpeedMax:
+    field: vec3
+    default: [0, 0, 0]
+    scale: true
+    time: true
+    desc: |
+      Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+  particleAccelerationMin:
+    field: vec3
+    default: [0, 0, 0]
+    scale: true
+    time: sq
+    desc: |
+      Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
     see:
-      - particleSpeedYMin
-      - particleSpeedYMax
-  particleSpeedZ:
-    field: float
+      - particleAccelerationX
+      - particleAccelerationY
+      - particleAccelerationZ
+  particleAccelerationMax:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
-    time: true
+    time: sq
     desc: |
-      Particle speed along the Z-axis.
+      Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
     see:
-      - particleSpeedZMin
-      - particleSpeedZMax
-  particleSpeedXMin:
-    field: float
-    scale: true
+      - particleAccelerationX
+      - particleAccelerationY
+      - particleAccelerationZ
+  particleRotationVariance:
+    field: vec3
+    default: [0, 0, 0]
+    desc: |
+      Maximum amount of random rotation for each particle in degrees.
+  particleAngularSpeedVariance:
+    field: vec3
+    default: [0, 0, 0]
     time: true
     desc: |
-      Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
-  particleSpeedYMin:
-    field: float
-    scale: true
-    time: true
-    desc: |
-      Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-  particleSpeedZMin:
-    field: float
-    scale: true
-    time: true
-    desc: |
-      Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-  particleSpeedXMax:
-    field: float
-    scale: true
-    time: true
-    desc: |
-      Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-  particleSpeedYMax:
-    field: float
-    scale: true
-    time: true
-    desc: |
-      Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-  particleSpeedZMax:
-    field: float
-    scale: true
-    time: true
-    desc: |
-      Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-  particleAccelerationXMin:
-    field: float
-    scale: true
+      Maximum amount of random angular speed for each particle in degrees per second.
+  particleAngularAccelerationMin:
+    field: vec3
+    default: [0, 0, 0]
     time: sq
     desc: |
-      Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-  particleAccelerationYMin:
-    field: float
-    scale: true
-    time: sq
-    desc: |
-      Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-  particleAccelerationZMin:
-    field: float
-    scale: true
-    time: sq
-    desc: |
-      Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-  particleAccelerationXMax:
-    field: float
-    scale: true
-    time: sq
-    desc: |
-      Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-  particleAccelerationYMax:
-    field: float
-    scale: true
-    time: sq
-    desc: |
-      Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-  particleAccelerationZMax:
-    field: float
-    scale: true
-    time: sq
-    desc: |
-      Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-  particleRotationVarianceX:
-    field: float
-    desc: |
-      Maximum amount of random rotation each particle will have around the X-axis in degrees.
-  particleRotationVarianceY:
-    field: float
-    desc: |
-      Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-  particleRotationVarianceZ:
-    field: float
-    desc: |
-      Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-  particleAngularSpeedVarianceX:
-    field: float
-    time: true
-    desc: |
-      Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-  particleAngularSpeedVarianceY:
-    field: float
-    time: true
-    desc: |
-      Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-  particleAngularSpeedVarianceZ:
-    field: float
-    time: true
-    desc: |
-      Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-  particleAngularAccelerationXMin:
-    field: float
-    time: sq
-    desc: |
-      Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
+      Minimum amount of random angular acceleration for each particle in degrees per second squared.
     see:
-      - particleAngularAccelerationXMax
-  particleAngularAccelerationYMin:
-    field: float
+      - particleAngularAccelerationMax
+  particleAngularAccelerationMax:
+    field: vec3
+    default: [0, 0, 0]
     time: sq
     desc: |
-      Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
+      Maximum amount of random angular acceleration for each particle in degrees per second squared.
     see:
-      - particleAngularAccelerationYMax
-  particleAngularAccelerationZMin:
-    field: float
-    time: sq
-    desc: |
-      Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-    see:
-      - particleAngularAccelerationZMax
-  particleAngularAccelerationXMax:
-    field: float
-    time: sq
-    desc: |
-      Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-    see:
-      - particleAngularAccelerationXMin
-  particleAngularAccelerationYMax:
-    field: float
-    time: sq
-    desc: |
-      Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-    see:
-      - particleAngularAccelerationYMin
-  particleAngularAccelerationZMax:
-    field: float
-    time: sq
-    desc: |
-      Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-    see:
-      - particleAngularAccelerationZMin
+      - particleAngularAccelerationMin
   particleUniformScale:
     field: bool
     default: false
@@ -982,8 +838,8 @@ properties:
     desc: |
       Particle acceleration along the X-axis.
     see:
-      - particleAccelerationXMin
-      - particleAccelerationXMax
+      - particleAccelerationMin
+      - particleAccelerationMax
   particleAccelerationY:
     type: ScalarValue
     scale: true
@@ -991,8 +847,8 @@ properties:
     desc: |
       Particle acceleration along the Y-axis.
     see:
-      - particleAccelerationYMin
-      - particleAccelerationYMax
+      - particleAccelerationMin
+      - particleAccelerationMax
   particleAccelerationZ:
     type: ScalarValue
     scale: true
@@ -1000,8 +856,8 @@ properties:
     desc: |
       Particle acceleration along the Z-axis.
     see:
-      - particleAccelerationZMin
-      - particleAccelerationZMax
+      - particleAccelerationMin
+      - particleAccelerationMax
   unk_ds3_p1_7:
     type: ScalarValue
   unk_ds3_p1_8:
@@ -1012,8 +868,8 @@ properties:
     desc: |
       Angular acceleration for particles around the Z-axis in degrees per second squared.
     see:
-      - particleAngularAccelerationZMin
-      - particleAngularAccelerationZMax
+      - particleAngularAccelerationMin
+      - particleAngularAccelerationMax
   particleGrowthRateX:
     type: ScalarValue
     scale: true
@@ -1095,12 +951,12 @@ games:
       - normalMap
       - emitterShape
       - unk_ds3_f1_5
-      - emitterSizeX
-      - emitterSizeY
-      - emitterSizeZ
-      - emitterRotationX
-      - emitterRotationY
-      - emitterRotationZ
+      - emitterSize
+      #
+      #
+      - emitterRotation
+      #
+      #
       - unk_ds3_f1_12
       - unk_ds3_f1_13
       - unk_ds3_f1_14
@@ -1123,42 +979,42 @@ games:
       - particleDuration
       - unk_ds3_f1_32
       - unk_ds3_f1_33
-      - particleOffsetX
-      - particleOffsetY
-      - particleOffsetZ
-      - particleOffsetXMin
-      - particleOffsetYMin
-      - particleOffsetZMin
-      - particleOffsetXMax
-      - particleOffsetYMax
-      - particleOffsetZMax
-      - particleSpeedX
-      - particleSpeedY
-      - particleSpeedZ
-      - particleSpeedXMin
-      - particleSpeedYMin
-      - particleSpeedZMin
-      - particleSpeedXMax
-      - particleSpeedYMax
-      - particleSpeedZMax
-      - particleAccelerationXMin
-      - particleAccelerationYMin
-      - particleAccelerationZMin
-      - particleAccelerationXMax
-      - particleAccelerationYMax
-      - particleAccelerationZMax
-      - particleRotationVarianceX
-      - particleRotationVarianceY
-      - particleRotationVarianceZ
-      - particleAngularSpeedVarianceX
-      - particleAngularSpeedVarianceY
-      - particleAngularSpeedVarianceZ
-      - particleAngularAccelerationXMin
-      - particleAngularAccelerationYMin
-      - particleAngularAccelerationZMin
-      - particleAngularAccelerationXMax
-      - particleAngularAccelerationYMax
-      - particleAngularAccelerationZMax
+      - particleOffset
+      #
+      #
+      - particleOffsetMin
+      #
+      #
+      - particleOffsetMax
+      #
+      #
+      - particleSpeed
+      #
+      #
+      - particleSpeedMin
+      #
+      #
+      - particleSpeedMax
+      #
+      #
+      - particleAccelerationMin
+      #
+      #
+      - particleAccelerationMax
+      #
+      #
+      - particleRotationVariance
+      #
+      #
+      - particleAngularSpeedVariance
+      #
+      #
+      - particleAngularAccelerationMin
+      #
+      #
+      - particleAngularAccelerationMax
+      #
+      #
       - particleUniformScale
       - particleSizeX
       - particleSizeY
@@ -1319,12 +1175,12 @@ games:
       - normalMap
       - emitterShape
       - unk_ds3_f1_5
-      - emitterSizeX
-      - emitterSizeY
-      - emitterSizeZ
-      - emitterRotationX
-      - emitterRotationY
-      - emitterRotationZ
+      - emitterSize
+      #
+      #
+      - emitterRotation
+      #
+      #
       - unk_ds3_f1_12
       - unk_ds3_f1_13
       - unk_ds3_f1_14
@@ -1347,42 +1203,42 @@ games:
       - particleDuration
       - unk_ds3_f1_32
       - unk_ds3_f1_33
-      - particleOffsetX
-      - particleOffsetY
-      - particleOffsetZ
-      - particleOffsetXMin
-      - particleOffsetYMin
-      - particleOffsetZMin
-      - particleOffsetXMax
-      - particleOffsetYMax
-      - particleOffsetZMax
-      - particleSpeedX
-      - particleSpeedY
-      - particleSpeedZ
-      - particleSpeedXMin
-      - particleSpeedYMin
-      - particleSpeedZMin
-      - particleSpeedXMax
-      - particleSpeedYMax
-      - particleSpeedZMax
-      - particleAccelerationXMin
-      - particleAccelerationYMin
-      - particleAccelerationZMin
-      - particleAccelerationXMax
-      - particleAccelerationYMax
-      - particleAccelerationZMax
-      - particleRotationVarianceX
-      - particleRotationVarianceY
-      - particleRotationVarianceZ
-      - particleAngularSpeedVarianceX
-      - particleAngularSpeedVarianceY
-      - particleAngularSpeedVarianceZ
-      - particleAngularAccelerationXMin
-      - particleAngularAccelerationYMin
-      - particleAngularAccelerationZMin
-      - particleAngularAccelerationXMax
-      - particleAngularAccelerationYMax
-      - particleAngularAccelerationZMax
+      - particleOffset
+      #
+      #
+      - particleOffsetMin
+      #
+      #
+      - particleOffsetMax
+      #
+      #
+      - particleSpeed
+      #
+      #
+      - particleSpeedMin
+      #
+      #
+      - particleSpeedMax
+      #
+      #
+      - particleAccelerationMin
+      #
+      #
+      - particleAccelerationMax
+      #
+      #
+      - particleRotationVariance
+      #
+      #
+      - particleAngularSpeedVariance
+      #
+      #
+      - particleAngularAccelerationMin
+      #
+      #
+      - particleAngularAccelerationMax
+      #
+      #
       - particleUniformScale
       - particleSizeX
       - particleSizeY
@@ -1530,12 +1386,12 @@ games:
       - normalMap
       - emitterShape
       - unk_ds3_f1_5
-      - emitterSizeX
-      - emitterSizeY
-      - emitterSizeZ
-      - emitterRotationX
-      - emitterRotationY
-      - emitterRotationZ
+      - emitterSize
+      #
+      #
+      - emitterRotation
+      #
+      #
       - unk_ds3_f1_12
       - unk_ds3_f1_13
       - unk_ds3_f1_14
@@ -1558,42 +1414,42 @@ games:
       - particleDuration
       - unk_ds3_f1_32
       - unk_ds3_f1_33
-      - particleOffsetX
-      - particleOffsetY
-      - particleOffsetZ
-      - particleOffsetXMin
-      - particleOffsetYMin
-      - particleOffsetZMin
-      - particleOffsetXMax
-      - particleOffsetYMax
-      - particleOffsetZMax
-      - particleSpeedX
-      - particleSpeedY
-      - particleSpeedZ
-      - particleSpeedXMin
-      - particleSpeedYMin
-      - particleSpeedZMin
-      - particleSpeedXMax
-      - particleSpeedYMax
-      - particleSpeedZMax
-      - particleAccelerationXMin
-      - particleAccelerationYMin
-      - particleAccelerationZMin
-      - particleAccelerationXMax
-      - particleAccelerationYMax
-      - particleAccelerationZMax
-      - particleRotationVarianceX
-      - particleRotationVarianceY
-      - particleRotationVarianceZ
-      - particleAngularSpeedVarianceX
-      - particleAngularSpeedVarianceY
-      - particleAngularSpeedVarianceZ
-      - particleAngularAccelerationXMin
-      - particleAngularAccelerationYMin
-      - particleAngularAccelerationZMin
-      - particleAngularAccelerationXMax
-      - particleAngularAccelerationYMax
-      - particleAngularAccelerationZMax
+      - particleOffset
+      #
+      #
+      - particleOffsetMin
+      #
+      #
+      - particleOffsetMax
+      #
+      #
+      - particleSpeed
+      #
+      #
+      - particleSpeedMin
+      #
+      #
+      - particleSpeedMax
+      #
+      #
+      - particleAccelerationMin
+      #
+      #
+      - particleAccelerationMax
+      #
+      #
+      - particleRotationVariance
+      #
+      #
+      - particleAngularSpeedVariance
+      #
+      #
+      - particleAngularAccelerationMin
+      #
+      #
+      - particleAngularAccelerationMax
+      #
+      #
       - particleUniformScale
       - particleSizeX
       - particleSizeY

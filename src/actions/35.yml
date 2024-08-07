@@ -1,6 +1,9 @@
 type: 35
 name: StaticNodeTransform
 slot: NodeTransform
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the translation and rotation of a node.
 properties:

@@ -1705,6 +1705,7 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 
 export interface IAction {
   readonly type: ActionType
+  readonly meta: ActionMeta
   toJSON(): any
   /**
    * Creates a minified version of this action.
@@ -1738,6 +1739,38 @@ export interface IModifier<T extends ValueType> {
   toJSON(): any
   clone(): IModifier<T>
   separateComponents(): IModifier<ValueType.Scalar>[]
+}
+
+export interface ActionMeta {
+  /**
+   * Is `true` if the action is an
+   * {@link ActionSlots.AppearanceAction appearance action}.
+   */
+  isAppearance: boolean
+  /**
+   * Is `true` if the action defines a particle appearance. Particles are
+   * affected by particle-related actions:
+   * - {@link ActionSlots.ParticleModifierAction ParticleModifierAction}
+   * - {@link ActionSlots.ParticleAttributesAction ParticleAttributesAction}
+   * - {@link ActionSlots.ParticleMovementAction ParticleMovementAction}
+   * - {@link ActionSlots.ParticleForceMovementAction ParticleForceMovementAction}
+   * 
+   * Particles can be emitted by any of the regular emitters:
+   * - {@link ActionType.OneTimeEmitter OneTimeEmitter}
+   * - {@link ActionType.PeriodicEmitter PeriodicEmitter}
+   * - {@link ActionType.EqualDistanceEmitter EqualDistanceEmitter}
+   * 
+   * Non-particles are not affected by the particle-related actions, and can
+   * only be emitted by {@link ActionType.OneTimeEmitter OneTimeEmitter}.
+   * 
+   * GPU particles, for example those from
+   * {@link ActionType.GPUStandardParticle GPUStandardParticle}, do not count
+   * as particles in the same way. They are not affected by the
+   * particle-related actions, and the actions that define them also define
+   * their own emitter for the GPU particles instead of using the one in the
+   * node's emitter slot.
+   */
+  isParticle: boolean
 }
 
 export type AnyAction = Action | DataAction
@@ -3772,12 +3805,8 @@ const ActionData: {
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ds3_f1_5: { default: 0, field: 1 },
-      emitterSizeX: { default: 1, field: 2, scale: 1 },
-      emitterSizeY: { default: 1, field: 2, scale: 1 },
-      emitterSizeZ: { default: 1, field: 2, scale: 1 },
-      emitterRotationX: { default: 0, field: 2 },
-      emitterRotationY: { default: 0, field: 2 },
-      emitterRotationZ: { default: 0, field: 2 },
+      emitterSize: { default: [1, 1, 1], field: 4, scale: 1 },
+      emitterRotation: { default: [0, 0, 0], field: 4 },
       unk_ds3_f1_12: { default: 1, field: 2 },
       unk_ds3_f1_13: { default: 1, field: 2 },
       unk_ds3_f1_14: { default: 1, field: 2 },
@@ -3800,42 +3829,18 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleRotationVarianceX: { default: 0, field: 2 },
-      particleRotationVarianceY: { default: 0, field: 2 },
-      particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
-      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleSpeed: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMin: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleAccelerationMin: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleAccelerationMax: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleRotationVariance: { default: [0, 0, 0], field: 4 },
+      particleAngularSpeedVariance: { default: [0, 0, 0], field: 4, time: 1 },
+      particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
+      particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -3997,19 +4002,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','desaturate'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','desaturate'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
@@ -4025,12 +4030,8 @@ const ActionData: {
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ds3_f1_5: { default: 0, field: 1 },
-      emitterSizeX: { default: 1, field: 2, scale: 1 },
-      emitterSizeY: { default: 1, field: 2, scale: 1 },
-      emitterSizeZ: { default: 1, field: 2, scale: 1 },
-      emitterRotationX: { default: 0, field: 2 },
-      emitterRotationY: { default: 0, field: 2 },
-      emitterRotationZ: { default: 0, field: 2 },
+      emitterSize: { default: [1, 1, 1], field: 4, scale: 1 },
+      emitterRotation: { default: [0, 0, 0], field: 4 },
       unk_ds3_f1_12: { default: 1, field: 2 },
       unk_ds3_f1_13: { default: 1, field: 2 },
       unk_ds3_f1_14: { default: 1, field: 2 },
@@ -4053,42 +4054,18 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleRotationVarianceX: { default: 0, field: 2 },
-      particleRotationVarianceY: { default: 0, field: 2 },
-      particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
-      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleSpeed: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMin: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleAccelerationMin: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleAccelerationMax: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleRotationVariance: { default: [0, 0, 0], field: 4 },
+      particleAngularSpeedVariance: { default: [0, 0, 0], field: 4, time: 1 },
+      particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
+      particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -4251,7 +4228,7 @@ const ActionData: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: -2,
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
@@ -4315,12 +4292,8 @@ const ActionData: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ac6_f1_1: { default: 0, field: 1 },
-      emitterSizeX: { default: 1, field: 2, scale: 1 },
-      emitterSizeY: { default: 1, field: 2, scale: 1 },
-      emitterSizeZ: { default: 1, field: 2, scale: 1 },
-      emitterRotationX: { default: 0, field: 2 },
-      emitterRotationY: { default: 0, field: 2 },
-      emitterRotationZ: { default: 0, field: 2 },
+      emitterSize: { default: [1, 1, 1], field: 4, scale: 1 },
+      emitterRotation: { default: [0, 0, 0], field: 4 },
       unk_ac6_f1_9: { default: 1, field: 2 },
       unk_ac6_f1_10: { default: 1, field: 2 },
       unk_ac6_f1_11: { default: 1, field: 2 },
@@ -4342,27 +4315,17 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedMin: { default: [-0.01, -0.01, -0.01], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0.01, 0.01, 0.01], field: 4, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
       colorMax: { default: [0, 0, 0, 0], field: 5 },
-      blendMode: { default: BlendMode.Normal, field: 1 },
+      blendMode: { default: BlendMode.Add, field: 1 },
       unk_ac6_f1_57: { default: -1, field: 1 },
       unk_ac6_f1_58: { default: -1, field: 1 },
       unk_ac6_f1_59: { default: 0, field: 1 },
@@ -4473,7 +4436,7 @@ const ActionData: {
       [Game.Sekiro]: Game.ArmoredCore6,
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -4485,12 +4448,8 @@ const ActionData: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
       unk_ac6_f1_1: { default: 0, field: 1 },
-      emitterSizeX: { default: 1, field: 2, scale: 1 },
-      emitterSizeY: { default: 1, field: 2, scale: 1 },
-      emitterSizeZ: { default: 1, field: 2, scale: 1 },
-      emitterRotationX: { default: 0, field: 2 },
-      emitterRotationY: { default: 0, field: 2 },
-      emitterRotationZ: { default: 0, field: 2 },
+      emitterSize: { default: [1, 1, 1], field: 4, scale: 1 },
+      emitterRotation: { default: [0, 0, 0], field: 4 },
       unk_ac6_f1_9: { default: 1, field: 2 },
       unk_ac6_f1_10: { default: 1, field: 2 },
       unk_ac6_f1_11: { default: 1, field: 2 },
@@ -4512,27 +4471,17 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedMin: { default: [-0.01, -0.01, -0.01], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0.01, 0.01, 0.01], field: 4, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
       colorMax: { default: [0, 0, 0, 0], field: 5 },
-      blendMode: { default: BlendMode.Normal, field: 1 },
+      blendMode: { default: BlendMode.Add, field: 1 },
       unk_ac6_f1_57: { default: -1, field: 1 },
       unk_ac6_f1_58: { default: -1, field: 1 },
       unk_ac6_f1_59: { default: 0, field: 1 },
@@ -4642,7 +4591,7 @@ const ActionData: {
     games: {
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSizeX','emitterSizeY','emitterSizeZ','emitterRotationX','emitterRotationY','emitterRotationZ','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -5100,9 +5049,7 @@ const ActionData: {
     props: {
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5110,7 +5057,7 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem']
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5122,9 +5069,7 @@ const ActionData: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5185,11 +5130,11 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_43','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_ds3_f1_49','unk_ds3_f1_50','fadeOutTime'],
         properties1: ['force']
       },
       [Game.Sekiro]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','unk_ds3_f1_28','unk_ds3_f1_29','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','unk_ds3_f1_35','unk_ds3_f1_36','unk_ds3_f1_37','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_40','unk_ds3_f1_41','unk_ds3_f1_42','unk_ds3_f1_44','unk_ds3_f1_45','forceMultiplier','unk_ds3_f1_47','unk_ds3_f1_48','unk_sdt_f1_48','unk_sdt_f1_49','unk_sdt_f1_50','unk_sdt_f1_51','unk_sdt_f1_52','fadeOutTime','unk_sdt_f1_54','unk_sdt_f1_55','unk_sdt_f1_56','unk_sdt_f1_57','unk_sdt_f1_58','unk_ds3_f1_49','unk_ds3_f1_50'],
         properties1: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -5201,9 +5146,7 @@ const ActionData: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5241,7 +5184,7 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','forceMultiplier','unk_ds3_f1_36','unk_ds3_f1_37','fadeOutTime'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_ds3_f1_9','unk_ds3_f1_10','unk_ds3_f1_11','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','unk_ds3_f1_22','unk_ds3_f1_23','unk_ds3_f1_24','unk_ds3_f1_25','unk_ds3_f1_26','unk_ds3_f1_27','forceRandomMultiplierMin','forceRandomMultiplierMax','unk_ds3_f1_30','unk_ds3_f1_31','unk_ds3_f1_32','unk_ds3_f1_33','unk_ds3_f1_34','forceMultiplier','unk_ds3_f1_36','unk_ds3_f1_37','fadeOutTime'],
         properties1: ['force']
       },
       [Game.Sekiro]: Game.DarkSouls3,
@@ -5253,15 +5196,13 @@ const ActionData: {
     props: {
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius']
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5276,9 +5217,7 @@ const ActionData: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
-      boxSizeX: { default: 0, field: 2, scale: 1 },
-      boxSizeY: { default: 0, field: 2, scale: 1 },
-      boxSizeZ: { default: 0, field: 2, scale: 1 },
+      boxSize: { default: [0, 0, 0], field: 4, scale: 1 },
       cylinderHeight: { default: 0, field: 2, scale: 1 },
       cylinderRadius: { default: 0, field: 2, scale: 1 },
       squarePrismHeight: { default: 0, field: 2, scale: 1 },
@@ -5329,7 +5268,7 @@ const ActionData: {
     },
     games: {
       [Game.Sekiro]: {
-        fields1: ['shape','sphereRadius','boxSizeX','boxSizeY','boxSizeZ','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_unk_f1_9','unk_unk_f1_10','unk_unk_f1_11','unk_unk_f1_12','unk_unk_f1_13','unk_unk_f1_14','unk_unk_f1_15','unk_unk_f1_16','unk_unk_f1_17','unk_unk_f1_18','unk_unk_f1_19','unk_unk_f1_20','unk_unk_f1_21','unk_unk_f1_22','unk_unk_f1_23','forceRandomMultiplierMin','forceRandomMultiplierMax','noiseScale','unk_unk_f1_27','unk_unk_f1_28','enableSoftRadius','softRadius','unk_unk_f1_31','unk_unk_f1_32','unk_unk_f1_33','unk_unk_f1_34','unk_unk_f1_35','unk_unk_f1_36','unk_unk_f1_37','unk_unk_f1_38','unk_unk_f1_39','fadeOutTime','unk_unk_f1_41','unk_unk_f1_42','unk_unk_f1_43','unk_unk_f1_44','unk_unk_f1_45','unk_unk_f1_46','unk_unk_f1_47','unk_unk_f1_48','unk_unk_f1_49','unk_unk_f1_50','unk_unk_f1_51'],
+        fields1: ['shape','sphereRadius','boxSize','cylinderHeight','cylinderRadius','squarePrismHeight','squarePrismApothem','unk_unk_f1_9','unk_unk_f1_10','unk_unk_f1_11','unk_unk_f1_12','unk_unk_f1_13','unk_unk_f1_14','unk_unk_f1_15','unk_unk_f1_16','unk_unk_f1_17','unk_unk_f1_18','unk_unk_f1_19','unk_unk_f1_20','unk_unk_f1_21','unk_unk_f1_22','unk_unk_f1_23','forceRandomMultiplierMin','forceRandomMultiplierMax','noiseScale','unk_unk_f1_27','unk_unk_f1_28','enableSoftRadius','softRadius','unk_unk_f1_31','unk_unk_f1_32','unk_unk_f1_33','unk_unk_f1_34','unk_unk_f1_35','unk_unk_f1_36','unk_unk_f1_37','unk_unk_f1_38','unk_unk_f1_39','fadeOutTime','unk_unk_f1_41','unk_unk_f1_42','unk_unk_f1_43','unk_unk_f1_44','unk_unk_f1_45','unk_unk_f1_46','unk_unk_f1_47','unk_unk_f1_48','unk_unk_f1_49','unk_unk_f1_50','unk_unk_f1_51'],
         properties1: ['noiseOffsetX','noiseOffsetY','noiseOffsetZ','force']
       },
       [Game.EldenRing]: Game.Sekiro,
@@ -6805,15 +6744,15 @@ function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[]
         break
       case FieldType.Vector2:
         i += 2
-        fields.push(new Vec2Field([ br.readFloat32(), br.readFloat32() ]))
+        fields.push(new Vector2Field([ br.readFloat32(), br.readFloat32() ]))
         break
       case FieldType.Vector3:
         i += 3
-        fields.push(new Vec3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
+        fields.push(new Vector3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
         break
       case FieldType.Vector4:
         i += 4
-        fields.push(new Vec4Field([
+        fields.push(new Vector4Field([
           br.readFloat32(),
           br.readFloat32(),
           br.readFloat32(),
@@ -7170,9 +7109,8 @@ function filterMillisecondDiffs(nums: Iterable<number>) {
  * 
  * Multiplying two vectors of different dimensionalities is not supported, but
  * a vector and a scalar will work.
- * @param av1 
- * @param av2 
- * @returns 
+ * @param av1 Left operand.
+ * @param av2 Right operand.
  */
 function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If p2 is none of these, it's invalid, likely undefined or null, it must
@@ -7348,9 +7286,8 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
  * 
  * Adding two vectors of different dimensionalities is not supported, but
  * a vector and a scalar will work.
- * @param av1 
- * @param av2 
- * @returns 
+ * @param av1 Left operand.
+ * @param av2 Right operand.
  */
 function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If p2 is none of these, it's invalid, likely undefined or null, it must
@@ -7536,6 +7473,19 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
   return anyValueSum(av2, av1)
+}
+
+/**
+ * Subtracts one number, vector, or a property of either kind to another
+ * number, vector, or property.
+ * 
+ * Subtracting two vectors of different dimensionalities is not supported, but
+ * a vector and a scalar will work.
+ * @param av1 Left operand.
+ * @param av2 Right operand.
+ */
+function anyValueDiff<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
+  return anyValueSum(av1, anyValueMult(-1, av2))
 }
 
 function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
@@ -7829,6 +7779,19 @@ function assertValidFXRID(id: number) {
       `Non-integer FXR ID: ${id} - The ID must be a positive integer less than ${1e9.toLocaleString()}.`
     )
   }
+}
+
+function normalizeVector3([x, y, z]: Vector3): Vector3 {
+  const l = Math.sqrt(x * x + y * y + z * z)
+  return [
+    x / l,
+    y / l,
+    z / l,
+  ]
+}
+
+function constantValueOf(v: AnyValue) {
+  return v instanceof Property ? v.valueAt(0) : v
 }
 
 const ActionDataConversion = {
@@ -9735,16 +9698,10 @@ abstract class Node {
       if (!('distortionParticle' in palette)) {
         avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
         palette.distortionParticle = [{
-          modifier: avgCommonNormal.modifier,
-          color: anyValueMult(
-            anyValueMult(
-              avgCommonNormal.color1,
-              avgCommonNormal.color2
-            ),
-            avgCommonNormal.color3,
-          ),
-          rgbMultiplier: avgCommonNormal.rgbMultiplier,
-          bloomColor: avgCommonNormal.bloomColor
+          modifier: new ConstantProperty(1, 1, 1, 1),
+          color: new ConstantProperty(1, 1, 1, 1),
+          rgbMultiplier: 1,
+          bloomColor: [1, 1, 1, 0]
         }]
       }
       palette.blurParticle ??= palette.distortionParticle
@@ -10983,6 +10940,8 @@ class NodeEmitterEffect implements IEffect {
 //#region Action
 class Action implements IAction {
 
+  readonly meta: ActionMeta & {isAppearance:false,isParticle:false} = {isAppearance:false,isParticle:false}
+
   constructor(
     public type: ActionType = ActionType.None,
     public fields1: Field<FieldType>[] = [],
@@ -11137,7 +11096,11 @@ class Action implements IAction {
  */
 class DataAction implements IAction {
 
-  constructor(public readonly type: ActionType) {}
+  /**
+   * @param type The {@link ActionType numeric ID for the type of action} this represents.
+   * @param meta Contains information about the action type.
+   */
+  constructor(public readonly type: ActionType, public readonly meta: ActionMeta) {}
 
   assign(props: any = {}) {
     for (const [k, v] of Object.entries(ActionData[this.type].props)) {
@@ -11690,7 +11653,8 @@ export interface NodeAccelerationParams {
  * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
  */
 class NodeAcceleration extends DataAction {
-  declare type: ActionType.NodeAcceleration
+  declare readonly type: ActionType.NodeAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -11722,7 +11686,7 @@ class NodeAcceleration extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_2: number
   constructor(props: NodeAccelerationParams = {}) {
-    super(ActionType.NodeAcceleration)
+    super(ActionType.NodeAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11751,7 +11715,8 @@ export interface NodeTranslationParams {
  * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
  */
 class NodeTranslation extends DataAction {
-  declare type: ActionType.NodeTranslation
+  declare readonly type: ActionType.NodeTranslation
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * An offset for the position of the node.
    * 
@@ -11763,7 +11728,7 @@ class NodeTranslation extends DataAction {
    */
   unk_er_f1_0: number
   constructor(props: NodeTranslationParams = {}) {
-    super(ActionType.NodeTranslation)
+    super(ActionType.NodeTranslation, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11841,7 +11806,8 @@ export interface NodeSpinParams {
  * Controls the angular speed of the node.
  */
 class NodeSpin extends DataAction {
-  declare type: ActionType.NodeSpin
+  declare readonly type: ActionType.NodeSpin
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
@@ -11889,7 +11855,7 @@ class NodeSpin extends DataAction {
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
   constructor(props: NodeSpinParams = {}) {
-    super(ActionType.NodeSpin)
+    super(ActionType.NodeSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11916,7 +11882,8 @@ export interface StaticNodeTransformParams {
  * Controls the translation and rotation of a node.
  */
 class StaticNodeTransform extends DataAction {
-  declare type: ActionType.StaticNodeTransform
+  declare readonly type: ActionType.StaticNodeTransform
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Translation of the node.
    */
@@ -11926,7 +11893,7 @@ class StaticNodeTransform extends DataAction {
    */
   rotation: Vector3
   constructor(props: StaticNodeTransformParams = {}) {
-    super(ActionType.StaticNodeTransform)
+    super(ActionType.StaticNodeTransform, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11965,7 +11932,8 @@ export interface RandomNodeTransformParams {
  * Controls the translation and rotation of a node, and can also randomize them.
  */
 class RandomNodeTransform extends DataAction {
-  declare type: ActionType.RandomNodeTransform
+  declare readonly type: ActionType.RandomNodeTransform
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Translation of the node.
    */
@@ -11983,7 +11951,7 @@ class RandomNodeTransform extends DataAction {
    */
   rotationVariance: Vector3
   constructor(props: RandomNodeTransformParams = {}) {
-    super(ActionType.RandomNodeTransform)
+    super(ActionType.RandomNodeTransform, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12010,14 +11978,15 @@ export interface NodeAttachToCameraParams {
  * Attaches the node to the camera.
  */
 class NodeAttachToCamera extends DataAction {
-  declare type: ActionType.NodeAttachToCamera
+  declare readonly type: ActionType.NodeAttachToCamera
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Disable this to stop the node from following the rotation of the camera.
    */
   followRotation: boolean
   unk_ds3_f1_1: number
   constructor(props: NodeAttachToCameraParams = {}) {
-    super(ActionType.NodeAttachToCamera)
+    super(ActionType.NodeAttachToCamera, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12070,7 +12039,8 @@ export interface ParticleAccelerationParams {
  * Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
  */
 class ParticleAcceleration extends DataAction {
-  declare type: ActionType.ParticleAcceleration
+  declare readonly type: ActionType.ParticleAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12094,7 +12064,7 @@ class ParticleAcceleration extends DataAction {
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   constructor(props: ParticleAccelerationParams = {}) {
-    super(ActionType.ParticleAcceleration)
+    super(ActionType.ParticleAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12147,7 +12117,8 @@ export interface ParticleSpeedParams {
  * Controls the movement of particles. This is the most basic action for controlling the speed of particles.
  */
 class ParticleSpeed extends DataAction {
-  declare type: ActionType.ParticleSpeed
+  declare readonly type: ActionType.ParticleSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12171,7 +12142,7 @@ class ParticleSpeed extends DataAction {
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   constructor(props: ParticleSpeedParams = {}) {
-    super(ActionType.ParticleSpeed)
+    super(ActionType.ParticleSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12236,7 +12207,8 @@ export interface ParticleSpeedRandomTurnsParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
  */
 class ParticleSpeedRandomTurns extends DataAction {
-  declare type: ActionType.ParticleSpeedRandomTurns
+  declare readonly type: ActionType.ParticleSpeedRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12273,7 +12245,7 @@ class ParticleSpeedRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: ParticleSpeedRandomTurnsParams = {}) {
-    super(ActionType.ParticleSpeedRandomTurns)
+    super(ActionType.ParticleSpeedRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12355,7 +12327,8 @@ export interface ParticleSpeedPartialFollowParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
  */
 class ParticleSpeedPartialFollow extends DataAction {
-  declare type: ActionType.ParticleSpeedPartialFollow
+  declare readonly type: ActionType.ParticleSpeedPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12405,7 +12378,7 @@ class ParticleSpeedPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: ParticleSpeedPartialFollowParams = {}) {
-    super(ActionType.ParticleSpeedPartialFollow)
+    super(ActionType.ParticleSpeedPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12442,7 +12415,8 @@ export interface NodeSoundParams {
  * Plays a sound effect when the node activates that can repeat.
  */
 class NodeSound extends DataAction {
-  declare type: ActionType.NodeSound
+  declare readonly type: ActionType.NodeSound
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the sound to play.
    */
@@ -12460,7 +12434,7 @@ class NodeSound extends DataAction {
    */
   volume: number
   constructor(props: NodeSoundParams = {}) {
-    super(ActionType.NodeSound)
+    super(ActionType.NodeSound, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12487,14 +12461,15 @@ export interface EmissionSoundParams {
  * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
  */
 class EmissionSound extends DataAction {
-  declare type: ActionType.EmissionSound
+  declare readonly type: ActionType.EmissionSound
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the sound to play.
    */
   sound: number
   unk_ds3_f1_1: number
   constructor(props: EmissionSoundParams = {}) {
-    super(ActionType.EmissionSound)
+    super(ActionType.EmissionSound, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12567,7 +12542,8 @@ export interface NodeAccelerationRandomTurnsParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
  */
 class NodeAccelerationRandomTurns extends DataAction {
-  declare type: ActionType.NodeAccelerationRandomTurns
+  declare readonly type: ActionType.NodeAccelerationRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -12608,7 +12584,7 @@ class NodeAccelerationRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: NodeAccelerationRandomTurnsParams = {}) {
-    super(ActionType.NodeAccelerationRandomTurns)
+    super(ActionType.NodeAccelerationRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12673,7 +12649,8 @@ export interface ParticleAccelerationRandomTurnsParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
  */
 class ParticleAccelerationRandomTurns extends DataAction {
-  declare type: ActionType.ParticleAccelerationRandomTurns
+  declare readonly type: ActionType.ParticleAccelerationRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12710,7 +12687,7 @@ class ParticleAccelerationRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: ParticleAccelerationRandomTurnsParams = {}) {
-    super(ActionType.ParticleAccelerationRandomTurns)
+    super(ActionType.ParticleAccelerationRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12792,7 +12769,8 @@ export interface ParticleAccelerationPartialFollowParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns} with the ability to make particles partially follow the parent node.
  */
 class ParticleAccelerationPartialFollow extends DataAction {
-  declare type: ActionType.ParticleAccelerationPartialFollow
+  declare readonly type: ActionType.ParticleAccelerationPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12842,7 +12820,7 @@ class ParticleAccelerationPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: ParticleAccelerationPartialFollowParams = {}) {
-    super(ActionType.ParticleAccelerationPartialFollow)
+    super(ActionType.ParticleAccelerationPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12937,7 +12915,8 @@ export interface NodeAccelerationPartialFollowParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
  */
 class NodeAccelerationPartialFollow extends DataAction {
-  declare type: ActionType.NodeAccelerationPartialFollow
+  declare readonly type: ActionType.NodeAccelerationPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -12996,7 +12975,7 @@ class NodeAccelerationPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: NodeAccelerationPartialFollowParams = {}) {
-    super(ActionType.NodeAccelerationPartialFollow)
+    super(ActionType.NodeAccelerationPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13124,7 +13103,8 @@ export interface NodeAccelerationSpinParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
  */
 class NodeAccelerationSpin extends DataAction {
-  declare type: ActionType.NodeAccelerationSpin
+  declare readonly type: ActionType.NodeAccelerationSpin
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13202,7 +13182,7 @@ class NodeAccelerationSpin extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_3: number
   constructor(props: NodeAccelerationSpinParams = {}) {
-    super(ActionType.NodeAccelerationSpin)
+    super(ActionType.NodeAccelerationSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13259,7 +13239,8 @@ export interface NodeSpeedParams {
  * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
  */
 class NodeSpeed extends DataAction {
-  declare type: ActionType.NodeSpeed
+  declare readonly type: ActionType.NodeSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13285,7 +13266,7 @@ class NodeSpeed extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_2: number
   constructor(props: NodeSpeedParams = {}) {
-    super(ActionType.NodeSpeed)
+    super(ActionType.NodeSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13350,7 +13331,8 @@ export interface NodeSpeedRandomTurnsParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
  */
 class NodeSpeedRandomTurns extends DataAction {
-  declare type: ActionType.NodeSpeedRandomTurns
+  declare readonly type: ActionType.NodeSpeedRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13385,7 +13367,7 @@ class NodeSpeedRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: NodeSpeedRandomTurnsParams = {}) {
-    super(ActionType.NodeSpeedRandomTurns)
+    super(ActionType.NodeSpeedRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13469,7 +13451,8 @@ export interface NodeSpeedPartialFollowParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
  */
 class NodeSpeedPartialFollow extends DataAction {
-  declare type: ActionType.NodeSpeedPartialFollow
+  declare readonly type: ActionType.NodeSpeedPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13519,7 +13502,7 @@ class NodeSpeedPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: NodeSpeedPartialFollowParams = {}) {
-    super(ActionType.NodeSpeedPartialFollow)
+    super(ActionType.NodeSpeedPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13639,7 +13622,8 @@ export interface NodeSpeedSpinParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
  */
 class NodeSpeedSpin extends DataAction {
-  declare type: ActionType.NodeSpeedSpin
+  declare readonly type: ActionType.NodeSpeedSpin
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13711,7 +13695,7 @@ class NodeSpeedSpin extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_3: number
   constructor(props: NodeSpeedSpinParams = {}) {
-    super(ActionType.NodeSpeedSpin)
+    super(ActionType.NodeSpeedSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13758,7 +13742,8 @@ export interface NodeAttributesParams {
  * Controls various things about the node, like its duration, and how it is attached to the parent node.
  */
 class NodeAttributes extends DataAction {
-  declare type: ActionType.NodeAttributes
+  declare readonly type: ActionType.NodeAttributes
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls how the node is attached to the parent node.
    */
@@ -13776,7 +13761,7 @@ class NodeAttributes extends DataAction {
   unk_ds3_f1_1: number
   unk_ds3_f1_3: number
   constructor(props: NodeAttributesParams = {}) {
-    super(ActionType.NodeAttributes)
+    super(ActionType.NodeAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13805,7 +13790,8 @@ export interface ParticleAttributesParams {
  * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
  */
 class ParticleAttributes extends DataAction {
-  declare type: ActionType.ParticleAttributes
+  declare readonly type: ActionType.ParticleAttributes
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls how the particles are attached to the node.
    */
@@ -13817,7 +13803,7 @@ class ParticleAttributes extends DataAction {
    */
   duration: ScalarValue
   constructor(props: ParticleAttributesParams = {}) {
-    super(ActionType.ParticleAttributes)
+    super(ActionType.ParticleAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13934,7 +13920,8 @@ export interface Unk130Params {
  * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
-  declare type: ActionType.Unk130
+  declare readonly type: ActionType.Unk130
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -13953,7 +13940,7 @@ class Unk130 extends DataAction {
   unk_ds3_p1_6: ScalarValue
   unk_ds3_p1_7: ScalarValue
   constructor(props: Unk130Params = {}) {
-    super(ActionType.Unk130)
+    super(ActionType.Unk130, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14027,7 +14014,8 @@ export interface ParticleModifierParams {
  * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
  */
 class ParticleModifier extends DataAction {
-  declare type: ActionType.ParticleModifier
+  declare readonly type: ActionType.ParticleModifier
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
    * 
@@ -14074,7 +14062,7 @@ class ParticleModifier extends DataAction {
    */
   color: Vector4Value
   constructor(props: ParticleModifierParams = {}) {
-    super(ActionType.ParticleModifier)
+    super(ActionType.ParticleModifier, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14085,7 +14073,8 @@ class ParticleModifier extends DataAction {
  * References another SFX by its ID.
  */
 class SFXReference extends DataAction {
-  declare type: ActionType.SFXReference
+  declare readonly type: ActionType.SFXReference
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the referenced SFX.
    */
@@ -14096,7 +14085,7 @@ class SFXReference extends DataAction {
    * **Default**: `0`
    */
   constructor(sfx: number = 0) {
-    super(ActionType.SFXReference)
+    super(ActionType.SFXReference, {isAppearance:false,isParticle:false})
     this.assign({ sfx })
   }
 }
@@ -14154,7 +14143,8 @@ export interface LevelsOfDetailThresholdsParams {
  * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
-  declare type: ActionType.LevelsOfDetailThresholds
+  declare readonly type: ActionType.LevelsOfDetailThresholds
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
    * 
@@ -14183,7 +14173,7 @@ class LevelsOfDetailThresholds extends DataAction {
   threshold4: number
   unk_ac6_f1_5: number
   constructor(props: LevelsOfDetailThresholdsParams = {}) {
-    super(ActionType.LevelsOfDetailThresholds)
+    super(ActionType.LevelsOfDetailThresholds, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14194,7 +14184,8 @@ class LevelsOfDetailThresholds extends DataAction {
  * Maps states to effects in the parent node.
  */
 class StateEffectMap extends DataAction {
-  declare type: ActionType.StateEffectMap
+  declare readonly type: ActionType.StateEffectMap
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * A list of effect indices.
    * 
@@ -14209,7 +14200,7 @@ class StateEffectMap extends DataAction {
    * **Default**: `[0]`
    */
   constructor(effectIndices: number[] = [0]) {
-    super(ActionType.StateEffectMap)
+    super(ActionType.StateEffectMap, {isAppearance:false,isParticle:false})
     this.assign({ effectIndices })
   }
 }
@@ -14221,10 +14212,11 @@ class StateEffectMap extends DataAction {
  * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
  */
 class SelectAllNodes extends DataAction {
-  declare type: ActionType.SelectAllNodes
+  declare readonly type: ActionType.SelectAllNodes
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.SelectAllNodes)
+    super(ActionType.SelectAllNodes, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -14235,7 +14227,8 @@ class SelectAllNodes extends DataAction {
  * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
  */
 class SelectRandomNode extends DataAction {
-  declare type: ActionType.SelectRandomNode
+  declare readonly type: ActionType.SelectRandomNode
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Probability weights for each child node to be selected for emission.
    * 
@@ -14250,7 +14243,7 @@ class SelectRandomNode extends DataAction {
    * **Default**: `[1]`
    */
   constructor(weights: number[] = [1]) {
-    super(ActionType.SelectRandomNode)
+    super(ActionType.SelectRandomNode, {isAppearance:false,isParticle:false})
     this.assign({ weights })
   }
 }
@@ -14303,7 +14296,8 @@ export interface PeriodicEmitterParams {
  * Emits particles periodically.
  */
 class PeriodicEmitter extends DataAction {
-  declare type: ActionType.PeriodicEmitter
+  declare readonly type: ActionType.PeriodicEmitter
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Time between emitting new particles in seconds.
    * 
@@ -14330,7 +14324,7 @@ class PeriodicEmitter extends DataAction {
   maxConcurrent: ScalarValue
   unk_ds3_f1_1: number
   constructor(props: PeriodicEmitterParams = {}) {
-    super(ActionType.PeriodicEmitter)
+    super(ActionType.PeriodicEmitter, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14387,7 +14381,8 @@ export interface EqualDistanceEmitterParams {
  * Emits particles once it has moved a certain distance from where it last emitted particles.
  */
 class EqualDistanceEmitter extends DataAction {
-  declare type: ActionType.EqualDistanceEmitter
+  declare readonly type: ActionType.EqualDistanceEmitter
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * How much the emitter must move to trigger emission.
    * 
@@ -14405,7 +14400,7 @@ class EqualDistanceEmitter extends DataAction {
   unk_ds3_p1_1: ScalarValue
   unk_ds3_p1_2: ScalarValue
   constructor(props: EqualDistanceEmitterParams = {}) {
-    super(ActionType.EqualDistanceEmitter)
+    super(ActionType.EqualDistanceEmitter, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14417,10 +14412,11 @@ class EqualDistanceEmitter extends DataAction {
  * Emits one particle once.
  */
 class OneTimeEmitter extends DataAction {
-  declare type: ActionType.OneTimeEmitter
+  declare readonly type: ActionType.OneTimeEmitter
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.OneTimeEmitter)
+    super(ActionType.OneTimeEmitter, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -14431,7 +14427,8 @@ class OneTimeEmitter extends DataAction {
  * Makes the emitter a single point.
  */
 class PointEmitterShape extends DataAction {
-  declare type: ActionType.PointEmitterShape
+  declare readonly type: ActionType.PointEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14442,7 +14439,7 @@ class PointEmitterShape extends DataAction {
    * **Default**: {@link InitialDirection.Emitter}
    */
   constructor(direction: InitialDirection = InitialDirection.Emitter) {
-    super(ActionType.PointEmitterShape)
+    super(ActionType.PointEmitterShape, {isAppearance:false,isParticle:false})
     this.assign({ direction })
   }
 }
@@ -14483,7 +14480,8 @@ export interface DiskEmitterShapeParams {
  * Makes the emitter disk-shaped.
  */
 class DiskEmitterShape extends DataAction {
-  declare type: ActionType.DiskEmitterShape
+  declare readonly type: ActionType.DiskEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14505,7 +14503,7 @@ class DiskEmitterShape extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: DiskEmitterShapeParams = {}) {
-    super(ActionType.DiskEmitterShape)
+    super(ActionType.DiskEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14554,7 +14552,8 @@ export interface RectangleEmitterShapeParams {
  * Makes the emitter rectangular.
  */
 class RectangleEmitterShape extends DataAction {
-  declare type: ActionType.RectangleEmitterShape
+  declare readonly type: ActionType.RectangleEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14582,7 +14581,7 @@ class RectangleEmitterShape extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: RectangleEmitterShapeParams = {}) {
-    super(ActionType.RectangleEmitterShape)
+    super(ActionType.RectangleEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14611,7 +14610,8 @@ export interface SphereEmitterShapeParams {
  * Makes the emitter spherical.
  */
 class SphereEmitterShape extends DataAction {
-  declare type: ActionType.SphereEmitterShape
+  declare readonly type: ActionType.SphereEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
    */
@@ -14623,7 +14623,7 @@ class SphereEmitterShape extends DataAction {
    */
   radius: ScalarValue
   constructor(props: SphereEmitterShapeParams = {}) {
-    super(ActionType.SphereEmitterShape)
+    super(ActionType.SphereEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14674,7 +14674,8 @@ export interface BoxEmitterShapeParams {
  * Makes the emitter cuboidal.
  */
 class BoxEmitterShape extends DataAction {
-  declare type: ActionType.BoxEmitterShape
+  declare readonly type: ActionType.BoxEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14702,7 +14703,7 @@ class BoxEmitterShape extends DataAction {
    */
   sizeZ: ScalarValue
   constructor(props: BoxEmitterShapeParams = {}) {
-    super(ActionType.BoxEmitterShape)
+    super(ActionType.BoxEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14751,7 +14752,8 @@ export interface CylinderEmitterShapeParams {
  * Makes the emitter cylindrical.
  */
 class CylinderEmitterShape extends DataAction {
-  declare type: ActionType.CylinderEmitterShape
+  declare readonly type: ActionType.CylinderEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14777,7 +14779,7 @@ class CylinderEmitterShape extends DataAction {
    */
   height: ScalarValue
   constructor(props: CylinderEmitterShapeParams = {}) {
-    super(ActionType.CylinderEmitterShape)
+    super(ActionType.CylinderEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14789,10 +14791,11 @@ class CylinderEmitterShape extends DataAction {
  * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
  */
 class NoSpread extends DataAction {
-  declare type: ActionType.NoSpread
+  declare readonly type: ActionType.NoSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.NoSpread)
+    super(ActionType.NoSpread, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -14833,7 +14836,8 @@ export interface CircularSpreadParams {
  * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
  */
 class CircularSpread extends DataAction {
-  declare type: ActionType.CircularSpread
+  declare readonly type: ActionType.CircularSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -14856,7 +14860,7 @@ class CircularSpread extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: CircularSpreadParams = {}) {
-    super(ActionType.CircularSpread)
+    super(ActionType.CircularSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14912,7 +14916,8 @@ export interface EllipticalSpreadParams {
  * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
  */
 class EllipticalSpread extends DataAction {
-  declare type: ActionType.EllipticalSpread
+  declare readonly type: ActionType.EllipticalSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -14947,7 +14952,7 @@ class EllipticalSpread extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: EllipticalSpreadParams = {}) {
-    super(ActionType.EllipticalSpread)
+    super(ActionType.EllipticalSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14997,7 +15002,8 @@ export interface RectangularSpreadParams {
  * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
  */
 class RectangularSpread extends DataAction {
-  declare type: ActionType.RectangularSpread
+  declare readonly type: ActionType.RectangularSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -15028,7 +15034,7 @@ class RectangularSpread extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: RectangularSpreadParams = {}) {
-    super(ActionType.RectangularSpread)
+    super(ActionType.RectangularSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -15451,7 +15457,8 @@ export interface PointSpriteParams {
  * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
  */
 class PointSprite extends DataAction {
-  declare type: ActionType.PointSprite
+  declare readonly type: ActionType.PointSprite
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Texture ID.
    * 
@@ -15634,7 +15641,7 @@ class PointSprite extends DataAction {
   unk_er_f1_4: number
   unk_er_f2_39: number
   constructor(props: PointSpriteParams = {}) {
-    super(ActionType.PointSprite)
+    super(ActionType.PointSprite, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -16066,7 +16073,8 @@ export interface LineParams {
  * Simple line particle. It automatically rotates to match the direction it's moving.
  */
 class Line extends DataAction {
-  declare type: ActionType.Line
+  declare readonly type: ActionType.Line
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Blend mode.
    * 
@@ -16267,7 +16275,7 @@ class Line extends DataAction {
   unk_er_f1_1: number
   unk_er_f1_2: number
   constructor(props: LineParams = {}) {
-    super(ActionType.Line)
+    super(ActionType.Line, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -16716,7 +16724,8 @@ export interface QuadLineParams {
  * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
  */
 class QuadLine extends DataAction {
-  declare type: ActionType.QuadLine
+  declare readonly type: ActionType.QuadLine
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Blend mode.
    * 
@@ -16927,7 +16936,7 @@ class QuadLine extends DataAction {
   unk_er_f1_1: number
   unk_er_f1_2: number
   constructor(props: QuadLineParams = {}) {
-    super(ActionType.QuadLine)
+    super(ActionType.QuadLine, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -17704,7 +17713,8 @@ export interface BillboardExParams {
  * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
  */
 class BillboardEx extends DataAction {
-  declare type: ActionType.BillboardEx
+  declare readonly type: ActionType.BillboardEx
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Texture ID.
    * 
@@ -18150,7 +18160,7 @@ class BillboardEx extends DataAction {
   unk_sdt_f2_44: number
   unk_ac6_f2_45: number
   constructor(props: BillboardExParams = {}) {
-    super(ActionType.BillboardEx)
+    super(ActionType.BillboardEx, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -19028,7 +19038,8 @@ export interface MultiTextureBillboardExParams {
  * Particle with multiple textures that can scroll.
  */
 class MultiTextureBillboardEx extends DataAction {
-  declare type: ActionType.MultiTextureBillboardEx
+  declare readonly type: ActionType.MultiTextureBillboardEx
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
    */
@@ -19523,7 +19534,7 @@ class MultiTextureBillboardEx extends DataAction {
   unk_er_f2_45: number
   unk_ac6_f2_46: number
   constructor(props: MultiTextureBillboardExParams = {}) {
-    super(ActionType.MultiTextureBillboardEx)
+    super(ActionType.MultiTextureBillboardEx, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -20334,7 +20345,8 @@ export interface ModelParams {
  * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
  */
 class Model extends DataAction {
-  declare type: ActionType.Model
+  declare readonly type: ActionType.Model
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Model orientation mode. See {@link ModelOrientationMode} for more information.
    */
@@ -20805,7 +20817,7 @@ class Model extends DataAction {
   unk_er_f1_19: number
   unk_ac6_f2_38: number
   constructor(props: ModelParams = {}) {
-    super(ActionType.Model)
+    super(ActionType.Model, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -21409,7 +21421,8 @@ export interface TracerParams {
  * Creates a trail behind moving effects.
  */
 class Tracer extends DataAction {
-  declare type: ActionType.Tracer
+  declare readonly type: ActionType.Tracer
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
    */
@@ -21726,7 +21739,7 @@ class Tracer extends DataAction {
   unk_er_f1_16: number
   unk_er_f2_39: number
   constructor(props: TracerParams = {}) {
-    super(ActionType.Tracer)
+    super(ActionType.Tracer, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -22348,7 +22361,8 @@ export interface DistortionParams {
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class Distortion extends DataAction {
-  declare type: ActionType.Distortion
+  declare readonly type: ActionType.Distortion
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
    */
@@ -22680,7 +22694,7 @@ class Distortion extends DataAction {
   unk_er_p2_7: ScalarValue
   unk_er_p2_8: ScalarValue
   constructor(props: DistortionParams = {}) {
-    super(ActionType.Distortion)
+    super(ActionType.Distortion, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -23107,7 +23121,8 @@ export interface RadialBlurParams {
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class RadialBlur extends DataAction {
-  declare type: ActionType.RadialBlur
+  declare readonly type: ActionType.RadialBlur
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
    * 
@@ -23332,7 +23347,7 @@ class RadialBlur extends DataAction {
   unk_er_f1_3: number
   unk_er_f1_4: number
   constructor(props: RadialBlurParams = {}) {
-    super(ActionType.RadialBlur)
+    super(ActionType.RadialBlur, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -23743,7 +23758,8 @@ export interface PointLightParams {
  * Point light source.
  */
 class PointLight extends DataAction {
-  declare type: ActionType.PointLight
+  declare readonly type: ActionType.PointLight
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls the diffuse color of the light.
    * 
@@ -23952,7 +23968,7 @@ class PointLight extends DataAction {
   unk_er_f2_31: number
   unk_er_f2_32: number
   constructor(props: PointLightParams = {}) {
-    super(ActionType.PointLight)
+    super(ActionType.PointLight, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -23964,10 +23980,11 @@ class PointLight extends DataAction {
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk700 extends DataAction {
-  declare type: ActionType.Unk700
+  declare readonly type: ActionType.Unk700
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.Unk700)
+    super(ActionType.Unk700, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -23978,7 +23995,8 @@ class Unk700 extends DataAction {
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk701 extends DataAction {
-  declare type: ActionType.Unk701
+  declare readonly type: ActionType.Unk701
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_er_p1_0: ScalarValue
   /**
    * @param unk_er_p1_0 Unknown.
@@ -23986,7 +24004,7 @@ class Unk701 extends DataAction {
    * **Default**: `1`
    */
   constructor(unk_er_p1_0: ScalarValue = 1) {
-    super(ActionType.Unk701)
+    super(ActionType.Unk701, {isAppearance:false,isParticle:false})
     this.assign({ unk_er_p1_0 })
   }
 }
@@ -23998,10 +24016,11 @@ class Unk701 extends DataAction {
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk702 extends DataAction {
-  declare type: ActionType.Unk702
+  declare readonly type: ActionType.Unk702
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.Unk702)
+    super(ActionType.Unk702, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -24042,7 +24061,8 @@ export interface NodeForceSpeedParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class NodeForceSpeed extends DataAction {
-  declare type: ActionType.NodeForceSpeed
+  declare readonly type: ActionType.NodeForceSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The speed in the direction of the force.
    * 
@@ -24057,7 +24077,7 @@ class NodeForceSpeed extends DataAction {
   speedMultiplier: ScalarValue
   unk_sdt_f1_0: number
   constructor(props: NodeForceSpeedParams = {}) {
-    super(ActionType.NodeForceSpeed)
+    super(ActionType.NodeForceSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24105,7 +24125,8 @@ export interface ParticleForceSpeedParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class ParticleForceSpeed extends DataAction {
-  declare type: ActionType.ParticleForceSpeed
+  declare readonly type: ActionType.ParticleForceSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The speed in the direction of the force.
    * 
@@ -24124,7 +24145,7 @@ class ParticleForceSpeed extends DataAction {
    */
   unk_sdt_f1_1: number
   constructor(props: ParticleForceSpeedParams = {}) {
-    super(ActionType.ParticleForceSpeed)
+    super(ActionType.ParticleForceSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24166,7 +24187,8 @@ export interface NodeForceAccelerationParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class NodeForceAcceleration extends DataAction {
-  declare type: ActionType.NodeForceAcceleration
+  declare readonly type: ActionType.NodeForceAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The acceleration in the direction of the force.
    * 
@@ -24181,7 +24203,7 @@ class NodeForceAcceleration extends DataAction {
   accelerationMultiplier: ScalarValue
   unk_sdt_f1_0: number
   constructor(props: NodeForceAccelerationParams = {}) {
-    super(ActionType.NodeForceAcceleration)
+    super(ActionType.NodeForceAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24229,7 +24251,8 @@ export interface ParticleForceAccelerationParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class ParticleForceAcceleration extends DataAction {
-  declare type: ActionType.ParticleForceAcceleration
+  declare readonly type: ActionType.ParticleForceAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The acceleration in the direction of the force.
    * 
@@ -24248,7 +24271,7 @@ class ParticleForceAcceleration extends DataAction {
    */
   unk_sdt_f1_1: number
   constructor(props: ParticleForceAccelerationParams = {}) {
-    super(ActionType.ParticleForceAcceleration)
+    super(ActionType.ParticleForceAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24281,12 +24304,13 @@ export interface Unk800Params {
  * Unknown action that was added in Armored Core 6.
  */
 class Unk800 extends DataAction {
-  declare type: ActionType.Unk800
+  declare readonly type: ActionType.Unk800
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ac6_f1_0: number
   unk_ac6_f1_1: number
   unk_ac6_f1_2: number
   constructor(props: Unk800Params = {}) {
-    super(ActionType.Unk800)
+    super(ActionType.Unk800, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24329,41 +24353,17 @@ export interface GPUStandardParticleParams {
    */
   unk_ds3_f1_5?: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1]`
    */
-  emitterSizeX?: number
+  emitterSize?: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[0, 0, 0]`
    */
-  emitterSizeY?: number
-  /**
-   * The depth of the emitter.
-   * 
-   * **Default**: `1`
-   */
-  emitterSizeZ?: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationX?: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationY?: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationZ?: number
+  emitterRotation?: Vector3
   /**
    * Unknown float.
    * 
@@ -24522,263 +24522,101 @@ export interface GPUStandardParticleParams {
    */
   unk_ds3_f1_33?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMin?: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMax?: Vector3
+  /**
+   * Particle speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetZ?: number
+  particleSpeed?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetYMin?: number
+  particleSpeedMax?: Vector3
   /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
-  /**
-   * Particle speed along the X-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX?: number
+  particleAccelerationMin?: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedY?: number
+  particleAccelerationMax?: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random rotation for each particle in degrees.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleRotationVariance?: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleAngularSpeedVariance?: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedZ?: number
+  particleAngularAccelerationMin?: Vector3
   /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
-   * **Default**: `0`
-   */
-  particleSpeedXMin?: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMax?: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMin?: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMin?: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMin?: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMax?: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMax?: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMax?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceX?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceY?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceZ?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceX?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceY?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceZ?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleAngularAccelerationXMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleAngularAccelerationXMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax?: number
+  particleAngularAccelerationMax?: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -25728,8 +25566,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX?: ScalarValue
   /**
@@ -25738,8 +25576,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY?: ScalarValue
   /**
@@ -25748,8 +25586,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ?: ScalarValue
   /**
@@ -25770,8 +25608,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ?: ScalarValue
   /**
@@ -25907,7 +25745,8 @@ export interface GPUStandardParticleParams {
  * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
  */
 class GPUStandardParticle extends DataAction {
-  declare type: ActionType.GPUStandardParticle
+  declare readonly type: ActionType.GPUStandardParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
@@ -25921,29 +25760,13 @@ class GPUStandardParticle extends DataAction {
   emitterShape: EmitterShape
   unk_ds3_f1_5: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    */
-  emitterSizeX: number
+  emitterSize: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    */
-  emitterSizeY: number
-  /**
-   * The depth of the emitter.
-   */
-  emitterSizeZ: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   */
-  emitterRotationX: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   */
-  emitterRotationY: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   */
-  emitterRotationZ: number
+  emitterRotation: Vector3
   unk_ds3_f1_12: number
   unk_ds3_f1_13: number
   unk_ds3_f1_14: number
@@ -26019,191 +25842,77 @@ class GPUStandardParticle extends DataAction {
   unk_ds3_f1_32: number
   unk_ds3_f1_33: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMin: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMax: Vector3
+  /**
+   * Particle speed.
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetY: number
+  particleSpeed: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMin: Vector3
+  /**
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMax: Vector3
+  /**
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleOffsetZ: number
+  particleAccelerationMin: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
-  /**
-   * Particle speed along the X-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX: number
+  particleAccelerationMax: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum amount of random rotation for each particle in degrees.
+   */
+  particleRotationVariance: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   */
+  particleAngularSpeedVariance: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedY: number
+  particleAngularAccelerationMin: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleSpeedZ: number
-  /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMin: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMax: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMin: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMin: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMin: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMax: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMax: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMax: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   */
-  particleRotationVarianceX: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   */
-  particleRotationVarianceY: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   */
-  particleRotationVarianceZ: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceX: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceY: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceZ: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMax}
-   */
-  particleAngularAccelerationXMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax: number
+  particleAngularAccelerationMax: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -26640,24 +26349,24 @@ class GPUStandardParticle extends DataAction {
    * Particle acceleration along the X-axis.
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ: ScalarValue
   unk_ds3_p1_7: ScalarValue
@@ -26666,8 +26375,8 @@ class GPUStandardParticle extends DataAction {
    * Angular acceleration for particles around the Z-axis in degrees per second squared.
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ: ScalarValue
   /**
@@ -26719,7 +26428,7 @@ class GPUStandardParticle extends DataAction {
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
   constructor(props: GPUStandardParticleParams = {}) {
-    super(ActionType.GPUStandardParticle)
+    super(ActionType.GPUStandardParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -26762,41 +26471,17 @@ export interface GPUStandardCorrectParticleParams {
    */
   unk_ds3_f1_5?: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1]`
    */
-  emitterSizeX?: number
+  emitterSize?: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[0, 0, 0]`
    */
-  emitterSizeY?: number
-  /**
-   * The depth of the emitter.
-   * 
-   * **Default**: `1`
-   */
-  emitterSizeZ?: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationX?: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationY?: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationZ?: number
+  emitterRotation?: Vector3
   /**
    * Unknown float.
    * 
@@ -26955,263 +26640,101 @@ export interface GPUStandardCorrectParticleParams {
    */
   unk_ds3_f1_33?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMin?: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMax?: Vector3
+  /**
+   * Particle speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetZ?: number
+  particleSpeed?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetYMin?: number
+  particleSpeedMax?: Vector3
   /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
-  /**
-   * Particle speed along the X-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX?: number
+  particleAccelerationMin?: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedY?: number
+  particleAccelerationMax?: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random rotation for each particle in degrees.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleRotationVariance?: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleAngularSpeedVariance?: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedZ?: number
+  particleAngularAccelerationMin?: Vector3
   /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
-   * **Default**: `0`
-   */
-  particleSpeedXMin?: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMax?: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMin?: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMin?: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMin?: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMax?: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMax?: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMax?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceX?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceY?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceZ?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceX?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceY?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceZ?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleAngularAccelerationXMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleAngularAccelerationXMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax?: number
+  particleAngularAccelerationMax?: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -28155,8 +27678,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX?: ScalarValue
   /**
@@ -28165,8 +27688,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY?: ScalarValue
   /**
@@ -28175,8 +27698,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ?: ScalarValue
   /**
@@ -28197,8 +27720,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ?: ScalarValue
   /**
@@ -28334,7 +27857,8 @@ export interface GPUStandardCorrectParticleParams {
  * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
  */
 class GPUStandardCorrectParticle extends DataAction {
-  declare type: ActionType.GPUStandardCorrectParticle
+  declare readonly type: ActionType.GPUStandardCorrectParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
@@ -28348,29 +27872,13 @@ class GPUStandardCorrectParticle extends DataAction {
   emitterShape: EmitterShape
   unk_ds3_f1_5: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    */
-  emitterSizeX: number
+  emitterSize: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    */
-  emitterSizeY: number
-  /**
-   * The depth of the emitter.
-   */
-  emitterSizeZ: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   */
-  emitterRotationX: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   */
-  emitterRotationY: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   */
-  emitterRotationZ: number
+  emitterRotation: Vector3
   unk_ds3_f1_12: number
   unk_ds3_f1_13: number
   unk_ds3_f1_14: number
@@ -28446,191 +27954,77 @@ class GPUStandardCorrectParticle extends DataAction {
   unk_ds3_f1_32: number
   unk_ds3_f1_33: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMin: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMax: Vector3
+  /**
+   * Particle speed.
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetY: number
+  particleSpeed: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMin: Vector3
+  /**
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMax: Vector3
+  /**
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleOffsetZ: number
+  particleAccelerationMin: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
-  /**
-   * Particle speed along the X-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX: number
+  particleAccelerationMax: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum amount of random rotation for each particle in degrees.
+   */
+  particleRotationVariance: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   */
+  particleAngularSpeedVariance: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedY: number
+  particleAngularAccelerationMin: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleSpeedZ: number
-  /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMin: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMax: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMin: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMin: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMin: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMax: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMax: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMax: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   */
-  particleRotationVarianceX: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   */
-  particleRotationVarianceY: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   */
-  particleRotationVarianceZ: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceX: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceY: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceZ: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMax}
-   */
-  particleAngularAccelerationXMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax: number
+  particleAngularAccelerationMax: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -29063,24 +28457,24 @@ class GPUStandardCorrectParticle extends DataAction {
    * Particle acceleration along the X-axis.
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ: ScalarValue
   unk_ds3_p1_7: ScalarValue
@@ -29089,8 +28483,8 @@ class GPUStandardCorrectParticle extends DataAction {
    * Angular acceleration for particles around the Z-axis in degrees per second squared.
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ: ScalarValue
   /**
@@ -29142,7 +28536,7 @@ class GPUStandardCorrectParticle extends DataAction {
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
   constructor(props: GPUStandardCorrectParticleParams = {}) {
-    super(ActionType.GPUStandardCorrectParticle)
+    super(ActionType.GPUStandardCorrectParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -29397,7 +28791,8 @@ export interface LightShaftParams {
  * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
  */
 class LightShaft extends DataAction {
-  declare type: ActionType.LightShaft
+  declare readonly type: ActionType.LightShaft
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Texture ID.
    */
@@ -29448,7 +28843,7 @@ class LightShaft extends DataAction {
   unk_ds3_p1_8: ScalarValue
   unk_ds3_p1_9: ScalarValue
   constructor(props: LightShaftParams = {}) {
-    super(ActionType.LightShaft)
+    super(ActionType.LightShaft, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -29473,41 +28868,17 @@ export interface GPUSparkParticleParams {
    */
   unk_ac6_f1_1?: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1]`
    */
-  emitterSizeX?: number
+  emitterSize?: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[0, 0, 0]`
    */
-  emitterSizeY?: number
-  /**
-   * The depth of the emitter.
-   * 
-   * **Default**: `1`
-   */
-  emitterSizeZ?: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationX?: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationY?: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationZ?: number
+  emitterRotation?: Vector3
   /**
    * Unknown float.
    * 
@@ -29666,71 +29037,27 @@ export interface GPUSparkParticleParams {
    */
   unk_ac6_f1_29?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetZ?: number
+  particleOffsetMin?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMin?: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
+  particleOffsetMax?: Vector3
   /**
    * Unknown integer.
    * 
@@ -29738,41 +29065,23 @@ export interface GPUSparkParticleParams {
    */
   unk_ac6_f1_39?: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
    * 
-   * **Default**: `-0.01`
+   * **Default**: `[-0.01, -0.01, -0.01]`
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
    * 
-   * **Default**: `-0.01`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis.
+   * **Default**: `[0.01, 0.01, 0.01]`
    * 
-   * **Default**: `-0.01`
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedZMax?: number
+  particleSpeedMax?: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -29800,7 +29109,7 @@ export interface GPUSparkParticleParams {
   /**
    * Blend mode.
    * 
-   * **Default**: {@link BlendMode.Normal}
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode?: BlendMode
   /**
@@ -30447,12 +29756,8 @@ export interface GPUSparkParticleParams {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `0`
    */
@@ -30467,12 +29772,8 @@ export interface GPUSparkParticleParams {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `1`
    */
@@ -30540,7 +29841,8 @@ export interface GPUSparkParticleParams {
  * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
  */
 class GPUSparkParticle extends DataAction {
-  declare type: ActionType.GPUSparkParticle
+  declare readonly type: ActionType.GPUSparkParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID of the texture of the particles.
    */
@@ -30551,29 +29853,13 @@ class GPUSparkParticle extends DataAction {
   emitterShape: EmitterShape
   unk_ac6_f1_1: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    */
-  emitterSizeX: number
+  emitterSize: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    */
-  emitterSizeY: number
-  /**
-   * The depth of the emitter.
-   */
-  emitterSizeZ: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   */
-  emitterRotationX: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   */
-  emitterRotationY: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   */
-  emitterRotationZ: number
+  emitterRotation: Vector3
   unk_ac6_f1_9: number
   unk_ac6_f1_10: number
   unk_ac6_f1_11: number
@@ -30657,78 +29943,36 @@ class GPUSparkParticle extends DataAction {
   unk_ac6_f1_28: number
   unk_ac6_f1_29: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetY: number
+  particleOffsetMin: Vector3
   /**
-   * Particle position offset along the Z-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetZ: number
-  /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
+  particleOffsetMax: Vector3
   unk_ac6_f1_39: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin: number
+  particleSpeedMin: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   */
-  particleSpeedZMax: number
+  particleSpeedMax: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    */
@@ -31001,12 +30245,8 @@ class GPUSparkParticle extends DataAction {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   unkParticleAcceleration: ScalarValue
   unk_ac6_p1_11: ScalarValue
@@ -31014,12 +30254,8 @@ class GPUSparkParticle extends DataAction {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   particleGravity: ScalarValue
   unk_ac6_p1_13: ScalarValue
@@ -31031,7 +30267,7 @@ class GPUSparkParticle extends DataAction {
   unk_ac6_p2_5: Vector4Value
   unk_ac6_p2_6: ScalarValue
   constructor(props: GPUSparkParticleParams = {}) {
-    super(ActionType.GPUSparkParticle)
+    super(ActionType.GPUSparkParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -31056,41 +30292,17 @@ export interface GPUSparkCorrectParticleParams {
    */
   unk_ac6_f1_1?: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[1, 1, 1]`
    */
-  emitterSizeX?: number
+  emitterSize?: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    * 
-   * **Default**: `1`
+   * **Default**: `[0, 0, 0]`
    */
-  emitterSizeY?: number
-  /**
-   * The depth of the emitter.
-   * 
-   * **Default**: `1`
-   */
-  emitterSizeZ?: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationX?: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationY?: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  emitterRotationZ?: number
+  emitterRotation?: Vector3
   /**
    * Unknown float.
    * 
@@ -31249,71 +30461,27 @@ export interface GPUSparkCorrectParticleParams {
    */
   unk_ac6_f1_29?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetZ?: number
+  particleOffsetMin?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMin?: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
+  particleOffsetMax?: Vector3
   /**
    * Unknown integer.
    * 
@@ -31321,41 +30489,23 @@ export interface GPUSparkCorrectParticleParams {
    */
   unk_ac6_f1_39?: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
    * 
-   * **Default**: `-0.01`
+   * **Default**: `[-0.01, -0.01, -0.01]`
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
    * 
-   * **Default**: `-0.01`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis.
+   * **Default**: `[0.01, 0.01, 0.01]`
    * 
-   * **Default**: `-0.01`
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedZMax?: number
+  particleSpeedMax?: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -31383,7 +30533,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * Blend mode.
    * 
-   * **Default**: {@link BlendMode.Normal}
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode?: BlendMode
   /**
@@ -32030,12 +31180,8 @@ export interface GPUSparkCorrectParticleParams {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `0`
    */
@@ -32050,12 +31196,8 @@ export interface GPUSparkCorrectParticleParams {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `1`
    */
@@ -32124,7 +31266,8 @@ export interface GPUSparkCorrectParticleParams {
  * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
  */
 class GPUSparkCorrectParticle extends DataAction {
-  declare type: ActionType.GPUSparkCorrectParticle
+  declare readonly type: ActionType.GPUSparkCorrectParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID of the texture of the particles.
    */
@@ -32135,29 +31278,13 @@ class GPUSparkCorrectParticle extends DataAction {
   emitterShape: EmitterShape
   unk_ac6_f1_1: number
   /**
-   * The width of the emitter.
+   * The size of the emitter.
    */
-  emitterSizeX: number
+  emitterSize: Vector3
   /**
-   * The height of the emitter.
+   * The rotation of the emitter.
    */
-  emitterSizeY: number
-  /**
-   * The depth of the emitter.
-   */
-  emitterSizeZ: number
-  /**
-   * The rotation of the emitter around the X-axis.
-   */
-  emitterRotationX: number
-  /**
-   * The rotation of the emitter around the Y-axis.
-   */
-  emitterRotationY: number
-  /**
-   * The rotation of the emitter around the Z-axis.
-   */
-  emitterRotationZ: number
+  emitterRotation: Vector3
   unk_ac6_f1_9: number
   unk_ac6_f1_10: number
   unk_ac6_f1_11: number
@@ -32241,78 +31368,36 @@ class GPUSparkCorrectParticle extends DataAction {
   unk_ac6_f1_28: number
   unk_ac6_f1_29: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetY: number
+  particleOffsetMin: Vector3
   /**
-   * Particle position offset along the Z-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetZ: number
-  /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
+  particleOffsetMax: Vector3
   unk_ac6_f1_39: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin: number
+  particleSpeedMin: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   */
-  particleSpeedZMax: number
+  particleSpeedMax: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    */
@@ -32585,12 +31670,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   unkParticleAcceleration: ScalarValue
   unk_ac6_p1_11: ScalarValue
@@ -32598,12 +31679,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   particleGravity: ScalarValue
   unk_ac6_p1_13: ScalarValue
@@ -32615,7 +31692,7 @@ class GPUSparkCorrectParticle extends DataAction {
   unk_ac6_p2_5: Vector4Value
   unk_ac6_p2_6: ScalarValue
   constructor(props: GPUSparkCorrectParticleParams = {}) {
-    super(ActionType.GPUSparkCorrectParticle)
+    super(ActionType.GPUSparkCorrectParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -33263,7 +32340,8 @@ export interface DynamicTracerParams {
  * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
  */
 class DynamicTracer extends DataAction {
-  declare type: ActionType.DynamicTracer
+  declare readonly type: ActionType.DynamicTracer
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
    */
@@ -33587,7 +32665,7 @@ class DynamicTracer extends DataAction {
   unk_sdt_f1_17: number
   unk_ac6_f2_41: number
   constructor(props: DynamicTracerParams = {}) {
-    super(ActionType.DynamicTracer)
+    super(ActionType.DynamicTracer, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -33632,7 +32710,8 @@ export interface WaterInteractionParams {
  * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
  */
 class WaterInteraction extends DataAction {
-  declare type: ActionType.WaterInteraction
+  declare readonly type: ActionType.WaterInteraction
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID for a texture that controls the shape of the interaction.
    */
@@ -33654,7 +32733,7 @@ class WaterInteraction extends DataAction {
    */
   duration: number
   constructor(props: WaterInteractionParams = {}) {
-    super(ActionType.WaterInteraction)
+    super(ActionType.WaterInteraction, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -34427,7 +33506,8 @@ export interface LensFlareParams {
  * Creates lens flares with up to 4 textured layers with different colors and sizes.
  */
 class LensFlare extends DataAction {
-  declare type: ActionType.LensFlare
+  declare readonly type: ActionType.LensFlare
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Layer 1 texture ID.
    */
@@ -34794,7 +33874,7 @@ class LensFlare extends DataAction {
   unk_ac6_f1_79: number
   unk_ac6_f1_80: number
   constructor(props: LensFlareParams = {}) {
-    super(ActionType.LensFlare)
+    super(ActionType.LensFlare, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -35637,7 +34717,8 @@ export interface RichModelParams {
  * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  */
 class RichModel extends DataAction {
-  declare type: ActionType.RichModel
+  declare readonly type: ActionType.RichModel
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
    */
@@ -36064,7 +35145,7 @@ class RichModel extends DataAction {
    */
   uvSpeedMultiplier: Vector2Value
   constructor(props: RichModelParams = {}) {
-    super(ActionType.RichModel)
+    super(ActionType.RichModel, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -36415,7 +35496,8 @@ export interface Unk10100Params {
  * Unknown root node action.
  */
 class Unk10100 extends DataAction {
-  declare type: ActionType.Unk10100
+  declare readonly type: ActionType.Unk10100
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -36476,7 +35558,7 @@ class Unk10100 extends DataAction {
   unk_ds3_f1_54: number
   unk_ds3_f1_55: number
   constructor(props: Unk10100Params = {}) {
-    super(ActionType.Unk10100)
+    super(ActionType.Unk10100, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -36490,7 +35572,7 @@ export interface CancelForceParams {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    * 
@@ -36507,38 +35589,14 @@ export interface CancelForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -36593,7 +35651,8 @@ export interface CancelForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
  */
 class CancelForce extends DataAction {
-  declare type: ActionType.CancelForce
+  declare readonly type: ActionType.CancelForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The shape of the volume.
    * 
@@ -36602,7 +35661,7 @@ class CancelForce extends DataAction {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
@@ -36615,32 +35674,12 @@ class CancelForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -36674,7 +35713,7 @@ class CancelForce extends DataAction {
    */
   squarePrismApothem: number
   constructor(props: CancelForceParams = {}) {
-    super(ActionType.CancelForce)
+    super(ActionType.CancelForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -36701,7 +35740,7 @@ export interface WindForceParams {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    * 
@@ -36718,38 +35757,14 @@ export interface WindForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37144,7 +36159,8 @@ export interface WindForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
  */
 class WindForce extends DataAction {
-  declare type: ActionType.WindForce
+  declare readonly type: ActionType.WindForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The strength of the force applied in the volume.
    * 
@@ -37164,7 +36180,7 @@ class WindForce extends DataAction {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
@@ -37177,32 +36193,12 @@ class WindForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37329,7 +36325,7 @@ class WindForce extends DataAction {
   unk_ds3_f1_49: number
   unk_ds3_f1_50: number
   constructor(props: WindForceParams = {}) {
-    super(ActionType.WindForce)
+    super(ActionType.WindForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -37356,7 +36352,7 @@ export interface GravityForceParams {
    * |-|-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
    * 
@@ -37373,38 +36369,14 @@ export interface GravityForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37657,7 +36629,8 @@ export interface GravityForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
  */
 class GravityForce extends DataAction {
-  declare type: ActionType.GravityForce
+  declare readonly type: ActionType.GravityForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The strength of the force applied in the volume.
    * 
@@ -37677,7 +36650,7 @@ class GravityForce extends DataAction {
    * |-|-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
    */
@@ -37690,32 +36663,12 @@ class GravityForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -37812,7 +36765,7 @@ class GravityForce extends DataAction {
    */
   fadeOutTime: number
   constructor(props: GravityForceParams = {}) {
-    super(ActionType.GravityForce)
+    super(ActionType.GravityForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -37826,7 +36779,7 @@ export interface ForceCollisionParams {
    * |-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
    * 
    * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
@@ -37844,38 +36797,14 @@ export interface ForceCollisionParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -37907,7 +36836,8 @@ export interface ForceCollisionParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
  */
 class ForceCollision extends DataAction {
-  declare type: ActionType.ForceCollision
+  declare readonly type: ActionType.ForceCollision
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The shape of the volume.
    * 
@@ -37916,7 +36846,7 @@ class ForceCollision extends DataAction {
    * |-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
    * 
    * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
@@ -37930,32 +36860,12 @@ class ForceCollision extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} volume.
+   * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
@@ -37973,7 +36883,7 @@ class ForceCollision extends DataAction {
    */
   cylinderRadius: number
   constructor(props: ForceCollisionParams = {}) {
-    super(ActionType.ForceCollision)
+    super(ActionType.ForceCollision, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -38035,7 +36945,7 @@ export interface TurbulenceForceParams {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    * 
@@ -38052,38 +36962,14 @@ export interface TurbulenceForceParams {
    */
   sphereRadius?: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
-   */
-  boxSizeX?: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
    */
-  boxSizeY?: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ?: number
+  boxSize?: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -38409,7 +37295,8 @@ export interface TurbulenceForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
  */
 class TurbulenceForce extends DataAction {
-  declare type: ActionType.TurbulenceForce
+  declare readonly type: ActionType.TurbulenceForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
@@ -38458,7 +37345,7 @@ class TurbulenceForce extends DataAction {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
@@ -38471,32 +37358,12 @@ class TurbulenceForce extends DataAction {
    */
   sphereRadius: number
   /**
-   * The width of the {@link ForceVolumeShape.Box box} where the force is active.
+   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
    * See also:
    * - {@link shape}
-   * - {@link boxSizeY}
-   * - {@link boxSizeZ}
    */
-  boxSizeX: number
-  /**
-   * The height of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeZ}
-   */
-  boxSizeY: number
-  /**
-   * The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link boxSizeX}
-   * - {@link boxSizeY}
-   */
-  boxSizeZ: number
+  boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
@@ -38607,7 +37474,7 @@ class TurbulenceForce extends DataAction {
   unk_unk_f1_50: number
   unk_unk_f1_51: number
   constructor(props: TurbulenceForceParams = {}) {
-    super(ActionType.TurbulenceForce)
+    super(ActionType.TurbulenceForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -39012,7 +37879,8 @@ export interface Unk10400Params {
  * Unknown root node action.
  */
 class Unk10400 extends DataAction {
-  declare type: ActionType.Unk10400
+  declare readonly type: ActionType.Unk10400
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -39079,7 +37947,7 @@ class Unk10400 extends DataAction {
   unk_ds3_f1_63: number
   unk_ds3_f1_64: number
   constructor(props: Unk10400Params = {}) {
-    super(ActionType.Unk10400)
+    super(ActionType.Unk10400, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -39168,7 +38036,8 @@ export interface Unk10500Params {
  * Unknown root node action.
  */
 class Unk10500 extends DataAction {
-  declare type: ActionType.Unk10500
+  declare readonly type: ActionType.Unk10500
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls how fast time passes for the entire effect.
    * 
@@ -39193,7 +38062,7 @@ class Unk10500 extends DataAction {
   unk_ds3_f1_8: number
   unk_sdt_f1_9: number
   constructor(props: Unk10500Params = {}) {
-    super(ActionType.Unk10500)
+    super(ActionType.Unk10500, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -39559,7 +38428,8 @@ export interface SpotLightParams {
  * Light source with an elliptic cone shape, a spot light.
  */
 class SpotLight extends DataAction {
-  declare type: ActionType.SpotLight
+  declare readonly type: ActionType.SpotLight
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls the diffuse color of the light.
    * 
@@ -39769,7 +38639,7 @@ class SpotLight extends DataAction {
   unk_er_f1_26: number
   unk_er_f1_27: number
   constructor(props: SpotLightParams = {}) {
-    super(ActionType.SpotLight)
+    super(ActionType.SpotLight, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -39871,9 +38741,9 @@ abstract class Field<T extends FieldType> {
       case FieldType.Boolean: return new BoolField(value as boolean)
       case FieldType.Integer: return new IntField(value as number)
       case FieldType.Float: return new FloatField(value as number)
-      case FieldType.Vector2: return new Vec2Field(value as Vector2)
-      case FieldType.Vector3: return new Vec3Field(value as Vector3)
-      case FieldType.Vector4: return new Vec4Field(value as Vector4)
+      case FieldType.Vector2: return new Vector2Field(value as Vector2)
+      case FieldType.Vector3: return new Vector3Field(value as Vector3)
+      case FieldType.Vector4: return new Vector4Field(value as Vector4)
     }
   }
 
@@ -39885,9 +38755,9 @@ abstract class Field<T extends FieldType> {
       case 'Boolean': return new BoolField(value as boolean)
       case 'Integer': return new IntField(value as number)
       case 'Float': return new FloatField(value as number)
-      case 'Vector2': return new Vec2Field(value as Vector2)
-      case 'Vector3': return new Vec3Field(value as Vector3)
-      case 'Vector4': return new Vec4Field(value as Vector4)
+      case 'Vector2': return new Vector2Field(value as Vector2)
+      case 'Vector3': return new Vector3Field(value as Vector3)
+      case 'Vector4': return new Vector4Field(value as Vector4)
     }
   }
 
@@ -39922,22 +38792,22 @@ class FloatField extends Field<FieldType.Float> {
   clone(): Field<FieldType.Float> { return new FloatField(this.value) }
 }
 
-class Vec2Field extends Field<FieldType.Vector2> {
+class Vector2Field extends Field<FieldType.Vector2> {
   declare readonly type = FieldType.Vector2
   constructor(value: Vector2 = [0, 0]) { super(FieldType.Vector2, value) }
-  clone(): Field<FieldType.Vector2> { return new Vec2Field(this.value.slice() as Vector2) }
+  clone(): Field<FieldType.Vector2> { return new Vector2Field(this.value.slice() as Vector2) }
 }
 
-class Vec3Field extends Field<FieldType.Vector3> {
+class Vector3Field extends Field<FieldType.Vector3> {
   declare readonly type = FieldType.Vector3
   constructor(value: Vector3 = [0, 0, 0]) { super(FieldType.Vector3, value) }
-  clone(): Field<FieldType.Vector3> { return new Vec3Field(this.value.slice() as Vector3) }
+  clone(): Field<FieldType.Vector3> { return new Vector3Field(this.value.slice() as Vector3) }
 }
 
-class Vec4Field extends Field<FieldType.Vector4> {
+class Vector4Field extends Field<FieldType.Vector4> {
   declare readonly type = FieldType.Vector4
   constructor(value: Vector4 = [0, 0, 0, 0]) { super(FieldType.Vector4, value) }
-  clone(): Field<FieldType.Vector4> { return new Vec4Field(this.value.slice() as Vector4) }
+  clone(): Field<FieldType.Vector4> { return new Vector4Field(this.value.slice() as Vector4) }
 }
 
 //#region Keyframe
@@ -42782,6 +41652,29 @@ namespace FXRUtility {
     return rad * 180 / Math.PI
   }
 
+  export function transform(center: Vector3, axis: Vector3, roll: number, nodes: Node[]) {
+    if (axis[0] === 0 && axis[1] === 0 && axis[2] === 0 && roll === 0) {
+      return new BasicNode([
+        NodeTransform({ offset: center })
+      ], nodes)
+    }
+    axis = normalizeVector3(axis)
+    const yaw = -Math.atan2(axis[1], axis[2]) * 180 / Math.PI
+    const pitch = -Math.asin(axis[0]) * 180 / Math.PI
+    return new BasicNode([
+      NodeTransform({
+        offset: center,
+        rotation: [yaw, 0, 0]
+      })
+    ], [
+      new BasicNode([
+        NodeTransform({
+          rotation: [0, pitch, roll]
+        }),
+      ], nodes)
+    ])
+  }
+
   /**
    * Creates a node with an attached particle that forms a line between two
    * given points.
@@ -42836,6 +41729,218 @@ namespace FXRUtility {
         })
       ])
     ])
+  }
+
+  /**
+   * Creates a node with a box outline. This can be useful for visualizing box
+   * volumes.
+   * @param pos The center point of the box.
+   * @param size The size of the box.
+   * @param color The color of the box outline.
+   * @param lineWidth The width of the box outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function box(
+    pos: Vector3 = [0, 0, 0],
+    size: Vector3 = [1, 1, 1],
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams
+  ) {
+    const x1 = pos[0] - size[0] * 0.5
+    const y1 = pos[1] - size[1] * 0.5
+    const z1 = pos[2] - size[2] * 0.5
+    const x2 = pos[0] + size[0] * 0.5
+    const y2 = pos[1] + size[1] * 0.5
+    const z2 = pos[2] + size[2] * 0.5
+    return new BasicNode([], [
+      line([x1, y1, z1], [x1, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z2], [x1, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z1], [x1, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y2, z1], [x1, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+
+      line([x2, y1, z1], [x2, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y1, z2], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y1, z1], [x2, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x2, y2, z1], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+
+      line([x1, y1, z1], [x2, y1, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y1, z2], [x2, y1, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y2, z1], [x2, y2, z1], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([x1, y2, z2], [x2, y2, z2], color, lineWidth, OrientationMode.LocalYaw, args),
+    ])
+  }
+
+  /**
+   * Creates a node with a rectangular outline.
+   * @param width The width of the rectangle.
+   * @param height The height of the rectangle.
+   * @param color The color of the outline.
+   * @param lineWidth The width of the outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function rect(
+    width: number = 1,
+    height: number = 1,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams
+  ) {
+    const w = width * 0.5
+    const h = height * 0.5
+    return new BasicNode([], [
+      line([-w, -h, 0], [ w, -h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([-w,  h, 0], [ w,  h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([-w, -h, 0], [-w,  h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([ w, -h, 0], [ w,  h, 0], color, lineWidth, OrientationMode.LocalYaw, args),
+    ])
+  }
+
+  /**
+   * Creates a node with an elliptical outline.
+   * @param radiusX The X radius of the ellipse.
+   * @param radiusY The Y radius of the ellipse.
+   * @param segments The number of line segments to use to approximate the
+   * ellipse.
+   * @param color The color of the outline.
+   * @param lineWidth The width of the outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function ellipse(
+    radiusX: number = 1,
+    radiusY: number = radiusX,
+    segments: number = 16,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams,
+  ) {
+    const angleInc = 2 * Math.PI / segments
+    return new BasicNode([], arrayOf(segments, i => {
+      const a1 = i * angleInc
+      const a2 = (i + 1) * angleInc
+      return line(
+        [radiusX * Math.cos(a1), radiusY * Math.sin(a1), 0],
+        [radiusX * Math.cos(a2), radiusY * Math.sin(a2), 0],
+        color,
+        lineWidth,
+        OrientationMode.LocalYaw,
+        args,
+      )
+    }))
+  }
+
+  /**
+   * Creates a node with three elliptical outlines forming an ellipsoid.
+   * @param radiusX The X radius of the ellipsoid.
+   * @param radiusY The Y radius of the ellipsoid.
+   * @param radiusY The Z radius of the ellipsoid.
+   * @param segments The number of line segments to use to approximate the
+   * ellipses.
+   * @param color The color of the outline.
+   * @param lineWidth The width of the outline.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function ellipsoid(
+    radiusX: number = 1,
+    radiusY: number = radiusX,
+    radiusZ: number = radiusX,
+    segments: number = 16,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams,
+  ) {
+    return new BasicNode([], [
+      ellipse(radiusX, radiusY, segments, color, lineWidth, args),
+      transform([0, 0, 0], [0, 1, 0], 0, ellipse(radiusX, radiusZ, segments, color, lineWidth, args).nodes),
+      transform([0, 0, 0], [1, 0, 0], 0, ellipse(radiusZ, radiusY, segments, color, lineWidth, args).nodes)
+    ])
+  }
+
+  /**
+   * Creates a node with two elliptical outlines and four line segments
+   * connecting them, forming a cylinder.
+   * @param radiusX The X radius of the cylinder.
+   * @param radiusY The Y radius of the cylinder.
+   * @param height The height of the cylinder.
+   * @param segments The number of line segments to use to approximate the
+   * ellipses.
+   * @param color The color of the lines.
+   * @param lineWidth The width of the lines.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function cylinder(
+    radiusX: number = 1,
+    radiusY: number = radiusX,
+    height: number = 1,
+    segments: number = 16,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams,
+  ) {
+    return new BasicNode([], [
+      transform([0, 0, -height * 0.5], [0, 0, 0], 0, ellipse(radiusX, radiusY, segments, color, lineWidth, args).nodes),
+      transform([0, 0,  height * 0.5], [0, 0, 0], 0, ellipse(radiusX, radiusY, segments, color, lineWidth, args).nodes),
+      line([ radiusX, 0, -height * 0.5], [ radiusX, 0, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([-radiusX, 0, -height * 0.5], [-radiusX, 0, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([0,  radiusY, -height * 0.5], [0,  radiusY, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+      line([0, -radiusY, -height * 0.5], [0, -radiusY, height * 0.5], color, lineWidth, OrientationMode.LocalYaw, args),
+    ])
+  }
+
+  /**
+   * Adds outlines for all particle and node emitters in the node.
+   * 
+   * GPU particle emitters are not outlined, as they work very differently, and
+   * adding child nodes to the node with the emitter can seemingly sometimes
+   * affect the rotation of the GPU particle emitter somehow.
+   * @param node The node to add the emitter outlines to.
+   * @param recurse Controls if the outlines should be added to the entire
+   * branch or only to the {@link node}. Defaults to `true`.
+   * @param color The color of the outlines.
+   * @param lineWidth The width of the outlines.
+   * @param args Extra arguments for the particle action constructor.
+   */
+  export function outlineEmitters(
+    node: Node,
+    recurse: boolean = true,
+    color?: Vector4Value,
+    lineWidth?: ScalarValue,
+    args?: BillboardExParams
+  ) {
+    const nodes = recurse ? Array.from(node.walk()) : [node]
+    for (const n of nodes) {
+      if (n instanceof BasicNode || n instanceof NodeEmitterNode) {
+        for (const effect of n.walkEffects(false)) {
+          if (effect instanceof NodeEmitterEffect || (
+            effect instanceof BasicEffect &&
+            effect.appearance instanceof DataAction &&
+            effect.appearance.meta.isParticle
+          )) {
+            const emShape = effect.emitterShape
+            if (emShape instanceof DiskEmitterShape) {
+              const radius = constantValueOf(emShape.radius)
+              n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
+            } else if (emShape instanceof RectangleEmitterShape) {
+              const width = constantValueOf(emShape.sizeX)
+              const height = constantValueOf(emShape.sizeX)
+              n.nodes.push(rect(width, height, color, lineWidth, args))
+            } else if (emShape instanceof SphereEmitterShape) {
+              const radius = constantValueOf(emShape.radius)
+              n.nodes.push(ellipsoid(radius, radius, radius, 16, color, lineWidth, args))
+            } else if (emShape instanceof BoxEmitterShape) {
+              const x = constantValueOf(emShape.sizeX)
+              const y = constantValueOf(emShape.sizeY)
+              const z = constantValueOf(emShape.sizeZ)
+              n.nodes.push(box([0, 0, 0], [x, y, z], color, lineWidth, args))
+            } else if (emShape instanceof CylinderEmitterShape) {
+              const radius = constantValueOf(emShape.radius)
+              const height = constantValueOf(emShape.height)
+              n.nodes.push(cylinder(radius, radius, height, 16, color, lineWidth, args))
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -42912,6 +42017,72 @@ namespace FXRUtility {
       offset[1] -= 10
     }
     return new BasicNode([], nodes).scale((options.fontSize ?? 1) / 7)
+  }
+
+  /**
+   * Creates a {@link ActionType.NodeSpin NodeSpin} action from an animated
+   * rotation property.
+   * 
+   * Normally, to animate the rotation of a node, you would need to use
+   * {@link ActionType.NodeSpin NodeSpin} to animate the angular speed.
+   * Controlling the angular speed instead of the rotation directly can be tricky
+   * if you want the node to point in specific directions at specific times. This
+   * function automatically converts an animated rotation property to an angular
+   * speed property to make this easier.
+   * 
+   * **Notes**:
+   * - High angular velocities are not very well supported. Avoid using
+   * this function if you need the rotation to change quickly. Stepped rotation
+   * properties are not supported at all.
+   * - The rotation property must start at `[0, 0, 0]`. To control the initial
+   * rotation, wrap the node in one with that rotation instead.
+   * - This only creates an approximation, it is not perfect. If this is used
+   * with a looping property, the rotation will eventually stray from where it
+   * should be. This is likely due to how the angular speed is applied, which is
+   * also why high speeds break this.
+   * @param rotation The rotation of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  export function animatedNodeRotation(rotation: Vector3Value): Action | NodeSpin {
+    if (!(rotation instanceof Property) || rotation instanceof ValueProperty) {
+      return new Action
+    }
+
+    if (rotation.function === PropertyFunction.Stepped) {
+      throw new Error(`The 'rotation' parameter for NodeAnimatedRotation cannot be a stepped property.`)
+    }
+
+    const prop: SequenceProperty<ValueType.Vector3, SequencePropertyFunction> =
+      rotation instanceof SequenceProperty ? rotation :
+      (rotation as ComponentSequenceProperty<ValueType.Vector3>).combineComponents()
+    const keyframes = prop.function === PropertyFunction.Linear ?
+      prop.keyframes as Keyframe<ValueType.Vector3>[] :
+      filterMillisecondDiffs(
+        interpolateSegments(prop.keyframes.map(e => e.position), 0.1, 40)
+      ).map(pos => new Keyframe<ValueType.Vector3>(pos, prop.valueAt(pos)))
+    const speeds: Keyframe<ValueType.Vector3>[] = []
+
+    for (let i = 0; i < keyframes.length; i++) {
+      if (i === keyframes.length - 1) {
+        speeds.push({ position: keyframes[i].position, value: [0, 0, 0] })
+      } else {
+        const deltaTime = keyframes[i + 1].position - keyframes[i].position
+        const deltaValue = anyValueDiff(keyframes[i + 1].value, keyframes[i].value)
+        const speed: Vector3 = anyValueMult(1 / deltaTime, deltaValue)
+        speeds.push(new Keyframe(keyframes[i].position, speed))
+      }
+    }
+
+    const angularSpeed = separateComponents(new LinearProperty<ValueType.Vector3>(prop.loop, speeds))
+
+    return new NodeSpin({
+      angularSpeedX: angularSpeed[0],
+      angularSpeedY: angularSpeed[1],
+      angularSpeedZ: angularSpeed[2],
+    }).minify()
   }
 
 }
@@ -43060,9 +42231,9 @@ export {
   BoolField,
   IntField,
   FloatField,
-  Vec2Field,
-  Vec3Field,
-  Vec4Field,
+  Vector2Field,
+  Vector3Field,
+  Vector4Field,
 
   Keyframe,
   BezierKeyframe,
@@ -43083,6 +42254,7 @@ export {
   BloodVisibilityProperty,
   anyValueMult,
   anyValueSum,
+  anyValueDiff,
   combineComponents,
   separateComponents,
   setVectorComponent,

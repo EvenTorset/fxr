@@ -1,6 +1,9 @@
 type: 11000
 name: SpotLight
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Light source with an elliptic cone shape, a spot light.
 properties:

@@ -1,6 +1,9 @@
 type: 606
 name: Tracer
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Creates a trail behind moving effects.
 properties:

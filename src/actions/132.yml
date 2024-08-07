@@ -1,5 +1,8 @@
 type: 132
 name: SFXReference
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   References another SFX by its ID.
 properties:

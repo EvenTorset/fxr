@@ -1,6 +1,9 @@
 type: 65
 name: ParticleSpeedPartialFollow
 slot: ParticleMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
 properties:

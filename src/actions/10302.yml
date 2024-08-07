@@ -1,6 +1,9 @@
 type: 10302
 name: ForceCollision
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Controls the volume used to detect whether or not the node is inside a force volume.
 
@@ -18,9 +21,9 @@ properties:
       |-|-|
       | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
       | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-      | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+      | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
       | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
-      
+
       **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
   sphereRadius:
     field: float
@@ -30,33 +33,14 @@ properties:
       The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
     see:
       - shape
-  boxSizeX:
-    field: float
+  boxSize:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      The width of the {@link ForceVolumeShape.Box box} volume.
+      The size of the {@link ForceVolumeShape.Box box} volume.
     see:
       - shape
-      - boxSizeY
-      - boxSizeZ
-  boxSizeY:
-    field: float
-    scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.Box box} volume.
-    see:
-      - shape
-      - boxSizeX
-      - boxSizeZ
-  boxSizeZ:
-    field: float
-    scale: true
-    desc: |
-      The depth of the {@link ForceVolumeShape.Box box} volume.
-    see:
-      - shape
-      - boxSizeX
-      - boxSizeY
   cylinderHeight:
     field: float
     scale: true
@@ -78,9 +62,9 @@ games:
     fields1:
       - shape
       - sphereRadius
-      - boxSizeX
-      - boxSizeY
-      - boxSizeZ
+      - boxSize
+      #
+      #
       - cylinderHeight
       - cylinderRadius
   SDT: DS3

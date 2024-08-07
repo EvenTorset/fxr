@@ -1,6 +1,9 @@
 type: 113
 name: NodeAccelerationSpin
 slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
 properties:

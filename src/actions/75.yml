@@ -1,6 +1,9 @@
 type: 75
 name: NodeSound
 slot: NodeAudio
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Plays a sound effect when the node activates that can repeat.
 properties:

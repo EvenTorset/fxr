@@ -1,6 +1,9 @@
 type: 609
 name: PointLight
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Point light source.
 properties:

@@ -1,5 +1,8 @@
 type: 700
 name: Unk700
 slot: Unknown70x
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Unknown root node action that was introduced in Elden Ring.

@@ -1,5 +1,8 @@
 type: 200
 name: SelectAllNodes
 slot: NodeSelector
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.

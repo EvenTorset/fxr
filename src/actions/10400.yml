@@ -1,6 +1,9 @@
 type: 10400
 name: Unk10400
 slot: Unknown10400
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Unknown root node action.
 properties:

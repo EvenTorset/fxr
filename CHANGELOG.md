@@ -1,5 +1,27 @@
 # Changelog
 
+## [14.0.0] - 2024-08-07
+
+### Highlights
+- Added `NodeAnimatedRotation` - A function that creates a `NodeSpin` action from a rotation property. Animating the rotation directly is not normally possible, it can only be done by controlling the angular speed. This function makes it possible by converting a rotation property to an angular speed property.
+- Added more utility functions:
+  - `FXRUtility.box` - Creates an outline of a cuboid shape.
+  - `FXRUtility.rect` - Creates a rectangle.
+  - `FXRUtility.ellipse` - Creates an ellipse.
+  - `FXRUtility.ellipsoid` - Creates three ellipses that form the outline of an ellipsoid.
+  - `FXRUtility.cylinder` - Creates an outline of a cylinder.
+  - `FXRUtility.transform` - Wraps a list of nodes in one that has a transform applied to it. The transform is defined by a translation, a direction to align with, and a roll angle. This makes it easier to point nodes in specific directions, or to just move them.
+  - `FXRUtility.outlineEmitters` - Adds outlines for all node and particle emitters in a node.
+  - `FXRUtility.animatedNodeRotation` - Creates a `NodeSpin` action from a rotation property. Animating the rotation directly is not normally possible, it can only be done by controlling the angular speed. This function makes it possible by converting a rotation property to an angular speed property.
+- Added `anyValueDiff` - This function subtracts one `AnyValue` from another. (An `AnyValue` is any scalar or vector value, including all types of properties.) This function simply uses the existing `anyValueSum` and `anyValueMult` functions to do this, so it works very similarly to those.
+- The three box size fields in the force volume actions have been converted to a single vector field.
+- The fallback for distortion and blur colors when applying a color palette has been changed to just white. This fixes partial palettes making some effects have strange-looking, bright or dark rectangles floating around.
+- `DataAction`s now have a new `meta` property with some information about the action type.
+  - `meta.isAppearance` - True if the action is an appearance action.
+  - `meta.isParticle` - True if the action defines a particle appearance.
+  - More is likely to be added to this in the future, if there are other things like this that is useful to have easy access to.
+- All of the position offset, speed, and acceleration fields in the GPU particle actions have been converted to vector fields. This got rid of 68 fields in total, so it can simplify things a lot.
+
 ## [13.0.0] - 2024-08-04
 
 ### Highlights
@@ -32,7 +54,7 @@
 - The color multiplier and bloom color fields in the LensFlare action (10014) have been converted to vector fields.
   - This fixes a bug where these fields were not changed by the recolor functions in the library.
 - Converting point lights between DS3 and the other games should now keep the brightness more like the original. DS3 point lights seem to work a bit differently, so it stil won't be perfectly accurate, but it should be much closer than before.
-- The rate of time can now be adjusted on nodes or actions using the new scaleRateOfTime method.
+- The rate of time can now be adjusted on nodes or actions using the new `scaleRateOfTime` method.
 - The rate of time in action 10500 is now automatically applied to everything when writing to DS3. This fixes converting effects from newer games to DS3 causing them to play at a different rate than the original effect if the original had a non-unit value for the rate of time.
 - The `FXR.toArrayBuffer` method will now throw if the FXR's ID is invalid.
 - Added an `FXR.name` getter function to FXR objects, which returns a file name for the FXR based on its ID.
@@ -115,6 +137,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0
 [13.0.0]: https://github.com/EvenTorset/fxr/compare/v12.2.0...v13.0.0
 [12.2.0]: https://github.com/EvenTorset/fxr/compare/v12.1.0...v12.2.0
 [12.1.0]: https://github.com/EvenTorset/fxr/compare/v12.0.0...v12.1.0

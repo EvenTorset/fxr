@@ -1,6 +1,9 @@
 type: 122
 name: NodeSpeedPartialFollow
 slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
 properties:

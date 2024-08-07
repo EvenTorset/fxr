@@ -1,6 +1,9 @@
 type: 731
 name: NodeForceSpeed
 slot: NodeForceMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
   - {@link ActionType.CancelForce CancelForce}

@@ -1,6 +1,9 @@
 type: 10301
 name: GravityForce
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
 
@@ -29,7 +32,7 @@ properties:
       |-|-|-|-|
       | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
       | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-      | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+      | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
       | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
       | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
   sphereRadius:
@@ -40,33 +43,14 @@ properties:
       The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
     see:
       - shape
-  boxSizeX:
-    field: float
+  boxSize:
+    field: vec3
+    default: [0, 0, 0]
     scale: true
     desc: |
-      The width of the {@link ForceVolumeShape.Box box} where the force is active.
+      The size of the {@link ForceVolumeShape.Box box} where the force is active.
     see:
       - shape
-      - boxSizeY
-      - boxSizeZ
-  boxSizeY:
-    field: float
-    scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.Box box} where the force is active.
-    see:
-      - shape
-      - boxSizeX
-      - boxSizeZ
-  boxSizeZ:
-    field: float
-    scale: true
-    desc: |
-      The depth of the {@link ForceVolumeShape.Box box} where the force is active.
-    see:
-      - shape
-      - boxSizeX
-      - boxSizeY
   cylinderHeight:
     field: float
     scale: true
@@ -199,9 +183,9 @@ games:
     fields1:
       - shape
       - sphereRadius
-      - boxSizeX
-      - boxSizeY
-      - boxSizeZ
+      - boxSize
+      #
+      #
       - cylinderHeight
       - cylinderRadius
       - squarePrismHeight

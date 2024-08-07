@@ -1,6 +1,9 @@
 type: 502
 name: EllipticalSpread
 slot: DirectionSpread
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
 properties:

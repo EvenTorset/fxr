@@ -1,6 +1,9 @@
 type: 83
 name: NodeAccelerationRandomTurns
 slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
 properties:

@@ -1,6 +1,9 @@
 type: 403
 name: SphereEmitterShape
 slot: EmitterShape
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Makes the emitter spherical.
 properties:
