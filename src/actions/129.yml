@@ -1,6 +1,9 @@
 type: 129
 name: ParticleAttributes
 slot: ParticleAttributes
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the duration of particles emitted by the node, and how the particles are attached to the node.
 properties:

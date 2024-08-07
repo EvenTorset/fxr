@@ -1,6 +1,9 @@
 type: 10003
 name: LightShaft
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
 properties:

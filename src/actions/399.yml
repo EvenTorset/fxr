@@ -1,5 +1,8 @@
 type: 399
 name: OneTimeEmitter
 slot: Emitter
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Emits one particle once.

@@ -1,6 +1,9 @@
 type: 64
 name: ParticleSpeedRandomTurns
 slot: ParticleMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
 properties:

@@ -1,6 +1,9 @@
 type: 10012
 name: DynamicTracer
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Creates a trail behind moving effects.
 

@@ -1,6 +1,9 @@
 type: 10300
 name: WindForce
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
 

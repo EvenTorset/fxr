@@ -1,6 +1,9 @@
 type: 46
 name: NodeAttachToCamera
 slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Attaches the node to the camera.
 properties:

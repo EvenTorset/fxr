@@ -1,6 +1,9 @@
 type: 604
 name: MultiTextureBillboardEx
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Particle with multiple textures that can scroll.
 properties:

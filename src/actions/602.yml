@@ -1,6 +1,9 @@
 type: 602
 name: QuadLine
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
 properties:

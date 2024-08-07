@@ -1,6 +1,9 @@
 type: 10014
 name: LensFlare
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Creates lens flares with up to 4 textured layers with different colors and sizes.
 properties:

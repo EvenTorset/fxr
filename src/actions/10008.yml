@@ -1,6 +1,9 @@
 type: 10008
 name: GPUSparkParticle
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
 
@@ -255,7 +258,7 @@ properties:
   blendMode:
     type: BlendMode
     field: int
-    default: BlendMode.Normal
+    default: BlendMode.Add
     desc: |
       Blend mode.
   unk_ac6_f1_57:

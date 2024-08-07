@@ -1,6 +1,9 @@
 type: 131
 name: ParticleModifier
 slot: ParticleModifier
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Modifies particles in various ways.
 

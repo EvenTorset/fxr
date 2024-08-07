@@ -1,6 +1,9 @@
 type: 81
 name: EmissionSound
 slot: EmissionAudio
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
 properties:

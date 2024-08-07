@@ -1,6 +1,9 @@
 type: 603
 name: BillboardEx
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
 properties:

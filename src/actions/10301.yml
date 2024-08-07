@@ -1,6 +1,9 @@
 type: 10301
 name: GravityForce
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
 

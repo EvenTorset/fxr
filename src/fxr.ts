@@ -1740,6 +1740,38 @@ export interface IModifier<T extends ValueType> {
   separateComponents(): IModifier<ValueType.Scalar>[]
 }
 
+export interface ActionMeta {
+  /**
+   * Is `true` if the action is an
+   * {@link ActionSlots.AppearanceAction appearance action}.
+   */
+  isAppearance: boolean
+  /**
+   * Is `true` if the action defines a particle appearance. Particles are
+   * affected by particle-related actions:
+   * - {@link ActionSlots.ParticleModifierAction ParticleModifierAction}
+   * - {@link ActionSlots.ParticleAttributesAction ParticleAttributesAction}
+   * - {@link ActionSlots.ParticleMovementAction ParticleMovementAction}
+   * - {@link ActionSlots.ParticleForceMovementAction ParticleForceMovementAction}
+   * 
+   * Particles can be emitted by any of the regular emitters:
+   * - {@link ActionType.OneTimeEmitter OneTimeEmitter}
+   * - {@link ActionType.PeriodicEmitter PeriodicEmitter}
+   * - {@link ActionType.EqualDistanceEmitter EqualDistanceEmitter}
+   * 
+   * Non-particles are not affected by the particle-related actions, and can
+   * only be emitted by {@link ActionType.OneTimeEmitter OneTimeEmitter}.
+   * 
+   * GPU particles, for example those from
+   * {@link ActionType.GPUStandardParticle GPUStandardParticle}, do not count
+   * as particles in the same way. They are not affected by the
+   * particle-related actions, and the actions that define them also define
+   * their own emitter for the GPU particles instead of using the one in the
+   * node's emitter slot.
+   */
+  isParticle: boolean
+}
+
 export type AnyAction = Action | DataAction
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
@@ -4350,7 +4382,7 @@ const ActionData: {
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
       colorMax: { default: [0, 0, 0, 0], field: 5 },
-      blendMode: { default: BlendMode.Normal, field: 1 },
+      blendMode: { default: BlendMode.Add, field: 1 },
       unk_ac6_f1_57: { default: -1, field: 1 },
       unk_ac6_f1_58: { default: -1, field: 1 },
       unk_ac6_f1_59: { default: 0, field: 1 },
@@ -4516,7 +4548,7 @@ const ActionData: {
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
       colorMax: { default: [0, 0, 0, 0], field: 5 },
-      blendMode: { default: BlendMode.Normal, field: 1 },
+      blendMode: { default: BlendMode.Add, field: 1 },
       unk_ac6_f1_57: { default: -1, field: 1 },
       unk_ac6_f1_58: { default: -1, field: 1 },
       unk_ac6_f1_59: { default: 0, field: 1 },
@@ -11129,7 +11161,11 @@ class Action implements IAction {
  */
 class DataAction implements IAction {
 
-  constructor(public readonly type: ActionType) {}
+  /**
+   * @param type The {@link ActionType numeric ID for the type of action} this represents.
+   * @param meta Contains information about the action type.
+   */
+  constructor(public readonly type: ActionType, public readonly meta: ActionMeta) {}
 
   assign(props: any = {}) {
     for (const [k, v] of Object.entries(ActionData[this.type].props)) {
@@ -11780,7 +11816,7 @@ class NodeAcceleration extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_2: number
   constructor(props: NodeAccelerationParams = {}) {
-    super(ActionType.NodeAcceleration)
+    super(ActionType.NodeAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11821,7 +11857,7 @@ class NodeTranslation extends DataAction {
    */
   unk_er_f1_0: number
   constructor(props: NodeTranslationParams = {}) {
-    super(ActionType.NodeTranslation)
+    super(ActionType.NodeTranslation, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11947,7 +11983,7 @@ class NodeSpin extends DataAction {
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
   constructor(props: NodeSpinParams = {}) {
-    super(ActionType.NodeSpin)
+    super(ActionType.NodeSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -11984,7 +12020,7 @@ class StaticNodeTransform extends DataAction {
    */
   rotation: Vector3
   constructor(props: StaticNodeTransformParams = {}) {
-    super(ActionType.StaticNodeTransform)
+    super(ActionType.StaticNodeTransform, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12041,7 +12077,7 @@ class RandomNodeTransform extends DataAction {
    */
   rotationVariance: Vector3
   constructor(props: RandomNodeTransformParams = {}) {
-    super(ActionType.RandomNodeTransform)
+    super(ActionType.RandomNodeTransform, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12075,7 +12111,7 @@ class NodeAttachToCamera extends DataAction {
   followRotation: boolean
   unk_ds3_f1_1: number
   constructor(props: NodeAttachToCameraParams = {}) {
-    super(ActionType.NodeAttachToCamera)
+    super(ActionType.NodeAttachToCamera, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12152,7 +12188,7 @@ class ParticleAcceleration extends DataAction {
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   constructor(props: ParticleAccelerationParams = {}) {
-    super(ActionType.ParticleAcceleration)
+    super(ActionType.ParticleAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12229,7 +12265,7 @@ class ParticleSpeed extends DataAction {
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   constructor(props: ParticleSpeedParams = {}) {
-    super(ActionType.ParticleSpeed)
+    super(ActionType.ParticleSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12331,7 +12367,7 @@ class ParticleSpeedRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: ParticleSpeedRandomTurnsParams = {}) {
-    super(ActionType.ParticleSpeedRandomTurns)
+    super(ActionType.ParticleSpeedRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12463,7 +12499,7 @@ class ParticleSpeedPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: ParticleSpeedPartialFollowParams = {}) {
-    super(ActionType.ParticleSpeedPartialFollow)
+    super(ActionType.ParticleSpeedPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12518,7 +12554,7 @@ class NodeSound extends DataAction {
    */
   volume: number
   constructor(props: NodeSoundParams = {}) {
-    super(ActionType.NodeSound)
+    super(ActionType.NodeSound, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12552,7 +12588,7 @@ class EmissionSound extends DataAction {
   sound: number
   unk_ds3_f1_1: number
   constructor(props: EmissionSoundParams = {}) {
-    super(ActionType.EmissionSound)
+    super(ActionType.EmissionSound, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12666,7 +12702,7 @@ class NodeAccelerationRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: NodeAccelerationRandomTurnsParams = {}) {
-    super(ActionType.NodeAccelerationRandomTurns)
+    super(ActionType.NodeAccelerationRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12768,7 +12804,7 @@ class ParticleAccelerationRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: ParticleAccelerationRandomTurnsParams = {}) {
-    super(ActionType.ParticleAccelerationRandomTurns)
+    super(ActionType.ParticleAccelerationRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -12900,7 +12936,7 @@ class ParticleAccelerationPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: ParticleAccelerationPartialFollowParams = {}) {
-    super(ActionType.ParticleAccelerationPartialFollow)
+    super(ActionType.ParticleAccelerationPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13054,7 +13090,7 @@ class NodeAccelerationPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: NodeAccelerationPartialFollowParams = {}) {
-    super(ActionType.NodeAccelerationPartialFollow)
+    super(ActionType.NodeAccelerationPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13260,7 +13296,7 @@ class NodeAccelerationSpin extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_3: number
   constructor(props: NodeAccelerationSpinParams = {}) {
-    super(ActionType.NodeAccelerationSpin)
+    super(ActionType.NodeAccelerationSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13343,7 +13379,7 @@ class NodeSpeed extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_2: number
   constructor(props: NodeSpeedParams = {}) {
-    super(ActionType.NodeSpeed)
+    super(ActionType.NodeSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13443,7 +13479,7 @@ class NodeSpeedRandomTurns extends DataAction {
    */
   turnInterval: number
   constructor(props: NodeSpeedRandomTurnsParams = {}) {
-    super(ActionType.NodeSpeedRandomTurns)
+    super(ActionType.NodeSpeedRandomTurns, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13577,7 +13613,7 @@ class NodeSpeedPartialFollow extends DataAction {
    */
   followRotation: boolean
   constructor(props: NodeSpeedPartialFollowParams = {}) {
-    super(ActionType.NodeSpeedPartialFollow)
+    super(ActionType.NodeSpeedPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13769,7 +13805,7 @@ class NodeSpeedSpin extends DataAction {
   alignWithMotion: number
   unk_ds3_f1_3: number
   constructor(props: NodeSpeedSpinParams = {}) {
-    super(ActionType.NodeSpeedSpin)
+    super(ActionType.NodeSpeedSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13834,7 +13870,7 @@ class NodeAttributes extends DataAction {
   unk_ds3_f1_1: number
   unk_ds3_f1_3: number
   constructor(props: NodeAttributesParams = {}) {
-    super(ActionType.NodeAttributes)
+    super(ActionType.NodeAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -13875,7 +13911,7 @@ class ParticleAttributes extends DataAction {
    */
   duration: ScalarValue
   constructor(props: ParticleAttributesParams = {}) {
-    super(ActionType.ParticleAttributes)
+    super(ActionType.ParticleAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14011,7 +14047,7 @@ class Unk130 extends DataAction {
   unk_ds3_p1_6: ScalarValue
   unk_ds3_p1_7: ScalarValue
   constructor(props: Unk130Params = {}) {
-    super(ActionType.Unk130)
+    super(ActionType.Unk130, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14132,7 +14168,7 @@ class ParticleModifier extends DataAction {
    */
   color: Vector4Value
   constructor(props: ParticleModifierParams = {}) {
-    super(ActionType.ParticleModifier)
+    super(ActionType.ParticleModifier, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14154,7 +14190,7 @@ class SFXReference extends DataAction {
    * **Default**: `0`
    */
   constructor(sfx: number = 0) {
-    super(ActionType.SFXReference)
+    super(ActionType.SFXReference, {isAppearance:false,isParticle:false})
     this.assign({ sfx })
   }
 }
@@ -14241,7 +14277,7 @@ class LevelsOfDetailThresholds extends DataAction {
   threshold4: number
   unk_ac6_f1_5: number
   constructor(props: LevelsOfDetailThresholdsParams = {}) {
-    super(ActionType.LevelsOfDetailThresholds)
+    super(ActionType.LevelsOfDetailThresholds, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14267,7 +14303,7 @@ class StateEffectMap extends DataAction {
    * **Default**: `[0]`
    */
   constructor(effectIndices: number[] = [0]) {
-    super(ActionType.StateEffectMap)
+    super(ActionType.StateEffectMap, {isAppearance:false,isParticle:false})
     this.assign({ effectIndices })
   }
 }
@@ -14282,7 +14318,7 @@ class SelectAllNodes extends DataAction {
   declare type: ActionType.SelectAllNodes
   
   constructor() {
-    super(ActionType.SelectAllNodes)
+    super(ActionType.SelectAllNodes, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -14308,7 +14344,7 @@ class SelectRandomNode extends DataAction {
    * **Default**: `[1]`
    */
   constructor(weights: number[] = [1]) {
-    super(ActionType.SelectRandomNode)
+    super(ActionType.SelectRandomNode, {isAppearance:false,isParticle:false})
     this.assign({ weights })
   }
 }
@@ -14388,7 +14424,7 @@ class PeriodicEmitter extends DataAction {
   maxConcurrent: ScalarValue
   unk_ds3_f1_1: number
   constructor(props: PeriodicEmitterParams = {}) {
-    super(ActionType.PeriodicEmitter)
+    super(ActionType.PeriodicEmitter, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14463,7 +14499,7 @@ class EqualDistanceEmitter extends DataAction {
   unk_ds3_p1_1: ScalarValue
   unk_ds3_p1_2: ScalarValue
   constructor(props: EqualDistanceEmitterParams = {}) {
-    super(ActionType.EqualDistanceEmitter)
+    super(ActionType.EqualDistanceEmitter, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14478,7 +14514,7 @@ class OneTimeEmitter extends DataAction {
   declare type: ActionType.OneTimeEmitter
   
   constructor() {
-    super(ActionType.OneTimeEmitter)
+    super(ActionType.OneTimeEmitter, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -14500,7 +14536,7 @@ class PointEmitterShape extends DataAction {
    * **Default**: {@link InitialDirection.Emitter}
    */
   constructor(direction: InitialDirection = InitialDirection.Emitter) {
-    super(ActionType.PointEmitterShape)
+    super(ActionType.PointEmitterShape, {isAppearance:false,isParticle:false})
     this.assign({ direction })
   }
 }
@@ -14563,7 +14599,7 @@ class DiskEmitterShape extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: DiskEmitterShapeParams = {}) {
-    super(ActionType.DiskEmitterShape)
+    super(ActionType.DiskEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14640,7 +14676,7 @@ class RectangleEmitterShape extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: RectangleEmitterShapeParams = {}) {
-    super(ActionType.RectangleEmitterShape)
+    super(ActionType.RectangleEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14681,7 +14717,7 @@ class SphereEmitterShape extends DataAction {
    */
   radius: ScalarValue
   constructor(props: SphereEmitterShapeParams = {}) {
-    super(ActionType.SphereEmitterShape)
+    super(ActionType.SphereEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14760,7 +14796,7 @@ class BoxEmitterShape extends DataAction {
    */
   sizeZ: ScalarValue
   constructor(props: BoxEmitterShapeParams = {}) {
-    super(ActionType.BoxEmitterShape)
+    super(ActionType.BoxEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14835,7 +14871,7 @@ class CylinderEmitterShape extends DataAction {
    */
   height: ScalarValue
   constructor(props: CylinderEmitterShapeParams = {}) {
-    super(ActionType.CylinderEmitterShape)
+    super(ActionType.CylinderEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -14850,7 +14886,7 @@ class NoSpread extends DataAction {
   declare type: ActionType.NoSpread
   
   constructor() {
-    super(ActionType.NoSpread)
+    super(ActionType.NoSpread, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -14914,7 +14950,7 @@ class CircularSpread extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: CircularSpreadParams = {}) {
-    super(ActionType.CircularSpread)
+    super(ActionType.CircularSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -15005,7 +15041,7 @@ class EllipticalSpread extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: EllipticalSpreadParams = {}) {
-    super(ActionType.EllipticalSpread)
+    super(ActionType.EllipticalSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -15086,7 +15122,7 @@ class RectangularSpread extends DataAction {
    */
   distribution: ScalarValue
   constructor(props: RectangularSpreadParams = {}) {
-    super(ActionType.RectangularSpread)
+    super(ActionType.RectangularSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -15692,7 +15728,7 @@ class PointSprite extends DataAction {
   unk_er_f1_4: number
   unk_er_f2_39: number
   constructor(props: PointSpriteParams = {}) {
-    super(ActionType.PointSprite)
+    super(ActionType.PointSprite, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -16325,7 +16361,7 @@ class Line extends DataAction {
   unk_er_f1_1: number
   unk_er_f1_2: number
   constructor(props: LineParams = {}) {
-    super(ActionType.Line)
+    super(ActionType.Line, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -16985,7 +17021,7 @@ class QuadLine extends DataAction {
   unk_er_f1_1: number
   unk_er_f1_2: number
   constructor(props: QuadLineParams = {}) {
-    super(ActionType.QuadLine)
+    super(ActionType.QuadLine, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -18208,7 +18244,7 @@ class BillboardEx extends DataAction {
   unk_sdt_f2_44: number
   unk_ac6_f2_45: number
   constructor(props: BillboardExParams = {}) {
-    super(ActionType.BillboardEx)
+    super(ActionType.BillboardEx, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -19581,7 +19617,7 @@ class MultiTextureBillboardEx extends DataAction {
   unk_er_f2_45: number
   unk_ac6_f2_46: number
   constructor(props: MultiTextureBillboardExParams = {}) {
-    super(ActionType.MultiTextureBillboardEx)
+    super(ActionType.MultiTextureBillboardEx, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -20863,7 +20899,7 @@ class Model extends DataAction {
   unk_er_f1_19: number
   unk_ac6_f2_38: number
   constructor(props: ModelParams = {}) {
-    super(ActionType.Model)
+    super(ActionType.Model, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -21784,7 +21820,7 @@ class Tracer extends DataAction {
   unk_er_f1_16: number
   unk_er_f2_39: number
   constructor(props: TracerParams = {}) {
-    super(ActionType.Tracer)
+    super(ActionType.Tracer, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -22738,7 +22774,7 @@ class Distortion extends DataAction {
   unk_er_p2_7: ScalarValue
   unk_er_p2_8: ScalarValue
   constructor(props: DistortionParams = {}) {
-    super(ActionType.Distortion)
+    super(ActionType.Distortion, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -23390,7 +23426,7 @@ class RadialBlur extends DataAction {
   unk_er_f1_3: number
   unk_er_f1_4: number
   constructor(props: RadialBlurParams = {}) {
-    super(ActionType.RadialBlur)
+    super(ActionType.RadialBlur, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -24010,7 +24046,7 @@ class PointLight extends DataAction {
   unk_er_f2_31: number
   unk_er_f2_32: number
   constructor(props: PointLightParams = {}) {
-    super(ActionType.PointLight)
+    super(ActionType.PointLight, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -24025,7 +24061,7 @@ class Unk700 extends DataAction {
   declare type: ActionType.Unk700
   
   constructor() {
-    super(ActionType.Unk700)
+    super(ActionType.Unk700, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -24044,7 +24080,7 @@ class Unk701 extends DataAction {
    * **Default**: `1`
    */
   constructor(unk_er_p1_0: ScalarValue = 1) {
-    super(ActionType.Unk701)
+    super(ActionType.Unk701, {isAppearance:false,isParticle:false})
     this.assign({ unk_er_p1_0 })
   }
 }
@@ -24059,7 +24095,7 @@ class Unk702 extends DataAction {
   declare type: ActionType.Unk702
   
   constructor() {
-    super(ActionType.Unk702)
+    super(ActionType.Unk702, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -24115,7 +24151,7 @@ class NodeForceSpeed extends DataAction {
   speedMultiplier: ScalarValue
   unk_sdt_f1_0: number
   constructor(props: NodeForceSpeedParams = {}) {
-    super(ActionType.NodeForceSpeed)
+    super(ActionType.NodeForceSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24182,7 +24218,7 @@ class ParticleForceSpeed extends DataAction {
    */
   unk_sdt_f1_1: number
   constructor(props: ParticleForceSpeedParams = {}) {
-    super(ActionType.ParticleForceSpeed)
+    super(ActionType.ParticleForceSpeed, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24239,7 +24275,7 @@ class NodeForceAcceleration extends DataAction {
   accelerationMultiplier: ScalarValue
   unk_sdt_f1_0: number
   constructor(props: NodeForceAccelerationParams = {}) {
-    super(ActionType.NodeForceAcceleration)
+    super(ActionType.NodeForceAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24306,7 +24342,7 @@ class ParticleForceAcceleration extends DataAction {
    */
   unk_sdt_f1_1: number
   constructor(props: ParticleForceAccelerationParams = {}) {
-    super(ActionType.ParticleForceAcceleration)
+    super(ActionType.ParticleForceAcceleration, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24344,7 +24380,7 @@ class Unk800 extends DataAction {
   unk_ac6_f1_1: number
   unk_ac6_f1_2: number
   constructor(props: Unk800Params = {}) {
-    super(ActionType.Unk800)
+    super(ActionType.Unk800, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -26737,7 +26773,7 @@ class GPUStandardParticle extends DataAction {
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
   constructor(props: GPUStandardParticleParams = {}) {
-    super(ActionType.GPUStandardParticle)
+    super(ActionType.GPUStandardParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -29120,7 +29156,7 @@ class GPUStandardCorrectParticle extends DataAction {
   unk_ds3_p2_5: Vector4Value
   unk_ds3_p2_6: ScalarValue
   constructor(props: GPUStandardCorrectParticleParams = {}) {
-    super(ActionType.GPUStandardCorrectParticle)
+    super(ActionType.GPUStandardCorrectParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -29426,7 +29462,7 @@ class LightShaft extends DataAction {
   unk_ds3_p1_8: ScalarValue
   unk_ds3_p1_9: ScalarValue
   constructor(props: LightShaftParams = {}) {
-    super(ActionType.LightShaft)
+    super(ActionType.LightShaft, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -29754,7 +29790,7 @@ export interface GPUSparkParticleParams {
   /**
    * Blend mode.
    * 
-   * **Default**: {@link BlendMode.Normal}
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode?: BlendMode
   /**
@@ -30969,7 +31005,7 @@ class GPUSparkParticle extends DataAction {
   unk_ac6_p2_5: Vector4Value
   unk_ac6_p2_6: ScalarValue
   constructor(props: GPUSparkParticleParams = {}) {
-    super(ActionType.GPUSparkParticle)
+    super(ActionType.GPUSparkParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -31297,7 +31333,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * Blend mode.
    * 
-   * **Default**: {@link BlendMode.Normal}
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode?: BlendMode
   /**
@@ -32513,7 +32549,7 @@ class GPUSparkCorrectParticle extends DataAction {
   unk_ac6_p2_5: Vector4Value
   unk_ac6_p2_6: ScalarValue
   constructor(props: GPUSparkCorrectParticleParams = {}) {
-    super(ActionType.GPUSparkCorrectParticle)
+    super(ActionType.GPUSparkCorrectParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -33485,7 +33521,7 @@ class DynamicTracer extends DataAction {
   unk_sdt_f1_17: number
   unk_ac6_f2_41: number
   constructor(props: DynamicTracerParams = {}) {
-    super(ActionType.DynamicTracer)
+    super(ActionType.DynamicTracer, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -33552,7 +33588,7 @@ class WaterInteraction extends DataAction {
    */
   duration: number
   constructor(props: WaterInteractionParams = {}) {
-    super(ActionType.WaterInteraction)
+    super(ActionType.WaterInteraction, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -34692,7 +34728,7 @@ class LensFlare extends DataAction {
   unk_ac6_f1_79: number
   unk_ac6_f1_80: number
   constructor(props: LensFlareParams = {}) {
-    super(ActionType.LensFlare)
+    super(ActionType.LensFlare, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -35962,7 +35998,7 @@ class RichModel extends DataAction {
    */
   uvSpeedMultiplier: Vector2Value
   constructor(props: RichModelParams = {}) {
-    super(ActionType.RichModel)
+    super(ActionType.RichModel, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
 }
@@ -36374,7 +36410,7 @@ class Unk10100 extends DataAction {
   unk_ds3_f1_54: number
   unk_ds3_f1_55: number
   constructor(props: Unk10100Params = {}) {
-    super(ActionType.Unk10100)
+    super(ActionType.Unk10100, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -36528,7 +36564,7 @@ class CancelForce extends DataAction {
    */
   squarePrismApothem: number
   constructor(props: CancelForceParams = {}) {
-    super(ActionType.CancelForce)
+    super(ActionType.CancelForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -37139,7 +37175,7 @@ class WindForce extends DataAction {
   unk_ds3_f1_49: number
   unk_ds3_f1_50: number
   constructor(props: WindForceParams = {}) {
-    super(ActionType.WindForce)
+    super(ActionType.WindForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -37578,7 +37614,7 @@ class GravityForce extends DataAction {
    */
   fadeOutTime: number
   constructor(props: GravityForceParams = {}) {
-    super(ActionType.GravityForce)
+    super(ActionType.GravityForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -37695,7 +37731,7 @@ class ForceCollision extends DataAction {
    */
   cylinderRadius: number
   constructor(props: ForceCollisionParams = {}) {
-    super(ActionType.ForceCollision)
+    super(ActionType.ForceCollision, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -38285,7 +38321,7 @@ class TurbulenceForce extends DataAction {
   unk_unk_f1_50: number
   unk_unk_f1_51: number
   constructor(props: TurbulenceForceParams = {}) {
-    super(ActionType.TurbulenceForce)
+    super(ActionType.TurbulenceForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -38757,7 +38793,7 @@ class Unk10400 extends DataAction {
   unk_ds3_f1_63: number
   unk_ds3_f1_64: number
   constructor(props: Unk10400Params = {}) {
-    super(ActionType.Unk10400)
+    super(ActionType.Unk10400, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -38871,7 +38907,7 @@ class Unk10500 extends DataAction {
   unk_ds3_f1_8: number
   unk_sdt_f1_9: number
   constructor(props: Unk10500Params = {}) {
-    super(ActionType.Unk10500)
+    super(ActionType.Unk10500, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -39447,7 +39483,7 @@ class SpotLight extends DataAction {
   unk_er_f1_26: number
   unk_er_f1_27: number
   constructor(props: SpotLightParams = {}) {
-    super(ActionType.SpotLight)
+    super(ActionType.SpotLight, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
 }
@@ -42719,7 +42755,11 @@ namespace FXRUtility {
     for (const n of nodes) {
       if (n instanceof BasicNode || n instanceof NodeEmitterNode) {
         for (const effect of n.walkEffects(false)) {
-          if (effect instanceof BasicEffect || effect instanceof NodeEmitterEffect) {
+          if (effect instanceof NodeEmitterEffect || (
+            effect instanceof BasicEffect &&
+            effect.appearance instanceof DataAction &&
+            effect.appearance.meta.isParticle
+          )) {
             const emShape = effect.emitterShape
             if (emShape instanceof DiskEmitterShape) {
               const radius = constantValueOf(emShape.radius)

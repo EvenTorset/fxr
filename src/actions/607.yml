@@ -1,6 +1,9 @@
 type: 607
 name: Distortion
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   A particle that distorts anything seen through it.
 

@@ -1,6 +1,9 @@
 type: 10000
 name: GPUStandardParticle
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
 

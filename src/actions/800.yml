@@ -1,6 +1,9 @@
 type: 800
 name: Unk800
 slot: ParticleForceMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Unknown action that was added in Armored Core 6.
 properties:

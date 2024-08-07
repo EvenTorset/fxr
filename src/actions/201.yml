@@ -1,6 +1,9 @@
 type: 201
 name: SelectRandomNode
 slot: NodeSelector
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
 properties:

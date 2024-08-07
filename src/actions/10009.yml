@@ -1,6 +1,9 @@
 type: 10009
 name: GPUSparkCorrectParticle
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
 
@@ -256,7 +259,7 @@ properties:
   blendMode:
     type: BlendMode
     field: int
-    default: BlendMode.Normal
+    default: BlendMode.Add
     desc: |
       Blend mode.
   unk_ac6_f1_57:

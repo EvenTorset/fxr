@@ -1,6 +1,9 @@
 type: 402
 name: RectangleEmitterShape
 slot: EmitterShape
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Makes the emitter rectangular.
 properties:

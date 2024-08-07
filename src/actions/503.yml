@@ -1,6 +1,9 @@
 type: 503
 name: RectangularSpread
 slot: DirectionSpread
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
 properties:

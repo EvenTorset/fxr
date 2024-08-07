@@ -1,5 +1,8 @@
 type: 199
 name: StateEffectMap
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Maps states to effects in the parent node.
 properties:

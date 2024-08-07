@@ -1,6 +1,9 @@
 type: 10001
 name: GPUStandardCorrectParticle
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
 

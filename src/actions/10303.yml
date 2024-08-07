@@ -1,6 +1,9 @@
 type: 10303
 name: TurbulenceForce
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Creates a chaotic force in a volume.
 

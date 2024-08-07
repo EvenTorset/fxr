@@ -1,6 +1,9 @@
 type: 10500
 name: Unk10500
 slot: Unknown10500
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Unknown root node action.
 properties:

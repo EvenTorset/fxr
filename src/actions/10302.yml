@@ -1,6 +1,9 @@
 type: 10302
 name: ForceCollision
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Controls the volume used to detect whether or not the node is inside a force volume.
 

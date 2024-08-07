@@ -1,6 +1,9 @@
 type: 36
 name: RandomNodeTransform
 slot: NodeTransform
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the translation and rotation of a node, and can also randomize them.
 properties:

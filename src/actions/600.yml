@@ -1,6 +1,9 @@
 type: 600
 name: PointSprite
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
 properties:

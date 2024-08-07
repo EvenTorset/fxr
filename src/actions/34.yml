@@ -1,6 +1,9 @@
 type: 34
 name: NodeSpin
 slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls the angular speed of the node.
 properties:

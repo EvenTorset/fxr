@@ -1,6 +1,9 @@
 type: 608
 name: RadialBlur
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: true
 desc: |
   A particle that applies a radial blur to anything seen through it.
 

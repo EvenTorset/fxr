@@ -1,6 +1,9 @@
 type: 400
 name: PointEmitterShape
 slot: EmitterShape
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Makes the emitter a single point.
 properties:

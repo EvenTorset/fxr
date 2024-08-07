@@ -1,6 +1,9 @@
 type: 732
 name: ParticleForceSpeed
 slot: ParticleForceMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
   - {@link ActionType.CancelForce CancelForce}

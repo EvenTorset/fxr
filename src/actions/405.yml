@@ -1,6 +1,9 @@
 type: 405
 name: CylinderEmitterShape
 slot: EmitterShape
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Makes the emitter cylindrical.
 properties:

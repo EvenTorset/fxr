@@ -1,6 +1,9 @@
 type: 404
 name: BoxEmitterShape
 slot: EmitterShape
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Makes the emitter cuboidal.
 properties:

@@ -1,6 +1,9 @@
 type: 501
 name: CircularSpread
 slot: DirectionSpread
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
 properties:

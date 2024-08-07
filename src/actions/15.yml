@@ -1,6 +1,9 @@
 type: 15
 name: NodeTranslation
 slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
 desc: |
   Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
 properties:

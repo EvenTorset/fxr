@@ -1,6 +1,9 @@
 type: 10200
 name: CancelForce
 slot: Appearance
+meta:
+  isAppearance: true
+  isParticle: false
 desc: |
   Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
   - {@link ActionType.WindForce WindForce}
