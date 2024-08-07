@@ -5,13 +5,14 @@
 ### Highlights
 - Added `NodeAnimatedRotation` - A function that creates a `NodeSpin` action from a rotation property. Animating the rotation directly is not normally possible, it can only be done by controlling the angular speed. This function makes it possible by converting a rotation property to an angular speed property.
 - Added more utility functions:
-  -  `FXRUtility.box` - Creates an outline of a cuboid shape.
-  -  `FXRUtility.rect` - Creates a rectangle.
-  -  `FXRUtility.ellipse` - Creates an ellipse.
-  -  `FXRUtility.ellipsoid` - Creates three ellipses that form the outline of an ellipsoid.
-  -  `FXRUtility.cylinder` - Creates an outline of a cylinder.
-  -  `FXRUtility.transform` - Wraps a list of nodes in one that has a transform applied to it. The transform is defined by a translation, a direction to align with, and a roll angle. This makes it easier to point nodes in specific directions, or to just move them.
-  -  `FXRUtility.outlineEmitters` - Adds outlines for all node and particle emitters in a node.
+  - `FXRUtility.box` - Creates an outline of a cuboid shape.
+  - `FXRUtility.rect` - Creates a rectangle.
+  - `FXRUtility.ellipse` - Creates an ellipse.
+  - `FXRUtility.ellipsoid` - Creates three ellipses that form the outline of an ellipsoid.
+  - `FXRUtility.cylinder` - Creates an outline of a cylinder.
+  - `FXRUtility.transform` - Wraps a list of nodes in one that has a transform applied to it. The transform is defined by a translation, a direction to align with, and a roll angle. This makes it easier to point nodes in specific directions, or to just move them.
+  - `FXRUtility.outlineEmitters` - Adds outlines for all node and particle emitters in a node.
+  - `FXRUtility.animatedNodeRotation` - Creates a `NodeSpin` action from a rotation property. Animating the rotation directly is not normally possible, it can only be done by controlling the angular speed. This function makes it possible by converting a rotation property to an angular speed property.
 - Added `anyValueDiff` - This function subtracts one `AnyValue` from another. (An `AnyValue` is any scalar or vector value, including all types of properties.) This function simply uses the existing `anyValueSum` and `anyValueMult` functions to do this, so it works very similarly to those.
 - The three box size fields in the force volume actions have been converted to a single vector field.
 - The fallback for distortion and blur colors when applying a color palette has been changed to just white. This fixes partial palettes making some effects have strange-looking, bright or dark rectangles floating around.

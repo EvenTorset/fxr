@@ -11537,72 +11537,6 @@ function NodeTransform(params: NodeTransformParams = {}) {
 }
 
 /**
- * Creates a {@link ActionType.NodeSpin NodeSpin} action from an animated
- * rotation property.
- * 
- * Normally, to animate the rotation of a node, you would need to use
- * {@link ActionType.NodeSpin NodeSpin} to animate the angular speed.
- * Controlling the angular speed instead of the rotation directly can be tricky
- * if you want the node to point in specific directions at specific times. This
- * function automatically converts an animated rotation property to an angular
- * speed property to make this easier.
- * 
- * **Notes**:
- * - High angular velocities are not very well supported. Avoid using
- * this function if you need the rotation to change quickly. Stepped rotation
- * properties are not supported at all.
- * - The rotation property must start at `[0, 0, 0]`. To control the initial
- * rotation, wrap the node in one with that rotation instead.
- * - This only creates an approximation, it is not perfect. If this is used
- * with a looping property, the rotation will eventually stray from where it
- * should be. This is likely due to how the angular speed is applied, which is
- * also why high speeds break this.
- * @param rotation The rotation of the node.
- * 
- * **Default**: `[0, 0, 0]`
- * 
- * **Argument**: {@link PropertyArgument.EffectAge Effect age}
- */
-function NodeAnimatedRotation(rotation: Vector3Value): Action | NodeSpin {
-  if (!(rotation instanceof Property) || rotation instanceof ValueProperty) {
-    return new Action
-  }
-
-  if (rotation.function === PropertyFunction.Stepped) {
-    throw new Error(`The 'rotation' parameter for NodeAnimatedRotation cannot be a stepped property.`)
-  }
-
-  const prop: SequenceProperty<ValueType.Vector3, SequencePropertyFunction> =
-    rotation instanceof SequenceProperty ? rotation :
-    (rotation as ComponentSequenceProperty<ValueType.Vector3>).combineComponents()
-  const keyframes = prop.function === PropertyFunction.Linear ?
-    prop.keyframes as Keyframe<ValueType.Vector3>[] :
-    filterMillisecondDiffs(
-      interpolateSegments(prop.keyframes.map(e => e.position), 0.1, 40)
-    ).map(pos => new Keyframe<ValueType.Vector3>(pos, prop.valueAt(pos)))
-  const speeds: Keyframe<ValueType.Vector3>[] = []
-
-  for (let i = 0; i < keyframes.length; i++) {
-    if (i === keyframes.length - 1) {
-      speeds.push({ position: keyframes[i].position, value: [0, 0, 0] })
-    } else {
-      const deltaTime = keyframes[i + 1].position - keyframes[i].position
-      const deltaValue = anyValueDiff(keyframes[i + 1].value, keyframes[i].value)
-      const speed: Vector3 = anyValueMult(1 / deltaTime, deltaValue)
-      speeds.push(new Keyframe(keyframes[i].position, speed))
-    }
-  }
-
-  const angularSpeed = separateComponents(new LinearProperty<ValueType.Vector3>(prop.loop, speeds))
-
-  return new NodeSpin({
-    angularSpeedX: angularSpeed[0],
-    angularSpeedY: angularSpeed[1],
-    angularSpeedZ: angularSpeed[2],
-  }).minify()
-}
-
-/**
  * Constructs one of the following {@link ActionSlots.ParticleMovementAction Particle Movement} classes:
  * - {@link ActionType.ParticleAcceleration ParticleAcceleration}
  * - {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns}
@@ -42085,6 +42019,72 @@ namespace FXRUtility {
     return new BasicNode([], nodes).scale((options.fontSize ?? 1) / 7)
   }
 
+  /**
+   * Creates a {@link ActionType.NodeSpin NodeSpin} action from an animated
+   * rotation property.
+   * 
+   * Normally, to animate the rotation of a node, you would need to use
+   * {@link ActionType.NodeSpin NodeSpin} to animate the angular speed.
+   * Controlling the angular speed instead of the rotation directly can be tricky
+   * if you want the node to point in specific directions at specific times. This
+   * function automatically converts an animated rotation property to an angular
+   * speed property to make this easier.
+   * 
+   * **Notes**:
+   * - High angular velocities are not very well supported. Avoid using
+   * this function if you need the rotation to change quickly. Stepped rotation
+   * properties are not supported at all.
+   * - The rotation property must start at `[0, 0, 0]`. To control the initial
+   * rotation, wrap the node in one with that rotation instead.
+   * - This only creates an approximation, it is not perfect. If this is used
+   * with a looping property, the rotation will eventually stray from where it
+   * should be. This is likely due to how the angular speed is applied, which is
+   * also why high speeds break this.
+   * @param rotation The rotation of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
+   * 
+   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   */
+  export function animatedNodeRotation(rotation: Vector3Value): Action | NodeSpin {
+    if (!(rotation instanceof Property) || rotation instanceof ValueProperty) {
+      return new Action
+    }
+
+    if (rotation.function === PropertyFunction.Stepped) {
+      throw new Error(`The 'rotation' parameter for NodeAnimatedRotation cannot be a stepped property.`)
+    }
+
+    const prop: SequenceProperty<ValueType.Vector3, SequencePropertyFunction> =
+      rotation instanceof SequenceProperty ? rotation :
+      (rotation as ComponentSequenceProperty<ValueType.Vector3>).combineComponents()
+    const keyframes = prop.function === PropertyFunction.Linear ?
+      prop.keyframes as Keyframe<ValueType.Vector3>[] :
+      filterMillisecondDiffs(
+        interpolateSegments(prop.keyframes.map(e => e.position), 0.1, 40)
+      ).map(pos => new Keyframe<ValueType.Vector3>(pos, prop.valueAt(pos)))
+    const speeds: Keyframe<ValueType.Vector3>[] = []
+
+    for (let i = 0; i < keyframes.length; i++) {
+      if (i === keyframes.length - 1) {
+        speeds.push({ position: keyframes[i].position, value: [0, 0, 0] })
+      } else {
+        const deltaTime = keyframes[i + 1].position - keyframes[i].position
+        const deltaValue = anyValueDiff(keyframes[i + 1].value, keyframes[i].value)
+        const speed: Vector3 = anyValueMult(1 / deltaTime, deltaValue)
+        speeds.push(new Keyframe(keyframes[i].position, speed))
+      }
+    }
+
+    const angularSpeed = separateComponents(new LinearProperty<ValueType.Vector3>(prop.loop, speeds))
+
+    return new NodeSpin({
+      angularSpeedX: angularSpeed[0],
+      angularSpeedY: angularSpeed[1],
+      angularSpeedZ: angularSpeed[2],
+    }).minify()
+  }
+
 }
 
 export {
@@ -42144,7 +42144,6 @@ export {
   getActionGameData,
   NodeMovement,
   NodeTransform,
-  NodeAnimatedRotation,
   ParticleMovement,
   /*#ActionsExport start*/
   NodeAcceleration,
