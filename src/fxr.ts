@@ -1705,6 +1705,7 @@ export interface IModifiableProperty<T extends ValueType, F extends PropertyFunc
 
 export interface IAction {
   readonly type: ActionType
+  readonly meta: ActionMeta
   toJSON(): any
   /**
    * Creates a minified version of this action.
@@ -10939,6 +10940,8 @@ class NodeEmitterEffect implements IEffect {
 //#region Action
 class Action implements IAction {
 
+  readonly meta: ActionMeta & {isAppearance:false,isParticle:false} = {isAppearance:false,isParticle:false}
+
   constructor(
     public type: ActionType = ActionType.None,
     public fields1: Field<FieldType>[] = [],
@@ -11716,7 +11719,8 @@ export interface NodeAccelerationParams {
  * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
  */
 class NodeAcceleration extends DataAction {
-  declare type: ActionType.NodeAcceleration
+  declare readonly type: ActionType.NodeAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -11777,7 +11781,8 @@ export interface NodeTranslationParams {
  * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
  */
 class NodeTranslation extends DataAction {
-  declare type: ActionType.NodeTranslation
+  declare readonly type: ActionType.NodeTranslation
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * An offset for the position of the node.
    * 
@@ -11867,7 +11872,8 @@ export interface NodeSpinParams {
  * Controls the angular speed of the node.
  */
 class NodeSpin extends DataAction {
-  declare type: ActionType.NodeSpin
+  declare readonly type: ActionType.NodeSpin
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
@@ -11942,7 +11948,8 @@ export interface StaticNodeTransformParams {
  * Controls the translation and rotation of a node.
  */
 class StaticNodeTransform extends DataAction {
-  declare type: ActionType.StaticNodeTransform
+  declare readonly type: ActionType.StaticNodeTransform
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Translation of the node.
    */
@@ -11991,7 +11998,8 @@ export interface RandomNodeTransformParams {
  * Controls the translation and rotation of a node, and can also randomize them.
  */
 class RandomNodeTransform extends DataAction {
-  declare type: ActionType.RandomNodeTransform
+  declare readonly type: ActionType.RandomNodeTransform
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Translation of the node.
    */
@@ -12036,7 +12044,8 @@ export interface NodeAttachToCameraParams {
  * Attaches the node to the camera.
  */
 class NodeAttachToCamera extends DataAction {
-  declare type: ActionType.NodeAttachToCamera
+  declare readonly type: ActionType.NodeAttachToCamera
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Disable this to stop the node from following the rotation of the camera.
    */
@@ -12096,7 +12105,8 @@ export interface ParticleAccelerationParams {
  * Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
  */
 class ParticleAcceleration extends DataAction {
-  declare type: ActionType.ParticleAcceleration
+  declare readonly type: ActionType.ParticleAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12173,7 +12183,8 @@ export interface ParticleSpeedParams {
  * Controls the movement of particles. This is the most basic action for controlling the speed of particles.
  */
 class ParticleSpeed extends DataAction {
-  declare type: ActionType.ParticleSpeed
+  declare readonly type: ActionType.ParticleSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12262,7 +12273,8 @@ export interface ParticleSpeedRandomTurnsParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
  */
 class ParticleSpeedRandomTurns extends DataAction {
-  declare type: ActionType.ParticleSpeedRandomTurns
+  declare readonly type: ActionType.ParticleSpeedRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12381,7 +12393,8 @@ export interface ParticleSpeedPartialFollowParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
  */
 class ParticleSpeedPartialFollow extends DataAction {
-  declare type: ActionType.ParticleSpeedPartialFollow
+  declare readonly type: ActionType.ParticleSpeedPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12468,7 +12481,8 @@ export interface NodeSoundParams {
  * Plays a sound effect when the node activates that can repeat.
  */
 class NodeSound extends DataAction {
-  declare type: ActionType.NodeSound
+  declare readonly type: ActionType.NodeSound
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the sound to play.
    */
@@ -12513,7 +12527,8 @@ export interface EmissionSoundParams {
  * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
  */
 class EmissionSound extends DataAction {
-  declare type: ActionType.EmissionSound
+  declare readonly type: ActionType.EmissionSound
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the sound to play.
    */
@@ -12593,7 +12608,8 @@ export interface NodeAccelerationRandomTurnsParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
  */
 class NodeAccelerationRandomTurns extends DataAction {
-  declare type: ActionType.NodeAccelerationRandomTurns
+  declare readonly type: ActionType.NodeAccelerationRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -12699,7 +12715,8 @@ export interface ParticleAccelerationRandomTurnsParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
  */
 class ParticleAccelerationRandomTurns extends DataAction {
-  declare type: ActionType.ParticleAccelerationRandomTurns
+  declare readonly type: ActionType.ParticleAccelerationRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12818,7 +12835,8 @@ export interface ParticleAccelerationPartialFollowParams {
  * Controls the movement of particles. This extends {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns} with the ability to make particles partially follow the parent node.
  */
 class ParticleAccelerationPartialFollow extends DataAction {
-  declare type: ActionType.ParticleAccelerationPartialFollow
+  declare readonly type: ActionType.ParticleAccelerationPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
    * 
@@ -12963,7 +12981,8 @@ export interface NodeAccelerationPartialFollowParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
  */
 class NodeAccelerationPartialFollow extends DataAction {
-  declare type: ActionType.NodeAccelerationPartialFollow
+  declare readonly type: ActionType.NodeAccelerationPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13150,7 +13169,8 @@ export interface NodeAccelerationSpinParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
  */
 class NodeAccelerationSpin extends DataAction {
-  declare type: ActionType.NodeAccelerationSpin
+  declare readonly type: ActionType.NodeAccelerationSpin
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13285,7 +13305,8 @@ export interface NodeSpeedParams {
  * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
  */
 class NodeSpeed extends DataAction {
-  declare type: ActionType.NodeSpeed
+  declare readonly type: ActionType.NodeSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13376,7 +13397,8 @@ export interface NodeSpeedRandomTurnsParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
  */
 class NodeSpeedRandomTurns extends DataAction {
-  declare type: ActionType.NodeSpeedRandomTurns
+  declare readonly type: ActionType.NodeSpeedRandomTurns
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13495,7 +13517,8 @@ export interface NodeSpeedPartialFollowParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
  */
 class NodeSpeedPartialFollow extends DataAction {
-  declare type: ActionType.NodeSpeedPartialFollow
+  declare readonly type: ActionType.NodeSpeedPartialFollow
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13665,7 +13688,8 @@ export interface NodeSpeedSpinParams {
  * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
  */
 class NodeSpeedSpin extends DataAction {
-  declare type: ActionType.NodeSpeedSpin
+  declare readonly type: ActionType.NodeSpeedSpin
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the speed of the node along its Z-axis.
    * 
@@ -13784,7 +13808,8 @@ export interface NodeAttributesParams {
  * Controls various things about the node, like its duration, and how it is attached to the parent node.
  */
 class NodeAttributes extends DataAction {
-  declare type: ActionType.NodeAttributes
+  declare readonly type: ActionType.NodeAttributes
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls how the node is attached to the parent node.
    */
@@ -13831,7 +13856,8 @@ export interface ParticleAttributesParams {
  * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
  */
 class ParticleAttributes extends DataAction {
-  declare type: ActionType.ParticleAttributes
+  declare readonly type: ActionType.ParticleAttributes
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls how the particles are attached to the node.
    */
@@ -13960,7 +13986,8 @@ export interface Unk130Params {
  * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
-  declare type: ActionType.Unk130
+  declare readonly type: ActionType.Unk130
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -14053,7 +14080,8 @@ export interface ParticleModifierParams {
  * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
  */
 class ParticleModifier extends DataAction {
-  declare type: ActionType.ParticleModifier
+  declare readonly type: ActionType.ParticleModifier
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
    * 
@@ -14111,7 +14139,8 @@ class ParticleModifier extends DataAction {
  * References another SFX by its ID.
  */
 class SFXReference extends DataAction {
-  declare type: ActionType.SFXReference
+  declare readonly type: ActionType.SFXReference
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the referenced SFX.
    */
@@ -14180,7 +14209,8 @@ export interface LevelsOfDetailThresholdsParams {
  * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
-  declare type: ActionType.LevelsOfDetailThresholds
+  declare readonly type: ActionType.LevelsOfDetailThresholds
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
    * 
@@ -14220,7 +14250,8 @@ class LevelsOfDetailThresholds extends DataAction {
  * Maps states to effects in the parent node.
  */
 class StateEffectMap extends DataAction {
-  declare type: ActionType.StateEffectMap
+  declare readonly type: ActionType.StateEffectMap
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * A list of effect indices.
    * 
@@ -14247,7 +14278,8 @@ class StateEffectMap extends DataAction {
  * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
  */
 class SelectAllNodes extends DataAction {
-  declare type: ActionType.SelectAllNodes
+  declare readonly type: ActionType.SelectAllNodes
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
     super(ActionType.SelectAllNodes, {isAppearance:false,isParticle:false})
@@ -14261,7 +14293,8 @@ class SelectAllNodes extends DataAction {
  * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
  */
 class SelectRandomNode extends DataAction {
-  declare type: ActionType.SelectRandomNode
+  declare readonly type: ActionType.SelectRandomNode
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Probability weights for each child node to be selected for emission.
    * 
@@ -14329,7 +14362,8 @@ export interface PeriodicEmitterParams {
  * Emits particles periodically.
  */
 class PeriodicEmitter extends DataAction {
-  declare type: ActionType.PeriodicEmitter
+  declare readonly type: ActionType.PeriodicEmitter
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Time between emitting new particles in seconds.
    * 
@@ -14413,7 +14447,8 @@ export interface EqualDistanceEmitterParams {
  * Emits particles once it has moved a certain distance from where it last emitted particles.
  */
 class EqualDistanceEmitter extends DataAction {
-  declare type: ActionType.EqualDistanceEmitter
+  declare readonly type: ActionType.EqualDistanceEmitter
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * How much the emitter must move to trigger emission.
    * 
@@ -14443,7 +14478,8 @@ class EqualDistanceEmitter extends DataAction {
  * Emits one particle once.
  */
 class OneTimeEmitter extends DataAction {
-  declare type: ActionType.OneTimeEmitter
+  declare readonly type: ActionType.OneTimeEmitter
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
     super(ActionType.OneTimeEmitter, {isAppearance:false,isParticle:false})
@@ -14457,7 +14493,8 @@ class OneTimeEmitter extends DataAction {
  * Makes the emitter a single point.
  */
 class PointEmitterShape extends DataAction {
-  declare type: ActionType.PointEmitterShape
+  declare readonly type: ActionType.PointEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14509,7 +14546,8 @@ export interface DiskEmitterShapeParams {
  * Makes the emitter disk-shaped.
  */
 class DiskEmitterShape extends DataAction {
-  declare type: ActionType.DiskEmitterShape
+  declare readonly type: ActionType.DiskEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14580,7 +14618,8 @@ export interface RectangleEmitterShapeParams {
  * Makes the emitter rectangular.
  */
 class RectangleEmitterShape extends DataAction {
-  declare type: ActionType.RectangleEmitterShape
+  declare readonly type: ActionType.RectangleEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14637,7 +14676,8 @@ export interface SphereEmitterShapeParams {
  * Makes the emitter spherical.
  */
 class SphereEmitterShape extends DataAction {
-  declare type: ActionType.SphereEmitterShape
+  declare readonly type: ActionType.SphereEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
    */
@@ -14700,7 +14740,8 @@ export interface BoxEmitterShapeParams {
  * Makes the emitter cuboidal.
  */
 class BoxEmitterShape extends DataAction {
-  declare type: ActionType.BoxEmitterShape
+  declare readonly type: ActionType.BoxEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14777,7 +14818,8 @@ export interface CylinderEmitterShapeParams {
  * Makes the emitter cylindrical.
  */
 class CylinderEmitterShape extends DataAction {
-  declare type: ActionType.CylinderEmitterShape
+  declare readonly type: ActionType.CylinderEmitterShape
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    */
@@ -14815,7 +14857,8 @@ class CylinderEmitterShape extends DataAction {
  * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
  */
 class NoSpread extends DataAction {
-  declare type: ActionType.NoSpread
+  declare readonly type: ActionType.NoSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
     super(ActionType.NoSpread, {isAppearance:false,isParticle:false})
@@ -14859,7 +14902,8 @@ export interface CircularSpreadParams {
  * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
  */
 class CircularSpread extends DataAction {
-  declare type: ActionType.CircularSpread
+  declare readonly type: ActionType.CircularSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -14938,7 +14982,8 @@ export interface EllipticalSpreadParams {
  * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
  */
 class EllipticalSpread extends DataAction {
-  declare type: ActionType.EllipticalSpread
+  declare readonly type: ActionType.EllipticalSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    */
@@ -15023,7 +15068,8 @@ export interface RectangularSpreadParams {
  * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
  */
 class RectangularSpread extends DataAction {
-  declare type: ActionType.RectangularSpread
+  declare readonly type: ActionType.RectangularSpread
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
@@ -15477,7 +15523,8 @@ export interface PointSpriteParams {
  * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
  */
 class PointSprite extends DataAction {
-  declare type: ActionType.PointSprite
+  declare readonly type: ActionType.PointSprite
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Texture ID.
    * 
@@ -16092,7 +16139,8 @@ export interface LineParams {
  * Simple line particle. It automatically rotates to match the direction it's moving.
  */
 class Line extends DataAction {
-  declare type: ActionType.Line
+  declare readonly type: ActionType.Line
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Blend mode.
    * 
@@ -16742,7 +16790,8 @@ export interface QuadLineParams {
  * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
  */
 class QuadLine extends DataAction {
-  declare type: ActionType.QuadLine
+  declare readonly type: ActionType.QuadLine
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Blend mode.
    * 
@@ -17730,7 +17779,8 @@ export interface BillboardExParams {
  * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
  */
 class BillboardEx extends DataAction {
-  declare type: ActionType.BillboardEx
+  declare readonly type: ActionType.BillboardEx
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Texture ID.
    * 
@@ -19054,7 +19104,8 @@ export interface MultiTextureBillboardExParams {
  * Particle with multiple textures that can scroll.
  */
 class MultiTextureBillboardEx extends DataAction {
-  declare type: ActionType.MultiTextureBillboardEx
+  declare readonly type: ActionType.MultiTextureBillboardEx
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
    */
@@ -20360,7 +20411,8 @@ export interface ModelParams {
  * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
  */
 class Model extends DataAction {
-  declare type: ActionType.Model
+  declare readonly type: ActionType.Model
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Model orientation mode. See {@link ModelOrientationMode} for more information.
    */
@@ -21435,7 +21487,8 @@ export interface TracerParams {
  * Creates a trail behind moving effects.
  */
 class Tracer extends DataAction {
-  declare type: ActionType.Tracer
+  declare readonly type: ActionType.Tracer
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
    */
@@ -22374,7 +22427,8 @@ export interface DistortionParams {
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class Distortion extends DataAction {
-  declare type: ActionType.Distortion
+  declare readonly type: ActionType.Distortion
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
    */
@@ -23133,7 +23187,8 @@ export interface RadialBlurParams {
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
  */
 class RadialBlur extends DataAction {
-  declare type: ActionType.RadialBlur
+  declare readonly type: ActionType.RadialBlur
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
    * 
@@ -23769,7 +23824,8 @@ export interface PointLightParams {
  * Point light source.
  */
 class PointLight extends DataAction {
-  declare type: ActionType.PointLight
+  declare readonly type: ActionType.PointLight
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls the diffuse color of the light.
    * 
@@ -23990,7 +24046,8 @@ class PointLight extends DataAction {
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk700 extends DataAction {
-  declare type: ActionType.Unk700
+  declare readonly type: ActionType.Unk700
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
     super(ActionType.Unk700, {isAppearance:false,isParticle:false})
@@ -24004,7 +24061,8 @@ class Unk700 extends DataAction {
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk701 extends DataAction {
-  declare type: ActionType.Unk701
+  declare readonly type: ActionType.Unk701
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_er_p1_0: ScalarValue
   /**
    * @param unk_er_p1_0 Unknown.
@@ -24024,7 +24082,8 @@ class Unk701 extends DataAction {
  * Unknown root node action that was introduced in Elden Ring.
  */
 class Unk702 extends DataAction {
-  declare type: ActionType.Unk702
+  declare readonly type: ActionType.Unk702
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
     super(ActionType.Unk702, {isAppearance:false,isParticle:false})
@@ -24068,7 +24127,8 @@ export interface NodeForceSpeedParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class NodeForceSpeed extends DataAction {
-  declare type: ActionType.NodeForceSpeed
+  declare readonly type: ActionType.NodeForceSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The speed in the direction of the force.
    * 
@@ -24131,7 +24191,8 @@ export interface ParticleForceSpeedParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class ParticleForceSpeed extends DataAction {
-  declare type: ActionType.ParticleForceSpeed
+  declare readonly type: ActionType.ParticleForceSpeed
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The speed in the direction of the force.
    * 
@@ -24192,7 +24253,8 @@ export interface NodeForceAccelerationParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class NodeForceAcceleration extends DataAction {
-  declare type: ActionType.NodeForceAcceleration
+  declare readonly type: ActionType.NodeForceAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The acceleration in the direction of the force.
    * 
@@ -24255,7 +24317,8 @@ export interface ParticleForceAccelerationParams {
  * - {@link ActionType.TurbulenceForce TurbulenceForce}
  */
 class ParticleForceAcceleration extends DataAction {
-  declare type: ActionType.ParticleForceAcceleration
+  declare readonly type: ActionType.ParticleForceAcceleration
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The acceleration in the direction of the force.
    * 
@@ -24307,7 +24370,8 @@ export interface Unk800Params {
  * Unknown action that was added in Armored Core 6.
  */
 class Unk800 extends DataAction {
-  declare type: ActionType.Unk800
+  declare readonly type: ActionType.Unk800
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ac6_f1_0: number
   unk_ac6_f1_1: number
   unk_ac6_f1_2: number
@@ -25747,7 +25811,8 @@ export interface GPUStandardParticleParams {
  * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
  */
 class GPUStandardParticle extends DataAction {
-  declare type: ActionType.GPUStandardParticle
+  declare readonly type: ActionType.GPUStandardParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
@@ -27858,7 +27923,8 @@ export interface GPUStandardCorrectParticleParams {
  * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
  */
 class GPUStandardCorrectParticle extends DataAction {
-  declare type: ActionType.GPUStandardCorrectParticle
+  declare readonly type: ActionType.GPUStandardCorrectParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
@@ -28791,7 +28857,8 @@ export interface LightShaftParams {
  * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
  */
 class LightShaft extends DataAction {
-  declare type: ActionType.LightShaft
+  declare readonly type: ActionType.LightShaft
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Texture ID.
    */
@@ -29840,7 +29907,8 @@ export interface GPUSparkParticleParams {
  * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
  */
 class GPUSparkParticle extends DataAction {
-  declare type: ActionType.GPUSparkParticle
+  declare readonly type: ActionType.GPUSparkParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID of the texture of the particles.
    */
@@ -31264,7 +31332,8 @@ export interface GPUSparkCorrectParticleParams {
  * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
  */
 class GPUSparkCorrectParticle extends DataAction {
-  declare type: ActionType.GPUSparkCorrectParticle
+  declare readonly type: ActionType.GPUSparkCorrectParticle
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID of the texture of the particles.
    */
@@ -32337,7 +32406,8 @@ export interface DynamicTracerParams {
  * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
  */
 class DynamicTracer extends DataAction {
-  declare type: ActionType.DynamicTracer
+  declare readonly type: ActionType.DynamicTracer
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
    */
@@ -32706,7 +32776,8 @@ export interface WaterInteractionParams {
  * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
  */
 class WaterInteraction extends DataAction {
-  declare type: ActionType.WaterInteraction
+  declare readonly type: ActionType.WaterInteraction
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID for a texture that controls the shape of the interaction.
    */
@@ -33501,7 +33572,8 @@ export interface LensFlareParams {
  * Creates lens flares with up to 4 textured layers with different colors and sizes.
  */
 class LensFlare extends DataAction {
-  declare type: ActionType.LensFlare
+  declare readonly type: ActionType.LensFlare
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Layer 1 texture ID.
    */
@@ -34711,7 +34783,8 @@ export interface RichModelParams {
  * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  */
 class RichModel extends DataAction {
-  declare type: ActionType.RichModel
+  declare readonly type: ActionType.RichModel
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:true}
   /**
    * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
    */
@@ -35489,7 +35562,8 @@ export interface Unk10100Params {
  * Unknown root node action.
  */
 class Unk10100 extends DataAction {
-  declare type: ActionType.Unk10100
+  declare readonly type: ActionType.Unk10100
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -35643,7 +35717,8 @@ export interface CancelForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
  */
 class CancelForce extends DataAction {
-  declare type: ActionType.CancelForce
+  declare readonly type: ActionType.CancelForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The shape of the volume.
    * 
@@ -36150,7 +36225,8 @@ export interface WindForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
  */
 class WindForce extends DataAction {
-  declare type: ActionType.WindForce
+  declare readonly type: ActionType.WindForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The strength of the force applied in the volume.
    * 
@@ -36619,7 +36695,8 @@ export interface GravityForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
  */
 class GravityForce extends DataAction {
-  declare type: ActionType.GravityForce
+  declare readonly type: ActionType.GravityForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The strength of the force applied in the volume.
    * 
@@ -36825,7 +36902,8 @@ export interface ForceCollisionParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
  */
 class ForceCollision extends DataAction {
-  declare type: ActionType.ForceCollision
+  declare readonly type: ActionType.ForceCollision
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The shape of the volume.
    * 
@@ -37283,7 +37361,8 @@ export interface TurbulenceForceParams {
  * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
  */
 class TurbulenceForce extends DataAction {
-  declare type: ActionType.TurbulenceForce
+  declare readonly type: ActionType.TurbulenceForce
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
@@ -37866,7 +37945,8 @@ export interface Unk10400Params {
  * Unknown root node action.
  */
 class Unk10400 extends DataAction {
-  declare type: ActionType.Unk10400
+  declare readonly type: ActionType.Unk10400
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   unk_ds3_f1_0: number
   unk_ds3_f1_1: number
   unk_ds3_f1_2: number
@@ -38022,7 +38102,8 @@ export interface Unk10500Params {
  * Unknown root node action.
  */
 class Unk10500 extends DataAction {
-  declare type: ActionType.Unk10500
+  declare readonly type: ActionType.Unk10500
+  declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls how fast time passes for the entire effect.
    * 
@@ -38413,7 +38494,8 @@ export interface SpotLightParams {
  * Light source with an elliptic cone shape, a spot light.
  */
 class SpotLight extends DataAction {
-  declare type: ActionType.SpotLight
+  declare readonly type: ActionType.SpotLight
+  declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls the diffuse color of the light.
    * 

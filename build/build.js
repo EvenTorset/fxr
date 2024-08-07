@@ -295,7 +295,8 @@ export default async function(writeToDist = true) {
          * ${data.desc.trim().replace(/\n/g, '\n * ')}
          */
         class ${data.name} extends DataAction {
-          declare type: ActionType.${data.name}
+          declare readonly type: ActionType.${data.name}
+          declare readonly meta: ActionMeta & {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}}
           ${Object.entries(data.properties ?? {}).filter(e => !e[1].omitClassProp).map(([k, v]) => {
             return (
               'desc' in v ? `
