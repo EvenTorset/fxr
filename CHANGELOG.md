@@ -3,7 +3,6 @@
 ## [14.0.0] - 2024-08-07
 
 ### Highlights
-- Added `NodeAnimatedRotation` - A function that creates a `NodeSpin` action from a rotation property. Animating the rotation directly is not normally possible, it can only be done by controlling the angular speed. This function makes it possible by converting a rotation property to an angular speed property.
 - Added more utility functions:
   - `FXRUtility.box` - Creates an outline of a cuboid shape.
   - `FXRUtility.rect` - Creates a rectangle.
