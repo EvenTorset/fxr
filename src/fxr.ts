@@ -3828,42 +3828,18 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleRotationVarianceX: { default: 0, field: 2 },
-      particleRotationVarianceY: { default: 0, field: 2 },
-      particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
-      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleSpeed: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMin: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleAccelerationMin: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleAccelerationMax: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleRotationVariance: { default: [0, 0, 0], field: 4 },
+      particleAngularSpeedVariance: { default: [0, 0, 0], field: 4, time: 1 },
+      particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
+      particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -4025,19 +4001,19 @@ const ActionData: {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','desaturate'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','desaturate'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_28'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
@@ -4077,42 +4053,18 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ds3_f1_32: { default: 0, field: 1 },
       unk_ds3_f1_33: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
-      particleSpeedX: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedY: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZ: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleAccelerationZMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleRotationVarianceX: { default: 0, field: 2 },
-      particleRotationVarianceY: { default: 0, field: 2 },
-      particleRotationVarianceZ: { default: 0, field: 2 },
-      particleAngularSpeedVarianceX: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceY: { default: 0, field: 2, time: 1 },
-      particleAngularSpeedVarianceZ: { default: 0, field: 2, time: 1 },
-      particleAngularAccelerationXMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMin: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationXMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationYMax: { default: 0, field: 2, time: 4 },
-      particleAngularAccelerationZMax: { default: 0, field: 2, time: 4 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleSpeed: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMin: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0, 0, 0], field: 4, scale: 1, time: 1 },
+      particleAccelerationMin: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleAccelerationMax: { default: [0, 0, 0], field: 4, scale: 1, time: 4 },
+      particleRotationVariance: { default: [0, 0, 0], field: 4 },
+      particleAngularSpeedVariance: { default: [0, 0, 0], field: 4, time: 1 },
+      particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
+      particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
       particleSizeX: { default: 1, field: 2, scale: 1 },
       particleSizeY: { default: 1, field: 2, scale: 1 },
@@ -4275,7 +4227,7 @@ const ActionData: {
       [Game.DarkSouls3]: -2,
       [Game.Sekiro]: -2,
       [Game.EldenRing]: {
-        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','particleSpeedX','particleSpeedY','particleSpeedZ','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','particleAccelerationXMin','particleAccelerationYMin','particleAccelerationZMin','particleAccelerationXMax','particleAccelerationYMax','particleAccelerationZMax','particleRotationVarianceX','particleRotationVarianceY','particleRotationVarianceZ','particleAngularSpeedVarianceX','particleAngularSpeedVarianceY','particleAngularSpeedVarianceZ','particleAngularAccelerationXMin','particleAngularAccelerationYMin','particleAngularAccelerationZMin','particleAngularAccelerationXMax','particleAngularAccelerationYMax','particleAngularAccelerationZMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
+        fields1: ['unk_ds3_f1_0','texture','unk_ds3_f1_2','normalMap','emitterShape','unk_ds3_f1_5','emitterSize','emitterRotation','unk_ds3_f1_12','unk_ds3_f1_13','unk_ds3_f1_14','emitterDistribution','unk_ds3_f1_16','unk_ds3_f1_17','unk_ds3_f1_18','unk_ds3_f1_19','unk_ds3_f1_20','unk_ds3_f1_21','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','unk_ds3_f1_25','emissionIntervalMin','emissionIntervalMax','limitEmissionCount','emissionCountLimit','unk_ds3_f1_30','particleDuration','unk_ds3_f1_32','unk_ds3_f1_33','particleOffset','particleOffsetMin','particleOffsetMax','particleSpeed','particleSpeedMin','particleSpeedMax','particleAccelerationMin','particleAccelerationMax','particleRotationVariance','particleAngularSpeedVariance','particleAngularAccelerationMin','particleAngularAccelerationMax','particleUniformScale','particleSizeX','particleSizeY','unk_ds3_f1_73','particleSizeXMin','particleSizeYMin','unk_ds3_f1_76','particleSizeXMax','particleSizeYMax','unk_ds3_f1_79','particleGrowthRateXStatic','particleGrowthRateYStatic','unk_ds3_f1_82','particleGrowthRateXMin','particleGrowthRateYMin','unk_ds3_f1_85','particleGrowthRateXMax','particleGrowthRateYMax','unk_ds3_f1_88','particleGrowthAccelerationXMin','particleGrowthAccelerationYMin','unk_ds3_f1_91','particleGrowthAccelerationXMax','particleGrowthAccelerationYMax','unk_ds3_f1_94','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','columns','totalFrames','randomTextureFrame','unk_ds3_f1_109','maxFrameIndex','unk_ds3_f1_111','unk_ds3_f1_112','unk_ds3_f1_113','unk_ds3_f1_114','unk_ds3_f1_115','unk_ds3_f1_116','unk_ds3_f1_117','unk_ds3_f1_118','particleDurationMultiplier','unk_ds3_f1_120','particleSizeMultiplier','unk_ds3_f1_122','unk_ds3_f1_123','unk_ds3_f1_124','unk_ds3_f1_125','unk_ds3_f1_126','unk_ds3_f1_127','unk_ds3_f1_128','unk_ds3_f1_129','unk_ds3_f1_130','unk_ds3_f1_131','unk_ds3_f1_132','unk_ds3_f1_133','unk_ds3_f1_134','unk_ds3_f1_135','unk_ds3_f1_136','unk_ds3_f1_137','unk_ds3_f1_138','unk_ds3_f1_139','unk_ds3_f1_140','unk_ds3_f1_141','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','particleRandomTurns','particleRandomTurnIntervalMax','traceParticles','unk_ds3_f1_149','particleTraceLength','traceParticlesThreshold','traceParticleHead','unk_ds3_f1_153','unk_ds3_f1_154','bloom','bloomColor','unk_sdt_f1_160','unk_sdt_f1_161','unk_sdt_f1_162','unk_sdt_f1_163','unk_sdt_f1_164','unk_sdt_f1_165','unk_sdt_f1_166','unk_er_f1_167'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','unk_ds3_f2_5','unk_ds3_f2_6','unk_ds3_f2_7','unk_ds3_f2_8','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_sdt_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
@@ -4362,22 +4314,12 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedMin: { default: [-0.01, -0.01, -0.01], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0.01, 0.01, 0.01], field: 4, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
@@ -4493,7 +4435,7 @@ const ActionData: {
       [Game.Sekiro]: Game.ArmoredCore6,
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -4528,22 +4470,12 @@ const ActionData: {
       particleDuration: { default: 1, field: 1, time: 2 },
       unk_ac6_f1_28: { default: 0, field: 1 },
       unk_ac6_f1_29: { default: 0, field: 1 },
-      particleOffsetX: { default: 0, field: 2, scale: 1 },
-      particleOffsetY: { default: 0, field: 2, scale: 1 },
-      particleOffsetZ: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMin: { default: 0, field: 2, scale: 1 },
-      particleOffsetXMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetYMax: { default: 0, field: 2, scale: 1 },
-      particleOffsetZMax: { default: 0, field: 2, scale: 1 },
+      particleOffset: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMin: { default: [0, 0, 0], field: 4, scale: 1 },
+      particleOffsetMax: { default: [0, 0, 0], field: 4, scale: 1 },
       unk_ac6_f1_39: { default: 0, field: 1 },
-      particleSpeedXMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMin: { default: -0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedXMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedYMax: { default: 0.01, field: 2, scale: 1, time: 1 },
-      particleSpeedZMax: { default: 0.01, field: 2, scale: 1, time: 1 },
+      particleSpeedMin: { default: [-0.01, -0.01, -0.01], field: 4, scale: 1, time: 1 },
+      particleSpeedMax: { default: [0.01, 0.01, 0.01], field: 4, scale: 1, time: 1 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
       colorMin: { default: [0, 0, 0, 0], field: 5 },
@@ -4658,7 +4590,7 @@ const ActionData: {
     games: {
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffsetX','particleOffsetY','particleOffsetZ','particleOffsetXMin','particleOffsetYMin','particleOffsetZMin','particleOffsetXMax','particleOffsetYMax','particleOffsetZMax','unk_ac6_f1_39','particleSpeedXMin','particleSpeedYMin','particleSpeedZMin','particleSpeedXMax','particleSpeedYMax','particleSpeedZMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -24592,263 +24524,101 @@ export interface GPUStandardParticleParams {
    */
   unk_ds3_f1_33?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMin?: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMax?: Vector3
+  /**
+   * Particle speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetZ?: number
+  particleSpeed?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetYMin?: number
+  particleSpeedMax?: Vector3
   /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
-  /**
-   * Particle speed along the X-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX?: number
+  particleAccelerationMin?: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedY?: number
+  particleAccelerationMax?: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random rotation for each particle in degrees.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleRotationVariance?: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleAngularSpeedVariance?: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedZ?: number
+  particleAngularAccelerationMin?: Vector3
   /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
-   * **Default**: `0`
-   */
-  particleSpeedXMin?: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMax?: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMin?: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMin?: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMin?: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMax?: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMax?: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMax?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceX?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceY?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceZ?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceX?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceY?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceZ?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleAngularAccelerationXMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleAngularAccelerationXMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax?: number
+  particleAngularAccelerationMax?: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -26073,191 +25843,77 @@ class GPUStandardParticle extends DataAction {
   unk_ds3_f1_32: number
   unk_ds3_f1_33: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMin: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMax: Vector3
+  /**
+   * Particle speed.
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetY: number
+  particleSpeed: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMin: Vector3
+  /**
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMax: Vector3
+  /**
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleOffsetZ: number
+  particleAccelerationMin: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
-  /**
-   * Particle speed along the X-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX: number
+  particleAccelerationMax: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum amount of random rotation for each particle in degrees.
+   */
+  particleRotationVariance: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   */
+  particleAngularSpeedVariance: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedY: number
+  particleAngularAccelerationMin: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleSpeedZ: number
-  /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMin: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMax: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMin: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMin: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMin: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMax: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMax: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMax: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   */
-  particleRotationVarianceX: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   */
-  particleRotationVarianceY: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   */
-  particleRotationVarianceZ: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceX: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceY: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceZ: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMax}
-   */
-  particleAngularAccelerationXMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax: number
+  particleAngularAccelerationMax: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -26985,263 +26641,101 @@ export interface GPUStandardCorrectParticleParams {
    */
   unk_ds3_f1_33?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMin?: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleOffsetMax?: Vector3
+  /**
+   * Particle speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetZ?: number
+  particleSpeed?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetYMin?: number
+  particleSpeedMax?: Vector3
   /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
-  /**
-   * Particle speed along the X-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX?: number
+  particleAccelerationMin?: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedY?: number
+  particleAccelerationMax?: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random rotation for each particle in degrees.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
+   */
+  particleRotationVariance?: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   * 
+   * **Default**: `[0, 0, 0]`
+   */
+  particleAngularSpeedVariance?: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedZ?: number
+  particleAngularAccelerationMin?: Vector3
   /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
-   * **Default**: `0`
-   */
-  particleSpeedXMin?: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   * 
-   * **Default**: `0`
-   */
-  particleSpeedZMax?: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMin?: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMin?: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMin?: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationXMax?: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationYMax?: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZMax?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceX?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceY?: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   */
-  particleRotationVarianceZ?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceX?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceY?: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   */
-  particleAngularSpeedVarianceZ?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleAngularAccelerationXMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleAngularAccelerationXMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin?: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax?: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax?: number
+  particleAngularAccelerationMax?: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -28460,191 +27954,77 @@ class GPUStandardCorrectParticle extends DataAction {
   unk_ds3_f1_32: number
   unk_ds3_f1_33: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMin: Vector3
+  /**
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   */
+  particleOffsetMax: Vector3
+  /**
+   * Particle speed.
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
-  particleOffsetY: number
+  particleSpeed: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMin: Vector3
+  /**
+   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+   */
+  particleSpeedMax: Vector3
+  /**
+   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleOffsetZ: number
+  particleAccelerationMin: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
-  /**
-   * Particle speed along the X-axis.
+   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
    * See also:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedXMax}
+   * - {@link particleAccelerationX}
+   * - {@link particleAccelerationY}
+   * - {@link particleAccelerationZ}
    */
-  particleSpeedX: number
+  particleAccelerationMax: Vector3
   /**
-   * Particle speed along the Y-axis.
+   * Maximum amount of random rotation for each particle in degrees.
+   */
+  particleRotationVariance: Vector3
+  /**
+   * Maximum amount of random angular speed for each particle in degrees per second.
+   */
+  particleAngularSpeedVariance: Vector3
+  /**
+   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedYMax}
+   * - {@link particleAngularAccelerationMax}
    */
-  particleSpeedY: number
+  particleAngularAccelerationMin: Vector3
   /**
-   * Particle speed along the Z-axis.
+   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
    * See also:
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedZMax}
+   * - {@link particleAngularAccelerationMin}
    */
-  particleSpeedZ: number
-  /**
-   * Minimum particle speed along the X-axis. A random value between this and {@link particleSpeedXMax} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMin: number
-  /**
-   * Minimum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMax} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMax} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis. A random value between this and {@link particleSpeedXMin} will be added to {@link particleSpeedX} to get the final speed.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis. A random value between this and {@link particleSpeedYMin} will be added to {@link particleSpeedY} to get the final speed.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis. A random value between this and {@link particleSpeedZMin} will be added to {@link particleSpeedZ} to get the final speed.
-   */
-  particleSpeedZMax: number
-  /**
-   * Minimum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMax} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMin: number
-  /**
-   * Minimum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMax} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMin: number
-  /**
-   * Minimum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMax} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMin: number
-  /**
-   * Maximum particle acceleration along the X-axis. A random value between this and {@link particleAccelerationXMin} will be added to {@link particleAccelerationX} to get the final acceleration.
-   */
-  particleAccelerationXMax: number
-  /**
-   * Maximum particle acceleration along the Y-axis. A random value between this and {@link particleAccelerationYMin} will be added to {@link particleAccelerationY} to get the final acceleration.
-   */
-  particleAccelerationYMax: number
-  /**
-   * Maximum particle acceleration along the Z-axis. A random value between this and {@link particleAccelerationZMin} will be added to {@link particleAccelerationZ} to get the final acceleration.
-   */
-  particleAccelerationZMax: number
-  /**
-   * Maximum amount of random rotation each particle will have around the X-axis in degrees.
-   */
-  particleRotationVarianceX: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Y-axis in degrees.
-   */
-  particleRotationVarianceY: number
-  /**
-   * Maximum amount of random rotation each particle will have around the Z-axis in degrees.
-   */
-  particleRotationVarianceZ: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the X-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceX: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Y-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceY: number
-  /**
-   * Maximum amount of random angular speed each particle will have around the Z-axis in degrees per second.
-   */
-  particleAngularSpeedVarianceZ: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMax}
-   */
-  particleAngularAccelerationXMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMax}
-   */
-  particleAngularAccelerationYMin: number
-  /**
-   * Minimum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMax}
-   */
-  particleAngularAccelerationZMin: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the X-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationXMin}
-   */
-  particleAngularAccelerationXMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Y-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationYMin}
-   */
-  particleAngularAccelerationYMax: number
-  /**
-   * Maximum amount of random angular acceleration each particle will have around the Z-axis in degrees per second squared.
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationZMin}
-   */
-  particleAngularAccelerationZMax: number
+  particleAngularAccelerationMax: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
    * 
@@ -29656,71 +29036,27 @@ export interface GPUSparkParticleParams {
    */
   unk_ac6_f1_29?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetZ?: number
+  particleOffsetMin?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMin?: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
+  particleOffsetMax?: Vector3
   /**
    * Unknown integer.
    * 
@@ -29728,41 +29064,23 @@ export interface GPUSparkParticleParams {
    */
   unk_ac6_f1_39?: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
    * 
-   * **Default**: `-0.01`
+   * **Default**: `[-0.01, -0.01, -0.01]`
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
    * 
-   * **Default**: `-0.01`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis.
+   * **Default**: `[0.01, 0.01, 0.01]`
    * 
-   * **Default**: `-0.01`
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedZMax?: number
+  particleSpeedMax?: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -30631,78 +29949,36 @@ class GPUSparkParticle extends DataAction {
   unk_ac6_f1_28: number
   unk_ac6_f1_29: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetY: number
+  particleOffsetMin: Vector3
   /**
-   * Particle position offset along the Z-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetZ: number
-  /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
+  particleOffsetMax: Vector3
   unk_ac6_f1_39: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin: number
+  particleSpeedMin: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   */
-  particleSpeedZMax: number
+  particleSpeedMax: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    */
@@ -31199,71 +30475,27 @@ export interface GPUSparkCorrectParticleParams {
    */
   unk_ac6_f1_29?: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
-   */
-  particleOffsetX?: number
-  /**
-   * Particle position offset along the Y-axis.
-   * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetY?: number
+  particleOffset?: Vector3
   /**
-   * Particle position offset along the Z-axis.
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetZ?: number
+  particleOffsetMin?: Vector3
   /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    * 
-   * **Default**: `0`
+   * **Default**: `[0, 0, 0]`
    */
-  particleOffsetXMin?: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMin?: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMin?: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetXMax?: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetYMax?: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   * 
-   * **Default**: `0`
-   */
-  particleOffsetZMax?: number
+  particleOffsetMax?: Vector3
   /**
    * Unknown integer.
    * 
@@ -31271,41 +30503,23 @@ export interface GPUSparkCorrectParticleParams {
    */
   unk_ac6_f1_39?: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
    * 
-   * **Default**: `-0.01`
+   * **Default**: `[-0.01, -0.01, -0.01]`
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin?: number
+  particleSpeedMin?: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
    * 
-   * **Default**: `-0.01`
-   */
-  particleSpeedYMin?: number
-  /**
-   * Minimum particle speed along the Z-axis.
+   * **Default**: `[0.01, 0.01, 0.01]`
    * 
-   * **Default**: `-0.01`
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedZMin?: number
-  /**
-   * Maximum particle speed along the X-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedXMax?: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedYMax?: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   * 
-   * **Default**: `0.01`
-   */
-  particleSpeedZMax?: number
+  particleSpeedMax?: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -32175,78 +31389,36 @@ class GPUSparkCorrectParticle extends DataAction {
   unk_ac6_f1_28: number
   unk_ac6_f1_29: number
   /**
-   * Particle position offset along the X-axis.
+   * Particle position offset.
    * 
    * See also:
-   * - {@link particleOffsetXMin}
-   * - {@link particleOffsetXMax}
+   * - {@link particleOffsetMin}
+   * - {@link particleOffsetMax}
    */
-  particleOffsetX: number
+  particleOffset: Vector3
   /**
-   * Particle position offset along the Y-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetYMin}
-   * - {@link particleOffsetYMax}
+   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetY: number
+  particleOffsetMin: Vector3
   /**
-   * Particle position offset along the Z-axis.
-   * 
-   * See also:
-   * - {@link particleOffsetZMin}
-   * - {@link particleOffsetZMax}
+   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
    */
-  particleOffsetZ: number
-  /**
-   * Minimum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMax} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMin: number
-  /**
-   * Minimum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMax} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMin: number
-  /**
-   * Minimum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMax} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMin: number
-  /**
-   * Maximum particle position offset along the X-axis. A random value between this and {@link particleOffsetXMin} will be added to {@link particleOffsetX} to get the final position offset.
-   */
-  particleOffsetXMax: number
-  /**
-   * Maximum particle position offset along the Y-axis. A random value between this and {@link particleOffsetYMin} will be added to {@link particleOffsetY} to get the final position offset.
-   */
-  particleOffsetYMax: number
-  /**
-   * Maximum particle position offset along the Z-axis. A random value between this and {@link particleOffsetZMin} will be added to {@link particleOffsetZ} to get the final position offset.
-   */
-  particleOffsetZMax: number
+  particleOffsetMax: Vector3
   unk_ac6_f1_39: number
   /**
-   * Minimum particle speed along the X-axis.
+   * Minimum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMax}
    */
-  particleSpeedXMin: number
+  particleSpeedMin: Vector3
   /**
-   * Minimum particle speed along the Y-axis.
+   * Maximum particle speed.
+   * 
+   * See also:
+   * - {@link particleSpeedMin}
    */
-  particleSpeedYMin: number
-  /**
-   * Minimum particle speed along the Z-axis.
-   */
-  particleSpeedZMin: number
-  /**
-   * Maximum particle speed along the X-axis.
-   */
-  particleSpeedXMax: number
-  /**
-   * Maximum particle speed along the Y-axis.
-   */
-  particleSpeedYMax: number
-  /**
-   * Maximum particle speed along the Z-axis.
-   */
-  particleSpeedZMax: number
+  particleSpeedMax: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    */
