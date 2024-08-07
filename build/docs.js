@@ -19,7 +19,10 @@ await fs.rename('docs/functions', 'docs/funcs')
 for await (const filePath of getFiles('docs')) {
   if (filePath.endsWith('.html')) {
     const content = await fs.readFile(filePath, 'utf-8')
-    await fs.writeFile(filePath, content.replace(/href="((?:..\/)*)functions/g, 'href="$1funcs'))
+    await fs.writeFile(filePath, content
+      .replace(/href="((?:..\/)*)functions/g, 'href="$1funcs')
+      .replace(/&lt;a href=&quot;.+?&quot; class=&quot;.*?&quot;&gt;<wbr\/>(.+?)&lt;\/a&gt;/, '$1')
+    )
   }
 }
 
