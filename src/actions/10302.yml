@@ -21,9 +21,9 @@ properties:
       |-|-|
       | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
       | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-      | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+      | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
       | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
-      
+
       **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
   sphereRadius:
     field: float

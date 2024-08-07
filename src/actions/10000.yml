@@ -838,8 +838,8 @@ properties:
     desc: |
       Particle acceleration along the X-axis.
     see:
-      - particleAccelerationXMin
-      - particleAccelerationXMax
+      - particleAccelerationMin
+      - particleAccelerationMax
   particleAccelerationY:
     type: ScalarValue
     scale: true
@@ -847,8 +847,8 @@ properties:
     desc: |
       Particle acceleration along the Y-axis.
     see:
-      - particleAccelerationYMin
-      - particleAccelerationYMax
+      - particleAccelerationMin
+      - particleAccelerationMax
   particleAccelerationZ:
     type: ScalarValue
     scale: true
@@ -856,8 +856,8 @@ properties:
     desc: |
       Particle acceleration along the Z-axis.
     see:
-      - particleAccelerationZMin
-      - particleAccelerationZMax
+      - particleAccelerationMin
+      - particleAccelerationMax
   unk_ds3_p1_7:
     type: ScalarValue
   unk_ds3_p1_8:
@@ -868,8 +868,8 @@ properties:
     desc: |
       Angular acceleration for particles around the Z-axis in degrees per second squared.
     see:
-      - particleAngularAccelerationZMin
-      - particleAngularAccelerationZMax
+      - particleAngularAccelerationMin
+      - particleAngularAccelerationMax
   particleGrowthRateX:
     type: ScalarValue
     scale: true

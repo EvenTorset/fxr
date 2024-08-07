@@ -588,12 +588,8 @@ properties:
       Similar to {@link particleAccelerationZ}, but this does not go exactly north?
 
       This requires any of the following fields to have a non-zero value:
-      - {@link particleSpeedXMin}
-      - {@link particleSpeedYMin}
-      - {@link particleSpeedZMin}
-      - {@link particleSpeedXMax}
-      - {@link particleSpeedYMax}
-      - {@link particleSpeedZMax}
+      - {@link particleSpeedMin}
+      - {@link particleSpeedMax}
   unk_ac6_p1_11:
     type: ScalarValue
   particleGravity:
@@ -605,12 +601,8 @@ properties:
       Downwards acceleration for particles.
 
       This requires any of the following fields to have a non-zero value:
-      - {@link particleSpeedXMin}
-      - {@link particleSpeedYMin}
-      - {@link particleSpeedZMin}
-      - {@link particleSpeedXMax}
-      - {@link particleSpeedYMax}
-      - {@link particleSpeedZMax}
+      - {@link particleSpeedMin}
+      - {@link particleSpeedMax}
   unk_ac6_p1_13:
     type: ScalarValue
   unk_ac6_p2_0:

@@ -25568,8 +25568,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX?: ScalarValue
   /**
@@ -25578,8 +25578,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY?: ScalarValue
   /**
@@ -25588,8 +25588,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ?: ScalarValue
   /**
@@ -25610,8 +25610,8 @@ export interface GPUStandardParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ?: ScalarValue
   /**
@@ -26350,24 +26350,24 @@ class GPUStandardParticle extends DataAction {
    * Particle acceleration along the X-axis.
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ: ScalarValue
   unk_ds3_p1_7: ScalarValue
@@ -26376,8 +26376,8 @@ class GPUStandardParticle extends DataAction {
    * Angular acceleration for particles around the Z-axis in degrees per second squared.
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ: ScalarValue
   /**
@@ -27679,8 +27679,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX?: ScalarValue
   /**
@@ -27689,8 +27689,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY?: ScalarValue
   /**
@@ -27699,8 +27699,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ?: ScalarValue
   /**
@@ -27721,8 +27721,8 @@ export interface GPUStandardCorrectParticleParams {
    * **Default**: `0`
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ?: ScalarValue
   /**
@@ -28457,24 +28457,24 @@ class GPUStandardCorrectParticle extends DataAction {
    * Particle acceleration along the X-axis.
    * 
    * See also:
-   * - {@link particleAccelerationXMin}
-   * - {@link particleAccelerationXMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
    * 
    * See also:
-   * - {@link particleAccelerationYMin}
-   * - {@link particleAccelerationYMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
    * 
    * See also:
-   * - {@link particleAccelerationZMin}
-   * - {@link particleAccelerationZMax}
+   * - {@link particleAccelerationMin}
+   * - {@link particleAccelerationMax}
    */
   particleAccelerationZ: ScalarValue
   unk_ds3_p1_7: ScalarValue
@@ -28483,8 +28483,8 @@ class GPUStandardCorrectParticle extends DataAction {
    * Angular acceleration for particles around the Z-axis in degrees per second squared.
    * 
    * See also:
-   * - {@link particleAngularAccelerationZMin}
-   * - {@link particleAngularAccelerationZMax}
+   * - {@link particleAngularAccelerationMin}
+   * - {@link particleAngularAccelerationMax}
    */
   particleAngularAccelerationZ: ScalarValue
   /**
@@ -29755,12 +29755,8 @@ export interface GPUSparkParticleParams {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `0`
    */
@@ -29775,12 +29771,8 @@ export interface GPUSparkParticleParams {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `1`
    */
@@ -30251,12 +30243,8 @@ class GPUSparkParticle extends DataAction {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   unkParticleAcceleration: ScalarValue
   unk_ac6_p1_11: ScalarValue
@@ -30264,12 +30252,8 @@ class GPUSparkParticle extends DataAction {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   particleGravity: ScalarValue
   unk_ac6_p1_13: ScalarValue
@@ -31194,12 +31178,8 @@ export interface GPUSparkCorrectParticleParams {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `0`
    */
@@ -31214,12 +31194,8 @@ export interface GPUSparkCorrectParticleParams {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    * 
    * **Default**: `1`
    */
@@ -31691,12 +31667,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   unkParticleAcceleration: ScalarValue
   unk_ac6_p1_11: ScalarValue
@@ -31704,12 +31676,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * Downwards acceleration for particles.
    * 
    * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedXMin}
-   * - {@link particleSpeedYMin}
-   * - {@link particleSpeedZMin}
-   * - {@link particleSpeedXMax}
-   * - {@link particleSpeedYMax}
-   * - {@link particleSpeedZMax}
+   * - {@link particleSpeedMin}
+   * - {@link particleSpeedMax}
    */
   particleGravity: ScalarValue
   unk_ac6_p1_13: ScalarValue
@@ -35596,7 +35564,7 @@ export interface CancelForceParams {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    * 
@@ -35684,7 +35652,7 @@ class CancelForce extends DataAction {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
@@ -35763,7 +35731,7 @@ export interface WindForceParams {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    * 
@@ -36202,7 +36170,7 @@ class WindForce extends DataAction {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
@@ -36374,7 +36342,7 @@ export interface GravityForceParams {
    * |-|-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
    * 
@@ -36671,7 +36639,7 @@ class GravityForce extends DataAction {
    * |-|-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
    */
@@ -36800,7 +36768,7 @@ export interface ForceCollisionParams {
    * |-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
    * 
    * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
@@ -36866,7 +36834,7 @@ class ForceCollision extends DataAction {
    * |-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
    * 
    * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
@@ -36965,7 +36933,7 @@ export interface TurbulenceForceParams {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    * 
@@ -37364,7 +37332,7 @@ class TurbulenceForce extends DataAction {
    * |-|-|-|
    * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
    * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSizeX}, {@link boxSizeY}, {@link boxSizeZ} | Center of the box |
+   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
    */
