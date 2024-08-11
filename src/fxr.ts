@@ -7794,6 +7794,12 @@ function constantValueOf(v: AnyValue) {
   return v instanceof Property ? v.valueAt(0) : v
 }
 
+function scalePropMods<T extends ValueType>(prop: Property<T, PropertyFunction>, factor: TypeMap.PropertyValue[T] | number) {
+  for (let i = prop.modifiers.length - 1; i >= 0; i--) {
+    prop.modifiers[i] = Modifier.multPropertyValue(prop.modifiers[i], factor)
+  }
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
@@ -38943,12 +38949,6 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  protected modifiersScale(factor: TypeMap.PropertyValue[T] | number) {
-    for (let i = this.modifiers.length - 1; i >= 0; i--) {
-      this.modifiers[i] = Modifier.multPropertyValue(this.modifiers[i], factor)
-    }
-  }
-
   static fromJSON<T extends ValueType>(obj: any) {
     if (obj instanceof Property) {
       return obj
@@ -39113,7 +39113,7 @@ class ValueProperty<T extends ValueType>
         this.value = (this.value as Vector).map((e, i) => e * factor[i]) as TypeMap.PropertyValue[T]
       }
     }
-    this.modifiersScale(factor)
+    scalePropMods(this, factor)
     return this
   }
 
@@ -39392,7 +39392,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     for (const kf of this.keyframes) {
       Keyframe.scale(kf, factor)
     }
-    this.modifiersScale(factor)
+    scalePropMods(this, factor)
     return this
   }
 
@@ -39608,7 +39608,7 @@ class ComponentSequenceProperty<T extends ValueType>
     for (const [i, comp] of this.components.entries()) {
       comp.scale(typeof factor === 'number' ? factor : factor[i])
     }
-    this.modifiersScale(factor)
+    scalePropMods(this, factor)
     return this
   }
 
