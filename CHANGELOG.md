@@ -1,5 +1,10 @@
 # Changelog
 
+## [14.0.1] - 2024-08-11
+
+### Highlights
+- Fixed a problem related to TypeScript. There are no functional changes at all in this update, the problem only occurred in rare cases when trying to use a generic Property as a type in TS. Any JavaScript using the library won't notice anything different, because there really is nothing different.
+
 ## [14.0.0] - 2024-08-07
 
 ### Highlights
@@ -136,6 +141,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0
 [13.0.0]: https://github.com/EvenTorset/fxr/compare/v12.2.0...v13.0.0
 [12.2.0]: https://github.com/EvenTorset/fxr/compare/v12.1.0...v12.2.0
