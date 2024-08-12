@@ -1739,6 +1739,7 @@ export interface IModifier<T extends ValueType> {
   toJSON(): any
   clone(): IModifier<T>
   separateComponents(): IModifier<ValueType.Scalar>[]
+  minify(): IModifier<T>
 }
 
 export interface ActionMeta {
@@ -7892,6 +7893,15 @@ function clampProp<T extends ValueType>(
     clone = seq
   }
   return clone.minify()
+}
+
+function propValueEqual(a: PropertyValue, b: PropertyValue) {
+  if (isVector(a) && isVector(b)) {
+    return a.every((e, i) => e === b[i])
+  } else if (!isVector(a) && !isVector(b)) {
+    return a === b
+  }
+  return false
 }
 
 const ActionDataConversion = {
@@ -38977,17 +38987,9 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
   }
 
   static equal<T extends ValueType, K extends IBasicKeyframe<T> | IBezierKeyframe<T>>(kf1: K, kf2: K) {
-    return (
-      Array.isArray(kf1.value) && kf1.value.every((e, i) => e === kf2.value[i]) ||
-      kf1.value === kf2.value
-    ) && (
-      !('p1' in kf1 && 'p1' in kf2) || (
-        Array.isArray(kf1.p1) && kf1.p1.every((e, i) => e === 0 && kf2.p1[i] === 0) ||
-        kf1.p1 === 0 && kf2.p1 === 0
-      ) && (
-        Array.isArray(kf1.p2) && kf1.p2.every((e, i) => e === 0 && kf2.p2[i] === 0) ||
-        kf1.p2 === 0 && kf2.p2 === 0
-      )
+    return propValueEqual(kf1.value, kf2.value) && (
+      !('p1' in kf1 && 'p1' in kf2) ||
+      propValueEqual(kf1.p1, kf2.p1) && propValueEqual(kf1.p2, kf2.p2)
     )
   }
 
@@ -39257,7 +39259,7 @@ class ValueProperty<T extends ValueType>
 
   minify(): ValueProperty<T> {
     const clone = this.clone()
-    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    clone.modifiers = clone.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     return clone
   }
 
@@ -39580,19 +39582,26 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   }
 
   minify(): Property<T, PropertyFunction> {
+    const mods = this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
       if (this.valueType === ValueType.Scalar) {
-        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
-          ...this.modifiers.filter(Modifier.isEffective)
-        )
+        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(...mods)
       } else {
-        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(
-          ...this.modifiers.filter(Modifier.isEffective)
-        )
+        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(...mods)
       }
     }
     const clone = this.clone()
-    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    clone.modifiers = mods
+    if (clone.function === PropertyFunction.Stepped) {
+      clone.keyframes = clone.keyframes.filter((e, i, a) => i === 0 || i === a.length - 1 || !propValueEqual(a[i-1].value, e.value))
+    } else if (clone.function === PropertyFunction.Linear) {
+      clone.keyframes = clone.keyframes.filter((e, i, a) =>
+        i === 0 ||
+        i === a.length - 1 ||
+        !propValueEqual(a[i-1].value, e.value) ||
+        !propValueEqual(e.value, a[i+1].value)
+      )
+    }
     return clone
   }
 
@@ -39837,12 +39846,12 @@ class ComponentSequenceProperty<T extends ValueType>
       return new ConstantProperty<T>(
         ...this.components.map(c => c.keyframes[0].value)
       ).withModifiers(
-        ...this.modifiers.filter(Modifier.isEffective)
+        ...this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
       )
     }
     if (this.canBeSimplified()) return this.combineComponents().minify()
     const clone = this.clone()
-    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    clone.modifiers = clone.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     return clone
   }
 
@@ -40350,6 +40359,10 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
     throw new Error('Generic modifiers cannot be split into component modifiers.')
   }
 
+  minify(): GenericModifier<T> {
+    return this
+  }
+
 }
 
 /**
@@ -40425,6 +40438,10 @@ class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
     } else {
       return (this.max as Vector).map((e, i) => new RandomDeltaModifier(e, (this.seed as Vector)[i]))
     }
+  }
+
+  minify(): RandomDeltaModifier<T> {
+    return this
   }
 
 }
@@ -40506,6 +40523,10 @@ class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
     }
   }
 
+  minify(): RandomRangeModifier<T> {
+    return this
+  }
+
 }
 
 /**
@@ -40582,6 +40603,10 @@ class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
     return (this.max as Vector).map((e, i) => new RandomFractionModifier(e, (this.seed as Vector)[i]))
   }
 
+  minify(): RandomFractionModifier<T> {
+    return this
+  }
+
 }
 
 /**
@@ -40642,6 +40667,12 @@ class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
     return this.factor.separateComponents().map(e => new ExternalValue1Modifier(this.externalValue, e))
   }
 
+  minify(): ExternalValue1Modifier<T> {
+    const clone = this.clone()
+    clone.factor = clone.factor.minify() as TypeMap.Property[T]
+    return clone
+  }
+
 }
 
 class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
@@ -40696,6 +40727,12 @@ class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
       return [ this.clone() as IModifier<ValueType.Scalar> ]
     }
     return this.factor.separateComponents().map(e => new ExternalValue2Modifier(this.externalValue, e))
+  }
+
+  minify(): ExternalValue2Modifier<T> {
+    const clone = this.clone()
+    clone.factor = clone.factor.minify() as TypeMap.Property[T]
+    return clone
   }
 
 }

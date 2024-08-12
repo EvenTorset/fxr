@@ -4,6 +4,9 @@
 
 ### Highlights
 - Added a `clamp` method to properties. This slices off peaks and troughs outside of a given range to make sure the property value stays within the range.
+- Added a `minify` method to modifiers. This does nothing for most of the modifier types, but for the external value modifiers this will minify the `factor` property.
+- The `minify` method on properties now also minify the modifiers.
+- The `minify` method on Stepped and Linear properties now removes keyframes that aren't doing anything. For example, if you have a linear scalar property with these keyframe values: `0, 1, 1, 1, 0`, then the middle keyframe is not doing anything, because it has two equivalent ones surrounding it, so when minified, this property would end up having these keyframe values: `0, 1, 1, 0`.
 
 ## [14.0.1] - 2024-08-11
 
