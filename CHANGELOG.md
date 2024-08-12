@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Highlights
+- Added a `clamp` method to properties. This slices off peaks and troughs outside of a given range to make sure the property value stays within the range.
+
 ## [14.0.1] - 2024-08-11
 
 ### Highlights

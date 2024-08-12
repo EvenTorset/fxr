@@ -6816,8 +6816,8 @@ function uniqueArray<T>(a: T[]) {
   return Array.from(new Set(a))
 }
 
-function lerp(a: number, b: number, c: number) {
-  return a + (b - a) * c
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t
 }
 
 function interpolateSegments(arr: number[], targetS: number, maxSegments: number): number[] {
@@ -7798,6 +7798,100 @@ function scalePropMods<T extends ValueType>(prop: Property<T, PropertyFunction>,
   for (let i = prop.modifiers.length - 1; i >= 0; i--) {
     prop.modifiers[i] = Modifier.multPropertyValue(prop.modifiers[i], factor)
   }
+}
+
+function clampPropValue<T extends PropertyValue>(v: T, min: T, max: T): T {
+  if (Array.isArray(v) && Array.isArray(min) && Array.isArray(max)) {
+    return v.map((e, i) => Math.max(min[i], Math.min(max[i], e))) as T
+  } else if (!Array.isArray(v) && !Array.isArray(min) && !Array.isArray(max)) {
+    return Math.max(min, Math.min(max, v)) as T
+  } else {
+    throw new Error('Invalid property type inputs.')
+  }
+}
+
+function lerpPropValue<T extends PropertyValue>(v1: T, v2: T, t: number): T {
+  if (isVector(v1) && isVector(v2)) {
+    return v1.map((e, i) => lerp(e, v2[i], t)) as T
+  } else if (typeof v1 === 'number' && typeof v2 === 'number') {
+    return lerp(v1, v2, t) as T
+  } else {
+    throw new Error('')
+  }
+}
+
+function findIntersection<T extends ValueType>(
+  kf1: Keyframe<T>,
+  kf2: Keyframe<T>,
+  min: TypeMap.PropertyValue[T],
+  max: TypeMap.PropertyValue[T]
+): Keyframe<T> | null {
+  for (let i = 0; i < 4; i++) {
+    if ((kf1.value[i] < min[i] && kf2.value[i] > min[i]) || (kf1.value[i] > max[i] && kf2.value[i] < max[i])) {
+      const t = (kf1.value[i] < min[i] ? min[i] : max[i] - kf1.value[i]) / (kf2.value[i] - kf1.value[i])
+      const position = kf1.position + t * (kf2.position - kf1.position)
+      const value = lerpPropValue(kf1.value, kf2.value, t)
+      return new Keyframe(position, value)
+    }
+  }
+  return null
+}
+
+function clampKeyframes<T extends ValueType>(
+  keyframes: Keyframe<T>[],
+  min: TypeMap.PropertyValue[T],
+  max: TypeMap.PropertyValue[T]
+): Keyframe<T>[] {
+  const clampedKeyframes: Keyframe<T>[] = []
+  for (let i = 0; i < keyframes.length - 1; i++) {
+    const kf1 = keyframes[i]
+    const kf2 = keyframes[i + 1]
+    clampedKeyframes.push(new Keyframe(kf1.position, clampPropValue(kf1.value, min, max)))
+    const intersection = findIntersection(kf1, kf2, min, max)
+    if (intersection) {
+      clampedKeyframes.push(intersection)
+    }
+  }
+  const lastKeyframe = keyframes[keyframes.length - 1]
+  clampedKeyframes.push(new Keyframe(lastKeyframe.position, clampPropValue(lastKeyframe.value, min, max)))
+  return clampedKeyframes
+}
+
+function clampProp<T extends ValueType>(
+  prop: Property<T, PropertyFunction>,
+  min: TypeMap.PropertyValue[T],
+  max: TypeMap.PropertyValue[T]
+): Property<T, PropertyFunction> {
+  let clone = prop.clone().minify()
+  if (clone instanceof ValueProperty) {
+    clone.value = clampPropValue(clone.value, min, max)
+  } else if (clone instanceof SequenceProperty || clone instanceof ComponentSequenceProperty) {
+    if (clone instanceof ComponentSequenceProperty) {
+      clone = clone.combineComponents()
+    }
+    let seq = clone as SequenceProperty<T, SequencePropertyFunction>
+    if (seq.function !== PropertyFunction.Stepped && seq.function !== PropertyFunction.Linear) {
+      const posSet = new Set<number>()
+      for (const keyframe of seq.keyframes) {
+        posSet.add(keyframe.position)
+      }
+      const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
+      seq = new LinearProperty(
+        seq.loop,
+        filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
+          .map(e => new Keyframe(e, seq.valueAt(e)))
+      )
+    }
+    if (seq.function === PropertyFunction.Stepped) {
+      for (const kf of seq.keyframes) {
+        kf.value = clampPropValue(kf.value, min, max)
+      }
+    } else {
+      seq.keyframes = clampKeyframes(seq.keyframes, min, max)
+    }
+    clone = seq
+  }
+  return clone.minify()
 }
 
 const ActionDataConversion = {
@@ -39003,6 +39097,10 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
       return clone
     }
     return this
+  }
+
+  clamp(min: TypeMap.PropertyValue[T], max: TypeMap.PropertyValue[T]): Property<T, PropertyFunction> {
+    return clampProp(this, min, max)
   }
 
   abstract fieldCount: number
