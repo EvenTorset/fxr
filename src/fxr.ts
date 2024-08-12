@@ -7821,21 +7821,54 @@ function lerpPropValue<T extends PropertyValue>(v1: T, v2: T, t: number): T {
   }
 }
 
-function findIntersection<T extends ValueType>(
-  kf1: Keyframe<T>,
-  kf2: Keyframe<T>,
-  min: TypeMap.PropertyValue[T],
-  max: TypeMap.PropertyValue[T]
-): Keyframe<T> | null {
-  for (let i = 0; i < 4; i++) {
-    if ((kf1.value[i] < min[i] && kf2.value[i] > min[i]) || (kf1.value[i] > max[i] && kf2.value[i] < max[i])) {
-      const t = (kf1.value[i] < min[i] ? min[i] : max[i] - kf1.value[i]) / (kf2.value[i] - kf1.value[i])
-      const position = kf1.position + t * (kf2.position - kf1.position)
-      const value = lerpPropValue(kf1.value, kf2.value, t)
-      return new Keyframe(position, value)
+function findIntersections<T extends ValueType>(
+  keyframe1: Keyframe<T>,
+  keyframe2: Keyframe<T>,
+  minValue: TypeMap.PropertyValue[T],
+  maxValue: TypeMap.PropertyValue[T]
+): Keyframe<T>[] {
+  const { position: x1, value: y1 } = keyframe1
+  const { position: x2, value: y2 } = keyframe2
+
+  if (y1 === y2) {
+    return []
+  }
+
+  function interpolate(y1: number, y2: number, minValue: number, maxValue: number) {
+    const slope = (y2 - y1) / (x2 - x1)
+    const positions: number[] = []
+
+    const tMin = (minValue - y1) / slope
+    if (tMin > 0 && tMin < (x2 - x1)) {
+      const xMin = x1 + tMin
+      if (xMin >= x1 && xMin <= x2) {
+        positions.push(xMin)
+      }
+    }
+
+    const tMax = (maxValue - y1) / slope
+    if (tMax > 0 && tMax < (x2 - x1)) {
+      const xMax = x1 + tMax
+      if (xMax >= x1 && xMax <= x2) {
+        positions.push(xMax)
+      }
+    }
+
+    return positions
+  }
+
+  const results: Keyframe<T>[] = []
+  if (typeof y1 === 'number' && typeof y2 === 'number') {
+    const positions = interpolate(y1, y2, minValue as number, maxValue as number)
+    results.push(...positions.map(x => new Keyframe(x, clampPropValue(lerpPropValue(y1, y2, (x - x1) / (x2 - x1)), minValue, maxValue))))
+  } else if (Array.isArray(y1) && Array.isArray(y2)) {
+    const comps = y1.length
+    for (let c = 0; c < comps; c++) {
+      const positions = interpolate(y1[c], y2[c], minValue[c], maxValue[c])
+      results.push(...positions.map(x => new Keyframe(x, clampPropValue(lerpPropValue(y1, y2, (x - x1) / (x2 - x1)), minValue, maxValue))))
     }
   }
-  return null
+  return results
 }
 
 function clampKeyframes<T extends ValueType>(
@@ -7846,12 +7879,10 @@ function clampKeyframes<T extends ValueType>(
   const clampedKeyframes: Keyframe<T>[] = []
   for (let i = 0; i < keyframes.length - 1; i++) {
     const kf1 = keyframes[i]
-    const kf2 = keyframes[i + 1]
-    clampedKeyframes.push(new Keyframe(kf1.position, clampPropValue(kf1.value, min, max)))
-    const intersection = findIntersection(kf1, kf2, min, max)
-    if (intersection) {
-      clampedKeyframes.push(intersection)
-    }
+    clampedKeyframes.push(
+      new Keyframe(kf1.position, clampPropValue(kf1.value, min, max)),
+      ...findIntersections(kf1, keyframes[i + 1], min, max)
+    )
   }
   const lastKeyframe = keyframes[keyframes.length - 1]
   clampedKeyframes.push(new Keyframe(lastKeyframe.position, clampPropValue(lastKeyframe.value, min, max)))
@@ -7890,16 +7921,22 @@ function clampProp<T extends ValueType>(
     } else {
       seq.keyframes = clampKeyframes(seq.keyframes, min, max)
     }
+    seq.sortKeyframes()
     clone = seq
   }
   return clone.minify()
 }
 
+const FLOAT32_EPSILON = 2 ** -23
+function f32Equal(a: number, b: number) {
+  return Math.abs(a - b) <= FLOAT32_EPSILON
+}
+
 function propValueEqual(a: PropertyValue, b: PropertyValue) {
   if (isVector(a) && isVector(b)) {
-    return a.every((e, i) => e === b[i])
+    return a.every((e, i) => f32Equal(e, b[i]))
   } else if (!isVector(a) && !isVector(b)) {
-    return a === b
+    return f32Equal(a, b)
   }
   return false
 }
