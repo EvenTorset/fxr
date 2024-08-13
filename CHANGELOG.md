@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Highlights
+- Added a `find` method to FXR objects, which finds and returns a value at a given path in the FXR. For example, a path like `root/nodes/0` would be the first child node of the root node.
 - Added a `clamp` method to properties. This slices off peaks and troughs outside of a given range to make sure the property value stays within the range.
 - Added a `minify` method to modifiers. This does nothing for most of the modifier types, but for the external value modifiers this will minify the `factor` property.
 - The `minify` method on properties now also minify the modifiers.

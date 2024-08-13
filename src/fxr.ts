@@ -9261,6 +9261,36 @@ class FXR {
     return `f${this.id.toString().padStart(9, '0')}.fxr`
   }
 
+  /**
+   * Finds and returns a value at a given path. If the path does not match
+   * anything, this returns `null`.
+   * 
+   * For example, to get the appearance action in the second effect in the
+   * first child node of the root node, you would use this path:
+   * ```js
+   * fxr.find(['root', 'nodes', 0, 'effects', 1, 'appearance'])
+   * // Or in string form:
+   * fxr.find('root/nodes/0/effects/1/appearance')
+   * // Both are equivalent to this:
+   * fxr.root.nodes[0].effects[1].appearance
+   * ```
+   * @param path The path to the value to look for.
+   */
+  find(path: (string | number)[] | string): any {
+    if (typeof path === 'string') {
+      path = path.replace(/^[\/\s]+|[\/\s]+$/g, '').split('/')
+    }
+    let current: any = this
+    for (const key of path) {
+      if (current && current[key] !== undefined) {
+        current = current[key]
+      } else {
+        return null
+      }
+    }
+    return current
+  }
+
 }
 
 //#region State
