@@ -41864,10 +41864,19 @@ namespace FXRUtility {
     return rad * 180 / Math.PI
   }
 
-  export function transform(center: Vector3, axis: Vector3, roll: number, nodes: Node[]) {
+  /**
+   * Wraps the given {@link nodes} in a node or set of nodes that have a
+   * transform applied to them. This can be useful to make the nodes point in a
+   * specific direction.
+   * @param offset Translation offset.
+   * @param axis The direction to point towards.
+   * @param roll The roll angle in degrees.
+   * @param nodes The nodes to transform.
+   */
+  export function transform(offset: Vector3, axis: Vector3, roll: number, nodes: Node[]) {
     if (axis[0] === 0 && axis[1] === 0 && axis[2] === 0 && roll === 0) {
       return new BasicNode([
-        NodeTransform({ offset: center })
+        NodeTransform({ offset })
       ], nodes)
     }
     axis = normalizeVector3(axis)
@@ -41875,7 +41884,7 @@ namespace FXRUtility {
     const pitch = -Math.asin(axis[0]) * 180 / Math.PI
     return new BasicNode([
       NodeTransform({
-        offset: center,
+        offset,
         rotation: [yaw, 0, 0]
       })
     ], [
