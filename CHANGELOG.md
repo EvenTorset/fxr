@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Highlights
+- The `hex` template tag now also accepts strings starting with `#`, like `#ff0000`.
 - Fixed the return type of the `hex` template tag. It was previously `number[]`, and is now `Vector4` like it should be.
 
 ## [14.1.0] - 2024-08-14
