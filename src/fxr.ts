@@ -1739,6 +1739,7 @@ export interface IModifier<T extends ValueType> {
   toJSON(): any
   clone(): IModifier<T>
   separateComponents(): IModifier<ValueType.Scalar>[]
+  minify(): IModifier<T>
 }
 
 export interface ActionMeta {
@@ -6816,8 +6817,8 @@ function uniqueArray<T>(a: T[]) {
   return Array.from(new Set(a))
 }
 
-function lerp(a: number, b: number, c: number) {
-  return a + (b - a) * c
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t
 }
 
 function interpolateSegments(arr: number[], targetS: number, maxSegments: number): number[] {
@@ -7798,6 +7799,146 @@ function scalePropMods<T extends ValueType>(prop: Property<T, PropertyFunction>,
   for (let i = prop.modifiers.length - 1; i >= 0; i--) {
     prop.modifiers[i] = Modifier.multPropertyValue(prop.modifiers[i], factor)
   }
+}
+
+function clampPropValue<T extends PropertyValue>(v: T, min: T, max: T): T {
+  if (Array.isArray(v) && Array.isArray(min) && Array.isArray(max)) {
+    return v.map((e, i) => Math.max(min[i], Math.min(max[i], e))) as T
+  } else if (!Array.isArray(v) && !Array.isArray(min) && !Array.isArray(max)) {
+    return Math.max(min, Math.min(max, v)) as T
+  } else {
+    throw new Error('Invalid property type inputs.')
+  }
+}
+
+function lerpPropValue<T extends PropertyValue>(v1: T, v2: T, t: number): T {
+  if (isVector(v1) && isVector(v2)) {
+    return v1.map((e, i) => lerp(e, v2[i], t)) as T
+  } else if (typeof v1 === 'number' && typeof v2 === 'number') {
+    return lerp(v1, v2, t) as T
+  } else {
+    throw new Error('')
+  }
+}
+
+function findIntersections<T extends ValueType>(
+  keyframe1: Keyframe<T>,
+  keyframe2: Keyframe<T>,
+  minValue: TypeMap.PropertyValue[T],
+  maxValue: TypeMap.PropertyValue[T]
+): Keyframe<T>[] {
+  const { position: x1, value: y1 } = keyframe1
+  const { position: x2, value: y2 } = keyframe2
+
+  if (y1 === y2) {
+    return []
+  }
+
+  function interpolate(y1: number, y2: number, minValue: number, maxValue: number) {
+    const slope = (y2 - y1) / (x2 - x1)
+    const positions: number[] = []
+
+    const tMin = (minValue - y1) / slope
+    if (tMin > 0 && tMin < (x2 - x1)) {
+      const xMin = x1 + tMin
+      if (xMin >= x1 && xMin <= x2) {
+        positions.push(xMin)
+      }
+    }
+
+    const tMax = (maxValue - y1) / slope
+    if (tMax > 0 && tMax < (x2 - x1)) {
+      const xMax = x1 + tMax
+      if (xMax >= x1 && xMax <= x2) {
+        positions.push(xMax)
+      }
+    }
+
+    return positions
+  }
+
+  const results: Keyframe<T>[] = []
+  if (typeof y1 === 'number' && typeof y2 === 'number') {
+    const positions = interpolate(y1, y2, minValue as number, maxValue as number)
+    results.push(...positions.map(x => new Keyframe(x, clampPropValue(lerpPropValue(y1, y2, (x - x1) / (x2 - x1)), minValue, maxValue))))
+  } else if (Array.isArray(y1) && Array.isArray(y2)) {
+    const comps = y1.length
+    for (let c = 0; c < comps; c++) {
+      const positions = interpolate(y1[c], y2[c], minValue[c], maxValue[c])
+      results.push(...positions.map(x => new Keyframe(x, clampPropValue(lerpPropValue(y1, y2, (x - x1) / (x2 - x1)), minValue, maxValue))))
+    }
+  }
+  return results
+}
+
+function clampKeyframes<T extends ValueType>(
+  keyframes: Keyframe<T>[],
+  min: TypeMap.PropertyValue[T],
+  max: TypeMap.PropertyValue[T]
+): Keyframe<T>[] {
+  const clampedKeyframes: Keyframe<T>[] = []
+  for (let i = 0; i < keyframes.length - 1; i++) {
+    const kf1 = keyframes[i]
+    clampedKeyframes.push(
+      new Keyframe(kf1.position, clampPropValue(kf1.value, min, max)),
+      ...findIntersections(kf1, keyframes[i + 1], min, max)
+    )
+  }
+  const lastKeyframe = keyframes[keyframes.length - 1]
+  clampedKeyframes.push(new Keyframe(lastKeyframe.position, clampPropValue(lastKeyframe.value, min, max)))
+  return clampedKeyframes
+}
+
+function clampProp<T extends ValueType>(
+  prop: Property<T, PropertyFunction>,
+  min: TypeMap.PropertyValue[T],
+  max: TypeMap.PropertyValue[T]
+): Property<T, PropertyFunction> {
+  let clone = prop.clone().minify()
+  if (clone instanceof ValueProperty) {
+    clone.value = clampPropValue(clone.value, min, max)
+  } else if (clone instanceof SequenceProperty || clone instanceof ComponentSequenceProperty) {
+    if (clone instanceof ComponentSequenceProperty) {
+      clone = clone.combineComponents()
+    }
+    let seq = clone as SequenceProperty<T, SequencePropertyFunction>
+    if (seq.function !== PropertyFunction.Stepped && seq.function !== PropertyFunction.Linear) {
+      const posSet = new Set<number>()
+      for (const keyframe of seq.keyframes) {
+        posSet.add(keyframe.position)
+      }
+      const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
+      seq = new LinearProperty(
+        seq.loop,
+        filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
+          .map(e => new Keyframe(e, seq.valueAt(e)))
+      )
+    }
+    if (seq.function === PropertyFunction.Stepped) {
+      for (const kf of seq.keyframes) {
+        kf.value = clampPropValue(kf.value, min, max)
+      }
+    } else {
+      seq.keyframes = clampKeyframes(seq.keyframes, min, max)
+    }
+    seq.sortKeyframes()
+    clone = seq
+  }
+  return clone.minify()
+}
+
+const FLOAT32_EPSILON = 2 ** -23
+function f32Equal(a: number, b: number) {
+  return Math.abs(a - b) <= FLOAT32_EPSILON
+}
+
+function propValueEqual(a: PropertyValue, b: PropertyValue) {
+  if (isVector(a) && isVector(b)) {
+    return a.every((e, i) => f32Equal(e, b[i]))
+  } else if (!isVector(a) && !isVector(b)) {
+    return f32Equal(a, b)
+  }
+  return false
 }
 
 const ActionDataConversion = {
@@ -9120,6 +9261,36 @@ class FXR {
     return `f${this.id.toString().padStart(9, '0')}.fxr`
   }
 
+  /**
+   * Finds and returns a value at a given path. If the path does not match
+   * anything, this returns `null`.
+   * 
+   * For example, to get the appearance action in the second effect in the
+   * first child node of the root node, you would use this path:
+   * ```js
+   * fxr.find(['root', 'nodes', 0, 'effects', 1, 'appearance'])
+   * // Or in string form:
+   * fxr.find('root/nodes/0/effects/1/appearance')
+   * // Both are equivalent to this:
+   * fxr.root.nodes[0].effects[1].appearance
+   * ```
+   * @param path The path to the value to look for.
+   */
+  find(path: (string | number)[] | string): any {
+    if (typeof path === 'string') {
+      path = path.replace(/^[\/\s]+|[\/\s]+$/g, '').split('/')
+    }
+    let current: any = this
+    for (const key of path) {
+      if (current && current[key] !== undefined) {
+        current = current[key]
+      } else {
+        return null
+      }
+    }
+    return current
+  }
+
 }
 
 //#region State
@@ -10242,6 +10413,16 @@ abstract class NodeWithEffects extends Node {
   mapStates(...effectIndices: number[]) {
     this.stateEffectMap = effectIndices
     return this
+  }
+
+  /**
+   * Returns the effect that is active when a given {@link State state} index
+   * is active. If no effects are active for the state, this returns `null`
+   * instead.
+   * @param stateIndex The index of a {@link FXR.states state in the FXR}.
+   */
+  getActiveEffect(stateIndex: number): IEffect | null {
+    return this.effects[this.stateEffectMap[stateIndex] ?? this.stateEffectMap[0]] ?? null
   }
 
 }
@@ -38883,17 +39064,9 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
   }
 
   static equal<T extends ValueType, K extends IBasicKeyframe<T> | IBezierKeyframe<T>>(kf1: K, kf2: K) {
-    return (
-      Array.isArray(kf1.value) && kf1.value.every((e, i) => e === kf2.value[i]) ||
-      kf1.value === kf2.value
-    ) && (
-      !('p1' in kf1 && 'p1' in kf2) || (
-        Array.isArray(kf1.p1) && kf1.p1.every((e, i) => e === 0 && kf2.p1[i] === 0) ||
-        kf1.p1 === 0 && kf2.p1 === 0
-      ) && (
-        Array.isArray(kf1.p2) && kf1.p2.every((e, i) => e === 0 && kf2.p2[i] === 0) ||
-        kf1.p2 === 0 && kf2.p2 === 0
-      )
+    return propValueEqual(kf1.value, kf2.value) && (
+      !('p1' in kf1 && 'p1' in kf2) ||
+      propValueEqual(kf1.p1, kf2.p1) && propValueEqual(kf1.p2, kf2.p2)
     )
   }
 
@@ -39003,6 +39176,10 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
       return clone
     }
     return this
+  }
+
+  clamp(min: TypeMap.PropertyValue[T], max: TypeMap.PropertyValue[T]): Property<T, PropertyFunction> {
+    return clampProp(this, min, max)
   }
 
   abstract fieldCount: number
@@ -39159,7 +39336,7 @@ class ValueProperty<T extends ValueType>
 
   minify(): ValueProperty<T> {
     const clone = this.clone()
-    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    clone.modifiers = clone.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     return clone
   }
 
@@ -39482,19 +39659,26 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   }
 
   minify(): Property<T, PropertyFunction> {
+    const mods = this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
       if (this.valueType === ValueType.Scalar) {
-        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(
-          ...this.modifiers.filter(Modifier.isEffective)
-        )
+        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(...mods)
       } else {
-        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(
-          ...this.modifiers.filter(Modifier.isEffective)
-        )
+        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(...mods)
       }
     }
     const clone = this.clone()
-    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    clone.modifiers = mods
+    if (clone.function === PropertyFunction.Stepped) {
+      clone.keyframes = clone.keyframes.filter((e, i, a) => i === 0 || i === a.length - 1 || !propValueEqual(a[i-1].value, e.value))
+    } else if (clone.function === PropertyFunction.Linear) {
+      clone.keyframes = clone.keyframes.filter((e, i, a) =>
+        i === 0 ||
+        i === a.length - 1 ||
+        !propValueEqual(a[i-1].value, e.value) ||
+        !propValueEqual(e.value, a[i+1].value)
+      )
+    }
     return clone
   }
 
@@ -39739,12 +39923,12 @@ class ComponentSequenceProperty<T extends ValueType>
       return new ConstantProperty<T>(
         ...this.components.map(c => c.keyframes[0].value)
       ).withModifiers(
-        ...this.modifiers.filter(Modifier.isEffective)
+        ...this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
       )
     }
     if (this.canBeSimplified()) return this.combineComponents().minify()
     const clone = this.clone()
-    clone.modifiers = clone.modifiers.filter(Modifier.isEffective)
+    clone.modifiers = clone.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     return clone
   }
 
@@ -40252,6 +40436,10 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
     throw new Error('Generic modifiers cannot be split into component modifiers.')
   }
 
+  minify(): GenericModifier<T> {
+    return this
+  }
+
 }
 
 /**
@@ -40327,6 +40515,10 @@ class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
     } else {
       return (this.max as Vector).map((e, i) => new RandomDeltaModifier(e, (this.seed as Vector)[i]))
     }
+  }
+
+  minify(): RandomDeltaModifier<T> {
+    return this
   }
 
 }
@@ -40408,6 +40600,10 @@ class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
     }
   }
 
+  minify(): RandomRangeModifier<T> {
+    return this
+  }
+
 }
 
 /**
@@ -40484,6 +40680,10 @@ class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
     return (this.max as Vector).map((e, i) => new RandomFractionModifier(e, (this.seed as Vector)[i]))
   }
 
+  minify(): RandomFractionModifier<T> {
+    return this
+  }
+
 }
 
 /**
@@ -40544,6 +40744,12 @@ class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
     return this.factor.separateComponents().map(e => new ExternalValue1Modifier(this.externalValue, e))
   }
 
+  minify(): ExternalValue1Modifier<T> {
+    const clone = this.clone()
+    clone.factor = clone.factor.minify() as TypeMap.Property[T]
+    return clone
+  }
+
 }
 
 class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
@@ -40598,6 +40804,12 @@ class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
       return [ this.clone() as IModifier<ValueType.Scalar> ]
     }
     return this.factor.separateComponents().map(e => new ExternalValue2Modifier(this.externalValue, e))
+  }
+
+  minify(): ExternalValue2Modifier<T> {
+    const clone = this.clone()
+    clone.factor = clone.factor.minify() as TypeMap.Property[T]
+    return clone
   }
 
 }
@@ -41652,10 +41864,19 @@ namespace FXRUtility {
     return rad * 180 / Math.PI
   }
 
-  export function transform(center: Vector3, axis: Vector3, roll: number, nodes: Node[]) {
+  /**
+   * Wraps the given {@link nodes} in a node or set of nodes that have a
+   * transform applied to them. This can be useful to make the nodes point in a
+   * specific direction.
+   * @param offset Translation offset.
+   * @param axis The direction to point towards.
+   * @param roll The roll angle in degrees.
+   * @param nodes The nodes to transform.
+   */
+  export function transform(offset: Vector3, axis: Vector3, roll: number, nodes: Node[]) {
     if (axis[0] === 0 && axis[1] === 0 && axis[2] === 0 && roll === 0) {
       return new BasicNode([
-        NodeTransform({ offset: center })
+        NodeTransform({ offset })
       ], nodes)
     }
     axis = normalizeVector3(axis)
@@ -41663,7 +41884,7 @@ namespace FXRUtility {
     const pitch = -Math.asin(axis[0]) * 180 / Math.PI
     return new BasicNode([
       NodeTransform({
-        offset: center,
+        offset,
         rotation: [yaw, 0, 0]
       })
     ], [
