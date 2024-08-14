@@ -7733,7 +7733,7 @@ function hsvToRgb(h: number, s: number, v: number): Vector3 {
  * ])
  * ```
  */
-function hex(strings: TemplateStringsArray, ...values: any[]): number[] {
+function hex(strings: TemplateStringsArray, ...values: any[]): Vector4 {
   let hexStr = strings.reduce((result, str, i) => result + str + (values[i] || ''), '')
   if (hexStr.length === 3) {
     hexStr = hexStr.split('').map(char => char + char).join('')

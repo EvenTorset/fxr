@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Highlights
+- Fixed the return type of the `hex` template tag. It was previously `number[]`, and is now `Vector4` like it should be.
+
 ## [14.1.0] - 2024-08-14
 
 ### Highlights
@@ -151,6 +156,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v14.1.0...HEAD
 [14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0
 [14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0
