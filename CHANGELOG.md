@@ -1,9 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [14.1.0] - 2024-08-14
 
 ### Highlights
 - Added a `find` method to FXR objects, which finds and returns a value at a given path in the FXR. For example, a path like `root/nodes/0` would be the first child node of the root node.
+- Added a `getActiveEffect` method to nodes that contain effects, which returns the effect that would be active when a given state index is active.
 - Added a `clamp` method to properties. This slices off peaks and troughs outside of a given range to make sure the property value stays within the range.
 - Added a `minify` method to modifiers. This does nothing for most of the modifier types, but for the external value modifiers this will minify the `factor` property.
 - The `minify` method on properties now also minify the modifiers.
@@ -150,6 +151,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0
 [14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0
 [13.0.0]: https://github.com/EvenTorset/fxr/compare/v12.2.0...v13.0.0

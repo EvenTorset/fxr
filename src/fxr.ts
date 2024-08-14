@@ -10415,6 +10415,16 @@ abstract class NodeWithEffects extends Node {
     return this
   }
 
+  /**
+   * Returns the effect that is active when a given {@link State state} index
+   * is active. If no effects are active for the state, this returns `null`
+   * instead.
+   * @param stateIndex The index of a {@link FXR.states state in the FXR}.
+   */
+  getActiveEffect(stateIndex: number): IEffect | null {
+    return this.effects[this.stateEffectMap[stateIndex] ?? this.stateEffectMap[0]] ?? null
+  }
+
 }
 
 /**
