@@ -7,12 +7,6 @@ meta:
 desc: |
   Controls various things about the node, like its duration, and how it is attached to the parent node.
 properties:
-  attachment:
-    type: AttachMode
-    field: int
-    default: AttachMode.Parent
-    desc: |
-      Controls how the node is attached to the parent node.
   duration:
     type: ScalarValue
     default: -1
@@ -27,6 +21,12 @@ properties:
   unk_ds3_f1_1:
     field: int
     default: 1
+  attachment:
+    type: AttachMode
+    field: int
+    default: AttachMode.Parent
+    desc: |
+      Controls how the node is attached to the parent node.
   unk_ds3_f1_3:
     field: float
 games:

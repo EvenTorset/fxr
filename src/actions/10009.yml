@@ -14,6 +14,92 @@ desc: |
 
   The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
 properties:
+  particleFollowFactor:
+    type: ScalarValue
+    desc: |
+      Controls how well the particles follow the node if it moves.
+  unk_ac6_p1_1:
+    type: ScalarValue
+  unk_ac6_p1_2:
+    type: ScalarValue
+  unk_ac6_p1_3:
+    type: ScalarValue
+  particleAccelerationX:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Particle acceleration along the X-axis.
+  particleAccelerationY:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Particle acceleration along the Y-axis.
+  particleAccelerationZ:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Particle acceleration along the Z-axis.
+  color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    color: true
+    desc: |
+      Color multiplier.
+  particleLength:
+    type: ScalarValue
+    default: 1
+    time: inv
+  particleWidth:
+    type: ScalarValue
+    default: 0.1
+  unkParticleAcceleration:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Similar to {@link particleAccelerationZ}, but this does not go exactly north?
+
+      This requires any of the following fields to have a non-zero value:
+      - {@link particleSpeedMin}
+      - {@link particleSpeedMax}
+  unk_ac6_p1_11:
+    type: ScalarValue
+  particleGravity:
+    type: ScalarValue
+    default: 1
+    scale: true
+    time: sq
+    desc: |
+      Downwards acceleration for particles.
+
+      This requires any of the following fields to have a non-zero value:
+      - {@link particleSpeedMin}
+      - {@link particleSpeedMax}
+  unk_ac6_p1_13:
+    type: ScalarValue
+  unk_ac6_p2_0:
+    type: ScalarValue
+    default: 1
+  unk_ac6_p2_1:
+    type: ScalarValue
+    default: 1
+  unk_ac6_p2_2:
+    type: ScalarValue
+  unk_ac6_p2_3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ac6_p2_4:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ac6_p2_5:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ac6_p2_6:
+    type: ScalarValue
   texture:
     field: int
     default: 1
@@ -539,92 +625,6 @@ properties:
     field: float
   unk_ac6_f2_39:
     field: int
-  particleFollowFactor:
-    type: ScalarValue
-    desc: |
-      Controls how well the particles follow the node if it moves.
-  unk_ac6_p1_1:
-    type: ScalarValue
-  unk_ac6_p1_2:
-    type: ScalarValue
-  unk_ac6_p1_3:
-    type: ScalarValue
-  particleAccelerationX:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Particle acceleration along the X-axis.
-  particleAccelerationY:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Particle acceleration along the Y-axis.
-  particleAccelerationZ:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Particle acceleration along the Z-axis.
-  color:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    argument: ParticleAge
-    color: true
-    desc: |
-      Color multiplier.
-  particleLength:
-    type: ScalarValue
-    default: 1
-    time: inv
-  particleWidth:
-    type: ScalarValue
-    default: 0.1
-  unkParticleAcceleration:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Similar to {@link particleAccelerationZ}, but this does not go exactly north?
-
-      This requires any of the following fields to have a non-zero value:
-      - {@link particleSpeedMin}
-      - {@link particleSpeedMax}
-  unk_ac6_p1_11:
-    type: ScalarValue
-  particleGravity:
-    type: ScalarValue
-    default: 1
-    scale: true
-    time: sq
-    desc: |
-      Downwards acceleration for particles.
-
-      This requires any of the following fields to have a non-zero value:
-      - {@link particleSpeedMin}
-      - {@link particleSpeedMax}
-  unk_ac6_p1_13:
-    type: ScalarValue
-  unk_ac6_p2_0:
-    type: ScalarValue
-    default: 1
-  unk_ac6_p2_1:
-    type: ScalarValue
-    default: 1
-  unk_ac6_p2_2:
-    type: ScalarValue
-  unk_ac6_p2_3:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ac6_p2_4:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ac6_p2_5:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ac6_p2_6:
-    type: ScalarValue
 games:
   ER: AC6
   AC6:

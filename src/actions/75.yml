@@ -12,18 +12,18 @@ properties:
     resource: sound
     desc: |
       The ID of the sound to play.
-  repeat:
-    field: bool
-    default: false
-    desc: |
-      Controls whether the sound will repeat or not.
-
-      Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
   volume:
     field: float
     default: 1
     desc: |
       Volume multiplier.
+
+      Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+  repeat:
+    field: bool
+    default: false
+    desc: |
+      Controls whether the sound will repeat or not.
 
       Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
 games:

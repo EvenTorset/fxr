@@ -7,17 +7,6 @@ meta:
 desc: |
   Makes the emitter cuboidal.
 properties:
-  direction:
-    type: InitialDirection
-    field: int
-    default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
-  emitInside:
-    field: bool
-    default: true
-    desc: |
-      If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
   sizeX:
     type: ScalarValue
     default: 1
@@ -39,6 +28,17 @@ properties:
     scale: true
     desc: |
       Depth of the cuboid.
+  direction:
+    type: InitialDirection
+    field: int
+    default: InitialDirection.Emitter
+    desc: |
+      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+  emitInside:
+    field: bool
+    default: true
+    desc: |
+      If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
 games:
   DS3:
     fields1:

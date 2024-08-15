@@ -7,12 +7,6 @@ meta:
 desc: |
   Controls the duration of particles emitted by the node, and how the particles are attached to the node.
 properties:
-  attachment:
-    type: AttachMode
-    field: int
-    default: AttachMode.Parent
-    desc: |
-      Controls how the particles are attached to the node.
   duration:
     type: ScalarValue
     default: -1
@@ -20,6 +14,12 @@ properties:
     time: invIfPositive
     desc: |
       The particle duration in seconds. Can be set to -1 to make particles last forever.
+  attachment:
+    type: AttachMode
+    field: int
+    default: AttachMode.Parent
+    desc: |
+      Controls how the particles are attached to the node.
 games:
   DS3:
     fields1:

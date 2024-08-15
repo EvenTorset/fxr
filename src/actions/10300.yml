@@ -180,9 +180,6 @@ properties:
   unk_ds3_f1_42:
     field: float
     default: 1
-  unk_ds3_f1_43:
-    field: float
-    default: 1
   unk_ds3_f1_44:
     field: float
     default: 1
@@ -243,6 +240,9 @@ properties:
   unk_ds3_f1_50:
     field: float
     default: 60
+  unk_ds3_f1_43:
+    field: float
+    default: 1
 games:
   DS3:
     fields1:

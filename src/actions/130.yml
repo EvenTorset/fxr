@@ -7,6 +7,22 @@ meta:
 desc: |
   Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
 properties:
+  unk_ds3_p1_0:
+    type: ScalarValue
+  unk_ds3_p1_1:
+    type: ScalarValue
+  unk_ds3_p1_2:
+    type: ScalarValue
+  unk_ds3_p1_3:
+    type: ScalarValue
+  unk_ds3_p1_4:
+    type: ScalarValue
+  unk_ds3_p1_5:
+    type: ScalarValue
+  unk_ds3_p1_6:
+    type: ScalarValue
+  unk_ds3_p1_7:
+    type: ScalarValue
   unk_ds3_f1_0:
     field: int
     default: 1
@@ -26,22 +42,6 @@ properties:
     field: int
   unk_ds3_f1_8:
     field: int
-  unk_ds3_p1_0:
-    type: ScalarValue
-  unk_ds3_p1_1:
-    type: ScalarValue
-  unk_ds3_p1_2:
-    type: ScalarValue
-  unk_ds3_p1_3:
-    type: ScalarValue
-  unk_ds3_p1_4:
-    type: ScalarValue
-  unk_ds3_p1_5:
-    type: ScalarValue
-  unk_ds3_p1_6:
-    type: ScalarValue
-  unk_ds3_p1_7:
-    type: ScalarValue
 games:
   DS3:
     fields1:

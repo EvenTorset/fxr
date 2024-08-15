@@ -7,6 +7,38 @@ meta:
 desc: |
   A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
 properties:
+  width:
+    type: ScalarValue
+    default: 1
+    scale: true
+  height:
+    type: ScalarValue
+    default: 1
+    scale: true
+  color1:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+  color2:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+  color3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+  unk_ds3_p1_5:
+    type: ScalarValue
+  unk_ds3_p1_6:
+    type: ScalarValue
+  unk_ds3_p1_7:
+    type: ScalarValue
+  unk_ds3_p1_8:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p1_9:
+    type: ScalarValue
+    default: 1
   texture:
     field: int
     resource: texture
@@ -99,38 +131,6 @@ properties:
     default: -1
   unk_ds3_f1_29:
     field: int
-  width:
-    type: ScalarValue
-    default: 1
-    scale: true
-  height:
-    type: ScalarValue
-    default: 1
-    scale: true
-  color1:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    color: true
-  color2:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    color: true
-  color3:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    color: true
-  unk_ds3_p1_5:
-    type: ScalarValue
-  unk_ds3_p1_6:
-    type: ScalarValue
-  unk_ds3_p1_7:
-    type: ScalarValue
-  unk_ds3_p1_8:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p1_9:
-    type: ScalarValue
-    default: 1
 games:
   DS3:
     fields1:
