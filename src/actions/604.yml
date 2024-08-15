@@ -86,6 +86,8 @@ properties:
       Note:
       - This has no effect if the "Effects Quality" setting is set to "Low".
       - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloom
   shadowDarkness:
     field: float
     desc: |
@@ -398,9 +400,17 @@ properties:
     default: 8
   unk_ds3_f2_3:
     field: float
-  unk_ds3_f2_4:
-    field: int
-    default: 1
+  bloom:
+    field: bool
+    default: true
+    desc: |
+      Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
+    see:
+      - bloomColor
   unk_ds3_f2_9:
     field: float
   unk_ds3_f2_10:
@@ -609,7 +619,7 @@ games:
       - unk_ds3_f2_1
       - unk_ds3_f2_2
       - unk_ds3_f2_3
-      - unk_ds3_f2_4
+      - bloom
       - bloomColor
       #
       #
@@ -706,7 +716,7 @@ games:
       - unk_ds3_f2_1
       - unk_ds3_f2_2
       - unk_ds3_f2_3
-      - unk_ds3_f2_4
+      - bloom
       - bloomColor
       #
       #
@@ -812,7 +822,7 @@ games:
       - unk_ds3_f2_1
       - unk_ds3_f2_2
       - unk_ds3_f2_3
-      - unk_ds3_f2_4
+      - bloom
       - bloomColor
       #
       #
@@ -863,7 +873,7 @@ games:
       - unk_ds3_f2_1
       - unk_ds3_f2_2
       - unk_ds3_f2_3
-      - unk_ds3_f2_4
+      - bloom
       - bloomColor
       #
       #
