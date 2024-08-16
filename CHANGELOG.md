@@ -6,7 +6,7 @@
 - Named and documented the `bloom` field (previously `unk_ds3_f2_4`) in actions 600, 601, 602, 603, 604, 606, and 10012.
 - The `hex` template tag now also accepts strings starting with `#`, like `#ff0000`.
 - Fixed the return type of the `hex` template tag. It was previously `number[]`, and is now `Vector4` like it should be.
-- `BasicNode` and `NodeEmitterNode` can now be constructed without any arguments to make a default empty version.
+- `BasicEffect` and `NodeEmitterEffect` can now be constructed without any arguments to make a default effect.
 
 ## [14.1.0] - 2024-08-14
 

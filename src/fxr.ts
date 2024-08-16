@@ -10501,7 +10501,7 @@ class BasicNode extends NodeWithEffects {
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: IEffect[] | AnyAction[] = [new BasicEffect], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: IEffect[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
@@ -10555,7 +10555,7 @@ class NodeEmitterNode extends NodeWithEffects {
 
   declare effects: NodeEmitterEffect[]
 
-  constructor(effectsOrEffectActions: IEffect[] | Action[] = [new NodeEmitterEffect], nodes: Node[] = []) {
+  constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
