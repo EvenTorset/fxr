@@ -9977,6 +9977,9 @@ abstract class Node {
           if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
             ;(c[k] as any) = setVectorComponent(c[k] as any, 3, alpha)
           }
+          if (c[k] instanceof Property) {
+            ;(c[k] as VectorProperty) = c[k].minify()
+          }
         } else {
           if (isVectorValue(c[k])) {
             ;(c[k] as VectorValue) = setVectorComponent(
@@ -9986,6 +9989,9 @@ abstract class Node {
               ) as VectorValue,
               3, separateComponents(c[k])[3]
             )
+            if (c[k] instanceof Property) {
+              ;(c[k] as VectorProperty) = c[k].minify()
+            }
           } else {
             ;(c[k] as any) = (
               paletteProp instanceof Property ? paletteProp.clone() :
@@ -41107,9 +41113,6 @@ namespace Recolor {
         return clone as T
       }
       return (val instanceof Property ? val.clone().minify() : val) as T
-    }
-    function sum<T extends PaletteSlots[keyof PaletteSlots]>(p: T, n: keyof T, o: AnyValue) {
-      ;(p[n] as AnyValue) = anyValueSum(p[n] as AnyValue, normalize(o))
     }
     function nonWhiteVisible(color: Vector4Value) {
       return (
