@@ -9,9 +9,20 @@ declare global {
 
 enum Game {
   /**
+   * Using this with the {@link FXR.read} function will cause it to try to find
+   * out what game the FXR is for automatically.
+   * 
+   * Using it with the {@link FXR.toArrayBuffer} and {@link FXR.saveAs} methods
+   * will cause them to use the {@link FXR.gameHint game hint}, unless the hint
+   * is {@link Game.Heuristic}, in which case they will check if the FXR
+   * contains anything AC6-specific, and then use {@link Game.ArmoredCore6} if
+   * it does, and otherwise throw an error.
+   */
+  Heuristic = -2,
+  /**
    * Does not represent any specific game.
    * 
-   * Using this with the {@link FXR.read} method will cause it to parse
+   * Using this with the {@link FXR.read} function will cause it to parse
    * everything as generic classes. This means that none of the methods in the
    * library that manipulate things that depend on the game version will work,
    * like the {@link Node.scale} and {@link Node.recolor} methods. It also
@@ -21,9 +32,10 @@ enum Game {
    * This is intended to be used only for research or for parsing modded files
    * that may not be structured correctly.
    * 
-   * Note that this does not work with the {@link FXR.toArrayBuffer} method
-   * unless the FXR only contains generic classes. If it contains any node
-   * classes other than {@link GenericNode}, or any {@link DataAction}s, it
+   * Note that this does not work with the {@link FXR.toArrayBuffer} and
+   * {@link FXR.saveAs} methods unless the FXR only contains generic classes.
+   * If it contains any node classes other than {@link GenericNode}, any
+   * effect classes other than {@link Effect}, or any {@link DataAction}s, it
    * must be given a specific game to write to.
    */
   Generic = -1,
@@ -1969,6 +1981,13 @@ export type ActionGameDataEntry = {
   properties1?: string[] | Game
   properties2?: string[] | Game
   section10s?: string[] | Game
+}
+export type FilledActionGameDataEntry = {
+  fields1?: string[] & { fieldsCount?: number }
+  fields2?: string[] & { fieldsCount?: number }
+  properties1?: string[]
+  properties2?: string[]
+  section10s?: string[]
 }
 const ActionData: {
   [x: string]: {
@@ -5646,7 +5665,7 @@ const EffectActionSlots = {
   ]
 }
 
-function getActionGameData(type: ActionType, game: Game) {
+function getActionGameData(type: ActionType, game: Game): FilledActionGameDataEntry {
   const adt = ActionData[type]
   if (!('props' in adt)) {
     return {
@@ -5681,19 +5700,12 @@ function getActionGameData(type: ActionType, game: Game) {
   if (typeof data.section10s === 'number') {
     data.section10s = (adt.games[data.section10s] as ActionGameDataEntry).section10s
   }
-  return data as {
-    fields1: string[] & { fieldsCount: number }
-    fields2: string[] & { fieldsCount: number }
-    properties1: string[]
-    properties2: string[]
-    section10s: string[]
-  }
+  return data as FilledActionGameDataEntry
 }
 
 //#region Functions - Property
 function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, any>>(
   br: BinaryReader,
-  game: Game,
   modifierProp: T extends IModifiableProperty<any, any> ? false : true
 ): T {
   const typeEnumA = br.readInt16()
@@ -5715,7 +5727,7 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     br.assertInt32(0)
     br.stepIn(modOffset)
     for (let i = 0; i < modCount; ++i) {
-      modifiers.push(readModifier(br, game))
+      modifiers.push(readModifier(br))
     }
     br.stepOut()
   }
@@ -5731,6 +5743,9 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     case PropertyFunction.Hermite:
       return SequenceProperty.fromFields(type, func, loop, modifiers, fields) as unknown as T
     case PropertyFunction.ComponentHermite:
+      if (br.game === Game.Heuristic) {
+        br.game = Game.ArmoredCore6
+      }
       return ComponentSequenceProperty.fromFields(type, loop, modifiers, fields) as unknown as T
     default:
       throw new Error('Unknown property function: ' + func)
@@ -5797,7 +5812,6 @@ function writePropertyFields(prop: IProperty<any, any>, bw: BinaryWriter, index:
 //#region Functions - Action
 function readAction(
   br: BinaryReader,
-  game: Game,
   type: number,
   fieldCount1: number,
   propertyCount1: number,
@@ -5818,10 +5832,10 @@ function readAction(
   const properties1: AnyProperty[] = []
   const properties2: AnyProperty[] = []
   for (let i = 0; i < propertyCount1; ++i) {
-    properties1.push(readProperty(br, game, false))
+    properties1.push(readProperty(br, false))
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    properties2.push(readProperty(br, game, false))
+    properties2.push(readProperty(br, false))
   }
   br.stepOut()
 
@@ -5900,7 +5914,7 @@ function writeActionFields(action: Action, bw: BinaryWriter, index: number): num
 //#region Functions - DataAction
 function readDataAction(
   br: BinaryReader,
-  game: Game,
+  gameData: FilledActionGameDataEntry,
   type: ActionType,
   fieldCount1: number,
   propertyCount1: number,
@@ -5908,6 +5922,7 @@ function readDataAction(
   propertyCount2: number,
   section10Count: number
 ): DataAction {
+  const game = br.game === Game.Heuristic ? Game.EldenRing : br.game
   const fieldOffset = br.readInt32()
   br.assertInt32(0)
   const section10Offset = br.readInt32()
@@ -5938,10 +5953,10 @@ function readDataAction(
 
   br.stepIn(propertyOffset)
   for (let i = 0; i < propertyCount1; ++i) {
-    c.properties1.push(readProperty(br, game, false))
+    c.properties1.push(readProperty(br, false))
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    c.properties2.push(readProperty(br, game, false))
+    c.properties2.push(readProperty(br, false))
   }
   br.stepOut()
 
@@ -5952,7 +5967,6 @@ function readDataAction(
   br.stepOut()
 
   br.stepIn(fieldOffset)
-  const gameData = getActionGameData(type, game)
   if ('fields1' in gameData) {
     c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map((e: string) => adt.props[e].field), null)
   }
@@ -6071,7 +6085,7 @@ function writeDataActionFields(action: DataAction, bw: BinaryWriter, game: Game,
 }
 
 //#region Functions - AnyAction
-function readAnyAction(br: BinaryReader, game: Game): AnyAction {
+function readAnyAction(br: BinaryReader): AnyAction {
   const type = br.readInt16()
   br.position += 6
   // br.readUint8() // Unk02
@@ -6084,7 +6098,62 @@ function readAnyAction(br: BinaryReader, game: Game): AnyAction {
   br.assertInt32(0)
   const propertyCount2 = br.readInt32()
 
-  if (game !== Game.Generic && type in ActionData) {
+  if (br.game !== Game.Generic && type in ActionData) {
+    let game = br.game
+    heuristic: if (game === Game.Heuristic) {
+      if (type === ActionType.Unk800) {
+        game = br.game = Game.ArmoredCore6
+        break heuristic
+      }
+      if (type === ActionType.Unk10500) {
+        if (propertyCount1 === 0) {
+          game = br.game = Game.Sekiro
+          break heuristic
+        }
+        const f7 = br.getInt32(br.position + 4 * 7)
+        if (f7 < 0 || f7 >= 1e6) {
+          game = br.game = Game.ArmoredCore6
+          break heuristic
+        }
+      }
+      if (type === ActionType.LevelsOfDetailThresholds && fieldCount1 === 6) {
+        game = br.game = Game.ArmoredCore6
+        break heuristic
+      }
+      if (type === ActionType.BillboardEx && fieldCount2 === 46) {
+        game = br.game = Game.ArmoredCore6
+        break heuristic
+      }
+      if (type === ActionType.MultiTextureBillboardEx && fieldCount2 === 47) {
+        game = br.game = Game.ArmoredCore6
+        break heuristic
+      }
+      if (type === ActionType.Model && fieldCount2 === 39) {
+        game = br.game = Game.ArmoredCore6
+        break heuristic
+      }
+      if (type === ActionType.DynamicTracer && fieldCount2 === 42) {
+        game = br.game = Game.ArmoredCore6
+        break heuristic
+      }
+      if (type === ActionType.LensFlare) {
+        if (fieldCount1 > 75) {
+          game = br.game = Game.ArmoredCore6
+        } else {
+          game = br.game = Game.EldenRing
+        }
+        break heuristic
+      }
+      if (type === ActionType.RichModel) {
+        if (fieldCount1 > 26 || propertyCount1 === 24) {
+          game = br.game = Game.ArmoredCore6
+        } else {
+          game = br.game = Game.EldenRing
+        }
+        break heuristic
+      }
+      game = Game.EldenRing
+    }
     const data = getActionGameData(type, game)
     if (
       section10Count <= data.section10s.length &&
@@ -6098,12 +6167,12 @@ function readAnyAction(br: BinaryReader, game: Game): AnyAction {
       propertyCount1 <= data.properties1.length &&
       propertyCount2 <= data.properties2.length
     ) {
-      return readDataAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+      return readDataAction(br, data, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     } else {
-      return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+      return readAction(br, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
     }
   } else {
-    return readAction(br, game, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
+    return readAction(br, type, fieldCount1, propertyCount1, fieldCount2, propertyCount2, section10Count)
   }
 }
 
@@ -6144,7 +6213,7 @@ function writeAnyActionFields(action: AnyAction, bw: BinaryWriter, game: Game, i
 }
 
 //#region Functions - Node
-function readNode(br: BinaryReader, game: Game): Node {
+function readNode(br: BinaryReader): Node {
   const type = br.readInt16()
   br.assertUint8(0)
   br.assertUint8(1)
@@ -6162,27 +6231,27 @@ function readNode(br: BinaryReader, game: Game): Node {
   br.stepIn(nodeOffset)
   const nodes = []
   for (let i = 0; i < nodeCount; ++i) {
-    nodes.push(readNode(br, game))
+    nodes.push(readNode(br))
   }
   br.stepOut()
   br.stepIn(effectOffset)
   const effects = []
   for (let i = 0; i < effectCount; ++i) {
-    effects.push(readEffect(br, game))
+    effects.push(readEffect(br))
   }
   br.stepOut()
   br.stepIn(actionOffset)
   const actions = []
   for (let i = 0; i < actionCount; ++i) {
-    actions.push(readAnyAction(br, game))
+    actions.push(readAnyAction(br))
   }
   br.stepOut()
-  if (game !== Game.Generic) switch (type) {
+  if (br.game !== Game.Generic) switch (type) {
     case NodeType.Root:
-      if (effectCount === 0 && actionCount === (game === Game.DarkSouls3 || game === Game.Sekiro ? 3 : 4)) {
+      if (effectCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
         return new RootNode(
           nodes,
-          game === Game.DarkSouls3 || game === Game.Sekiro ? null :
+          br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? null :
             actions.find(e => e.type >= 700 && e.type <= 702) ?? new Action(ActionType.Unk700),
           actions.find(e => e.type === ActionType.Unk10100),
           actions.find(e => e.type === ActionType.Unk10400),
@@ -6304,7 +6373,7 @@ function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: numbe
 }
 
 //#region Functions - Effect
-function readEffect(br: BinaryReader, game: Game): IEffect {
+function readEffect(br: BinaryReader): IEffect {
   const type = br.readInt16()
   br.assertUint8(0)
   br.assertUint8(1)
@@ -6318,10 +6387,10 @@ function readEffect(br: BinaryReader, game: Game): IEffect {
   br.stepIn(actionOffset)
   const actions = []
   for (let i = 0; i < actionCount; ++i) {
-    actions.push(readAnyAction(br, game))
+    actions.push(readAnyAction(br))
   }
   br.stepOut()
-  if (game === Game.Generic) {
+  if (br.game === Game.Generic) {
     return new Effect(type, actions)
   } else if (type === EffectType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
     const lod = actions[0]
@@ -6362,7 +6431,7 @@ function writeEffectActions(effect: IEffect, bw: BinaryWriter, game: Game, index
 }
 
 //#region Functions - Modifier
-function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
+function readModifier(br: BinaryReader): IModifier<ValueType> {
   const typeEnumA = br.readUint16()
   const modifierType = Modifier.enumAToType(typeEnumA)
   if (!(modifierType in ModifierType)) {
@@ -6384,10 +6453,10 @@ function readModifier(br: BinaryReader, game: Game): IModifier<ValueType> {
   br.stepIn(propertyOffset)
   const properties = []
   for (let i = 0; i < propertyCount; ++i) {
-    properties.push(readProperty(br, game, true))
+    properties.push(readProperty(br, true))
   }
   br.stepOut()
-  if (game === Game.Generic) {
+  if (br.game === Game.Generic) {
     const fields = readFieldsAt(br, fieldOffset, fieldCount, this)
     return new GenericModifier(modifierType, valueType, fields, properties)
   } else switch (modifierType) {
@@ -7943,6 +8012,15 @@ function propValueEqual(a: PropertyValue, b: PropertyValue) {
   return false
 }
 
+function anyMatch<T>(iterator: Iterable<T>, predicate: (value: T) => boolean): boolean {
+  for (const value of iterator) {
+    if (predicate(value)) {
+      return true
+    }
+  }
+  return false
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
@@ -8337,6 +8415,7 @@ class BinaryReader extends DataView {
   position: number = 0
   littleEndian: boolean = true
   round: boolean = false
+  game: Game = Game.Heuristic
   steps: number[] = []
 
   getInt16(offset: number) {
@@ -8691,6 +8770,8 @@ export interface FXRReadOptions {
  */
 class FXR {
 
+  #gameHint: Game = Game.Generic
+
   constructor(
     public id: number,
     public root: RootNode | GenericNode = new RootNode,
@@ -8721,7 +8802,18 @@ class FXR {
    * Parses an FXR file.
    * @param buffer {@link ArrayBuffer} or {@link ArrayBufferView} of the
    * contents of the FXR file to parse.
-   * @param game The game the FXR file is for.
+   * @param game The game the FXR file is for. Defaults to
+   * {@link Game.Heuristic}, which will make the function try to figure out
+   * what it is for automatically.
+   * 
+   * Accuracy of {@link Game.Heuristic} (with valid FXRs):
+   * - Dark Souls 3: **Perfect, 100%**
+   * - Sekiro: **Perfect, 100%**
+   * - Elden Ring: **Low**
+   * - Armored Core 6: **Low**
+   * 
+   * For Elden Ring and Armored Core 6, it will still correctly parse the file,
+   * but {@link gameHint} will be *very* unreliable.
    */
   static read<T extends typeof FXR>(
     this: T,
@@ -8739,7 +8831,7 @@ class FXR {
   static read<T extends typeof FXR>(
     this: T,
     input: string | ArrayBuffer | ArrayBufferView,
-    game: Game = Game.EldenRing,
+    game: Game = Game.Heuristic,
     { round }: FXRReadOptions = {}
   ): Promise<InstanceType<T>> | InstanceType<T> {
     round ??= false
@@ -8753,14 +8845,18 @@ class FXR {
     }
     const br = new BinaryReader(input)
     br.round = round
+    br.game = game
 
     br.assertASCII('FXR\0')
     br.assertInt16(0)
-    if (game === Game.Generic) {
-      br.assertInt16(
+    if (game === Game.Generic || game === Game.Heuristic) {
+      const version = br.assertInt16(
         FXRVersion.DarkSouls3,
         FXRVersion.Sekiro
       )
+      if (game === Game.Heuristic && version === FXRVersion.DarkSouls3) {
+        br.game = game = Game.DarkSouls3
+      }
     } else {
       br.assertInt16(GameVersionMap[game])
     }
@@ -8829,9 +8925,9 @@ class FXR {
     br.stepOut()
 
     br.position = nodeOffset
-    const rootNode = readNode(br, game) as RootNode | GenericNode
+    const rootNode = readNode(br) as RootNode | GenericNode
 
-    return new this(
+    const fxr = new this(
       id,
       rootNode,
       states,
@@ -8840,14 +8936,35 @@ class FXR {
       // externalValues2,
       // unkEmpty,
     ) as InstanceType<T>
+
+    return fxr
   }
 
   /**
    * Serialize to the FXR file format.
    * @param game The game to write this FXR for.
+   * 
+   * Defaults to {@link Game.Heuristic}, which means it will use the
+   * {@link gameHint game hint}, unless the hint is also
+   * {@link Game.Heuristic}, in which case it will check if the FXR contains
+   * anything AC6-specific, and then use {@link Game.ArmoredCore6} if it does,
+   * and otherwise throw an error, because the game is unknowable.
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
-  toArrayBuffer(game: Game = Game.EldenRing) {
+  toArrayBuffer(game: Game = Game.Heuristic) {
+    heuristic: if (game === Game.Heuristic) {
+      if (this.#gameHint === Game.Heuristic) {
+        if (
+          anyMatch(this.root.walkActions(), a => a.type === ActionType.Unk800) ||
+          anyMatch(this.root.walkProperties(), p => p instanceof ComponentSequenceProperty)
+        ) {
+          game = Game.ArmoredCore6
+          break heuristic
+        }
+        throw new Error('What game this FXR is for is unknowable. Please provide a game to write the FXR for.')
+      }
+      game = this.#gameHint
+    }
     assertValidFXRID(this.id)
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
@@ -9292,6 +9409,20 @@ class FXR {
     }
     return current
   }
+
+  /**
+   * The game hint is set by {@link FXR.read} to keep track of what game the
+   * FXR file it read was for. It is used by {@link FXR.toArrayBuffer} and
+   * {@link FXR.saveAs} when they are called with {@link Game.Heuristic}.
+   * 
+   * For FXR objects created in any other way, the game hint will always be
+   * {@link Game.Generic}.
+   * 
+   * This value can be checked to find out what game the {@link FXR.read}
+   * function read it as, which might be useful if it was called with
+   * {@link Game.Heuristic}.
+   */
+  get gameHint() { return this.#gameHint }
 
 }
 
