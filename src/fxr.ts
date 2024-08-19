@@ -8937,6 +8937,8 @@ class FXR {
       // unkEmpty,
     ) as InstanceType<T>
 
+    fxr.#gameHint = br.game
+
     return fxr
   }
 
