@@ -23951,9 +23951,16 @@ export interface PointLightParams {
    */
   unk_ds3_p1_9?: ScalarValue
   /**
-   * Unknown.
+   * Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
+   * - At 0 or negative values, this completely disabled the light.
+   * - At 1, the light behaves like you would expect.
+   * - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
+   * - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link falloffExponent}
    */
   unk_ds3_p2_0?: ScalarValue
   /**
@@ -24241,6 +24248,9 @@ export interface PointLightParams {
    * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link unk_ds3_p2_0}
    */
   falloffExponent?: number
   /**
@@ -24316,6 +24326,16 @@ class PointLight extends DataAction {
   unk_ds3_p1_7: ScalarValue
   unk_ds3_p1_8: ScalarValue
   unk_ds3_p1_9: ScalarValue
+  /**
+   * Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
+   * - At 0 or negative values, this completely disabled the light.
+   * - At 1, the light behaves like you would expect.
+   * - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
+   * - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
+   * 
+   * See also:
+   * - {@link falloffExponent}
+   */
   unk_ds3_p2_0: ScalarValue
   unk_ds3_p2_1: ScalarValue
   unk_sdt_p2_2: ScalarValue
@@ -24481,6 +24501,9 @@ class PointLight extends DataAction {
    * Controls the falloff exponent of the light.
    * 
    * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+   * 
+   * See also:
+   * - {@link unk_ds3_p2_0}
    */
   falloffExponent: number
   unk_er_f2_29: number

@@ -14,6 +14,7 @@
 - Added a `getValueType` function that returns the `ValueType` of a given value. This works with numbers, vector arrays, and properties. It's probably not super useful for most people, it's just a utility function used internally that I figured might as well be exported.
 - All action fields/properties have been sorted in a way to make their order closer to their order in the actual files. It's not going to match exactly, because the actions in the library have all fields and properties from all four of the supported games, and some of the games have things moved around a bit. This order doesn't really affect much in the library or the documentation, but it causes the JSON structure to have the fields/properties in the new order, so it should hopefully make it easier to find and edit unknowns in the JSON.
 - Named and documented the `bloom` field (previously `unk_ds3_f2_4`) in actions 600, 601, 602, 603, 604, 606, and 10012. This is simply a boolean field that toggles the extra bloom effect. (*Requires "Effects Quality" to be set to anything but "Low", and the `bloomColor` vector field to have a non-zero alpha.*)
+- The behavior of the `unk_ds3_p2_0` property in `PointLight`s has been documented. The property is still unnamed.
 - The `hex` template tag now also accepts strings starting with `#`, like `#ff0000`.
 - Fixed the return type of the `hex` template tag. It was previously `number[]`, and is now `Vector4` like it should be.
 - `BasicEffect` and `NodeEmitterEffect` can now be constructed without any arguments to make a default effect.

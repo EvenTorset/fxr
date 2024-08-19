@@ -54,6 +54,14 @@ properties:
   unk_ds3_p2_0:
     type: ScalarValue
     default: 1
+    desc: |
+      Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
+      - At 0 or negative values, this completely disabled the light.
+      - At 1, the light behaves like you would expect.
+      - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
+      - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
+    see:
+      - falloffExponent
   unk_ds3_p2_1:
     type: ScalarValue
     default: 1
@@ -252,6 +260,8 @@ properties:
       Controls the falloff exponent of the light.
 
       Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+    see:
+      - unk_ds3_p2_0
   unk_er_f2_29:
     field: int
     default: 1
