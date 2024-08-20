@@ -41307,6 +41307,48 @@ namespace Recolor {
     lensFlare?: PaletteSlots['LensFlare'][]
   }
 
+  export type WeightedColorPalette = {
+    [K in keyof ColorPalette]: ColorPalette[K] extends (infer U)[]
+      ? (U & { weight?: number })[]
+      : ColorPalette[K]
+  }
+
+  /**
+   * Create a new palette with the average of the entries in the given palette.
+   * Each entry in the input palette may have a `weight` property that controls
+   * how much the entry affects the average.
+   * @param palette A color palette, with optional weights. The weights default
+   * to 1 if not set.
+   */
+  export function weightedAveragePalette(palette: WeightedColorPalette): ColorPalette {
+    const p: ColorPalette = {}
+    for (const [k, v] of Object.entries(palette) as Entries<Recolor.WeightedColorPalette>) {
+      const entries = []
+      for (const entry of v) {
+        entries.push({
+          weight: 1,
+          ...entry
+        })
+      }
+      if (entries.length === 1) {
+        p[k] = entries
+        continue
+      }
+      const weightSum = entries.reduce((a, e) => a + e.weight!, 0)
+      const obj: any = {}
+      for (const entry of entries) {
+        for (const p of Object.keys(entry)) if (p !== 'weight') {
+          obj[p] = anyValueSum<AnyProperty>(
+            Property.fromJSON(obj[p] ?? 0),
+            anyValueMult(entry.weight / weightSum, Property.fromJSON(entry[p]))
+          ).toJSON()
+        }
+      }
+      p[k] = [obj]
+    }
+    return p
+  }
+
   /**
    * Generates a color palette that can be used to recolor other nodes based on
    * the colors in the given nodes and their descendants.
@@ -41344,12 +41386,12 @@ namespace Recolor {
         (
           Array.isArray(color) &&
           color[3] !== 0 &&
-          color.some(e => e !== 1)
+          color.some(e => !f32Equal(e, 1))
         ) ||
         (
           color instanceof ValueProperty &&
           (color.value as Vector4)[3] !== 0 &&
-          (color.value as Vector4).some(e => e !== 1)
+          (color.value as Vector4).some(e => !f32Equal(e, 1))
         )
       )
     }
