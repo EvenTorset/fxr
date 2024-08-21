@@ -9243,29 +9243,29 @@ class FXR {
     await fs.writeFile(path, new Uint8Array(this.toArrayBuffer(game)))
   }
 
-  static fromJSON(obj: {
+  static fromJSON<T extends typeof FXR>(this: T, obj: {
     id: number
     states?: (string | string[])[]
     root?: any
   } | {
     version: string
     fxr: any
-  }) {
-    if (obj instanceof FXR) {
-      return obj
+  }): InstanceType<T> {
+    if (obj instanceof this) {
+      return obj as InstanceType<T>
     }
     if ('fxr' in obj) {
-      return new FXR(
+      return new this(
         obj.fxr.id,
         'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
         'states' in obj.fxr ? obj.fxr.states.map(state => State.from(state)) : undefined,
-      )
+      ) as InstanceType<T>
     }
-    return new FXR(
+    return new this(
       obj.id,
       'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
       'states' in obj ? obj.states.map(state => State.from(state)) : undefined,
-    )
+    ) as InstanceType<T>
   }
 
   toJSON() {
