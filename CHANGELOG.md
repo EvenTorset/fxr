@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [15.0.0] - 2024-08-28
 
 ### Highlights
 - Added `Game.Heuristic`, which can be used with `FXR.read` to let the library figure out what game an FXR file is for.
@@ -171,7 +171,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
-[Unreleased]: https://github.com/EvenTorset/fxr/compare/v14.1.0...HEAD
+[15.0.0]: https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0
 [14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0
 [14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0
