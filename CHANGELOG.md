@@ -1,5 +1,25 @@
 # Changelog
 
+## [15.0.0] - 2024-08-28
+
+### Highlights
+- Added `Game.Heuristic`, which can be used with `FXR.read` to let the library figure out what game an FXR file is for.
+  - This is now the default `game` value for the `FXR.read` function. (*Was `Game.EldenRing` previously.*)
+  - `FXR` objects now have a new `gameHint` property that stores what game the file was parsed as. It defaults to `Game.Generic`, and the only way to set it is using the `FXR.read` function. New effects created with `new FXR` or `FXR.fromJSON` will have the default value. The hint will be `Game.Heuristic` if the `FXR.read` function could not determine what game it was from.
+  - The `FXR.toArrayBuffer` and `FXR.saveAs` methods now use `Game.Heuristic` as the default game value too (*was also `Game.EldenRing` previously*), which will cause them to use the `gameHint` as the game, unless the hint is `Game.Heuristic`. If the hint is `Game.Heuristic`, they will look for some AC6-specific things, like action 800, and will use that as the game if anything is found. Otherwise, it will throw an error. I highly recommend still giving these methods a specific game, so the library doesn't need to guess.
+  - `FXR.read` can detect any DS3 or Sekiro effects perfectly, as long as they're not modified in ways that would make the effect invalid for the game.
+    - It has a pretty high chance of getting it right for ER and AC6, but it is not perfect, because there are a lot of ways to make AC6 effects that would be the same in ER. It will still read the effect correctly, as it doesn't matter if it's for ER or AC6 if they're both the same, but it affects the `gameHint` property, which can then affect `FXR.toArrayBuffer` and `FXR.saveAs`.
+- Added a `Recolor.weightedAveragePalette` function, which takes a color palette with weights for each entry and returns a new palette that has the weighted average of all entries for each slot.
+- Added a `randomSeed` function for generating random seeds to be used with randomization modifiers. The modifier classes already generated random seeds as default values, but this allows you to easily generate seeds that can be used in multiple properties, synchronizing their randomization.
+- Added a `RandomFractionProperty` function. This was the only missing function to generate properties with randomization modifiers. The other two modifiers have had functions like this one for a while now.
+- Added a `getValueType` function that returns the `ValueType` of a given value. This works with numbers, vector arrays, and properties. It's probably not super useful for most people, it's just a utility function used internally that I figured might as well be exported.
+- All action fields/properties have been sorted in a way to make their order closer to their order in the actual files. It's not going to match exactly, because the actions in the library have all fields and properties from all four of the supported games, and some of the games have things moved around a bit. This order doesn't really affect much in the library or the documentation, but it causes the JSON structure to have the fields/properties in the new order, so it should hopefully make it easier to find and edit unknowns in the JSON.
+- Named and documented the `bloom` field (previously `unk_ds3_f2_4`) in actions 600, 601, 602, 603, 604, 606, and 10012. This is simply a boolean field that toggles the extra bloom effect. (*Requires "Effects Quality" to be set to anything but "Low", and the `bloomColor` vector field to have a non-zero alpha.*)
+- The behavior of the `unk_ds3_p2_0` property in `PointLight`s has been documented. The property is still unnamed.
+- The `hex` template tag now also accepts strings starting with `#`, like `#ff0000`.
+- Fixed the return type of the `hex` template tag. It was previously `number[]`, and is now `Vector4` like it should be.
+- `BasicEffect` and `NodeEmitterEffect` can now be constructed without any arguments to make a default effect.
+
 ## [14.1.0] - 2024-08-14
 
 ### Highlights
@@ -151,6 +171,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[15.0.0]: https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0
 [14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0
 [14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0

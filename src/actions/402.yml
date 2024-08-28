@@ -7,12 +7,6 @@ meta:
 desc: |
   Makes the emitter rectangular.
 properties:
-  direction:
-    type: InitialDirection
-    field: int
-    default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
   sizeX:
     type: ScalarValue
     default: 1
@@ -37,6 +31,12 @@ properties:
       - At 1, particles have a 100% chance of being emitted from the center point.
       - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
       - Values between these smoothly blend between them.
+  direction:
+    type: InitialDirection
+    field: int
+    default: InitialDirection.Emitter
+    desc: |
+      Controls the initial direction for particles. See {@link InitialDirection} for more information.
 games:
   DS3:
     fields1:

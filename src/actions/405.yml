@@ -7,6 +7,20 @@ meta:
 desc: |
   Makes the emitter cylindrical.
 properties:
+  radius:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    scale: true
+    desc: |
+      The radius of the cylinder.
+  height:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    scale: true
+    desc: |
+      The height of the cylinder.
   direction:
     type: InitialDirection
     field: int
@@ -23,20 +37,6 @@ properties:
     default: true
     desc: |
       If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
-  radius:
-    type: ScalarValue
-    default: 1
-    argument: EffectAge
-    scale: true
-    desc: |
-      The radius of the cylinder.
-  height:
-    type: ScalarValue
-    default: 1
-    argument: EffectAge
-    scale: true
-    desc: |
-      The height of the cylinder.
 games:
   SDT:
     fields1:

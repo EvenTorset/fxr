@@ -14,6 +14,10 @@ properties:
     scale: true
     desc: |
       How much the emitter must move to trigger emission.
+  unk_ds3_p1_2:
+    type: ScalarValue
+    default: -1
+    argument: EffectAge
   maxConcurrent:
     type: ScalarValue
     field: int
@@ -21,19 +25,15 @@ properties:
     argument: EffectAge
     desc: |
       Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+  unk_ds3_p1_1:
+    type: ScalarValue
+    default: 1
   unk_ds3_f1_1:
     field: int
     default: 1
   unk_sdt_f1_1:
     field: int
     default: 0
-  unk_ds3_p1_1:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p1_2:
-    type: ScalarValue
-    default: -1
-    argument: EffectAge
 games:
   DS3:
     fields1:

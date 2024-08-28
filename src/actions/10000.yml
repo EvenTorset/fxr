@@ -11,6 +11,127 @@ desc: |
 
   The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
 properties:
+  particleFollowFactor:
+    type: ScalarValue
+    desc: |
+      Controls how well the particles follow the node if it moves.
+  unk_ds3_p1_1:
+    type: ScalarValue
+  unk_ds3_p1_2:
+    type: ScalarValue
+  unk_ds3_p1_3:
+    type: ScalarValue
+  particleAccelerationX:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Particle acceleration along the X-axis.
+    see:
+      - particleAccelerationMin
+      - particleAccelerationMax
+  particleAccelerationY:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Particle acceleration along the Y-axis.
+    see:
+      - particleAccelerationMin
+      - particleAccelerationMax
+  particleAccelerationZ:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Particle acceleration along the Z-axis.
+    see:
+      - particleAccelerationMin
+      - particleAccelerationMax
+  unk_ds3_p1_7:
+    type: ScalarValue
+  unk_ds3_p1_8:
+    type: ScalarValue
+  particleAngularAccelerationZ:
+    type: ScalarValue
+    time: sq
+    desc: |
+      Angular acceleration for particles around the Z-axis in degrees per second squared.
+    see:
+      - particleAngularAccelerationMin
+      - particleAngularAccelerationMax
+  particleGrowthRateX:
+    type: ScalarValue
+    scale: true
+    time: true
+    desc: |
+      The rate of change for the width of the particles.
+    see:
+      - particleGrowthRateXStatic
+  particleGrowthRateY:
+    type: ScalarValue
+    scale: true
+    time: true
+    desc: |
+      The rate of change for the height of the particles.
+    see:
+      - particleGrowthRateYStatic
+  unk_ds3_p1_12:
+    type: ScalarValue
+  color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    color: true
+    desc: |
+      Color multiplier.
+  unk_ds3_p1_14:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p1_15:
+    type: ScalarValue
+  unkParticleAcceleration:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Seemingly identical to {@link particleAccelerationZ}?
+  unk_ds3_p1_17:
+    type: ScalarValue
+  particleGravity:
+    type: ScalarValue
+    scale: true
+    time: sq
+    desc: |
+      Downwards acceleration for particles.
+  particleRandomTurnAngle:
+    type: ScalarValue
+    desc: |
+      Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
+    see:
+      - particleRandomTurns
+      - particleRandomTurnIntervalMax
+  unk_ds3_p1_20:
+    type: ScalarValue
+  unk_ds3_p2_0:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p2_1:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p2_2:
+    type: ScalarValue
+  unk_ds3_p2_3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_4:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_5:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_6:
+    type: ScalarValue
   unk_ds3_f1_0:
     field: int
     default: 1005
@@ -603,10 +724,6 @@ properties:
       - This does not affect the natural bloom effect from high color values.
     see:
       - bloom
-  desaturate:
-    field: float
-    desc: |
-      Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
   unk_sdt_f1_160:
     field: float
     default: 1
@@ -629,6 +746,10 @@ properties:
   unk_er_f1_167:
     field: float
     default: 1
+  desaturate:
+    field: float
+    desc: |
+      Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
   unk_ds3_f2_0:
     field: int
   unk_ds3_f2_1:
@@ -662,6 +783,20 @@ properties:
     field: int
   unk_ds3_f2_13:
     field: int
+  minFadeDistance:
+    field: float
+    default: -1
+    scale: ifNotMinusOne
+    desc: |
+      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+
+      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+    see:
+      - minDistance
+      - maxFadeDistance
+      - maxDistance
+      - minDistanceThreshold
+      - maxDistanceThreshold
   minDistance:
     field: float
     default: -1
@@ -674,20 +809,6 @@ properties:
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
       - minFadeDistance
-      - maxFadeDistance
-      - maxDistance
-      - minDistanceThreshold
-      - maxDistanceThreshold
-  minFadeDistance:
-    field: float
-    default: -1
-    scale: ifNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
-    see:
-      - minDistance
       - maxFadeDistance
       - maxDistance
       - minDistanceThreshold
@@ -821,127 +942,6 @@ properties:
       - glossiness
   unk_er_f2_39:
     field: int
-  particleFollowFactor:
-    type: ScalarValue
-    desc: |
-      Controls how well the particles follow the node if it moves.
-  unk_ds3_p1_1:
-    type: ScalarValue
-  unk_ds3_p1_2:
-    type: ScalarValue
-  unk_ds3_p1_3:
-    type: ScalarValue
-  particleAccelerationX:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Particle acceleration along the X-axis.
-    see:
-      - particleAccelerationMin
-      - particleAccelerationMax
-  particleAccelerationY:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Particle acceleration along the Y-axis.
-    see:
-      - particleAccelerationMin
-      - particleAccelerationMax
-  particleAccelerationZ:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Particle acceleration along the Z-axis.
-    see:
-      - particleAccelerationMin
-      - particleAccelerationMax
-  unk_ds3_p1_7:
-    type: ScalarValue
-  unk_ds3_p1_8:
-    type: ScalarValue
-  particleAngularAccelerationZ:
-    type: ScalarValue
-    time: sq
-    desc: |
-      Angular acceleration for particles around the Z-axis in degrees per second squared.
-    see:
-      - particleAngularAccelerationMin
-      - particleAngularAccelerationMax
-  particleGrowthRateX:
-    type: ScalarValue
-    scale: true
-    time: true
-    desc: |
-      The rate of change for the width of the particles.
-    see:
-      - particleGrowthRateXStatic
-  particleGrowthRateY:
-    type: ScalarValue
-    scale: true
-    time: true
-    desc: |
-      The rate of change for the height of the particles.
-    see:
-      - particleGrowthRateYStatic
-  unk_ds3_p1_12:
-    type: ScalarValue
-  color:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    argument: ParticleAge
-    color: true
-    desc: |
-      Color multiplier.
-  unk_ds3_p1_14:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p1_15:
-    type: ScalarValue
-  unkParticleAcceleration:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Seemingly identical to {@link particleAccelerationZ}?
-  unk_ds3_p1_17:
-    type: ScalarValue
-  particleGravity:
-    type: ScalarValue
-    scale: true
-    time: sq
-    desc: |
-      Downwards acceleration for particles.
-  particleRandomTurnAngle:
-    type: ScalarValue
-    desc: |
-      Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
-    see:
-      - particleRandomTurns
-      - particleRandomTurnIntervalMax
-  unk_ds3_p1_20:
-    type: ScalarValue
-  unk_ds3_p2_0:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p2_1:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p2_2:
-    type: ScalarValue
-  unk_ds3_p2_3:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_4:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_5:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_6:
-    type: ScalarValue
 games:
   DS3:
     fields1:

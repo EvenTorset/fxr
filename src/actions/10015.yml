@@ -9,64 +9,6 @@ desc: |
 
   Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
 properties:
-  orientation:
-    type: RichModelOrientationMode
-    field: int
-    default: RichModelOrientationMode.ParticleDirection
-    desc: |
-      Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
-  scaleVariationX:
-    field: float
-    default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
-
-      If {@link uniformScale} is enabled, this also affects the height.
-    see:
-      - scaleVariationY
-      - scaleVariationZ
-  scaleVariationY:
-    field: float
-    default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
-
-      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
-    see:
-      - scaleVariationX
-      - scaleVariationZ
-  scaleVariationZ:
-    field: float
-    default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
-
-      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
-    see:
-      - scaleVariationX
-      - scaleVariationY
-  uniformScale:
-    field: bool
-    default: false
-    desc: |
-      If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
-    see:
-      - sizeX
-      - sizeY
-      - sizeZ
-      - scaleVariationX
-      - scaleVariationY
-      - scaleVariationZ
-  bloomColor:
-    field: vec4
-    default: [1, 1, 1, 0]
-    color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
   model:
     type: ScalarValue
     default: 80201
@@ -146,6 +88,14 @@ properties:
     see:
       - rotationX
       - angularSpeedMultiplierX
+  angularSpeedMultiplierX:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link angularSpeedX}.
+    see:
+      - rotationX
   angularSpeedY:
     type: ScalarValue
     argument: ParticleAge
@@ -155,6 +105,14 @@ properties:
     see:
       - rotationY
       - angularSpeedMultiplierY
+  angularSpeedMultiplierY:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link angularSpeedY}.
+    see:
+      - rotationY
   angularSpeedZ:
     type: ScalarValue
     argument: ParticleAge
@@ -164,22 +122,6 @@ properties:
     see:
       - rotationZ
       - angularSpeedMultiplierZ
-  angularSpeedMultiplierX:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    desc: |
-      Multiplier for {@link angularSpeedX}.
-    see:
-      - rotationX
-  angularSpeedMultiplierY:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    desc: |
-      Multiplier for {@link angularSpeedY}.
-    see:
-      - rotationY
   angularSpeedMultiplierZ:
     type: ScalarValue
     default: 1
@@ -209,6 +151,43 @@ properties:
     color: true
     desc: |
       Color multiplier for the particle.
+  unk_er_p1_16:
+    type: ScalarValue
+  unk_er_p1_17:
+    type: ScalarValue
+  rgbMultiplier2:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Seemingly identical to {@link rgbMultiplier}?
+  unk_er_p1_19:
+    type: ScalarValue
+  unk_er_p1_20:
+    type: ScalarValue
+  uvOffset:
+    type: Vector2Value
+    default: [0, 0]
+    argument: Constant0
+    desc: |
+      Offset for the UV coordinates of the model.
+    see:
+      - uvSpeed
+  uvSpeed:
+    type: Vector2Value
+    default: [0, 0]
+    argument: ParticleAge
+    time: true
+    desc: |
+      Scroll speed for the model's texture.
+    see:
+      - uvSpeedMultiplier
+  uvSpeedMultiplier:
+    type: Vector2Value
+    default: [1, 1]
+    argument: ParticleAge
+    desc: |
+      Multiplier for {@link uvSpeed}
   uOffset:
     omitClassProp: true
     type: ScalarValue
@@ -272,6 +251,81 @@ properties:
     argument: EffectAge
     desc: |
       Alpha multiplier.
+  unk_er_p2_2:
+    type: ScalarValue
+  unk_er_p2_3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p2_4:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p2_5:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_er_p2_6:
+    type: ScalarValue
+  orientation:
+    type: RichModelOrientationMode
+    field: int
+    default: RichModelOrientationMode.ParticleDirection
+    desc: |
+      Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
+  scaleVariationX:
+    field: float
+    default: 1
+    desc: |
+      Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+
+      If {@link uniformScale} is enabled, this also affects the height.
+    see:
+      - scaleVariationY
+      - scaleVariationZ
+  scaleVariationY:
+    field: float
+    default: 1
+    desc: |
+      Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+
+      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+    see:
+      - scaleVariationX
+      - scaleVariationZ
+  scaleVariationZ:
+    field: float
+    default: 1
+    desc: |
+      Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+
+      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+    see:
+      - scaleVariationX
+      - scaleVariationY
+  uniformScale:
+    field: bool
+    default: false
+    desc: |
+      If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+    see:
+      - sizeX
+      - sizeY
+      - sizeZ
+      - scaleVariationX
+      - scaleVariationY
+      - scaleVariationZ
+  unk_er_f1_5:
+    field: int
+    default: 1
+  unk_er_f1_6:
+    field: int
+    default: 1
+  unk_er_f1_7:
+    field: int
+  unk_er_f1_8:
+    field: int
+    default: -2
+  unk_er_f1_9:
+    field: int
+    default: -2
   anibnd:
     field: int
     resource: anibnd
@@ -308,20 +362,6 @@ properties:
       - anibnd
       - animation
       - loopAnimation
-  unk_er_f1_5:
-    field: int
-    default: 1
-  unk_er_f1_6:
-    field: int
-    default: 1
-  unk_er_f1_7:
-    field: int
-  unk_er_f1_8:
-    field: int
-    default: -2
-  unk_er_f1_9:
-    field: int
-    default: -2
   unk_er_f1_14:
     field: float
   unk_er_f1_15:
@@ -342,6 +382,33 @@ properties:
     field: int
   unk_er_f1_23:
     field: int
+  unk_ac6_f1_24:
+    field: float
+  unk_ac6_f1_25:
+    field: float
+    default: -1
+  unk_ac6_f1_26:
+    field: float
+    default: -1
+  unk_ac6_f1_27:
+    field: float
+    default: -1
+  unk_ac6_f1_28:
+    field: float
+    default: -1
+  unk_ac6_f1_29:
+    field: int
+  unk_ac6_f1_30:
+    field: int
+  unk_ac6_f1_31:
+    field: float
+  unk_ac6_f1_32:
+    field: int
+  unk_ac6_f1_33:
+    field: int
+    default: 1
+  unk_ac6_f1_34:
+    field: int
   unk_er_f1_24:
     field: float
   unk_er_f1_25:
@@ -356,6 +423,16 @@ properties:
     default: 8
   unk_er_f2_3:
     field: int
+  bloomColor:
+    field: vec4
+    default: [1, 1, 1, 0]
+    color: true
+    desc: |
+      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
   unk_er_f2_8:
     field: int
   unk_er_f2_9:
@@ -368,6 +445,20 @@ properties:
     field: int
   unk_er_f2_13:
     field: int
+  minFadeDistance:
+    field: float
+    default: -1
+    scale: ifNotMinusOne
+    desc: |
+      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+
+      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+    see:
+      - minDistance
+      - maxFadeDistance
+      - maxDistance
+      - minDistanceThreshold
+      - maxDistanceThreshold
   minDistance:
     field: float
     default: -1
@@ -380,20 +471,6 @@ properties:
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
       - minFadeDistance
-      - maxFadeDistance
-      - maxDistance
-      - minDistanceThreshold
-      - maxDistanceThreshold
-  minFadeDistance:
-    field: float
-    default: -1
-    scale: ifNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
-    see:
-      - minDistance
       - maxFadeDistance
       - maxDistance
       - minDistanceThreshold
@@ -495,83 +572,6 @@ properties:
     default: -2
   unk_er_f2_37:
     field: int
-  unk_er_p1_16:
-    type: ScalarValue
-  unk_er_p1_17:
-    type: ScalarValue
-  rgbMultiplier2:
-    type: ScalarValue
-    default: 1
-    argument: EffectAge
-    desc: |
-      Seemingly identical to {@link rgbMultiplier}?
-  unk_er_p1_19:
-    type: ScalarValue
-  unk_er_p1_20:
-    type: ScalarValue
-  unk_er_p2_2:
-    type: ScalarValue
-  unk_er_p2_3:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_er_p2_4:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_er_p2_5:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_er_p2_6:
-    type: ScalarValue
-  unk_ac6_f1_24:
-    field: float
-  unk_ac6_f1_25:
-    field: float
-    default: -1
-  unk_ac6_f1_26:
-    field: float
-    default: -1
-  unk_ac6_f1_27:
-    field: float
-    default: -1
-  unk_ac6_f1_28:
-    field: float
-    default: -1
-  unk_ac6_f1_29:
-    field: int
-  unk_ac6_f1_30:
-    field: int
-  unk_ac6_f1_31:
-    field: float
-  unk_ac6_f1_32:
-    field: int
-  unk_ac6_f1_33:
-    field: int
-    default: 1
-  unk_ac6_f1_34:
-    field: int
-  uvOffset:
-    type: Vector2Value
-    default: [0, 0]
-    argument: Constant0
-    desc: |
-      Offset for the UV coordinates of the model.
-    see:
-      - uvSpeed
-  uvSpeed:
-    type: Vector2Value
-    default: [0, 0]
-    argument: ParticleAge
-    time: true
-    desc: |
-      Scroll speed for the model's texture.
-    see:
-      - uvSpeedMultiplier
-  uvSpeedMultiplier:
-    type: Vector2Value
-    default: [1, 1]
-    argument: ParticleAge
-    desc: |
-      Multiplier for {@link uvSpeed}
 games:
   ER:
     fields1:

@@ -9,6 +9,161 @@ desc: |
 
   Note: This particle is not visible if the "Effects" setting is set to "Low".
 properties:
+  blendMode:
+    type: BlendMode | ScalarProperty
+    field: int
+    default: BlendMode.Normal
+    argument: Constant0
+    desc: |
+      Blend mode.
+  offsetX:
+    type: ScalarValue
+    argument: ParticleAge
+    scale: true
+    desc: |
+      X position offset.
+  offsetY:
+    type: ScalarValue
+    argument: ParticleAge
+    scale: true
+    desc: |
+      Y position offset.
+  offsetZ:
+    type: ScalarValue
+    argument: ParticleAge
+    scale: true
+    desc: |
+      Z position offset.
+  sizeX:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    scale: true
+    desc: |
+      The width of the particle.
+
+      If {@link uniformScale} is enabled, this also controls the height and depth.
+    see:
+      - scaleVariationX
+      - sizeY
+      - sizeZ
+  sizeY:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    scale: true
+    desc: |
+      The height of the particle.
+
+      If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+    see:
+      - scaleVariationY
+      - sizeX
+      - sizeZ
+  sizeZ:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    scale: true
+    desc: |
+      The depth of the particle.
+
+      If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+
+      If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
+    see:
+      - scaleVariationZ
+      - sizeX
+      - sizeY
+  color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    color: true
+    desc: |
+      Color multiplier.
+  unk_ds3_p1_7:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  intensity:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+  unk_ds3_p1_9:
+    type: ScalarValue
+  stirSpeed:
+    type: ScalarValue
+    default: 60
+    argument: ParticleAge
+    time: true
+    desc: |
+      Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+  radius:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
+  normalMapOffsetU:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Horizontal offset for the {@link normalMap normal map}.
+  normalMapOffsetV:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Vertical offset for the {@link normalMap normal map}.
+  normalMapSpeedU:
+    type: ScalarValue
+    argument: ParticleAge
+    time: true
+    desc: |
+      Horizontal offset speed for the {@link normalMap normal map}.
+  normalMapSpeedV:
+    type: ScalarValue
+    argument: ParticleAge
+    time: true
+    desc: |
+      Vertical offset speed for the {@link normalMap normal map}.
+  rgbMultiplier:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+  alphaMultiplier:
+    type: ScalarValue
+    default: 1
+    argument: EffectAge
+    desc: |
+      Alpha multiplier.
+  unk_ds3_p2_2:
+    type: ScalarValue
+  unk_ds3_p2_3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_4:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_5:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  alphaThreshold:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+  unk_er_p2_7:
+    type: ScalarValue
+    default: 1
+  unk_er_p2_8:
+    type: ScalarValue
+    default: 1
   mode:
     type: DistortionMode
     field: int
@@ -94,147 +249,17 @@ properties:
       - scaleVariationX
       - scaleVariationY
       - scaleVariationZ
-  bloomColor:
-    field: vec4
-    default: [1, 1, 1, 0]
-    color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
-  blendMode:
-    type: BlendMode | ScalarProperty
-    field: int
-    default: BlendMode.Normal
-    argument: Constant0
-    desc: |
-      Blend mode.
-  offsetX:
-    type: ScalarValue
-    argument: ParticleAge
-    scale: true
-    desc: |
-      X position offset.
-  offsetY:
-    type: ScalarValue
-    argument: ParticleAge
-    scale: true
-    desc: |
-      Y position offset.
-  offsetZ:
-    type: ScalarValue
-    argument: ParticleAge
-    scale: true
-    desc: |
-      Z position offset.
-  sizeX:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    scale: true
-    desc: |
-      The width of the particle.
-
-      If {@link uniformScale} is enabled, this also controls the height and depth.
-    see:
-      - scaleVariationX
-      - sizeY
-      - sizeZ
-  sizeY:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    scale: true
-    desc: |
-      The height of the particle.
-
-      If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
-    see:
-      - scaleVariationY
-      - sizeX
-      - sizeZ
-  sizeZ:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    scale: true
-    desc: |
-      The depth of the particle.
-
-      If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
-
-      If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
-    see:
-      - scaleVariationZ
-      - sizeX
-      - sizeY
-  color:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    argument: ParticleAge
-    color: true
-    desc: |
-      Color multiplier.
-  intensity:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    desc: |
-      Controls the intensity of the distortion effect. At 0, there is no distortion at all.
-  stirSpeed:
-    type: ScalarValue
-    default: 60
-    argument: ParticleAge
-    time: true
-    desc: |
-      Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
-  radius:
-    type: ScalarValue
-    default: 1
-    argument: ParticleAge
-    desc: |
-      The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
-  normalMapOffsetU:
-    type: ScalarValue
-    argument: Constant0
-    desc: |
-      Horizontal offset for the {@link normalMap normal map}.
-  normalMapOffsetV:
-    type: ScalarValue
-    argument: Constant0
-    desc: |
-      Vertical offset for the {@link normalMap normal map}.
-  normalMapSpeedU:
-    type: ScalarValue
-    argument: ParticleAge
-    time: true
-    desc: |
-      Horizontal offset speed for the {@link normalMap normal map}.
-  normalMapSpeedV:
-    type: ScalarValue
-    argument: ParticleAge
-    time: true
-    desc: |
-      Vertical offset speed for the {@link normalMap normal map}.
-  rgbMultiplier:
-    type: ScalarValue
-    default: 1
-    argument: EffectAge
-    desc: |
-      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-  alphaMultiplier:
-    type: ScalarValue
-    default: 1
-    argument: EffectAge
-    desc: |
-      Alpha multiplier.
   unk_ds3_f1_11:
     field: int
     default: -2
   unk_ds3_f1_12:
     field: int
+  unk_er_f1_12:
+    field: int
+    default: 1
+  unk_er_f1_13:
+    field: int
+    default: 1
   unk_ds3_f2_0:
     field: int
   unk_ds3_f2_1:
@@ -247,6 +272,16 @@ properties:
     default: 1
   unk_ds3_f2_4:
     field: int
+  bloomColor:
+    field: vec4
+    default: [1, 1, 1, 0]
+    color: true
+    desc: |
+      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
   unk_ds3_f2_9:
     field: int
   unk_ds3_f2_10:
@@ -257,6 +292,20 @@ properties:
     field: int
   unk_ds3_f2_13:
     field: int
+  minFadeDistance:
+    field: float
+    default: -1
+    scale: ifNotMinusOne
+    desc: |
+      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+
+      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+    see:
+      - minDistance
+      - maxFadeDistance
+      - maxDistance
+      - minDistanceThreshold
+      - maxDistanceThreshold
   minDistance:
     field: float
     default: -1
@@ -269,20 +318,6 @@ properties:
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
       - minFadeDistance
-      - maxFadeDistance
-      - maxDistance
-      - minDistanceThreshold
-      - maxDistanceThreshold
-  minFadeDistance:
-    field: float
-    default: -1
-    scale: ifNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
-    see:
-      - minDistance
       - maxFadeDistance
       - maxDistance
       - minDistanceThreshold
@@ -365,29 +400,6 @@ properties:
     field: int
   unk_ds3_f2_29:
     field: int
-  unk_ds3_p1_7:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p1_9:
-    type: ScalarValue
-  unk_ds3_p2_2:
-    type: ScalarValue
-  unk_ds3_p2_3:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_4:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_5:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  alphaThreshold:
-    type: ScalarValue
-    argument: EffectAge
-    desc: |
-      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-
-      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
   unk_sdt_f2_30:
     field: float
   unk_sdt_f2_31:
@@ -408,18 +420,6 @@ properties:
     field: int
   unk_sdt_f2_38:
     field: float
-  unk_er_f1_12:
-    field: int
-    default: 1
-  unk_er_f1_13:
-    field: int
-    default: 1
-  unk_er_p2_7:
-    type: ScalarValue
-    default: 1
-  unk_er_p2_8:
-    type: ScalarValue
-    default: 1
 games:
   DS3:
     fields1:

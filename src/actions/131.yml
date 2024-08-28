@@ -9,15 +9,6 @@ desc: |
 
   Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
 properties:
-  uniformScale:
-    field: bool
-    default: false
-    desc: |
-      Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
-    see:
-      - scaleX
-      - scaleY
-      - scaleZ
   speed:
     type: ScalarValue
     argument: EffectAge
@@ -56,6 +47,15 @@ properties:
     color: true
     desc: |
       Color multiplier for the particles emitted from this node.
+  uniformScale:
+    field: bool
+    default: false
+    desc: |
+      Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+    see:
+      - scaleX
+      - scaleY
+      - scaleZ
 games:
   DS3:
     fields1:

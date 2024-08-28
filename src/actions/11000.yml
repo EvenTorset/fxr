@@ -69,6 +69,17 @@ properties:
     scale: true
     desc: |
       The Y radius for the elliptic base of the cone.
+  unk_ds3_p1_6:
+    type: ScalarValue
+    default: 1
+  unk_ds3_p1_7:
+    type: ScalarValue
+    default: 1
+  unk_sdt_p1_10:
+    type: ScalarValue
+    default: 1
+  unk_sdt_f1_0:
+    field: int
   jitterAndFlicker:
     field: bool
     default: false
@@ -94,6 +105,8 @@ properties:
       - jitterX
       - jitterY
       - jitterZ
+  unk_sdt_f1_3:
+    field: float
   jitterX:
     field: float
     scale: true
@@ -169,6 +182,17 @@ properties:
       - specularColor
       - diffuseMultiplier
       - specularMultiplier
+  shadowDarkness:
+    field: float
+    default: 1
+    desc: |
+      Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+  unk_ds3_f1_3:
+    field: int
+    default: 2
+  unk_ds3_f1_4:
+    field: int
+    default: 1
   fadeOutTime:
     field: int
     default: 0
@@ -177,11 +201,13 @@ properties:
       The number of seconds the light takes to fade to nothing after being destroyed.
 
       Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
-  shadowDarkness:
+  unk_sdt_f1_16:
+    field: int
+    default: 100
+  unk_sdt_f1_17:
+    field: int
+  unk_sdt_f1_18:
     field: float
-    default: 1
-    desc: |
-      Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
   volumeDensity:
     field: float
     default: 0
@@ -190,6 +216,8 @@ properties:
     see:
       - phaseFunction
       - asymmetryParam
+  unk_sdt_f1_20:
+    field: float
   phaseFunction:
     field: bool
     default: true
@@ -212,44 +240,6 @@ properties:
       Controls the falloff exponent of the light.
 
       Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
-  unk_ds3_f1_0:
-    field: int
-    default: 1
-  unk_ds3_f1_3:
-    field: int
-    default: 2
-  unk_ds3_f1_4:
-    field: int
-    default: 1
-  unk_ds3_f1_5:
-    field: float
-    default: 1
-  unk_ds3_f1_7:
-    field: int
-  unk_ds3_f1_8:
-    field: int
-  unk_ds3_p1_6:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p1_7:
-    type: ScalarValue
-    default: 1
-  unk_sdt_f1_0:
-    field: int
-  unk_sdt_f1_3:
-    field: float
-  unk_sdt_f1_16:
-    field: int
-    default: 100
-  unk_sdt_f1_17:
-    field: int
-  unk_sdt_f1_18:
-    field: float
-  unk_sdt_f1_20:
-    field: float
-  unk_sdt_p1_10:
-    type: ScalarValue
-    default: 1
   unk_er_f1_24:
     field: int
     default: 1
@@ -260,6 +250,16 @@ properties:
     field: int
     default: 1
   unk_er_f1_27:
+    field: int
+  unk_ds3_f1_0:
+    field: int
+    default: 1
+  unk_ds3_f1_5:
+    field: float
+    default: 1
+  unk_ds3_f1_7:
+    field: int
+  unk_ds3_f1_8:
     field: int
 games:
   DS3:

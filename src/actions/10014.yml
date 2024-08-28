@@ -7,13 +7,6 @@ meta:
 desc: |
   Creates lens flares with up to 4 textured layers with different colors and sizes.
 properties:
-  layer1:
-    field: int
-    default: 1
-    resource: texture
-    textureType: a
-    desc: |
-      Layer 1 texture ID.
   layer1Width:
     type: ScalarValue
     default: 1
@@ -32,6 +25,112 @@ properties:
     color: true
     desc: |
       Layer 1 color.
+  layer2Width:
+    type: ScalarValue
+    default: 1
+    scale: true
+    desc: |
+      Layer 2 width.
+  layer2Height:
+    type: ScalarValue
+    default: 1
+    scale: true
+    desc: |
+      Layer 2 height.
+  layer2Color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+      Layer 2 color.
+  layer3Width:
+    type: ScalarValue
+    default: 1
+    scale: true
+    desc: |
+      Layer 3 width.
+  layer3Height:
+    type: ScalarValue
+    default: 1
+    scale: true
+    desc: |
+      Layer 3 height.
+  layer3Color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+      Layer 3 color.
+  layer4Width:
+    type: ScalarValue
+    default: 1
+    scale: true
+    desc: |
+      Layer 4 width.
+  layer4Height:
+    type: ScalarValue
+    default: 1
+    scale: true
+    desc: |
+      Layer 4 height.
+  layer4Color:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+      Layer 4 color.
+  layer1:
+    field: int
+    default: 1
+    resource: texture
+    textureType: a
+    desc: |
+      Layer 1 texture ID.
+  layer2:
+    field: int
+    default: 0
+    resource: texture
+    textureType: a
+    desc: |
+      Layer 2 texture ID.
+  layer3:
+    field: int
+    default: 0
+    resource: texture
+    textureType: a
+    desc: |
+      Layer 3 texture ID.
+  layer4:
+    field: int
+    default: 0
+    resource: texture
+    textureType: a
+    desc: |
+      Layer 4 texture ID.
+
+      This layer seems to work a bit differently from the others in Sekiro.
+  blendMode:
+    type: BlendMode
+    field: int
+    default: BlendMode.Add
+    desc: |
+      Blend mode.
+  unk_er_f1_4:
+    field: int
+  sourceSize:
+    field: float
+    default: 1
+    desc: |
+      Diameter of the lens flare source sphere.
+
+      The opacity of the lens flare depends on how much of the source is in view.
+  opacityTransitionDuration:
+    field: float
+    default: 1
+    desc: |
+      The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
+  unk_er_f1_8:
+    field: int
   layer1Count:
     field: int
     default: 1
@@ -78,40 +177,16 @@ properties:
       Multiplier for the {@link layer1Color layer's color}.
     see:
       - layer1Color
-  layer1BloomColor:
-    field: vec4
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-       The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-    see:
-      - bloom
-      - layer1Color
-  layer2:
+  unk_er_f1_17:
     field: int
-    default: 0
-    resource: texture
-    textureType: a
-    desc: |
-      Layer 2 texture ID.
-  layer2Width:
-    type: ScalarValue
+  unk_er_f1_18:
+    field: float
+  unk_er_f1_19:
+    field: float
     default: 1
-    scale: true
-    desc: |
-      Layer 2 width.
-  layer2Height:
-    type: ScalarValue
-    default: 1
-    scale: true
-    desc: |
-      Layer 2 height.
-  layer2Color:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-      Layer 2 color.
+  unk_er_f1_20:
+    field: float
+    default: -1
   layer2Count:
     field: int
     default: 1
@@ -158,40 +233,16 @@ properties:
       Multiplier for the {@link layer2Color layer's color}.
     see:
       - layer2Color
-  layer2BloomColor:
-    field: vec4
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-      The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-    see:
-      - bloom
-      - layer2Color
-  layer3:
+  unk_er_f1_29:
     field: int
-    default: 0
-    resource: texture
-    textureType: a
-    desc: |
-      Layer 3 texture ID.
-  layer3Width:
-    type: ScalarValue
+  unk_er_f1_30:
+    field: float
+  unk_er_f1_31:
+    field: float
     default: 1
-    scale: true
-    desc: |
-      Layer 3 width.
-  layer3Height:
-    type: ScalarValue
-    default: 1
-    scale: true
-    desc: |
-      Layer 3 height.
-  layer3Color:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-      Layer 3 color.
+  unk_er_f1_32:
+    field: float
+    default: -1
   layer3Count:
     field: int
     default: 1
@@ -238,42 +289,16 @@ properties:
       Multiplier for the {@link layer3Color layer's color}.
     see:
       - layer3Color
-  layer3BloomColor:
-    field: vec4
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-      The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-    see:
-      - bloom
-      - layer3Color
-  layer4:
+  unk_er_f1_41:
     field: int
-    default: 0
-    resource: texture
-    textureType: a
-    desc: |
-      Layer 4 texture ID.
-
-      This layer seems to work a bit differently from the others in Sekiro.
-  layer4Width:
-    type: ScalarValue
+  unk_er_f1_42:
+    field: float
+  unk_er_f1_43:
+    field: float
     default: 1
-    scale: true
-    desc: |
-      Layer 4 width.
-  layer4Height:
-    type: ScalarValue
-    default: 1
-    scale: true
-    desc: |
-      Layer 4 height.
-  layer4Color:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-      Layer 4 color.
+  unk_er_f1_44:
+    field: float
+    default: -1
   layer4Count:
     field: int
     default: 1
@@ -320,79 +345,6 @@ properties:
       Multiplier for the {@link layer4Color layer's color}.
     see:
       - layer4Color
-  layer4BloomColor:
-    field: vec4
-    default: [1, 1, 1, 1]
-    color: true
-    desc: |
-      The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-    see:
-      - bloom
-      - layer4Color
-  blendMode:
-    type: BlendMode
-    field: int
-    default: BlendMode.Add
-    desc: |
-      Blend mode.
-  sourceSize:
-    field: float
-    default: 1
-    desc: |
-      Diameter of the lens flare source sphere.
-
-      The opacity of the lens flare depends on how much of the source is in view.
-  opacityTransitionDuration:
-    field: float
-    default: 1
-    desc: |
-      The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
-  bloom:
-    field: bool
-    default: false
-    desc: |
-      When enabled, this allows the lens flare to have a bloom effect.
-
-      Does not seem to work in Sekiro.
-    see:
-      - layer1BloomColor
-      - layer2BloomColor
-      - layer3BloomColor
-      - layer4BloomColor
-  unk_er_f1_4:
-    field: int
-  unk_er_f1_8:
-    field: int
-  unk_er_f1_17:
-    field: int
-  unk_er_f1_18:
-    field: float
-  unk_er_f1_19:
-    field: float
-    default: 1
-  unk_er_f1_20:
-    field: float
-    default: -1
-  unk_er_f1_29:
-    field: int
-  unk_er_f1_30:
-    field: float
-  unk_er_f1_31:
-    field: float
-    default: 1
-  unk_er_f1_32:
-    field: float
-    default: -1
-  unk_er_f1_41:
-    field: int
-  unk_er_f1_42:
-    field: float
-  unk_er_f1_43:
-    field: float
-    default: 1
-  unk_er_f1_44:
-    field: float
-    default: -1
   unk_er_f1_53:
     field: int
   unk_er_f1_54:
@@ -405,6 +357,72 @@ properties:
     default: -1
   unk_er_f1_57:
     field: int
+  bloom:
+    field: bool
+    default: false
+    desc: |
+      When enabled, this allows the lens flare to have a bloom effect.
+
+      Does not seem to work in Sekiro.
+    see:
+      - layer1BloomColor
+      - layer2BloomColor
+      - layer3BloomColor
+      - layer4BloomColor
+  layer1BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+       The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+    see:
+      - bloom
+      - layer1Color
+  layer2BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+      The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+    see:
+      - bloom
+      - layer2Color
+  layer3BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+      The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+    see:
+      - bloom
+      - layer3Color
+  layer4BloomColor:
+    field: vec4
+    default: [1, 1, 1, 1]
+    color: true
+    desc: |
+      The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+    see:
+      - bloom
+      - layer4Color
+  unk_ac6_f1_75:
+    field: float
+    default: -1
+  unk_ac6_f1_76:
+    field: float
+    default: -1
+  unk_ac6_f1_77:
+    field: float
+    default: -1
+  unk_ac6_f1_78:
+    field: float
+    default: -1
+  unk_ac6_f1_79:
+    field: float
+    default: -1
+  unk_ac6_f1_80:
+    field: float
+    default: -1
   unk_er_f2_0:
     field: int
   unk_er_f2_1:
@@ -478,24 +496,6 @@ properties:
   unk_er_f2_36:
     field: int
     default: -2
-  unk_ac6_f1_75:
-    field: float
-    default: -1
-  unk_ac6_f1_76:
-    field: float
-    default: -1
-  unk_ac6_f1_77:
-    field: float
-    default: -1
-  unk_ac6_f1_78:
-    field: float
-    default: -1
-  unk_ac6_f1_79:
-    field: float
-    default: -1
-  unk_ac6_f1_80:
-    field: float
-    default: -1
 games:
   SDT: ER # This action works in Sekiro, but it's not used in vanilla
   ER:

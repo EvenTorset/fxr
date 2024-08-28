@@ -9,29 +9,6 @@ desc: |
 
   Note: This particle is not visible if the "Effects" setting is set to "Low".
 properties:
-  uniformScale:
-    field: bool
-    default: false
-    desc: |
-      If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
-    see:
-      - width
-      - height
-  iterations:
-    field: int
-    default: 1
-    desc: |
-      Controls how many times to apply the effect. Higher values can have a significant impact on performance.
-  bloomColor:
-    field: vec4
-    default: [1, 1, 1, 0]
-    color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
@@ -104,6 +81,9 @@ properties:
     color: true
     desc: |
       Color multiplier.
+  unk_ds3_p1_6:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
   blurRadius:
     type: ScalarValue
     default: 0.5
@@ -122,8 +102,45 @@ properties:
     argument: EffectAge
     desc: |
       Alpha multiplier.
+  unk_ds3_p2_2:
+    type: ScalarValue
+  unk_ds3_p2_3:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_4:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  unk_ds3_p2_5:
+    type: Vector4Value
+    default: [1, 1, 1, 1]
+  alphaThreshold:
+    type: ScalarValue
+    argument: EffectAge
+    desc: |
+      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+
+      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+  uniformScale:
+    field: bool
+    default: false
+    desc: |
+      If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+    see:
+      - width
+      - height
+  iterations:
+    field: int
+    default: 1
+    desc: |
+      Controls how many times to apply the effect. Higher values can have a significant impact on performance.
   unk_ds3_f1_4:
     field: int
+  unk_er_f1_3:
+    field: int
+    default: 1
+  unk_er_f1_4:
+    field: int
+    default: 1
   unk_ds3_f2_0:
     field: int
   unk_ds3_f2_1:
@@ -136,6 +153,16 @@ properties:
     default: 1
   unk_ds3_f2_4:
     field: int
+  bloomColor:
+    field: vec4
+    default: [1, 1, 1, 0]
+    color: true
+    desc: |
+      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+
+      Note:
+      - This has no effect if the "Effects Quality" setting is set to "Low".
+      - This does not affect the natural bloom effect from high color values.
   unk_ds3_f2_9:
     field: int
   unk_ds3_f2_10:
@@ -146,6 +173,20 @@ properties:
     field: int
   unk_ds3_f2_13:
     field: int
+  minFadeDistance:
+    field: float
+    default: -1
+    scale: ifNotMinusOne
+    desc: |
+      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+
+      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+    see:
+      - minDistance
+      - maxFadeDistance
+      - maxDistance
+      - minDistanceThreshold
+      - maxDistanceThreshold
   minDistance:
     field: float
     default: -1
@@ -158,20 +199,6 @@ properties:
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
       - minFadeDistance
-      - maxFadeDistance
-      - maxDistance
-      - minDistanceThreshold
-      - maxDistanceThreshold
-  minFadeDistance:
-    field: float
-    default: -1
-    scale: ifNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
-    see:
-      - minDistance
       - maxFadeDistance
       - maxDistance
       - minDistanceThreshold
@@ -255,35 +282,8 @@ properties:
     field: int
   unk_ds3_f2_29:
     field: float
-  unk_ds3_p1_6:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_2:
-    type: ScalarValue
-  unk_ds3_p2_3:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_4:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  unk_ds3_p2_5:
-    type: Vector4Value
-    default: [1, 1, 1, 1]
-  alphaThreshold:
-    type: ScalarValue
-    argument: EffectAge
-    desc: |
-      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-
-      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
   unk_sdt_f2_30:
     field: float
-  unk_er_f1_3:
-    field: int
-    default: 1
-  unk_er_f1_4:
-    field: int
-    default: 1
 games:
   DS3:
     fields1:

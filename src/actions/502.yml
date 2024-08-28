@@ -7,11 +7,6 @@ meta:
 desc: |
   Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
 properties:
-  unk_er_f1_0:
-    field: bool
-    default: false
-    desc: |
-      No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
   angleX:
     type: ScalarValue
     default: 30
@@ -39,6 +34,11 @@ properties:
       - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
       - Values between these values smoothly blend between them.
       - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+  unk_er_f1_0:
+    field: bool
+    default: false
+    desc: |
+      No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
 games:
   DS3:
     properties1:

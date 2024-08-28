@@ -7,11 +7,6 @@ meta:
 desc: |
   Makes the emitter spherical.
 properties:
-  emitInside:
-    field: bool
-    default: true
-    desc: |
-      If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
   radius:
     type: ScalarValue
     default: 1
@@ -19,6 +14,11 @@ properties:
     scale: true
     desc: |
       Radius of the sphere.
+  emitInside:
+    field: bool
+    default: true
+    desc: |
+      If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
 games:
   DS3:
     fields1:
