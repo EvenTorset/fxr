@@ -10301,7 +10301,7 @@ abstract class Node {
 
   /**
    * Lists all resources (textures, models, animations, sounds) used in the
-   * FXR. Useful for finding out what resources must exist for the effect to
+   * node. Useful for finding out what resources must exist for the effect to
    * work correctly, which is often needed when converting from one game to
    * another.
    * @param recurse Controls whether resources from descendant
