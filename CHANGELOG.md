@@ -1,14 +1,16 @@
 # Changelog
 
+## [15.2.0] - 2024-09-01
+
+- Added a `getResources` method to nodes. This does the same thing that the `FXR` method with the same name does, except it only lists resources used in the node it is called on, and optionally descendant nodes.
+
 ## [15.1.0] - 2024-09-01
 
-### Highlights
 - Added a `depth` argument to the `clone` method on nodes that controls how many levels of descendants to clone. It defaults to `Infinity` (same behavior as before), and can be set to 0 to not clone any child nodes.
 - Updated links in the readme to work with the FXR Playground update.
 
 ## [15.0.0] - 2024-08-28
 
-### Highlights
 - Added `Game.Heuristic`, which can be used with `FXR.read` to let the library figure out what game an FXR file is for.
   - This is now the default `game` value for the `FXR.read` function. (*Was `Game.EldenRing` previously.*)
   - `FXR` objects now have a new `gameHint` property that stores what game the file was parsed as. It defaults to `Game.Generic`, and the only way to set it is using the `FXR.read` function. New effects created with `new FXR` or `FXR.fromJSON` will have the default value. The hint will be `Game.Heuristic` if the `FXR.read` function could not determine what game it was from.
@@ -28,7 +30,6 @@
 
 ## [14.1.0] - 2024-08-14
 
-### Highlights
 - Added a `find` method to FXR objects, which finds and returns a value at a given path in the FXR. For example, a path like `root/nodes/0` would be the first child node of the root node.
 - Added a `getActiveEffect` method to nodes that contain effects, which returns the effect that would be active when a given state index is active.
 - Added a `clamp` method to properties. This slices off peaks and troughs outside of a given range to make sure the property value stays within the range.
@@ -38,12 +39,10 @@
 
 ## [14.0.1] - 2024-08-11
 
-### Highlights
 - Fixed a problem related to TypeScript. There are no functional changes at all in this update, the problem only occurred in rare cases when trying to use a generic Property as a type in TS. Any JavaScript using the library won't notice anything different, because there really is nothing different.
 
 ## [14.0.0] - 2024-08-07
 
-### Highlights
 - Added more utility functions:
   - `FXRUtility.box` - Creates an outline of a cuboid shape.
   - `FXRUtility.rect` - Creates a rectangle.
@@ -64,7 +63,6 @@
 
 ## [13.0.0] - 2024-08-04
 
-### Highlights
 - Many new recolor-related features have been added to make recoloring even easier.
   - There is now a template tag for converting hex color strings into color vectors for FXRs. This tag is simply called `hex`, so it is now possible to do something like `` hex`5588ff` `` and it would be equivalent to `[0.333, 0.533, 1, 1]`. It supports 3-, 4-, 6-, and 8-digit hex values. This can be used anywhere where you would normally put color vectors.
   - There are now two new functions for generating a color palette from existing effects:
@@ -109,12 +107,10 @@
 
 ## [12.2.0] - 2024-07-14
 
-### Highlights
 - The static FXR.read method now returns an instance of the class it was called from instead of the FXR class specifically. This means that it's now possible to extend the class without rewriting the static read method from scratch as long as the constructor is similar.
 
 ## [12.1.0] - 2024-07-11
 
-### Highlights
 - The following Node methods now have a new recurse parameter that controls whether or not the method should be applied to descendant nodes:
   - scale
   - recolor
@@ -127,7 +123,6 @@
 
 ## [12.0.0] - 2024-06-27
 
-### Highlights
 - The ComponentSequenceProperty.combineComponents method has been improved so that it should now return an equal HermiteProperty if all of the components have the same number of keyframes and keyframe positions. This method is used internally to, for example, enable correct recoloring of these properties, so the output structure of recolored AC6 effects should now look a lot nicer if they were originally of this type.
 - Added .minify methods to all types of properties.
   - Modifiers for all properties will be filtered to remove ones that are ineffective, i.e. modifiers that don't change anything about the property, for example a random range modifier with 0 as both the min and max values.
@@ -146,7 +141,6 @@
 
 ## [11.0.0] - 2024-06-09
 
-### Highlights
 - Added subclasses and documentation for pretty much all remaining actions, including the ones not used in any of the games:
   - 10003 - LightShaft
   - 10008 - GPUSparkParticle
@@ -177,6 +171,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
 [15.1.0]: https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0
 [15.0.0]: https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0
 [14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0

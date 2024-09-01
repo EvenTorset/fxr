@@ -9351,72 +9351,7 @@ class FXR {
    * another.
    */
   getResources() {
-    const reslist: {
-      textures: { resource: ScalarValue, type: string }[],
-      models: { resource: ScalarValue }[],
-      anibnds: { resource: ScalarValue }[],
-      sounds: { resource: ScalarValue }[]
-    } = {
-      textures: [],
-      models: [],
-      anibnds: [],
-      sounds: []
-    }
-    for (const action of this.root.walkActions()) {
-      if (action instanceof DataAction) {
-        for (const res of action.getResourceProperties()) {
-          switch (res.type) {
-            case ResourceType.Texture:
-              reslist.textures.push({ resource: action[res.property], type: res.textureType })
-              break
-            case ResourceType.Model:
-              reslist.models.push({ resource: action[res.property] })
-              break
-            case ResourceType.Anibnd:
-              reslist.anibnds.push({ resource: action[res.property] })
-              break
-            case ResourceType.Sound:
-              reslist.sounds.push({ resource: action[res.property] })
-              break
-          }
-        }
-      }
-    }
-    const cleanList = (list: { resource: ScalarValue, type?: string }[]) => list.map(e => {
-      if (e.resource instanceof Property) {
-        e.resource = e.resource.valueAt(0)
-      }
-      return e
-    }).filter((e, i, a) => e.resource !== 0 && a.findIndex(f =>
-      f.resource === e.resource &&
-      f.type === e.type
-    ) === i).sort((a, b) => {
-      if (a.resource instanceof Property) {
-        if (b.resource instanceof Property) {
-          return a.resource.valueAt(0) - b.resource.valueAt(0)
-        } else {
-          return a.resource.valueAt(0) - b.resource
-        }
-      } else {
-        if (b.resource instanceof Property) {
-          return a.resource - b.resource.valueAt(0)
-        } else {
-          return a.resource - b.resource
-        }
-      }
-    }) as { resource: number }[]
-
-    return {
-      textures: cleanList(reslist.textures),
-      models: cleanList(reslist.models).map(e => e.resource),
-      anibnds: cleanList(reslist.anibnds).map(e => e.resource),
-      sounds: cleanList(reslist.sounds).map(e => e.resource)
-    } as {
-      textures: { resource: number, type: string }[],
-      models: number[],
-      anibnds: number[],
-      sounds: number[]
-    }
+    return this.root.getResources()
   }
 
   clone(): FXR {
@@ -10362,6 +10297,83 @@ abstract class Node {
       action.scaleRateOfTime(factor)
     }
     return this
+  }
+
+  /**
+   * Lists all resources (textures, models, animations, sounds) used in the
+   * FXR. Useful for finding out what resources must exist for the effect to
+   * work correctly, which is often needed when converting from one game to
+   * another.
+   * @param recurse Controls whether resources from descendant
+   * nodes should be listed or not. Defaults to `true`.
+   */
+  getResources(recurse: boolean = true) {
+    const reslist: {
+      textures: { resource: ScalarValue, type: string }[],
+      models: { resource: ScalarValue }[],
+      anibnds: { resource: ScalarValue }[],
+      sounds: { resource: ScalarValue }[]
+    } = {
+      textures: [],
+      models: [],
+      anibnds: [],
+      sounds: []
+    }
+    for (const action of this.walkActions(recurse)) {
+      if (action instanceof DataAction) {
+        for (const res of action.getResourceProperties()) {
+          switch (res.type) {
+            case ResourceType.Texture:
+              reslist.textures.push({ resource: action[res.property], type: res.textureType })
+              break
+            case ResourceType.Model:
+              reslist.models.push({ resource: action[res.property] })
+              break
+            case ResourceType.Anibnd:
+              reslist.anibnds.push({ resource: action[res.property] })
+              break
+            case ResourceType.Sound:
+              reslist.sounds.push({ resource: action[res.property] })
+              break
+          }
+        }
+      }
+    }
+    const cleanList = (list: { resource: ScalarValue, type?: string }[]) => list.map(e => {
+      if (e.resource instanceof Property) {
+        e.resource = e.resource.valueAt(0)
+      }
+      return e
+    }).filter((e, i, a) => e.resource !== 0 && a.findIndex(f =>
+      f.resource === e.resource &&
+      f.type === e.type
+    ) === i).sort((a, b) => {
+      if (a.resource instanceof Property) {
+        if (b.resource instanceof Property) {
+          return a.resource.valueAt(0) - b.resource.valueAt(0)
+        } else {
+          return a.resource.valueAt(0) - b.resource
+        }
+      } else {
+        if (b.resource instanceof Property) {
+          return a.resource - b.resource.valueAt(0)
+        } else {
+          return a.resource - b.resource
+        }
+      }
+    }) as { resource: number }[]
+
+    return {
+      textures: cleanList(reslist.textures),
+      models: cleanList(reslist.models).map(e => e.resource),
+      anibnds: cleanList(reslist.anibnds).map(e => e.resource),
+      sounds: cleanList(reslist.sounds).map(e => e.resource)
+    } as {
+      textures: { resource: number, type: string }[],
+      models: number[],
+      anibnds: number[],
+      sounds: number[]
+    }
   }
 
 }
