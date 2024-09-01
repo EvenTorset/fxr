@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Renamed `unk_ac6_f1_1` in actions 10008 and 10009 to `unk_ac6_f1_2`. The old name did not match the field's index.
+
 ## [15.2.0] - 2024-09-01
 
 - Added a `getResources` method to nodes. This does the same thing that the `FXR` method with the same name does, except it only lists resources used in the node it is called on, and optionally descendant nodes.
@@ -171,6 +175,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v15.2.0...HEAD
 [15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
 [15.1.0]: https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0
 [15.0.0]: https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0
