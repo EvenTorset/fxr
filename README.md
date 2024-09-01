@@ -35,12 +35,12 @@ Once it has been read, you can change things in the FXR object to whatever you n
 
 Once you have made your changes to the FXR object, you can write it to a file if you're using Node.js, or you can generate an ArrayBuffer with the file's content if you need it to run in the browser.
 
-[Open in FXR Playground](https://fxr-playground.pages.dev/#examples/readme/edit)
+[Open in FXR Playground](https://fxr-playground.pages.dev/shared/examples/readme/edit)
 ```js
 import { FXR, Game, Recolor, hex } from '@cccode/fxr'
 
 // Parse file
-const fxr = await FXR.read('f000450360.fxr', Game.EldenRing)
+const fxr = await FXR.read('f000450360.fxr')
 
 // Make some changes to the FXR here.
 
@@ -58,7 +58,7 @@ await fxr.saveAs('f000450360_edit.fxr', Game.EldenRing)
 ## Creating new FXR files
 Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume.
 
-[Open in FXR Playground](https://fxr-playground.pages.dev/#examples/readme/create)
+[Open in FXR Playground](https://fxr-playground.pages.dev/shared/examples/readme/create)
 ```js
 import {
   FXR,

@@ -1,5 +1,11 @@
 # Changelog
 
+## [15.1.0] - 2024-09-01
+
+### Highlights
+- Added a `depth` argument to the `clone` method on nodes that controls how many levels of descendants to clone. It defaults to `Infinity` (same behavior as before), and can be set to 0 to not clone any child nodes.
+- Updated links in the readme to work with the FXR Playground update.
+
 ## [15.0.0] - 2024-08-28
 
 ### Highlights
@@ -171,6 +177,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[15.1.0]: https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0
 [15.0.0]: https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0
 [14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0
 [14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1

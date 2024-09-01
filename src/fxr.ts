@@ -9771,7 +9771,7 @@ abstract class Node {
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
-  abstract clone(): Node
+  abstract clone(depth: number): Node
 
   static fromJSON(obj: any): Node {
     if (obj instanceof Node) {
@@ -10424,12 +10424,12 @@ class GenericNode extends Node {
     )
   }
 
-  clone(): GenericNode {
+  clone(depth: number = Infinity): GenericNode {
     return new GenericNode(
       this.type,
       this.actions.map(e => e.clone()),
       this.effects.map(e => e.clone()),
-      this.nodes.map(e => e.clone()),
+      depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
 
@@ -10512,9 +10512,9 @@ class RootNode extends Node {
     }
   }
 
-  clone(): RootNode {
+  clone(depth: number = Infinity): RootNode {
     return new RootNode(
-      this.nodes.map(e => e.clone()),
+      depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
       this.unk70x.clone() as ActionSlots.Unknown70xAction,
       this.unk10100.clone() as ActionSlots.Unknown10100Action,
       this.unk10400.clone() as ActionSlots.Unknown10400Action,
@@ -10676,10 +10676,10 @@ class LevelsOfDetailNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
-  clone(): LevelsOfDetailNode {
+  clone(depth: number = Infinity): LevelsOfDetailNode {
     return new LevelsOfDetailNode(
       this.effects.map(e => e.clone()),
-      this.nodes.map(e => e.clone()),
+      depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
 
@@ -10736,10 +10736,10 @@ class BasicNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
-  clone(): BasicNode {
+  clone(depth: number = Infinity): BasicNode {
     return new BasicNode(
       this.effects.map(e => e.clone()),
-      this.nodes.map(e => e.clone()),
+      depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
 
@@ -10790,10 +10790,10 @@ class NodeEmitterNode extends NodeWithEffects {
     ).mapStates(...this.stateEffectMap)
   }
 
-  clone(): NodeEmitterNode {
+  clone(depth: number = Infinity): NodeEmitterNode {
     return new NodeEmitterNode(
       this.effects.map(e => e.clone()),
-      this.nodes.map(e => e.clone()),
+      depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
 
