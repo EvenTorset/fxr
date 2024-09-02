@@ -54,7 +54,7 @@ properties:
   lengthMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ParticleAge
     desc: |
       Multiplier for the line {@link length}.
   color3:

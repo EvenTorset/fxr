@@ -16124,7 +16124,7 @@ export interface LineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier?: ScalarValue
   /**
@@ -16548,7 +16548,7 @@ class Line extends DataAction {
   /**
    * Multiplier for the line {@link length}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier: ScalarValue
   /**
@@ -16792,7 +16792,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   widthMultiplier?: ScalarValue
   /**
@@ -16800,7 +16800,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier?: ScalarValue
   /**
@@ -17231,13 +17231,13 @@ class QuadLine extends DataAction {
   /**
    * Multiplier for the line {@link width}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   widthMultiplier: ScalarValue
   /**
    * Multiplier for the line {@link length}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier: ScalarValue
   /**

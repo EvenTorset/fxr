@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fixed the argument for the `lengthMultiplier` and `widthMultiplier` properties for actions 601 and 602. They were incorrectly set to `EffectAge`, when they should be `ParticleAge`. This was just a documentation error and should not affect any functionality.
 - Renamed `unk_ac6_f1_1` in actions 10008 and 10009 to `unk_ac6_f1_2`. The old name did not match the field's index.
 
 ## [15.2.0] - 2024-09-01
