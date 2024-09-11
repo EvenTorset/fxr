@@ -1,24 +1,46 @@
 type: 800
-name: Unk800
+name: ParticleForceCollision
 slot: ParticleForceMovement
 meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Unknown action that was added in Armored Core 6.
+  Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
+
+  Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
+
+  Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
 properties:
-  unk_ac6_f1_0:
+  radius:
     field: float
     default: 1
-  unk_ac6_f1_1:
+    desc: |
+      The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+  friction:
     field: float
-    default: 0.2
-  unk_ac6_f1_2:
+    default: 0.5
+    desc: |
+      The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
+      | Values | Behavior |
+      |-|-|
+      | <0 | The particles will accelerate as they slide, going faster and faster over time. |
+      | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
+      | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
+      | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+  bounciness:
     field: float
-    default: 0.25
+    default: 0.5
+    desc: |
+      The coefficient of restitution of the particles, or how "bouncy" they are.
+      | Values | Behavior |
+      |-|-|
+      | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
+      | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
+      | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
+      | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
 games:
   AC6:
     fields1:
-      - unk_ac6_f1_0
-      - unk_ac6_f1_1
-      - unk_ac6_f1_2
+      - radius
+      - friction
+      - bounciness

@@ -710,14 +710,18 @@ enum ActionType {
    */
   ParticleForceAcceleration = 734,
   /**
-   * ### Action 800 - Unk800
+   * ### Action 800 - ParticleForceCollision
    * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
    * 
-   * Unknown action that was added in Armored Core 6.
+   * Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
    * 
-   * This action type has a specialized subclass: {@link Unk800}
+   * Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
+   * 
+   * Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
+   * 
+   * This action type has a specialized subclass: {@link ParticleForceCollision}
    */
-  Unk800 = 800,
+  ParticleForceCollision = 800,
   /**
    * ### Action 10000 - GPUStandardParticle
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1934,7 +1938,7 @@ export namespace ActionSlots {
   export type ParticleForceMovementAction =
     | ParticleForceSpeed
     | ParticleForceAcceleration
-    | Unk800
+    | ParticleForceCollision
     | Action
 
   export type ParticleModifierAction =
@@ -3805,15 +3809,15 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.Unk800]: {
+  [ActionType.ParticleForceCollision]: {
     props: {
-      unk_ac6_f1_0: { default: 1, field: 2 },
-      unk_ac6_f1_1: { default: 0.2, field: 2 },
-      unk_ac6_f1_2: { default: 0.25, field: 2 },
+      radius: { default: 1, field: 2 },
+      friction: { default: 0.5, field: 2 },
+      bounciness: { default: 0.5, field: 2 },
     },
     games: {
       [Game.ArmoredCore6]: {
-        fields1: ['unk_ac6_f1_0','unk_ac6_f1_1','unk_ac6_f1_2']
+        fields1: ['radius','friction','bounciness']
       }
     }
   },
@@ -5606,7 +5610,7 @@ const EffectActionSlots = {
     [
       ActionType.ParticleForceSpeed,
       ActionType.ParticleForceAcceleration,
-      ActionType.Unk800
+      ActionType.ParticleForceCollision
     ]
   ],
   [EffectType.NodeEmitter]: [
@@ -6101,7 +6105,7 @@ function readAnyAction(br: BinaryReader): AnyAction {
   if (br.game !== Game.Generic && type in ActionData) {
     let game = br.game
     heuristic: if (game === Game.Heuristic) {
-      if (type === ActionType.Unk800) {
+      if (type === ActionType.ParticleForceCollision) {
         game = br.game = Game.ArmoredCore6
         break heuristic
       }
@@ -9015,7 +9019,7 @@ class FXR {
     heuristic: if (game === Game.Heuristic) {
       if (this.#gameHint === Game.Heuristic) {
         if (
-          anyMatch(this.root.walkActions(), a => a.type === ActionType.Unk800) ||
+          anyMatch(this.root.walkActions(), a => a.type === ActionType.ParticleForceCollision) ||
           anyMatch(this.root.walkProperties(), p => p instanceof ComponentSequenceProperty)
         ) {
           game = Game.ArmoredCore6
@@ -24835,41 +24839,78 @@ class ParticleForceAcceleration extends DataAction {
   }
 }
 
-export interface Unk800Params {
+export interface ParticleForceCollisionParams {
   /**
-   * Unknown float.
+   * The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
    * 
    * **Default**: `1`
    */
-  unk_ac6_f1_0?: number
+  radius?: number
   /**
-   * Unknown float.
+   * The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
+   * | Values | Behavior |
+   * |-|-|
+   * | <0 | The particles will accelerate as they slide, going faster and faster over time. |
+   * | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
+   * | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
+   * | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
    * 
-   * **Default**: `0.2`
+   * **Default**: `0.5`
    */
-  unk_ac6_f1_1?: number
+  friction?: number
   /**
-   * Unknown float.
+   * The coefficient of restitution of the particles, or how "bouncy" they are.
+   * | Values | Behavior |
+   * |-|-|
+   * | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
+   * | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
+   * | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
+   * | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
    * 
-   * **Default**: `0.25`
+   * **Default**: `0.5`
    */
-  unk_ac6_f1_2?: number
+  bounciness?: number
 }
 
 /**
- * ### {@link ActionType.Unk800 Action 800 - Unk800}
+ * ### {@link ActionType.ParticleForceCollision Action 800 - ParticleForceCollision}
  * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
  * 
- * Unknown action that was added in Armored Core 6.
+ * Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
+ * 
+ * Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
+ * 
+ * Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
  */
-class Unk800 extends DataAction {
-  declare readonly type: ActionType.Unk800
+class ParticleForceCollision extends DataAction {
+  declare readonly type: ActionType.ParticleForceCollision
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
-  unk_ac6_f1_0: number
-  unk_ac6_f1_1: number
-  unk_ac6_f1_2: number
-  constructor(props: Unk800Params = {}) {
-    super(ActionType.Unk800, {isAppearance:false,isParticle:false})
+  /**
+   * The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+   */
+  radius: number
+  /**
+   * The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
+   * | Values | Behavior |
+   * |-|-|
+   * | <0 | The particles will accelerate as they slide, going faster and faster over time. |
+   * | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
+   * | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
+   * | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+   */
+  friction: number
+  /**
+   * The coefficient of restitution of the particles, or how "bouncy" they are.
+   * | Values | Behavior |
+   * |-|-|
+   * | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
+   * | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
+   * | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
+   * | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
+   */
+  bounciness: number
+  constructor(props: ParticleForceCollisionParams = {}) {
+    super(ActionType.ParticleForceCollision, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -39289,7 +39330,7 @@ const DataActions = {
   [ActionType.ParticleForceSpeed]: ParticleForceSpeed, ParticleForceSpeed,
   [ActionType.NodeForceAcceleration]: NodeForceAcceleration, NodeForceAcceleration,
   [ActionType.ParticleForceAcceleration]: ParticleForceAcceleration, ParticleForceAcceleration,
-  [ActionType.Unk800]: Unk800, Unk800,
+  [ActionType.ParticleForceCollision]: ParticleForceCollision, ParticleForceCollision,
   [ActionType.GPUStandardParticle]: GPUStandardParticle, GPUStandardParticle,
   [ActionType.GPUStandardCorrectParticle]: GPUStandardCorrectParticle, GPUStandardCorrectParticle,
   [ActionType.LightShaft]: LightShaft, LightShaft,
@@ -42879,7 +42920,7 @@ export {
   ParticleForceSpeed,
   NodeForceAcceleration,
   ParticleForceAcceleration,
-  Unk800,
+  ParticleForceCollision,
   GPUStandardParticle,
   GPUStandardCorrectParticle,
   LightShaft,
