@@ -49,6 +49,8 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this are unrestricted and can go above 1.
   particleLength:
     type: ScalarValue
     default: 1
@@ -113,7 +115,7 @@ properties:
     default: EmitterShape.Box
     desc: |
       Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
-  unk_ac6_f1_1:
+  unk_ac6_f1_2:
     field: int
   emitterSize:
     field: vec3
@@ -631,7 +633,7 @@ games:
     fields1:
       - texture
       - emitterShape
-      - unk_ac6_f1_1
+      - unk_ac6_f1_2
       - emitterSize
       #
       #

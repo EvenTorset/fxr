@@ -82,6 +82,8 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
   unk_ds3_p1_7:
     type: Vector4Value
     default: [1, 1, 1, 1]

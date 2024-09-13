@@ -47,6 +47,8 @@ properties:
     color: true
     desc: |
       Color multiplier for the particles emitted from this node.
+
+      Values in this are unrestricted and can go above 1.
   uniformScale:
     field: bool
     default: false

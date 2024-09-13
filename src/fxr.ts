@@ -710,14 +710,18 @@ enum ActionType {
    */
   ParticleForceAcceleration = 734,
   /**
-   * ### Action 800 - Unk800
+   * ### Action 800 - ParticleForceCollision
    * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
    * 
-   * Unknown action that was added in Armored Core 6.
+   * Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
    * 
-   * This action type has a specialized subclass: {@link Unk800}
+   * Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
+   * 
+   * Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
+   * 
+   * This action type has a specialized subclass: {@link ParticleForceCollision}
    */
-  Unk800 = 800,
+  ParticleForceCollision = 800,
   /**
    * ### Action 10000 - GPUStandardParticle
    * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1666,6 +1670,11 @@ export namespace TypeMap {
     [FieldType.Vector3]: Vector3
     [FieldType.Vector4]: Vector4
   }
+  export type VectorComponents = {
+    [ValueType.Vector2]: Vector2Components
+    [ValueType.Vector3]: Vector3Components
+    [ValueType.Vector4]: Vector4Components
+  }
 }
 
 export interface IBasicKeyframe<T extends ValueType> {
@@ -1806,6 +1815,10 @@ export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 export type NumericalField = Field<FieldType.Integer | FieldType.Float>
 export type VectorValueType = Exclude<ValueType, ValueType.Scalar>
+export type Vector2Components = [ScalarValue, ScalarValue]
+export type Vector3Components = [ScalarValue, ScalarValue, ScalarValue]
+export type Vector4Components = [ScalarValue, ScalarValue, ScalarValue, ScalarValue]
+export type VectorComponents = Vector2Components | Vector3Components | Vector4Components
 
 export type GenComponents<T, V extends ValueType> = [
   [T], [T, T], [T, T, T], [T, T, T, T]
@@ -1934,7 +1947,7 @@ export namespace ActionSlots {
   export type ParticleForceMovementAction =
     | ParticleForceSpeed
     | ParticleForceAcceleration
-    | Unk800
+    | ParticleForceCollision
     | Action
 
   export type ParticleModifierAction =
@@ -3805,15 +3818,15 @@ const ActionData: {
       [Game.ArmoredCore6]: Game.Sekiro
     }
   },
-  [ActionType.Unk800]: {
+  [ActionType.ParticleForceCollision]: {
     props: {
-      unk_ac6_f1_0: { default: 1, field: 2 },
-      unk_ac6_f1_1: { default: 0.2, field: 2 },
-      unk_ac6_f1_2: { default: 0.25, field: 2 },
+      radius: { default: 1, field: 2 },
+      friction: { default: 0.5, field: 2 },
+      bounciness: { default: 0.5, field: 2 },
     },
     games: {
       [Game.ArmoredCore6]: {
-        fields1: ['unk_ac6_f1_0','unk_ac6_f1_1','unk_ac6_f1_2']
+        fields1: ['radius','friction','bounciness']
       }
     }
   },
@@ -4332,7 +4345,7 @@ const ActionData: {
       unk_ac6_p2_6: { default: 0 },
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
-      unk_ac6_f1_1: { default: 0, field: 1 },
+      unk_ac6_f1_2: { default: 0, field: 1 },
       emitterSize: { default: [1, 1, 1], field: 4, scale: 1 },
       emitterRotation: { default: [0, 0, 0], field: 4 },
       unk_ac6_f1_9: { default: 1, field: 2 },
@@ -4456,7 +4469,7 @@ const ActionData: {
       [Game.Sekiro]: Game.ArmoredCore6,
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_2','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -4488,7 +4501,7 @@ const ActionData: {
       unk_ac6_p2_6: { default: 0 },
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       emitterShape: { default: EmitterShape.Box, field: 1 },
-      unk_ac6_f1_1: { default: 0, field: 1 },
+      unk_ac6_f1_2: { default: 0, field: 1 },
       emitterSize: { default: [1, 1, 1], field: 4, scale: 1 },
       emitterRotation: { default: [0, 0, 0], field: 4 },
       unk_ac6_f1_9: { default: 1, field: 2 },
@@ -4611,7 +4624,7 @@ const ActionData: {
     games: {
       [Game.EldenRing]: Game.ArmoredCore6,
       [Game.ArmoredCore6]: {
-        fields1: ['texture','emitterShape','unk_ac6_f1_1','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
+        fields1: ['texture','emitterShape','unk_ac6_f1_2','emitterSize','emitterRotation','unk_ac6_f1_9','unk_ac6_f1_10','unk_ac6_f1_11','emitterDistribution','unk_ac6_f1_13','unk_ac6_f1_14','unk_ac6_f1_15','unk_ac6_f1_16','unk_ac6_f1_17','emissionParticleCount','emissionParticleCountMin','emissionParticleCountMax','emissionInterval','emissionIntervalMin','emissionIntervalMax','limitConcurrentEmissions','concurrentEmissionsLimit','unk_ac6_f1_26','particleDuration','unk_ac6_f1_28','unk_ac6_f1_29','particleOffset','particleOffsetMin','particleOffsetMax','unk_ac6_f1_39','particleSpeedMin','particleSpeedMax','rgbMultiplier','alphaMultiplier','colorMin','colorMax','blendMode','unk_ac6_f1_57','unk_ac6_f1_58','unk_ac6_f1_59','unk_ac6_f1_60','unk_ac6_f1_61','unk_ac6_f1_62','particleLengthMin','particleLengthMax','particleWidthMin','particleWidthMax','unk_ac6_f1_67','unk_ac6_f1_68','particleDurationMultiplier','unk_ac6_f1_70','unk_ac6_f1_71','unk_ac6_f1_72','unk_ac6_f1_73','unk_ac6_f1_74','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80','unk_ac6_f1_81','unk_ac6_f1_82','unk_ac6_f1_83','unk_ac6_f1_84','unk_ac6_f1_85','unk_ac6_f1_86','unk_ac6_f1_87','unk_ac6_f1_88','unk_ac6_f1_89','limitUpdateDistance','updateDistance','particleCollision','particleBounciness','unk_ac6_f1_94','unk_ac6_f1_95','bloom','bloomColor','unk_ac6_f1_101','unk_ac6_f1_102','unk_ac6_f1_103'],
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
@@ -5606,7 +5619,7 @@ const EffectActionSlots = {
     [
       ActionType.ParticleForceSpeed,
       ActionType.ParticleForceAcceleration,
-      ActionType.Unk800
+      ActionType.ParticleForceCollision
     ]
   ],
   [EffectType.NodeEmitter]: [
@@ -6101,7 +6114,7 @@ function readAnyAction(br: BinaryReader): AnyAction {
   if (br.game !== Game.Generic && type in ActionData) {
     let game = br.game
     heuristic: if (game === Game.Heuristic) {
-      if (type === ActionType.Unk800) {
+      if (type === ActionType.ParticleForceCollision) {
         game = br.game = Game.ArmoredCore6
         break heuristic
       }
@@ -6918,6 +6931,16 @@ function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number) 
 }
 
 function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(keyframes: K[], position: number) {
+  let max = -Infinity
+  keyframes = keyframes.filter(kf => {
+    if (kf.position < max) {
+      return false
+    } else {
+      max = kf.position
+      return true
+    }
+  })
+
   let prevKeyframe: K, nextKeyframe: K
 
   for (const kf of keyframes) {
@@ -7569,10 +7592,12 @@ function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, 
   ]).slice(1, -1))
 }
 
-function combineComponents(...comps: ScalarValue[]): VectorValue {
-  comps = comps.map(c => c instanceof SequenceProperty && c.function === PropertyFunction.Stepped ? steppedToLinearProperty(c) : c)
+function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorComponents[T]): TypeMap.Value[T] {
+  comps = comps.map(
+    c => c instanceof SequenceProperty && c.function === PropertyFunction.Stepped ? steppedToLinearProperty(c) : c
+  ) as TypeMap.VectorComponents[T]
   if (!comps.some(c => c instanceof Property)) {
-    return comps as Vector
+    return comps as TypeMap.Value[T]
   }
   const hasCurveComp = comps.some(e =>
     e instanceof SequenceProperty && (
@@ -7655,44 +7680,44 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
       switch (e[0].type) {
         case ModifierType.RandomDelta:
           return new RandomDeltaModifier(
-            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as Vector,
-            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as Vector
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
           )
         case ModifierType.RandomRange:
           return new RandomRangeModifier(
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as Vector,
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as Vector,
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as Vector
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
           )
         case ModifierType.RandomFraction:
           return new RandomFractionModifier(
-            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as Vector,
-            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as Vector
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
           )
       }
-    })
+    }) as IModifier<T>[]
   }
   if (positions.size >= 2) {
-    const keyframes = (hasCurveComp ?
+    const keyframes: Keyframe<T>[] = (hasCurveComp ?
       filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)) :
       Array.from(positions).sort((a, b) => a - b)
-    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
-    return new LinearProperty(
+    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as TypeMap.PropertyValue[T]))
+    return new LinearProperty<T>(
       comps.some(e => (e instanceof SequenceProperty || e instanceof ComponentSequenceProperty) && e.loop),
       keyframes
-    ).withModifiers(...combineModifiers()) as VectorProperty
+    ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   } else {
-    return new ConstantProperty(...comps.map(c => c instanceof Property ? c.valueAt(0) : c)).withModifiers(
-      ...combineModifiers()
-    ) as VectorProperty
+    return new ConstantProperty<T>(
+      ...comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
+    ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   }
 }
 
-function separateComponents(value: VectorValue): ScalarValue[] {
+function separateComponents<T extends VectorValueType>(value: TypeMap.Value[T]): TypeMap.VectorComponents[T] {
   if (value instanceof Property) {
-    return value.separateComponents()
+    return value.separateComponents() as TypeMap.VectorComponents[T]
   } else {
-    return value
+    return value as TypeMap.PropertyValue[T]
   }
 }
 
@@ -7721,7 +7746,7 @@ function getValueType<T extends ValueType>(v: TypeMap.Property[T] | TypeMap.Prop
 function setVectorComponent(vec: VectorValue, componentIndex: number, value: ScalarValue): VectorValue {
   const cc = getComponentCount(vec)
   return anyValueSum(
-    combineComponents(...Array(cc).fill(0).with(componentIndex, value)),
+    combineComponents(...Array(cc).fill(0).with(componentIndex, value) as VectorComponents),
     anyValueMult(
       Array(cc).fill(1).with(componentIndex, 0) as VectorValue,
       vec
@@ -8236,16 +8261,24 @@ const ActionDataConversion = {
     read(props: PointLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       if (game === Game.DarkSouls3) {
-        props.diffuseMultiplier = 10
-        props.specularMultiplier = 10
+        props.diffuseMultiplier = 100
+        props.specularMultiplier = 100
       }
       return props
     },
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
-        props.diffuseColor = anyValueMult(anyValueMult(1/10, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
-        props.specularColor = anyValueMult(anyValueMult(1/10, props.specularMultiplier), props.specularColor) as Vector4Value
+        const diffuseComps = separateComponents(props.diffuseColor)
+        props.diffuseColor = combineComponents<ValueType.Vector4>(
+          ...diffuseComps.slice(0, 3) as Vector3Components,
+          anyValueMult(diffuseComps[3], anyValueMult(1/100, props.diffuseMultiplier))
+        ) as Vector4Value
+        const specularComps = separateComponents(props.specularColor)
+        props.specularColor = combineComponents<ValueType.Vector4>(
+          ...specularComps.slice(0, 3) as Vector3Components,
+          anyValueMult(specularComps[3], anyValueMult(1/100, props.specularMultiplier))
+        ) as Vector4Value
       }
       return props
     }
@@ -9015,7 +9048,7 @@ class FXR {
     heuristic: if (game === Game.Heuristic) {
       if (this.#gameHint === Game.Heuristic) {
         if (
-          anyMatch(this.root.walkActions(), a => a.type === ActionType.Unk800) ||
+          anyMatch(this.root.walkActions(), a => a.type === ActionType.ParticleForceCollision) ||
           anyMatch(this.root.walkProperties(), p => p instanceof ComponentSequenceProperty)
         ) {
           game = Game.ArmoredCore6
@@ -11482,15 +11515,20 @@ class Action implements IAction {
 }
 
 /**
- * Base class for all actions that are defined in {@link ActionData}. The main
- * difference is that these actions don't use fields or properties, and cannot
- * have Section10s. Instead, these actions will automatically generate the
- * lists of fields and properties based on the game they're being written for.
+ * Base class for all actions that are defined in {@link ActionData}. These
+ * actions have a very different structure compared to regular {@link Action}s
+ * that you see in FXR files. They only have named properties. There is very
+ * little difference between a property and a field, and they can often be
+ * represented as single numbers both of them.
  * 
- * Aside from from these actions using class properties instead of action
- * fields and properties, there is not much different to the end user. It is
- * mainly just a different way to define actions in the source code that
- * allows those actions to work in multiple games.
+ * This different structure is used to allow a single DataAction to represent
+ * an action from any of the supported games at the same time, and also makes
+ * it possible to perform certain actions that are difficult to do with regular
+ * actions, like recoloring or resizing.
+ * 
+ * This class is not meant to be used directly. Instead, use the classes that
+ * extend it. There is one for every known action in all of the supported
+ * games, and also most of the unknown actions.
  */
 class DataAction implements IAction {
 
@@ -14385,6 +14423,8 @@ export interface ParticleModifierParams {
   /**
    * Color multiplier for the particles emitted from this node.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -14446,6 +14486,8 @@ class ParticleModifier extends DataAction {
   scaleZ: ScalarValue
   /**
    * Color multiplier for the particles emitted from this node.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
@@ -15465,25 +15507,43 @@ export interface PointSpriteParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -15888,19 +15948,37 @@ class PointSprite extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -16090,33 +16168,65 @@ export interface LineParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2?: Vector4Value
   /**
    * The color for the start of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor?: Vector4Value
   /**
    * The color for the end of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor?: Vector4Value
   /**
@@ -16124,15 +16234,23 @@ export interface LineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier?: ScalarValue
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3?: Vector4Value
   /**
@@ -16524,37 +16642,77 @@ class Line extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2: Vector4Value
   /**
    * The color for the start of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor: Vector4Value
   /**
    * The color for the end of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor: Vector4Value
   /**
    * Multiplier for the line {@link length}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier: ScalarValue
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3: Vector4Value
   /**
@@ -16758,33 +16916,65 @@ export interface QuadLineParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2?: Vector4Value
   /**
    * The color for the leading edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor?: Vector4Value
   /**
    * The color for the trailing edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor?: Vector4Value
   /**
@@ -16792,7 +16982,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   widthMultiplier?: ScalarValue
   /**
@@ -16800,15 +16990,23 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier?: ScalarValue
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3?: Vector4Value
   /**
@@ -17207,43 +17405,83 @@ class QuadLine extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2: Vector4Value
   /**
    * The color for the leading edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor: Vector4Value
   /**
    * The color for the trailing edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor: Vector4Value
   /**
    * Multiplier for the line {@link width}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   widthMultiplier: ScalarValue
   /**
    * Multiplier for the line {@link length}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier: ScalarValue
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3: Vector4Value
   /**
@@ -17478,25 +17716,43 @@ export interface BillboardExParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -18247,19 +18503,37 @@ class BillboardEx extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -18816,25 +19090,43 @@ export interface MultiTextureBillboardExParams {
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -19670,19 +19962,37 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -20222,27 +20532,45 @@ export interface ModelParams {
    */
   blendMode?: BlendMode | ScalarProperty
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -21001,21 +21329,39 @@ class Model extends DataAction {
    */
   blendMode: BlendMode | ScalarProperty
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   unk_ds3_p1_15: ScalarValue
@@ -21383,25 +21729,43 @@ export interface TracerParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -21975,19 +22339,37 @@ class Tracer extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -22362,6 +22744,8 @@ export interface DistortionParams {
   sizeZ?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -22967,6 +23351,8 @@ class Distortion extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -23316,6 +23702,8 @@ export interface RadialBlurParams {
   height?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -23726,6 +24114,8 @@ class RadialBlur extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -23892,6 +24282,8 @@ export interface PointLightParams {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Default**: `[1, 1, 1, 1]`
@@ -23904,6 +24296,8 @@ export interface PointLightParams {
   diffuseColor?: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -24309,6 +24703,8 @@ class PointLight extends DataAction {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -24319,6 +24715,8 @@ class PointLight extends DataAction {
   diffuseColor: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -24835,41 +25233,78 @@ class ParticleForceAcceleration extends DataAction {
   }
 }
 
-export interface Unk800Params {
+export interface ParticleForceCollisionParams {
   /**
-   * Unknown float.
+   * The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
    * 
    * **Default**: `1`
    */
-  unk_ac6_f1_0?: number
+  radius?: number
   /**
-   * Unknown float.
+   * The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
+   * | Values | Behavior |
+   * |-|-|
+   * | <0 | The particles will accelerate as they slide, going faster and faster over time. |
+   * | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
+   * | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
+   * | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
    * 
-   * **Default**: `0.2`
+   * **Default**: `0.5`
    */
-  unk_ac6_f1_1?: number
+  friction?: number
   /**
-   * Unknown float.
+   * The coefficient of restitution of the particles, or how "bouncy" they are.
+   * | Values | Behavior |
+   * |-|-|
+   * | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
+   * | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
+   * | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
+   * | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
    * 
-   * **Default**: `0.25`
+   * **Default**: `0.5`
    */
-  unk_ac6_f1_2?: number
+  bounciness?: number
 }
 
 /**
- * ### {@link ActionType.Unk800 Action 800 - Unk800}
+ * ### {@link ActionType.ParticleForceCollision Action 800 - ParticleForceCollision}
  * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
  * 
- * Unknown action that was added in Armored Core 6.
+ * Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
+ * 
+ * Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
+ * 
+ * Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
  */
-class Unk800 extends DataAction {
-  declare readonly type: ActionType.Unk800
+class ParticleForceCollision extends DataAction {
+  declare readonly type: ActionType.ParticleForceCollision
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
-  unk_ac6_f1_0: number
-  unk_ac6_f1_1: number
-  unk_ac6_f1_2: number
-  constructor(props: Unk800Params = {}) {
-    super(ActionType.Unk800, {isAppearance:false,isParticle:false})
+  /**
+   * The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+   */
+  radius: number
+  /**
+   * The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
+   * | Values | Behavior |
+   * |-|-|
+   * | <0 | The particles will accelerate as they slide, going faster and faster over time. |
+   * | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
+   * | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
+   * | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+   */
+  friction: number
+  /**
+   * The coefficient of restitution of the particles, or how "bouncy" they are.
+   * | Values | Behavior |
+   * |-|-|
+   * | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
+   * | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
+   * | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
+   * | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
+   */
+  bounciness: number
+  constructor(props: ParticleForceCollisionParams = {}) {
+    super(ActionType.ParticleForceCollision, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
 }
@@ -24977,6 +25412,8 @@ export interface GPUStandardParticleParams {
   unk_ds3_p1_12?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -26365,6 +26802,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -27095,6 +27534,8 @@ export interface GPUStandardCorrectParticleParams {
   unk_ds3_p1_12?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -28477,6 +28918,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -29453,6 +29896,8 @@ export interface GPUSparkParticleParams {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
@@ -29561,7 +30006,7 @@ export interface GPUSparkParticleParams {
    * 
    * **Default**: `0`
    */
-  unk_ac6_f1_1?: number
+  unk_ac6_f1_2?: number
   /**
    * The size of the emitter.
    * 
@@ -30424,6 +30869,8 @@ class GPUSparkParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -30462,7 +30909,7 @@ class GPUSparkParticle extends DataAction {
    * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
    */
   emitterShape: EmitterShape
-  unk_ac6_f1_1: number
+  unk_ac6_f1_2: number
   /**
    * The size of the emitter.
    */
@@ -30877,6 +31324,8 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
@@ -30985,7 +31434,7 @@ export interface GPUSparkCorrectParticleParams {
    * 
    * **Default**: `0`
    */
-  unk_ac6_f1_1?: number
+  unk_ac6_f1_2?: number
   /**
    * The size of the emitter.
    * 
@@ -31849,6 +32298,8 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -31887,7 +32338,7 @@ class GPUSparkCorrectParticle extends DataAction {
    * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
    */
   emitterShape: EmitterShape
-  unk_ac6_f1_1: number
+  unk_ac6_f1_2: number
   /**
    * The size of the emitter.
    */
@@ -32304,25 +32755,43 @@ export interface DynamicTracerParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -32940,19 +33409,37 @@ class DynamicTracer extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -34621,27 +35108,45 @@ export interface RichModelParams {
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -35434,21 +35939,39 @@ class RichModel extends DataAction {
    */
   angularSpeedMultiplierZ: ScalarValue
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   unk_er_p1_16: ScalarValue
@@ -38653,6 +39176,8 @@ export interface SpotLightParams {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Default**: `[1, 1, 1, 1]`
@@ -38662,6 +39187,8 @@ export interface SpotLightParams {
   diffuseColor?: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -39015,6 +39542,8 @@ class SpotLight extends DataAction {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -39022,6 +39551,8 @@ class SpotLight extends DataAction {
   diffuseColor: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -39289,7 +39820,7 @@ const DataActions = {
   [ActionType.ParticleForceSpeed]: ParticleForceSpeed, ParticleForceSpeed,
   [ActionType.NodeForceAcceleration]: NodeForceAcceleration, NodeForceAcceleration,
   [ActionType.ParticleForceAcceleration]: ParticleForceAcceleration, ParticleForceAcceleration,
-  [ActionType.Unk800]: Unk800, Unk800,
+  [ActionType.ParticleForceCollision]: ParticleForceCollision, ParticleForceCollision,
   [ActionType.GPUStandardParticle]: GPUStandardParticle, GPUStandardParticle,
   [ActionType.GPUStandardCorrectParticle]: GPUStandardCorrectParticle, GPUStandardCorrectParticle,
   [ActionType.LightShaft]: LightShaft, LightShaft,
@@ -39753,6 +40284,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   sortKeyframes() {
     this.keyframes.sort((a, b) => a.position - b.position)
+    return this
   }
 
   get fieldCount(): number {
@@ -39768,7 +40300,6 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   get fields(): NumericalField[] {
     const cc = this.componentCount
-    this.sortKeyframes()
     switch (this.function) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
@@ -39995,6 +40526,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         ) as TypeMap.PropertyValue[T]
       }
       arg %= duration
+    } else if (arg > this.duration) {
+      return this.keyframes[this.keyframes.length - 1].value
     }
     switch (this.function) {
       case PropertyFunction.Stepped:
@@ -40110,6 +40643,7 @@ class ComponentSequenceProperty<T extends ValueType>
     for (const comp of this.components) {
       comp.sortKeyframes()
     }
+    return this
   }
 
   get fieldCount(): number {
@@ -40117,7 +40651,6 @@ class ComponentSequenceProperty<T extends ValueType>
   }
 
   get fields(): NumericalField[] {
-    this.sortComponentKeyframes()
     return [
       new FloatField(this.duration),
       ...this.components.map(e => new IntField(e.keyframes.length)),
@@ -42879,7 +43412,7 @@ export {
   ParticleForceSpeed,
   NodeForceAcceleration,
   ParticleForceAcceleration,
-  Unk800,
+  ParticleForceCollision,
   GPUStandardParticle,
   GPUStandardCorrectParticle,
   LightShaft,

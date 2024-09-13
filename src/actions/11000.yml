@@ -15,6 +15,8 @@ properties:
     desc: |
       Controls the diffuse color of the light.
 
+      Values in this are unrestricted and can go above 1.
+
       If {@link separateSpecular} is disabled, this also controls the specular color of the light.
   specularColor:
     type: Vector4Value
@@ -23,6 +25,8 @@ properties:
     color: true
     desc: |
       Controls the specular color of the light.
+
+      Values in this are unrestricted and can go above 1.
 
       If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
   diffuseMultiplier:
