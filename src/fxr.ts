@@ -1670,6 +1670,11 @@ export namespace TypeMap {
     [FieldType.Vector3]: Vector3
     [FieldType.Vector4]: Vector4
   }
+  export type VectorComponents = {
+    [ValueType.Vector2]: Vector2Components
+    [ValueType.Vector3]: Vector3Components
+    [ValueType.Vector4]: Vector4Components
+  }
 }
 
 export interface IBasicKeyframe<T extends ValueType> {
@@ -1810,6 +1815,10 @@ export type Vector4Value = Vector4 | Vector4Property
 export type VectorValue = Vector | VectorProperty
 export type NumericalField = Field<FieldType.Integer | FieldType.Float>
 export type VectorValueType = Exclude<ValueType, ValueType.Scalar>
+export type Vector2Components = [ScalarValue, ScalarValue]
+export type Vector3Components = [ScalarValue, ScalarValue, ScalarValue]
+export type Vector4Components = [ScalarValue, ScalarValue, ScalarValue, ScalarValue]
+export type VectorComponents = Vector2Components | Vector3Components | Vector4Components
 
 export type GenComponents<T, V extends ValueType> = [
   [T], [T, T], [T, T, T], [T, T, T, T]
@@ -7573,10 +7582,12 @@ function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, 
   ]).slice(1, -1))
 }
 
-function combineComponents(...comps: ScalarValue[]): VectorValue {
-  comps = comps.map(c => c instanceof SequenceProperty && c.function === PropertyFunction.Stepped ? steppedToLinearProperty(c) : c)
+function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorComponents[T]): TypeMap.Value[T] {
+  comps = comps.map(
+    c => c instanceof SequenceProperty && c.function === PropertyFunction.Stepped ? steppedToLinearProperty(c) : c
+  ) as TypeMap.VectorComponents[T]
   if (!comps.some(c => c instanceof Property)) {
-    return comps as Vector
+    return comps as TypeMap.Value[T]
   }
   const hasCurveComp = comps.some(e =>
     e instanceof SequenceProperty && (
@@ -7659,44 +7670,44 @@ function combineComponents(...comps: ScalarValue[]): VectorValue {
       switch (e[0].type) {
         case ModifierType.RandomDelta:
           return new RandomDeltaModifier(
-            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as Vector,
-            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as Vector
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
           )
         case ModifierType.RandomRange:
           return new RandomRangeModifier(
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as Vector,
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as Vector,
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as Vector
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
           )
         case ModifierType.RandomFraction:
           return new RandomFractionModifier(
-            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as Vector,
-            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as Vector
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
+            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
           )
       }
-    })
+    }) as IModifier<T>[]
   }
   if (positions.size >= 2) {
-    const keyframes = (hasCurveComp ?
+    const keyframes: Keyframe<T>[] = (hasCurveComp ?
       filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)) :
       Array.from(positions).sort((a, b) => a - b)
-    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as Vector))
-    return new LinearProperty(
+    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as TypeMap.PropertyValue[T]))
+    return new LinearProperty<T>(
       comps.some(e => (e instanceof SequenceProperty || e instanceof ComponentSequenceProperty) && e.loop),
       keyframes
-    ).withModifiers(...combineModifiers()) as VectorProperty
+    ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   } else {
-    return new ConstantProperty(...comps.map(c => c instanceof Property ? c.valueAt(0) : c)).withModifiers(
-      ...combineModifiers()
-    ) as VectorProperty
+    return new ConstantProperty<T>(
+      ...comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
+    ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   }
 }
 
-function separateComponents(value: VectorValue): ScalarValue[] {
+function separateComponents<T extends VectorValueType>(value: TypeMap.Value[T]): TypeMap.VectorComponents[T] {
   if (value instanceof Property) {
-    return value.separateComponents()
+    return value.separateComponents() as TypeMap.VectorComponents[T]
   } else {
-    return value
+    return value as TypeMap.PropertyValue[T]
   }
 }
 
@@ -7725,7 +7736,7 @@ function getValueType<T extends ValueType>(v: TypeMap.Property[T] | TypeMap.Prop
 function setVectorComponent(vec: VectorValue, componentIndex: number, value: ScalarValue): VectorValue {
   const cc = getComponentCount(vec)
   return anyValueSum(
-    combineComponents(...Array(cc).fill(0).with(componentIndex, value)),
+    combineComponents(...Array(cc).fill(0).with(componentIndex, value) as VectorComponents),
     anyValueMult(
       Array(cc).fill(1).with(componentIndex, 0) as VectorValue,
       vec
@@ -8240,16 +8251,24 @@ const ActionDataConversion = {
     read(props: PointLightParams, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       if (game === Game.DarkSouls3) {
-        props.diffuseMultiplier = 10
-        props.specularMultiplier = 10
+        props.diffuseMultiplier = 100
+        props.specularMultiplier = 100
       }
       return props
     },
     write(props: PointLightParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
-        props.diffuseColor = anyValueMult(anyValueMult(1/10, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
-        props.specularColor = anyValueMult(anyValueMult(1/10, props.specularMultiplier), props.specularColor) as Vector4Value
+        const diffuseComps = separateComponents(props.diffuseColor)
+        props.diffuseColor = combineComponents<ValueType.Vector4>(
+          ...diffuseComps.slice(0, 3) as Vector3Components,
+          anyValueMult(diffuseComps[3], anyValueMult(1/100, props.diffuseMultiplier))
+        ) as Vector4Value
+        const specularComps = separateComponents(props.specularColor)
+        props.specularColor = combineComponents<ValueType.Vector4>(
+          ...specularComps.slice(0, 3) as Vector3Components,
+          anyValueMult(specularComps[3], anyValueMult(1/100, props.specularMultiplier))
+        ) as Vector4Value
       }
       return props
     }
