@@ -40284,6 +40284,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   sortKeyframes() {
     this.keyframes.sort((a, b) => a.position - b.position)
+    return this
   }
 
   get fieldCount(): number {
@@ -40299,7 +40300,6 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   get fields(): NumericalField[] {
     const cc = this.componentCount
-    this.sortKeyframes()
     switch (this.function) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
@@ -40643,6 +40643,7 @@ class ComponentSequenceProperty<T extends ValueType>
     for (const comp of this.components) {
       comp.sortKeyframes()
     }
+    return this
   }
 
   get fieldCount(): number {
@@ -40650,7 +40651,6 @@ class ComponentSequenceProperty<T extends ValueType>
   }
 
   get fields(): NumericalField[] {
-    this.sortComponentKeyframes()
     return [
       new FloatField(this.duration),
       ...this.components.map(e => new IntField(e.keyframes.length)),
