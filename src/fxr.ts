@@ -6931,6 +6931,16 @@ function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number) 
 }
 
 function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(keyframes: K[], position: number) {
+  let max = -Infinity
+  keyframes = keyframes.filter(kf => {
+    if (kf.position < max) {
+      return false
+    } else {
+      max = kf.position
+      return true
+    }
+  })
+
   let prevKeyframe: K, nextKeyframe: K
 
   for (const kf of keyframes) {
@@ -40516,6 +40526,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
         ) as TypeMap.PropertyValue[T]
       }
       arg %= duration
+    } else if (arg > this.duration) {
+      return this.keyframes[this.keyframes.length - 1].value
     }
     switch (this.function) {
       case PropertyFunction.Stepped:

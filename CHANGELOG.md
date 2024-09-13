@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 - Named and documented action 800: `ParticleForceCollision`. This enables collision with the full 3D environment for regular particles, but also causes the game to crash if a particle despawns. It is most likely an unfinished action, and it only exists in AC6, where it's used just once, in an effect that also causes the game to crash. It seems very stable as long as the particles don't despawn, though.
+- The `valueAt` method on properties should now give the correct value for sequence properties with keyframes that are out of order. These properties can be considered invalid in some sense, but they are still functional in-game, and this method should now reflect that.
+  - Any keyframes that are out of order, i.e. their position is less than the position of the previous keyframe, are now ignored entirely, unless the property does not loop and the given argument is greater than the duration of the property, in which case the last keyframe's value is always returned, no matter what its position is.
 - Fixed the brightness of point lights when converted to or from DS3. Hopefully it's actually fixed this time...
 - Renamed `unk_ac6_f1_1` in actions 10008 and 10009 to `unk_ac6_f1_2`. The old name did not match the field's index.
 - Fixed the argument for some properties:
