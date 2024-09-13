@@ -37,6 +37,11 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+    see:
+      - color2
+      - color3
   color2:
     type: Vector4Value
     default: [1, 1, 1, 1]
@@ -44,13 +49,23 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+    see:
+      - color1
+      - color3
   color3:
     type: Vector4Value
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ParticleAge
     color: true
     desc: |
       Color multiplier.
+
+      Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+    see:
+      - color1
+      - color2
   rgbMultiplier:
     type: ScalarValue
     default: 1

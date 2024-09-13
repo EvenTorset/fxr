@@ -30,6 +30,13 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+    see:
+      - color2
+      - color3
+      - startColor
+      - endColor
   color2:
     type: Vector4Value
     default: [1, 1, 1, 1]
@@ -37,6 +44,13 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+    see:
+      - color1
+      - color3
+      - startColor
+      - endColor
   startColor:
     type: Vector4Value
     default: [1, 1, 1, 1]
@@ -44,6 +58,13 @@ properties:
     color: true
     desc: |
       The color for the start of the line.
+
+      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+    see:
+      - color1
+      - color2
+      - color3
+      - endColor
   endColor:
     type: Vector4Value
     default: [1, 1, 1, 1]
@@ -51,6 +72,13 @@ properties:
     color: true
     desc: |
       The color for the end of the line.
+
+      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+    see:
+      - color1
+      - color2
+      - color3
+      - startColor
   lengthMultiplier:
     type: ScalarValue
     default: 1
@@ -64,6 +92,13 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+    see:
+      - color1
+      - color2
+      - startColor
+      - endColor
   rgbMultiplier:
     type: ScalarValue
     default: 1

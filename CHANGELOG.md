@@ -5,8 +5,14 @@
 - Named and documented action 800: `ParticleForceCollision`. This enables collision with the full 3D environment for regular particles, but also causes the game to crash if a particle despawns. It is most likely an unfinished action, and it only exists in AC6, where it's used just once, in an effect that also causes the game to crash. It seems very stable as long as the particles don't despawn, though.
 - Fixed the brightness of point lights when converted to or from DS3. Hopefully it's actually fixed this time...
 - Renamed `unk_ac6_f1_1` in actions 10008 and 10009 to `unk_ac6_f1_2`. The old name did not match the field's index.
-- Fixed the argument for the `lengthMultiplier` and `widthMultiplier` properties for actions 601 and 602. They were incorrectly set to `EffectAge`, when they should be `ParticleAge`. This was just a documentation error and should not affect any functionality.
+- Fixed the argument for some properties:
+  - `color3` in `PointSprite` is now `ParticleAge` (*was `EffectAge`*)
+  - `lengthMultiplier` in `Line` is now `ParticleAge` (*was `EffectAge`*)
+  - `lengthMultiplier` in `QuadLine` is now `ParticleAge` (*was `EffectAge`*)
+  - `widthMultiplier` in `QuadLine` is now `ParticleAge` (*was `EffectAge`*)
+  - This was just a documentation error and should not affect any functionality.
 - Updated the description for the `DataAction` class. It was very out of date.
+- Updated the description for most color properties to mention if the values are clamped or not.
 
 ## [15.2.0] - 2024-09-01
 

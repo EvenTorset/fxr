@@ -85,6 +85,8 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this are unrestricted and can go above 1.
   unk_ds3_p1_14:
     type: ScalarValue
     default: 1

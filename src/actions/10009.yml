@@ -49,6 +49,8 @@ properties:
     color: true
     desc: |
       Color multiplier.
+
+      Values in this are unrestricted and can go above 1.
   particleLength:
     type: ScalarValue
     default: 1

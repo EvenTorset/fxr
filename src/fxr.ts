@@ -14413,6 +14413,8 @@ export interface ParticleModifierParams {
   /**
    * Color multiplier for the particles emitted from this node.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -14474,6 +14476,8 @@ class ParticleModifier extends DataAction {
   scaleZ: ScalarValue
   /**
    * Color multiplier for the particles emitted from this node.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
@@ -15493,25 +15497,43 @@ export interface PointSpriteParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -15916,19 +15938,37 @@ class PointSprite extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -16118,33 +16158,65 @@ export interface LineParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2?: Vector4Value
   /**
    * The color for the start of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor?: Vector4Value
   /**
    * The color for the end of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor?: Vector4Value
   /**
@@ -16158,9 +16230,17 @@ export interface LineParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3?: Vector4Value
   /**
@@ -16552,25 +16632,57 @@ class Line extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2: Vector4Value
   /**
    * The color for the start of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor: Vector4Value
   /**
    * The color for the end of the line.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor: Vector4Value
   /**
@@ -16582,7 +16694,15 @@ class Line extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3: Vector4Value
   /**
@@ -16786,33 +16906,65 @@ export interface QuadLineParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2?: Vector4Value
   /**
    * The color for the leading edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor?: Vector4Value
   /**
    * The color for the trailing edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor?: Vector4Value
   /**
@@ -16834,9 +16986,17 @@ export interface QuadLineParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3?: Vector4Value
   /**
@@ -17235,25 +17395,57 @@ class QuadLine extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color2: Vector4Value
   /**
    * The color for the leading edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link endColor}
    */
   startColor: Vector4Value
   /**
    * The color for the trailing edge of the quad.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link color3}
+   * - {@link startColor}
    */
   endColor: Vector4Value
   /**
@@ -17271,7 +17463,15 @@ class QuadLine extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
+   * - {@link startColor}
+   * - {@link endColor}
    */
   color3: Vector4Value
   /**
@@ -17506,25 +17706,43 @@ export interface BillboardExParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -18275,19 +18493,37 @@ class BillboardEx extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -18844,25 +19080,43 @@ export interface MultiTextureBillboardExParams {
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -19698,19 +19952,37 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier for the particle.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -20250,27 +20522,45 @@ export interface ModelParams {
    */
   blendMode?: BlendMode | ScalarProperty
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -21029,21 +21319,39 @@ class Model extends DataAction {
    */
   blendMode: BlendMode | ScalarProperty
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   unk_ds3_p1_15: ScalarValue
@@ -21411,25 +21719,43 @@ export interface TracerParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -22003,19 +22329,37 @@ class Tracer extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -22390,6 +22734,8 @@ export interface DistortionParams {
   sizeZ?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -22995,6 +23341,8 @@ class Distortion extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -23344,6 +23692,8 @@ export interface RadialBlurParams {
   height?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -23754,6 +24104,8 @@ class RadialBlur extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -23920,6 +24272,8 @@ export interface PointLightParams {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Default**: `[1, 1, 1, 1]`
@@ -23932,6 +24286,8 @@ export interface PointLightParams {
   diffuseColor?: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -24337,6 +24693,8 @@ class PointLight extends DataAction {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -24347,6 +24705,8 @@ class PointLight extends DataAction {
   diffuseColor: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -25042,6 +25402,8 @@ export interface GPUStandardParticleParams {
   unk_ds3_p1_12?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -26430,6 +26792,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -27160,6 +27524,8 @@ export interface GPUStandardCorrectParticleParams {
   unk_ds3_p1_12?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -28542,6 +28908,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -29518,6 +29886,8 @@ export interface GPUSparkParticleParams {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
@@ -30489,6 +30859,8 @@ class GPUSparkParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -30941,6 +31313,8 @@ export interface GPUSparkCorrectParticleParams {
   particleAccelerationZ?: ScalarValue
   /**
    * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -31914,6 +32288,8 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
@@ -32369,25 +32745,43 @@ export interface DynamicTracerParams {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -33005,19 +33399,37 @@ class DynamicTracer extends DataAction {
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
    * Color multiplier.
    * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   /**
@@ -34686,27 +35098,45 @@ export interface RichModelParams {
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2?: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3?: Vector4Value
   /**
@@ -35499,21 +35929,39 @@ class RichModel extends DataAction {
    */
   angularSpeedMultiplierZ: ScalarValue
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color2}
+   * - {@link color3}
    */
   color1: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color3}
    */
   color2: Vector4Value
   /**
-   * Color multiplier for the particle.
+   * Color multiplier.
+   * 
+   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link color1}
+   * - {@link color2}
    */
   color3: Vector4Value
   unk_er_p1_16: ScalarValue
@@ -38718,6 +39166,8 @@ export interface SpotLightParams {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Default**: `[1, 1, 1, 1]`
@@ -38727,6 +39177,8 @@ export interface SpotLightParams {
   diffuseColor?: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
@@ -39080,6 +39532,8 @@ class SpotLight extends DataAction {
   /**
    * Controls the diffuse color of the light.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
    * **Argument**: {@link PropertyArgument.EffectAge Effect age}
@@ -39087,6 +39541,8 @@ class SpotLight extends DataAction {
   diffuseColor: Vector4Value
   /**
    * Controls the specular color of the light.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
