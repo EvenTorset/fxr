@@ -11505,15 +11505,20 @@ class Action implements IAction {
 }
 
 /**
- * Base class for all actions that are defined in {@link ActionData}. The main
- * difference is that these actions don't use fields or properties, and cannot
- * have Section10s. Instead, these actions will automatically generate the
- * lists of fields and properties based on the game they're being written for.
+ * Base class for all actions that are defined in {@link ActionData}. These
+ * actions have a very different structure compared to regular {@link Action}s
+ * that you see in FXR files. They only have named properties. There is very
+ * little difference between a property and a field, and they can often be
+ * represented as single numbers both of them.
  * 
- * Aside from from these actions using class properties instead of action
- * fields and properties, there is not much different to the end user. It is
- * mainly just a different way to define actions in the source code that
- * allows those actions to work in multiple games.
+ * This different structure is used to allow a single DataAction to represent
+ * an action from any of the supported games at the same time, and also makes
+ * it possible to perform certain actions that are difficult to do with regular
+ * actions, like recoloring or resizing.
+ * 
+ * This class is not meant to be used directly. Instead, use the classes that
+ * extend it. There is one for every known action in all of the supported
+ * games, and also most of the unknown actions.
  */
 class DataAction implements IAction {
 
