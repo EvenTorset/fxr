@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Added the missing descriptions for the `particleLength` and `particleWidth` properties in actions 10008 and 10009.
+
 ## [16.0.0] - 2024-09-13
 
 - Named and documented action 800: `ParticleForceCollision`. This enables collision with the full 3D environment for regular particles, but also causes the game to crash if a particle despawns. It is most likely an unfinished action, and it only exists in AC6, where it's used just once, in an effect that also causes the game to crash. It seems very stable as long as the particles don't despawn, though.
@@ -190,6 +194,7 @@
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v16.0.0...HEAD
 [16.0.0]: https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0
 [15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
 [15.1.0]: https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0

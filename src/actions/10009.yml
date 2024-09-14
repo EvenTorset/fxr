@@ -55,9 +55,13 @@ properties:
     type: ScalarValue
     default: 1
     time: inv
+    desc: |
+      The length of the particles.
   particleWidth:
     type: ScalarValue
     default: 0.1
+    desc: |
+      The width of the particles.
   unkParticleAcceleration:
     type: ScalarValue
     scale: true

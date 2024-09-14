@@ -29904,13 +29904,13 @@ export interface GPUSparkParticleParams {
    */
   color?: Vector4Value
   /**
-   * Unknown.
+   * The length of the particles.
    * 
    * **Default**: `1`
    */
   particleLength?: ScalarValue
   /**
-   * Unknown.
+   * The width of the particles.
    * 
    * **Default**: `0.1`
    */
@@ -30874,7 +30874,13 @@ class GPUSparkParticle extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * The length of the particles.
+   */
   particleLength: ScalarValue
+  /**
+   * The width of the particles.
+   */
   particleWidth: ScalarValue
   /**
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
@@ -31332,13 +31338,13 @@ export interface GPUSparkCorrectParticleParams {
    */
   color?: Vector4Value
   /**
-   * Unknown.
+   * The length of the particles.
    * 
    * **Default**: `1`
    */
   particleLength?: ScalarValue
   /**
-   * Unknown.
+   * The width of the particles.
    * 
    * **Default**: `0.1`
    */
@@ -32303,7 +32309,13 @@ class GPUSparkCorrectParticle extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * The length of the particles.
+   */
   particleLength: ScalarValue
+  /**
+   * The width of the particles.
+   */
   particleWidth: ScalarValue
   /**
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
