@@ -2002,28 +2002,32 @@ export type FilledActionGameDataEntry = {
   properties2?: string[]
   section10s?: string[]
 }
-const ActionData: {
-  [x: string]: {
-    props?: {
-      [name: string]: {
-        default: any
-        field?: FieldType
-        resource?: ResourceType
-        textureType?: string
-        scale?: ScaleCondition
-        time?: TimeOperation
-        color?: 1
-        omit?: 1
-        paths?: {
-          [game: string]: [string, number]
-        }
-      }
+export type ActionDataProp = (
+  {
+    field?: FieldType
+    resource?: ResourceType
+    textureType?: string
+    scale?: ScaleCondition
+    time?: TimeOperation
+    color?: 1
+    omit?: 1
+    paths?: {
+      [game: string]: [string, number]
     }
-    games?: {
-      [game: string]: ActionGameDataEntry | Game | -2
-    }
-  }
-} = {
+  } & ({
+    default: AnyValue
+  } | {
+    default: boolean
+    field: FieldType.Boolean
+  } | {
+    default: number[]
+    s10: 1
+  })
+)
+const ActionData: Record<string, {
+  props?: Record<string, ActionDataProp>
+  games?: Record<string, ActionGameDataEntry | Game | -2>
+}> = {
   /*#ActionData start*/
   [ActionType.NodeAcceleration]: {
     props: {
@@ -2549,7 +2553,7 @@ const ActionData: {
   },
   [ActionType.StateEffectMap]: {
     props: {
-      effectIndices: { default: [0] },
+      effectIndices: { default: [0], s10: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2563,7 +2567,7 @@ const ActionData: {
   [ActionType.SelectAllNodes]: {},
   [ActionType.SelectRandomNode]: {
     props: {
-      weights: { default: [1] },
+      weights: { default: [1], s10: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -7727,12 +7731,12 @@ function fieldsCount(fields: Field<FieldType>[]) {
   return count
 }
 
-function getComponentCount(v: AnyValue): 1 | 2 | 3 | 4 {
-  const vt = isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
-  if (vt < 1 || vt > 4) {
+function getComponentCount(v: AnyValue | boolean): 1 | 2 | 3 | 4 {
+  const cc = isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
+  if (cc < 1 || cc > 4) {
     throw new Error('Invalid value.')
   }
-  return vt
+  return cc
 }
 
 /**
@@ -8101,6 +8105,25 @@ function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[t
     case ValueType.Vector3: return [randomInt32(), randomInt32(), randomInt32()]
     case ValueType.Vector4: return [randomInt32(), randomInt32(), randomInt32(), randomInt32()]
     default: throw new Error(`Invalid value type: ${type}`)
+  }
+}
+
+function validateDataActionProp(container: any, name: string, prop: ActionDataProp) {
+  if (typeof container[name] !== typeof prop.default) {
+    throw new Error(`${ActionType[container.type]}.${name} is not of the correct type.`)
+  }
+
+  if ('s10' in prop) {
+    if (!Array.isArray(container[name]) || container[name].some(e => typeof e !== 'number')) {
+      throw new Error(`${ActionType[container.type]}.${name} must be an array of numbers.`)
+    }
+    return
+  }
+
+  const cc = getComponentCount(container[name])
+  const defCC = getComponentCount(prop.default)
+  if (cc !== defCC) {
+    throw new Error(`${ActionType[container.type]}.${name} has ${cc} components, but is expected to have ${defCC}.`)
   }
 }
 
@@ -8877,8 +8900,7 @@ class FXR {
    * Parses an FXR file.
    * 
    * This uses the fs module from Node.js to read the file. If you are
-   * targeting browers, pass an {@link ArrayBuffer} or
-   * {@link ArrayBufferView} of the contents of the file instead.
+   * targeting browers, pass an {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
    * @param game The game the FXR file is for.
    */
@@ -8891,7 +8913,7 @@ class FXR {
 
   /**
    * Parses an FXR file.
-   * @param buffer {@link ArrayBuffer} or {@link ArrayBufferView} of the
+   * @param buffer {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the
    * contents of the FXR file to parse.
    * @param game The game the FXR file is for. Defaults to
    * {@link Game.Heuristic}, which will make the function try to figure out
@@ -8915,8 +8937,7 @@ class FXR {
 
   /**
    * Parses an FXR file.
-   * @param input A path to the FXR file to parse, or an {@link ArrayBuffer} or
-   * {@link ArrayBufferView} of the contents of the FXR file.
+   * @param input A path to the FXR file to parse, or an {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the contents of the FXR file.
    * @param game The game the FXR file is for.
    */
   static read<T extends typeof FXR>(
@@ -11594,6 +11615,7 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return data[list].map((name: string) => {
       const prop = ActionData[this.type].props[name]
+      validateDataActionProp(this, name, prop)
       return Field.from(
         prop.field,
         this[name] instanceof Property ? this[name].valueAt(0) : this[name]
@@ -11605,6 +11627,7 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return (data[list] ?? []).map((name: string) => {
       const prop = ActionData[this.type].props[name]
+      validateDataActionProp(this, name, prop)
       return this[name] instanceof Property ? this[name].for(game) : Array.isArray(prop.default) ?
         new ConstantProperty(...this[name]).for(game) :
         new ConstantProperty(this[name]).for(game)

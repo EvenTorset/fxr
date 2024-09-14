@@ -225,6 +225,8 @@ export default async function(writeToDist = true) {
               'color' in v ? `, color: 1` : ''
             }${
               v.omitClassProp ? `, omit: 1` : ''
+            }${
+              v.s10 ? `, s10: 1` : ''
             } },`
           }).join('\n          ')}
         },

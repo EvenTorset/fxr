@@ -9,6 +9,7 @@ properties:
   effectIndices:
     type: number[]
     default: [0]
+    s10: true
     desc: |
       A list of effect indices.
 
