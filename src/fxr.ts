@@ -3713,7 +3713,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 100, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
-      unk_ds3_f2_24: { default: 0, field: 2 },
+      maxViewDistance: { default: 0, field: 2 },
       volumeDensity: { default: 0, field: 2 },
       unk_sdt_f2_25: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -3728,19 +3728,19 @@ const ActionData: Record<string, {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','unk_ds3_f2_12','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','unk_ds3_f2_12','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance'],
         properties1: ['diffuseColor','specularColor','radius','unk_ds3_p1_3','unk_ds3_p1_4','unk_ds3_p1_5','unk_ds3_p1_6','unk_ds3_p1_7','unk_ds3_p1_8','unk_ds3_p1_9'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1']
       },
       [Game.Sekiro]: {
         fields1: Game.DarkSouls3,
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent'],
         properties1: Game.DarkSouls3,
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_sdt_p2_2','diffuseMultiplier','specularMultiplier']
       },
       [Game.EldenRing]: {
         fields1: Game.DarkSouls3,
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
         properties1: Game.DarkSouls3,
         properties2: Game.Sekiro
       },
@@ -24633,11 +24633,13 @@ export interface PointLightParams {
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown float.
+   * Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
+   * 
+   * Setting this to `0` will disable the distance limit.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f2_24?: number
+  maxViewDistance?: number
   /**
    * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
    * 
@@ -24907,7 +24909,12 @@ class PointLight extends DataAction {
   unk_ds3_f2_21: number
   unk_ds3_f2_22: number
   unk_ds3_f2_23: number
-  unk_ds3_f2_24: number
+  /**
+   * Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
+   * 
+   * Setting this to `0` will disable the distance limit.
+   */
+  maxViewDistance: number
   /**
    * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
    * 
