@@ -3066,7 +3066,7 @@ const ActionData: Record<string, {
       unk_sdt_f1_16: { default: 1, field: 1 },
       unk_sdt_f1_17: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: 0, field: 0 },
+      unk_ds3_f2_1: { default: false, field: 0 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
       bloom: { default: true, field: 0 },
@@ -3436,7 +3436,7 @@ const ActionData: Record<string, {
       unk_er_f1_15: { default: 1, field: 1 },
       unk_er_f1_16: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: 0, field: 0 },
+      unk_ds3_f2_1: { default: false, field: 0 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
@@ -3972,7 +3972,7 @@ const ActionData: Record<string, {
       unk_ds3_f1_139: { default: 0, field: 2 },
       unk_ds3_f1_140: { default: 0, field: 2 },
       unk_ds3_f1_141: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4197,7 +4197,7 @@ const ActionData: Record<string, {
       unk_ds3_f1_139: { default: 0, field: 2 },
       unk_ds3_f1_140: { default: 0, field: 2 },
       unk_ds3_f1_141: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4417,7 +4417,7 @@ const ActionData: Record<string, {
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
       unk_ac6_f1_89: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4573,7 +4573,7 @@ const ActionData: Record<string, {
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
       unk_ac6_f1_89: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4683,7 +4683,7 @@ const ActionData: Record<string, {
       unk_er_f1_20: { default: 0, field: 1 },
       unk_er_f1_21: { default: 0, field: 2 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: 0, field: 0 },
+      unk_ds3_f2_1: { default: false, field: 0 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
@@ -8109,7 +8109,7 @@ function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[t
 }
 
 function validateDataActionProp(container: any, name: string, prop: ActionDataProp) {
-  if (typeof container[name] !== typeof prop.default) {
+  if (!(container[name] instanceof Property) && typeof container[name] !== typeof prop.default) {
     throw new Error(`${ActionType[container.type]}.${name} is not of the correct type.`)
   }
 

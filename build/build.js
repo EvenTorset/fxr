@@ -119,6 +119,9 @@ function defValString(prop) {
 }
 
 function defValTS(prop) {
+  if (!('default' in prop) && prop.field === 'bool') {
+    return 'false'
+  }
   const defValue = prop.default ?? 0
   if (Array.isArray(defValue)) {
     return `[${defValue.join(', ')}]`
