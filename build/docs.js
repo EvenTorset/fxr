@@ -2,6 +2,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import zlib from 'node:zlib'
 
+import * as cheerio from 'cheerio'
+
 async function* getFiles(dir) {
   const dirents = await fs.readdir(dir, { withFileTypes: true })
   for (const dirent of dirents) {
@@ -18,11 +20,33 @@ await fs.rename('docs/functions', 'docs/funcs')
 
 for await (const filePath of getFiles('docs')) {
   if (filePath.endsWith('.html')) {
-    const content = await fs.readFile(filePath, 'utf-8')
-    await fs.writeFile(filePath, content
+    const content = (await fs.readFile(filePath, 'utf-8'))
+      // Replace functions links with funcs
       .replace(/href="((?:..\/)*)functions/g, 'href="$1funcs')
+      // Remove HTML that got escaped and added to anchors linking to that part of the page
       .replace(/&lt;a href=&quot;.+?&quot; class=&quot;.*?&quot;&gt;<wbr\/>(.+?)&lt;\/a&gt;/, '$1')
-    )
+
+    // Remove weird deeply nested lists that shouldn't be there
+    const $ = cheerio.load(content)
+    $('ul').each(function() {
+      let ul = $(this)
+  
+      // Check if this <ul> has a single <li> child that contains a <ul> and no other content
+      while (ul.children().length === 1 && ul.children().first().is('li')) {
+        let li = ul.children().first()
+        let nestedUl = li.children('ul').first()
+  
+        // If the <li> contains only the nested <ul>, replace the current <ul> with the nested one
+        if (nestedUl.length && li.children().length === 1) {
+          ul.replaceWith(nestedUl)
+          ul = nestedUl
+        } else {
+          break
+        }
+      }
+    })
+
+    await fs.writeFile(filePath, $.html())
   }
 }
 
