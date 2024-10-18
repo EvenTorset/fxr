@@ -11731,13 +11731,13 @@ class DataAction implements IAction {
         keyframe.value = func(keyframe.value as Vector4)
       }
     }
+    prop.modifiers = prop.modifiers.filter(mod => !(
+      mod instanceof RandomDeltaModifier ||
+      mod instanceof RandomRangeModifier ||
+      mod instanceof RandomFractionModifier
+    ))
     for (const mod of prop.modifiers) {
-      if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
-        mod.max = func(mod.max)
-      } else if (mod instanceof RandomRangeModifier) {
-        mod.min = func(mod.min)
-        mod.max = func(mod.max)
-      } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+      if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
         if (mod.factor instanceof ComponentSequenceProperty) {
           mod.factor = mod.factor.combineComponents()
         }
