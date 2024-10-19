@@ -2439,11 +2439,11 @@ const ActionData: Record<string, {
       delay: { default: 0, field: 2 },
       unk_ds3_f1_1: { default: 1, field: 1 },
       attachment: { default: AttachMode.Parent, field: 1 },
-      unk_ds3_f1_3: { default: 0, field: 2 },
+      depthBias: { default: 0, field: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['delay','unk_ds3_f1_1','attachment','unk_ds3_f1_3'],
+        fields1: ['delay','unk_ds3_f1_1','attachment','depthBias'],
         properties1: ['duration']
       },
       [Game.Sekiro]: Game.DarkSouls3,
@@ -14187,11 +14187,15 @@ export interface NodeAttributesParams {
    */
   attachment?: AttachMode
   /**
-   * Unknown float.
+   * Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
+   * 
+   * This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
+   * 
+   * Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_3?: number
+  depthBias?: number
 }
 
 /**
@@ -14218,7 +14222,14 @@ class NodeAttributes extends DataAction {
    * Controls how the node is attached to the parent node.
    */
   attachment: AttachMode
-  unk_ds3_f1_3: number
+  /**
+   * Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
+   * 
+   * This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
+   * 
+   * Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
+   */
+  depthBias: number
   constructor(props: NodeAttributesParams = {}) {
     super(ActionType.NodeAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)

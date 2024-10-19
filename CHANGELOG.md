@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-- Named and documented a field in action 609 (`PointLight`). The field was previously named `unk_ds3_f2_24` and is now `maxViewDistance`.
+- Named and documented some fields:
+  - Action 128 (`NodeAttributes`): `unk_ds3_f1_3` is now `depthBias`.
+  - Action 609 (`PointLight`): `unk_ds3_f2_24` is now `maxViewDistance`.
 - `DataAction`s now check if there are any properties that have the wrong type or number of components when they are written to an FXR buffer, and throws descriptive errors if there are any. This should make it easier to find out if and where you put an invalid value.
 - Added the missing descriptions for the `particleLength` and `particleWidth` properties in actions 10008 and 10009.
 - Fixed a bug where recoloring actions white would cause them to be randomly extra colorful due to randomization modifiers on the color properties in the action. Recoloring now removes randomization modifiers from color properties.

@@ -27,15 +27,21 @@ properties:
     default: AttachMode.Parent
     desc: |
       Controls how the node is attached to the parent node.
-  unk_ds3_f1_3:
+  depthBias:
     field: float
+    desc: |
+      Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
+
+      This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
+
+      Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
 games:
   DS3:
     fields1:
       - delay
       - unk_ds3_f1_1
       - attachment
-      - unk_ds3_f1_3
+      - depthBias
     properties1:
       - duration
   SDT: DS3
