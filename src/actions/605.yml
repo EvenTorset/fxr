@@ -542,7 +542,10 @@ properties:
     field: int
   unk_sdt_f2_32:
     field: int
-    default: 1
+    desc: |
+      Unknown integer.
+
+      When set to 1, it can cause some ugly "outline" effects on things seen through particles.
   unk_sdt_f2_33:
     field: int
   unk_sdt_f2_34:

@@ -324,7 +324,10 @@ properties:
     default: 0
   unk_sdt_f2_32:
     field: int
-    default: 0
+    desc: |
+      Unknown integer.
+
+      When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
   unk_sdt_f2_33:
     field: int
     default: 0

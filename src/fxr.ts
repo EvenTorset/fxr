@@ -3094,7 +3094,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -3228,7 +3228,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -3357,7 +3357,7 @@ const ActionData: Record<string, {
       unk_sdt_f2_29: { default: 0, field: 2 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3464,7 +3464,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -4711,7 +4711,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -15905,6 +15905,8 @@ export interface PointSpriteParams {
   /**
    * Unknown integer.
    * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
@@ -16165,6 +16167,11 @@ class PointSprite extends DataAction {
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -16602,6 +16609,8 @@ export interface LineParams {
   /**
    * Unknown integer.
    * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
@@ -16902,6 +16911,11 @@ class Line extends DataAction {
    * Other values are used in AC6, but what they do is unknown.
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -17356,6 +17370,8 @@ export interface QuadLineParams {
   /**
    * Unknown integer.
    * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
@@ -17666,6 +17682,11 @@ class QuadLine extends DataAction {
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -18375,7 +18396,9 @@ export interface BillboardExParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -18916,6 +18939,11 @@ class BillboardEx extends DataAction {
    * Other values are used in AC6, but what they do is unknown.
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -19760,7 +19788,9 @@ export interface MultiTextureBillboardExParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -20358,6 +20388,11 @@ class MultiTextureBillboardEx extends DataAction {
    */
   shadowDarkness: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -21164,7 +21199,9 @@ export interface ModelParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -21701,6 +21738,11 @@ class Model extends DataAction {
   unk_sdt_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -22273,7 +22315,9 @@ export interface TracerParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -22655,6 +22699,11 @@ class Tracer extends DataAction {
    */
   shadowDarkness: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -33348,7 +33397,9 @@ export interface DynamicTracerParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -33749,6 +33800,11 @@ class DynamicTracer extends DataAction {
    */
   shadowDarkness: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
