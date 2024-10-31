@@ -202,8 +202,8 @@ export default async function(writeToDist = true) {
     actionTypes.push(`
       /**
        * ### Action ${data.type} - ${data.name}${'slot' in data ? `
-       * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
-       * **Class**: {@link ${data.name}}
+       * - **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+       * - **Class**: {@link ${data.name}}
        * 
        * ${data.desc.trim().replace(/\n/g, '\n   * ')}
        */

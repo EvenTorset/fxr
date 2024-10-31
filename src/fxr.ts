@@ -93,200 +93,200 @@ export enum ActionType {
   Unk10010_Tracer = 10010,
   /**
    * ### Action 1 - NodeAcceleration
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeAcceleration}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAcceleration}
    * 
    * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
    */
   NodeAcceleration = 1,
   /**
    * ### Action 15 - NodeTranslation
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeTranslation}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeTranslation}
    * 
    * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
    */
   NodeTranslation = 15,
   /**
    * ### Action 34 - NodeSpin
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeSpin}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpin}
    * 
    * Controls the angular speed of the node.
    */
   NodeSpin = 34,
   /**
    * ### Action 35 - StaticNodeTransform
-   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
-   * **Class**: {@link StaticNodeTransform}
+   * - **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * - **Class**: {@link StaticNodeTransform}
    * 
    * Controls the translation and rotation of a node.
    */
   StaticNodeTransform = 35,
   /**
    * ### Action 36 - RandomNodeTransform
-   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
-   * **Class**: {@link RandomNodeTransform}
+   * - **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * - **Class**: {@link RandomNodeTransform}
    * 
    * Controls the translation and rotation of a node, and can also randomize them.
    */
   RandomNodeTransform = 36,
   /**
    * ### Action 46 - NodeAttachToCamera
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeAttachToCamera}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAttachToCamera}
    * 
    * Attaches the node to the camera.
    */
   NodeAttachToCamera = 46,
   /**
    * ### Action 55 - ParticleAcceleration
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
-   * **Class**: {@link ParticleAcceleration}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleAcceleration}
    * 
    * Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
    */
   ParticleAcceleration = 55,
   /**
    * ### Action 60 - ParticleSpeed
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
-   * **Class**: {@link ParticleSpeed}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleSpeed}
    * 
    * Controls the movement of particles. This is the most basic action for controlling the speed of particles.
    */
   ParticleSpeed = 60,
   /**
    * ### Action 64 - ParticleSpeedRandomTurns
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
-   * **Class**: {@link ParticleSpeedRandomTurns}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleSpeedRandomTurns}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
    */
   ParticleSpeedRandomTurns = 64,
   /**
    * ### Action 65 - ParticleSpeedPartialFollow
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
-   * **Class**: {@link ParticleSpeedPartialFollow}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleSpeedPartialFollow}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
    */
   ParticleSpeedPartialFollow = 65,
   /**
    * ### Action 75 - NodeSound
-   * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
-   * **Class**: {@link NodeSound}
+   * - **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+   * - **Class**: {@link NodeSound}
    * 
    * Plays a sound effect when the node activates that can repeat.
    */
   NodeSound = 75,
   /**
    * ### Action 81 - EmissionSound
-   * **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
-   * **Class**: {@link EmissionSound}
+   * - **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+   * - **Class**: {@link EmissionSound}
    * 
    * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
    */
   EmissionSound = 81,
   /**
    * ### Action 83 - NodeAccelerationRandomTurns
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeAccelerationRandomTurns}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAccelerationRandomTurns}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
    */
   NodeAccelerationRandomTurns = 83,
   /**
    * ### Action 84 - ParticleAccelerationRandomTurns
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
-   * **Class**: {@link ParticleAccelerationRandomTurns}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleAccelerationRandomTurns}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
    */
   ParticleAccelerationRandomTurns = 84,
   /**
    * ### Action 105 - ParticleAccelerationPartialFollow
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
-   * **Class**: {@link ParticleAccelerationPartialFollow}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleAccelerationPartialFollow}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns} with the ability to make particles partially follow the parent node.
    */
   ParticleAccelerationPartialFollow = 105,
   /**
    * ### Action 106 - NodeAccelerationPartialFollow
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeAccelerationPartialFollow}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAccelerationPartialFollow}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
    */
   NodeAccelerationPartialFollow = 106,
   /**
    * ### Action 113 - NodeAccelerationSpin
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeAccelerationSpin}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAccelerationSpin}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
    */
   NodeAccelerationSpin = 113,
   /**
    * ### Action 120 - NodeSpeed
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeSpeed}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeed}
    * 
    * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
    */
   NodeSpeed = 120,
   /**
    * ### Action 121 - NodeSpeedRandomTurns
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeSpeedRandomTurns}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeedRandomTurns}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
    */
   NodeSpeedRandomTurns = 121,
   /**
    * ### Action 122 - NodeSpeedPartialFollow
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeSpeedPartialFollow}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeedPartialFollow}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
    */
   NodeSpeedPartialFollow = 122,
   /**
    * ### Action 123 - NodeSpeedSpin
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
-   * **Class**: {@link NodeSpeedSpin}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeedSpin}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
    */
   NodeSpeedSpin = 123,
   /**
    * ### Action 128 - NodeAttributes
-   * **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
-   * **Class**: {@link NodeAttributes}
+   * - **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+   * - **Class**: {@link NodeAttributes}
    * 
    * Controls various things about the node, like its duration, and how it is attached to the parent node.
    */
   NodeAttributes = 128,
   /**
    * ### Action 129 - ParticleAttributes
-   * **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
-   * **Class**: {@link ParticleAttributes}
+   * - **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+   * - **Class**: {@link ParticleAttributes}
    * 
    * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
    */
   ParticleAttributes = 129,
   /**
    * ### Action 130 - Unk130
-   * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
-   * **Class**: {@link Unk130}
+   * - **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
+   * - **Class**: {@link Unk130}
    * 
    * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
    */
   Unk130 = 130,
   /**
    * ### Action 131 - ParticleModifier
-   * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
-   * **Class**: {@link ParticleModifier}
+   * - **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+   * - **Class**: {@link ParticleModifier}
    * 
    * Modifies particles in various ways.
    * 
@@ -295,189 +295,189 @@ export enum ActionType {
   ParticleModifier = 131,
   /**
    * ### Action 132 - SFXReference
-   * **Class**: {@link SFXReference}
+   * - **Class**: {@link SFXReference}
    * 
    * References another SFX by its ID.
    */
   SFXReference = 132,
   /**
    * ### Action 133 - LevelsOfDetailThresholds
-   * **Class**: {@link LevelsOfDetailThresholds}
+   * - **Class**: {@link LevelsOfDetailThresholds}
    * 
    * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    */
   LevelsOfDetailThresholds = 133,
   /**
    * ### Action 199 - StateEffectMap
-   * **Class**: {@link StateEffectMap}
+   * - **Class**: {@link StateEffectMap}
    * 
    * Maps states to effects in the parent node.
    */
   StateEffectMap = 199,
   /**
    * ### Action 200 - SelectAllNodes
-   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
-   * **Class**: {@link SelectAllNodes}
+   * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
+   * - **Class**: {@link SelectAllNodes}
    * 
    * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
    */
   SelectAllNodes = 200,
   /**
    * ### Action 201 - SelectRandomNode
-   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
-   * **Class**: {@link SelectRandomNode}
+   * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
+   * - **Class**: {@link SelectRandomNode}
    * 
    * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
    */
   SelectRandomNode = 201,
   /**
    * ### Action 300 - PeriodicEmitter
-   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
-   * **Class**: {@link PeriodicEmitter}
+   * - **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Class**: {@link PeriodicEmitter}
    * 
    * Emits particles periodically.
    */
   PeriodicEmitter = 300,
   /**
    * ### Action 301 - EqualDistanceEmitter
-   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
-   * **Class**: {@link EqualDistanceEmitter}
+   * - **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Class**: {@link EqualDistanceEmitter}
    * 
    * Emits particles once it has moved a certain distance from where it last emitted particles.
    */
   EqualDistanceEmitter = 301,
   /**
    * ### Action 399 - OneTimeEmitter
-   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
-   * **Class**: {@link OneTimeEmitter}
+   * - **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Class**: {@link OneTimeEmitter}
    * 
    * Emits one particle once.
    */
   OneTimeEmitter = 399,
   /**
    * ### Action 400 - PointEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
-   * **Class**: {@link PointEmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link PointEmitterShape}
    * 
    * Makes the emitter a single point.
    */
   PointEmitterShape = 400,
   /**
    * ### Action 401 - DiskEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
-   * **Class**: {@link DiskEmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link DiskEmitterShape}
    * 
    * Makes the emitter disk-shaped.
    */
   DiskEmitterShape = 401,
   /**
    * ### Action 402 - RectangleEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
-   * **Class**: {@link RectangleEmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link RectangleEmitterShape}
    * 
    * Makes the emitter rectangular.
    */
   RectangleEmitterShape = 402,
   /**
    * ### Action 403 - SphereEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
-   * **Class**: {@link SphereEmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link SphereEmitterShape}
    * 
    * Makes the emitter spherical.
    */
   SphereEmitterShape = 403,
   /**
    * ### Action 404 - BoxEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
-   * **Class**: {@link BoxEmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link BoxEmitterShape}
    * 
    * Makes the emitter cuboidal.
    */
   BoxEmitterShape = 404,
   /**
    * ### Action 405 - CylinderEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
-   * **Class**: {@link CylinderEmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link CylinderEmitterShape}
    * 
    * Makes the emitter cylindrical.
    */
   CylinderEmitterShape = 405,
   /**
    * ### Action 500 - NoSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
-   * **Class**: {@link NoSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link NoSpread}
    * 
    * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
    */
   NoSpread = 500,
   /**
    * ### Action 501 - CircularSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
-   * **Class**: {@link CircularSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link CircularSpread}
    * 
    * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
    */
   CircularSpread = 501,
   /**
    * ### Action 502 - EllipticalSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
-   * **Class**: {@link EllipticalSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link EllipticalSpread}
    * 
    * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
    */
   EllipticalSpread = 502,
   /**
    * ### Action 503 - RectangularSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
-   * **Class**: {@link RectangularSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link RectangularSpread}
    * 
    * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
    */
   RectangularSpread = 503,
   /**
    * ### Action 600 - PointSprite
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link PointSprite}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link PointSprite}
    * 
    * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
    */
   PointSprite = 600,
   /**
    * ### Action 601 - Line
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link Line}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Line}
    * 
    * Simple line particle. It automatically rotates to match the direction it's moving.
    */
   Line = 601,
   /**
    * ### Action 602 - QuadLine
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link QuadLine}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link QuadLine}
    * 
    * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
    */
   QuadLine = 602,
   /**
    * ### Action 603 - BillboardEx
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link BillboardEx}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link BillboardEx}
    * 
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
    */
   BillboardEx = 603,
   /**
    * ### Action 604 - MultiTextureBillboardEx
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link MultiTextureBillboardEx}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link MultiTextureBillboardEx}
    * 
    * Particle with multiple textures that can scroll.
    */
   MultiTextureBillboardEx = 604,
   /**
    * ### Action 605 - Model
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link Model}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Model}
    * 
    * Particle with a 3D model.
    * 
@@ -486,16 +486,16 @@ export enum ActionType {
   Model = 605,
   /**
    * ### Action 606 - Tracer
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link Tracer}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Tracer}
    * 
    * Creates a trail behind moving effects.
    */
   Tracer = 606,
   /**
    * ### Action 607 - Distortion
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link Distortion}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Distortion}
    * 
    * A particle that distorts anything seen through it.
    * 
@@ -504,8 +504,8 @@ export enum ActionType {
   Distortion = 607,
   /**
    * ### Action 608 - RadialBlur
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link RadialBlur}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link RadialBlur}
    * 
    * A particle that applies a radial blur to anything seen through it.
    * 
@@ -514,16 +514,16 @@ export enum ActionType {
   RadialBlur = 608,
   /**
    * ### Action 609 - PointLight
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link PointLight}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link PointLight}
    * 
    * Point light source.
    */
   PointLight = 609,
   /**
    * ### Action 700 - SimulateTermination
-   * **Slot**: {@link ActionSlots.TerminationAction Termination}
-   * **Class**: {@link SimulateTermination}
+   * - **Slot**: {@link ActionSlots.TerminationAction Termination}
+   * - **Class**: {@link SimulateTermination}
    * 
    * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
    * 
@@ -532,8 +532,8 @@ export enum ActionType {
   SimulateTermination = 700,
   /**
    * ### Action 701 - FadeTermination
-   * **Slot**: {@link ActionSlots.TerminationAction Termination}
-   * **Class**: {@link FadeTermination}
+   * - **Slot**: {@link ActionSlots.TerminationAction Termination}
+   * - **Class**: {@link FadeTermination}
    * 
    * Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
    * 
@@ -542,8 +542,8 @@ export enum ActionType {
   FadeTermination = 701,
   /**
    * ### Action 702 - InstantTermination
-   * **Slot**: {@link ActionSlots.TerminationAction Termination}
-   * **Class**: {@link InstantTermination}
+   * - **Slot**: {@link ActionSlots.TerminationAction Termination}
+   * - **Class**: {@link InstantTermination}
    * 
    * Makes the effect instantly disappear when it terminates.
    * 
@@ -552,8 +552,8 @@ export enum ActionType {
   InstantTermination = 702,
   /**
    * ### Action 731 - NodeForceSpeed
-   * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
-   * **Class**: {@link NodeForceSpeed}
+   * - **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
+   * - **Class**: {@link NodeForceSpeed}
    * 
    * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -565,8 +565,8 @@ export enum ActionType {
   NodeForceSpeed = 731,
   /**
    * ### Action 732 - ParticleForceSpeed
-   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
-   * **Class**: {@link ParticleForceSpeed}
+   * - **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Class**: {@link ParticleForceSpeed}
    * 
    * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -578,8 +578,8 @@ export enum ActionType {
   ParticleForceSpeed = 732,
   /**
    * ### Action 733 - NodeForceAcceleration
-   * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
-   * **Class**: {@link NodeForceAcceleration}
+   * - **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
+   * - **Class**: {@link NodeForceAcceleration}
    * 
    * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -591,8 +591,8 @@ export enum ActionType {
   NodeForceAcceleration = 733,
   /**
    * ### Action 734 - ParticleForceAcceleration
-   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
-   * **Class**: {@link ParticleForceAcceleration}
+   * - **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Class**: {@link ParticleForceAcceleration}
    * 
    * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -604,8 +604,8 @@ export enum ActionType {
   ParticleForceAcceleration = 734,
   /**
    * ### Action 800 - ParticleForceCollision
-   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
-   * **Class**: {@link ParticleForceCollision}
+   * - **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Class**: {@link ParticleForceCollision}
    * 
    * Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
    * 
@@ -616,8 +616,8 @@ export enum ActionType {
   ParticleForceCollision = 800,
   /**
    * ### Action 10000 - GPUStandardParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link GPUStandardParticle}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUStandardParticle}
    * 
    * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
@@ -628,8 +628,8 @@ export enum ActionType {
   GPUStandardParticle = 10000,
   /**
    * ### Action 10001 - GPUStandardCorrectParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link GPUStandardCorrectParticle}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUStandardCorrectParticle}
    * 
    * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
    * 
@@ -640,16 +640,16 @@ export enum ActionType {
   GPUStandardCorrectParticle = 10001,
   /**
    * ### Action 10003 - LightShaft
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link LightShaft}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link LightShaft}
    * 
    * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
    */
   LightShaft = 10003,
   /**
    * ### Action 10008 - GPUSparkParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link GPUSparkParticle}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUSparkParticle}
    * 
    * Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
    * 
@@ -662,8 +662,8 @@ export enum ActionType {
   GPUSparkParticle = 10008,
   /**
    * ### Action 10009 - GPUSparkCorrectParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link GPUSparkCorrectParticle}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUSparkCorrectParticle}
    * 
    * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
    * 
@@ -677,8 +677,8 @@ export enum ActionType {
   GPUSparkCorrectParticle = 10009,
   /**
    * ### Action 10012 - DynamicTracer
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link DynamicTracer}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link DynamicTracer}
    * 
    * Creates a trail behind moving effects.
    * 
@@ -687,24 +687,24 @@ export enum ActionType {
   DynamicTracer = 10012,
   /**
    * ### Action 10013 - WaterInteraction
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link WaterInteraction}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link WaterInteraction}
    * 
    * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
    */
   WaterInteraction = 10013,
   /**
    * ### Action 10014 - LensFlare
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link LensFlare}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link LensFlare}
    * 
    * Creates lens flares with up to 4 textured layers with different colors and sizes.
    */
   LensFlare = 10014,
   /**
    * ### Action 10015 - RichModel
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link RichModel}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link RichModel}
    * 
    * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
    * 
@@ -713,16 +713,16 @@ export enum ActionType {
   RichModel = 10015,
   /**
    * ### Action 10100 - Unk10100
-   * **Slot**: {@link ActionSlots.Unknown10100Action Unknown10100}
-   * **Class**: {@link Unk10100}
+   * - **Slot**: {@link ActionSlots.Unknown10100Action Unknown10100}
+   * - **Class**: {@link Unk10100}
    * 
    * Unknown root node action.
    */
   Unk10100 = 10100,
   /**
    * ### Action 10200 - CancelForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link CancelForce}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link CancelForce}
    * 
    * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
    * - {@link ActionType.WindForce WindForce}
@@ -734,8 +734,8 @@ export enum ActionType {
   CancelForce = 10200,
   /**
    * ### Action 10300 - WindForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link WindForce}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link WindForce}
    * 
    * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
    * 
@@ -744,8 +744,8 @@ export enum ActionType {
   WindForce = 10300,
   /**
    * ### Action 10301 - GravityForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link GravityForce}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GravityForce}
    * 
    * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
    * 
@@ -754,8 +754,8 @@ export enum ActionType {
   GravityForce = 10301,
   /**
    * ### Action 10302 - ForceCollision
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link ForceCollision}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link ForceCollision}
    * 
    * Controls the volume used to detect whether or not the node is inside a force volume.
    * 
@@ -764,8 +764,8 @@ export enum ActionType {
   ForceCollision = 10302,
   /**
    * ### Action 10303 - TurbulenceForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link TurbulenceForce}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link TurbulenceForce}
    * 
    * Creates a chaotic force in a volume.
    * 
@@ -774,24 +774,24 @@ export enum ActionType {
   TurbulenceForce = 10303,
   /**
    * ### Action 10400 - Unk10400
-   * **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
-   * **Class**: {@link Unk10400}
+   * - **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
+   * - **Class**: {@link Unk10400}
    * 
    * Unknown root node action.
    */
   Unk10400 = 10400,
   /**
    * ### Action 10500 - Unk10500
-   * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
-   * **Class**: {@link Unk10500}
+   * - **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
+   * - **Class**: {@link Unk10500}
    * 
    * Unknown root node action.
    */
   Unk10500 = 10500,
   /**
    * ### Action 11000 - SpotLight
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * **Class**: {@link SpotLight}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link SpotLight}
    * 
    * Light source with an elliptic cone shape, a spot light.
    */
