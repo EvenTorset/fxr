@@ -1,8 +1,10 @@
 type: 702
-name: Unk702
-slot: Unknown70x
+name: InstantTermination
+slot: Termination
 meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Unknown root node action that was introduced in Elden Ring.
+  Makes the effect instantly disappear when it terminates.
+
+  Note: An effect terminates when it reaches {@link State} -1.

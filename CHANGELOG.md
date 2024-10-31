@@ -2,12 +2,17 @@
 
 ## [Unreleased]
 
+- Named and documented three actions:
+  - 700 - `SimulateTermination`
+  - 701 - `FadeTermination`
+  - 702 - `InstantTermination`
 - Named and documented some fields:
   - Action 128 (`NodeAttributes`): `unk_ds3_f1_3` is now `depthBias`.
   - Action 609 (`PointLight`): `unk_ds3_f2_24` is now `maxViewDistance`.
 - Changed the default value of `unk_sdt_f2_32` in some of the appearance actions to 0. (Was previously 1.)
   - When this is 1, it can cause object seen through particles with the depth blending effect to have some ugly-looking outlines. When it's set to 0, this doesn't happen at all, and it also seems to allow some other fields in the action to work.
   - What this field does exactly is still unknown, so if this change has any other side-effects is also unknown.
+- Renamed the `unk70x` property in the `RootNode` class. It is now `termination` to match the actions it can be set to.
 - `DataAction`s now check if there are any properties that have the wrong type or number of components when they are written to an FXR buffer, and throws descriptive errors if there are any. This should make it easier to find out if and where you put an invalid value.
 - Added the missing descriptions for the `particleLength` and `particleWidth` properties in actions 10008 and 10009.
 - Fixed a bug where recoloring actions white would cause them to be randomly extra colorful due to randomization modifiers on the color properties in the action. Recoloring now removes randomization modifiers from color properties.

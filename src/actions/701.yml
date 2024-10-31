@@ -1,17 +1,21 @@
 type: 701
-name: Unk701
-slot: Unknown70x
+name: FadeTermination
+slot: Termination
 meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Unknown root node action that was introduced in Elden Ring.
+  Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
+
+  Note: An effect terminates when it reaches {@link State} -1.
 properties:
-  unk_er_p1_0:
+  duration:
     type: ScalarValue
     default: 1
+    desc: |
+      The duration of the fade out in seconds.
 games:
   ER:
     properties1:
-      - unk_er_p1_0
+      - duration
   AC6: ER

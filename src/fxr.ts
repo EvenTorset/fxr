@@ -627,32 +627,38 @@ enum ActionType {
    */
   PointLight = 609,
   /**
-   * ### Action 700 - Unk700
-   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * ### Action 700 - SimulateTermination
+   * **Slot**: {@link ActionSlots.TerminationAction Termination}
    * 
-   * Unknown root node action that was introduced in Elden Ring.
+   * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
    * 
-   * This action type has a specialized subclass: {@link Unk700}
+   * Note: An effect terminates when it reaches {@link State} -1.
+   * 
+   * This action type has a specialized subclass: {@link SimulateTermination}
    */
-  Unk700 = 700,
+  SimulateTermination = 700,
   /**
-   * ### Action 701 - Unk701
-   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * ### Action 701 - FadeTermination
+   * **Slot**: {@link ActionSlots.TerminationAction Termination}
    * 
-   * Unknown root node action that was introduced in Elden Ring.
+   * Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
    * 
-   * This action type has a specialized subclass: {@link Unk701}
+   * Note: An effect terminates when it reaches {@link State} -1.
+   * 
+   * This action type has a specialized subclass: {@link FadeTermination}
    */
-  Unk701 = 701,
+  FadeTermination = 701,
   /**
-   * ### Action 702 - Unk702
-   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * ### Action 702 - InstantTermination
+   * **Slot**: {@link ActionSlots.TerminationAction Termination}
    * 
-   * Unknown root node action that was introduced in Elden Ring.
+   * Makes the effect instantly disappear when it terminates.
    * 
-   * This action type has a specialized subclass: {@link Unk702}
+   * Note: An effect terminates when it reaches {@link State} -1.
+   * 
+   * This action type has a specialized subclass: {@link InstantTermination}
    */
-  Unk702 = 702,
+  InstantTermination = 702,
   /**
    * ### Action 731 - NodeForceSpeed
    * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
@@ -1963,10 +1969,10 @@ export namespace ActionSlots {
     | ParticleAccelerationPartialFollow
     | Action
 
-  export type Unknown70xAction =
-    | Unk700
-    | Unk701
-    | Unk702
+  export type TerminationAction =
+    | SimulateTermination
+    | FadeTermination
+    | InstantTermination
     | Action
 
   export type Unknown130Action =
@@ -3747,19 +3753,19 @@ const ActionData: Record<string, {
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.Unk700]: {},
-  [ActionType.Unk701]: {
+  [ActionType.SimulateTermination]: {},
+  [ActionType.FadeTermination]: {
     props: {
-      unk_er_p1_0: { default: 1 },
+      duration: { default: 1 },
     },
     games: {
       [Game.EldenRing]: {
-        properties1: ['unk_er_p1_0']
+        properties1: ['duration']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.Unk702]: {},
+  [ActionType.InstantTermination]: {},
   [ActionType.NodeForceSpeed]: {
     props: {
       speed: { default: 0, scale: 1, time: 1 },
@@ -6269,7 +6275,7 @@ function readNode(br: BinaryReader): Node {
         return new RootNode(
           nodes,
           br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? null :
-            actions.find(e => e.type >= 700 && e.type <= 702) ?? new Action(ActionType.Unk700),
+            actions.find(e => e.type >= 700 && e.type <= 702) ?? new Action(ActionType.SimulateTermination),
           actions.find(e => e.type === ActionType.Unk10100),
           actions.find(e => e.type === ActionType.Unk10400),
           actions.find(e => e.type === ActionType.Unk10500)
@@ -9823,7 +9829,7 @@ abstract class Node {
       if (node instanceof GenericNode) {
         yield* node.actions
       } else if (node instanceof RootNode) {
-        yield node.unk70x
+        yield node.termination
         yield node.unk10100
         yield node.unk10400
         yield node.unk10500
@@ -10506,18 +10512,18 @@ class GenericNode extends Node {
  */
 class RootNode extends Node {
 
-  unk70x: ActionSlots.Unknown70xAction = new Unk700
+  termination: ActionSlots.TerminationAction = new SimulateTermination
 
   constructor(
     public nodes: Node[] = [],
-    unk70x?: ActionSlots.Unknown70xAction,
+    termination?: ActionSlots.TerminationAction,
     public unk10100: ActionSlots.Unknown10100Action = new Unk10100,
     public unk10400: ActionSlots.Unknown10400Action = new Unk10400,
     public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
-    if (unk70x !== undefined && unk70x !== null) {
-      this.unk70x = unk70x
+    if (termination !== undefined && termination !== null) {
+      this.termination = termination
     }
   }
 
@@ -10533,7 +10539,7 @@ class RootNode extends Node {
       case Game.EldenRing:
       case Game.ArmoredCore6:
         return [
-          this.unk70x,
+          this.termination,
           this.unk10100,
           this.unk10400,
           this.unk10500
@@ -10547,7 +10553,7 @@ class RootNode extends Node {
   minify(): Node {
     return new RootNode(
       this.nodes.map(node => node.minify()),
-      this.unk70x.minify(),
+      this.termination.minify(),
       this.unk10100.minify(),
       this.unk10400.minify(),
       this.unk10500.minify()
@@ -10560,7 +10566,7 @@ class RootNode extends Node {
     }
     return new RootNode(
       (obj.nodes ?? []).map(node => Node.fromJSON(node)),
-      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : undefined,
+      'termination' in obj ? Action.fromJSON(obj.termination) : undefined,
       'unk10100' in obj ? Action.fromJSON(obj.unk10100) : undefined,
       'unk10400' in obj ? Action.fromJSON(obj.unk10400) : undefined,
       'unk10500' in obj ? Action.fromJSON(obj.unk10500) : undefined
@@ -10570,7 +10576,7 @@ class RootNode extends Node {
   toJSON() {
     return {
       type: this.type,
-      unk70x: this.unk70x.toJSON(),
+      termination: this.termination.toJSON(),
       unk10100: this.unk10100.toJSON(),
       unk10400: this.unk10400.toJSON(),
       unk10500: this.unk10500.toJSON(),
@@ -10581,7 +10587,7 @@ class RootNode extends Node {
   clone(depth: number = Infinity): RootNode {
     return new RootNode(
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-      this.unk70x.clone() as ActionSlots.Unknown70xAction,
+      this.termination.clone() as ActionSlots.TerminationAction,
       this.unk10100.clone() as ActionSlots.Unknown10100Action,
       this.unk10400.clone() as ActionSlots.Unknown10400Action,
       this.unk10500.clone() as ActionSlots.Unknown10500Action,
@@ -25021,53 +25027,62 @@ class PointLight extends DataAction {
 }
 
 /**
- * ### {@link ActionType.Unk700 Action 700 - Unk700}
- * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * ### {@link ActionType.SimulateTermination Action 700 - SimulateTermination}
+ * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Unknown root node action that was introduced in Elden Ring.
+ * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
+ * 
+ * Note: An effect terminates when it reaches {@link State} -1.
  */
-class Unk700 extends DataAction {
-  declare readonly type: ActionType.Unk700
+class SimulateTermination extends DataAction {
+  declare readonly type: ActionType.SimulateTermination
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.Unk700, {isAppearance:false,isParticle:false})
+    super(ActionType.SimulateTermination, {isAppearance:false,isParticle:false})
   }
 }
 
 /**
- * ### {@link ActionType.Unk701 Action 701 - Unk701}
- * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * ### {@link ActionType.FadeTermination Action 701 - FadeTermination}
+ * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Unknown root node action that was introduced in Elden Ring.
+ * Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
+ * 
+ * Note: An effect terminates when it reaches {@link State} -1.
  */
-class Unk701 extends DataAction {
-  declare readonly type: ActionType.Unk701
+class FadeTermination extends DataAction {
+  declare readonly type: ActionType.FadeTermination
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
-  unk_er_p1_0: ScalarValue
   /**
-   * @param unk_er_p1_0 Unknown.
+   * The duration of the fade out in seconds.
+   */
+  duration: ScalarValue
+  /**
+   * @param duration The duration of the fade out in seconds.
    *
    * **Default**: `1`
    */
-  constructor(unk_er_p1_0: ScalarValue = 1) {
-    super(ActionType.Unk701, {isAppearance:false,isParticle:false})
-    this.assign({ unk_er_p1_0 })
+  constructor(duration: ScalarValue = 1) {
+    super(ActionType.FadeTermination, {isAppearance:false,isParticle:false})
+    this.assign({ duration })
   }
 }
 
 /**
- * ### {@link ActionType.Unk702 Action 702 - Unk702}
- * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * ### {@link ActionType.InstantTermination Action 702 - InstantTermination}
+ * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Unknown root node action that was introduced in Elden Ring.
+ * Makes the effect instantly disappear when it terminates.
+ * 
+ * Note: An effect terminates when it reaches {@link State} -1.
  */
-class Unk702 extends DataAction {
-  declare readonly type: ActionType.Unk702
+class InstantTermination extends DataAction {
+  declare readonly type: ActionType.InstantTermination
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.Unk702, {isAppearance:false,isParticle:false})
+    super(ActionType.InstantTermination, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -39922,9 +39937,9 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
-  [ActionType.Unk700]: Unk700, Unk700,
-  [ActionType.Unk701]: Unk701, Unk701,
-  [ActionType.Unk702]: Unk702, Unk702,
+  [ActionType.SimulateTermination]: SimulateTermination, SimulateTermination,
+  [ActionType.FadeTermination]: FadeTermination, FadeTermination,
+  [ActionType.InstantTermination]: InstantTermination, InstantTermination,
   [ActionType.NodeForceSpeed]: NodeForceSpeed, NodeForceSpeed,
   [ActionType.ParticleForceSpeed]: ParticleForceSpeed, ParticleForceSpeed,
   [ActionType.NodeForceAcceleration]: NodeForceAcceleration, NodeForceAcceleration,
@@ -43514,9 +43529,9 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
-  Unk700,
-  Unk701,
-  Unk702,
+  SimulateTermination,
+  FadeTermination,
+  InstantTermination,
   NodeForceSpeed,
   ParticleForceSpeed,
   NodeForceAcceleration,
