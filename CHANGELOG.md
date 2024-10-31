@@ -16,6 +16,7 @@
 - `DataAction`s now check if there are any properties that have the wrong type or number of components when they are written to an FXR buffer, and throws descriptive errors if there are any. This should make it easier to find out if and where you put an invalid value.
 - Added the missing descriptions for the `particleLength` and `particleWidth` properties in actions 10008 and 10009.
 - Fixed a bug where recoloring actions white would cause them to be randomly extra colorful due to randomization modifiers on the color properties in the action. Recoloring now removes randomization modifiers from color properties.
+- Fixed the `delay` field in `NodeAttributes` actions not being scaled when using the `scaleRateOfTime` method.
 
 ## [16.0.0] - 2024-09-13
 

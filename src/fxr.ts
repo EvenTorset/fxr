@@ -2442,7 +2442,7 @@ const ActionData: Record<string, {
   [ActionType.NodeAttributes]: {
     props: {
       duration: { default: -1, time: 3 },
-      delay: { default: 0, field: 2 },
+      delay: { default: 0, field: 2, time: 2 },
       unk_ds3_f1_1: { default: 1, field: 1 },
       attachment: { default: AttachMode.Parent, field: 1 },
       depthBias: { default: 0, field: 2 },
@@ -3756,7 +3756,7 @@ const ActionData: Record<string, {
   [ActionType.SimulateTermination]: {},
   [ActionType.FadeTermination]: {
     props: {
-      duration: { default: 1 },
+      duration: { default: 1, time: 2 },
     },
     games: {
       [Game.EldenRing]: {
@@ -25056,12 +25056,16 @@ class FadeTermination extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The duration of the fade out in seconds.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   duration: ScalarValue
   /**
    * @param duration The duration of the fade out in seconds.
    *
    * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   constructor(duration: ScalarValue = 1) {
     super(ActionType.FadeTermination, {isAppearance:false,isParticle:false})

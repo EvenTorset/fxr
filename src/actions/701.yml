@@ -12,6 +12,8 @@ properties:
   duration:
     type: ScalarValue
     default: 1
+    argument: Constant0
+    time: inv
     desc: |
       The duration of the fade out in seconds.
 games:
