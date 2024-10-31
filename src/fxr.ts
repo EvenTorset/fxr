@@ -37219,7 +37219,7 @@ export interface WindForceParams {
   /**
    * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37232,7 +37232,7 @@ export interface WindForceParams {
   /**
    * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37503,7 +37503,7 @@ class WindForce extends DataAction {
   /**
    * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37514,7 +37514,7 @@ class WindForce extends DataAction {
   /**
    * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37767,7 +37767,7 @@ export interface GravityForceParams {
   /**
    * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37780,7 +37780,7 @@ export interface GravityForceParams {
   /**
    * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37956,7 +37956,7 @@ class GravityForce extends DataAction {
   /**
    * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37967,7 +37967,7 @@ class GravityForce extends DataAction {
   /**
    * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}

@@ -127,7 +127,7 @@ properties:
     desc: |
       The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
 
-      This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+      This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
     see:
       - force
       - forceRandomMultiplierMax
@@ -138,7 +138,7 @@ properties:
     desc: |
       The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
 
-      This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+      This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
     see:
       - force
       - forceRandomMultiplierMin
