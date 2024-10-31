@@ -12,6 +12,7 @@ properties:
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
+    enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
     desc: |
@@ -76,6 +77,7 @@ properties:
       - width
   color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -85,6 +87,7 @@ properties:
       Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
   unk_ds3_p1_6:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   blurRadius:
     type: ScalarValue
@@ -108,12 +111,15 @@ properties:
     type: ScalarValue
   unk_ds3_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
@@ -157,6 +163,7 @@ properties:
     field: int
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |

@@ -1,0 +1,32 @@
+name: ModelOrientationMode
+desc: |
+  Values representing different orientation modes for {@link ActionType.Model Model} particles.
+members:
+  North:
+    value: 0
+    desc: |
+      Faces global north.
+  CameraPlane:
+    value: 1
+    desc: |
+      Faces away from the camera plane, the same direction as the camera itself.
+  ParticleDirection:
+    value: 2
+    desc: |
+      Faces in the direction the particle is moving. This direction can be modified by {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and is initially the particle's {@link InitialDirection}.
+  GlobalPitch:
+    value: 3
+    desc: |
+      Tries to face the camera, but is limited to rotation around the global X-axis.
+
+      Seemingly identical to {@link UnkGlobalPitch}?
+  GlobalYaw:
+    value: 4
+    desc: |
+      Tries to face the camera, but is limited to rotation around the vertical global Y-axis.
+  UnkGlobalPitch:
+    value: 5
+    desc: |
+      Tries to face the camera, but is limited to rotation around the global X-axis.
+
+      Seemingly identical to {@link GlobalPitch}?

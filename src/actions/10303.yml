@@ -49,6 +49,7 @@ properties:
   shape:
     type: ForceVolumeShape
     field: int
+    enum: ForceVolumeShape
     default: ForceVolumeShape.Sphere
     desc: |
       The shape of the volume.
@@ -71,6 +72,7 @@ properties:
       - shape
   boxSize:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |

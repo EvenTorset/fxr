@@ -132,6 +132,7 @@ properties:
       - rotationZ
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -144,6 +145,7 @@ properties:
       - color3
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EmissionTime
     color: true
@@ -156,6 +158,7 @@ properties:
       - color3
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -182,6 +185,7 @@ properties:
     type: ScalarValue
   uvOffset:
     type: Vector2Value
+    components: 2
     default: [0, 0]
     argument: Constant0
     desc: |
@@ -190,6 +194,7 @@ properties:
       - uvSpeed
   uvSpeed:
     type: Vector2Value
+    components: 2
     default: [0, 0]
     argument: ParticleAge
     time: true
@@ -199,6 +204,7 @@ properties:
       - uvSpeedMultiplier
   uvSpeedMultiplier:
     type: Vector2Value
+    components: 2
     default: [1, 1]
     argument: ParticleAge
     desc: |
@@ -270,18 +276,22 @@ properties:
     type: ScalarValue
   unk_er_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_er_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_er_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_er_p2_6:
     type: ScalarValue
   orientation:
     type: RichModelOrientationMode
     field: int
+    enum: RichModelOrientationMode
     default: RichModelOrientationMode.ParticleDirection
     desc: |
       Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
@@ -440,6 +450,7 @@ properties:
     field: int
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |

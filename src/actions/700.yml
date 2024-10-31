@@ -4,6 +4,9 @@ slot: Termination
 meta:
   isAppearance: false
   isParticle: false
+inGames:
+  - ER
+  - AC6
 desc: |
   Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
 

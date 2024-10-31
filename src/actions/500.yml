@@ -4,5 +4,10 @@ slot: DirectionSpread
 meta:
   isAppearance: false
   isParticle: false
+inGames:
+  - DS3
+  - SDT
+  - ER
+  - AC6
 desc: |
   Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.

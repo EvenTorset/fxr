@@ -1,0 +1,28 @@
+name: TracerOrientationMode
+desc: |
+  Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.DynamicTracer DynamicTracer} particles.
+members:
+  Travel:
+    value: 0
+    desc: |
+      The tracer source is perpendicular to the direction it's travelling and the direction of the camera.
+  LocalZ:
+    value: 1
+    desc: |
+      The tracer source is aligned with the local Z-axis, which is detenmined by the rotation of the node that emits the tracer.
+  Vertical:
+    value: 2
+    desc: |
+      The tracer source is aligned with the global vertical axis.
+  GlobalX:
+    value: 3
+    desc: |
+      The tracer source is aligned with the global X-axis.
+  Cross:
+    value: 4
+    desc: |
+      Creates two sources for the tracer with different orientation modes. One has {@link Vertical} and the other has {@link GlobalX}, forming a cross.
+  Diagonal:
+    value: 5
+    desc: |
+      The tracer source is parallel to the global diagonal (1, 1, 1).

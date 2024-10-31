@@ -1,0 +1,50 @@
+name: InitialDirection
+desc: |
+  An emitted instance's initial direction is used for various things that require a direction, but does not have a set one to follow.
+  - {@link ActionType.ParticleModifier ParticleModifier action}'s
+  {@link ParticleModifierParams.speed speed}.
+  - {@link ActionType.Line Line action}'s initial rotation.
+  - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
+
+  The initial direction can be further modified by the following actions:
+  - {@link ActionType.NoSpread NoSpread}
+  - {@link ActionType.CircularSpread CircularDirectionSpread}
+  - {@link ActionType.EllipticalSpread EllipticalDirectionSpread}
+  - {@link ActionType.RectangularSpread RectangularDirectionSpread}
+members:
+  Emitter:
+    value: 0
+    desc: |
+      The direction will depend on the emitter shape.
+      | Emitter&nbsp;Shape | Direction |
+      |:-|:-|
+      | {@link ActionType.PointEmitterShape Point} | Same as {@link LocalNorth}. |
+      | {@link ActionType.DiskEmitterShape Disk} | Same as {@link LocalNorth}. |
+      | {@link ActionType.RectangleEmitterShape Rectangle} | Same as {@link LocalNorth}. |
+      | {@link ActionType.SphereEmitterShape Sphere} | The direction cannot be changed for this emitter shape. |
+      | {@link ActionType.BoxEmitterShape Box} | If {@link BoxEmitterShape.emitInside emitInside} is true, it picks a direction parallel to a random local axis. If it is false, the direction will be out from the box, perpendicular to the side where the particle was emitted. |
+      | {@link ActionType.CylinderEmitterShape Cylinder} | Out from the cylinder's axis. |
+  Up:
+    value: 1
+    desc: |
+      Global up. (+Y)
+  Down:
+    value: 2
+    desc: |
+      Global down. (-Y)
+  North:
+    value: 3
+    desc: |
+      Global north. (+Z)
+  LocalUp:
+    value: 4
+    desc: |
+      Local up. (+Y)
+  LocalDown:
+    value: 5
+    desc: |
+      Local down. (-Y)
+  LocalNorth:
+    value: 6
+    desc: |
+      Local north. (+Z)

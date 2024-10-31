@@ -4,5 +4,10 @@ slot: Emitter
 meta:
   isAppearance: false
   isParticle: false
+inGames:
+  - DS3
+  - SDT
+  - ER
+  - AC6
 desc: |
   Emits one particle once.

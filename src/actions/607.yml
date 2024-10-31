@@ -12,6 +12,7 @@ properties:
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
+    enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
     desc: |
@@ -77,6 +78,7 @@ properties:
       - sizeY
   color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -86,6 +88,7 @@ properties:
       Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
   unk_ds3_p1_7:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   intensity:
     type: ScalarValue
@@ -146,12 +149,15 @@ properties:
     type: ScalarValue
   unk_ds3_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
@@ -169,18 +175,21 @@ properties:
   mode:
     type: DistortionMode
     field: int
+    enum: DistortionMode
     default: DistortionMode.NormalMap
     desc: |
       Controls what type of distortion to apply. See {@link DistortionMode} for more details.
   shape:
     type: DistortionShape
     field: int
+    enum: DistortionShape
     default: DistortionShape.Rectangle
     desc: |
       Controls the shape of the particle. See {@link DistortionShape} for more information.
   orientation:
     type: OrientationMode
     field: int
+    enum: OrientationMode
     default: OrientationMode.CameraPlane
     desc: |
       Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
@@ -276,6 +285,7 @@ properties:
     field: int
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |

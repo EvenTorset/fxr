@@ -4,5 +4,10 @@ slot: NodeSelector
 meta:
   isAppearance: false
   isParticle: false
+inGames:
+  - DS3
+  - SDT
+  - ER
+  - AC6
 desc: |
   Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.

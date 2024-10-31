@@ -43,6 +43,7 @@ properties:
       Particle acceleration along the Z-axis.
   color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -96,12 +97,15 @@ properties:
     type: ScalarValue
   unk_ac6_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ac6_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ac6_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ac6_p2_6:
     type: ScalarValue
@@ -115,6 +119,7 @@ properties:
   emitterShape:
     type: EmitterShape
     field: int
+    enum: EmitterShape
     default: EmitterShape.Box
     desc: |
       Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
@@ -122,12 +127,14 @@ properties:
     field: int
   emitterSize:
     field: vec3
+    components: 3
     default: [1, 1, 1]
     scale: true
     desc: |
       The size of the emitter.
   emitterRotation:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     desc: |
       The rotation of the emitter.
@@ -231,6 +238,7 @@ properties:
     field: int
   particleOffset:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
@@ -240,12 +248,14 @@ properties:
       - particleOffsetMax
   particleOffsetMin:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
       Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
   particleOffsetMax:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
@@ -254,6 +264,7 @@ properties:
     field: int
   particleSpeedMin:
     field: vec3
+    components: 3
     default: [-0.01, -0.01, -0.01]
     scale: true
     time: true
@@ -263,6 +274,7 @@ properties:
       - particleSpeedMax
   particleSpeedMax:
     field: vec3
+    components: 3
     default: [0.01, 0.01, 0.01]
     scale: true
     time: true
@@ -282,17 +294,20 @@ properties:
       Alpha multiplier.
   colorMin:
     field: vec4
+    components: 4
     default: [0, 0, 0, 0]
     desc: |
       Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
   colorMax:
     field: vec4
+    components: 4
     default: [0, 0, 0, 0]
     desc: |
       Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
   blendMode:
     type: BlendMode
     field: int
+    enum: BlendMode
     default: BlendMode.Add
     desc: |
       Blend mode.
@@ -441,6 +456,7 @@ properties:
       - bloomColor
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |
@@ -620,6 +636,7 @@ properties:
   lighting:
     type: LightingMode
     field: int
+    enum: LightingMode
     default: LightingMode.Unlit
   unk_ac6_f2_36:
     field: int

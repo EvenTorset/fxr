@@ -19,6 +19,7 @@ properties:
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
+    enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
     desc: |
@@ -32,6 +33,7 @@ properties:
       Particle size.
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -44,6 +46,7 @@ properties:
       - color3
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EmissionTime
     color: true
@@ -56,6 +59,7 @@ properties:
       - color3
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -83,12 +87,15 @@ properties:
     default: 0
   unk_ds3_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
@@ -137,6 +144,7 @@ properties:
       - bloomColor
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |

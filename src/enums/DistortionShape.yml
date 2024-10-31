@@ -1,0 +1,16 @@
+name: DistortionShape
+desc: |
+  Possible shapes for {@link ActionType.Distortion distortion} particles.
+members:
+  Rectangle:
+    value: 0
+    desc: |
+      A flat rectangle.
+  Hemiellipsoid:
+    value: 1
+    desc: |
+      Half of an ellipsoid. (Like a hemisphere, but with three different radii.)
+  Ellipsoid:
+    value: 2
+    desc: |
+      An ellipsoid. (Like a sphere, but with three different radii.)

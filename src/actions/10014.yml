@@ -21,6 +21,7 @@ properties:
       Layer 1 height.
   layer1Color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -39,6 +40,7 @@ properties:
       Layer 2 height.
   layer2Color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -57,6 +59,7 @@ properties:
       Layer 3 height.
   layer3Color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -75,6 +78,7 @@ properties:
       Layer 4 height.
   layer4Color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -112,6 +116,7 @@ properties:
   blendMode:
     type: BlendMode
     field: int
+    enum: BlendMode
     default: BlendMode.Add
     desc: |
       Blend mode.
@@ -171,6 +176,7 @@ properties:
       - layer1ScaleVariationX
   layer1ColorMultiplier:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -227,6 +233,7 @@ properties:
       - layer2ScaleVariationX
   layer2ColorMultiplier:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -283,6 +290,7 @@ properties:
       - layer3ScaleVariationX
   layer3ColorMultiplier:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -339,6 +347,7 @@ properties:
       - layer4ScaleVariationX
   layer4ColorMultiplier:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -371,6 +380,7 @@ properties:
       - layer4BloomColor
   layer1BloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -380,6 +390,7 @@ properties:
       - layer1Color
   layer2BloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -389,6 +400,7 @@ properties:
       - layer2Color
   layer3BloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |
@@ -398,6 +410,7 @@ properties:
       - layer3Color
   layer4BloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 1]
     color: true
     desc: |

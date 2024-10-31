@@ -1,0 +1,34 @@
+name: NodeType
+desc: |
+  Values used to represent different types of FXR nodes.
+members:
+  Root:
+    value: 2000
+    desc: |
+      The root of the FXR tree structure.
+
+      **Class**: {@link RootNode}
+  Proxy:
+    value: 2001
+    desc: |
+      Acts as a node containing another SFX.
+
+      **Class**: {@link ProxyNode}
+  LevelsOfDetail:
+    value: 2002
+    desc: |
+      A node that only displays one of its child nodes at a time based on distance thresholds for each.
+
+      **Class**: {@link LevelsOfDetailNode}
+  Basic:
+    value: 2200
+    desc: |
+      A basic node that can emit particles, play sounds, have transforms and child nodes.
+
+      **Class**: {@link BasicNode}
+  NodeEmitter:
+    value: 2202
+    desc: |
+      A node that emits its child nodes.
+
+      **Class**: {@link NodeEmitterNode}

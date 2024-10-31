@@ -1,0 +1,24 @@
+name: ForceVolumeShape
+desc: |
+  Values representing different shapes of the volume where force actions apply their force.
+members:
+  Boundless:
+    value: 0
+    desc: |
+      Allows the force to affect everything, everywhere.
+  Sphere:
+    value: 0
+    desc: |
+      A spherical volume.
+  Box:
+    value: 0
+    desc: |
+      A cuboid volume.
+  Cylinder:
+    value: 0
+    desc: |
+      A cylindrical volume.
+  SquarePrism:
+    value: 0
+    desc: |
+      A square prism volume.

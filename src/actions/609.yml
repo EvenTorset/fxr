@@ -9,6 +9,7 @@ desc: |
 properties:
   diffuseColor:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EffectAge
     color: true
@@ -22,6 +23,7 @@ properties:
       - specularColor
   specularColor:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EffectAge
     color: true

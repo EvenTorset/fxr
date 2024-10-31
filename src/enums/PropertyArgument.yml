@@ -1,0 +1,24 @@
+name: PropertyArgument
+desc: |
+  Arguments used when evaluating properties.
+
+  There is no way to change what argument is given to a property. Each property has one specific argument given to it, and this is sometimes the only difference between two properties in the same action.
+members:
+  Constant0:
+    value: 0
+    desc: |
+      A constant value of 0.
+  ParticleAge:
+    value: 1
+    desc: |
+      Time in seconds since the particle was emitted.
+  EffectAge:
+    value: 2
+    desc: |
+      Time in seconds since the {@link IEffect Effect} became active.
+
+      An effect becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its effects is active.
+  EmissionTime:
+    value: 3
+    desc: |
+      Time in seconds between the effect being created and the particle being emitted. Stays constant per particle.

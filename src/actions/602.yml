@@ -10,6 +10,7 @@ properties:
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
+    enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
     desc: |
@@ -34,6 +35,7 @@ properties:
       - lengthMultiplier
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -48,6 +50,7 @@ properties:
       - endColor
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -62,6 +65,7 @@ properties:
       - endColor
   startColor:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EffectAge
     color: true
@@ -76,6 +80,7 @@ properties:
       - endColor
   endColor:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EffectAge
     color: true
@@ -102,6 +107,7 @@ properties:
       Multiplier for the line {@link length}.
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EffectAge
     color: true
@@ -131,12 +137,15 @@ properties:
     default: 0
   unk_ds3_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
@@ -179,6 +188,7 @@ properties:
       - bloomColor
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |

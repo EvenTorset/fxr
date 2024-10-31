@@ -42,6 +42,7 @@ properties:
       If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
   color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EffectAge
     color: true

@@ -12,7 +12,13 @@
 - Changed the default value of `unk_sdt_f2_32` in some of the appearance actions to 0. (Was previously 1.)
   - When this is 1, it can cause object seen through particles with the depth blending effect to have some ugly-looking outlines. When it's set to 0, this doesn't happen at all, and it also seems to allow some other fields in the action to work.
   - What this field does exactly is still unknown, so if this change has any other side-effects is also unknown.
-- Renamed the `unk70x` property in the `RootNode` class. It is now `termination` to match the actions it can be set to.
+- Renamed the `unk70x` property in the `RootNode` class to `termination` to match the actions it can be set to.
+- Renamed `BlendMode.Screen` to `BlendMode.Unk7`. The old name was based on some old, and apparently incorrect, documentation. This blend mode is seemingly identical to `BlendMode.Add`.
+- The documentation site now generates JSON files that contain a lot of the information that is in the library. The main reason behind this addition was to allow the FXR Playground to have easy access to the documentation in the library, but feel free to use these in other tools if you need any of this information.
+  - `/data/actions.json` - This is an array of objects that contain information about all action types, including a name, description, what games it works in, the structure of the action in each of the supported games, and detailed information about every field, property, and section10 in the action.
+  - `/data/enums.json` - This is an object that contains various enums, like `BlendMode`, `InitialDirection`, `OrientationMode`, and so on. Each enum has a description and a members object. Each member has a value and a description.
+  - All of the descriptions are Markdown strings.
+  - As a bonus for this, more enums are now properly documented, and some documentation errors in some actions have been fixed.
 - `DataAction`s now check if there are any properties that have the wrong type or number of components when they are written to an FXR buffer, and throws descriptive errors if there are any. This should make it easier to find out if and where you put an invalid value.
 - Added the missing descriptions for the `particleLength` and `particleWidth` properties in actions 10008 and 10009.
 - Fixed a bug where recoloring actions white would cause them to be randomly extra colorful due to randomization modifiers on the color properties in the action. Recoloring now removes randomization modifiers from color properties.

@@ -9,6 +9,7 @@ desc: |
 properties:
   translation:
     type: Vector3Value
+    components: 3
     default: [0, 0, 0]
     argument: EffectAge
     scale: true

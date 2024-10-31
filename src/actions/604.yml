@@ -10,6 +10,7 @@ properties:
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
+    enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
     desc: |
@@ -127,6 +128,7 @@ properties:
       - rotationZ
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -139,6 +141,7 @@ properties:
       - color3
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EmissionTime
     color: true
@@ -151,6 +154,7 @@ properties:
       - color3
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -163,6 +167,7 @@ properties:
       - color2
   layersColor:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -170,6 +175,7 @@ properties:
       Color multiplier for both of the texture layers.
   layer1Color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -177,6 +183,7 @@ properties:
       Color multiplier for Layer 1.
   layer2Color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -303,12 +310,15 @@ properties:
     type: ScalarValue
   unk_ds3_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
@@ -320,6 +330,7 @@ properties:
   orientation:
     type: OrientationMode
     field: int
+    enum: OrientationMode
     default: OrientationMode.CameraPlane
     desc: |
       Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
@@ -426,6 +437,7 @@ properties:
       - bloomColor
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |
@@ -586,6 +598,7 @@ properties:
   lighting:
     type: LightingMode
     field: int
+    enum: LightingMode
     default: LightingMode.Unlit
     desc: |
       Controls how the particles are lit. See {@link LightingMode} for more information.

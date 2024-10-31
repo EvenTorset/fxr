@@ -1,0 +1,24 @@
+name: DistortionMode
+desc: |
+  Used by {@link ActionType.Distortion Distortion} particles to control what type of distortion to apply.
+members:
+  Stir:
+    value: 0
+    desc: |
+      Distorts the background as if you stuck something into it and stirred it. It is animated, and the stir speed is controlled by a property.
+  NormalMap:
+    value: 1
+    desc: |
+      Distorts the background based on the normal map.
+  Twist:
+    value: 2
+    desc: |
+      Distorts the background as if the edges were held in place and you grabbed the center and twisted it.
+  Unk3:
+    value: 3
+    desc: |
+      Seemingly identical to {@link NormalMap}?
+  Unk4:
+    value: 4
+    desc: |
+      This seems to just squeeze everything to the bottom left corner?

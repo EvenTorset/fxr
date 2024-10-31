@@ -4,6 +4,9 @@ slot: Termination
 meta:
   isAppearance: false
   isParticle: false
+inGames:
+  - ER
+  - AC6
 desc: |
   Makes the effect instantly disappear when it terminates.
 
