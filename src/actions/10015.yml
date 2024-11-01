@@ -176,7 +176,7 @@ properties:
   rgbMultiplier2:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Seemingly identical to {@link rgbMultiplier}?
   unk_er_p1_19:
@@ -263,13 +263,13 @@ properties:
   rgbMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Alpha multiplier.
   unk_er_p2_2:

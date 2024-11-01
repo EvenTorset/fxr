@@ -58,7 +58,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       The color for the start of the line.
@@ -73,7 +73,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       The color for the end of the line.
@@ -94,7 +94,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       Color multiplier.
@@ -108,13 +108,13 @@ properties:
   rgbMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Alpha multiplier.
   unk_ds3_p2_2:
@@ -134,7 +134,7 @@ properties:
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
 

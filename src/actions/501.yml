@@ -10,13 +10,13 @@ properties:
   angle:
     type: ScalarValue
     default: 30
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       The maximum change in direction in degrees, the angle of the cone.
   distribution:
     type: ScalarValue
     default: 0
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Controls the distribution of the random directions that can be chosen.
       - At 0, all directions within the cone have an equal chance of being chosen.

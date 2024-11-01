@@ -12,12 +12,12 @@ members:
     value: 1
     desc: |
       Time in seconds since the particle was emitted.
-  EffectAge:
+  ActiveTime:
     value: 2
     desc: |
-      Time in seconds since the {@link IEffect Effect} became active.
+      Time in seconds since the action became active.
 
-      An effect becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its effects is active.
+      An action becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its profiles is active.
   EmissionTime:
     value: 3
     desc: |

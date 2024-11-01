@@ -5,7 +5,7 @@ meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+  Unknown action that is in every basic profile in every game, and still literally nothing is known about it.
 properties:
   unk_ds3_p1_0:
     type: ScalarValue

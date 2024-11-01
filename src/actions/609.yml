@@ -11,7 +11,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       Controls the diffuse color of the light.
@@ -25,7 +25,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       Controls the specular color of the light.
@@ -36,7 +36,7 @@ properties:
   radius:
     type: ScalarValue
     default: 10
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
@@ -77,7 +77,7 @@ properties:
   diffuseMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
 
@@ -85,7 +85,7 @@ properties:
   specularMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       A scalar multiplier for the {@link specularColor specular color}.
 

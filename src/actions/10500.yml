@@ -11,7 +11,7 @@ properties:
     type: ScalarValue
     field: float
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Controls how fast time passes for the entire effect.
   limitViewDistance:

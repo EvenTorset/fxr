@@ -425,7 +425,7 @@ properties:
     desc: |
       If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
 
-      It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+      It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
   updateDistance:
     field: float
     scale: true

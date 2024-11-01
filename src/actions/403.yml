@@ -10,7 +10,7 @@ properties:
   radius:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Radius of the sphere.

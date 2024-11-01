@@ -10,14 +10,14 @@ properties:
   radius:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Radius of the disk.
   distribution:
     type: ScalarValue
     default: 0
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Controls how the random emission points are distributed within the disk.
       - At 0, particles are equally likely to emit from anywhere inside the disk.

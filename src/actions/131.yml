@@ -11,15 +11,15 @@ desc: |
 properties:
   speed:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     time: true
     desc: |
-      Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+      Controls the speed of the particles emitted from this node, but only if the profile has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
   scaleX:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for the scale along the X-axis for the particles emitted from this node.
 
@@ -27,7 +27,7 @@ properties:
   scaleY:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for the scale along the Y-axis for the particles emitted from this node.
 
@@ -35,7 +35,7 @@ properties:
   scaleZ:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for the scale along the Z-axis for the particles emitted from this node.
 
@@ -44,7 +44,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       Color multiplier for the particles emitted from this node.

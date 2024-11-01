@@ -11,7 +11,7 @@ desc: |
 properties:
   noiseOffsetX:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
@@ -20,7 +20,7 @@ properties:
       - noiseOffsetZ
   noiseOffsetY:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
@@ -29,7 +29,7 @@ properties:
       - noiseOffsetZ
   noiseOffsetZ:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
@@ -39,7 +39,7 @@ properties:
   force:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     time: true
     desc: |
       The strength of the force applied in the volume.
@@ -206,7 +206,7 @@ properties:
     field: int
     time: inv
     desc: |
-      The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+      The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
   unk_unk_f1_41:
     field: int
   unk_unk_f1_42:

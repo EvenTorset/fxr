@@ -9,6 +9,8 @@
 - Named and documented some fields:
   - Action 128 (`NodeAttributes`): `unk_ds3_f1_3` is now `depthBias`.
   - Action 609 (`PointLight`): `unk_ds3_f2_24` is now `maxViewDistance`.
+- Renamed "Effects" to "Profiles". The old name had a bunch of different issues, including making writing documentation just more annoying because it could be refering to different things. The new name should better descibe what they are (basically a configuration that defines the characteristics of the node that can be swapped out with another by state changes), and isn't used to refer to anything else that is related to FXRs so far. This is likely the biggest breaking change in this update, so check out the table under the patch notes for things to find and replace if you need to update your scripts.
+  - The `EffectAge` property argument was renamed to `ActiveTime` due to this, which is the biggest change in the documentation. No code should need to change because of this, because this is only used to document the argument given to properties, but it's worth mentioning due to how important this might be. The description for it was also updated to say that it is the time since the *action* (previously "effect") became active, which is also more accurate since this is also used outside of profiles/effects.
 - Changed the default value of `unk_sdt_f2_32` in some of the appearance actions to 0. (Was previously 1.)
   - When this is 1, it can cause object seen through particles with the depth blending effect to have some ugly-looking outlines. When it's set to 0, this doesn't happen at all, and it also seems to allow some other fields in the action to work.
   - What this field does exactly is still unknown, so if this change has any other side-effects is also unknown.
@@ -23,6 +25,16 @@
 - Added the missing descriptions for the `particleLength` and `particleWidth` properties in actions 10008 and 10009.
 - Fixed a bug where recoloring actions white would cause them to be randomly extra colorful due to randomization modifiers on the color properties in the action. Recoloring now removes randomization modifiers from color properties.
 - Fixed the `delay` field in `NodeAttributes` actions not being scaled when using the `scaleRateOfTime` method.
+
+If you need to update your scripts, here's a table of things to find and replace which should fix most of the problems:
+| Old | New |
+|-|-|
+| `BasicEffect` | `BasicProfile` |
+| `LevelsOfDetailEffect` | `LevelsOfDetailProfile` |
+| `NodeEmitterEffect` | `NodeEmitterProfile` |
+| `.walkEffects` | `.walkProfiles` |
+| `.effects` | `.profiles` |
+| `.stateEffectMap` | `.stateProfileMap` |
 
 ## [16.0.0] - 2024-09-13
 

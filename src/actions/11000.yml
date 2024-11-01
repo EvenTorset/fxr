@@ -11,7 +11,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       Controls the diffuse color of the light.
@@ -23,7 +23,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    argument: EffectAge
+    argument: ActiveTime
     color: true
     desc: |
       Controls the specular color of the light.
@@ -34,7 +34,7 @@ properties:
   diffuseMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
 
@@ -42,7 +42,7 @@ properties:
   specularMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       A scalar multiplier for the {@link specularColor specular color}.
 
@@ -50,28 +50,28 @@ properties:
   near:
     type: ScalarValue
     default: 0.01
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
   far:
     type: ScalarValue
     default: 50
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Controls how far away the base of the cone is from the light source.
   radiusX:
     type: ScalarValue
     default: 50
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       The X radius for the elliptic base of the cone.
   radiusY:
     type: ScalarValue
     default: 50
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       The Y radius for the elliptic base of the cone.

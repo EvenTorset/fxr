@@ -38,7 +38,7 @@ enum Game {
    * Note that this does not work with the {@link FXR.toArrayBuffer} and
    * {@link FXR.saveAs} methods unless the FXR only contains generic classes.
    * If it contains any node classes other than {@link GenericNode}, any
-   * effect classes other than {@link Effect}, or any {@link DataAction}s, it
+   * profile classes other than {@link Profile}, or any {@link DataAction}s, it
    * must be given a specific game to write to.
    */
   Generic = -1,
@@ -280,7 +280,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
    * - **Class**: {@link Unk130}
    * 
-   * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+   * Unknown action that is in every basic profile in every game, and still literally nothing is known about it.
    */
   Unk130 = 130,
   /**
@@ -304,22 +304,22 @@ export enum ActionType {
    * ### Action 133 - LevelsOfDetailThresholds
    * - **Class**: {@link LevelsOfDetailThresholds}
    * 
-   * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+   * Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    */
   LevelsOfDetailThresholds = 133,
   /**
-   * ### Action 199 - StateEffectMap
-   * - **Class**: {@link StateEffectMap}
+   * ### Action 199 - StateProfileMap
+   * - **Class**: {@link StateProfileMap}
    * 
-   * Maps states to effects in the parent node.
+   * Maps states to profiles in the parent node.
    */
-  StateEffectMap = 199,
+  StateProfileMap = 199,
   /**
    * ### Action 200 - SelectAllNodes
    * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * - **Class**: {@link SelectAllNodes}
    * 
-   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
+   * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit all child nodes every emission.
    */
   SelectAllNodes = 200,
   /**
@@ -327,7 +327,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * - **Class**: {@link SelectRandomNode}
    * 
-   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
+   * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit a random child node every emission.
    */
   SelectRandomNode = 201,
   /**
@@ -919,31 +919,6 @@ export enum DistortionShape {
 }
 
 /**
- * Values used to represent different types of node states, also known as "effects". There is one for each {@link NodeType type of node} that supports multiple states.
- */
-export enum EffectType {
-  /**
-   * Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
-   * 
-   * **Class**: {@link LevelsOfDetailEffect}
-   */
-  LevelsOfDetail = 1002,
-  /**
-   * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
-   * 
-   * **Class**: {@link BasicEffect}
-   */
-  Basic = 1004,
-  /**
-   * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
-   * 
-   * **Class**: {@link NodeEmitterEffect}
-   */
-  NodeEmitter = 1005,
-  
-}
-
-/**
  * Emitter shapes for the following actions:
  * - {@link ActionType.GPUStandardParticle GPUStandardParticle}
  * - {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle}
@@ -1205,6 +1180,31 @@ export enum OrientationMode {
 }
 
 /**
+ * Values used to represent different types of node profiles, also known as "effects". There is one for each {@link NodeType type of node} that supports profiles.
+ */
+export enum ProfileType {
+  /**
+   * Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+   * 
+   * **Class**: {@link LevelsOfDetailProfile}
+   */
+  LevelsOfDetail = 1002,
+  /**
+   * Profile used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
+   * 
+   * **Class**: {@link BasicProfile}
+   */
+  Basic = 1004,
+  /**
+   * Profile used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
+   * 
+   * **Class**: {@link NodeEmitterProfile}
+   */
+  NodeEmitter = 1005,
+  
+}
+
+/**
  * Arguments used when evaluating properties.
  * 
  * There is no way to change what argument is given to a property. Each property has one specific argument given to it, and this is sometimes the only difference between two properties in the same action.
@@ -1219,11 +1219,11 @@ export enum PropertyArgument {
    */
   ParticleAge = 1,
   /**
-   * Time in seconds since the {@link IEffect Effect} became active.
+   * Time in seconds since the action became active.
    * 
-   * An effect becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its effects is active.
+   * An action becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its profiles is active.
    */
-  EffectAge = 2,
+  ActiveTime = 2,
   /**
    * Time in seconds between the effect being created and the particle being emitted. Stays constant per particle.
    */
@@ -1747,14 +1747,14 @@ export interface IAction {
   clone(): IAction
 }
 
-export interface IEffect {
-  readonly type: EffectType
+export interface IProfile {
+  readonly type: ProfileType
   getActionCount(game: Game): number
   getActions(game: Game): AnyAction[]
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<AnyAction>
-  clone(): IEffect
+  clone(): IProfile
 }
 
 export interface IModifier<T extends ValueType> {
@@ -2558,13 +2558,13 @@ const ActionData: Record<string, {
       }
     }
   },
-  [ActionType.StateEffectMap]: {
+  [ActionType.StateProfileMap]: {
     props: {
-      effectIndices: { default: [0], s10: 1 },
+      profileIndices: { default: [0], s10: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        section10s: ['effectIndices']
+        section10s: ['profileIndices']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5530,8 +5530,8 @@ for (const [type, action] of Object.entries(ActionData)) {
   }
 }
 
-const EffectActionSlots = {
-  [EffectType.Basic]: [
+const ProfileActionSlots = {
+  [ProfileType.Basic]: [
     [
       ActionType.NodeAttributes
     ],
@@ -5633,7 +5633,7 @@ const EffectActionSlots = {
       ActionType.ParticleForceCollision
     ]
   ],
-  [EffectType.NodeEmitter]: [
+  [ProfileType.NodeEmitter]: [
     [
       ActionType.NodeAttributes
     ],
@@ -6242,11 +6242,11 @@ function readNode(br: BinaryReader): Node {
   br.assertUint8(0)
   br.assertUint8(1)
   br.assertInt32(0)
-  const effectCount = br.readInt32()
+  const profileCount = br.readInt32()
   const actionCount = br.readInt32()
   const nodeCount = br.readInt32()
   br.assertInt32(0)
-  const effectOffset = br.readInt32()
+  const profileOffset = br.readInt32()
   br.assertInt32(0)
   const actionOffset = br.readInt32()
   br.assertInt32(0)
@@ -6258,10 +6258,10 @@ function readNode(br: BinaryReader): Node {
     nodes.push(readNode(br))
   }
   br.stepOut()
-  br.stepIn(effectOffset)
-  const effects = []
-  for (let i = 0; i < effectCount; ++i) {
-    effects.push(readEffect(br))
+  br.stepIn(profileOffset)
+  const profiles = []
+  for (let i = 0; i < profileCount; ++i) {
+    profiles.push(readProfile(br))
   }
   br.stepOut()
   br.stepIn(actionOffset)
@@ -6272,7 +6272,7 @@ function readNode(br: BinaryReader): Node {
   br.stepOut()
   if (br.game !== Game.Generic) switch (type) {
     case NodeType.Root:
-      if (effectCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
+      if (profileCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
         return new RootNode(
           nodes,
           br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? null :
@@ -6284,27 +6284,27 @@ function readNode(br: BinaryReader): Node {
       }
       break
     case NodeType.Proxy:
-      if (effectCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
+      if (profileCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
         return new ProxyNode(actions[0].sfx)
       }
       break
     case NodeType.LevelsOfDetail:
-      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new LevelsOfDetailNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      if (actionCount === 1 && actions[0] instanceof StateProfileMap) {
+        return new LevelsOfDetailNode(profiles, nodes).mapStates(...actions[0].profileIndices)
       }
       break
     case NodeType.Basic:
-      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new BasicNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      if (actionCount === 1 && actions[0] instanceof StateProfileMap) {
+        return new BasicNode(profiles, nodes).mapStates(...actions[0].profileIndices)
       }
       break
     case NodeType.NodeEmitter:
-      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new NodeEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      if (actionCount === 1 && actions[0] instanceof StateProfileMap) {
+        return new NodeEmitterNode(profiles, nodes).mapStates(...actions[0].profileIndices)
       }
       break
   }
-  return new GenericNode(type, actions, effects, nodes)
+  return new GenericNode(type, actions, profiles, nodes)
 }
 
 function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
@@ -6312,15 +6312,15 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
     throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
   }
   const count = nodes.length
-  let effectCount = 0
+  let profileCount = 0
   let actionCount = 0
   let childCount = 0
   if (node instanceof GenericNode) {
-    effectCount = node.effects.length
+    profileCount = node.profiles.length
     actionCount = node.actions.length
     childCount = node.nodes.length
-  } else if (node instanceof NodeWithEffects) {
-    effectCount = node.effects.length
+  } else if (node instanceof NodeWithProfiles) {
+    profileCount = node.profiles.length
     actionCount = 1
     childCount = node.nodes.length
   } else if (node instanceof RootNode) {
@@ -6333,11 +6333,11 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
-  bw.writeInt32(effectCount)
+  bw.writeInt32(profileCount)
   bw.writeInt32(actionCount)
   bw.writeInt32(childCount)
   bw.writeInt32(0)
-  bw.reserveInt32(`NodeEffectsOffset${count}`)
+  bw.reserveInt32(`NodeProfilesOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`NodeActionsOffset${count}`)
   bw.writeInt32(0)
@@ -6349,7 +6349,7 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
 function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   const num = nodes.indexOf(node)
   let childCount = 0
-  if (node instanceof GenericNode || node instanceof NodeWithEffects || node instanceof RootNode) {
+  if (node instanceof GenericNode || node instanceof NodeWithProfiles || node instanceof RootNode) {
     childCount = node.nodes.length
   }
   if (childCount === 0) {
@@ -6366,38 +6366,38 @@ function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node
   }
 }
 
-function writeNodeEffects(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
-  let effectCount = 0
-  if (node instanceof GenericNode || node instanceof NodeWithEffects) {
-    effectCount = node.effects.length
+function writeNodeProfiles(node: Node, bw: BinaryWriter, game: Game, index: number, profileCounter: { value: number }) {
+  let profileCount = 0
+  if (node instanceof GenericNode || node instanceof NodeWithProfiles) {
+    profileCount = node.profiles.length
   }
-  if (effectCount === 0) {
-    bw.fill(`NodeEffectsOffset${index}`, 0)
+  if (profileCount === 0) {
+    bw.fill(`NodeProfilesOffset${index}`, 0)
   } else {
-    bw.fill(`NodeEffectsOffset${index}`, bw.position)
-    const nodeEffects = node.getEffects(game)
-    for (let i = 0; i < nodeEffects.length; ++i) {
-      writeEffect(nodeEffects[i], bw, game, effectCounter.value + i)
+    bw.fill(`NodeProfilesOffset${index}`, bw.position)
+    const nodeProfiles = node.getProfiles(game)
+    for (let i = 0; i < nodeProfiles.length; ++i) {
+      writeProfile(nodeProfiles[i], bw, game, profileCounter.value + i)
     }
-    effectCounter.value += nodeEffects.length
+    profileCounter.value += nodeProfiles.length
   }
 }
 
-function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
+function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, profileCounter: { value: number }, actions: Action[]) {
   bw.fill(`NodeActionsOffset${index}`, bw.position)
   const nodeActions = node.getActions(game)
-  const nodeEffects = node.getEffects(game)
+  const nodeProfiles = node.getProfiles(game)
   for (const action of nodeActions) {
     writeAnyAction(action, bw, game, actions)
   }
-  for (let i = 0; i < nodeEffects.length; ++i) {
-    writeEffectActions(nodeEffects[i], bw, game, effectCounter.value + i, actions)
+  for (let i = 0; i < nodeProfiles.length; ++i) {
+    writeProfileActions(nodeProfiles[i], bw, game, profileCounter.value + i, actions)
   }
-  effectCounter.value += nodeEffects.length
+  profileCounter.value += nodeProfiles.length
 }
 
-//#region Functions - Effect
-function readEffect(br: BinaryReader): IEffect {
+//#region Functions - Profile
+function readProfile(br: BinaryReader): IProfile {
   const type = br.readInt16()
   br.assertUint8(0)
   br.assertUint8(1)
@@ -6415,41 +6415,41 @@ function readEffect(br: BinaryReader): IEffect {
   }
   br.stepOut()
   if (br.game === Game.Generic) {
-    return new Effect(type, actions)
-  } else if (type === EffectType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
+    return new Profile(type, actions)
+  } else if (type === ProfileType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
     const lod = actions[0]
-    return new LevelsOfDetailEffect(lod.duration, [
+    return new LevelsOfDetailProfile(lod.duration, [
       lod.threshold0,
       lod.threshold1,
       lod.threshold2,
       lod.threshold3,
       lod.threshold4,
     ])
-  } else if (type === EffectType.Basic && actionCount <= 15) {
-    return new BasicEffect(actions)
-  } else if (type === EffectType.NodeEmitter && actionCount <= 10) {
-    return new NodeEmitterEffect(actions)
+  } else if (type === ProfileType.Basic && actionCount <= 15) {
+    return new BasicProfile(actions)
+  } else if (type === ProfileType.NodeEmitter && actionCount <= 10) {
+    return new NodeEmitterProfile(actions)
   } else {
-    return new Effect(type, actions)
+    return new Profile(type, actions)
   }
 }
 
-function writeEffect(effect: IEffect, bw: BinaryWriter, game: Game, index: number) {
-  bw.writeInt16(effect.type)
+function writeProfile(profile: IProfile, bw: BinaryWriter, game: Game, index: number) {
+  bw.writeInt16(profile.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt32(effect.getActionCount(game))
+  bw.writeInt32(profile.getActionCount(game))
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.reserveInt32(`EffectActionsOffset${index}`)
+  bw.reserveInt32(`ProfileActionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeEffectActions(effect: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
-  bw.fill(`EffectActionsOffset${index}`, bw.position)
-  for (const action of effect.getActions(game)) {
+function writeProfileActions(profile: IProfile, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+  bw.fill(`ProfileActionsOffset${index}`, bw.position)
+  for (const action of profile.getActions(game)) {
     writeAnyAction(action, bw, game, actions)
   }
 }
@@ -8276,10 +8276,10 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.StateEffectMap]: {
-    minify(this: StateEffectMap): StateEffectMap {
-      if (this.effectIndices.length > 1 && this.effectIndices.every(e => e === 0)) {
-        return new StateEffectMap
+  [ActionType.StateProfileMap]: {
+    minify(this: StateProfileMap): StateProfileMap {
+      if (this.profileIndices.length > 1 && this.profileIndices.every(e => e === 0)) {
+        return new StateProfileMap
       }
       return this
     }
@@ -8998,8 +8998,8 @@ class FXR {
     const nodeOffset = br.readInt32()
     br.position += 15 * 4
     // br.readInt32() // NodeCount
-    // br.readInt32() // EffectOffset
-    // br.readInt32() // EffectCount
+    // br.readInt32() // ProfileOffset
+    // br.readInt32() // ProfileCount
     // br.readInt32() // ActionOffset
     // br.readInt32() // ActionCount
     // br.readInt32() // PropertyOffset
@@ -9109,8 +9109,8 @@ class FXR {
     bw.reserveInt32('ConditionCount')
     bw.reserveInt32('NodeOffset')
     bw.reserveInt32('NodeCount')
-    bw.reserveInt32('EffectOffset')
-    bw.reserveInt32('EffectCount')
+    bw.reserveInt32('ProfileOffset')
+    bw.reserveInt32('ProfileCount')
     bw.reserveInt32('ActionOffset')
     bw.reserveInt32('ActionCount')
     bw.reserveInt32('PropertyOffset')
@@ -9207,12 +9207,12 @@ class FXR {
     writeNodeChildren(root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
-    bw.fill('EffectOffset', bw.position)
+    bw.fill('ProfileOffset', bw.position)
     let counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeEffects(nodes[i], bw, game, i, counter)
+      writeNodeProfiles(nodes[i], bw, game, i, counter)
     }
-    bw.fill('EffectCount', counter.value)
+    bw.fill('ProfileCount', counter.value)
     bw.pad(16)
     bw.fill('ActionOffset', bw.position)
     counter.value = 0
@@ -9447,14 +9447,14 @@ class FXR {
    * Finds and returns a value at a given path. If the path does not match
    * anything, this returns `null`.
    * 
-   * For example, to get the appearance action in the second effect in the
+   * For example, to get the appearance action in the second profile in the
    * first child node of the root node, you would use this path:
    * ```js
-   * fxr.find(['root', 'nodes', 0, 'effects', 1, 'appearance'])
+   * fxr.find(['root', 'nodes', 0, 'profiles', 1, 'appearance'])
    * // Or in string form:
-   * fxr.find('root/nodes/0/effects/1/appearance')
+   * fxr.find('root/nodes/0/profiles/1/appearance')
    * // Both are equivalent to this:
-   * fxr.root.nodes[0].effects[1].appearance
+   * fxr.root.nodes[0].profiles[1].appearance
    * ```
    * @param path The path to the value to look for.
    */
@@ -9762,7 +9762,7 @@ class StateCondition {
 /**
  * The base class for all nodes.
  * 
- * A node is a container with actions, effects, and other nodes, and they form
+ * A node is a container with actions, profiles, and other nodes, and they form
  * the tree structure of the FXR.
  */
 abstract class Node {
@@ -9770,7 +9770,7 @@ abstract class Node {
   constructor(public readonly type: NodeType) {}
 
   abstract getActions(game: Game): AnyAction[]
-  getEffects(game: Game): IEffect[] { return [] }
+  getProfiles(game: Game): IProfile[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
@@ -9804,7 +9804,7 @@ abstract class Node {
     if (
       this instanceof GenericNode ||
       this instanceof RootNode ||
-      this instanceof NodeWithEffects
+      this instanceof NodeWithProfiles
     ) {
       for (const node of this.nodes) {
         yield* node.walk()
@@ -9813,21 +9813,21 @@ abstract class Node {
   }
 
   /**
-   * Yields all effects in this branch.
-   * @param recurse Controls whether or not to yield effects in descendant
+   * Yields all profiles in this branch.
+   * @param recurse Controls whether or not to yield profiles in descendant
    * nodes. Defaults to true.
    */
-  *walkEffects(recurse: boolean = true) {
+  *walkProfiles(recurse: boolean = true) {
     for (const node of recurse ? this.walk() : [this]) {
-      if (node instanceof NodeWithEffects || node instanceof GenericNode) {
-        yield* node.effects
+      if (node instanceof NodeWithProfiles || node instanceof GenericNode) {
+        yield* node.profiles
       }
     }
   }
 
   /**
    * Yields all actions in this branch, excluding node actions from
-   * {@link NodeWithEffects nodes with effects}, as those are not stored as
+   * {@link NodeWithProfiles nodes with profiles}, as those are not stored as
    * actions internally.
    * @param recurse Controls whether or not to yield actions in descendant
    * nodes. Defaults to true.
@@ -9842,9 +9842,9 @@ abstract class Node {
         yield node.unk10400
         yield node.unk10500
       }
-      if (node instanceof GenericNode || node instanceof NodeWithEffects) {
-        for (const effect of node.effects) {
-          yield* effect.walkActions()
+      if (node instanceof GenericNode || node instanceof NodeWithProfiles) {
+        for (const profile of node.profiles) {
+          yield* profile.walkActions()
         }
       }
     }
@@ -10194,8 +10194,8 @@ abstract class Node {
           }
         }
       }
-      for (const effect of this.walkEffects(recurse)) if (effect instanceof BasicEffect) {
-        const a = effect.appearance
+      for (const profile of this.walkProfiles(recurse)) if (profile instanceof BasicProfile) {
+        const a = profile.appearance
         if (
           a instanceof PointSprite ||
           a instanceof Line ||
@@ -10207,7 +10207,7 @@ abstract class Node {
           a instanceof Tracer ||
           a instanceof DynamicTracer
         ) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(profile.particleModifier instanceof ParticleModifier)) continue
           if (a instanceof MultiTextureBillboardEx) {
             a.recolorProperty('layersColor', Recolor.grayscale)
             a.recolorProperty('layer1Color', Recolor.grayscale)
@@ -10230,35 +10230,35 @@ abstract class Node {
             Recolor.PaletteSlots['CommonParticle'][]
           >
           const pc = randomItem(palette[key])
-          const ndf = durationFallback(effect.nodeAttributes)
-          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
-          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          const ndf = durationFallback(profile.nodeAttributes)
+          const pdf = durationFallback(profile.particleAttributes, profile.nodeAttributes)
+          proc(pc.modifier, profile.particleModifier, 'color', ndf)
           proc(pc.color1, a, 'color1', pdf)
           proc(pc.color2, a, 'color2', ndf)
           proc(pc.color3, a, 'color3', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof Distortion) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(profile.particleModifier instanceof ParticleModifier)) continue
           const pc = randomItem(palette.distortionParticle)
-          const ndf = durationFallback(effect.nodeAttributes)
-          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
-          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          const ndf = durationFallback(profile.nodeAttributes)
+          const pdf = durationFallback(profile.particleAttributes, profile.nodeAttributes)
+          proc(pc.modifier, profile.particleModifier, 'color', ndf)
           proc(pc.color, a, 'color', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof RadialBlur) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(profile.particleModifier instanceof ParticleModifier)) continue
           const pc = randomItem(palette.blurParticle)
-          const ndf = durationFallback(effect.nodeAttributes)
-          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
-          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          const ndf = durationFallback(profile.nodeAttributes)
+          const pdf = durationFallback(profile.particleAttributes, profile.nodeAttributes)
+          proc(pc.modifier, profile.particleModifier, 'color', ndf)
           proc(pc.color, a, 'color', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof PointLight || a instanceof SpotLight) {
           const pc = randomItem(palette.light)
-          const df = durationFallback(effect.nodeAttributes)
+          const df = durationFallback(profile.nodeAttributes)
           proc(pc.diffuseColor, a, 'diffuseColor', df)
           proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
           a.separateSpecular = 'specularColor' in pc
@@ -10273,7 +10273,7 @@ abstract class Node {
           a instanceof GPUSparkCorrectParticle
         ) {
           const pc = randomItem(palette.gpuParticle)
-          proc(pc.color, a, 'color', durationFallback(effect.nodeAttributes))
+          proc(pc.color, a, 'color', durationFallback(profile.nodeAttributes))
           proc(pc.rgbMultiplier, a, 'rgbMultiplier')
           proc(pc.colorMin, a, 'colorMin')
           proc(pc.colorMax, a, 'colorMax')
@@ -10283,7 +10283,7 @@ abstract class Node {
           }
         } else if ('lensFlare' in palette && a instanceof LensFlare) {
           const pc = randomItem(palette.lensFlare)
-          const df = durationFallback(effect.nodeAttributes)
+          const df = durationFallback(profile.nodeAttributes)
           proc(pc.color, a, 'layer1Color', df)
           proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
           proc(pc.bloomColor, a, 'layer1BloomColor', df)
@@ -10457,31 +10457,31 @@ class GenericNode extends Node {
   constructor(
     type: NodeType,
     public actions: AnyAction[],
-    public effects: IEffect[],
+    public profiles: IProfile[],
     public nodes: Node[]
   ) {
     super(type)
   }
 
   getActions(game: Game): AnyAction[] { return this.actions }
-  getEffects(game: Game): IEffect[] { return this.effects }
+  getProfiles(game: Game): IProfile[] { return this.profiles }
   getNodes(game: Game): Node[] { return this.nodes }
 
   static fromJSON({
     type,
     actions,
-    effects,
+    profiles,
     nodes
   }: {
     type: number
     actions: any[]
-    effects?: any[]
+    profiles?: any[]
     nodes?: any[]
   }) {
     return new GenericNode(
       type,
       actions.map(action => Action.fromJSON(action)),
-      (effects ?? []).map(effect => Effect.fromJSON(effect)),
+      (profiles ?? []).map(profile => Profile.fromJSON(profile)),
       (nodes ?? []).map(node => Node.fromJSON(node))
     )
   }
@@ -10490,7 +10490,7 @@ class GenericNode extends Node {
     return {
       type: this.type,
       actions: this.actions.map(action => action.toJSON()),
-      effects: this.effects.map(effect => effect.toJSON()),
+      profiles: this.profiles.map(profile => profile.toJSON()),
       nodes: this.nodes.map(node => node.toJSON()),
     }
   }
@@ -10499,7 +10499,7 @@ class GenericNode extends Node {
     return new GenericNode(
       this.type,
       this.actions.map(action => action.minify()),
-      this.effects.map(effect => effect.minify()),
+      this.profiles.map(profile => profile.minify()),
       this.nodes.map(node => node.minify())
     )
   }
@@ -10508,7 +10508,7 @@ class GenericNode extends Node {
     return new GenericNode(
       this.type,
       this.actions.map(e => e.clone()),
-      this.effects.map(e => e.clone()),
+      this.profiles.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10555,7 +10555,7 @@ class RootNode extends Node {
     }
   }
 
-  getEffects(game: Game): IEffect[] { return [] }
+  getProfiles(game: Game): IProfile[] { return [] }
   getNodes(game: Game): Node[] { return this.nodes }
 
   minify(): Node {
@@ -10605,7 +10605,7 @@ class RootNode extends Node {
   /**
    * Controls how fast time passes for the entire effect.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   get rateOfTime() {
     if (this.unk10500 instanceof Unk10500) {
@@ -10658,22 +10658,22 @@ class ProxyNode extends Node {
 }
 
 /**
- * Super class for any type of node that contains {@link EffectType effects}.
+ * Super class for all types of nodes that contain {@link ProfileType profiles}.
  */
-abstract class NodeWithEffects extends Node {
+abstract class NodeWithProfiles extends Node {
 
-  stateEffectMap: number[] = [0]
+  stateProfileMap: number[] = [0]
 
-  constructor(type: NodeType, public effects: IEffect[], public nodes: Node[]) {
+  constructor(type: NodeType, public profiles: IProfile[], public nodes: Node[]) {
     super(type)
   }
 
   getActions(game: Game): AnyAction[] {
-    return [ new StateEffectMap(this.stateEffectMap) ]
+    return [ new StateProfileMap(this.stateProfileMap) ]
   }
 
-  getEffects(game: Game): IEffect[] {
-    return this.effects
+  getProfiles(game: Game): IProfile[] {
+    return this.profiles
   }
 
   getNodes(game: Game): Node[] {
@@ -10683,25 +10683,25 @@ abstract class NodeWithEffects extends Node {
   toJSON() {
     return {
       type: this.type,
-      stateEffectMap: this.stateEffectMap,
-      effects: this.effects.map(e => e.toJSON()),
+      stateProfileMap: this.stateProfileMap,
+      profiles: this.profiles.map(e => e.toJSON()),
       nodes: this.nodes.map(e => e.toJSON())
     }
   }
 
-  mapStates(...effectIndices: number[]) {
-    this.stateEffectMap = effectIndices
+  mapStates(...profileIndices: number[]) {
+    this.stateProfileMap = profileIndices
     return this
   }
 
   /**
-   * Returns the effect that is active when a given {@link State state} index
-   * is active. If no effects are active for the state, this returns `null`
+   * Returns the profile that is active when a given {@link State state} index
+   * is active. If no profiles are active for the state, this returns `null`
    * instead.
    * @param stateIndex The index of a {@link FXR.states state in the FXR}.
    */
-  getActiveEffect(stateIndex: number): IEffect | null {
-    return this.effects[this.stateEffectMap[stateIndex] ?? this.stateEffectMap[0]] ?? null
+  getActiveProfile(stateIndex: number): IProfile | null {
+    return this.profiles[this.stateProfileMap[stateIndex] ?? this.stateProfileMap[0]] ?? null
   }
 
 }
@@ -10714,24 +10714,24 @@ abstract class NodeWithEffects extends Node {
  * levels, you can put another LOD node as the fifth child of this node and set
  * higher thresholds in that.
  */
-class LevelsOfDetailNode extends NodeWithEffects {
+class LevelsOfDetailNode extends NodeWithProfiles {
 
-  declare effects: LevelsOfDetailEffect[]
+  declare profiles: LevelsOfDetailProfile[]
 
   /**
-   * @param effectsOrThresholds An array of
-   * {@link EffectType.LevelsOfDetail LOD effects} or an array of LOD
-   * thresholds. Use an array of LOD effects if you need multiple effects or a
-   * finite node duration.
+   * @param profilesOrThresholds An array of
+   * {@link ProfileType.LevelsOfDetail LOD profiles} or an array of LOD
+   * thresholds. Use an array of LOD profiles if you need multiple profiles or
+   * a finite node duration.
    * @param nodes An array of child nodes.
    */
-  constructor(effectsOrThresholds: IEffect[] | number[], nodes: Node[] = []) {
-    if (effectsOrThresholds.every(e => typeof e === 'number')) {
+  constructor(profilesOrThresholds: IProfile[] | number[], nodes: Node[] = []) {
+    if (profilesOrThresholds.every(e => typeof e === 'number')) {
       super(NodeType.LevelsOfDetail, [
-        new LevelsOfDetailEffect(-1, effectsOrThresholds as number[])
+        new LevelsOfDetailProfile(-1, profilesOrThresholds as number[])
       ], nodes)
     } else {
-      super(NodeType.LevelsOfDetail, effectsOrThresholds as IEffect[], nodes)
+      super(NodeType.LevelsOfDetail, profilesOrThresholds as IProfile[], nodes)
     }
   }
 
@@ -10740,25 +10740,25 @@ class LevelsOfDetailNode extends NodeWithEffects {
       return GenericNode.fromJSON(obj)
     }
     const node = new LevelsOfDetailNode(
-      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.profiles ?? []).map((e: any) => Profile.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateEffectMap' in obj) {
-      node.mapStates(...obj.stateEffectMap)
+    if ('stateProfileMap' in obj) {
+      node.mapStates(...obj.stateProfileMap)
     }
     return node
   }
 
   minify(): Node {
     return new LevelsOfDetailNode(
-      this.effects.map(e => e.minify()),
+      this.profiles.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateEffectMap)
+    ).mapStates(...this.stateProfileMap)
   }
 
   clone(depth: number = Infinity): LevelsOfDetailNode {
     return new LevelsOfDetailNode(
-      this.effects.map(e => e.clone()),
+      this.profiles.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10768,28 +10768,28 @@ class LevelsOfDetailNode extends NodeWithEffects {
 /**
  * A basic node that can have transforms and child nodes, and emit particles.
  */
-class BasicNode extends NodeWithEffects {
+class BasicNode extends NodeWithProfiles {
 
-  declare effects: BasicEffect[]
+  declare profiles: BasicProfile[]
 
   /**
-   * @param effectsOrEffectActions This is either the list of effects to add
-   * to the node or a list of actions to create a {@link BasicEffect} with to
+   * @param profilesOrProfileActions This is either the list of profiles to add
+   * to the node or a list of actions to create a {@link BasicProfile} with to
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: IEffect[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(profilesOrProfileActions: IProfile[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (profilesOrProfileActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicEffect(effectsOrEffectActions as AnyAction[])
+        new BasicProfile(profilesOrProfileActions as AnyAction[])
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        effectsOrEffectActions as IEffect[],
+        profilesOrProfileActions as IProfile[],
         nodes
       )
     }
@@ -10800,25 +10800,25 @@ class BasicNode extends NodeWithEffects {
       return GenericNode.fromJSON(obj)
     }
     const node = new BasicNode(
-      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.profiles ?? []).map((e: any) => Profile.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateEffectMap' in obj) {
-      node.mapStates(...obj.stateEffectMap)
+    if ('stateProfileMap' in obj) {
+      node.mapStates(...obj.stateProfileMap)
     }
     return node
   }
 
   minify(): Node {
     return new BasicNode(
-      this.effects.map(e => e.minify()),
+      this.profiles.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateEffectMap)
+    ).mapStates(...this.stateProfileMap)
   }
 
   clone(depth: number = Infinity): BasicNode {
     return new BasicNode(
-      this.effects.map(e => e.clone()),
+      this.profiles.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10828,22 +10828,22 @@ class BasicNode extends NodeWithEffects {
 /**
  * A node that emits its child nodes.
  */
-class NodeEmitterNode extends NodeWithEffects {
+class NodeEmitterNode extends NodeWithProfiles {
 
-  declare effects: NodeEmitterEffect[]
+  declare profiles: NodeEmitterProfile[]
 
-  constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
+  constructor(profilesOrProfileActions: IProfile[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
-    if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (profilesOrProfileActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.NodeEmitter, [
-        new NodeEmitterEffect(effectsOrEffectActions as Action[])
+        new NodeEmitterProfile(profilesOrProfileActions as Action[])
       ], nodes)
     } else {
       super(
         NodeType.NodeEmitter,
-        effectsOrEffectActions as IEffect[],
+        profilesOrProfileActions as IProfile[],
         nodes
       )
     }
@@ -10854,25 +10854,25 @@ class NodeEmitterNode extends NodeWithEffects {
       return GenericNode.fromJSON(obj)
     }
     const node = new NodeEmitterNode(
-      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.profiles ?? []).map((e: any) => Profile.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateEffectMap' in obj) {
-      node.mapStates(...obj.stateEffectMap)
+    if ('stateProfileMap' in obj) {
+      node.mapStates(...obj.stateProfileMap)
     }
     return node
   }
 
   minify(): NodeEmitterNode {
     return new NodeEmitterNode(
-      this.effects.map(e => e.minify()),
+      this.profiles.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateEffectMap)
+    ).mapStates(...this.stateProfileMap)
   }
 
   clone(depth: number = Infinity): NodeEmitterNode {
     return new NodeEmitterNode(
-      this.effects.map(e => e.clone()),
+      this.profiles.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10886,18 +10886,18 @@ const Nodes = {
   [NodeType.Basic]: BasicNode, BasicNode,
 }
 
-//#region Effect
+//#region Profile
 /**
- * Generic effect class that uses the same structure as the file format. Only
- * for use with undocumented effect types. Use one of the other effect classes
- * for effects that are known:
- * - {@link LevelsOfDetailEffect}
- * - {@link BasicEffect}
- * - {@link NodeEmitterEffect}
+ * Generic profile class that uses the same structure as the file format. Only
+ * for use with undocumented profile types. Use one of the other profile
+ * classes for profiles that are known:
+ * - {@link LevelsOfDetailProfile}
+ * - {@link BasicProfile}
+ * - {@link NodeEmitterProfile}
  */
-class Effect implements IEffect {
+class Profile implements IProfile {
 
-  constructor(public type: EffectType, public actions: AnyAction[]) {}
+  constructor(public type: ProfileType, public actions: AnyAction[]) {}
 
   getActionCount(game: Game): number {
     return this.actions.length
@@ -10923,17 +10923,17 @@ class Effect implements IEffect {
     yield* this.actions
   }
 
-  static fromJSON(obj: any): IEffect {
-    if (obj instanceof Effect) {
+  static fromJSON(obj: any): IProfile {
+    if (obj instanceof Profile) {
       return obj
     }
     if ('actions' in obj) {
-      return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
+      return new Profile(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
-      case EffectType.LevelsOfDetail:
-        return new LevelsOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
-      case EffectType.Basic: {
-        const params: BasicEffectParams = {}
+      case ProfileType.LevelsOfDetail:
+        return new LevelsOfDetailProfile(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
+      case ProfileType.Basic: {
+        const params: BasicProfileParams = {}
         if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
         if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
         if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
@@ -10949,10 +10949,10 @@ class Effect implements IEffect {
         if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
         if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
         if ('particleForceMovement' in obj) params.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
-        return new BasicEffect(params)
+        return new BasicProfile(params)
       }
-      case EffectType.NodeEmitter: {
-        const params: NodeEmitterEffectParams = {}
+      case ProfileType.NodeEmitter: {
+        const params: NodeEmitterProfileParams = {}
         if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
         if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
         if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
@@ -10963,14 +10963,14 @@ class Effect implements IEffect {
         if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
         if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
         if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
-        return new NodeEmitterEffect(params)
+        return new NodeEmitterProfile(params)
       }
     }
-    throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
+    throw new Error('Invalid profile JSON: ' + JSON.stringify(obj))
   }
 
-  clone(): Effect {
-    return new Effect(
+  clone(): Profile {
+    return new Profile(
       this.type,
       this.actions.map(e => e.clone()),
     )
@@ -10982,8 +10982,8 @@ class Effect implements IEffect {
  * Manages the duration and thresholds for the
  * {@link NodeType.LevelsOfDetail level of detail node}.
  */
-class LevelsOfDetailEffect implements IEffect {
-  readonly type = EffectType.LevelsOfDetail
+class LevelsOfDetailProfile implements IProfile {
+  readonly type = ProfileType.LevelsOfDetail
 
   /**
    * @param duration The duration for the node to stay active. Once its time is
@@ -11029,8 +11029,8 @@ class LevelsOfDetailEffect implements IEffect {
 
   *walkActions() {}
 
-  clone(): LevelsOfDetailEffect {
-    return new LevelsOfDetailEffect(
+  clone(): LevelsOfDetailProfile {
+    return new LevelsOfDetailProfile(
       this.duration,
       this.thresholds.slice(),
       this.unk_ac6_f1_5,
@@ -11039,7 +11039,7 @@ class LevelsOfDetailEffect implements IEffect {
 
 }
 
-export interface BasicEffectParams {
+export interface BasicProfileParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
@@ -11058,7 +11058,7 @@ export interface BasicEffectParams {
 }
 
 /**
- * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
+ * Profile used in {@link NodeType.Basic basic nodes} to apply transforms and
  * emit particles of many different types.
  * 
  * Default actions:
@@ -11080,8 +11080,8 @@ export interface BasicEffectParams {
  * 13    | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  * 14    | {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement} | {@link ActionType.None None}
  */
-class BasicEffect implements IEffect {
-  readonly type = EffectType.Basic
+class BasicProfile implements IProfile {
+  readonly type = ProfileType.Basic
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -11099,10 +11099,10 @@ class BasicEffect implements IEffect {
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
   particleForceMovement: ActionSlots.ParticleForceMovementAction = new Action
 
-  constructor(params: BasicEffectParams | AnyAction[] = []) {
+  constructor(params: BasicProfileParams | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
+        const index = ProfileActionSlots[ProfileType.Basic].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0:  this.nodeAttributes        = action as Action; break;
           case 1:  this.nodeTransform         = action as Action; break;
@@ -11224,8 +11224,8 @@ class BasicEffect implements IEffect {
     yield this.particleForceMovement
   }
 
-  clone(): BasicEffect {
-    return new BasicEffect({
+  clone(): BasicProfile {
+    return new BasicProfile({
       nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
       nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
       nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
@@ -11246,7 +11246,7 @@ class BasicEffect implements IEffect {
 
 }
 
-export interface NodeEmitterEffectParams {
+export interface NodeEmitterProfileParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
@@ -11260,7 +11260,7 @@ export interface NodeEmitterEffectParams {
 }
 
 /**
- * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
+ * Profile used in {@link NodeType.NodeEmitter node emitter nodes} to control
  * the emission of child nodes.
  * 
  * Default actions:
@@ -11277,8 +11277,8 @@ export interface NodeEmitterEffectParams {
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 9     | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  */
-class NodeEmitterEffect implements IEffect {
-  readonly type = EffectType.NodeEmitter
+class NodeEmitterProfile implements IProfile {
+  readonly type = ProfileType.NodeEmitter
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -11291,10 +11291,10 @@ class NodeEmitterEffect implements IEffect {
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
 
-  constructor(params: NodeEmitterEffectParams | AnyAction[] = []) {
+  constructor(params: NodeEmitterProfileParams | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = EffectActionSlots[EffectType.NodeEmitter].findIndex(a => a.includes(action.type))
+        const index = ProfileActionSlots[ProfileType.NodeEmitter].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0: this.nodeAttributes    = action as Action; break;
           case 1: this.nodeTransform     = action as Action; break;
@@ -11386,8 +11386,8 @@ class NodeEmitterEffect implements IEffect {
     yield this.nodeForceMovement
   }
 
-  clone(): NodeEmitterEffect {
-    return new NodeEmitterEffect({
+  clone(): NodeEmitterProfile {
+    return new NodeEmitterProfile({
       nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
       nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
       nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
@@ -12080,7 +12080,7 @@ export interface NodeAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ?: ScalarValue
   /**
@@ -12088,7 +12088,7 @@ export interface NodeAccelerationParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -12096,7 +12096,7 @@ export interface NodeAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -12137,19 +12137,19 @@ class NodeAcceleration extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   unk_ds3_f1_0: number
@@ -12170,7 +12170,7 @@ export interface NodeTranslationParams {
    * 
    * **Default**: `[0, 0, 0]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   translation?: Vector3Value
   /**
@@ -12193,7 +12193,7 @@ class NodeTranslation extends DataAction {
   /**
    * An offset for the position of the node.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   translation: Vector3Value
   /**
@@ -12212,7 +12212,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -12223,7 +12223,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX?: ScalarValue
   /**
@@ -12231,7 +12231,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -12242,7 +12242,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY?: ScalarValue
   /**
@@ -12250,7 +12250,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -12261,7 +12261,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
@@ -12284,7 +12284,7 @@ class NodeSpin extends DataAction {
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -12293,13 +12293,13 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -12308,13 +12308,13 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -12323,7 +12323,7 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
@@ -12961,7 +12961,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ?: ScalarValue
   /**
@@ -12969,7 +12969,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -12977,7 +12977,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -12985,7 +12985,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13026,25 +13026,25 @@ class NodeAccelerationRandomTurns extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
@@ -13312,7 +13312,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link accelerationY}
@@ -13323,7 +13323,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -13333,7 +13333,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13341,7 +13341,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13349,7 +13349,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13399,7 +13399,7 @@ class NodeAccelerationPartialFollow extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link accelerationY}
@@ -13408,7 +13408,7 @@ class NodeAccelerationPartialFollow extends DataAction {
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
@@ -13416,19 +13416,19 @@ class NodeAccelerationPartialFollow extends DataAction {
    * 
    * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13467,7 +13467,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ?: ScalarValue
   /**
@@ -13475,7 +13475,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -13483,7 +13483,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13491,7 +13491,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -13502,7 +13502,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX?: ScalarValue
   /**
@@ -13510,7 +13510,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -13521,7 +13521,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY?: ScalarValue
   /**
@@ -13529,7 +13529,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -13540,7 +13540,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
@@ -13587,25 +13587,25 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -13614,13 +13614,13 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -13629,13 +13629,13 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -13644,7 +13644,7 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
@@ -13674,7 +13674,7 @@ export interface NodeSpeedParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13682,7 +13682,7 @@ export interface NodeSpeedParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13723,13 +13723,13 @@ class NodeSpeed extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   unk_ds3_f1_0: number
@@ -13758,7 +13758,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13766,7 +13766,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13774,7 +13774,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13815,19 +13815,19 @@ class NodeSpeedRandomTurns extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
@@ -13859,7 +13859,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13869,7 +13869,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13877,7 +13877,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13885,7 +13885,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13935,7 +13935,7 @@ class NodeSpeedPartialFollow extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
@@ -13943,19 +13943,19 @@ class NodeSpeedPartialFollow extends DataAction {
    * 
    * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13994,7 +13994,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -14002,7 +14002,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -14010,7 +14010,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -14021,7 +14021,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX?: ScalarValue
   /**
@@ -14029,7 +14029,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -14040,7 +14040,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY?: ScalarValue
   /**
@@ -14048,7 +14048,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -14059,7 +14059,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
@@ -14106,19 +14106,19 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -14127,13 +14127,13 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -14142,13 +14142,13 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -14157,7 +14157,7 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
@@ -14401,7 +14401,7 @@ export interface Unk130Params {
  * ### {@link ActionType.Unk130 Action 130 - Unk130}
  * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
  * 
- * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+ * Unknown action that is in every basic profile in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
   declare readonly type: ActionType.Unk130
@@ -14431,11 +14431,11 @@ class Unk130 extends DataAction {
 
 export interface ParticleModifierParams {
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+   * Controls the speed of the particles emitted from this node, but only if the profile has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed?: ScalarValue
   /**
@@ -14445,7 +14445,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleX?: ScalarValue
   /**
@@ -14455,7 +14455,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleY?: ScalarValue
   /**
@@ -14465,7 +14465,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleZ?: ScalarValue
   /**
@@ -14475,7 +14475,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   color?: Vector4Value
   /**
@@ -14503,9 +14503,9 @@ class ParticleModifier extends DataAction {
   declare readonly type: ActionType.ParticleModifier
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+   * Controls the speed of the particles emitted from this node, but only if the profile has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
@@ -14513,7 +14513,7 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also affects the Y and Z axes.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleX: ScalarValue
   /**
@@ -14521,7 +14521,7 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleY: ScalarValue
   /**
@@ -14529,7 +14529,7 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleZ: ScalarValue
   /**
@@ -14537,7 +14537,7 @@ class ParticleModifier extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   color: Vector4Value
   /**
@@ -14628,7 +14628,7 @@ export interface LevelsOfDetailThresholdsParams {
 /**
  * ### {@link ActionType.LevelsOfDetailThresholds Action 133 - LevelsOfDetailThresholds}
  * 
- * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+ * Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
   declare readonly type: ActionType.LevelsOfDetailThresholds
@@ -14667,29 +14667,29 @@ class LevelsOfDetailThresholds extends DataAction {
 }
 
 /**
- * ### {@link ActionType.StateEffectMap Action 199 - StateEffectMap}
+ * ### {@link ActionType.StateProfileMap Action 199 - StateProfileMap}
  * 
- * Maps states to effects in the parent node.
+ * Maps states to profiles in the parent node.
  */
-class StateEffectMap extends DataAction {
-  declare readonly type: ActionType.StateEffectMap
+class StateProfileMap extends DataAction {
+  declare readonly type: ActionType.StateProfileMap
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
-   * A list of effect indices.
+   * A list of profile indices.
    * 
-   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   * The index of each value represents the index of the state, and the value represents the index of the profile that should be active when the state is active.
    */
-  effectIndices: number[]
+  profileIndices: number[]
   /**
-   * @param effectIndices A list of effect indices.
+   * @param profileIndices A list of profile indices.
    * 
-   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   * The index of each value represents the index of the state, and the value represents the index of the profile that should be active when the state is active.
    *
    * **Default**: `[0]`
    */
-  constructor(effectIndices: number[] = [0]) {
-    super(ActionType.StateEffectMap, {isAppearance:false,isParticle:false})
-    this.assign({ effectIndices })
+  constructor(profileIndices: number[] = [0]) {
+    super(ActionType.StateProfileMap, {isAppearance:false,isParticle:false})
+    this.assign({ profileIndices })
   }
 }
 
@@ -14697,7 +14697,7 @@ class StateEffectMap extends DataAction {
  * ### {@link ActionType.SelectAllNodes Action 200 - SelectAllNodes}
  * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
+ * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit all child nodes every emission.
  */
 class SelectAllNodes extends DataAction {
   declare readonly type: ActionType.SelectAllNodes
@@ -14712,7 +14712,7 @@ class SelectAllNodes extends DataAction {
  * ### {@link ActionType.SelectRandomNode Action 201 - SelectRandomNode}
  * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
+ * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit a random child node every emission.
  */
 class SelectRandomNode extends DataAction {
   declare readonly type: ActionType.SelectRandomNode
@@ -14742,7 +14742,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   interval?: ScalarValue
   /**
@@ -14750,7 +14750,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   perInterval?: ScalarValue
   /**
@@ -14758,7 +14758,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   totalIntervals?: ScalarValue
   /**
@@ -14766,7 +14766,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent?: ScalarValue
   /**
@@ -14789,25 +14789,25 @@ class PeriodicEmitter extends DataAction {
   /**
    * Time between emitting new particles in seconds.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   interval: ScalarValue
   /**
    * The number of particles to emit per interval. They all spawn at the same time per interval.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   perInterval: ScalarValue
   /**
    * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   totalIntervals: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent: ScalarValue
   unk_ds3_f1_1: number
@@ -14823,7 +14823,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Default**: `0.1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   threshold?: ScalarValue
   /**
@@ -14831,7 +14831,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   unk_ds3_p1_2?: ScalarValue
   /**
@@ -14839,7 +14839,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent?: ScalarValue
   /**
@@ -14874,14 +14874,14 @@ class EqualDistanceEmitter extends DataAction {
   /**
    * How much the emitter must move to trigger emission.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   threshold: ScalarValue
   unk_ds3_p1_2: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent: ScalarValue
   unk_ds3_p1_1: ScalarValue
@@ -14938,7 +14938,7 @@ export interface DiskEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -14950,7 +14950,7 @@ export interface DiskEmitterShapeParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -14973,7 +14973,7 @@ class DiskEmitterShape extends DataAction {
   /**
    * Radius of the disk.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
@@ -14983,7 +14983,7 @@ class DiskEmitterShape extends DataAction {
    * - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
    * - Values between these smoothly blend between them.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15002,7 +15002,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX?: ScalarValue
   /**
@@ -15010,7 +15010,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY?: ScalarValue
   /**
@@ -15022,7 +15022,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -15045,13 +15045,13 @@ class RectangleEmitterShape extends DataAction {
   /**
    * Width of the rectangle.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX: ScalarValue
   /**
    * Height of the rectangle.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY: ScalarValue
   /**
@@ -15061,7 +15061,7 @@ class RectangleEmitterShape extends DataAction {
    * - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
    * - Values between these smoothly blend between them.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15080,7 +15080,7 @@ export interface SphereEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -15103,7 +15103,7 @@ class SphereEmitterShape extends DataAction {
   /**
    * Radius of the sphere.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
@@ -15122,7 +15122,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX?: ScalarValue
   /**
@@ -15130,7 +15130,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY?: ScalarValue
   /**
@@ -15138,7 +15138,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeZ?: ScalarValue
   /**
@@ -15167,19 +15167,19 @@ class BoxEmitterShape extends DataAction {
   /**
    * Width of the cuboid.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX: ScalarValue
   /**
    * Height of the cuboid.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY: ScalarValue
   /**
    * Depth of the cuboid.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeZ: ScalarValue
   /**
@@ -15202,7 +15202,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -15210,7 +15210,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   height?: ScalarValue
   /**
@@ -15245,13 +15245,13 @@ class CylinderEmitterShape extends DataAction {
   /**
    * The radius of the cylinder.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
    * The height of the cylinder.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   height: ScalarValue
   /**
@@ -15293,7 +15293,7 @@ export interface CircularSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angle?: ScalarValue
   /**
@@ -15306,7 +15306,7 @@ export interface CircularSpreadParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -15329,7 +15329,7 @@ class CircularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, the angle of the cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angle: ScalarValue
   /**
@@ -15340,7 +15340,7 @@ class CircularSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15359,7 +15359,7 @@ export interface EllipticalSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15370,7 +15370,7 @@ export interface EllipticalSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15386,7 +15386,7 @@ export interface EllipticalSpreadParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -15409,7 +15409,7 @@ class EllipticalSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15418,7 +15418,7 @@ class EllipticalSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15432,7 +15432,7 @@ class EllipticalSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15451,7 +15451,7 @@ export interface RectangularSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15462,7 +15462,7 @@ export interface RectangularSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleX}
@@ -15478,7 +15478,7 @@ export interface RectangularSpreadParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
 }
@@ -15495,7 +15495,7 @@ class RectangularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15504,7 +15504,7 @@ class RectangularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleX}
@@ -15518,7 +15518,7 @@ class RectangularSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   constructor(props: RectangularSpreadParams = {}) {
@@ -15599,7 +15599,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -15607,7 +15607,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -15641,7 +15641,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -16034,13 +16034,13 @@ class PointSprite extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -16052,7 +16052,7 @@ class PointSprite extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_ds3_f1_2: number
@@ -16259,7 +16259,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16275,7 +16275,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16299,7 +16299,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16313,7 +16313,7 @@ export interface LineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -16321,7 +16321,7 @@ export interface LineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -16355,7 +16355,7 @@ export interface LineParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -16729,7 +16729,7 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16743,7 +16743,7 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16763,7 +16763,7 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16775,13 +16775,13 @@ class Line extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -16793,7 +16793,7 @@ class Line extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_ds3_f1_1: number
@@ -17014,7 +17014,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17030,7 +17030,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17062,7 +17062,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17076,7 +17076,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -17084,7 +17084,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -17118,7 +17118,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -17499,7 +17499,7 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17513,7 +17513,7 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17539,7 +17539,7 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17551,13 +17551,13 @@ class QuadLine extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -17569,7 +17569,7 @@ class QuadLine extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_ds3_f1_1: number
@@ -17982,7 +17982,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -17990,7 +17990,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -18024,7 +18024,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -18727,13 +18727,13 @@ class BillboardEx extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -18745,7 +18745,7 @@ class BillboardEx extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -19394,7 +19394,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -19402,7 +19402,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -19436,7 +19436,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -20194,13 +20194,13 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -20212,7 +20212,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -20759,7 +20759,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -20767,7 +20767,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -21524,13 +21524,13 @@ class Model extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -21921,7 +21921,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -21929,7 +21929,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -21937,7 +21937,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -21968,7 +21968,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -22508,19 +22508,19 @@ class Tracer extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -22534,7 +22534,7 @@ class Tracer extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -22922,7 +22922,7 @@ export interface DistortionParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -22930,7 +22930,7 @@ export interface DistortionParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -22964,7 +22964,7 @@ export interface DistortionParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -23500,13 +23500,13 @@ class Distortion extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -23518,7 +23518,7 @@ class Distortion extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_er_p2_7: ScalarValue
@@ -23826,7 +23826,7 @@ export interface RadialBlurParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -23834,7 +23834,7 @@ export interface RadialBlurParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -23868,7 +23868,7 @@ export interface RadialBlurParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -24226,13 +24226,13 @@ class RadialBlur extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -24244,7 +24244,7 @@ class RadialBlur extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -24385,7 +24385,7 @@ export interface PointLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link specularColor}
@@ -24400,7 +24400,7 @@ export interface PointLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor?: Vector4Value
   /**
@@ -24408,7 +24408,7 @@ export interface PointLightParams {
    * 
    * **Default**: `10`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -24485,7 +24485,7 @@ export interface PointLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier?: ScalarValue
   /**
@@ -24495,7 +24495,7 @@ export interface PointLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier?: ScalarValue
   /**
@@ -24806,7 +24806,7 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link specularColor}
@@ -24819,13 +24819,13 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor: Vector4Value
   /**
    * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   unk_ds3_p1_3: ScalarValue
@@ -24853,7 +24853,7 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier: ScalarValue
   /**
@@ -24861,7 +24861,7 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier: ScalarValue
   unk_ds3_f1_0: number
@@ -25104,7 +25104,7 @@ export interface NodeForceSpeedParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed?: ScalarValue
   /**
@@ -25112,7 +25112,7 @@ export interface NodeForceSpeedParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier?: ScalarValue
   /**
@@ -25140,13 +25140,13 @@ class NodeForceSpeed extends DataAction {
   /**
    * The speed in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
    * A multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -25162,7 +25162,7 @@ export interface ParticleForceSpeedParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed?: ScalarValue
   /**
@@ -25170,7 +25170,7 @@ export interface ParticleForceSpeedParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier?: ScalarValue
   /**
@@ -25204,13 +25204,13 @@ class ParticleForceSpeed extends DataAction {
   /**
    * The speed in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
    * A multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -25230,7 +25230,7 @@ export interface NodeForceAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration?: ScalarValue
   /**
@@ -25238,7 +25238,7 @@ export interface NodeForceAccelerationParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier?: ScalarValue
   /**
@@ -25266,13 +25266,13 @@ class NodeForceAcceleration extends DataAction {
   /**
    * The acceleration in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration: ScalarValue
   /**
    * A multiplier for {@link acceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -25288,7 +25288,7 @@ export interface ParticleForceAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration?: ScalarValue
   /**
@@ -25296,7 +25296,7 @@ export interface ParticleForceAccelerationParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier?: ScalarValue
   /**
@@ -25330,13 +25330,13 @@ class ParticleForceAcceleration extends DataAction {
   /**
    * The acceleration in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration: ScalarValue
   /**
    * A multiplier for {@link acceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -26361,7 +26361,7 @@ export interface GPUStandardParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -27306,7 +27306,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -28483,7 +28483,7 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -29422,7 +29422,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -30570,7 +30570,7 @@ export interface GPUSparkParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -31231,7 +31231,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -32004,7 +32004,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -32666,7 +32666,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -32986,7 +32986,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -32994,7 +32994,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -33002,7 +33002,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -33033,7 +33033,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -33617,19 +33617,19 @@ class DynamicTracer extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -33643,7 +33643,7 @@ class DynamicTracer extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -35302,7 +35302,7 @@ export interface RichModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier2?: ScalarValue
   /**
@@ -35352,7 +35352,7 @@ export interface RichModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -35360,7 +35360,7 @@ export interface RichModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -36115,7 +36115,7 @@ class RichModel extends DataAction {
   /**
    * Seemingly identical to {@link rgbMultiplier}?
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier2: ScalarValue
   unk_er_p1_19: ScalarValue
@@ -36147,13 +36147,13 @@ class RichModel extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_er_p2_2: ScalarValue
@@ -36965,7 +36965,7 @@ export interface WindForceParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37336,7 +37336,7 @@ export interface WindForceParams {
    */
   unk_sdt_f1_52?: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -37405,7 +37405,7 @@ class WindForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37554,7 +37554,7 @@ class WindForce extends DataAction {
   unk_sdt_f1_51: number
   unk_sdt_f1_52: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   unk_sdt_f1_54: number
@@ -37577,7 +37577,7 @@ export interface GravityForceParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37854,7 +37854,7 @@ export interface GravityForceParams {
    */
   unk_ds3_f1_37?: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -37875,7 +37875,7 @@ class GravityForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -38002,7 +38002,7 @@ class GravityForce extends DataAction {
   unk_ds3_f1_36: number
   unk_ds3_f1_37: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   constructor(props: GravityForceParams = {}) {
@@ -38135,7 +38135,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetY}
@@ -38147,7 +38147,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38159,7 +38159,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38171,7 +38171,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -38454,7 +38454,7 @@ export interface TurbulenceForceParams {
    */
   unk_unk_f1_39?: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -38541,7 +38541,7 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetY}
@@ -38551,7 +38551,7 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38561,7 +38561,7 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38571,7 +38571,7 @@ class TurbulenceForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -38700,7 +38700,7 @@ class TurbulenceForce extends DataAction {
   unk_unk_f1_38: number
   unk_unk_f1_39: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   unk_unk_f1_41: number
@@ -39199,7 +39199,7 @@ export interface Unk10500Params {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rateOfTime?: ScalarValue
   /**
@@ -39282,7 +39282,7 @@ class Unk10500 extends DataAction {
   /**
    * Controls how fast time passes for the entire effect.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rateOfTime: ScalarValue
   /**
@@ -39318,7 +39318,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseColor?: Vector4Value
   /**
@@ -39330,7 +39330,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor?: Vector4Value
   /**
@@ -39340,7 +39340,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier?: ScalarValue
   /**
@@ -39350,7 +39350,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier?: ScalarValue
   /**
@@ -39358,7 +39358,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `0.01`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   near?: ScalarValue
   /**
@@ -39366,7 +39366,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `50`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   far?: ScalarValue
   /**
@@ -39374,7 +39374,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `50`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusX?: ScalarValue
   /**
@@ -39382,7 +39382,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `50`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusY?: ScalarValue
   /**
@@ -39682,7 +39682,7 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseColor: Vector4Value
   /**
@@ -39692,7 +39692,7 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor: Vector4Value
   /**
@@ -39700,7 +39700,7 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier: ScalarValue
   /**
@@ -39708,31 +39708,31 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier: ScalarValue
   /**
    * Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   near: ScalarValue
   /**
    * Controls how far away the base of the cone is from the light source.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   far: ScalarValue
   /**
    * The X radius for the elliptic base of the cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusX: ScalarValue
   /**
    * The Y radius for the elliptic base of the cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusY: ScalarValue
   unk_ds3_p1_6: ScalarValue
@@ -39923,7 +39923,7 @@ const DataActions = {
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
-  [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
+  [ActionType.StateProfileMap]: StateProfileMap, StateProfileMap,
   [ActionType.SelectAllNodes]: SelectAllNodes, SelectAllNodes,
   [ActionType.SelectRandomNode]: SelectRandomNode, SelectRandomNode,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -42076,18 +42076,18 @@ namespace Recolor {
         )
       )
     }
-    function *walkEffects(sources: (FXR | Node)[]) {
+    function *walkProfiles(sources: (FXR | Node)[]) {
       for (const src of sources) {
         if (src instanceof FXR) {
-          yield* src.root.walkEffects()
+          yield* src.root.walkProfiles()
         } else {
-          yield* src.walkEffects()
+          yield* src.walkProfiles()
         }
       }
     }
-    for (const effect of walkEffects(sources)) {
-      if (effect instanceof BasicEffect) {
-        const a = effect.appearance
+    for (const profile of walkProfiles(sources)) {
+      if (profile instanceof BasicProfile) {
+        const a = profile.appearance
         if (
           a instanceof PointSprite ||
           a instanceof Line ||
@@ -42099,7 +42099,7 @@ namespace Recolor {
           a instanceof Tracer ||
           a instanceof DynamicTracer
         ) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(profile.particleModifier instanceof ParticleModifier)) continue
           let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
           if (blendMode instanceof Property) {
             blendMode = blendMode.valueAt(0)
@@ -42116,7 +42116,7 @@ namespace Recolor {
           if (key in palette && mode === PaletteMode.First) continue
           palette[key] ??= []
           palette[key].push({
-            modifier: normalize(effect.particleModifier.color),
+            modifier: normalize(profile.particleModifier.color),
             color1: normalize(a.color1),
             color2: normalize(a.color2),
             color3: normalize(a.color3),
@@ -42124,21 +42124,21 @@ namespace Recolor {
             bloomColor: normalize(a.bloomColor),
           })
         } else if (a instanceof Distortion) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(profile.particleModifier instanceof ParticleModifier)) continue
           if ('distortionParticle' in palette && mode === PaletteMode.First) continue
           palette.distortionParticle ??= []
           palette.distortionParticle.push({
-            modifier: normalize(effect.particleModifier.color),
+            modifier: normalize(profile.particleModifier.color),
             color: normalize(a.color),
             rgbMultiplier: normalize(a.rgbMultiplier),
             bloomColor: normalize(a.bloomColor),
           })
         } else if (a instanceof RadialBlur) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(profile.particleModifier instanceof ParticleModifier)) continue
           if ('blurParticle' in palette && mode === PaletteMode.First) continue
           palette.blurParticle ??= []
           palette.blurParticle.push({
-            modifier: normalize(effect.particleModifier.color),
+            modifier: normalize(profile.particleModifier.color),
             color: normalize(a.color),
             rgbMultiplier: normalize(a.rgbMultiplier),
             bloomColor: normalize(a.bloomColor),
@@ -43243,13 +43243,13 @@ namespace FXRUtility {
     const nodes = recurse ? Array.from(node.walk()) : [node]
     for (const n of nodes) {
       if (n instanceof BasicNode || n instanceof NodeEmitterNode) {
-        for (const effect of n.walkEffects(false)) {
-          if (effect instanceof NodeEmitterEffect || (
-            effect instanceof BasicEffect &&
-            effect.appearance instanceof DataAction &&
-            effect.appearance.meta.isParticle
+        for (const profile of n.walkProfiles(false)) {
+          if (profile instanceof NodeEmitterProfile || (
+            profile instanceof BasicProfile &&
+            profile.appearance instanceof DataAction &&
+            profile.appearance.meta.isParticle
           )) {
-            const emShape = effect.emitterShape
+            const emShape = profile.emitterShape
             if (emShape instanceof DiskEmitterShape) {
               const radius = constantValueOf(emShape.radius)
               n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
@@ -43377,7 +43377,7 @@ namespace FXRUtility {
    * 
    * **Default**: `[0, 0, 0]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   export function animatedNodeRotation(rotation: Vector3Value): Action | NodeSpin {
     if (!(rotation instanceof Property) || rotation instanceof ValueProperty) {
@@ -43433,7 +43433,7 @@ export {
   ResourceType,
 
   Nodes,
-  EffectActionSlots,
+  ProfileActionSlots,
   ActionData,
   DataActions,
 
@@ -43453,17 +43453,17 @@ export {
 
   Node,
   GenericNode,
-  NodeWithEffects,
+  NodeWithProfiles,
   RootNode,
   ProxyNode,
   LevelsOfDetailNode,
   BasicNode,
   NodeEmitterNode,
 
-  Effect,
-  LevelsOfDetailEffect,
-  BasicEffect,
-  NodeEmitterEffect,
+  Profile,
+  LevelsOfDetailProfile,
+  BasicProfile,
+  NodeEmitterProfile,
 
   Action,
   DataAction,
@@ -43499,7 +43499,7 @@ export {
   ParticleModifier,
   SFXReference,
   LevelsOfDetailThresholds,
-  StateEffectMap,
+  StateProfileMap,
   SelectAllNodes,
   SelectRandomNode,
   PeriodicEmitter,

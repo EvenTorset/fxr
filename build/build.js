@@ -48,7 +48,7 @@ const argumentNames = {
   Constant0: 'Constant 0',
   ParticleAge: 'Particle age',
   EmissionTime: 'Emission time',
-  EffectAge: 'Effect age',
+  ActiveTime: 'Active time',
 }
 
 const resourceMap = {

@@ -1,0 +1,22 @@
+name: ProfileType
+desc: |
+  Values used to represent different types of node profiles, also known as "effects". There is one for each {@link NodeType type of node} that supports profiles.
+members:
+  LevelsOfDetail:
+    value: 1002
+    desc: |
+      Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+
+      **Class**: {@link LevelsOfDetailProfile}
+  Basic:
+    value: 1004
+    desc: |
+      Profile used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
+
+      **Class**: {@link BasicProfile}
+  NodeEmitter:
+    value: 1005
+    desc: |
+      Profile used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
+
+      **Class**: {@link NodeEmitterProfile}
