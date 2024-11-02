@@ -14830,8 +14830,6 @@ export interface EqualDistanceEmitterParams {
    * Unknown.
    * 
    * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   unk_ds3_p1_2?: ScalarValue
   /**

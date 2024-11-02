@@ -17,7 +17,6 @@ properties:
   unk_ds3_p1_2:
     type: ScalarValue
     default: -1
-    argument: ActiveTime
   maxConcurrent:
     type: ScalarValue
     field: int
