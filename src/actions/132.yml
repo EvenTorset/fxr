@@ -1,5 +1,6 @@
 type: 132
 name: SFXReference
+slot: SFXReference
 meta:
   isAppearance: false
   isParticle: false

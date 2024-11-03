@@ -1,5 +1,6 @@
 type: 133
 name: LevelsOfDetailThresholds
+slot: LevelsOfDetailThresholds
 meta:
   isAppearance: false
   isParticle: false

@@ -1,5 +1,6 @@
 type: 199
 name: StateProfileMap
+slot: StateProfileMap
 meta:
   isAppearance: false
   isParticle: false

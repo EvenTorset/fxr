@@ -295,6 +295,7 @@ export enum ActionType {
   ParticleModifier = 131,
   /**
    * ### Action 132 - SFXReference
+   * - **Slot**: {@link ActionSlots.SFXReferenceAction SFXReference}
    * - **Class**: {@link SFXReference}
    * 
    * References another SFX by its ID.
@@ -302,6 +303,7 @@ export enum ActionType {
   SFXReference = 132,
   /**
    * ### Action 133 - LevelsOfDetailThresholds
+   * - **Slot**: {@link ActionSlots.LevelsOfDetailThresholdsAction LevelsOfDetailThresholds}
    * - **Class**: {@link LevelsOfDetailThresholds}
    * 
    * Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
@@ -309,6 +311,7 @@ export enum ActionType {
   LevelsOfDetailThresholds = 133,
   /**
    * ### Action 199 - StateProfileMap
+   * - **Slot**: {@link ActionSlots.StateProfileMapAction StateProfileMap}
    * - **Class**: {@link StateProfileMap}
    * 
    * Maps states to profiles in the parent node.
@@ -1910,6 +1913,10 @@ export namespace ActionSlots {
     | CylinderEmitterShape
     | Action
 
+  export type LevelsOfDetailThresholdsAction =
+    | LevelsOfDetailThresholds
+    | Action
+
   export type NodeAttributesAction =
     | NodeAttributes
     | Action
@@ -1968,6 +1975,14 @@ export namespace ActionSlots {
     | ParticleSpeedPartialFollow
     | ParticleAccelerationRandomTurns
     | ParticleAccelerationPartialFollow
+    | Action
+
+  export type SFXReferenceAction =
+    | SFXReference
+    | Action
+
+  export type StateProfileMapAction =
+    | StateProfileMap
     | Action
 
   export type TerminationAction =
@@ -14557,6 +14572,7 @@ class ParticleModifier extends DataAction {
 
 /**
  * ### {@link ActionType.SFXReference Action 132 - SFXReference}
+ * **Slot**: {@link ActionSlots.SFXReferenceAction SFXReference}
  * 
  * References another SFX by its ID.
  */
@@ -14627,6 +14643,7 @@ export interface LevelsOfDetailThresholdsParams {
 
 /**
  * ### {@link ActionType.LevelsOfDetailThresholds Action 133 - LevelsOfDetailThresholds}
+ * **Slot**: {@link ActionSlots.LevelsOfDetailThresholdsAction LevelsOfDetailThresholds}
  * 
  * Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
@@ -14668,6 +14685,7 @@ class LevelsOfDetailThresholds extends DataAction {
 
 /**
  * ### {@link ActionType.StateProfileMap Action 199 - StateProfileMap}
+ * **Slot**: {@link ActionSlots.StateProfileMapAction StateProfileMap}
  * 
  * Maps states to profiles in the parent node.
  */
