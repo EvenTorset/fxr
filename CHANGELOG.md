@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [17.0.0] - 2024-11-12
 
 - Named and documented three actions:
   - 700 - `SimulateTermination`
@@ -9,7 +9,7 @@
 - Named and documented some fields:
   - Action 128 (`NodeAttributes`): `unk_ds3_f1_3` is now `depthBias`.
   - Action 609 (`PointLight`): `unk_ds3_f2_24` is now `maxViewDistance`.
-- Renamed "Effects" to "Configs". The old name had a bunch of different issues, including making writing documentation just more annoying because it could be referring to different things. The new name should better descibe what they are (basically a configuration that defines the characteristics of the node that can be swapped out with another by state changes), and isn't used to refer to anything else that is related to FXRs so far. This is likely the biggest breaking change in this update, so check out the table under the patch notes for things to find and replace if you need to update your scripts.
+- Renamed "Effects" to "Configs". The old name had a bunch of different issues, including making writing documentation just more annoying because it could be referring to different things. The new name should better descibe what they are (basically a configuration that defines the characteristics of the node that can be swapped out with another by state changes), and isn't used to refer to anything else that is related to FXRs so far. This is the biggest breaking change in this update, so check out the table under the patch notes for things to find and replace if you need to update your scripts.
   - The `EffectAge` property argument was renamed to `ActiveTime` due to this, which is the biggest change in the documentation. No code should need to change because of this, because this is only used to document the argument given to properties, but it's worth mentioning due to how important this might be. The description for it was also updated to say that it is the time since the *action* (previously "effect") became active, which is also more accurate since this is also used outside of configs/effects.
 - Changed the default value of `unk_sdt_f2_32` in some of the appearance actions to 0. (Was previously 1.)
   - When this is 1, it can cause object seen through particles with the depth blending effect to have some ugly-looking outlines. When it's set to 0, this doesn't happen at all, and it also seems to allow some other fields in the action to work.
@@ -227,7 +227,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
-[Unreleased]: https://github.com/EvenTorset/fxr/compare/v16.0.0...HEAD
+[17.0.0]: https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0
 [16.0.0]: https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0
 [15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
 [15.1.0]: https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0
