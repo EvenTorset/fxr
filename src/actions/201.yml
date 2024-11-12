@@ -5,7 +5,7 @@ meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit a random child node every emission.
+  Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
 properties:
   weights:
     type: number[]

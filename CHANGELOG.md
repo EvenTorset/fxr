@@ -9,16 +9,17 @@
 - Named and documented some fields:
   - Action 128 (`NodeAttributes`): `unk_ds3_f1_3` is now `depthBias`.
   - Action 609 (`PointLight`): `unk_ds3_f2_24` is now `maxViewDistance`.
-- Renamed "Effects" to "Profiles". The old name had a bunch of different issues, including making writing documentation just more annoying because it could be refering to different things. The new name should better descibe what they are (basically a configuration that defines the characteristics of the node that can be swapped out with another by state changes), and isn't used to refer to anything else that is related to FXRs so far. This is likely the biggest breaking change in this update, so check out the table under the patch notes for things to find and replace if you need to update your scripts.
-  - The `EffectAge` property argument was renamed to `ActiveTime` due to this, which is the biggest change in the documentation. No code should need to change because of this, because this is only used to document the argument given to properties, but it's worth mentioning due to how important this might be. The description for it was also updated to say that it is the time since the *action* (previously "effect") became active, which is also more accurate since this is also used outside of profiles/effects.
+- Renamed "Effects" to "Configs". The old name had a bunch of different issues, including making writing documentation just more annoying because it could be referring to different things. The new name should better descibe what they are (basically a configuration that defines the characteristics of the node that can be swapped out with another by state changes), and isn't used to refer to anything else that is related to FXRs so far. This is likely the biggest breaking change in this update, so check out the table under the patch notes for things to find and replace if you need to update your scripts.
+  - The `EffectAge` property argument was renamed to `ActiveTime` due to this, which is the biggest change in the documentation. No code should need to change because of this, because this is only used to document the argument given to properties, but it's worth mentioning due to how important this might be. The description for it was also updated to say that it is the time since the *action* (previously "effect") became active, which is also more accurate since this is also used outside of configs/effects.
 - Changed the default value of `unk_sdt_f2_32` in some of the appearance actions to 0. (Was previously 1.)
   - When this is 1, it can cause object seen through particles with the depth blending effect to have some ugly-looking outlines. When it's set to 0, this doesn't happen at all, and it also seems to allow some other fields in the action to work.
+  - This seems to make the texture on the particle a bit blurry in some cases, but for most particles that shouldn't matter much since they often use textures that are blurry anyway. Just set the property to 1 again if you need the detail in the texture to be visible, but keep in mind that this will cause the outline problem described above to occur again.
   - What this field does exactly is still unknown, so if this change has any other side-effects is also unknown.
 - Renamed the `unk70x` property in the `RootNode` class to `termination` to match the actions it can be set to.
 - Renamed `BlendMode.Screen` to `BlendMode.Unk7`. The old name was based on some old, and apparently incorrect, documentation. This blend mode is seemingly identical to `BlendMode.Add`.
 - The documentation site now generates JSON files that contain a lot of the information that is in the library. The main reason behind this addition was to allow the FXR Playground to have easy access to the documentation in the library, but feel free to use these in other tools if you need any of this information.
-  - `/data/actions.json` - This is an array of objects that contain information about all action types, including a name, description, what games it works in, the structure of the action in each of the supported games, and detailed information about every field, property, and section10 in the action.
-  - `/data/enums.json` - This is an object that contains various enums, like `BlendMode`, `InitialDirection`, `OrientationMode`, and so on. Each enum has a description and a members object. Each member has a value and a description.
+  - [`/data/actions.json`](https://fxr-docs.pages.dev/data/actions.json) - This is an array of objects that contain information about all action types, including a name, description, what games it works in, the structure of the action in each of the supported games, and detailed information about every field, property, and section10 in the action.
+  - [`/data/enums.json`](https://fxr-docs.pages.dev/data/enums.json) - This is an object that contains various enums, like `BlendMode`, `InitialDirection`, `OrientationMode`, and so on. Each enum has a description and a members object. Each member has a value and a description.
   - All of the descriptions are Markdown strings.
   - As a bonus for this, more enums are now properly documented, and some documentation errors in some actions have been fixed.
 - `DataAction`s now check if there are any properties that have the wrong type or number of components when they are written to an FXR buffer, and throws descriptive errors if there are any. This should make it easier to find out if and where you put an invalid value.
@@ -29,12 +30,12 @@
 If you need to update your scripts, here's a table of things to find and replace which should fix most of the problems:
 | Old | New |
 |-|-|
-| `BasicEffect` | `BasicProfile` |
-| `LevelsOfDetailEffect` | `LevelsOfDetailProfile` |
-| `NodeEmitterEffect` | `NodeEmitterProfile` |
-| `.walkEffects` | `.walkProfiles` |
-| `.effects` | `.profiles` |
-| `.stateEffectMap` | `.stateProfileMap` |
+| `BasicEffect` | `BasicConfig` |
+| `LevelsOfDetailEffect` | `LevelsOfDetailConfig` |
+| `NodeEmitterEffect` | `NodeEmitterConfig` |
+| `.walkEffects` | `.walkConfigs` |
+| `.effects` | `.configs` |
+| `.stateEffectMap` | `.stateConfigMap` |
 
 ## [16.0.0] - 2024-09-13
 

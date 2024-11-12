@@ -10,4 +10,4 @@ inGames:
   - ER
   - AC6
 desc: |
-  Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit all child nodes every emission.
+  Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.

@@ -29,7 +29,7 @@ fxr.root.nodes = [
   */
   Node.fromJSON({
     "type": 2200,
-    "stateProfileMap": [ 0 ],
+    "stateConfigMap": [ 0 ],
     "effects": [
       {
         "type": 1004,

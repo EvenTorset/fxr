@@ -1,5 +1,5 @@
 import {
-  BasicProfile,
+  BasicConfig,
   BasicNode,
   BillboardEx,
   FXR,
@@ -29,13 +29,13 @@ fxr.states = [
 ]
 
 fxr.root.nodes = [
-  // This node has two very simple profiles that just create colored squares.
+  // This node has two very simple configs that just create colored squares.
   new BasicNode([
-    new BasicProfile([ new BillboardEx({ color1: [1, 0, 0, 1] }) ]), // Profile 0
-    new BasicProfile([ new BillboardEx({ color1: [0, 1, 0, 1] }) ]), // Profile 1
+    new BasicConfig([ new BillboardEx({ color1: [1, 0, 0, 1] }) ]), // Config 0
+    new BasicConfig([ new BillboardEx({ color1: [0, 1, 0, 1] }) ]), // Config 1
   ]).mapStates(
-    1, // State 0 is mapped to Profile 1
-    0, // State 1 is mapped to Profile 0
-    -1 // State 2 is mapped to no profiles
+    1, // State 0 is mapped to Config 1
+    0, // State 1 is mapped to Config 0
+    -1 // State 2 is mapped to no configs
   )
 ]

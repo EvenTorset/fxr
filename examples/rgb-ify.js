@@ -1,5 +1,5 @@
 import {
-  BasicProfile,
+  BasicConfig,
   BillboardEx,
   ConstantProperty,
   Distortion,
@@ -101,10 +101,10 @@ while (ids.length) {
     Adding it to Action 131 (ParticleModifier) wouldn't work in all cases,
     because not all appearance types are particles.
   */
-  for (const profile of fxr.root.walkProfiles()) {
-    if (!(profile instanceof BasicProfile)) continue
+  for (const config of fxr.root.walkConfigs()) {
+    if (!(config instanceof BasicConfig)) continue
 
-    const action = profile.appearance
+    const action = config.appearance
     if (
       action instanceof PointSprite ||
       action instanceof Line ||

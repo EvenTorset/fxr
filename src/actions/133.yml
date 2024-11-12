@@ -5,7 +5,7 @@ meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+  Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
 properties:
   duration:
     type: ScalarValue

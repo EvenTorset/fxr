@@ -38,7 +38,7 @@ enum Game {
    * Note that this does not work with the {@link FXR.toArrayBuffer} and
    * {@link FXR.saveAs} methods unless the FXR only contains generic classes.
    * If it contains any node classes other than {@link GenericNode}, any
-   * profile classes other than {@link Profile}, or any {@link DataAction}s, it
+   * config classes other than {@link NodeConfig}, or any {@link DataAction}s, it
    * must be given a specific game to write to.
    */
   Generic = -1,
@@ -280,7 +280,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
    * - **Class**: {@link Unk130}
    * 
-   * Unknown action that is in every basic profile in every game, and still literally nothing is known about it.
+   * Unknown action that is in every basic config in every game, and still literally nothing is known about it.
    */
   Unk130 = 130,
   /**
@@ -306,23 +306,23 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.LevelsOfDetailThresholdsAction LevelsOfDetailThresholds}
    * - **Class**: {@link LevelsOfDetailThresholds}
    * 
-   * Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+   * Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    */
   LevelsOfDetailThresholds = 133,
   /**
-   * ### Action 199 - StateProfileMap
-   * - **Slot**: {@link ActionSlots.StateProfileMapAction StateProfileMap}
-   * - **Class**: {@link StateProfileMap}
+   * ### Action 199 - StateConfigMap
+   * - **Slot**: {@link ActionSlots.StateConfigMapAction StateConfigMap}
+   * - **Class**: {@link StateConfigMap}
    * 
-   * Maps states to profiles in the parent node.
+   * Maps states to configs in the parent node.
    */
-  StateProfileMap = 199,
+  StateConfigMap = 199,
   /**
    * ### Action 200 - SelectAllNodes
    * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * - **Class**: {@link SelectAllNodes}
    * 
-   * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit all child nodes every emission.
+   * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.
    */
   SelectAllNodes = 200,
   /**
@@ -330,7 +330,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
    * - **Class**: {@link SelectRandomNode}
    * 
-   * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit a random child node every emission.
+   * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
    */
   SelectRandomNode = 201,
   /**
@@ -876,6 +876,31 @@ export enum BlendMode {
 }
 
 /**
+ * Values used to represent different types of node configurations, also known as "effects". There is one for each {@link NodeType type of node} that supports multiple configs.
+ */
+export enum ConfigType {
+  /**
+   * Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+   * 
+   * **Class**: {@link LevelsOfDetailConfig}
+   */
+  LevelsOfDetail = 1002,
+  /**
+   * Config used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
+   * 
+   * **Class**: {@link BasicConfig}
+   */
+  Basic = 1004,
+  /**
+   * Config used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
+   * 
+   * **Class**: {@link NodeEmitterConfig}
+   */
+  NodeEmitter = 1005,
+  
+}
+
+/**
  * Used by {@link ActionType.Distortion Distortion} particles to control what type of distortion to apply.
  */
 export enum DistortionMode {
@@ -1183,31 +1208,6 @@ export enum OrientationMode {
 }
 
 /**
- * Values used to represent different types of node profiles, also known as "effects". There is one for each {@link NodeType type of node} that supports profiles.
- */
-export enum ProfileType {
-  /**
-   * Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
-   * 
-   * **Class**: {@link LevelsOfDetailProfile}
-   */
-  LevelsOfDetail = 1002,
-  /**
-   * Profile used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
-   * 
-   * **Class**: {@link BasicProfile}
-   */
-  Basic = 1004,
-  /**
-   * Profile used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
-   * 
-   * **Class**: {@link NodeEmitterProfile}
-   */
-  NodeEmitter = 1005,
-  
-}
-
-/**
  * Arguments used when evaluating properties.
  * 
  * There is no way to change what argument is given to a property. Each property has one specific argument given to it, and this is sometimes the only difference between two properties in the same action.
@@ -1224,7 +1224,7 @@ export enum PropertyArgument {
   /**
    * Time in seconds since the action became active.
    * 
-   * An action becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its profiles is active.
+   * An action becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its configs is active.
    */
   ActiveTime = 2,
   /**
@@ -1750,14 +1750,14 @@ export interface IAction {
   clone(): IAction
 }
 
-export interface IProfile {
-  readonly type: ProfileType
+export interface IConfig {
+  readonly type: ConfigType
   getActionCount(game: Game): number
   getActions(game: Game): AnyAction[]
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<AnyAction>
-  clone(): IProfile
+  clone(): IConfig
 }
 
 export interface IModifier<T extends ValueType> {
@@ -1981,8 +1981,8 @@ export namespace ActionSlots {
     | SFXReference
     | Action
 
-  export type StateProfileMapAction =
-    | StateProfileMap
+  export type StateConfigMapAction =
+    | StateConfigMap
     | Action
 
   export type TerminationAction =
@@ -2573,13 +2573,13 @@ const ActionData: Record<string, {
       }
     }
   },
-  [ActionType.StateProfileMap]: {
+  [ActionType.StateConfigMap]: {
     props: {
-      profileIndices: { default: [0], s10: 1 },
+      configIndices: { default: [0], s10: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        section10s: ['profileIndices']
+        section10s: ['configIndices']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -5545,8 +5545,8 @@ for (const [type, action] of Object.entries(ActionData)) {
   }
 }
 
-const ProfileActionSlots = {
-  [ProfileType.Basic]: [
+const ConfigActionSlots = {
+  [ConfigType.Basic]: [
     [
       ActionType.NodeAttributes
     ],
@@ -5648,7 +5648,7 @@ const ProfileActionSlots = {
       ActionType.ParticleForceCollision
     ]
   ],
-  [ProfileType.NodeEmitter]: [
+  [ConfigType.NodeEmitter]: [
     [
       ActionType.NodeAttributes
     ],
@@ -6257,11 +6257,11 @@ function readNode(br: BinaryReader): Node {
   br.assertUint8(0)
   br.assertUint8(1)
   br.assertInt32(0)
-  const profileCount = br.readInt32()
+  const configCount = br.readInt32()
   const actionCount = br.readInt32()
   const nodeCount = br.readInt32()
   br.assertInt32(0)
-  const profileOffset = br.readInt32()
+  const configOffset = br.readInt32()
   br.assertInt32(0)
   const actionOffset = br.readInt32()
   br.assertInt32(0)
@@ -6273,10 +6273,10 @@ function readNode(br: BinaryReader): Node {
     nodes.push(readNode(br))
   }
   br.stepOut()
-  br.stepIn(profileOffset)
-  const profiles = []
-  for (let i = 0; i < profileCount; ++i) {
-    profiles.push(readProfile(br))
+  br.stepIn(configOffset)
+  const configs = []
+  for (let i = 0; i < configCount; ++i) {
+    configs.push(readConfig(br))
   }
   br.stepOut()
   br.stepIn(actionOffset)
@@ -6287,7 +6287,7 @@ function readNode(br: BinaryReader): Node {
   br.stepOut()
   if (br.game !== Game.Generic) switch (type) {
     case NodeType.Root:
-      if (profileCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
+      if (configCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
         return new RootNode(
           nodes,
           br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? null :
@@ -6299,27 +6299,27 @@ function readNode(br: BinaryReader): Node {
       }
       break
     case NodeType.Proxy:
-      if (profileCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
+      if (configCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
         return new ProxyNode(actions[0].sfx)
       }
       break
     case NodeType.LevelsOfDetail:
-      if (actionCount === 1 && actions[0] instanceof StateProfileMap) {
-        return new LevelsOfDetailNode(profiles, nodes).mapStates(...actions[0].profileIndices)
+      if (actionCount === 1 && actions[0] instanceof StateConfigMap) {
+        return new LevelsOfDetailNode(configs, nodes).mapStates(...actions[0].configIndices)
       }
       break
     case NodeType.Basic:
-      if (actionCount === 1 && actions[0] instanceof StateProfileMap) {
-        return new BasicNode(profiles, nodes).mapStates(...actions[0].profileIndices)
+      if (actionCount === 1 && actions[0] instanceof StateConfigMap) {
+        return new BasicNode(configs, nodes).mapStates(...actions[0].configIndices)
       }
       break
     case NodeType.NodeEmitter:
-      if (actionCount === 1 && actions[0] instanceof StateProfileMap) {
-        return new NodeEmitterNode(profiles, nodes).mapStates(...actions[0].profileIndices)
+      if (actionCount === 1 && actions[0] instanceof StateConfigMap) {
+        return new NodeEmitterNode(configs, nodes).mapStates(...actions[0].configIndices)
       }
       break
   }
-  return new GenericNode(type, actions, profiles, nodes)
+  return new GenericNode(type, actions, configs, nodes)
 }
 
 function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
@@ -6327,15 +6327,15 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
     throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
   }
   const count = nodes.length
-  let profileCount = 0
+  let configCount = 0
   let actionCount = 0
   let childCount = 0
   if (node instanceof GenericNode) {
-    profileCount = node.profiles.length
+    configCount = node.configs.length
     actionCount = node.actions.length
     childCount = node.nodes.length
-  } else if (node instanceof NodeWithProfiles) {
-    profileCount = node.profiles.length
+  } else if (node instanceof NodeWithConfigs) {
+    configCount = node.configs.length
     actionCount = 1
     childCount = node.nodes.length
   } else if (node instanceof RootNode) {
@@ -6348,11 +6348,11 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
-  bw.writeInt32(profileCount)
+  bw.writeInt32(configCount)
   bw.writeInt32(actionCount)
   bw.writeInt32(childCount)
   bw.writeInt32(0)
-  bw.reserveInt32(`NodeProfilesOffset${count}`)
+  bw.reserveInt32(`NodeConfigsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`NodeActionsOffset${count}`)
   bw.writeInt32(0)
@@ -6364,7 +6364,7 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
 function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   const num = nodes.indexOf(node)
   let childCount = 0
-  if (node instanceof GenericNode || node instanceof NodeWithProfiles || node instanceof RootNode) {
+  if (node instanceof GenericNode || node instanceof NodeWithConfigs || node instanceof RootNode) {
     childCount = node.nodes.length
   }
   if (childCount === 0) {
@@ -6381,38 +6381,38 @@ function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node
   }
 }
 
-function writeNodeProfiles(node: Node, bw: BinaryWriter, game: Game, index: number, profileCounter: { value: number }) {
-  let profileCount = 0
-  if (node instanceof GenericNode || node instanceof NodeWithProfiles) {
-    profileCount = node.profiles.length
+function writeNodeConfigs(node: Node, bw: BinaryWriter, game: Game, index: number, configCounter: { value: number }) {
+  let configCount = 0
+  if (node instanceof GenericNode || node instanceof NodeWithConfigs) {
+    configCount = node.configs.length
   }
-  if (profileCount === 0) {
-    bw.fill(`NodeProfilesOffset${index}`, 0)
+  if (configCount === 0) {
+    bw.fill(`NodeConfigsOffset${index}`, 0)
   } else {
-    bw.fill(`NodeProfilesOffset${index}`, bw.position)
-    const nodeProfiles = node.getProfiles(game)
-    for (let i = 0; i < nodeProfiles.length; ++i) {
-      writeProfile(nodeProfiles[i], bw, game, profileCounter.value + i)
+    bw.fill(`NodeConfigsOffset${index}`, bw.position)
+    const nodeConfigs = node.getConfigs(game)
+    for (let i = 0; i < nodeConfigs.length; ++i) {
+      writeConfig(nodeConfigs[i], bw, game, configCounter.value + i)
     }
-    profileCounter.value += nodeProfiles.length
+    configCounter.value += nodeConfigs.length
   }
 }
 
-function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, profileCounter: { value: number }, actions: Action[]) {
+function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, configCounter: { value: number }, actions: Action[]) {
   bw.fill(`NodeActionsOffset${index}`, bw.position)
   const nodeActions = node.getActions(game)
-  const nodeProfiles = node.getProfiles(game)
+  const nodeConfigs = node.getConfigs(game)
   for (const action of nodeActions) {
     writeAnyAction(action, bw, game, actions)
   }
-  for (let i = 0; i < nodeProfiles.length; ++i) {
-    writeProfileActions(nodeProfiles[i], bw, game, profileCounter.value + i, actions)
+  for (let i = 0; i < nodeConfigs.length; ++i) {
+    writeConfigActions(nodeConfigs[i], bw, game, configCounter.value + i, actions)
   }
-  profileCounter.value += nodeProfiles.length
+  configCounter.value += nodeConfigs.length
 }
 
-//#region Functions - Profile
-function readProfile(br: BinaryReader): IProfile {
+//#region Functions - Config
+function readConfig(br: BinaryReader): IConfig {
   const type = br.readInt16()
   br.assertUint8(0)
   br.assertUint8(1)
@@ -6430,41 +6430,41 @@ function readProfile(br: BinaryReader): IProfile {
   }
   br.stepOut()
   if (br.game === Game.Generic) {
-    return new Profile(type, actions)
-  } else if (type === ProfileType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
+    return new NodeConfig(type, actions)
+  } else if (type === ConfigType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
     const lod = actions[0]
-    return new LevelsOfDetailProfile(lod.duration, [
+    return new LevelsOfDetailConfig(lod.duration, [
       lod.threshold0,
       lod.threshold1,
       lod.threshold2,
       lod.threshold3,
       lod.threshold4,
     ])
-  } else if (type === ProfileType.Basic && actionCount <= 15) {
-    return new BasicProfile(actions)
-  } else if (type === ProfileType.NodeEmitter && actionCount <= 10) {
-    return new NodeEmitterProfile(actions)
+  } else if (type === ConfigType.Basic && actionCount <= 15) {
+    return new BasicConfig(actions)
+  } else if (type === ConfigType.NodeEmitter && actionCount <= 10) {
+    return new NodeEmitterConfig(actions)
   } else {
-    return new Profile(type, actions)
+    return new NodeConfig(type, actions)
   }
 }
 
-function writeProfile(profile: IProfile, bw: BinaryWriter, game: Game, index: number) {
-  bw.writeInt16(profile.type)
+function writeConfig(config: IConfig, bw: BinaryWriter, game: Game, index: number) {
+  bw.writeInt16(config.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt32(profile.getActionCount(game))
+  bw.writeInt32(config.getActionCount(game))
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.reserveInt32(`ProfileActionsOffset${index}`)
+  bw.reserveInt32(`ConfigActionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeProfileActions(profile: IProfile, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
-  bw.fill(`ProfileActionsOffset${index}`, bw.position)
-  for (const action of profile.getActions(game)) {
+function writeConfigActions(config: IConfig, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+  bw.fill(`ConfigActionsOffset${index}`, bw.position)
+  for (const action of config.getActions(game)) {
     writeAnyAction(action, bw, game, actions)
   }
 }
@@ -8291,10 +8291,10 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.StateProfileMap]: {
-    minify(this: StateProfileMap): StateProfileMap {
-      if (this.profileIndices.length > 1 && this.profileIndices.every(e => e === 0)) {
-        return new StateProfileMap
+  [ActionType.StateConfigMap]: {
+    minify(this: StateConfigMap): StateConfigMap {
+      if (this.configIndices.length > 1 && this.configIndices.every(e => e === 0)) {
+        return new StateConfigMap
       }
       return this
     }
@@ -9013,8 +9013,8 @@ class FXR {
     const nodeOffset = br.readInt32()
     br.position += 15 * 4
     // br.readInt32() // NodeCount
-    // br.readInt32() // ProfileOffset
-    // br.readInt32() // ProfileCount
+    // br.readInt32() // ConfigOffset
+    // br.readInt32() // ConfigCount
     // br.readInt32() // ActionOffset
     // br.readInt32() // ActionCount
     // br.readInt32() // PropertyOffset
@@ -9124,8 +9124,8 @@ class FXR {
     bw.reserveInt32('ConditionCount')
     bw.reserveInt32('NodeOffset')
     bw.reserveInt32('NodeCount')
-    bw.reserveInt32('ProfileOffset')
-    bw.reserveInt32('ProfileCount')
+    bw.reserveInt32('ConfigOffset')
+    bw.reserveInt32('ConfigCount')
     bw.reserveInt32('ActionOffset')
     bw.reserveInt32('ActionCount')
     bw.reserveInt32('PropertyOffset')
@@ -9222,12 +9222,12 @@ class FXR {
     writeNodeChildren(root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
-    bw.fill('ProfileOffset', bw.position)
+    bw.fill('ConfigOffset', bw.position)
     let counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeProfiles(nodes[i], bw, game, i, counter)
+      writeNodeConfigs(nodes[i], bw, game, i, counter)
     }
-    bw.fill('ProfileCount', counter.value)
+    bw.fill('ConfigCount', counter.value)
     bw.pad(16)
     bw.fill('ActionOffset', bw.position)
     counter.value = 0
@@ -9462,14 +9462,14 @@ class FXR {
    * Finds and returns a value at a given path. If the path does not match
    * anything, this returns `null`.
    * 
-   * For example, to get the appearance action in the second profile in the
+   * For example, to get the appearance action in the second config in the
    * first child node of the root node, you would use this path:
    * ```js
-   * fxr.find(['root', 'nodes', 0, 'profiles', 1, 'appearance'])
+   * fxr.find(['root', 'nodes', 0, 'configs', 1, 'appearance'])
    * // Or in string form:
-   * fxr.find('root/nodes/0/profiles/1/appearance')
+   * fxr.find('root/nodes/0/configs/1/appearance')
    * // Both are equivalent to this:
-   * fxr.root.nodes[0].profiles[1].appearance
+   * fxr.root.nodes[0].configs[1].appearance
    * ```
    * @param path The path to the value to look for.
    */
@@ -9777,7 +9777,7 @@ class StateCondition {
 /**
  * The base class for all nodes.
  * 
- * A node is a container with actions, profiles, and other nodes, and they form
+ * A node is a container with actions, configs, and other nodes, and they form
  * the tree structure of the FXR.
  */
 abstract class Node {
@@ -9785,7 +9785,7 @@ abstract class Node {
   constructor(public readonly type: NodeType) {}
 
   abstract getActions(game: Game): AnyAction[]
-  getProfiles(game: Game): IProfile[] { return [] }
+  getConfigs(game: Game): IConfig[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
@@ -9819,7 +9819,7 @@ abstract class Node {
     if (
       this instanceof GenericNode ||
       this instanceof RootNode ||
-      this instanceof NodeWithProfiles
+      this instanceof NodeWithConfigs
     ) {
       for (const node of this.nodes) {
         yield* node.walk()
@@ -9828,21 +9828,21 @@ abstract class Node {
   }
 
   /**
-   * Yields all profiles in this branch.
-   * @param recurse Controls whether or not to yield profiles in descendant
+   * Yields all configs in this branch.
+   * @param recurse Controls whether or not to yield configs in descendant
    * nodes. Defaults to true.
    */
-  *walkProfiles(recurse: boolean = true) {
+  *walkConfigs(recurse: boolean = true) {
     for (const node of recurse ? this.walk() : [this]) {
-      if (node instanceof NodeWithProfiles || node instanceof GenericNode) {
-        yield* node.profiles
+      if (node instanceof NodeWithConfigs || node instanceof GenericNode) {
+        yield* node.configs
       }
     }
   }
 
   /**
    * Yields all actions in this branch, excluding node actions from
-   * {@link NodeWithProfiles nodes with profiles}, as those are not stored as
+   * {@link NodeWithConfigs nodes with configs}, as those are not stored as
    * actions internally.
    * @param recurse Controls whether or not to yield actions in descendant
    * nodes. Defaults to true.
@@ -9857,9 +9857,9 @@ abstract class Node {
         yield node.unk10400
         yield node.unk10500
       }
-      if (node instanceof GenericNode || node instanceof NodeWithProfiles) {
-        for (const profile of node.profiles) {
-          yield* profile.walkActions()
+      if (node instanceof GenericNode || node instanceof NodeWithConfigs) {
+        for (const config of node.configs) {
+          yield* config.walkActions()
         }
       }
     }
@@ -10209,8 +10209,8 @@ abstract class Node {
           }
         }
       }
-      for (const profile of this.walkProfiles(recurse)) if (profile instanceof BasicProfile) {
-        const a = profile.appearance
+      for (const config of this.walkConfigs(recurse)) if (config instanceof BasicConfig) {
+        const a = config.appearance
         if (
           a instanceof PointSprite ||
           a instanceof Line ||
@@ -10222,7 +10222,7 @@ abstract class Node {
           a instanceof Tracer ||
           a instanceof DynamicTracer
         ) {
-          if (!(profile.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           if (a instanceof MultiTextureBillboardEx) {
             a.recolorProperty('layersColor', Recolor.grayscale)
             a.recolorProperty('layer1Color', Recolor.grayscale)
@@ -10245,35 +10245,35 @@ abstract class Node {
             Recolor.PaletteSlots['CommonParticle'][]
           >
           const pc = randomItem(palette[key])
-          const ndf = durationFallback(profile.nodeAttributes)
-          const pdf = durationFallback(profile.particleAttributes, profile.nodeAttributes)
-          proc(pc.modifier, profile.particleModifier, 'color', ndf)
+          const ndf = durationFallback(config.nodeAttributes)
+          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
+          proc(pc.modifier, config.particleModifier, 'color', ndf)
           proc(pc.color1, a, 'color1', pdf)
           proc(pc.color2, a, 'color2', ndf)
           proc(pc.color3, a, 'color3', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof Distortion) {
-          if (!(profile.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           const pc = randomItem(palette.distortionParticle)
-          const ndf = durationFallback(profile.nodeAttributes)
-          const pdf = durationFallback(profile.particleAttributes, profile.nodeAttributes)
-          proc(pc.modifier, profile.particleModifier, 'color', ndf)
+          const ndf = durationFallback(config.nodeAttributes)
+          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
+          proc(pc.modifier, config.particleModifier, 'color', ndf)
           proc(pc.color, a, 'color', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof RadialBlur) {
-          if (!(profile.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           const pc = randomItem(palette.blurParticle)
-          const ndf = durationFallback(profile.nodeAttributes)
-          const pdf = durationFallback(profile.particleAttributes, profile.nodeAttributes)
-          proc(pc.modifier, profile.particleModifier, 'color', ndf)
+          const ndf = durationFallback(config.nodeAttributes)
+          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
+          proc(pc.modifier, config.particleModifier, 'color', ndf)
           proc(pc.color, a, 'color', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof PointLight || a instanceof SpotLight) {
           const pc = randomItem(palette.light)
-          const df = durationFallback(profile.nodeAttributes)
+          const df = durationFallback(config.nodeAttributes)
           proc(pc.diffuseColor, a, 'diffuseColor', df)
           proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
           a.separateSpecular = 'specularColor' in pc
@@ -10288,7 +10288,7 @@ abstract class Node {
           a instanceof GPUSparkCorrectParticle
         ) {
           const pc = randomItem(palette.gpuParticle)
-          proc(pc.color, a, 'color', durationFallback(profile.nodeAttributes))
+          proc(pc.color, a, 'color', durationFallback(config.nodeAttributes))
           proc(pc.rgbMultiplier, a, 'rgbMultiplier')
           proc(pc.colorMin, a, 'colorMin')
           proc(pc.colorMax, a, 'colorMax')
@@ -10298,7 +10298,7 @@ abstract class Node {
           }
         } else if ('lensFlare' in palette && a instanceof LensFlare) {
           const pc = randomItem(palette.lensFlare)
-          const df = durationFallback(profile.nodeAttributes)
+          const df = durationFallback(config.nodeAttributes)
           proc(pc.color, a, 'layer1Color', df)
           proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
           proc(pc.bloomColor, a, 'layer1BloomColor', df)
@@ -10472,31 +10472,31 @@ class GenericNode extends Node {
   constructor(
     type: NodeType,
     public actions: AnyAction[],
-    public profiles: IProfile[],
+    public configs: IConfig[],
     public nodes: Node[]
   ) {
     super(type)
   }
 
   getActions(game: Game): AnyAction[] { return this.actions }
-  getProfiles(game: Game): IProfile[] { return this.profiles }
+  getConfigs(game: Game): IConfig[] { return this.configs }
   getNodes(game: Game): Node[] { return this.nodes }
 
   static fromJSON({
     type,
     actions,
-    profiles,
+    configs,
     nodes
   }: {
     type: number
     actions: any[]
-    profiles?: any[]
+    configs?: any[]
     nodes?: any[]
   }) {
     return new GenericNode(
       type,
       actions.map(action => Action.fromJSON(action)),
-      (profiles ?? []).map(profile => Profile.fromJSON(profile)),
+      (configs ?? []).map(config => NodeConfig.fromJSON(config)),
       (nodes ?? []).map(node => Node.fromJSON(node))
     )
   }
@@ -10505,7 +10505,7 @@ class GenericNode extends Node {
     return {
       type: this.type,
       actions: this.actions.map(action => action.toJSON()),
-      profiles: this.profiles.map(profile => profile.toJSON()),
+      configs: this.configs.map(config => config.toJSON()),
       nodes: this.nodes.map(node => node.toJSON()),
     }
   }
@@ -10514,7 +10514,7 @@ class GenericNode extends Node {
     return new GenericNode(
       this.type,
       this.actions.map(action => action.minify()),
-      this.profiles.map(profile => profile.minify()),
+      this.configs.map(config => config.minify()),
       this.nodes.map(node => node.minify())
     )
   }
@@ -10523,7 +10523,7 @@ class GenericNode extends Node {
     return new GenericNode(
       this.type,
       this.actions.map(e => e.clone()),
-      this.profiles.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10570,7 +10570,7 @@ class RootNode extends Node {
     }
   }
 
-  getProfiles(game: Game): IProfile[] { return [] }
+  getConfigs(game: Game): IConfig[] { return [] }
   getNodes(game: Game): Node[] { return this.nodes }
 
   minify(): Node {
@@ -10673,22 +10673,22 @@ class ProxyNode extends Node {
 }
 
 /**
- * Super class for all types of nodes that contain {@link ProfileType profiles}.
+ * Super class for all types of nodes that contain {@link ConfigType configs}.
  */
-abstract class NodeWithProfiles extends Node {
+abstract class NodeWithConfigs extends Node {
 
-  stateProfileMap: number[] = [0]
+  stateConfigMap: number[] = [0]
 
-  constructor(type: NodeType, public profiles: IProfile[], public nodes: Node[]) {
+  constructor(type: NodeType, public configs: IConfig[], public nodes: Node[]) {
     super(type)
   }
 
   getActions(game: Game): AnyAction[] {
-    return [ new StateProfileMap(this.stateProfileMap) ]
+    return [ new StateConfigMap(this.stateConfigMap) ]
   }
 
-  getProfiles(game: Game): IProfile[] {
-    return this.profiles
+  getConfigs(game: Game): IConfig[] {
+    return this.configs
   }
 
   getNodes(game: Game): Node[] {
@@ -10698,25 +10698,25 @@ abstract class NodeWithProfiles extends Node {
   toJSON() {
     return {
       type: this.type,
-      stateProfileMap: this.stateProfileMap,
-      profiles: this.profiles.map(e => e.toJSON()),
+      stateConfigMap: this.stateConfigMap,
+      configs: this.configs.map(e => e.toJSON()),
       nodes: this.nodes.map(e => e.toJSON())
     }
   }
 
-  mapStates(...profileIndices: number[]) {
-    this.stateProfileMap = profileIndices
+  mapStates(...configIndices: number[]) {
+    this.stateConfigMap = configIndices
     return this
   }
 
   /**
-   * Returns the profile that is active when a given {@link State state} index
-   * is active. If no profiles are active for the state, this returns `null`
+   * Returns the config that is active when a given {@link State state} index
+   * is active. If no configs are active for the state, this returns `null`
    * instead.
    * @param stateIndex The index of a {@link FXR.states state in the FXR}.
    */
-  getActiveProfile(stateIndex: number): IProfile | null {
-    return this.profiles[this.stateProfileMap[stateIndex] ?? this.stateProfileMap[0]] ?? null
+  getActiveConfig(stateIndex: number): IConfig | null {
+    return this.configs[this.stateConfigMap[stateIndex] ?? this.stateConfigMap[0]] ?? null
   }
 
 }
@@ -10729,24 +10729,24 @@ abstract class NodeWithProfiles extends Node {
  * levels, you can put another LOD node as the fifth child of this node and set
  * higher thresholds in that.
  */
-class LevelsOfDetailNode extends NodeWithProfiles {
+class LevelsOfDetailNode extends NodeWithConfigs {
 
-  declare profiles: LevelsOfDetailProfile[]
+  declare configs: LevelsOfDetailConfig[]
 
   /**
-   * @param profilesOrThresholds An array of
-   * {@link ProfileType.LevelsOfDetail LOD profiles} or an array of LOD
-   * thresholds. Use an array of LOD profiles if you need multiple profiles or
+   * @param configsOrThresholds An array of
+   * {@link ConfigType.LevelsOfDetail LOD configs} or an array of LOD
+   * thresholds. Use an array of LOD configs if you need multiple configs or
    * a finite node duration.
    * @param nodes An array of child nodes.
    */
-  constructor(profilesOrThresholds: IProfile[] | number[], nodes: Node[] = []) {
-    if (profilesOrThresholds.every(e => typeof e === 'number')) {
+  constructor(configsOrThresholds: IConfig[] | number[], nodes: Node[] = []) {
+    if (configsOrThresholds.every(e => typeof e === 'number')) {
       super(NodeType.LevelsOfDetail, [
-        new LevelsOfDetailProfile(-1, profilesOrThresholds as number[])
+        new LevelsOfDetailConfig(-1, configsOrThresholds as number[])
       ], nodes)
     } else {
-      super(NodeType.LevelsOfDetail, profilesOrThresholds as IProfile[], nodes)
+      super(NodeType.LevelsOfDetail, configsOrThresholds as IConfig[], nodes)
     }
   }
 
@@ -10755,25 +10755,25 @@ class LevelsOfDetailNode extends NodeWithProfiles {
       return GenericNode.fromJSON(obj)
     }
     const node = new LevelsOfDetailNode(
-      (obj.profiles ?? []).map((e: any) => Profile.fromJSON(e)),
+      (obj.configs ?? []).map((e: any) => NodeConfig.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateProfileMap' in obj) {
-      node.mapStates(...obj.stateProfileMap)
+    if ('stateConfigMap' in obj) {
+      node.mapStates(...obj.stateConfigMap)
     }
     return node
   }
 
   minify(): Node {
     return new LevelsOfDetailNode(
-      this.profiles.map(e => e.minify()),
+      this.configs.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateProfileMap)
+    ).mapStates(...this.stateConfigMap)
   }
 
   clone(depth: number = Infinity): LevelsOfDetailNode {
     return new LevelsOfDetailNode(
-      this.profiles.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10783,28 +10783,28 @@ class LevelsOfDetailNode extends NodeWithProfiles {
 /**
  * A basic node that can have transforms and child nodes, and emit particles.
  */
-class BasicNode extends NodeWithProfiles {
+class BasicNode extends NodeWithConfigs {
 
-  declare profiles: BasicProfile[]
+  declare configs: BasicConfig[]
 
   /**
-   * @param profilesOrProfileActions This is either the list of profiles to add
-   * to the node or a list of actions to create a {@link BasicProfile} with to
+   * @param configsOrConfigActions This is either the list of configs to add
+   * to the node or a list of actions to create a {@link BasicConfig} with to
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(profilesOrProfileActions: IProfile[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(configsOrConfigActions: IConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    if (profilesOrProfileActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicProfile(profilesOrProfileActions as AnyAction[])
+        new BasicConfig(configsOrConfigActions as AnyAction[])
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        profilesOrProfileActions as IProfile[],
+        configsOrConfigActions as IConfig[],
         nodes
       )
     }
@@ -10815,25 +10815,25 @@ class BasicNode extends NodeWithProfiles {
       return GenericNode.fromJSON(obj)
     }
     const node = new BasicNode(
-      (obj.profiles ?? []).map((e: any) => Profile.fromJSON(e)),
+      (obj.configs ?? []).map((e: any) => NodeConfig.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateProfileMap' in obj) {
-      node.mapStates(...obj.stateProfileMap)
+    if ('stateConfigMap' in obj) {
+      node.mapStates(...obj.stateConfigMap)
     }
     return node
   }
 
   minify(): Node {
     return new BasicNode(
-      this.profiles.map(e => e.minify()),
+      this.configs.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateProfileMap)
+    ).mapStates(...this.stateConfigMap)
   }
 
   clone(depth: number = Infinity): BasicNode {
     return new BasicNode(
-      this.profiles.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10843,22 +10843,22 @@ class BasicNode extends NodeWithProfiles {
 /**
  * A node that emits its child nodes.
  */
-class NodeEmitterNode extends NodeWithProfiles {
+class NodeEmitterNode extends NodeWithConfigs {
 
-  declare profiles: NodeEmitterProfile[]
+  declare configs: NodeEmitterConfig[]
 
-  constructor(profilesOrProfileActions: IProfile[] | Action[] = [], nodes: Node[] = []) {
+  constructor(configsOrConfigActions: IConfig[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
-    if (profilesOrProfileActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.NodeEmitter, [
-        new NodeEmitterProfile(profilesOrProfileActions as Action[])
+        new NodeEmitterConfig(configsOrConfigActions as Action[])
       ], nodes)
     } else {
       super(
         NodeType.NodeEmitter,
-        profilesOrProfileActions as IProfile[],
+        configsOrConfigActions as IConfig[],
         nodes
       )
     }
@@ -10869,25 +10869,25 @@ class NodeEmitterNode extends NodeWithProfiles {
       return GenericNode.fromJSON(obj)
     }
     const node = new NodeEmitterNode(
-      (obj.profiles ?? []).map((e: any) => Profile.fromJSON(e)),
+      (obj.configs ?? []).map((e: any) => NodeConfig.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateProfileMap' in obj) {
-      node.mapStates(...obj.stateProfileMap)
+    if ('stateConfigMap' in obj) {
+      node.mapStates(...obj.stateConfigMap)
     }
     return node
   }
 
   minify(): NodeEmitterNode {
     return new NodeEmitterNode(
-      this.profiles.map(e => e.minify()),
+      this.configs.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateProfileMap)
+    ).mapStates(...this.stateConfigMap)
   }
 
   clone(depth: number = Infinity): NodeEmitterNode {
     return new NodeEmitterNode(
-      this.profiles.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10901,18 +10901,18 @@ const Nodes = {
   [NodeType.Basic]: BasicNode, BasicNode,
 }
 
-//#region Profile
+//#region Config
 /**
- * Generic profile class that uses the same structure as the file format. Only
- * for use with undocumented profile types. Use one of the other profile
- * classes for profiles that are known:
- * - {@link LevelsOfDetailProfile}
- * - {@link BasicProfile}
- * - {@link NodeEmitterProfile}
+ * Generic config class that uses the same structure as the file format. Only
+ * for use with undocumented config types. Use one of the other config
+ * classes for configs that are known:
+ * - {@link LevelsOfDetailConfig}
+ * - {@link BasicConfig}
+ * - {@link NodeEmitterConfig}
  */
-class Profile implements IProfile {
+class NodeConfig implements IConfig {
 
-  constructor(public type: ProfileType, public actions: AnyAction[]) {}
+  constructor(public type: ConfigType, public actions: AnyAction[]) {}
 
   getActionCount(game: Game): number {
     return this.actions.length
@@ -10938,17 +10938,17 @@ class Profile implements IProfile {
     yield* this.actions
   }
 
-  static fromJSON(obj: any): IProfile {
-    if (obj instanceof Profile) {
+  static fromJSON(obj: any): IConfig {
+    if (obj instanceof NodeConfig) {
       return obj
     }
     if ('actions' in obj) {
-      return new Profile(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
+      return new NodeConfig(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
-      case ProfileType.LevelsOfDetail:
-        return new LevelsOfDetailProfile(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
-      case ProfileType.Basic: {
-        const params: BasicProfileParams = {}
+      case ConfigType.LevelsOfDetail:
+        return new LevelsOfDetailConfig(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
+      case ConfigType.Basic: {
+        const params: BasicConfigParams = {}
         if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
         if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
         if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
@@ -10964,10 +10964,10 @@ class Profile implements IProfile {
         if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
         if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
         if ('particleForceMovement' in obj) params.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
-        return new BasicProfile(params)
+        return new BasicConfig(params)
       }
-      case ProfileType.NodeEmitter: {
-        const params: NodeEmitterProfileParams = {}
+      case ConfigType.NodeEmitter: {
+        const params: NodeEmitterConfigParams = {}
         if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
         if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
         if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
@@ -10978,14 +10978,14 @@ class Profile implements IProfile {
         if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
         if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
         if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
-        return new NodeEmitterProfile(params)
+        return new NodeEmitterConfig(params)
       }
     }
-    throw new Error('Invalid profile JSON: ' + JSON.stringify(obj))
+    throw new Error('Invalid config JSON: ' + JSON.stringify(obj))
   }
 
-  clone(): Profile {
-    return new Profile(
+  clone(): NodeConfig {
+    return new NodeConfig(
       this.type,
       this.actions.map(e => e.clone()),
     )
@@ -10997,8 +10997,8 @@ class Profile implements IProfile {
  * Manages the duration and thresholds for the
  * {@link NodeType.LevelsOfDetail level of detail node}.
  */
-class LevelsOfDetailProfile implements IProfile {
-  readonly type = ProfileType.LevelsOfDetail
+class LevelsOfDetailConfig implements IConfig {
+  readonly type = ConfigType.LevelsOfDetail
 
   /**
    * @param duration The duration for the node to stay active. Once its time is
@@ -11044,8 +11044,8 @@ class LevelsOfDetailProfile implements IProfile {
 
   *walkActions() {}
 
-  clone(): LevelsOfDetailProfile {
-    return new LevelsOfDetailProfile(
+  clone(): LevelsOfDetailConfig {
+    return new LevelsOfDetailConfig(
       this.duration,
       this.thresholds.slice(),
       this.unk_ac6_f1_5,
@@ -11054,7 +11054,7 @@ class LevelsOfDetailProfile implements IProfile {
 
 }
 
-export interface BasicProfileParams {
+export interface BasicConfigParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
@@ -11073,7 +11073,7 @@ export interface BasicProfileParams {
 }
 
 /**
- * Profile used in {@link NodeType.Basic basic nodes} to apply transforms and
+ * Config used in {@link NodeType.Basic basic nodes} to apply transforms and
  * emit particles of many different types.
  * 
  * Default actions:
@@ -11095,8 +11095,8 @@ export interface BasicProfileParams {
  * 13    | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  * 14    | {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement} | {@link ActionType.None None}
  */
-class BasicProfile implements IProfile {
-  readonly type = ProfileType.Basic
+class BasicConfig implements IConfig {
+  readonly type = ConfigType.Basic
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -11114,10 +11114,10 @@ class BasicProfile implements IProfile {
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
   particleForceMovement: ActionSlots.ParticleForceMovementAction = new Action
 
-  constructor(params: BasicProfileParams | AnyAction[] = []) {
+  constructor(params: BasicConfigParams | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = ProfileActionSlots[ProfileType.Basic].findIndex(a => a.includes(action.type))
+        const index = ConfigActionSlots[ConfigType.Basic].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0:  this.nodeAttributes        = action as Action; break;
           case 1:  this.nodeTransform         = action as Action; break;
@@ -11239,8 +11239,8 @@ class BasicProfile implements IProfile {
     yield this.particleForceMovement
   }
 
-  clone(): BasicProfile {
-    return new BasicProfile({
+  clone(): BasicConfig {
+    return new BasicConfig({
       nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
       nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
       nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
@@ -11261,7 +11261,7 @@ class BasicProfile implements IProfile {
 
 }
 
-export interface NodeEmitterProfileParams {
+export interface NodeEmitterConfigParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
@@ -11275,7 +11275,7 @@ export interface NodeEmitterProfileParams {
 }
 
 /**
- * Profile used in {@link NodeType.NodeEmitter node emitter nodes} to control
+ * Config used in {@link NodeType.NodeEmitter node emitter nodes} to control
  * the emission of child nodes.
  * 
  * Default actions:
@@ -11292,8 +11292,8 @@ export interface NodeEmitterProfileParams {
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 9     | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  */
-class NodeEmitterProfile implements IProfile {
-  readonly type = ProfileType.NodeEmitter
+class NodeEmitterConfig implements IConfig {
+  readonly type = ConfigType.NodeEmitter
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -11306,10 +11306,10 @@ class NodeEmitterProfile implements IProfile {
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
 
-  constructor(params: NodeEmitterProfileParams | AnyAction[] = []) {
+  constructor(params: NodeEmitterConfigParams | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = ProfileActionSlots[ProfileType.NodeEmitter].findIndex(a => a.includes(action.type))
+        const index = ConfigActionSlots[ConfigType.NodeEmitter].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0: this.nodeAttributes    = action as Action; break;
           case 1: this.nodeTransform     = action as Action; break;
@@ -11401,8 +11401,8 @@ class NodeEmitterProfile implements IProfile {
     yield this.nodeForceMovement
   }
 
-  clone(): NodeEmitterProfile {
-    return new NodeEmitterProfile({
+  clone(): NodeEmitterConfig {
+    return new NodeEmitterConfig({
       nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
       nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
       nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
@@ -14416,7 +14416,7 @@ export interface Unk130Params {
  * ### {@link ActionType.Unk130 Action 130 - Unk130}
  * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
  * 
- * Unknown action that is in every basic profile in every game, and still literally nothing is known about it.
+ * Unknown action that is in every basic config in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
   declare readonly type: ActionType.Unk130
@@ -14446,7 +14446,7 @@ class Unk130 extends DataAction {
 
 export interface ParticleModifierParams {
   /**
-   * Controls the speed of the particles emitted from this node, but only if the profile has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+   * Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Default**: `0`
    * 
@@ -14518,7 +14518,7 @@ class ParticleModifier extends DataAction {
   declare readonly type: ActionType.ParticleModifier
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
-   * Controls the speed of the particles emitted from this node, but only if the profile has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+   * Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -14645,7 +14645,7 @@ export interface LevelsOfDetailThresholdsParams {
  * ### {@link ActionType.LevelsOfDetailThresholds Action 133 - LevelsOfDetailThresholds}
  * **Slot**: {@link ActionSlots.LevelsOfDetailThresholdsAction LevelsOfDetailThresholds}
  * 
- * Used in the {@link ProfileType.LevelsOfDetail levels of detail profile} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+ * Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
   declare readonly type: ActionType.LevelsOfDetailThresholds
@@ -14684,30 +14684,30 @@ class LevelsOfDetailThresholds extends DataAction {
 }
 
 /**
- * ### {@link ActionType.StateProfileMap Action 199 - StateProfileMap}
- * **Slot**: {@link ActionSlots.StateProfileMapAction StateProfileMap}
+ * ### {@link ActionType.StateConfigMap Action 199 - StateConfigMap}
+ * **Slot**: {@link ActionSlots.StateConfigMapAction StateConfigMap}
  * 
- * Maps states to profiles in the parent node.
+ * Maps states to configs in the parent node.
  */
-class StateProfileMap extends DataAction {
-  declare readonly type: ActionType.StateProfileMap
+class StateConfigMap extends DataAction {
+  declare readonly type: ActionType.StateConfigMap
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
-   * A list of profile indices.
+   * A list of config indices.
    * 
-   * The index of each value represents the index of the state, and the value represents the index of the profile that should be active when the state is active.
+   * The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
    */
-  profileIndices: number[]
+  configIndices: number[]
   /**
-   * @param profileIndices A list of profile indices.
+   * @param configIndices A list of config indices.
    * 
-   * The index of each value represents the index of the state, and the value represents the index of the profile that should be active when the state is active.
+   * The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
    *
    * **Default**: `[0]`
    */
-  constructor(profileIndices: number[] = [0]) {
-    super(ActionType.StateProfileMap, {isAppearance:false,isParticle:false})
-    this.assign({ profileIndices })
+  constructor(configIndices: number[] = [0]) {
+    super(ActionType.StateConfigMap, {isAppearance:false,isParticle:false})
+    this.assign({ configIndices })
   }
 }
 
@@ -14715,7 +14715,7 @@ class StateProfileMap extends DataAction {
  * ### {@link ActionType.SelectAllNodes Action 200 - SelectAllNodes}
  * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit all child nodes every emission.
+ * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.
  */
 class SelectAllNodes extends DataAction {
   declare readonly type: ActionType.SelectAllNodes
@@ -14730,7 +14730,7 @@ class SelectAllNodes extends DataAction {
  * ### {@link ActionType.SelectRandomNode Action 201 - SelectRandomNode}
  * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link ProfileType.NodeEmitter NodeEmitter profiles} to emit a random child node every emission.
+ * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
  */
 class SelectRandomNode extends DataAction {
   declare readonly type: ActionType.SelectRandomNode
@@ -39939,7 +39939,7 @@ const DataActions = {
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
-  [ActionType.StateProfileMap]: StateProfileMap, StateProfileMap,
+  [ActionType.StateConfigMap]: StateConfigMap, StateConfigMap,
   [ActionType.SelectAllNodes]: SelectAllNodes, SelectAllNodes,
   [ActionType.SelectRandomNode]: SelectRandomNode, SelectRandomNode,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -42092,18 +42092,18 @@ namespace Recolor {
         )
       )
     }
-    function *walkProfiles(sources: (FXR | Node)[]) {
+    function *walkConfigs(sources: (FXR | Node)[]) {
       for (const src of sources) {
         if (src instanceof FXR) {
-          yield* src.root.walkProfiles()
+          yield* src.root.walkConfigs()
         } else {
-          yield* src.walkProfiles()
+          yield* src.walkConfigs()
         }
       }
     }
-    for (const profile of walkProfiles(sources)) {
-      if (profile instanceof BasicProfile) {
-        const a = profile.appearance
+    for (const config of walkConfigs(sources)) {
+      if (config instanceof BasicConfig) {
+        const a = config.appearance
         if (
           a instanceof PointSprite ||
           a instanceof Line ||
@@ -42115,7 +42115,7 @@ namespace Recolor {
           a instanceof Tracer ||
           a instanceof DynamicTracer
         ) {
-          if (!(profile.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
           if (blendMode instanceof Property) {
             blendMode = blendMode.valueAt(0)
@@ -42132,7 +42132,7 @@ namespace Recolor {
           if (key in palette && mode === PaletteMode.First) continue
           palette[key] ??= []
           palette[key].push({
-            modifier: normalize(profile.particleModifier.color),
+            modifier: normalize(config.particleModifier.color),
             color1: normalize(a.color1),
             color2: normalize(a.color2),
             color3: normalize(a.color3),
@@ -42140,21 +42140,21 @@ namespace Recolor {
             bloomColor: normalize(a.bloomColor),
           })
         } else if (a instanceof Distortion) {
-          if (!(profile.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           if ('distortionParticle' in palette && mode === PaletteMode.First) continue
           palette.distortionParticle ??= []
           palette.distortionParticle.push({
-            modifier: normalize(profile.particleModifier.color),
+            modifier: normalize(config.particleModifier.color),
             color: normalize(a.color),
             rgbMultiplier: normalize(a.rgbMultiplier),
             bloomColor: normalize(a.bloomColor),
           })
         } else if (a instanceof RadialBlur) {
-          if (!(profile.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           if ('blurParticle' in palette && mode === PaletteMode.First) continue
           palette.blurParticle ??= []
           palette.blurParticle.push({
-            modifier: normalize(profile.particleModifier.color),
+            modifier: normalize(config.particleModifier.color),
             color: normalize(a.color),
             rgbMultiplier: normalize(a.rgbMultiplier),
             bloomColor: normalize(a.bloomColor),
@@ -43259,13 +43259,13 @@ namespace FXRUtility {
     const nodes = recurse ? Array.from(node.walk()) : [node]
     for (const n of nodes) {
       if (n instanceof BasicNode || n instanceof NodeEmitterNode) {
-        for (const profile of n.walkProfiles(false)) {
-          if (profile instanceof NodeEmitterProfile || (
-            profile instanceof BasicProfile &&
-            profile.appearance instanceof DataAction &&
-            profile.appearance.meta.isParticle
+        for (const config of n.walkConfigs(false)) {
+          if (config instanceof NodeEmitterConfig || (
+            config instanceof BasicConfig &&
+            config.appearance instanceof DataAction &&
+            config.appearance.meta.isParticle
           )) {
-            const emShape = profile.emitterShape
+            const emShape = config.emitterShape
             if (emShape instanceof DiskEmitterShape) {
               const radius = constantValueOf(emShape.radius)
               n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
@@ -43449,7 +43449,7 @@ export {
   ResourceType,
 
   Nodes,
-  ProfileActionSlots,
+  ConfigActionSlots,
   ActionData,
   DataActions,
 
@@ -43469,17 +43469,17 @@ export {
 
   Node,
   GenericNode,
-  NodeWithProfiles,
+  NodeWithConfigs,
   RootNode,
   ProxyNode,
   LevelsOfDetailNode,
   BasicNode,
   NodeEmitterNode,
 
-  Profile,
-  LevelsOfDetailProfile,
-  BasicProfile,
-  NodeEmitterProfile,
+  NodeConfig,
+  LevelsOfDetailConfig,
+  BasicConfig,
+  NodeEmitterConfig,
 
   Action,
   DataAction,
@@ -43515,7 +43515,7 @@ export {
   ParticleModifier,
   SFXReference,
   LevelsOfDetailThresholds,
-  StateProfileMap,
+  StateConfigMap,
   SelectAllNodes,
   SelectRandomNode,
   PeriodicEmitter,

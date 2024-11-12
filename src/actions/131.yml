@@ -15,7 +15,7 @@ properties:
     scale: true
     time: true
     desc: |
-      Controls the speed of the particles emitted from this node, but only if the profile has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+      Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
   scaleX:
     type: ScalarValue
     default: 1
