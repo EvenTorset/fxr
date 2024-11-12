@@ -5,11 +5,12 @@ meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
+  Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
 properties:
   weights:
     type: number[]
     default: [1]
+    s10: true
     desc: |
       Probability weights for each child node to be selected for emission.
 

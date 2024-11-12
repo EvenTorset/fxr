@@ -10,7 +10,7 @@ properties:
   angleX:
     type: ScalarValue
     default: 30
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       The maximum change in direction in degrees, one of the angles of the elliptical cone.
     see:
@@ -18,7 +18,7 @@ properties:
   angleY:
     type: ScalarValue
     default: 30
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       The maximum change in direction in degrees, one of the angles of the elliptical cone.
     see:
@@ -26,7 +26,7 @@ properties:
   distribution:
     type: ScalarValue
     default: 0
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Controls the distribution of the random directions that can be chosen.
       - At 0, all directions within the cone have an equal chance of being chosen.

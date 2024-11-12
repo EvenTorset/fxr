@@ -17,14 +17,17 @@ properties:
     scale: true
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     color: true
   unk_ds3_p1_5:
@@ -48,6 +51,7 @@ properties:
   blendMode:
     type: BlendMode
     field: int
+    enum: BlendMode
     default: BlendMode.Add
     desc: |
       Blend mode.

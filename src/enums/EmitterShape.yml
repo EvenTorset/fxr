@@ -1,0 +1,36 @@
+name: EmitterShape
+desc: |
+  Emitter shapes for the following actions:
+  - {@link ActionType.GPUStandardParticle GPUStandardParticle}
+  - {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle}
+  - {@link ActionType.GPUSparkParticle GPUSparkParticle}
+  - {@link ActionType.GPUSparkCorrectParticle GPUSparkCorrectParticle}
+
+  Not related to the {@link ActionSlots.EmitterShapeAction emitter shape actions}.
+members:
+  Line:
+    value: 0
+    desc: |
+      A simple line.
+  Box:
+    value: 1
+    desc: |
+      A cuboid.
+
+      The difference between this and {@link Box2} is how the
+      {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
+  Box2:
+    value: 2
+    desc: |
+      A cuboid.
+
+      The difference between this and {@link Box} is how the
+      {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
+  Unk3:
+    value: 3
+    desc: |
+      Seemingly identical to {@link Line}?
+  Cylinder:
+    value: 4
+    desc: |
+      A cylinder.

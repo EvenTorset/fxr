@@ -7,6 +7,9 @@ declare global {
   }
 }
 
+/**
+ * Values representing different games supported by the library.
+ */
 enum Game {
   /**
    * Using this with the {@link FXR.read} function will cause it to try to find
@@ -35,7 +38,7 @@ enum Game {
    * Note that this does not work with the {@link FXR.toArrayBuffer} and
    * {@link FXR.saveAs} methods unless the FXR only contains generic classes.
    * If it contains any node classes other than {@link GenericNode}, any
-   * effect classes other than {@link Effect}, or any {@link DataAction}s, it
+   * config classes other than {@link NodeConfig}, or any {@link DataAction}s, it
    * must be given a specific game to write to.
    */
   Generic = -1,
@@ -57,6 +60,9 @@ enum Game {
   ArmoredCore6 = 3
 }
 
+/**
+ * FXR file format version numbers supported by the library.
+ */
 enum FXRVersion {
   /**
    * Used in Dark Souls 3.
@@ -68,594 +74,489 @@ enum FXRVersion {
   Sekiro = 5,
 }
 
-const GameVersionMap = {
-  [Game.DarkSouls3]: FXRVersion.DarkSouls3,
-  [Game.Sekiro]: FXRVersion.Sekiro,
-  [Game.EldenRing]: FXRVersion.Sekiro,
-  [Game.ArmoredCore6]: FXRVersion.Sekiro,
-}
-
-enum NodeType {
+/*#Enums start*/
+/**
+ * Values used to represent different types of FXR actions.
+ */
+export enum ActionType {
   /**
-   * The root of the FXR tree structure.
-   * 
-   * This node type has a specialized subclass: {@link RootNode}
-   */
-  Root = 2000,
-  /**
-   * Acts as a node containing another SFX.
-   * 
-   * This node type has a specialized subclass: {@link ProxyNode}
-   */
-  Proxy = 2001,
-  /**
-   * A node that only displays one of its child nodes at a time based on
-   * distance thresholds for each.
-   * 
-   * This node type has a specialized subclass: {@link LevelsOfDetailNode}
-   */
-  LevelsOfDetail = 2002,
-  /**
-   * A basic node that can have transforms and child nodes, and emit particles.
-   * 
-   * This node type has a specialized subclass: {@link BasicNode}
-   */
-  Basic = 2200,
-  /**
-   * A node that emits its child nodes.
-   * 
-   * This node type has a specialized subclass: {@link NodeEmitterNode}
-   */
-  NodeEmitter = 2202,
-}
-
-enum EffectType {
-  /**
-   * Manages the duration and thresholds for the
-   * {@link NodeType.LevelsOfDetail levels of detail node}.
-   * 
-   * This effect type has a specialized subclass: {@link LevelsOfDetailEffect}
-   */
-  LevelsOfDetail = 1002,
-  /**
-   * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
-   * to control emission and properties of particles.
-   * 
-   * This effect type has a specialized subclass: {@link BasicEffect}
-   */
-  Basic = 1004,
-  /**
-   * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
-   * the emission of child nodes.
-   * 
-   * This effect type has a specialized subclass: {@link NodeEmitterEffect}
-   */
-  NodeEmitter = 1005,
-}
-
-enum ActionType {
-  /**
-   * This action does nothing. It fits into most action slots and acts as a way
-   * to disable the effects of the other actions that go in those slots.
+   * This action does nothing. It fits into most action slots and acts as a way to disable the effects of the other actions that go in those slots.
    */
   None = 0,
+  /**
+   * Unknown action that *may* exist in Dark Souls 3. It is not used in vanilla, but its name and ID have been found in the game's executable.
+   */
   Unk10002_Fluid = 10002,
+  /**
+   * Unknown action that *may* exist in Dark Souls 3. It is not used in vanilla, but its name and ID have been found in the game's executable.
+   */
   Unk10010_Tracer = 10010,
-
-  // Data Actions
-  /*#ActionType start*/
   /**
    * ### Action 1 - NodeAcceleration
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAcceleration}
    * 
    * Controls the movement of the node. This is the most basic action for controlling the acceleration of nodes.
-   * 
-   * This action type has a specialized subclass: {@link NodeAcceleration}
    */
   NodeAcceleration = 1,
   /**
    * ### Action 15 - NodeTranslation
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeTranslation}
    * 
    * Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
-   * 
-   * This action type has a specialized subclass: {@link NodeTranslation}
    */
   NodeTranslation = 15,
   /**
    * ### Action 34 - NodeSpin
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpin}
    * 
    * Controls the angular speed of the node.
-   * 
-   * This action type has a specialized subclass: {@link NodeSpin}
    */
   NodeSpin = 34,
   /**
    * ### Action 35 - StaticNodeTransform
-   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * - **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * - **Class**: {@link StaticNodeTransform}
    * 
    * Controls the translation and rotation of a node.
-   * 
-   * This action type has a specialized subclass: {@link StaticNodeTransform}
    */
   StaticNodeTransform = 35,
   /**
    * ### Action 36 - RandomNodeTransform
-   * **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * - **Slot**: {@link ActionSlots.NodeTransformAction NodeTransform}
+   * - **Class**: {@link RandomNodeTransform}
    * 
    * Controls the translation and rotation of a node, and can also randomize them.
-   * 
-   * This action type has a specialized subclass: {@link RandomNodeTransform}
    */
   RandomNodeTransform = 36,
   /**
    * ### Action 46 - NodeAttachToCamera
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAttachToCamera}
    * 
    * Attaches the node to the camera.
-   * 
-   * This action type has a specialized subclass: {@link NodeAttachToCamera}
    */
   NodeAttachToCamera = 46,
   /**
    * ### Action 55 - ParticleAcceleration
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleAcceleration}
    * 
    * Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleAcceleration}
    */
   ParticleAcceleration = 55,
   /**
    * ### Action 60 - ParticleSpeed
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleSpeed}
    * 
    * Controls the movement of particles. This is the most basic action for controlling the speed of particles.
-   * 
-   * This action type has a specialized subclass: {@link ParticleSpeed}
    */
   ParticleSpeed = 60,
   /**
    * ### Action 64 - ParticleSpeedRandomTurns
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleSpeedRandomTurns}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleSpeed ParticleSpeed} with the ability to make particles make random turns at a fixed interval.
-   * 
-   * This action type has a specialized subclass: {@link ParticleSpeedRandomTurns}
    */
   ParticleSpeedRandomTurns = 64,
   /**
    * ### Action 65 - ParticleSpeedPartialFollow
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleSpeedPartialFollow}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleSpeedRandomTurns ParticleSpeedRandomTurns} with the ability to make particles partially follow the parent node.
-   * 
-   * This action type has a specialized subclass: {@link ParticleSpeedPartialFollow}
    */
   ParticleSpeedPartialFollow = 65,
   /**
    * ### Action 75 - NodeSound
-   * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+   * - **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
+   * - **Class**: {@link NodeSound}
    * 
    * Plays a sound effect when the node activates that can repeat.
-   * 
-   * This action type has a specialized subclass: {@link NodeSound}
    */
   NodeSound = 75,
   /**
    * ### Action 81 - EmissionSound
-   * **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+   * - **Slot**: {@link ActionSlots.EmissionAudioAction EmissionAudio}
+   * - **Class**: {@link EmissionSound}
    * 
    * Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
-   * 
-   * This action type has a specialized subclass: {@link EmissionSound}
    */
   EmissionSound = 81,
   /**
    * ### Action 83 - NodeAccelerationRandomTurns
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAccelerationRandomTurns}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
-   * 
-   * This action type has a specialized subclass: {@link NodeAccelerationRandomTurns}
    */
   NodeAccelerationRandomTurns = 83,
   /**
    * ### Action 84 - ParticleAccelerationRandomTurns
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleAccelerationRandomTurns}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleAcceleration ParticleAcceleration} with the ability to make particles make random turns at a fixed interval.
-   * 
-   * This action type has a specialized subclass: {@link ParticleAccelerationRandomTurns}
    */
   ParticleAccelerationRandomTurns = 84,
   /**
    * ### Action 105 - ParticleAccelerationPartialFollow
-   * **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Slot**: {@link ActionSlots.ParticleMovementAction ParticleMovement}
+   * - **Class**: {@link ParticleAccelerationPartialFollow}
    * 
    * Controls the movement of particles. This extends {@link ActionType.ParticleAccelerationRandomTurns ParticleAccelerationRandomTurns} with the ability to make particles partially follow the parent node.
-   * 
-   * This action type has a specialized subclass: {@link ParticleAccelerationPartialFollow}
    */
   ParticleAccelerationPartialFollow = 105,
   /**
    * ### Action 106 - NodeAccelerationPartialFollow
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAccelerationPartialFollow}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeAccelerationRandomTurns NodeAccelerationRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
-   * 
-   * This action type has a specialized subclass: {@link NodeAccelerationPartialFollow}
    */
   NodeAccelerationPartialFollow = 106,
   /**
    * ### Action 113 - NodeAccelerationSpin
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeAccelerationSpin}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
-   * 
-   * This action type has a specialized subclass: {@link NodeAccelerationSpin}
    */
   NodeAccelerationSpin = 113,
   /**
    * ### Action 120 - NodeSpeed
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeed}
    * 
    * Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
-   * 
-   * This action type has a specialized subclass: {@link NodeSpeed}
    */
   NodeSpeed = 120,
   /**
    * ### Action 121 - NodeSpeedRandomTurns
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeedRandomTurns}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to make the node turn a random amount at a given interval.
-   * 
-   * This action type has a specialized subclass: {@link NodeSpeedRandomTurns}
    */
   NodeSpeedRandomTurns = 121,
   /**
    * ### Action 122 - NodeSpeedPartialFollow
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeedPartialFollow}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
-   * 
-   * This action type has a specialized subclass: {@link NodeSpeedPartialFollow}
    */
   NodeSpeedPartialFollow = 122,
   /**
    * ### Action 123 - NodeSpeedSpin
-   * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link NodeSpeedSpin}
    * 
    * Controls the movement of the node. This extends {@link ActionType.NodeSpeed NodeSpeed} with the ability to control the node's angular speed.
-   * 
-   * This action type has a specialized subclass: {@link NodeSpeedSpin}
    */
   NodeSpeedSpin = 123,
   /**
    * ### Action 128 - NodeAttributes
-   * **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+   * - **Slot**: {@link ActionSlots.NodeAttributesAction NodeAttributes}
+   * - **Class**: {@link NodeAttributes}
    * 
    * Controls various things about the node, like its duration, and how it is attached to the parent node.
-   * 
-   * This action type has a specialized subclass: {@link NodeAttributes}
    */
   NodeAttributes = 128,
   /**
    * ### Action 129 - ParticleAttributes
-   * **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+   * - **Slot**: {@link ActionSlots.ParticleAttributesAction ParticleAttributes}
+   * - **Class**: {@link ParticleAttributes}
    * 
    * Controls the duration of particles emitted by the node, and how the particles are attached to the node.
-   * 
-   * This action type has a specialized subclass: {@link ParticleAttributes}
    */
   ParticleAttributes = 129,
   /**
    * ### Action 130 - Unk130
-   * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
+   * - **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
+   * - **Class**: {@link Unk130}
    * 
-   * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
-   * 
-   * This action type has a specialized subclass: {@link Unk130}
+   * Unknown action that is in every basic config in every game, and still literally nothing is known about it.
    */
   Unk130 = 130,
   /**
    * ### Action 131 - ParticleModifier
-   * **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+   * - **Slot**: {@link ActionSlots.ParticleModifierAction ParticleModifier}
+   * - **Class**: {@link ParticleModifier}
    * 
    * Modifies particles in various ways.
    * 
    * Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
-   * 
-   * This action type has a specialized subclass: {@link ParticleModifier}
    */
   ParticleModifier = 131,
   /**
    * ### Action 132 - SFXReference
+   * - **Slot**: {@link ActionSlots.SFXReferenceAction SFXReference}
+   * - **Class**: {@link SFXReference}
    * 
    * References another SFX by its ID.
-   * 
-   * This action type has a specialized subclass: {@link SFXReference}
    */
   SFXReference = 132,
   /**
    * ### Action 133 - LevelsOfDetailThresholds
+   * - **Slot**: {@link ActionSlots.LevelsOfDetailThresholdsAction LevelsOfDetailThresholds}
+   * - **Class**: {@link LevelsOfDetailThresholds}
    * 
-   * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
-   * 
-   * This action type has a specialized subclass: {@link LevelsOfDetailThresholds}
+   * Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    */
   LevelsOfDetailThresholds = 133,
   /**
-   * ### Action 199 - StateEffectMap
+   * ### Action 199 - StateConfigMap
+   * - **Slot**: {@link ActionSlots.StateConfigMapAction StateConfigMap}
+   * - **Class**: {@link StateConfigMap}
    * 
-   * Maps states to effects in the parent node.
-   * 
-   * This action type has a specialized subclass: {@link StateEffectMap}
+   * Maps states to configs in the parent node.
    */
-  StateEffectMap = 199,
+  StateConfigMap = 199,
   /**
    * ### Action 200 - SelectAllNodes
-   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
+   * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
+   * - **Class**: {@link SelectAllNodes}
    * 
-   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
-   * 
-   * This action type has a specialized subclass: {@link SelectAllNodes}
+   * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.
    */
   SelectAllNodes = 200,
   /**
    * ### Action 201 - SelectRandomNode
-   * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
+   * - **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
+   * - **Class**: {@link SelectRandomNode}
    * 
-   * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
-   * 
-   * This action type has a specialized subclass: {@link SelectRandomNode}
+   * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
    */
   SelectRandomNode = 201,
   /**
    * ### Action 300 - PeriodicEmitter
-   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Class**: {@link PeriodicEmitter}
    * 
    * Emits particles periodically.
-   * 
-   * This action type has a specialized subclass: {@link PeriodicEmitter}
    */
   PeriodicEmitter = 300,
   /**
    * ### Action 301 - EqualDistanceEmitter
-   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Class**: {@link EqualDistanceEmitter}
    * 
    * Emits particles once it has moved a certain distance from where it last emitted particles.
-   * 
-   * This action type has a specialized subclass: {@link EqualDistanceEmitter}
    */
   EqualDistanceEmitter = 301,
   /**
    * ### Action 399 - OneTimeEmitter
-   * **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Slot**: {@link ActionSlots.EmitterAction Emitter}
+   * - **Class**: {@link OneTimeEmitter}
    * 
    * Emits one particle once.
-   * 
-   * This action type has a specialized subclass: {@link OneTimeEmitter}
    */
   OneTimeEmitter = 399,
   /**
    * ### Action 400 - PointEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link PointEmitterShape}
    * 
    * Makes the emitter a single point.
-   * 
-   * This action type has a specialized subclass: {@link PointEmitterShape}
    */
   PointEmitterShape = 400,
   /**
    * ### Action 401 - DiskEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link DiskEmitterShape}
    * 
    * Makes the emitter disk-shaped.
-   * 
-   * This action type has a specialized subclass: {@link DiskEmitterShape}
    */
   DiskEmitterShape = 401,
   /**
    * ### Action 402 - RectangleEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link RectangleEmitterShape}
    * 
    * Makes the emitter rectangular.
-   * 
-   * This action type has a specialized subclass: {@link RectangleEmitterShape}
    */
   RectangleEmitterShape = 402,
   /**
    * ### Action 403 - SphereEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link SphereEmitterShape}
    * 
    * Makes the emitter spherical.
-   * 
-   * This action type has a specialized subclass: {@link SphereEmitterShape}
    */
   SphereEmitterShape = 403,
   /**
    * ### Action 404 - BoxEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link BoxEmitterShape}
    * 
    * Makes the emitter cuboidal.
-   * 
-   * This action type has a specialized subclass: {@link BoxEmitterShape}
    */
   BoxEmitterShape = 404,
   /**
    * ### Action 405 - CylinderEmitterShape
-   * **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Slot**: {@link ActionSlots.EmitterShapeAction EmitterShape}
+   * - **Class**: {@link CylinderEmitterShape}
    * 
    * Makes the emitter cylindrical.
-   * 
-   * This action type has a specialized subclass: {@link CylinderEmitterShape}
    */
   CylinderEmitterShape = 405,
   /**
    * ### Action 500 - NoSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link NoSpread}
    * 
    * Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
-   * 
-   * This action type has a specialized subclass: {@link NoSpread}
    */
   NoSpread = 500,
   /**
    * ### Action 501 - CircularSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link CircularSpread}
    * 
    * Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
-   * 
-   * This action type has a specialized subclass: {@link CircularSpread}
    */
   CircularSpread = 501,
   /**
    * ### Action 502 - EllipticalSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link EllipticalSpread}
    * 
    * Gives each emitted instance a random initial direction offset within an elliptical cone. See {@link InitialDirection} for more information.
-   * 
-   * This action type has a specialized subclass: {@link EllipticalSpread}
    */
   EllipticalSpread = 502,
   /**
    * ### Action 503 - RectangularSpread
-   * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
+   * - **Class**: {@link RectangularSpread}
    * 
    * Gives each emitted instance a random initial direction offset within a rectangular cone. See {@link InitialDirection} for more information.
-   * 
-   * This action type has a specialized subclass: {@link RectangularSpread}
    */
   RectangularSpread = 503,
   /**
    * ### Action 600 - PointSprite
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link PointSprite}
    * 
    * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
-   * 
-   * This action type has a specialized subclass: {@link PointSprite}
    */
   PointSprite = 600,
   /**
    * ### Action 601 - Line
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Line}
    * 
    * Simple line particle. It automatically rotates to match the direction it's moving.
-   * 
-   * This action type has a specialized subclass: {@link Line}
    */
   Line = 601,
   /**
    * ### Action 602 - QuadLine
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link QuadLine}
    * 
    * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
-   * 
-   * This action type has a specialized subclass: {@link QuadLine}
    */
   QuadLine = 602,
   /**
    * ### Action 603 - BillboardEx
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link BillboardEx}
    * 
    * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
-   * 
-   * This action type has a specialized subclass: {@link BillboardEx}
    */
   BillboardEx = 603,
   /**
    * ### Action 604 - MultiTextureBillboardEx
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link MultiTextureBillboardEx}
    * 
    * Particle with multiple textures that can scroll.
-   * 
-   * This action type has a specialized subclass: {@link MultiTextureBillboardEx}
    */
   MultiTextureBillboardEx = 604,
   /**
    * ### Action 605 - Model
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Model}
    * 
    * Particle with a 3D model.
    * 
    * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
-   * 
-   * This action type has a specialized subclass: {@link Model}
    */
   Model = 605,
   /**
    * ### Action 606 - Tracer
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Tracer}
    * 
    * Creates a trail behind moving effects.
-   * 
-   * This action type has a specialized subclass: {@link Tracer}
    */
   Tracer = 606,
   /**
    * ### Action 607 - Distortion
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link Distortion}
    * 
    * A particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
-   * 
-   * This action type has a specialized subclass: {@link Distortion}
    */
   Distortion = 607,
   /**
    * ### Action 608 - RadialBlur
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link RadialBlur}
    * 
    * A particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
-   * 
-   * This action type has a specialized subclass: {@link RadialBlur}
    */
   RadialBlur = 608,
   /**
    * ### Action 609 - PointLight
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link PointLight}
    * 
    * Point light source.
-   * 
-   * This action type has a specialized subclass: {@link PointLight}
    */
   PointLight = 609,
   /**
-   * ### Action 700 - Unk700
-   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * ### Action 700 - SimulateTermination
+   * - **Slot**: {@link ActionSlots.TerminationAction Termination}
+   * - **Class**: {@link SimulateTermination}
    * 
-   * Unknown root node action that was introduced in Elden Ring.
+   * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
    * 
-   * This action type has a specialized subclass: {@link Unk700}
+   * Note: An effect terminates when it reaches {@link State} -1.
    */
-  Unk700 = 700,
+  SimulateTermination = 700,
   /**
-   * ### Action 701 - Unk701
-   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * ### Action 701 - FadeTermination
+   * - **Slot**: {@link ActionSlots.TerminationAction Termination}
+   * - **Class**: {@link FadeTermination}
    * 
-   * Unknown root node action that was introduced in Elden Ring.
+   * Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
    * 
-   * This action type has a specialized subclass: {@link Unk701}
+   * Note: An effect terminates when it reaches {@link State} -1.
    */
-  Unk701 = 701,
+  FadeTermination = 701,
   /**
-   * ### Action 702 - Unk702
-   * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+   * ### Action 702 - InstantTermination
+   * - **Slot**: {@link ActionSlots.TerminationAction Termination}
+   * - **Class**: {@link InstantTermination}
    * 
-   * Unknown root node action that was introduced in Elden Ring.
+   * Makes the effect instantly disappear when it terminates.
    * 
-   * This action type has a specialized subclass: {@link Unk702}
+   * Note: An effect terminates when it reaches {@link State} -1.
    */
-  Unk702 = 702,
+  InstantTermination = 702,
   /**
    * ### Action 731 - NodeForceSpeed
-   * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
+   * - **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
+   * - **Class**: {@link NodeForceSpeed}
    * 
    * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -663,13 +564,12 @@ enum ActionType {
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
    * - {@link ActionType.TurbulenceForce TurbulenceForce}
-   * 
-   * This action type has a specialized subclass: {@link NodeForceSpeed}
    */
   NodeForceSpeed = 731,
   /**
    * ### Action 732 - ParticleForceSpeed
-   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Class**: {@link ParticleForceSpeed}
    * 
    * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -677,13 +577,12 @@ enum ActionType {
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
    * - {@link ActionType.TurbulenceForce TurbulenceForce}
-   * 
-   * This action type has a specialized subclass: {@link ParticleForceSpeed}
    */
   ParticleForceSpeed = 732,
   /**
    * ### Action 733 - NodeForceAcceleration
-   * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
+   * - **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
+   * - **Class**: {@link NodeForceAcceleration}
    * 
    * Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -691,13 +590,12 @@ enum ActionType {
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
    * - {@link ActionType.TurbulenceForce TurbulenceForce}
-   * 
-   * This action type has a specialized subclass: {@link NodeForceAcceleration}
    */
   NodeForceAcceleration = 733,
   /**
    * ### Action 734 - ParticleForceAcceleration
-   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Class**: {@link ParticleForceAcceleration}
    * 
    * Controls how the particles emitted by the node is affected by forces. For more information about forces that can affect nodes and particles, see:
    * - {@link ActionType.CancelForce CancelForce}
@@ -705,61 +603,56 @@ enum ActionType {
    * - {@link ActionType.GravityForce GravityForce}
    * - {@link ActionType.ForceCollision ForceCollision}
    * - {@link ActionType.TurbulenceForce TurbulenceForce}
-   * 
-   * This action type has a specialized subclass: {@link ParticleForceAcceleration}
    */
   ParticleForceAcceleration = 734,
   /**
    * ### Action 800 - ParticleForceCollision
-   * **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Slot**: {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement}
+   * - **Class**: {@link ParticleForceCollision}
    * 
    * Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
    * 
    * Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
    * 
    * Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
-   * 
-   * This action type has a specialized subclass: {@link ParticleForceCollision}
    */
   ParticleForceCollision = 800,
   /**
    * ### Action 10000 - GPUStandardParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUStandardParticle}
    * 
    * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
    * 
    * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
-   * 
-   * This action type has a specialized subclass: {@link GPUStandardParticle}
    */
   GPUStandardParticle = 10000,
   /**
    * ### Action 10001 - GPUStandardCorrectParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUStandardCorrectParticle}
    * 
    * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
    * 
    * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
    * 
    * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
-   * 
-   * This action type has a specialized subclass: {@link GPUStandardCorrectParticle}
    */
   GPUStandardCorrectParticle = 10001,
   /**
    * ### Action 10003 - LightShaft
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link LightShaft}
    * 
    * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
-   * 
-   * This action type has a specialized subclass: {@link LightShaft}
    */
   LightShaft = 10003,
   /**
    * ### Action 10008 - GPUSparkParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUSparkParticle}
    * 
    * Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
    * 
@@ -768,13 +661,12 @@ enum ActionType {
    * The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
    * 
    * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
-   * 
-   * This action type has a specialized subclass: {@link GPUSparkParticle}
    */
   GPUSparkParticle = 10008,
   /**
    * ### Action 10009 - GPUSparkCorrectParticle
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GPUSparkCorrectParticle}
    * 
    * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
    * 
@@ -784,62 +676,56 @@ enum ActionType {
    * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
    * 
    * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
-   * 
-   * This action type has a specialized subclass: {@link GPUSparkCorrectParticle}
    */
   GPUSparkCorrectParticle = 10009,
   /**
    * ### Action 10012 - DynamicTracer
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link DynamicTracer}
    * 
    * Creates a trail behind moving effects.
    * 
    * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
-   * 
-   * This action type has a specialized subclass: {@link DynamicTracer}
    */
   DynamicTracer = 10012,
   /**
    * ### Action 10013 - WaterInteraction
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link WaterInteraction}
    * 
    * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
-   * 
-   * This action type has a specialized subclass: {@link WaterInteraction}
    */
   WaterInteraction = 10013,
   /**
    * ### Action 10014 - LensFlare
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link LensFlare}
    * 
    * Creates lens flares with up to 4 textured layers with different colors and sizes.
-   * 
-   * This action type has a specialized subclass: {@link LensFlare}
    */
   LensFlare = 10014,
   /**
    * ### Action 10015 - RichModel
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link RichModel}
    * 
    * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
    * 
    * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
-   * 
-   * This action type has a specialized subclass: {@link RichModel}
    */
   RichModel = 10015,
   /**
    * ### Action 10100 - Unk10100
-   * **Slot**: {@link ActionSlots.Unknown10100Action Unknown10100}
+   * - **Slot**: {@link ActionSlots.Unknown10100Action Unknown10100}
+   * - **Class**: {@link Unk10100}
    * 
    * Unknown root node action.
-   * 
-   * This action type has a specialized subclass: {@link Unk10100}
    */
   Unk10100 = 10100,
   /**
    * ### Action 10200 - CancelForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link CancelForce}
    * 
    * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
    * - {@link ActionType.WindForce WindForce}
@@ -847,83 +733,569 @@ enum ActionType {
    * - {@link ActionType.TurbulenceForce TurbulenceForce}
    * 
    * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
-   * 
-   * This action type has a specialized subclass: {@link CancelForce}
    */
   CancelForce = 10200,
   /**
    * ### Action 10300 - WindForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link WindForce}
    * 
    * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
    * 
    * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
-   * 
-   * This action type has a specialized subclass: {@link WindForce}
    */
   WindForce = 10300,
   /**
    * ### Action 10301 - GravityForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link GravityForce}
    * 
    * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
    * 
    * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
-   * 
-   * This action type has a specialized subclass: {@link GravityForce}
    */
   GravityForce = 10301,
   /**
    * ### Action 10302 - ForceCollision
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link ForceCollision}
    * 
    * Controls the volume used to detect whether or not the node is inside a force volume.
    * 
    * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
-   * 
-   * This action type has a specialized subclass: {@link ForceCollision}
    */
   ForceCollision = 10302,
   /**
    * ### Action 10303 - TurbulenceForce
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link TurbulenceForce}
    * 
    * Creates a chaotic force in a volume.
    * 
    * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
-   * 
-   * This action type has a specialized subclass: {@link TurbulenceForce}
    */
   TurbulenceForce = 10303,
   /**
    * ### Action 10400 - Unk10400
-   * **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
+   * - **Slot**: {@link ActionSlots.Unknown10400Action Unknown10400}
+   * - **Class**: {@link Unk10400}
    * 
    * Unknown root node action.
-   * 
-   * This action type has a specialized subclass: {@link Unk10400}
    */
   Unk10400 = 10400,
   /**
    * ### Action 10500 - Unk10500
-   * **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
+   * - **Slot**: {@link ActionSlots.Unknown10500Action Unknown10500}
+   * - **Class**: {@link Unk10500}
    * 
    * Unknown root node action.
-   * 
-   * This action type has a specialized subclass: {@link Unk10500}
    */
   Unk10500 = 10500,
   /**
    * ### Action 11000 - SpotLight
-   * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
+   * - **Class**: {@link SpotLight}
    * 
    * Light source with an elliptic cone shape, a spot light.
-   * 
-   * This action type has a specialized subclass: {@link SpotLight}
    */
   SpotLight = 11000,
-  /*#ActionType end*/
 }
+
+/**
+ * Values used to represent different modes of attachment.
+ */
+export enum AttachMode {
+  /**
+   * Completely detached.
+   */
+  None = 0,
+  /**
+   * Translates and rotates with the parent node.
+   */
+  Parent = 1,
+  /**
+   * Translates and rotates with the attachment point (dummypoly). Parent transformations are ignored.
+   */
+  DummyPoly = 2,
+  /**
+   * Only translates with the parent node. Rotations are entirely ignored.
+   */
+  ParentTranslation = 3,
+  /**
+   * Only translates with the attachment point (dummypoly). Rotations are entirely ignored.
+   */
+  DummyPolyTranslation = 4,
+  
+}
+
+/**
+ * Values used to represent different types of blend modes.
+ */
+export enum BlendMode {
+  /**
+   * Seemingly identical to {@link Add}?
+   */
+  Unk0 = 0,
+  /**
+   * Completely ignores blending. The source layer (particle) will be drawn in place of the background, ignoring the alpha of the layer.
+   */
+  Source = 1,
+  /**
+   * The source layer (particle) will be drawn on over the background. Transparent or partially transparent parts of the layer will allow the background to be seen through the layer.
+   * 
+   * Also known as "source-over", and is the same as the "normal" blend mode found in many image editors.
+   */
+  Normal = 2,
+  /**
+   * The source layer (particle) will be multiplied with the background, ignoring the alpha of the layer.
+   * 
+   * Same as the "multiply" blend mode found in many image editors.
+   */
+  Multiply = 3,
+  /**
+   * The source layer (particle) multiplied by its alpha (clamped to [0, 1]) will be added to the background.
+   * 
+   * Same as the "add", "additive", or "linear dodge" blend modes found in many image editors. The opposite of {@link Subtract}.
+   */
+  Add = 4,
+  /**
+   * The source layer (particle) multiplied by its alpha (clamped to [0, 1]) will be subtracted from the background.
+   * 
+   * Same as the "subtract" or "difference" blend modes found in many image editors. The opposite of {@link Add}.
+   */
+  Subtract = 5,
+  /**
+   * Seemingly identical to {@link Normal}?
+   */
+  Unk6 = 6,
+  /**
+   * Seemingly identical to {@link Add}?
+   */
+  Unk7 = 7,
+  
+}
+
+/**
+ * Values used to represent different types of node configurations, also known as "effects". There is one for each {@link NodeType type of node} that supports multiple configs.
+ */
+export enum ConfigType {
+  /**
+   * Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+   * 
+   * **Class**: {@link LevelsOfDetailConfig}
+   */
+  LevelsOfDetail = 1002,
+  /**
+   * Config used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
+   * 
+   * **Class**: {@link BasicConfig}
+   */
+  Basic = 1004,
+  /**
+   * Config used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
+   * 
+   * **Class**: {@link NodeEmitterConfig}
+   */
+  NodeEmitter = 1005,
+  
+}
+
+/**
+ * Used by {@link ActionType.Distortion Distortion} particles to control what type of distortion to apply.
+ */
+export enum DistortionMode {
+  /**
+   * Distorts the background as if you stuck something into it and stirred it. It is animated, and the stir speed is controlled by a property.
+   */
+  Stir = 0,
+  /**
+   * Distorts the background based on the normal map.
+   */
+  NormalMap = 1,
+  /**
+   * Distorts the background as if the edges were held in place and you grabbed the center and twisted it.
+   */
+  Twist = 2,
+  /**
+   * Seemingly identical to {@link NormalMap}?
+   */
+  Unk3 = 3,
+  /**
+   * This seems to just squeeze everything to the bottom left corner?
+   */
+  Unk4 = 4,
+  
+}
+
+/**
+ * Possible shapes for {@link ActionType.Distortion distortion} particles.
+ */
+export enum DistortionShape {
+  /**
+   * A flat rectangle.
+   */
+  Rectangle = 0,
+  /**
+   * Half of an ellipsoid. (Like a hemisphere, but with three different radii.)
+   */
+  Hemiellipsoid = 1,
+  /**
+   * An ellipsoid. (Like a sphere, but with three different radii.)
+   */
+  Ellipsoid = 2,
+  
+}
+
+/**
+ * Emitter shapes for the following actions:
+ * - {@link ActionType.GPUStandardParticle GPUStandardParticle}
+ * - {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle}
+ * - {@link ActionType.GPUSparkParticle GPUSparkParticle}
+ * - {@link ActionType.GPUSparkCorrectParticle GPUSparkCorrectParticle}
+ * 
+ * Not related to the {@link ActionSlots.EmitterShapeAction emitter shape actions}.
+ */
+export enum EmitterShape {
+  /**
+   * A simple line.
+   */
+  Line = 0,
+  /**
+   * A cuboid.
+   * 
+   * The difference between this and {@link Box2} is how the
+   * {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
+   */
+  Box = 1,
+  /**
+   * A cuboid.
+   * 
+   * The difference between this and {@link Box} is how the
+   * {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
+   */
+  Box2 = 2,
+  /**
+   * Seemingly identical to {@link Line}?
+   */
+  Unk3 = 3,
+  /**
+   * A cylinder.
+   */
+  Cylinder = 4,
+  
+}
+
+/**
+ * Values representing different shapes of the volume where force actions apply their force.
+ */
+export enum ForceVolumeShape {
+  /**
+   * Allows the force to affect everything, everywhere.
+   */
+  Boundless = 0,
+  /**
+   * A spherical volume.
+   */
+  Sphere = 0,
+  /**
+   * A cuboid volume.
+   */
+  Box = 0,
+  /**
+   * A cylindrical volume.
+   */
+  Cylinder = 0,
+  /**
+   * A square prism volume.
+   */
+  SquarePrism = 0,
+  
+}
+
+/**
+ * An emitted instance's initial direction is used for various things that require a direction, but does not have a set one to follow.
+ * - {@link ActionType.ParticleModifier ParticleModifier action}'s
+ * {@link ParticleModifierParams.speed speed}.
+ * - {@link ActionType.Line Line action}'s initial rotation.
+ * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
+ * 
+ * The initial direction can be further modified by the following actions:
+ * - {@link ActionType.NoSpread NoSpread}
+ * - {@link ActionType.CircularSpread CircularDirectionSpread}
+ * - {@link ActionType.EllipticalSpread EllipticalDirectionSpread}
+ * - {@link ActionType.RectangularSpread RectangularDirectionSpread}
+ */
+export enum InitialDirection {
+  /**
+   * The direction will depend on the emitter shape.
+   * | Emitter&nbsp;Shape | Direction |
+   * |:-|:-|
+   * | {@link ActionType.PointEmitterShape Point} | Same as {@link LocalNorth}. |
+   * | {@link ActionType.DiskEmitterShape Disk} | Same as {@link LocalNorth}. |
+   * | {@link ActionType.RectangleEmitterShape Rectangle} | Same as {@link LocalNorth}. |
+   * | {@link ActionType.SphereEmitterShape Sphere} | The direction cannot be changed for this emitter shape. |
+   * | {@link ActionType.BoxEmitterShape Box} | If {@link BoxEmitterShape.emitInside emitInside} is true, it picks a direction parallel to a random local axis. If it is false, the direction will be out from the box, perpendicular to the side where the particle was emitted. |
+   * | {@link ActionType.CylinderEmitterShape Cylinder} | Out from the cylinder's axis. |
+   */
+  Emitter = 0,
+  /**
+   * Global up. (+Y)
+   */
+  Up = 1,
+  /**
+   * Global down. (-Y)
+   */
+  Down = 2,
+  /**
+   * Global north. (+Z)
+   */
+  North = 3,
+  /**
+   * Local up. (+Y)
+   */
+  LocalUp = 4,
+  /**
+   * Local down. (-Y)
+   */
+  LocalDown = 5,
+  /**
+   * Local north. (+Z)
+   */
+  LocalNorth = 6,
+  
+}
+
+/**
+ * Values representing different lighting modes.
+ * 
+ * These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described.
+ */
+export enum LightingMode {
+  /**
+   * Same as {@link Lit}, but this seems to sometimes have an extra light source from somewhere?
+   */
+  UnkMinus2 = -2,
+  /**
+   * Lighting does not affect the particles. No shadows or specular hightlights.
+   */
+  Unlit = -1,
+  /**
+   * Lighting affects the particles just like most regular objects.
+   */
+  Lit = 0,
+  
+}
+
+/**
+ * Values representing different orientation modes for {@link ActionType.Model Model} particles.
+ */
+export enum ModelOrientationMode {
+  /**
+   * Faces global north.
+   */
+  North = 0,
+  /**
+   * Faces away from the camera plane, the same direction as the camera itself.
+   */
+  CameraPlane = 1,
+  /**
+   * Faces in the direction the particle is moving. This direction can be modified by {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and is initially the particle's {@link InitialDirection}.
+   */
+  ParticleDirection = 2,
+  /**
+   * Tries to face the camera, but is limited to rotation around the global X-axis.
+   * 
+   * Seemingly identical to {@link UnkGlobalPitch}?
+   */
+  GlobalPitch = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical global Y-axis.
+   */
+  GlobalYaw = 4,
+  /**
+   * Tries to face the camera, but is limited to rotation around the global X-axis.
+   * 
+   * Seemingly identical to {@link GlobalPitch}?
+   */
+  UnkGlobalPitch = 5,
+  
+}
+
+/**
+ * Values used to represent different types of FXR nodes.
+ */
+export enum NodeType {
+  /**
+   * The root of the FXR tree structure.
+   * 
+   * **Class**: {@link RootNode}
+   */
+  Root = 2000,
+  /**
+   * Acts as a node containing another SFX.
+   * 
+   * **Class**: {@link ProxyNode}
+   */
+  Proxy = 2001,
+  /**
+   * A node that only displays one of its child nodes at a time based on distance thresholds for each.
+   * 
+   * **Class**: {@link LevelsOfDetailNode}
+   */
+  LevelsOfDetail = 2002,
+  /**
+   * A basic node that can emit particles, play sounds, have transforms and child nodes.
+   * 
+   * **Class**: {@link BasicNode}
+   */
+  Basic = 2200,
+  /**
+   * A node that emits its child nodes.
+   * 
+   * **Class**: {@link NodeEmitterNode}
+   */
+  NodeEmitter = 2202,
+  
+}
+
+/**
+ * Values representing different orientation modes for most particles.
+ */
+export enum OrientationMode {
+  /**
+   * Faces global south.
+   * 
+   * See also:
+   * - {@link UnkSouth}
+   */
+  South = 0,
+  /**
+   * Faces the camera plane.
+   * 
+   * See also:
+   * - {@link Camera}
+   */
+  CameraPlane = 1,
+  /**
+   * Faces the -Z direction of the parent node.
+   */
+  LocalSouth = 2,
+  /**
+   * Faces global south.
+   * 
+   * Similar to {@link South}, but this seems to change the projection of the particle in some way.
+   */
+  UnkSouth = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical global Y-axis.
+   */
+  GlobalYaw = 4,
+  /**
+   * Faces global east.
+   */
+  East = 5,
+  /**
+   * Faces the camera.
+   * 
+   * This is different from {@link CameraPlane}, as this makes it face the camera's position instead of the camera plane.
+   */
+  Camera = 6,
+  /**
+   * Tries to face the camera, but is limited to rotation around the Y-axis of the parent node.
+   */
+  LocalYaw = 7,
+  
+}
+
+/**
+ * Arguments used when evaluating properties.
+ * 
+ * There is no way to change what argument is given to a property. Each property has one specific argument given to it, and this is sometimes the only difference between two properties in the same action.
+ */
+export enum PropertyArgument {
+  /**
+   * A constant value of 0.
+   */
+  Constant0 = 0,
+  /**
+   * Time in seconds since the particle was emitted.
+   */
+  ParticleAge = 1,
+  /**
+   * Time in seconds since the action became active.
+   * 
+   * An action becoming active is for example the delay from {@link ActionType.NodeAttributes NodeAttributes} being over, or the active {@link State} changing, making a node change which of its configs is active.
+   */
+  ActiveTime = 2,
+  /**
+   * Time in seconds between the effect being created and the particle being emitted. Stays constant per particle.
+   */
+  EmissionTime = 3,
+  
+}
+
+/**
+ * Values representing different orientation modes for {@link ActionType.RichModel RichModel} particles.
+ */
+export enum RichModelOrientationMode {
+  /**
+   * Faces global north.
+   * 
+   * Seemingly identical to {@link UnkNorth}?
+   */
+  North = 0,
+  /**
+   * Faces away from the camera plane, the same direction as the camera itself.
+   */
+  CameraPlane = 1,
+  /**
+   * Faces in the direction the particle is moving. This direction can be modified by {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and is initially the particle's {@link InitialDirection}.
+   */
+  ParticleDirection = 2,
+  /**
+   * Faces global north.
+   * 
+   * Seemingly identical to {@link North}?
+   */
+  UnkNorth = 3,
+  /**
+   * Tries to face the camera, but is limited to rotation around the vertical global Y-axis.
+   */
+  GlobalYaw = 4,
+  
+}
+
+/**
+ * Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.DynamicTracer DynamicTracer} particles.
+ */
+export enum TracerOrientationMode {
+  /**
+   * The tracer source is perpendicular to the direction it's travelling and the direction of the camera.
+   */
+  Travel = 0,
+  /**
+   * The tracer source is aligned with the local Z-axis, which is detenmined by the rotation of the node that emits the tracer.
+   */
+  LocalZ = 1,
+  /**
+   * The tracer source is aligned with the global vertical axis.
+   */
+  Vertical = 2,
+  /**
+   * The tracer source is aligned with the global X-axis.
+   */
+  GlobalX = 3,
+  /**
+   * Creates two sources for the tracer with different orientation modes. One has {@link Vertical} and the other has {@link GlobalX}, forming a cross.
+   */
+  Cross = 4,
+  /**
+   * The tracer source is parallel to the global diagonal (1, 1, 1).
+   */
+  Diagonal = 5,
+  
+}
+/*#Enums end*/
 
 enum ValueType {
   Scalar = 0,
@@ -944,32 +1316,31 @@ enum PropertyFunction {
   /**
    * Always returns the value in the property's fields.
    * 
-   * This property function has a specialized subclass:
-   * {@link ConstantProperty}
+   * **Class**: {@link ConstantProperty}
    */
   Constant = 2,
   /**
    * Uses step interpolation to interpolate the property's values.
    * 
-   * This property function has a specialized subclass: {@link SteppedProperty}
+   * **Class**: {@link SteppedProperty}
    */
   Stepped = 3,
   /**
    * Uses linear interpolation to interpolate the property's values.
    * 
-   * This property function has a specialized subclass: {@link LinearProperty}
+   * **Class**: {@link LinearProperty}
    */
   Linear = 4,
   /**
    * Uses a cubic Bezier spline to interpolate the property's values.
    * 
-   * This property function has a specialized subclass: {@link BezierProperty}
+   * **Class**: {@link BezierProperty}
    */
   Bezier = 5,
   /**
    * Uses a cubic Hermite spline to interpolate the property's values.
    * 
-   * This property function has a specialized subclass: {@link HermiteProperty}
+   * **Class**: {@link HermiteProperty}
    */
   Hermite = 6,
   /**
@@ -977,6 +1348,8 @@ enum PropertyFunction {
    * number of keyframes.
    * 
    * Only available in Armored Core 6.
+   * 
+   * **Class**:  {@link ComponentSequenceProperty}
    */
   ComponentHermite = 7
 }
@@ -988,18 +1361,20 @@ enum ModifierType {
    * and `max` is the {@link RandomDeltaModifier.max maximum difference}, the
    * property's modified value will be between `p - max` and `p + max`.
    * 
-   * This modifier type has its own class: {@link RandomDeltaModifier}
+   * **Class**: {@link RandomDeltaModifier}
    */
   RandomDelta = 21,
   /**
    * Adds a random value in a given range to a property's value.
    * 
-   * This modifier type has its own class: {@link RandomRangeModifier}
+   * **Class**: {@link RandomRangeModifier}
    */
   RandomRange = 24,
   /**
    * Modifies a property's value by multiplying it with different values
    * depending on an {@link ExternalValue external value}.
+   * 
+   * **Class**:  {@link ExternalValue1Modifier}
    */
   ExternalValue1 = 38,
   /**
@@ -1010,6 +1385,8 @@ enum ModifierType {
    * The restrictions may depend on the game. In Elden Ring, it seems to only
    * work with the {@link ExternalValue.EldenRing.BloodVisibility DisplayBlood}
    * external value, but Armored Core 6 uses it for external value 2000.
+   * 
+   * **Class**:  {@link ExternalValue2Modifier}
    */
   ExternalValue2 = 39,
   /**
@@ -1018,6 +1395,8 @@ enum ModifierType {
    * base value and `max` is the
    * {@link RandomFractionModifier.max maximum fraction}, the property's
    * modified value will be between `p - p * max` and `p + p * max`.
+   * 
+   * **Class**:  {@link RandomFractionModifier}
    */
   RandomFraction = 53,
 }
@@ -1029,17 +1408,6 @@ enum FieldType {
   Vector2,
   Vector3,
   Vector4,
-}
-
-enum BlendMode {
-  Unk0 = 0,
-  Source = 1,
-  Normal = 2,
-  Multiply = 3,
-  Add = 4,
-  Subtract = 5,
-  Unk6 = 6,
-  Screen = 7,
 }
 
 namespace ExternalValue {
@@ -1137,7 +1505,7 @@ namespace ExternalValue {
     Unk70010 = 70010,
     Unk70020 = 70020,
     /**
-     * The "Scan Distance" value on your AC's currently equipped head part.
+     * The "Scan Distance" value on the player AC's currently equipped head part.
      */
     ScanDistance = 70200,
   }
@@ -1183,369 +1551,11 @@ enum OperandType {
   StateTime = -1,
 }
 
-enum AttachMode {
-  /**
-   * Completely detached.
-   */
-  None = 0,
-  /**
-   * Translates and rotates with the parent.
-   */
-  Parent = 1,
-  /**
-   * Translates and rotates with the attachment point (dummypoly). Parent transformations are ignored.
-   */
-  DummyPoly = 2,
-  /**
-   * Only translates with the parent. Rotations are entirely ignored.
-   */
-  ParentTranslation = 3,
-  /**
-   * Only translates with the attachment point (dummypoly). Rotations are entirely ignored.
-   */
-  DummyPolyTranslation = 4
-}
-
-enum PropertyArgument {
-  /**
-   * A constant value of 0.
-   */
-  Constant0,
-  /**
-   * Time in seconds since the particle was emitted.
-   */
-  ParticleAge,
-  /**
-   * Time in seconds since the {@link IEffect Effect} became active.
-   * 
-   * An effect becoming active is for example the delay from
-   * {@link ActionType.NodeAttributes NodeAttributes} being over, or the active
-   * {@link State} changing, making a node change which of its effects is
-   * active.
-   */
-  EffectAge,
-  /**
-   * Time in seconds between the effect being created and the particle being
-   * emitted. Stays constant per particle.
-   */
-  EmissionTime
-}
-
-enum OrientationMode {
-  /**
-   * Faces global south.
-   * 
-   * See also:
-   * - {@link UnkSouth}
-   */
-  South = 0,
-  /**
-   * Faces the camera plane.
-   * 
-   * See also:
-   * - {@link Camera}
-   */
-  CameraPlane = 1,
-  /**
-   * Faces the -Z direction of the parent node.
-   */
-  LocalSouth = 2,
-  /**
-   * Faces global south.
-   * 
-   * Similar to {@link South}, but this seems to change the projection of the
-   * particle in some way.
-   */
-  UnkSouth = 3,
-  /**
-   * Tries to face the camera, but is limited to rotation around the vertical
-   * global Y-axis.
-   */
-  GlobalYaw = 4,
-  /**
-   * Faces global east.
-   */
-  East = 5,
-  /**
-   * Faces the camera.
-   * 
-   * This is different from {@link CameraPlane}, as this makes it face the
-   * camera's position instead of the camera plane.
-   */
-  Camera = 6,
-  /**
-   * Tries to face the camera, but is limited to rotation around the Y axis of
-   * the parent node.
-   */
-  LocalYaw = 7,
-}
-
-enum ModelOrientationMode {
-  /**
-   * Faces global north.
-   */
-  North = 0,
-  /**
-   * Faces away from the camera plane, the same direction as the camera itself.
-   */
-  CameraPlane = 1,
-  /**
-   * Faces in the direction the particle is moving. This direction can be
-   * modified by
-   * {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and
-   * is initially the particle's {@link InitialDirection}.
-   */
-  ParticleDirection = 2,
-  /**
-   * Tries to face the camera, but is limited to rotation around the global
-   * X-axis.
-   * 
-   * Seemingly identical to {@link UnkGlobalPitch}?
-   */
-  GlobalPitch = 3,
-  /**
-   * Tries to face the camera, but is limited to rotation around the vertical
-   * global Y-axis.
-   */
-  GlobalYaw = 4,
-  /**
-   * Tries to face the camera, but is limited to rotation around the global
-   * X-axis.
-   * 
-   * Seemingly identical to {@link GlobalPitch}?
-   */
-  UnkGlobalPitch = 5,
-}
-
-enum TracerOrientationMode {
-  /**
-   * The tracer source is perpendicular to the direction it's travelling and
-   * the direction of the camera.
-   */
-  Travel = 0,
-  /**
-   * The tracer source is aligned with the local Z-axis, which is detenmined
-   * by the rotation of the node that emits the tracer.
-   */
-  LocalZ = 1,
-  /**
-   * The tracer source is aligned with the global vertical axis.
-   */
-  Vertical = 2,
-  /**
-   * The tracer source is aligned with the global X-axis.
-   */
-  GlobalX = 3,
-  /**
-   * Creates two sources for the tracer with different orientation modes. One
-   * has {@link Vertical} and the other has {@link GlobalX}, forming a cross.
-   */
-  Cross = 4,
-  /**
-   * The tracer source is parallel to the global diagonal (1, 1, 1).
-   */
-  Diagonal = 5,
-}
-
-enum RichModelOrientationMode {
-  /**
-   * Faces global north.
-   * 
-   * Seemingly identical to {@link UnkNorth}?
-   */
-  North = 0,
-  /**
-   * Faces away from the camera plane, the same direction as the camera itself.
-   */
-  CameraPlane = 1,
-  /**
-   * Faces in the direction the particle is moving. This direction can be
-   * modified by
-   * {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and
-   * is initially the particle's {@link InitialDirection}.
-   */
-  ParticleDirection = 2,
-  /**
-   * Faces global north.
-   * 
-   * Seemingly identical to {@link North}?
-   */
-  UnkNorth = 3,
-  /**
-   * Tries to face the camera, but is limited to rotation around the vertical
-   * global Y-axis.
-   */
-  GlobalYaw = 4,
-}
-
-enum LightingMode {
-  /**
-   * Same as {@link Lit}, but this seems to sometimes have an extra light
-   * source from somewhere?
-   */
-  UnkMinus2 = -2,
-  /**
-   * Lighting does not affect the particles. No shadows or specular
-   * hightlights.
-   */
-  Unlit = -1,
-  /**
-   * Lighting affects the particles just like most regular objects.
-   */
-  Lit = 0,
-}
-
-/**
- * Used by {@link ActionType.Distortion distortion} particles to control what
- * type of distortion to apply.
- */
-enum DistortionMode {
-  /**
-   * Distorts the background as if you stuck something into it and stirred it.
-   * It is animated, and the stir speed is controlled by a property.
-   */
-  Stir = 0,
-  /**
-   * Distorts the background based on the normal map.
-   */
-  NormalMap = 1,
-  /**
-   * Distorts the background as if the edges were held in place and you grabbed
-   * the center and twisted it.
-   */
-  Twist = 2,
-  /**
-   * Seemingly identical to {@link NormalMap}?
-   */
-  Unk3 = 3,
-  /**
-   * This seems to just squeeze everything to the bottom left corner?
-   */
-  Unk4 = 4,
-}
-
-/**
- * Possible shapes for {@link ActionType.Distortion distortion} particles.
- */
-enum DistortionShape {
-  /**
-   * A flat rectangle.
-   */
-  Rectangle = 0,
-  /**
-   * Half of an ellipsoid. (Like a hemisphere, but with three different radii.)
-   */
-  Hemiellipsoid = 1,
-  /**
-   * An ellipsoid. (Like a sphere, but with three different radii.)
-   */
-  Ellipsoid = 2,
-}
-
-/**
- * An emitted instance's initial direction is used for various things that
- * require a direction, but does not have a set one to follow.
- * - {@link ActionType.ParticleModifier ParticleModifier action}'s
- * {@link ParticleModifierParams.speed speed}.
- * - {@link ActionType.Line Line action}'s initial rotation.
- * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
- * 
- * The initial direction can be further modified by the following actions:
- * - {@link ActionType.NoSpread NoSpread}
- * - {@link ActionType.CircularSpread CircularDirectionSpread}
- * - {@link ActionType.EllipticalSpread EllipticalDirectionSpread}
- * - {@link ActionType.RectangularSpread RectangularDirectionSpread}
- */
-enum InitialDirection {
-  /**
-   * The direction will depend on the emitter shape.
-   * | Emitter&nbsp;Shape | Direction |
-   * |:-|:-|
-   * | {@link ActionType.PointEmitterShape Point} | Same as {@link LocalNorth}. |
-   * | {@link ActionType.DiskEmitterShape Disk} | Same as {@link LocalNorth}. |
-   * | {@link ActionType.RectangleEmitterShape Rectangle} | Same as {@link LocalNorth}. |
-   * | {@link ActionType.SphereEmitterShape Sphere} | The direction cannot be changed for this emitter shape. |
-   * | {@link ActionType.BoxEmitterShape Box} | If {@link BoxEmitterShape.emitInside emitInside} is true, it picks a direction parallel to a random local axis. If it is false, the direction will be out from the box, perpendicular to the side where the particle was emitted. |
-   * | {@link ActionType.CylinderEmitterShape Cylinder} | Out from the cylinder's axis. |
-   */
-  Emitter = 0,
-  /**
-   * Global up. (+Y)
-   */
-  Up = 1,
-  /**
-   * Global down. (-Y)
-   */
-  Down = 2,
-  /**
-   * Global north. (+Z)
-   */
-  North = 3,
-  /**
-   * Local up. (+Y)
-   */
-  LocalUp = 4,
-  /**
-   * Local down. (-Y)
-   */
-  LocalDown = 5,
-  /**
-   * Local north. (+Z)
-   */
-  LocalNorth = 6,
-}
-
-/**
- * Emitter shapes for the following actions:
- * - {@link ActionType.GPUStandardParticle GPUStandardParticle}
- * - {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle}
- * - {@link ActionType.GPUSparkParticle GPUSparkParticle}
- * - {@link ActionType.GPUSparkCorrectParticle GPUSparkCorrectParticle}
- * 
- * Not related to the {@link ActionSlots.EmitterShapeAction emitter shape actions}.
- */
-enum EmitterShape {
-  /**
-   * A simple line.
-   */
-  Line = 0,
-  /**
-   * A cuboid.
-   * 
-   * The difference between this and {@link Box2} is how the
-   * {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
-   */
-  Box = 1,
-  /**
-   * A cuboid.
-   * 
-   * The difference between this and {@link Box} is how the
-   * {@link GPUStandardParticle.emitterDistribution distribution} field acts on it.
-   */
-  Box2 = 2,
-  /**
-   * Seemingly identical to {@link Line}?
-   */
-  Unk3 = 3,
-  /**
-   * A cylinder without the two end faces.
-   */
-  Cylinder = 4,
-}
-
 enum ResourceType {
   Texture = 0,
   Model = 1,
   Anibnd = 2,
   Sound = 3,
-}
-
-enum ForceVolumeShape {
-  Boundless = 0,
-  Sphere = 1,
-  Box = 2,
-  Cylinder = 3,
-  SquarePrism = 4,
 }
 
 /**
@@ -1740,14 +1750,14 @@ export interface IAction {
   clone(): IAction
 }
 
-export interface IEffect {
-  readonly type: EffectType
+export interface IConfig {
+  readonly type: ConfigType
   getActionCount(game: Game): number
   getActions(game: Game): AnyAction[]
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<AnyAction>
-  clone(): IEffect
+  clone(): IConfig
 }
 
 export interface IModifier<T extends ValueType> {
@@ -1903,6 +1913,10 @@ export namespace ActionSlots {
     | CylinderEmitterShape
     | Action
 
+  export type LevelsOfDetailThresholdsAction =
+    | LevelsOfDetailThresholds
+    | Action
+
   export type NodeAttributesAction =
     | NodeAttributes
     | Action
@@ -1963,10 +1977,18 @@ export namespace ActionSlots {
     | ParticleAccelerationPartialFollow
     | Action
 
-  export type Unknown70xAction =
-    | Unk700
-    | Unk701
-    | Unk702
+  export type SFXReferenceAction =
+    | SFXReference
+    | Action
+
+  export type StateConfigMapAction =
+    | StateConfigMap
+    | Action
+
+  export type TerminationAction =
+    | SimulateTermination
+    | FadeTermination
+    | InstantTermination
     | Action
 
   export type Unknown130Action =
@@ -2002,28 +2024,32 @@ export type FilledActionGameDataEntry = {
   properties2?: string[]
   section10s?: string[]
 }
-const ActionData: {
-  [x: string]: {
-    props?: {
-      [name: string]: {
-        default: any
-        field?: FieldType
-        resource?: ResourceType
-        textureType?: string
-        scale?: ScaleCondition
-        time?: TimeOperation
-        color?: 1
-        omit?: 1
-        paths?: {
-          [game: string]: [string, number]
-        }
-      }
+export type ActionDataProp = (
+  {
+    field?: FieldType
+    resource?: ResourceType
+    textureType?: string
+    scale?: ScaleCondition
+    time?: TimeOperation
+    color?: 1
+    omit?: 1
+    paths?: {
+      [game: string]: [string, number]
     }
-    games?: {
-      [game: string]: ActionGameDataEntry | Game | -2
-    }
-  }
-} = {
+  } & ({
+    default: AnyValue
+  } | {
+    default: boolean
+    field: FieldType.Boolean
+  } | {
+    default: number[]
+    s10: 1
+  })
+)
+const ActionData: Record<string, {
+  props?: Record<string, ActionDataProp>
+  games?: Record<string, ActionGameDataEntry | Game | -2>
+}> = {
   /*#ActionData start*/
   [ActionType.NodeAcceleration]: {
     props: {
@@ -2432,14 +2458,14 @@ const ActionData: {
   [ActionType.NodeAttributes]: {
     props: {
       duration: { default: -1, time: 3 },
-      delay: { default: 0, field: 2 },
+      delay: { default: 0, field: 2, time: 2 },
       unk_ds3_f1_1: { default: 1, field: 1 },
       attachment: { default: AttachMode.Parent, field: 1 },
-      unk_ds3_f1_3: { default: 0, field: 2 },
+      depthBias: { default: 0, field: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['delay','unk_ds3_f1_1','attachment','unk_ds3_f1_3'],
+        fields1: ['delay','unk_ds3_f1_1','attachment','depthBias'],
         properties1: ['duration']
       },
       [Game.Sekiro]: Game.DarkSouls3,
@@ -2547,13 +2573,13 @@ const ActionData: {
       }
     }
   },
-  [ActionType.StateEffectMap]: {
+  [ActionType.StateConfigMap]: {
     props: {
-      effectIndices: { default: [0] },
+      configIndices: { default: [0], s10: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        section10s: ['effectIndices']
+        section10s: ['configIndices']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -2563,7 +2589,7 @@ const ActionData: {
   [ActionType.SelectAllNodes]: {},
   [ActionType.SelectRandomNode]: {
     props: {
-      weights: { default: [1] },
+      weights: { default: [1], s10: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -3062,7 +3088,7 @@ const ActionData: {
       unk_sdt_f1_16: { default: 1, field: 1 },
       unk_sdt_f1_17: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: 0, field: 0 },
+      unk_ds3_f2_1: { default: false, field: 0 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
       bloom: { default: true, field: 0 },
@@ -3090,7 +3116,7 @@ const ActionData: {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -3224,7 +3250,7 @@ const ActionData: {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -3353,7 +3379,7 @@ const ActionData: {
       unk_sdt_f2_29: { default: 0, field: 2 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3432,7 +3458,7 @@ const ActionData: {
       unk_er_f1_15: { default: 1, field: 1 },
       unk_er_f1_16: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: 0, field: 0 },
+      unk_ds3_f2_1: { default: false, field: 0 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
@@ -3460,7 +3486,7 @@ const ActionData: {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -3709,7 +3735,7 @@ const ActionData: {
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 100, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
-      unk_ds3_f2_24: { default: 0, field: 2 },
+      maxViewDistance: { default: 0, field: 2 },
       volumeDensity: { default: 0, field: 2 },
       unk_sdt_f2_25: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -3724,38 +3750,38 @@ const ActionData: {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1'],
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','unk_ds3_f2_12','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','unk_ds3_f2_12','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance'],
         properties1: ['diffuseColor','specularColor','radius','unk_ds3_p1_3','unk_ds3_p1_4','unk_ds3_p1_5','unk_ds3_p1_6','unk_ds3_p1_7','unk_ds3_p1_8','unk_ds3_p1_9'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1']
       },
       [Game.Sekiro]: {
         fields1: Game.DarkSouls3,
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent'],
         properties1: Game.DarkSouls3,
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_sdt_p2_2','diffuseMultiplier','specularMultiplier']
       },
       [Game.EldenRing]: {
         fields1: Game.DarkSouls3,
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
         properties1: Game.DarkSouls3,
         properties2: Game.Sekiro
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.Unk700]: {},
-  [ActionType.Unk701]: {
+  [ActionType.SimulateTermination]: {},
+  [ActionType.FadeTermination]: {
     props: {
-      unk_er_p1_0: { default: 1 },
+      duration: { default: 1, time: 2 },
     },
     games: {
       [Game.EldenRing]: {
-        properties1: ['unk_er_p1_0']
+        properties1: ['duration']
       },
       [Game.ArmoredCore6]: Game.EldenRing
     }
   },
-  [ActionType.Unk702]: {},
+  [ActionType.InstantTermination]: {},
   [ActionType.NodeForceSpeed]: {
     props: {
       speed: { default: 0, scale: 1, time: 1 },
@@ -3968,7 +3994,7 @@ const ActionData: {
       unk_ds3_f1_139: { default: 0, field: 2 },
       unk_ds3_f1_140: { default: 0, field: 2 },
       unk_ds3_f1_141: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4193,7 +4219,7 @@ const ActionData: {
       unk_ds3_f1_139: { default: 0, field: 2 },
       unk_ds3_f1_140: { default: 0, field: 2 },
       unk_ds3_f1_141: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4413,7 +4439,7 @@ const ActionData: {
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
       unk_ac6_f1_89: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4569,7 +4595,7 @@ const ActionData: {
       unk_ac6_f1_87: { default: 8, field: 1 },
       unk_ac6_f1_88: { default: 0, field: 1 },
       unk_ac6_f1_89: { default: 0, field: 1 },
-      limitUpdateDistance: { default: 0, field: 0 },
+      limitUpdateDistance: { default: false, field: 0 },
       updateDistance: { default: 0, field: 2, scale: 1 },
       particleCollision: { default: false, field: 0 },
       particleBounciness: { default: 0, field: 2 },
@@ -4679,7 +4705,7 @@ const ActionData: {
       unk_er_f1_20: { default: 0, field: 1 },
       unk_er_f1_21: { default: 0, field: 2 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: 0, field: 0 },
+      unk_ds3_f2_1: { default: false, field: 0 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
@@ -4707,7 +4733,7 @@ const ActionData: {
       unk_ds3_f2_29: { default: 5, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -5519,8 +5545,8 @@ for (const [type, action] of Object.entries(ActionData)) {
   }
 }
 
-const EffectActionSlots = {
-  [EffectType.Basic]: [
+const ConfigActionSlots = {
+  [ConfigType.Basic]: [
     [
       ActionType.NodeAttributes
     ],
@@ -5622,7 +5648,7 @@ const EffectActionSlots = {
       ActionType.ParticleForceCollision
     ]
   ],
-  [EffectType.NodeEmitter]: [
+  [ConfigType.NodeEmitter]: [
     [
       ActionType.NodeAttributes
     ],
@@ -6231,11 +6257,11 @@ function readNode(br: BinaryReader): Node {
   br.assertUint8(0)
   br.assertUint8(1)
   br.assertInt32(0)
-  const effectCount = br.readInt32()
+  const configCount = br.readInt32()
   const actionCount = br.readInt32()
   const nodeCount = br.readInt32()
   br.assertInt32(0)
-  const effectOffset = br.readInt32()
+  const configOffset = br.readInt32()
   br.assertInt32(0)
   const actionOffset = br.readInt32()
   br.assertInt32(0)
@@ -6247,10 +6273,10 @@ function readNode(br: BinaryReader): Node {
     nodes.push(readNode(br))
   }
   br.stepOut()
-  br.stepIn(effectOffset)
-  const effects = []
-  for (let i = 0; i < effectCount; ++i) {
-    effects.push(readEffect(br))
+  br.stepIn(configOffset)
+  const configs = []
+  for (let i = 0; i < configCount; ++i) {
+    configs.push(readConfig(br))
   }
   br.stepOut()
   br.stepIn(actionOffset)
@@ -6261,11 +6287,11 @@ function readNode(br: BinaryReader): Node {
   br.stepOut()
   if (br.game !== Game.Generic) switch (type) {
     case NodeType.Root:
-      if (effectCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
+      if (configCount === 0 && actionCount === (br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? 3 : 4)) {
         return new RootNode(
           nodes,
           br.game === Game.DarkSouls3 || br.game === Game.Sekiro ? null :
-            actions.find(e => e.type >= 700 && e.type <= 702) ?? new Action(ActionType.Unk700),
+            actions.find(e => e.type >= 700 && e.type <= 702) ?? new Action(ActionType.SimulateTermination),
           actions.find(e => e.type === ActionType.Unk10100),
           actions.find(e => e.type === ActionType.Unk10400),
           actions.find(e => e.type === ActionType.Unk10500)
@@ -6273,27 +6299,27 @@ function readNode(br: BinaryReader): Node {
       }
       break
     case NodeType.Proxy:
-      if (effectCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
+      if (configCount === 0 && actionCount === 1 && actions[0] instanceof SFXReference) {
         return new ProxyNode(actions[0].sfx)
       }
       break
     case NodeType.LevelsOfDetail:
-      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new LevelsOfDetailNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      if (actionCount === 1 && actions[0] instanceof StateConfigMap) {
+        return new LevelsOfDetailNode(configs, nodes).mapStates(...actions[0].configIndices)
       }
       break
     case NodeType.Basic:
-      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new BasicNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      if (actionCount === 1 && actions[0] instanceof StateConfigMap) {
+        return new BasicNode(configs, nodes).mapStates(...actions[0].configIndices)
       }
       break
     case NodeType.NodeEmitter:
-      if (actionCount === 1 && actions[0] instanceof StateEffectMap) {
-        return new NodeEmitterNode(effects, nodes).mapStates(...actions[0].effectIndices)
+      if (actionCount === 1 && actions[0] instanceof StateConfigMap) {
+        return new NodeEmitterNode(configs, nodes).mapStates(...actions[0].configIndices)
       }
       break
   }
-  return new GenericNode(type, actions, effects, nodes)
+  return new GenericNode(type, actions, configs, nodes)
 }
 
 function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
@@ -6301,15 +6327,15 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
     throw new Error('Non-generic node classes cannot be formatted for Game.Generic.')
   }
   const count = nodes.length
-  let effectCount = 0
+  let configCount = 0
   let actionCount = 0
   let childCount = 0
   if (node instanceof GenericNode) {
-    effectCount = node.effects.length
+    configCount = node.configs.length
     actionCount = node.actions.length
     childCount = node.nodes.length
-  } else if (node instanceof NodeWithEffects) {
-    effectCount = node.effects.length
+  } else if (node instanceof NodeWithConfigs) {
+    configCount = node.configs.length
     actionCount = 1
     childCount = node.nodes.length
   } else if (node instanceof RootNode) {
@@ -6322,11 +6348,11 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
-  bw.writeInt32(effectCount)
+  bw.writeInt32(configCount)
   bw.writeInt32(actionCount)
   bw.writeInt32(childCount)
   bw.writeInt32(0)
-  bw.reserveInt32(`NodeEffectsOffset${count}`)
+  bw.reserveInt32(`NodeConfigsOffset${count}`)
   bw.writeInt32(0)
   bw.reserveInt32(`NodeActionsOffset${count}`)
   bw.writeInt32(0)
@@ -6338,7 +6364,7 @@ function writeNode(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
 function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node[]) {
   const num = nodes.indexOf(node)
   let childCount = 0
-  if (node instanceof GenericNode || node instanceof NodeWithEffects || node instanceof RootNode) {
+  if (node instanceof GenericNode || node instanceof NodeWithConfigs || node instanceof RootNode) {
     childCount = node.nodes.length
   }
   if (childCount === 0) {
@@ -6355,38 +6381,38 @@ function writeNodeChildren(node: Node, bw: BinaryWriter, game: Game, nodes: Node
   }
 }
 
-function writeNodeEffects(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }) {
-  let effectCount = 0
-  if (node instanceof GenericNode || node instanceof NodeWithEffects) {
-    effectCount = node.effects.length
+function writeNodeConfigs(node: Node, bw: BinaryWriter, game: Game, index: number, configCounter: { value: number }) {
+  let configCount = 0
+  if (node instanceof GenericNode || node instanceof NodeWithConfigs) {
+    configCount = node.configs.length
   }
-  if (effectCount === 0) {
-    bw.fill(`NodeEffectsOffset${index}`, 0)
+  if (configCount === 0) {
+    bw.fill(`NodeConfigsOffset${index}`, 0)
   } else {
-    bw.fill(`NodeEffectsOffset${index}`, bw.position)
-    const nodeEffects = node.getEffects(game)
-    for (let i = 0; i < nodeEffects.length; ++i) {
-      writeEffect(nodeEffects[i], bw, game, effectCounter.value + i)
+    bw.fill(`NodeConfigsOffset${index}`, bw.position)
+    const nodeConfigs = node.getConfigs(game)
+    for (let i = 0; i < nodeConfigs.length; ++i) {
+      writeConfig(nodeConfigs[i], bw, game, configCounter.value + i)
     }
-    effectCounter.value += nodeEffects.length
+    configCounter.value += nodeConfigs.length
   }
 }
 
-function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, effectCounter: { value: number }, actions: Action[]) {
+function writeNodeActions(node: Node, bw: BinaryWriter, game: Game, index: number, configCounter: { value: number }, actions: Action[]) {
   bw.fill(`NodeActionsOffset${index}`, bw.position)
   const nodeActions = node.getActions(game)
-  const nodeEffects = node.getEffects(game)
+  const nodeConfigs = node.getConfigs(game)
   for (const action of nodeActions) {
     writeAnyAction(action, bw, game, actions)
   }
-  for (let i = 0; i < nodeEffects.length; ++i) {
-    writeEffectActions(nodeEffects[i], bw, game, effectCounter.value + i, actions)
+  for (let i = 0; i < nodeConfigs.length; ++i) {
+    writeConfigActions(nodeConfigs[i], bw, game, configCounter.value + i, actions)
   }
-  effectCounter.value += nodeEffects.length
+  configCounter.value += nodeConfigs.length
 }
 
-//#region Functions - Effect
-function readEffect(br: BinaryReader): IEffect {
+//#region Functions - Config
+function readConfig(br: BinaryReader): IConfig {
   const type = br.readInt16()
   br.assertUint8(0)
   br.assertUint8(1)
@@ -6404,41 +6430,41 @@ function readEffect(br: BinaryReader): IEffect {
   }
   br.stepOut()
   if (br.game === Game.Generic) {
-    return new Effect(type, actions)
-  } else if (type === EffectType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
+    return new NodeConfig(type, actions)
+  } else if (type === ConfigType.LevelsOfDetail && actionCount === 1 && actions[0] instanceof LevelsOfDetailThresholds) {
     const lod = actions[0]
-    return new LevelsOfDetailEffect(lod.duration, [
+    return new LevelsOfDetailConfig(lod.duration, [
       lod.threshold0,
       lod.threshold1,
       lod.threshold2,
       lod.threshold3,
       lod.threshold4,
     ])
-  } else if (type === EffectType.Basic && actionCount <= 15) {
-    return new BasicEffect(actions)
-  } else if (type === EffectType.NodeEmitter && actionCount <= 10) {
-    return new NodeEmitterEffect(actions)
+  } else if (type === ConfigType.Basic && actionCount <= 15) {
+    return new BasicConfig(actions)
+  } else if (type === ConfigType.NodeEmitter && actionCount <= 10) {
+    return new NodeEmitterConfig(actions)
   } else {
-    return new Effect(type, actions)
+    return new NodeConfig(type, actions)
   }
 }
 
-function writeEffect(effect: IEffect, bw: BinaryWriter, game: Game, index: number) {
-  bw.writeInt16(effect.type)
+function writeConfig(config: IConfig, bw: BinaryWriter, game: Game, index: number) {
+  bw.writeInt16(config.type)
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.writeInt32(effect.getActionCount(game))
+  bw.writeInt32(config.getActionCount(game))
   bw.writeInt32(0)
   bw.writeInt32(0)
-  bw.reserveInt32(`EffectActionsOffset${index}`)
+  bw.reserveInt32(`ConfigActionsOffset${index}`)
   bw.writeInt32(0)
 }
 
-function writeEffectActions(effect: IEffect, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
-  bw.fill(`EffectActionsOffset${index}`, bw.position)
-  for (const action of effect.getActions(game)) {
+function writeConfigActions(config: IConfig, bw: BinaryWriter, game: Game, index: number, actions: Action[]) {
+  bw.fill(`ConfigActionsOffset${index}`, bw.position)
+  for (const action of config.getActions(game)) {
     writeAnyAction(action, bw, game, actions)
   }
 }
@@ -7727,12 +7753,12 @@ function fieldsCount(fields: Field<FieldType>[]) {
   return count
 }
 
-function getComponentCount(v: AnyValue): 1 | 2 | 3 | 4 {
-  const vt = isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
-  if (vt < 1 || vt > 4) {
+function getComponentCount(v: AnyValue | boolean): 1 | 2 | 3 | 4 {
+  const cc = isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
+  if (cc < 1 || cc > 4) {
     throw new Error('Invalid value.')
   }
-  return vt
+  return cc
 }
 
 /**
@@ -8104,6 +8130,32 @@ function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[t
   }
 }
 
+function validateDataActionProp(container: any, name: string, prop: ActionDataProp) {
+  if (!(container[name] instanceof Property) && typeof container[name] !== typeof prop.default) {
+    throw new Error(`${ActionType[container.type]}.${name} is not of the correct type.`)
+  }
+
+  if ('s10' in prop) {
+    if (!Array.isArray(container[name]) || container[name].some(e => typeof e !== 'number')) {
+      throw new Error(`${ActionType[container.type]}.${name} must be an array of numbers.`)
+    }
+    return
+  }
+
+  const cc = getComponentCount(container[name])
+  const defCC = getComponentCount(prop.default)
+  if (cc !== defCC) {
+    throw new Error(`${ActionType[container.type]}.${name} has ${cc} components, but is expected to have ${defCC}.`)
+  }
+}
+
+const GameVersionMap = {
+  [Game.DarkSouls3]: FXRVersion.DarkSouls3,
+  [Game.Sekiro]: FXRVersion.Sekiro,
+  [Game.EldenRing]: FXRVersion.Sekiro,
+  [Game.ArmoredCore6]: FXRVersion.Sekiro,
+}
+
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
     read(props: StaticNodeTransformParams, game: Game) {
@@ -8239,10 +8291,10 @@ const ActionDataConversion = {
       return props
     }
   },
-  [ActionType.StateEffectMap]: {
-    minify(this: StateEffectMap): StateEffectMap {
-      if (this.effectIndices.length > 1 && this.effectIndices.every(e => e === 0)) {
-        return new StateEffectMap
+  [ActionType.StateConfigMap]: {
+    minify(this: StateConfigMap): StateConfigMap {
+      if (this.configIndices.length > 1 && this.configIndices.every(e => e === 0)) {
+        return new StateConfigMap
       }
       return this
     }
@@ -8877,8 +8929,7 @@ class FXR {
    * Parses an FXR file.
    * 
    * This uses the fs module from Node.js to read the file. If you are
-   * targeting browers, pass an {@link ArrayBuffer} or
-   * {@link ArrayBufferView} of the contents of the file instead.
+   * targeting browers, pass an {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
    * @param game The game the FXR file is for.
    */
@@ -8891,7 +8942,7 @@ class FXR {
 
   /**
    * Parses an FXR file.
-   * @param buffer {@link ArrayBuffer} or {@link ArrayBufferView} of the
+   * @param buffer {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the
    * contents of the FXR file to parse.
    * @param game The game the FXR file is for. Defaults to
    * {@link Game.Heuristic}, which will make the function try to figure out
@@ -8915,8 +8966,7 @@ class FXR {
 
   /**
    * Parses an FXR file.
-   * @param input A path to the FXR file to parse, or an {@link ArrayBuffer} or
-   * {@link ArrayBufferView} of the contents of the FXR file.
+   * @param input A path to the FXR file to parse, or an {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the contents of the FXR file.
    * @param game The game the FXR file is for.
    */
   static read<T extends typeof FXR>(
@@ -8963,8 +9013,8 @@ class FXR {
     const nodeOffset = br.readInt32()
     br.position += 15 * 4
     // br.readInt32() // NodeCount
-    // br.readInt32() // EffectOffset
-    // br.readInt32() // EffectCount
+    // br.readInt32() // ConfigOffset
+    // br.readInt32() // ConfigCount
     // br.readInt32() // ActionOffset
     // br.readInt32() // ActionCount
     // br.readInt32() // PropertyOffset
@@ -9074,8 +9124,8 @@ class FXR {
     bw.reserveInt32('ConditionCount')
     bw.reserveInt32('NodeOffset')
     bw.reserveInt32('NodeCount')
-    bw.reserveInt32('EffectOffset')
-    bw.reserveInt32('EffectCount')
+    bw.reserveInt32('ConfigOffset')
+    bw.reserveInt32('ConfigCount')
     bw.reserveInt32('ActionOffset')
     bw.reserveInt32('ActionCount')
     bw.reserveInt32('PropertyOffset')
@@ -9172,12 +9222,12 @@ class FXR {
     writeNodeChildren(root, bw, game, nodes)
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
-    bw.fill('EffectOffset', bw.position)
+    bw.fill('ConfigOffset', bw.position)
     let counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
-      writeNodeEffects(nodes[i], bw, game, i, counter)
+      writeNodeConfigs(nodes[i], bw, game, i, counter)
     }
-    bw.fill('EffectCount', counter.value)
+    bw.fill('ConfigCount', counter.value)
     bw.pad(16)
     bw.fill('ActionOffset', bw.position)
     counter.value = 0
@@ -9412,14 +9462,14 @@ class FXR {
    * Finds and returns a value at a given path. If the path does not match
    * anything, this returns `null`.
    * 
-   * For example, to get the appearance action in the second effect in the
+   * For example, to get the appearance action in the second config in the
    * first child node of the root node, you would use this path:
    * ```js
-   * fxr.find(['root', 'nodes', 0, 'effects', 1, 'appearance'])
+   * fxr.find(['root', 'nodes', 0, 'configs', 1, 'appearance'])
    * // Or in string form:
-   * fxr.find('root/nodes/0/effects/1/appearance')
+   * fxr.find('root/nodes/0/configs/1/appearance')
    * // Both are equivalent to this:
-   * fxr.root.nodes[0].effects[1].appearance
+   * fxr.root.nodes[0].configs[1].appearance
    * ```
    * @param path The path to the value to look for.
    */
@@ -9727,7 +9777,7 @@ class StateCondition {
 /**
  * The base class for all nodes.
  * 
- * A node is a container with actions, effects, and other nodes, and they form
+ * A node is a container with actions, configs, and other nodes, and they form
  * the tree structure of the FXR.
  */
 abstract class Node {
@@ -9735,7 +9785,7 @@ abstract class Node {
   constructor(public readonly type: NodeType) {}
 
   abstract getActions(game: Game): AnyAction[]
-  getEffects(game: Game): IEffect[] { return [] }
+  getConfigs(game: Game): IConfig[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
@@ -9769,7 +9819,7 @@ abstract class Node {
     if (
       this instanceof GenericNode ||
       this instanceof RootNode ||
-      this instanceof NodeWithEffects
+      this instanceof NodeWithConfigs
     ) {
       for (const node of this.nodes) {
         yield* node.walk()
@@ -9778,21 +9828,21 @@ abstract class Node {
   }
 
   /**
-   * Yields all effects in this branch.
-   * @param recurse Controls whether or not to yield effects in descendant
+   * Yields all configs in this branch.
+   * @param recurse Controls whether or not to yield configs in descendant
    * nodes. Defaults to true.
    */
-  *walkEffects(recurse: boolean = true) {
+  *walkConfigs(recurse: boolean = true) {
     for (const node of recurse ? this.walk() : [this]) {
-      if (node instanceof NodeWithEffects || node instanceof GenericNode) {
-        yield* node.effects
+      if (node instanceof NodeWithConfigs || node instanceof GenericNode) {
+        yield* node.configs
       }
     }
   }
 
   /**
    * Yields all actions in this branch, excluding node actions from
-   * {@link NodeWithEffects nodes with effects}, as those are not stored as
+   * {@link NodeWithConfigs nodes with configs}, as those are not stored as
    * actions internally.
    * @param recurse Controls whether or not to yield actions in descendant
    * nodes. Defaults to true.
@@ -9802,14 +9852,14 @@ abstract class Node {
       if (node instanceof GenericNode) {
         yield* node.actions
       } else if (node instanceof RootNode) {
-        yield node.unk70x
+        yield node.termination
         yield node.unk10100
         yield node.unk10400
         yield node.unk10500
       }
-      if (node instanceof GenericNode || node instanceof NodeWithEffects) {
-        for (const effect of node.effects) {
-          yield* effect.walkActions()
+      if (node instanceof GenericNode || node instanceof NodeWithConfigs) {
+        for (const config of node.configs) {
+          yield* config.walkActions()
         }
       }
     }
@@ -10159,8 +10209,8 @@ abstract class Node {
           }
         }
       }
-      for (const effect of this.walkEffects(recurse)) if (effect instanceof BasicEffect) {
-        const a = effect.appearance
+      for (const config of this.walkConfigs(recurse)) if (config instanceof BasicConfig) {
+        const a = config.appearance
         if (
           a instanceof PointSprite ||
           a instanceof Line ||
@@ -10172,7 +10222,7 @@ abstract class Node {
           a instanceof Tracer ||
           a instanceof DynamicTracer
         ) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           if (a instanceof MultiTextureBillboardEx) {
             a.recolorProperty('layersColor', Recolor.grayscale)
             a.recolorProperty('layer1Color', Recolor.grayscale)
@@ -10187,7 +10237,7 @@ abstract class Node {
           }
           if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
             blendMode = BlendMode.Normal
-          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Screen) {
+          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Unk7) {
             blendMode = BlendMode.Add
           }
           const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
@@ -10195,35 +10245,35 @@ abstract class Node {
             Recolor.PaletteSlots['CommonParticle'][]
           >
           const pc = randomItem(palette[key])
-          const ndf = durationFallback(effect.nodeAttributes)
-          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
-          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          const ndf = durationFallback(config.nodeAttributes)
+          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
+          proc(pc.modifier, config.particleModifier, 'color', ndf)
           proc(pc.color1, a, 'color1', pdf)
           proc(pc.color2, a, 'color2', ndf)
           proc(pc.color3, a, 'color3', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof Distortion) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           const pc = randomItem(palette.distortionParticle)
-          const ndf = durationFallback(effect.nodeAttributes)
-          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
-          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          const ndf = durationFallback(config.nodeAttributes)
+          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
+          proc(pc.modifier, config.particleModifier, 'color', ndf)
           proc(pc.color, a, 'color', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof RadialBlur) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           const pc = randomItem(palette.blurParticle)
-          const ndf = durationFallback(effect.nodeAttributes)
-          const pdf = durationFallback(effect.particleAttributes, effect.nodeAttributes)
-          proc(pc.modifier, effect.particleModifier, 'color', ndf)
+          const ndf = durationFallback(config.nodeAttributes)
+          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
+          proc(pc.modifier, config.particleModifier, 'color', ndf)
           proc(pc.color, a, 'color', pdf)
           proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
           proc(pc.bloomColor, a, 'bloomColor')
         } else if (a instanceof PointLight || a instanceof SpotLight) {
           const pc = randomItem(palette.light)
-          const df = durationFallback(effect.nodeAttributes)
+          const df = durationFallback(config.nodeAttributes)
           proc(pc.diffuseColor, a, 'diffuseColor', df)
           proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
           a.separateSpecular = 'specularColor' in pc
@@ -10238,7 +10288,7 @@ abstract class Node {
           a instanceof GPUSparkCorrectParticle
         ) {
           const pc = randomItem(palette.gpuParticle)
-          proc(pc.color, a, 'color', durationFallback(effect.nodeAttributes))
+          proc(pc.color, a, 'color', durationFallback(config.nodeAttributes))
           proc(pc.rgbMultiplier, a, 'rgbMultiplier')
           proc(pc.colorMin, a, 'colorMin')
           proc(pc.colorMax, a, 'colorMax')
@@ -10248,7 +10298,7 @@ abstract class Node {
           }
         } else if ('lensFlare' in palette && a instanceof LensFlare) {
           const pc = randomItem(palette.lensFlare)
-          const df = durationFallback(effect.nodeAttributes)
+          const df = durationFallback(config.nodeAttributes)
           proc(pc.color, a, 'layer1Color', df)
           proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
           proc(pc.bloomColor, a, 'layer1BloomColor', df)
@@ -10422,31 +10472,31 @@ class GenericNode extends Node {
   constructor(
     type: NodeType,
     public actions: AnyAction[],
-    public effects: IEffect[],
+    public configs: IConfig[],
     public nodes: Node[]
   ) {
     super(type)
   }
 
   getActions(game: Game): AnyAction[] { return this.actions }
-  getEffects(game: Game): IEffect[] { return this.effects }
+  getConfigs(game: Game): IConfig[] { return this.configs }
   getNodes(game: Game): Node[] { return this.nodes }
 
   static fromJSON({
     type,
     actions,
-    effects,
+    configs,
     nodes
   }: {
     type: number
     actions: any[]
-    effects?: any[]
+    configs?: any[]
     nodes?: any[]
   }) {
     return new GenericNode(
       type,
       actions.map(action => Action.fromJSON(action)),
-      (effects ?? []).map(effect => Effect.fromJSON(effect)),
+      (configs ?? []).map(config => NodeConfig.fromJSON(config)),
       (nodes ?? []).map(node => Node.fromJSON(node))
     )
   }
@@ -10455,7 +10505,7 @@ class GenericNode extends Node {
     return {
       type: this.type,
       actions: this.actions.map(action => action.toJSON()),
-      effects: this.effects.map(effect => effect.toJSON()),
+      configs: this.configs.map(config => config.toJSON()),
       nodes: this.nodes.map(node => node.toJSON()),
     }
   }
@@ -10464,7 +10514,7 @@ class GenericNode extends Node {
     return new GenericNode(
       this.type,
       this.actions.map(action => action.minify()),
-      this.effects.map(effect => effect.minify()),
+      this.configs.map(config => config.minify()),
       this.nodes.map(node => node.minify())
     )
   }
@@ -10473,7 +10523,7 @@ class GenericNode extends Node {
     return new GenericNode(
       this.type,
       this.actions.map(e => e.clone()),
-      this.effects.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10485,18 +10535,18 @@ class GenericNode extends Node {
  */
 class RootNode extends Node {
 
-  unk70x: ActionSlots.Unknown70xAction = new Unk700
+  termination: ActionSlots.TerminationAction = new SimulateTermination
 
   constructor(
     public nodes: Node[] = [],
-    unk70x?: ActionSlots.Unknown70xAction,
+    termination?: ActionSlots.TerminationAction,
     public unk10100: ActionSlots.Unknown10100Action = new Unk10100,
     public unk10400: ActionSlots.Unknown10400Action = new Unk10400,
     public unk10500: ActionSlots.Unknown10500Action = new Unk10500
   ) {
     super(NodeType.Root)
-    if (unk70x !== undefined && unk70x !== null) {
-      this.unk70x = unk70x
+    if (termination !== undefined && termination !== null) {
+      this.termination = termination
     }
   }
 
@@ -10512,7 +10562,7 @@ class RootNode extends Node {
       case Game.EldenRing:
       case Game.ArmoredCore6:
         return [
-          this.unk70x,
+          this.termination,
           this.unk10100,
           this.unk10400,
           this.unk10500
@@ -10520,13 +10570,13 @@ class RootNode extends Node {
     }
   }
 
-  getEffects(game: Game): IEffect[] { return [] }
+  getConfigs(game: Game): IConfig[] { return [] }
   getNodes(game: Game): Node[] { return this.nodes }
 
   minify(): Node {
     return new RootNode(
       this.nodes.map(node => node.minify()),
-      this.unk70x.minify(),
+      this.termination.minify(),
       this.unk10100.minify(),
       this.unk10400.minify(),
       this.unk10500.minify()
@@ -10539,7 +10589,7 @@ class RootNode extends Node {
     }
     return new RootNode(
       (obj.nodes ?? []).map(node => Node.fromJSON(node)),
-      'unk70x' in obj ? Action.fromJSON(obj.unk70x) : undefined,
+      'termination' in obj ? Action.fromJSON(obj.termination) : undefined,
       'unk10100' in obj ? Action.fromJSON(obj.unk10100) : undefined,
       'unk10400' in obj ? Action.fromJSON(obj.unk10400) : undefined,
       'unk10500' in obj ? Action.fromJSON(obj.unk10500) : undefined
@@ -10549,7 +10599,7 @@ class RootNode extends Node {
   toJSON() {
     return {
       type: this.type,
-      unk70x: this.unk70x.toJSON(),
+      termination: this.termination.toJSON(),
       unk10100: this.unk10100.toJSON(),
       unk10400: this.unk10400.toJSON(),
       unk10500: this.unk10500.toJSON(),
@@ -10560,7 +10610,7 @@ class RootNode extends Node {
   clone(depth: number = Infinity): RootNode {
     return new RootNode(
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-      this.unk70x.clone() as ActionSlots.Unknown70xAction,
+      this.termination.clone() as ActionSlots.TerminationAction,
       this.unk10100.clone() as ActionSlots.Unknown10100Action,
       this.unk10400.clone() as ActionSlots.Unknown10400Action,
       this.unk10500.clone() as ActionSlots.Unknown10500Action,
@@ -10570,7 +10620,7 @@ class RootNode extends Node {
   /**
    * Controls how fast time passes for the entire effect.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   get rateOfTime() {
     if (this.unk10500 instanceof Unk10500) {
@@ -10623,22 +10673,22 @@ class ProxyNode extends Node {
 }
 
 /**
- * Super class for any type of node that contains {@link EffectType effects}.
+ * Super class for all types of nodes that contain {@link ConfigType configs}.
  */
-abstract class NodeWithEffects extends Node {
+abstract class NodeWithConfigs extends Node {
 
-  stateEffectMap: number[] = [0]
+  stateConfigMap: number[] = [0]
 
-  constructor(type: NodeType, public effects: IEffect[], public nodes: Node[]) {
+  constructor(type: NodeType, public configs: IConfig[], public nodes: Node[]) {
     super(type)
   }
 
   getActions(game: Game): AnyAction[] {
-    return [ new StateEffectMap(this.stateEffectMap) ]
+    return [ new StateConfigMap(this.stateConfigMap) ]
   }
 
-  getEffects(game: Game): IEffect[] {
-    return this.effects
+  getConfigs(game: Game): IConfig[] {
+    return this.configs
   }
 
   getNodes(game: Game): Node[] {
@@ -10648,25 +10698,25 @@ abstract class NodeWithEffects extends Node {
   toJSON() {
     return {
       type: this.type,
-      stateEffectMap: this.stateEffectMap,
-      effects: this.effects.map(e => e.toJSON()),
+      stateConfigMap: this.stateConfigMap,
+      configs: this.configs.map(e => e.toJSON()),
       nodes: this.nodes.map(e => e.toJSON())
     }
   }
 
-  mapStates(...effectIndices: number[]) {
-    this.stateEffectMap = effectIndices
+  mapStates(...configIndices: number[]) {
+    this.stateConfigMap = configIndices
     return this
   }
 
   /**
-   * Returns the effect that is active when a given {@link State state} index
-   * is active. If no effects are active for the state, this returns `null`
+   * Returns the config that is active when a given {@link State state} index
+   * is active. If no configs are active for the state, this returns `null`
    * instead.
    * @param stateIndex The index of a {@link FXR.states state in the FXR}.
    */
-  getActiveEffect(stateIndex: number): IEffect | null {
-    return this.effects[this.stateEffectMap[stateIndex] ?? this.stateEffectMap[0]] ?? null
+  getActiveConfig(stateIndex: number): IConfig | null {
+    return this.configs[this.stateConfigMap[stateIndex] ?? this.stateConfigMap[0]] ?? null
   }
 
 }
@@ -10679,24 +10729,24 @@ abstract class NodeWithEffects extends Node {
  * levels, you can put another LOD node as the fifth child of this node and set
  * higher thresholds in that.
  */
-class LevelsOfDetailNode extends NodeWithEffects {
+class LevelsOfDetailNode extends NodeWithConfigs {
 
-  declare effects: LevelsOfDetailEffect[]
+  declare configs: LevelsOfDetailConfig[]
 
   /**
-   * @param effectsOrThresholds An array of
-   * {@link EffectType.LevelsOfDetail LOD effects} or an array of LOD
-   * thresholds. Use an array of LOD effects if you need multiple effects or a
-   * finite node duration.
+   * @param configsOrThresholds An array of
+   * {@link ConfigType.LevelsOfDetail LOD configs} or an array of LOD
+   * thresholds. Use an array of LOD configs if you need multiple configs or
+   * a finite node duration.
    * @param nodes An array of child nodes.
    */
-  constructor(effectsOrThresholds: IEffect[] | number[], nodes: Node[] = []) {
-    if (effectsOrThresholds.every(e => typeof e === 'number')) {
+  constructor(configsOrThresholds: IConfig[] | number[], nodes: Node[] = []) {
+    if (configsOrThresholds.every(e => typeof e === 'number')) {
       super(NodeType.LevelsOfDetail, [
-        new LevelsOfDetailEffect(-1, effectsOrThresholds as number[])
+        new LevelsOfDetailConfig(-1, configsOrThresholds as number[])
       ], nodes)
     } else {
-      super(NodeType.LevelsOfDetail, effectsOrThresholds as IEffect[], nodes)
+      super(NodeType.LevelsOfDetail, configsOrThresholds as IConfig[], nodes)
     }
   }
 
@@ -10705,25 +10755,25 @@ class LevelsOfDetailNode extends NodeWithEffects {
       return GenericNode.fromJSON(obj)
     }
     const node = new LevelsOfDetailNode(
-      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.configs ?? []).map((e: any) => NodeConfig.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateEffectMap' in obj) {
-      node.mapStates(...obj.stateEffectMap)
+    if ('stateConfigMap' in obj) {
+      node.mapStates(...obj.stateConfigMap)
     }
     return node
   }
 
   minify(): Node {
     return new LevelsOfDetailNode(
-      this.effects.map(e => e.minify()),
+      this.configs.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateEffectMap)
+    ).mapStates(...this.stateConfigMap)
   }
 
   clone(depth: number = Infinity): LevelsOfDetailNode {
     return new LevelsOfDetailNode(
-      this.effects.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10733,28 +10783,28 @@ class LevelsOfDetailNode extends NodeWithEffects {
 /**
  * A basic node that can have transforms and child nodes, and emit particles.
  */
-class BasicNode extends NodeWithEffects {
+class BasicNode extends NodeWithConfigs {
 
-  declare effects: BasicEffect[]
+  declare configs: BasicConfig[]
 
   /**
-   * @param effectsOrEffectActions This is either the list of effects to add
-   * to the node or a list of actions to create a {@link BasicEffect} with to
+   * @param configsOrConfigActions This is either the list of configs to add
+   * to the node or a list of actions to create a {@link BasicConfig} with to
    * add to the node.
    * @param nodes A list of child nodes.
    */
-  constructor(effectsOrEffectActions: IEffect[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(configsOrConfigActions: IConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicEffect(effectsOrEffectActions as AnyAction[])
+        new BasicConfig(configsOrConfigActions as AnyAction[])
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        effectsOrEffectActions as IEffect[],
+        configsOrConfigActions as IConfig[],
         nodes
       )
     }
@@ -10765,25 +10815,25 @@ class BasicNode extends NodeWithEffects {
       return GenericNode.fromJSON(obj)
     }
     const node = new BasicNode(
-      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.configs ?? []).map((e: any) => NodeConfig.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateEffectMap' in obj) {
-      node.mapStates(...obj.stateEffectMap)
+    if ('stateConfigMap' in obj) {
+      node.mapStates(...obj.stateConfigMap)
     }
     return node
   }
 
   minify(): Node {
     return new BasicNode(
-      this.effects.map(e => e.minify()),
+      this.configs.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateEffectMap)
+    ).mapStates(...this.stateConfigMap)
   }
 
   clone(depth: number = Infinity): BasicNode {
     return new BasicNode(
-      this.effects.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10793,22 +10843,22 @@ class BasicNode extends NodeWithEffects {
 /**
  * A node that emits its child nodes.
  */
-class NodeEmitterNode extends NodeWithEffects {
+class NodeEmitterNode extends NodeWithConfigs {
 
-  declare effects: NodeEmitterEffect[]
+  declare configs: NodeEmitterConfig[]
 
-  constructor(effectsOrEffectActions: IEffect[] | Action[] = [], nodes: Node[] = []) {
+  constructor(configsOrConfigActions: IConfig[] | Action[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
-    if (effectsOrEffectActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.NodeEmitter, [
-        new NodeEmitterEffect(effectsOrEffectActions as Action[])
+        new NodeEmitterConfig(configsOrConfigActions as Action[])
       ], nodes)
     } else {
       super(
         NodeType.NodeEmitter,
-        effectsOrEffectActions as IEffect[],
+        configsOrConfigActions as IConfig[],
         nodes
       )
     }
@@ -10819,25 +10869,25 @@ class NodeEmitterNode extends NodeWithEffects {
       return GenericNode.fromJSON(obj)
     }
     const node = new NodeEmitterNode(
-      (obj.effects ?? []).map((e: any) => Effect.fromJSON(e)),
+      (obj.configs ?? []).map((e: any) => NodeConfig.fromJSON(e)),
       (obj.nodes ?? []).map((e: any) => Node.fromJSON(e))
     )
-    if ('stateEffectMap' in obj) {
-      node.mapStates(...obj.stateEffectMap)
+    if ('stateConfigMap' in obj) {
+      node.mapStates(...obj.stateConfigMap)
     }
     return node
   }
 
   minify(): NodeEmitterNode {
     return new NodeEmitterNode(
-      this.effects.map(e => e.minify()),
+      this.configs.map(e => e.minify()),
       this.nodes.map(e => e.minify())
-    ).mapStates(...this.stateEffectMap)
+    ).mapStates(...this.stateConfigMap)
   }
 
   clone(depth: number = Infinity): NodeEmitterNode {
     return new NodeEmitterNode(
-      this.effects.map(e => e.clone()),
+      this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
   }
@@ -10851,18 +10901,18 @@ const Nodes = {
   [NodeType.Basic]: BasicNode, BasicNode,
 }
 
-//#region Effect
+//#region Config
 /**
- * Generic effect class that uses the same structure as the file format. Only
- * for use with undocumented effect types. Use one of the other effect classes
- * for effects that are known:
- * - {@link LevelsOfDetailEffect}
- * - {@link BasicEffect}
- * - {@link NodeEmitterEffect}
+ * Generic config class that uses the same structure as the file format. Only
+ * for use with undocumented config types. Use one of the other config
+ * classes for configs that are known:
+ * - {@link LevelsOfDetailConfig}
+ * - {@link BasicConfig}
+ * - {@link NodeEmitterConfig}
  */
-class Effect implements IEffect {
+class NodeConfig implements IConfig {
 
-  constructor(public type: EffectType, public actions: AnyAction[]) {}
+  constructor(public type: ConfigType, public actions: AnyAction[]) {}
 
   getActionCount(game: Game): number {
     return this.actions.length
@@ -10888,17 +10938,17 @@ class Effect implements IEffect {
     yield* this.actions
   }
 
-  static fromJSON(obj: any): IEffect {
-    if (obj instanceof Effect) {
+  static fromJSON(obj: any): IConfig {
+    if (obj instanceof NodeConfig) {
       return obj
     }
     if ('actions' in obj) {
-      return new Effect(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
+      return new NodeConfig(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
-      case EffectType.LevelsOfDetail:
-        return new LevelsOfDetailEffect(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
-      case EffectType.Basic: {
-        const params: BasicEffectParams = {}
+      case ConfigType.LevelsOfDetail:
+        return new LevelsOfDetailConfig(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
+      case ConfigType.Basic: {
+        const params: BasicConfigParams = {}
         if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
         if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
         if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
@@ -10914,10 +10964,10 @@ class Effect implements IEffect {
         if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
         if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
         if ('particleForceMovement' in obj) params.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
-        return new BasicEffect(params)
+        return new BasicConfig(params)
       }
-      case EffectType.NodeEmitter: {
-        const params: NodeEmitterEffectParams = {}
+      case ConfigType.NodeEmitter: {
+        const params: NodeEmitterConfigParams = {}
         if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
         if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
         if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
@@ -10928,14 +10978,14 @@ class Effect implements IEffect {
         if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
         if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
         if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
-        return new NodeEmitterEffect(params)
+        return new NodeEmitterConfig(params)
       }
     }
-    throw new Error('Invalid effect JSON: ' + JSON.stringify(obj))
+    throw new Error('Invalid config JSON: ' + JSON.stringify(obj))
   }
 
-  clone(): Effect {
-    return new Effect(
+  clone(): NodeConfig {
+    return new NodeConfig(
       this.type,
       this.actions.map(e => e.clone()),
     )
@@ -10947,8 +10997,8 @@ class Effect implements IEffect {
  * Manages the duration and thresholds for the
  * {@link NodeType.LevelsOfDetail level of detail node}.
  */
-class LevelsOfDetailEffect implements IEffect {
-  readonly type = EffectType.LevelsOfDetail
+class LevelsOfDetailConfig implements IConfig {
+  readonly type = ConfigType.LevelsOfDetail
 
   /**
    * @param duration The duration for the node to stay active. Once its time is
@@ -10994,8 +11044,8 @@ class LevelsOfDetailEffect implements IEffect {
 
   *walkActions() {}
 
-  clone(): LevelsOfDetailEffect {
-    return new LevelsOfDetailEffect(
+  clone(): LevelsOfDetailConfig {
+    return new LevelsOfDetailConfig(
       this.duration,
       this.thresholds.slice(),
       this.unk_ac6_f1_5,
@@ -11004,7 +11054,7 @@ class LevelsOfDetailEffect implements IEffect {
 
 }
 
-export interface BasicEffectParams {
+export interface BasicConfigParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
@@ -11023,7 +11073,7 @@ export interface BasicEffectParams {
 }
 
 /**
- * Effect used in {@link NodeType.Basic basic nodes} to apply transforms and
+ * Config used in {@link NodeType.Basic basic nodes} to apply transforms and
  * emit particles of many different types.
  * 
  * Default actions:
@@ -11045,8 +11095,8 @@ export interface BasicEffectParams {
  * 13    | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  * 14    | {@link ActionSlots.ParticleForceMovementAction ParticleForceMovement} | {@link ActionType.None None}
  */
-class BasicEffect implements IEffect {
-  readonly type = EffectType.Basic
+class BasicConfig implements IConfig {
+  readonly type = ConfigType.Basic
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -11064,10 +11114,10 @@ class BasicEffect implements IEffect {
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
   particleForceMovement: ActionSlots.ParticleForceMovementAction = new Action
 
-  constructor(params: BasicEffectParams | AnyAction[] = []) {
+  constructor(params: BasicConfigParams | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = EffectActionSlots[EffectType.Basic].findIndex(a => a.includes(action.type))
+        const index = ConfigActionSlots[ConfigType.Basic].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0:  this.nodeAttributes        = action as Action; break;
           case 1:  this.nodeTransform         = action as Action; break;
@@ -11189,8 +11239,8 @@ class BasicEffect implements IEffect {
     yield this.particleForceMovement
   }
 
-  clone(): BasicEffect {
-    return new BasicEffect({
+  clone(): BasicConfig {
+    return new BasicConfig({
       nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
       nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
       nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
@@ -11211,7 +11261,7 @@ class BasicEffect implements IEffect {
 
 }
 
-export interface NodeEmitterEffectParams {
+export interface NodeEmitterConfigParams {
   nodeAttributes?: ActionSlots.NodeAttributesAction
   nodeTransform?: ActionSlots.NodeTransformAction
   nodeMovement?: ActionSlots.NodeMovementAction
@@ -11225,7 +11275,7 @@ export interface NodeEmitterEffectParams {
 }
 
 /**
- * Effect used in {@link NodeType.NodeEmitter node emitter nodes} to control
+ * Config used in {@link NodeType.NodeEmitter node emitter nodes} to control
  * the emission of child nodes.
  * 
  * Default actions:
@@ -11242,8 +11292,8 @@ export interface NodeEmitterEffectParams {
  * 8     | {@link ActionSlots.EmissionAudioAction EmissionAudio} | {@link ActionType.None None}
  * 9     | {@link ActionSlots.NodeForceMovementAction NodeForceMovement} | {@link ActionType.None None}
  */
-class NodeEmitterEffect implements IEffect {
-  readonly type = EffectType.NodeEmitter
+class NodeEmitterConfig implements IConfig {
+  readonly type = ConfigType.NodeEmitter
 
   nodeAttributes: ActionSlots.NodeAttributesAction = new NodeAttributes
   nodeTransform: ActionSlots.NodeTransformAction = new Action
@@ -11256,10 +11306,10 @@ class NodeEmitterEffect implements IEffect {
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
 
-  constructor(params: NodeEmitterEffectParams | AnyAction[] = []) {
+  constructor(params: NodeEmitterConfigParams | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
-        const index = EffectActionSlots[EffectType.NodeEmitter].findIndex(a => a.includes(action.type))
+        const index = ConfigActionSlots[ConfigType.NodeEmitter].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0: this.nodeAttributes    = action as Action; break;
           case 1: this.nodeTransform     = action as Action; break;
@@ -11351,8 +11401,8 @@ class NodeEmitterEffect implements IEffect {
     yield this.nodeForceMovement
   }
 
-  clone(): NodeEmitterEffect {
-    return new NodeEmitterEffect({
+  clone(): NodeEmitterConfig {
+    return new NodeEmitterConfig({
       nodeAttributes: this.nodeAttributes.clone() as ActionSlots.NodeAttributesAction,
       nodeTransform: this.nodeTransform.clone() as ActionSlots.NodeTransformAction,
       nodeMovement: this.nodeMovement.clone() as ActionSlots.NodeMovementAction,
@@ -11594,6 +11644,7 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return data[list].map((name: string) => {
       const prop = ActionData[this.type].props[name]
+      validateDataActionProp(this, name, prop)
       return Field.from(
         prop.field,
         this[name] instanceof Property ? this[name].valueAt(0) : this[name]
@@ -11605,6 +11656,7 @@ class DataAction implements IAction {
     const data = getActionGameData(this.type, game)
     return (data[list] ?? []).map((name: string) => {
       const prop = ActionData[this.type].props[name]
+      validateDataActionProp(this, name, prop)
       return this[name] instanceof Property ? this[name].for(game) : Array.isArray(prop.default) ?
         new ConstantProperty(...this[name]).for(game) :
         new ConstantProperty(this[name]).for(game)
@@ -11708,13 +11760,13 @@ class DataAction implements IAction {
         keyframe.value = func(keyframe.value as Vector4)
       }
     }
+    prop.modifiers = prop.modifiers.filter(mod => !(
+      mod instanceof RandomDeltaModifier ||
+      mod instanceof RandomRangeModifier ||
+      mod instanceof RandomFractionModifier
+    ))
     for (const mod of prop.modifiers) {
-      if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
-        mod.max = func(mod.max)
-      } else if (mod instanceof RandomRangeModifier) {
-        mod.min = func(mod.min)
-        mod.max = func(mod.max)
-      } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+      if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
         if (mod.factor instanceof ComponentSequenceProperty) {
           mod.factor = mod.factor.combineComponents()
         }
@@ -12043,7 +12095,7 @@ export interface NodeAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ?: ScalarValue
   /**
@@ -12051,7 +12103,7 @@ export interface NodeAccelerationParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -12059,7 +12111,7 @@ export interface NodeAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -12100,19 +12152,19 @@ class NodeAcceleration extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   unk_ds3_f1_0: number
@@ -12133,7 +12185,7 @@ export interface NodeTranslationParams {
    * 
    * **Default**: `[0, 0, 0]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   translation?: Vector3Value
   /**
@@ -12156,7 +12208,7 @@ class NodeTranslation extends DataAction {
   /**
    * An offset for the position of the node.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   translation: Vector3Value
   /**
@@ -12175,7 +12227,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -12186,7 +12238,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX?: ScalarValue
   /**
@@ -12194,7 +12246,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -12205,7 +12257,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY?: ScalarValue
   /**
@@ -12213,7 +12265,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -12224,7 +12276,7 @@ export interface NodeSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
@@ -12247,7 +12299,7 @@ class NodeSpin extends DataAction {
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -12256,13 +12308,13 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -12271,13 +12323,13 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -12286,7 +12338,7 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
@@ -12924,7 +12976,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ?: ScalarValue
   /**
@@ -12932,7 +12984,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -12940,7 +12992,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -12948,7 +13000,7 @@ export interface NodeAccelerationRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -12989,25 +13041,25 @@ class NodeAccelerationRandomTurns extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
@@ -13275,7 +13327,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link accelerationY}
@@ -13286,7 +13338,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -13296,7 +13348,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13304,7 +13356,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13312,7 +13364,7 @@ export interface NodeAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13362,7 +13414,7 @@ class NodeAccelerationPartialFollow extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link accelerationY}
@@ -13371,7 +13423,7 @@ class NodeAccelerationPartialFollow extends DataAction {
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
@@ -13379,19 +13431,19 @@ class NodeAccelerationPartialFollow extends DataAction {
    * 
    * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13430,7 +13482,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ?: ScalarValue
   /**
@@ -13438,7 +13490,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ?: ScalarValue
   /**
@@ -13446,7 +13498,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13454,7 +13506,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -13465,7 +13517,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX?: ScalarValue
   /**
@@ -13473,7 +13525,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -13484,7 +13536,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY?: ScalarValue
   /**
@@ -13492,7 +13544,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -13503,7 +13555,7 @@ export interface NodeAccelerationSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
@@ -13550,25 +13602,25 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationZ: ScalarValue
   /**
    * Multiplier for {@link accelerationZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -13577,13 +13629,13 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -13592,13 +13644,13 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -13607,7 +13659,7 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
@@ -13637,7 +13689,7 @@ export interface NodeSpeedParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13645,7 +13697,7 @@ export interface NodeSpeedParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13686,13 +13738,13 @@ class NodeSpeed extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   unk_ds3_f1_0: number
@@ -13721,7 +13773,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13729,7 +13781,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13737,7 +13789,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13778,19 +13830,19 @@ class NodeSpeedRandomTurns extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
@@ -13822,7 +13874,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13832,7 +13884,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13840,7 +13892,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle?: ScalarValue
   /**
@@ -13848,7 +13900,7 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13898,7 +13950,7 @@ class NodeSpeedPartialFollow extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
@@ -13906,19 +13958,19 @@ class NodeSpeedPartialFollow extends DataAction {
    * 
    * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link followRotation}
@@ -13957,7 +14009,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ?: ScalarValue
   /**
@@ -13965,7 +14017,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY?: ScalarValue
   /**
@@ -13973,7 +14025,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -13984,7 +14036,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX?: ScalarValue
   /**
@@ -13992,7 +14044,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -14003,7 +14055,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY?: ScalarValue
   /**
@@ -14011,7 +14063,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -14022,7 +14074,7 @@ export interface NodeSpeedSpinParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ?: ScalarValue
   /**
@@ -14069,19 +14121,19 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link speedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierX}
@@ -14090,13 +14142,13 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierY}
@@ -14105,13 +14157,13 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angularSpeedMultiplierZ}
@@ -14120,7 +14172,7 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
   unk_ds3_f1_0: number
@@ -14164,11 +14216,15 @@ export interface NodeAttributesParams {
    */
   attachment?: AttachMode
   /**
-   * Unknown float.
+   * Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
+   * 
+   * This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
+   * 
+   * Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_3?: number
+  depthBias?: number
 }
 
 /**
@@ -14195,7 +14251,14 @@ class NodeAttributes extends DataAction {
    * Controls how the node is attached to the parent node.
    */
   attachment: AttachMode
-  unk_ds3_f1_3: number
+  /**
+   * Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
+   * 
+   * This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
+   * 
+   * Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
+   */
+  depthBias: number
   constructor(props: NodeAttributesParams = {}) {
     super(ActionType.NodeAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
@@ -14353,7 +14416,7 @@ export interface Unk130Params {
  * ### {@link ActionType.Unk130 Action 130 - Unk130}
  * **Slot**: {@link ActionSlots.Unknown130Action Unknown130}
  * 
- * Unknown action that is in every basic effect in every game, and still literally nothing is known about it.
+ * Unknown action that is in every basic config in every game, and still literally nothing is known about it.
  */
 class Unk130 extends DataAction {
   declare readonly type: ActionType.Unk130
@@ -14383,11 +14446,11 @@ class Unk130 extends DataAction {
 
 export interface ParticleModifierParams {
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+   * Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed?: ScalarValue
   /**
@@ -14397,7 +14460,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleX?: ScalarValue
   /**
@@ -14407,7 +14470,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleY?: ScalarValue
   /**
@@ -14417,7 +14480,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleZ?: ScalarValue
   /**
@@ -14427,7 +14490,7 @@ export interface ParticleModifierParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   color?: Vector4Value
   /**
@@ -14455,9 +14518,9 @@ class ParticleModifier extends DataAction {
   declare readonly type: ActionType.ParticleModifier
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
-   * Controls the speed of the particles emitted from this node, but only if the effect has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+   * Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
@@ -14465,7 +14528,7 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also affects the Y and Z axes.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleX: ScalarValue
   /**
@@ -14473,7 +14536,7 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleY: ScalarValue
   /**
@@ -14481,7 +14544,7 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleZ: ScalarValue
   /**
@@ -14489,7 +14552,7 @@ class ParticleModifier extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   color: Vector4Value
   /**
@@ -14509,6 +14572,7 @@ class ParticleModifier extends DataAction {
 
 /**
  * ### {@link ActionType.SFXReference Action 132 - SFXReference}
+ * **Slot**: {@link ActionSlots.SFXReferenceAction SFXReference}
  * 
  * References another SFX by its ID.
  */
@@ -14579,8 +14643,9 @@ export interface LevelsOfDetailThresholdsParams {
 
 /**
  * ### {@link ActionType.LevelsOfDetailThresholds Action 133 - LevelsOfDetailThresholds}
+ * **Slot**: {@link ActionSlots.LevelsOfDetailThresholdsAction LevelsOfDetailThresholds}
  * 
- * Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+ * Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailThresholds extends DataAction {
   declare readonly type: ActionType.LevelsOfDetailThresholds
@@ -14619,29 +14684,30 @@ class LevelsOfDetailThresholds extends DataAction {
 }
 
 /**
- * ### {@link ActionType.StateEffectMap Action 199 - StateEffectMap}
+ * ### {@link ActionType.StateConfigMap Action 199 - StateConfigMap}
+ * **Slot**: {@link ActionSlots.StateConfigMapAction StateConfigMap}
  * 
- * Maps states to effects in the parent node.
+ * Maps states to configs in the parent node.
  */
-class StateEffectMap extends DataAction {
-  declare readonly type: ActionType.StateEffectMap
+class StateConfigMap extends DataAction {
+  declare readonly type: ActionType.StateConfigMap
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
-   * A list of effect indices.
+   * A list of config indices.
    * 
-   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   * The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
    */
-  effectIndices: number[]
+  configIndices: number[]
   /**
-   * @param effectIndices A list of effect indices.
+   * @param configIndices A list of config indices.
    * 
-   * The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+   * The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
    *
    * **Default**: `[0]`
    */
-  constructor(effectIndices: number[] = [0]) {
-    super(ActionType.StateEffectMap, {isAppearance:false,isParticle:false})
-    this.assign({ effectIndices })
+  constructor(configIndices: number[] = [0]) {
+    super(ActionType.StateConfigMap, {isAppearance:false,isParticle:false})
+    this.assign({ configIndices })
   }
 }
 
@@ -14649,7 +14715,7 @@ class StateEffectMap extends DataAction {
  * ### {@link ActionType.SelectAllNodes Action 200 - SelectAllNodes}
  * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit all child nodes every emission.
+ * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.
  */
 class SelectAllNodes extends DataAction {
   declare readonly type: ActionType.SelectAllNodes
@@ -14664,7 +14730,7 @@ class SelectAllNodes extends DataAction {
  * ### {@link ActionType.SelectRandomNode Action 201 - SelectRandomNode}
  * **Slot**: {@link ActionSlots.NodeSelectorAction NodeSelector}
  * 
- * Used in {@link EffectType.NodeEmitter NodeEmitter effects} to emit a random child node every emission.
+ * Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
  */
 class SelectRandomNode extends DataAction {
   declare readonly type: ActionType.SelectRandomNode
@@ -14694,7 +14760,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   interval?: ScalarValue
   /**
@@ -14702,7 +14768,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   perInterval?: ScalarValue
   /**
@@ -14710,7 +14776,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   totalIntervals?: ScalarValue
   /**
@@ -14718,7 +14784,7 @@ export interface PeriodicEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent?: ScalarValue
   /**
@@ -14741,25 +14807,25 @@ class PeriodicEmitter extends DataAction {
   /**
    * Time between emitting new particles in seconds.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   interval: ScalarValue
   /**
    * The number of particles to emit per interval. They all spawn at the same time per interval.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   perInterval: ScalarValue
   /**
    * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   totalIntervals: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent: ScalarValue
   unk_ds3_f1_1: number
@@ -14775,15 +14841,13 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Default**: `0.1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   threshold?: ScalarValue
   /**
    * Unknown.
    * 
    * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
    */
   unk_ds3_p1_2?: ScalarValue
   /**
@@ -14791,7 +14855,7 @@ export interface EqualDistanceEmitterParams {
    * 
    * **Default**: `-1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent?: ScalarValue
   /**
@@ -14826,14 +14890,14 @@ class EqualDistanceEmitter extends DataAction {
   /**
    * How much the emitter must move to trigger emission.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   threshold: ScalarValue
   unk_ds3_p1_2: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent: ScalarValue
   unk_ds3_p1_1: ScalarValue
@@ -14890,7 +14954,7 @@ export interface DiskEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -14902,7 +14966,7 @@ export interface DiskEmitterShapeParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -14925,7 +14989,7 @@ class DiskEmitterShape extends DataAction {
   /**
    * Radius of the disk.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
@@ -14935,7 +14999,7 @@ class DiskEmitterShape extends DataAction {
    * - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
    * - Values between these smoothly blend between them.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -14954,7 +15018,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX?: ScalarValue
   /**
@@ -14962,7 +15026,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY?: ScalarValue
   /**
@@ -14974,7 +15038,7 @@ export interface RectangleEmitterShapeParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -14997,13 +15061,13 @@ class RectangleEmitterShape extends DataAction {
   /**
    * Width of the rectangle.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX: ScalarValue
   /**
    * Height of the rectangle.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY: ScalarValue
   /**
@@ -15013,7 +15077,7 @@ class RectangleEmitterShape extends DataAction {
    * - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
    * - Values between these smoothly blend between them.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15032,7 +15096,7 @@ export interface SphereEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -15055,7 +15119,7 @@ class SphereEmitterShape extends DataAction {
   /**
    * Radius of the sphere.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
@@ -15074,7 +15138,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX?: ScalarValue
   /**
@@ -15082,7 +15146,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY?: ScalarValue
   /**
@@ -15090,7 +15154,7 @@ export interface BoxEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeZ?: ScalarValue
   /**
@@ -15119,19 +15183,19 @@ class BoxEmitterShape extends DataAction {
   /**
    * Width of the cuboid.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX: ScalarValue
   /**
    * Height of the cuboid.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeY: ScalarValue
   /**
    * Depth of the cuboid.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeZ: ScalarValue
   /**
@@ -15154,7 +15218,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -15162,7 +15226,7 @@ export interface CylinderEmitterShapeParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   height?: ScalarValue
   /**
@@ -15197,13 +15261,13 @@ class CylinderEmitterShape extends DataAction {
   /**
    * The radius of the cylinder.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
    * The height of the cylinder.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   height: ScalarValue
   /**
@@ -15245,7 +15309,7 @@ export interface CircularSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angle?: ScalarValue
   /**
@@ -15258,7 +15322,7 @@ export interface CircularSpreadParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -15281,7 +15345,7 @@ class CircularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, the angle of the cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angle: ScalarValue
   /**
@@ -15292,7 +15356,7 @@ class CircularSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15311,7 +15375,7 @@ export interface EllipticalSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15322,7 +15386,7 @@ export interface EllipticalSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15338,7 +15402,7 @@ export interface EllipticalSpreadParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
   /**
@@ -15361,7 +15425,7 @@ class EllipticalSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15370,7 +15434,7 @@ class EllipticalSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15384,7 +15448,7 @@ class EllipticalSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
@@ -15403,7 +15467,7 @@ export interface RectangularSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15414,7 +15478,7 @@ export interface RectangularSpreadParams {
    * 
    * **Default**: `30`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleX}
@@ -15430,7 +15494,7 @@ export interface RectangularSpreadParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution?: ScalarValue
 }
@@ -15447,7 +15511,7 @@ class RectangularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleY}
@@ -15456,7 +15520,7 @@ class RectangularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link angleX}
@@ -15470,7 +15534,7 @@ class RectangularSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   constructor(props: RectangularSpreadParams = {}) {
@@ -15551,7 +15615,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -15559,7 +15623,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -15593,7 +15657,7 @@ export interface PointSpriteParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -15709,7 +15773,7 @@ export interface PointSpriteParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -15724,7 +15788,7 @@ export interface PointSpriteParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -15741,7 +15805,7 @@ export interface PointSpriteParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -15756,7 +15820,7 @@ export interface PointSpriteParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -15871,6 +15935,8 @@ export interface PointSpriteParams {
   /**
    * Unknown integer.
    * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
@@ -15984,13 +16050,13 @@ class PointSprite extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -16002,7 +16068,7 @@ class PointSprite extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_ds3_f1_2: number
@@ -16044,7 +16110,7 @@ class PointSprite extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -16057,7 +16123,7 @@ class PointSprite extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -16072,7 +16138,7 @@ class PointSprite extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -16085,7 +16151,7 @@ class PointSprite extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -16131,6 +16197,11 @@ class PointSprite extends DataAction {
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -16204,7 +16275,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16220,7 +16291,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16244,7 +16315,7 @@ export interface LineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16258,7 +16329,7 @@ export interface LineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -16266,7 +16337,7 @@ export interface LineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -16300,7 +16371,7 @@ export interface LineParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -16404,7 +16475,7 @@ export interface LineParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -16419,7 +16490,7 @@ export interface LineParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -16436,7 +16507,7 @@ export interface LineParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -16451,7 +16522,7 @@ export interface LineParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -16568,6 +16639,8 @@ export interface LineParams {
   /**
    * Unknown integer.
    * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
@@ -16672,7 +16745,7 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16686,7 +16759,7 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16706,7 +16779,7 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16718,13 +16791,13 @@ class Line extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -16736,7 +16809,7 @@ class Line extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_ds3_f1_1: number
@@ -16776,7 +16849,7 @@ class Line extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -16789,7 +16862,7 @@ class Line extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -16804,7 +16877,7 @@ class Line extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -16817,7 +16890,7 @@ class Line extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -16868,6 +16941,11 @@ class Line extends DataAction {
    * Other values are used in AC6, but what they do is unknown.
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -16952,7 +17030,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -16968,7 +17046,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17000,7 +17078,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17014,7 +17092,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -17022,7 +17100,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -17056,7 +17134,7 @@ export interface QuadLineParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -17160,7 +17238,7 @@ export interface QuadLineParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -17175,7 +17253,7 @@ export interface QuadLineParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -17192,7 +17270,7 @@ export interface QuadLineParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -17207,7 +17285,7 @@ export interface QuadLineParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -17322,6 +17400,8 @@ export interface QuadLineParams {
   /**
    * Unknown integer.
    * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_32?: number
@@ -17435,7 +17515,7 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17449,7 +17529,7 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17475,7 +17555,7 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link color1}
@@ -17487,13 +17567,13 @@ class QuadLine extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -17505,7 +17585,7 @@ class QuadLine extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_ds3_f1_1: number
@@ -17545,7 +17625,7 @@ class QuadLine extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -17558,7 +17638,7 @@ class QuadLine extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -17573,7 +17653,7 @@ class QuadLine extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -17586,7 +17666,7 @@ class QuadLine extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -17632,6 +17712,11 @@ class QuadLine extends DataAction {
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -17913,7 +17998,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -17921,7 +18006,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -17955,7 +18040,7 @@ export interface BillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -18177,7 +18262,7 @@ export interface BillboardExParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -18192,7 +18277,7 @@ export interface BillboardExParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -18209,7 +18294,7 @@ export interface BillboardExParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -18224,7 +18309,7 @@ export interface BillboardExParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -18341,7 +18426,9 @@ export interface BillboardExParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -18656,13 +18743,13 @@ class BillboardEx extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -18674,7 +18761,7 @@ class BillboardEx extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -18787,7 +18874,7 @@ class BillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -18800,7 +18887,7 @@ class BillboardEx extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -18815,7 +18902,7 @@ class BillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -18828,7 +18915,7 @@ class BillboardEx extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -18882,6 +18969,11 @@ class BillboardEx extends DataAction {
    * Other values are used in AC6, but what they do is unknown.
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -19318,7 +19410,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -19326,7 +19418,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -19360,7 +19452,7 @@ export interface MultiTextureBillboardExParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -19564,7 +19656,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -19579,7 +19671,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -19596,7 +19688,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -19611,7 +19703,7 @@ export interface MultiTextureBillboardExParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -19726,7 +19818,9 @@ export interface MultiTextureBillboardExParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -20116,13 +20210,13 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -20134,7 +20228,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -20234,7 +20328,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -20247,7 +20341,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -20262,7 +20356,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -20275,7 +20369,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -20324,6 +20418,11 @@ class MultiTextureBillboardEx extends DataAction {
    */
   shadowDarkness: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -20676,7 +20775,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -20684,7 +20783,7 @@ export interface ModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -20968,7 +21067,7 @@ export interface ModelParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -20983,7 +21082,7 @@ export interface ModelParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -21000,7 +21099,7 @@ export interface ModelParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -21015,7 +21114,7 @@ export interface ModelParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -21130,7 +21229,9 @@ export interface ModelParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -21439,13 +21540,13 @@ class Model extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -21580,7 +21681,7 @@ class Model extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -21593,7 +21694,7 @@ class Model extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -21608,7 +21709,7 @@ class Model extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -21621,7 +21722,7 @@ class Model extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -21667,6 +21768,11 @@ class Model extends DataAction {
   unk_sdt_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   unk_sdt_f2_33: number
   unk_sdt_f2_34: number
@@ -21831,7 +21937,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -21839,7 +21945,7 @@ export interface TracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -21847,7 +21953,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -21878,7 +21984,7 @@ export interface TracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -22077,7 +22183,7 @@ export interface TracerParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -22092,7 +22198,7 @@ export interface TracerParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -22109,7 +22215,7 @@ export interface TracerParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -22124,7 +22230,7 @@ export interface TracerParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -22239,7 +22345,9 @@ export interface TracerParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -22416,19 +22524,19 @@ class Tracer extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -22442,7 +22550,7 @@ class Tracer extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -22531,7 +22639,7 @@ class Tracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -22544,7 +22652,7 @@ class Tracer extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -22559,7 +22667,7 @@ class Tracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -22572,7 +22680,7 @@ class Tracer extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -22621,6 +22729,11 @@ class Tracer extends DataAction {
    */
   shadowDarkness: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -22825,7 +22938,7 @@ export interface DistortionParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -22833,7 +22946,7 @@ export interface DistortionParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -22867,7 +22980,7 @@ export interface DistortionParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -23069,7 +23182,7 @@ export interface DistortionParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -23084,7 +23197,7 @@ export interface DistortionParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -23101,7 +23214,7 @@ export interface DistortionParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -23116,7 +23229,7 @@ export interface DistortionParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -23403,13 +23516,13 @@ class Distortion extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -23421,7 +23534,7 @@ class Distortion extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   unk_er_p2_7: ScalarValue
@@ -23521,7 +23634,7 @@ class Distortion extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -23534,7 +23647,7 @@ class Distortion extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -23549,7 +23662,7 @@ class Distortion extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -23562,7 +23675,7 @@ class Distortion extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -23729,7 +23842,7 @@ export interface RadialBlurParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -23737,7 +23850,7 @@ export interface RadialBlurParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -23771,7 +23884,7 @@ export interface RadialBlurParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -23881,7 +23994,7 @@ export interface RadialBlurParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -23896,7 +24009,7 @@ export interface RadialBlurParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -23913,7 +24026,7 @@ export interface RadialBlurParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -23928,7 +24041,7 @@ export interface RadialBlurParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -24129,13 +24242,13 @@ class RadialBlur extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_ds3_p2_2: ScalarValue
@@ -24147,7 +24260,7 @@ class RadialBlur extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -24186,7 +24299,7 @@ class RadialBlur extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -24199,7 +24312,7 @@ class RadialBlur extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -24214,7 +24327,7 @@ class RadialBlur extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -24227,7 +24340,7 @@ class RadialBlur extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -24288,7 +24401,7 @@ export interface PointLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link specularColor}
@@ -24303,7 +24416,7 @@ export interface PointLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor?: Vector4Value
   /**
@@ -24311,7 +24424,7 @@ export interface PointLightParams {
    * 
    * **Default**: `10`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius?: ScalarValue
   /**
@@ -24388,7 +24501,7 @@ export interface PointLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier?: ScalarValue
   /**
@@ -24398,7 +24511,7 @@ export interface PointLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier?: ScalarValue
   /**
@@ -24610,11 +24723,13 @@ export interface PointLightParams {
    */
   unk_ds3_f2_23?: number
   /**
-   * Unknown float.
+   * Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
+   * 
+   * Setting this to `0` will disable the distance limit.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f2_24?: number
+  maxViewDistance?: number
   /**
    * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
    * 
@@ -24707,7 +24822,7 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link specularColor}
@@ -24720,13 +24835,13 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor: Vector4Value
   /**
    * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   unk_ds3_p1_3: ScalarValue
@@ -24754,7 +24869,7 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier: ScalarValue
   /**
@@ -24762,7 +24877,7 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier: ScalarValue
   unk_ds3_f1_0: number
@@ -24884,7 +24999,12 @@ class PointLight extends DataAction {
   unk_ds3_f2_21: number
   unk_ds3_f2_22: number
   unk_ds3_f2_23: number
-  unk_ds3_f2_24: number
+  /**
+   * Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
+   * 
+   * Setting this to `0` will disable the distance limit.
+   */
+  maxViewDistance: number
   /**
    * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
    * 
@@ -24931,53 +25051,66 @@ class PointLight extends DataAction {
 }
 
 /**
- * ### {@link ActionType.Unk700 Action 700 - Unk700}
- * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * ### {@link ActionType.SimulateTermination Action 700 - SimulateTermination}
+ * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Unknown root node action that was introduced in Elden Ring.
+ * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
+ * 
+ * Note: An effect terminates when it reaches {@link State} -1.
  */
-class Unk700 extends DataAction {
-  declare readonly type: ActionType.Unk700
+class SimulateTermination extends DataAction {
+  declare readonly type: ActionType.SimulateTermination
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.Unk700, {isAppearance:false,isParticle:false})
+    super(ActionType.SimulateTermination, {isAppearance:false,isParticle:false})
   }
 }
 
 /**
- * ### {@link ActionType.Unk701 Action 701 - Unk701}
- * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * ### {@link ActionType.FadeTermination Action 701 - FadeTermination}
+ * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Unknown root node action that was introduced in Elden Ring.
+ * Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
+ * 
+ * Note: An effect terminates when it reaches {@link State} -1.
  */
-class Unk701 extends DataAction {
-  declare readonly type: ActionType.Unk701
+class FadeTermination extends DataAction {
+  declare readonly type: ActionType.FadeTermination
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
-  unk_er_p1_0: ScalarValue
   /**
-   * @param unk_er_p1_0 Unknown.
+   * The duration of the fade out in seconds.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  duration: ScalarValue
+  /**
+   * @param duration The duration of the fade out in seconds.
    *
    * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  constructor(unk_er_p1_0: ScalarValue = 1) {
-    super(ActionType.Unk701, {isAppearance:false,isParticle:false})
-    this.assign({ unk_er_p1_0 })
+  constructor(duration: ScalarValue = 1) {
+    super(ActionType.FadeTermination, {isAppearance:false,isParticle:false})
+    this.assign({ duration })
   }
 }
 
 /**
- * ### {@link ActionType.Unk702 Action 702 - Unk702}
- * **Slot**: {@link ActionSlots.Unknown70xAction Unknown70x}
+ * ### {@link ActionType.InstantTermination Action 702 - InstantTermination}
+ * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Unknown root node action that was introduced in Elden Ring.
+ * Makes the effect instantly disappear when it terminates.
+ * 
+ * Note: An effect terminates when it reaches {@link State} -1.
  */
-class Unk702 extends DataAction {
-  declare readonly type: ActionType.Unk702
+class InstantTermination extends DataAction {
+  declare readonly type: ActionType.InstantTermination
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   
   constructor() {
-    super(ActionType.Unk702, {isAppearance:false,isParticle:false})
+    super(ActionType.InstantTermination, {isAppearance:false,isParticle:false})
   }
 }
 
@@ -24987,7 +25120,7 @@ export interface NodeForceSpeedParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed?: ScalarValue
   /**
@@ -24995,7 +25128,7 @@ export interface NodeForceSpeedParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier?: ScalarValue
   /**
@@ -25023,13 +25156,13 @@ class NodeForceSpeed extends DataAction {
   /**
    * The speed in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
    * A multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -25045,7 +25178,7 @@ export interface ParticleForceSpeedParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed?: ScalarValue
   /**
@@ -25053,7 +25186,7 @@ export interface ParticleForceSpeedParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier?: ScalarValue
   /**
@@ -25087,13 +25220,13 @@ class ParticleForceSpeed extends DataAction {
   /**
    * The speed in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
    * A multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speedMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -25113,7 +25246,7 @@ export interface NodeForceAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration?: ScalarValue
   /**
@@ -25121,7 +25254,7 @@ export interface NodeForceAccelerationParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier?: ScalarValue
   /**
@@ -25149,13 +25282,13 @@ class NodeForceAcceleration extends DataAction {
   /**
    * The acceleration in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration: ScalarValue
   /**
    * A multiplier for {@link acceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -25171,7 +25304,7 @@ export interface ParticleForceAccelerationParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration?: ScalarValue
   /**
@@ -25179,7 +25312,7 @@ export interface ParticleForceAccelerationParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier?: ScalarValue
   /**
@@ -25213,13 +25346,13 @@ class ParticleForceAcceleration extends DataAction {
   /**
    * The acceleration in the direction of the force.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration: ScalarValue
   /**
    * A multiplier for {@link acceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier: ScalarValue
   unk_sdt_f1_0: number
@@ -26244,7 +26377,7 @@ export interface GPUStandardParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -26504,7 +26637,7 @@ export interface GPUStandardParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -26519,7 +26652,7 @@ export interface GPUStandardParticleParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -26536,7 +26669,7 @@ export interface GPUStandardParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -26551,7 +26684,7 @@ export interface GPUStandardParticleParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -27189,7 +27322,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -27298,7 +27431,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -27311,7 +27444,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -27326,7 +27459,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -27339,7 +27472,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -28366,7 +28499,7 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -28620,7 +28753,7 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -28635,7 +28768,7 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -28652,7 +28785,7 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -28667,7 +28800,7 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -29305,7 +29438,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -29410,7 +29543,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -29423,7 +29556,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -29438,7 +29571,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -29451,7 +29584,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -29904,13 +30037,13 @@ export interface GPUSparkParticleParams {
    */
   color?: Vector4Value
   /**
-   * Unknown.
+   * The length of the particles.
    * 
    * **Default**: `1`
    */
   particleLength?: ScalarValue
   /**
-   * Unknown.
+   * The width of the particles.
    * 
    * **Default**: `0.1`
    */
@@ -30453,7 +30586,7 @@ export interface GPUSparkParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -30621,7 +30754,7 @@ export interface GPUSparkParticleParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -30638,7 +30771,7 @@ export interface GPUSparkParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -30653,7 +30786,7 @@ export interface GPUSparkParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -30668,7 +30801,7 @@ export interface GPUSparkParticleParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -30874,7 +31007,13 @@ class GPUSparkParticle extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * The length of the particles.
+   */
   particleLength: ScalarValue
+  /**
+   * The width of the particles.
+   */
   particleWidth: ScalarValue
   /**
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
@@ -31108,7 +31247,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -31169,7 +31308,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -31184,7 +31323,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -31197,7 +31336,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -31210,7 +31349,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -31332,13 +31471,13 @@ export interface GPUSparkCorrectParticleParams {
    */
   color?: Vector4Value
   /**
-   * Unknown.
+   * The length of the particles.
    * 
    * **Default**: `1`
    */
   particleLength?: ScalarValue
   /**
-   * Unknown.
+   * The width of the particles.
    * 
    * **Default**: `0.1`
    */
@@ -31881,7 +32020,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
    * **Default**: `0`
    */
@@ -32049,7 +32188,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -32066,7 +32205,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -32081,7 +32220,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -32096,7 +32235,7 @@ export interface GPUSparkCorrectParticleParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -32303,7 +32442,13 @@ class GPUSparkCorrectParticle extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * The length of the particles.
+   */
   particleLength: ScalarValue
+  /**
+   * The width of the particles.
+   */
   particleWidth: ScalarValue
   /**
    * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
@@ -32537,7 +32682,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
-   * It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    */
   limitUpdateDistance: boolean
   /**
@@ -32598,7 +32743,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -32613,7 +32758,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -32626,7 +32771,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -32639,7 +32784,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -32857,7 +33002,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -32865,7 +33010,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -32873,7 +33018,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -32904,7 +33049,7 @@ export interface DynamicTracerParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold?: ScalarValue
   /**
@@ -33133,7 +33278,7 @@ export interface DynamicTracerParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -33148,7 +33293,7 @@ export interface DynamicTracerParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -33165,7 +33310,7 @@ export interface DynamicTracerParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -33180,7 +33325,7 @@ export interface DynamicTracerParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -33295,7 +33440,9 @@ export interface DynamicTracerParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -33486,19 +33633,19 @@ class DynamicTracer extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link normalMap}
@@ -33512,7 +33659,7 @@ class DynamicTracer extends DataAction {
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
@@ -33606,7 +33753,7 @@ class DynamicTracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -33619,7 +33766,7 @@ class DynamicTracer extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -33634,7 +33781,7 @@ class DynamicTracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -33647,7 +33794,7 @@ class DynamicTracer extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -33696,6 +33843,11 @@ class DynamicTracer extends DataAction {
    */
   shadowDarkness: number
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -35166,7 +35318,7 @@ export interface RichModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier2?: ScalarValue
   /**
@@ -35216,7 +35368,7 @@ export interface RichModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier?: ScalarValue
   /**
@@ -35224,7 +35376,7 @@ export interface RichModelParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier?: ScalarValue
   /**
@@ -35598,7 +35750,7 @@ export interface RichModelParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -35613,7 +35765,7 @@ export interface RichModelParams {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -35630,7 +35782,7 @@ export interface RichModelParams {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -35645,7 +35797,7 @@ export interface RichModelParams {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -35979,7 +36131,7 @@ class RichModel extends DataAction {
   /**
    * Seemingly identical to {@link rgbMultiplier}?
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier2: ScalarValue
   unk_er_p1_19: ScalarValue
@@ -36011,13 +36163,13 @@ class RichModel extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   unk_er_p2_2: ScalarValue
@@ -36156,7 +36308,7 @@ class RichModel extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minDistance}
@@ -36169,7 +36321,7 @@ class RichModel extends DataAction {
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link minFadeDistance} to be set to something other than -1.
+   * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -36184,7 +36336,7 @@ class RichModel extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -36197,7 +36349,7 @@ class RichModel extends DataAction {
   /**
    * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
-   * This requires {@link maxFadeDistance} to be set to something other than -1.
+   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
@@ -36829,7 +36981,7 @@ export interface WindForceParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37091,7 +37243,7 @@ export interface WindForceParams {
   /**
    * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37104,7 +37256,7 @@ export interface WindForceParams {
   /**
    * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37200,7 +37352,7 @@ export interface WindForceParams {
    */
   unk_sdt_f1_52?: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -37269,7 +37421,7 @@ class WindForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37375,7 +37527,7 @@ class WindForce extends DataAction {
   /**
    * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37386,7 +37538,7 @@ class WindForce extends DataAction {
   /**
    * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37418,7 +37570,7 @@ class WindForce extends DataAction {
   unk_sdt_f1_51: number
   unk_sdt_f1_52: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   unk_sdt_f1_54: number
@@ -37441,7 +37593,7 @@ export interface GravityForceParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37639,7 +37791,7 @@ export interface GravityForceParams {
   /**
    * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37652,7 +37804,7 @@ export interface GravityForceParams {
   /**
    * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * **Default**: `1`
    * 
@@ -37718,7 +37870,7 @@ export interface GravityForceParams {
    */
   unk_ds3_f1_37?: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -37739,7 +37891,7 @@ class GravityForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -37828,7 +37980,7 @@ class GravityForce extends DataAction {
   /**
    * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37839,7 +37991,7 @@ class GravityForce extends DataAction {
   /**
    * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
    * 
-   * This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
    * See also:
    * - {@link force}
@@ -37866,7 +38018,7 @@ class GravityForce extends DataAction {
   unk_ds3_f1_36: number
   unk_ds3_f1_37: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   constructor(props: GravityForceParams = {}) {
@@ -37999,7 +38151,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetY}
@@ -38011,7 +38163,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38023,7 +38175,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `0`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38035,7 +38187,7 @@ export interface TurbulenceForceParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -38318,7 +38470,7 @@ export interface TurbulenceForceParams {
    */
   unk_unk_f1_39?: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    * 
    * **Default**: `0`
    */
@@ -38405,7 +38557,7 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetY}
@@ -38415,7 +38567,7 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38425,7 +38577,7 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link noiseOffsetX}
@@ -38435,7 +38587,7 @@ class TurbulenceForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
    * - {@link forceRandomMultiplierMin}
@@ -38564,7 +38716,7 @@ class TurbulenceForce extends DataAction {
   unk_unk_f1_38: number
   unk_unk_f1_39: number
   /**
-   * The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
    */
   fadeOutTime: number
   unk_unk_f1_41: number
@@ -39063,7 +39215,7 @@ export interface Unk10500Params {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rateOfTime?: ScalarValue
   /**
@@ -39146,7 +39298,7 @@ class Unk10500 extends DataAction {
   /**
    * Controls how fast time passes for the entire effect.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rateOfTime: ScalarValue
   /**
@@ -39182,7 +39334,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseColor?: Vector4Value
   /**
@@ -39194,7 +39346,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor?: Vector4Value
   /**
@@ -39204,7 +39356,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier?: ScalarValue
   /**
@@ -39214,7 +39366,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier?: ScalarValue
   /**
@@ -39222,7 +39374,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `0.01`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   near?: ScalarValue
   /**
@@ -39230,7 +39382,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `50`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   far?: ScalarValue
   /**
@@ -39238,7 +39390,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `50`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusX?: ScalarValue
   /**
@@ -39246,7 +39398,7 @@ export interface SpotLightParams {
    * 
    * **Default**: `50`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusY?: ScalarValue
   /**
@@ -39546,7 +39698,7 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseColor: Vector4Value
   /**
@@ -39556,7 +39708,7 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor: Vector4Value
   /**
@@ -39564,7 +39716,7 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseMultiplier: ScalarValue
   /**
@@ -39572,31 +39724,31 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier: ScalarValue
   /**
    * Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   near: ScalarValue
   /**
    * Controls how far away the base of the cone is from the light source.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   far: ScalarValue
   /**
    * The X radius for the elliptic base of the cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusX: ScalarValue
   /**
    * The Y radius for the elliptic base of the cone.
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusY: ScalarValue
   unk_ds3_p1_6: ScalarValue
@@ -39787,7 +39939,7 @@ const DataActions = {
   [ActionType.ParticleModifier]: ParticleModifier, ParticleModifier,
   [ActionType.SFXReference]: SFXReference, SFXReference,
   [ActionType.LevelsOfDetailThresholds]: LevelsOfDetailThresholds, LevelsOfDetailThresholds,
-  [ActionType.StateEffectMap]: StateEffectMap, StateEffectMap,
+  [ActionType.StateConfigMap]: StateConfigMap, StateConfigMap,
   [ActionType.SelectAllNodes]: SelectAllNodes, SelectAllNodes,
   [ActionType.SelectRandomNode]: SelectRandomNode, SelectRandomNode,
   [ActionType.PeriodicEmitter]: PeriodicEmitter, PeriodicEmitter,
@@ -39813,9 +39965,9 @@ const DataActions = {
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
-  [ActionType.Unk700]: Unk700, Unk700,
-  [ActionType.Unk701]: Unk701, Unk701,
-  [ActionType.Unk702]: Unk702, Unk702,
+  [ActionType.SimulateTermination]: SimulateTermination, SimulateTermination,
+  [ActionType.FadeTermination]: FadeTermination, FadeTermination,
+  [ActionType.InstantTermination]: InstantTermination, InstantTermination,
   [ActionType.NodeForceSpeed]: NodeForceSpeed, NodeForceSpeed,
   [ActionType.ParticleForceSpeed]: ParticleForceSpeed, ParticleForceSpeed,
   [ActionType.NodeForceAcceleration]: NodeForceAcceleration, NodeForceAcceleration,
@@ -41940,18 +42092,18 @@ namespace Recolor {
         )
       )
     }
-    function *walkEffects(sources: (FXR | Node)[]) {
+    function *walkConfigs(sources: (FXR | Node)[]) {
       for (const src of sources) {
         if (src instanceof FXR) {
-          yield* src.root.walkEffects()
+          yield* src.root.walkConfigs()
         } else {
-          yield* src.walkEffects()
+          yield* src.walkConfigs()
         }
       }
     }
-    for (const effect of walkEffects(sources)) {
-      if (effect instanceof BasicEffect) {
-        const a = effect.appearance
+    for (const config of walkConfigs(sources)) {
+      if (config instanceof BasicConfig) {
+        const a = config.appearance
         if (
           a instanceof PointSprite ||
           a instanceof Line ||
@@ -41963,14 +42115,14 @@ namespace Recolor {
           a instanceof Tracer ||
           a instanceof DynamicTracer
         ) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
           if (blendMode instanceof Property) {
             blendMode = blendMode.valueAt(0)
           }
           if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
             blendMode = BlendMode.Normal
-          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Screen) {
+          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Unk7) {
             blendMode = BlendMode.Add
           }
           const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
@@ -41980,7 +42132,7 @@ namespace Recolor {
           if (key in palette && mode === PaletteMode.First) continue
           palette[key] ??= []
           palette[key].push({
-            modifier: normalize(effect.particleModifier.color),
+            modifier: normalize(config.particleModifier.color),
             color1: normalize(a.color1),
             color2: normalize(a.color2),
             color3: normalize(a.color3),
@@ -41988,21 +42140,21 @@ namespace Recolor {
             bloomColor: normalize(a.bloomColor),
           })
         } else if (a instanceof Distortion) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           if ('distortionParticle' in palette && mode === PaletteMode.First) continue
           palette.distortionParticle ??= []
           palette.distortionParticle.push({
-            modifier: normalize(effect.particleModifier.color),
+            modifier: normalize(config.particleModifier.color),
             color: normalize(a.color),
             rgbMultiplier: normalize(a.rgbMultiplier),
             bloomColor: normalize(a.bloomColor),
           })
         } else if (a instanceof RadialBlur) {
-          if (!(effect.particleModifier instanceof ParticleModifier)) continue
+          if (!(config.particleModifier instanceof ParticleModifier)) continue
           if ('blurParticle' in palette && mode === PaletteMode.First) continue
           palette.blurParticle ??= []
           palette.blurParticle.push({
-            modifier: normalize(effect.particleModifier.color),
+            modifier: normalize(config.particleModifier.color),
             color: normalize(a.color),
             rgbMultiplier: normalize(a.rgbMultiplier),
             bloomColor: normalize(a.bloomColor),
@@ -43107,13 +43259,13 @@ namespace FXRUtility {
     const nodes = recurse ? Array.from(node.walk()) : [node]
     for (const n of nodes) {
       if (n instanceof BasicNode || n instanceof NodeEmitterNode) {
-        for (const effect of n.walkEffects(false)) {
-          if (effect instanceof NodeEmitterEffect || (
-            effect instanceof BasicEffect &&
-            effect.appearance instanceof DataAction &&
-            effect.appearance.meta.isParticle
+        for (const config of n.walkConfigs(false)) {
+          if (config instanceof NodeEmitterConfig || (
+            config instanceof BasicConfig &&
+            config.appearance instanceof DataAction &&
+            config.appearance.meta.isParticle
           )) {
-            const emShape = effect.emitterShape
+            const emShape = config.emitterShape
             if (emShape instanceof DiskEmitterShape) {
               const radius = constantValueOf(emShape.radius)
               n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
@@ -43241,7 +43393,7 @@ namespace FXRUtility {
    * 
    * **Default**: `[0, 0, 0]`
    * 
-   * **Argument**: {@link PropertyArgument.EffectAge Effect age}
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   export function animatedNodeRotation(rotation: Vector3Value): Action | NodeSpin {
     if (!(rotation instanceof Property) || rotation instanceof ValueProperty) {
@@ -43287,33 +43439,17 @@ namespace FXRUtility {
 export {
   Game,
   FXRVersion,
-  NodeType,
-  EffectType,
-  ActionType,
   ValueType,
   PropertyFunction,
   ModifierType,
   FieldType,
-  BlendMode,
   ExternalValue,
   Operator,
   OperandType,
-  AttachMode,
-  PropertyArgument,
-  OrientationMode,
-  ModelOrientationMode,
-  TracerOrientationMode,
-  RichModelOrientationMode,
-  LightingMode,
-  DistortionMode,
-  DistortionShape,
-  InitialDirection,
-  EmitterShape,
   ResourceType,
-  ForceVolumeShape,
 
   Nodes,
-  EffectActionSlots,
+  ConfigActionSlots,
   ActionData,
   DataActions,
 
@@ -43333,17 +43469,17 @@ export {
 
   Node,
   GenericNode,
-  NodeWithEffects,
+  NodeWithConfigs,
   RootNode,
   ProxyNode,
   LevelsOfDetailNode,
   BasicNode,
   NodeEmitterNode,
 
-  Effect,
-  LevelsOfDetailEffect,
-  BasicEffect,
-  NodeEmitterEffect,
+  NodeConfig,
+  LevelsOfDetailConfig,
+  BasicConfig,
+  NodeEmitterConfig,
 
   Action,
   DataAction,
@@ -43379,7 +43515,7 @@ export {
   ParticleModifier,
   SFXReference,
   LevelsOfDetailThresholds,
-  StateEffectMap,
+  StateConfigMap,
   SelectAllNodes,
   SelectRandomNode,
   PeriodicEmitter,
@@ -43405,9 +43541,9 @@ export {
   Distortion,
   RadialBlur,
   PointLight,
-  Unk700,
-  Unk701,
-  Unk702,
+  SimulateTermination,
+  FadeTermination,
+  InstantTermination,
   NodeForceSpeed,
   ParticleForceSpeed,
   NodeForceAcceleration,

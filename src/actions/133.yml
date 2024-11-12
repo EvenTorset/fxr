@@ -1,10 +1,11 @@
 type: 133
 name: LevelsOfDetailThresholds
+slot: LevelsOfDetailThresholds
 meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Used in the {@link EffectType.LevelsOfDetail levels of detail effect} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+  Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
 properties:
   duration:
     type: ScalarValue

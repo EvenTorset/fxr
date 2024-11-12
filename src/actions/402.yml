@@ -10,21 +10,21 @@ properties:
   sizeX:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Width of the rectangle.
   sizeY:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       Height of the rectangle.
   distribution:
     type: ScalarValue
     default: 0
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Controls how the random emission points are distributed within the rectangle.
       - At 0, particles are equally likely to emit from anywhere inside the rectangle.
@@ -34,6 +34,7 @@ properties:
   direction:
     type: InitialDirection
     field: int
+    enum: InitialDirection
     default: InitialDirection.Emitter
     desc: |
       Controls the initial direction for particles. See {@link InitialDirection} for more information.

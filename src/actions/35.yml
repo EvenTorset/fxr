@@ -9,12 +9,14 @@ desc: |
 properties:
   offset:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
       Translation of the node.
   rotation:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     desc: |
       The rotation of the node.

@@ -132,6 +132,7 @@ properties:
       - rotationZ
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -144,6 +145,7 @@ properties:
       - color3
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EmissionTime
     color: true
@@ -156,6 +158,7 @@ properties:
       - color3
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -173,7 +176,7 @@ properties:
   rgbMultiplier2:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Seemingly identical to {@link rgbMultiplier}?
   unk_er_p1_19:
@@ -182,6 +185,7 @@ properties:
     type: ScalarValue
   uvOffset:
     type: Vector2Value
+    components: 2
     default: [0, 0]
     argument: Constant0
     desc: |
@@ -190,6 +194,7 @@ properties:
       - uvSpeed
   uvSpeed:
     type: Vector2Value
+    components: 2
     default: [0, 0]
     argument: ParticleAge
     time: true
@@ -199,6 +204,7 @@ properties:
       - uvSpeedMultiplier
   uvSpeedMultiplier:
     type: Vector2Value
+    components: 2
     default: [1, 1]
     argument: ParticleAge
     desc: |
@@ -257,31 +263,35 @@ properties:
   rgbMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Alpha multiplier.
   unk_er_p2_2:
     type: ScalarValue
   unk_er_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_er_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_er_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_er_p2_6:
     type: ScalarValue
   orientation:
     type: RichModelOrientationMode
     field: int
+    enum: RichModelOrientationMode
     default: RichModelOrientationMode.ParticleDirection
     desc: |
       Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
@@ -440,6 +450,7 @@ properties:
     field: int
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |
@@ -467,7 +478,7 @@ properties:
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
     see:
       - minDistance
       - maxFadeDistance
@@ -481,7 +492,7 @@ properties:
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to something other than -1.
+      This requires {@link minFadeDistance} to be set to a positive value or 0.
 
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
@@ -497,7 +508,7 @@ properties:
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
     see:
       - minFadeDistance
       - minDistance
@@ -511,7 +522,7 @@ properties:
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to something other than -1.
+      This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
       This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:

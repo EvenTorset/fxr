@@ -1,6 +1,6 @@
 {
   "name": "@cccode/fxr",
-  "version": "16.0.0",
+  "version": "17.0.0",
   "description": "JavaScript library for creating and editing FXR files for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
@@ -44,11 +44,12 @@
   },
   "homepage": "https://fxr-docs.pages.dev/",
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "chokidar": "^3.6.0",
-    "npm-run-all2": "^6.2.0",
-    "typedoc": "^0.26.2",
-    "typescript": "^5.5.2",
-    "yaml": "^2.4.5"
+    "@types/node": "^22.5.5",
+    "cheerio": "^1.0.0",
+    "chokidar": "^4.0.0",
+    "npm-run-all2": "^7.0.1",
+    "typedoc": "^0.26.7",
+    "typescript": "^5.6.2",
+    "yaml": "^2.5.1"
   }
 }

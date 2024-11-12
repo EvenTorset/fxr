@@ -10,20 +10,21 @@ properties:
   radius:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       The radius of the cylinder.
   height:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       The height of the cylinder.
   direction:
     type: InitialDirection
     field: int
+    enum: InitialDirection
     default: InitialDirection.Emitter
     desc: |
       Controls the initial direction for particles. See {@link InitialDirection} for more information.

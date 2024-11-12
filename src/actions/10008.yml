@@ -43,6 +43,7 @@ properties:
       Particle acceleration along the Z-axis.
   color:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -54,9 +55,13 @@ properties:
     type: ScalarValue
     default: 1
     time: inv
+    desc: |
+      The length of the particles.
   particleWidth:
     type: ScalarValue
     default: 0.1
+    desc: |
+      The width of the particles.
   unkParticleAcceleration:
     type: ScalarValue
     scale: true
@@ -92,12 +97,15 @@ properties:
     type: ScalarValue
   unk_ac6_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ac6_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ac6_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ac6_p2_6:
     type: ScalarValue
@@ -111,6 +119,7 @@ properties:
   emitterShape:
     type: EmitterShape
     field: int
+    enum: EmitterShape
     default: EmitterShape.Box
     desc: |
       Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
@@ -118,12 +127,14 @@ properties:
     field: int
   emitterSize:
     field: vec3
+    components: 3
     default: [1, 1, 1]
     scale: true
     desc: |
       The size of the emitter.
   emitterRotation:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     desc: |
       The rotation of the emitter.
@@ -227,6 +238,7 @@ properties:
     field: int
   particleOffset:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
@@ -236,12 +248,14 @@ properties:
       - particleOffsetMax
   particleOffsetMin:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
       Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
   particleOffsetMax:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
@@ -250,6 +264,7 @@ properties:
     field: int
   particleSpeedMin:
     field: vec3
+    components: 3
     default: [-0.01, -0.01, -0.01]
     scale: true
     time: true
@@ -259,6 +274,7 @@ properties:
       - particleSpeedMax
   particleSpeedMax:
     field: vec3
+    components: 3
     default: [0.01, 0.01, 0.01]
     scale: true
     time: true
@@ -278,17 +294,20 @@ properties:
       Alpha multiplier.
   colorMin:
     field: vec4
+    components: 4
     default: [0, 0, 0, 0]
     desc: |
       Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
   colorMax:
     field: vec4
+    components: 4
     default: [0, 0, 0, 0]
     desc: |
       Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
   blendMode:
     type: BlendMode
     field: int
+    enum: BlendMode
     default: BlendMode.Add
     desc: |
       Blend mode.
@@ -405,7 +424,7 @@ properties:
     desc: |
       If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
 
-      It will not stop updating immediately after the effect becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+      It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
   updateDistance:
     field: float
     scale: true
@@ -437,6 +456,7 @@ properties:
       - bloomColor
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |
@@ -495,7 +515,7 @@ properties:
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to something other than -1.
+      This requires {@link minFadeDistance} to be set to a positive value or 0.
 
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
@@ -511,7 +531,7 @@ properties:
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
     see:
       - minDistance
       - maxFadeDistance
@@ -525,7 +545,7 @@ properties:
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
     see:
       - minFadeDistance
       - minDistance
@@ -539,7 +559,7 @@ properties:
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to something other than -1.
+      This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
       This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
@@ -616,6 +636,7 @@ properties:
   lighting:
     type: LightingMode
     field: int
+    enum: LightingMode
     default: LightingMode.Unlit
   unk_ac6_f2_36:
     field: int

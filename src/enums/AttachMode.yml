@@ -1,0 +1,24 @@
+name: AttachMode
+desc: |
+  Values used to represent different modes of attachment.
+members:
+  None:
+    value: 0
+    desc: |
+      Completely detached.
+  Parent:
+    value: 1
+    desc: |
+      Translates and rotates with the parent node.
+  DummyPoly:
+    value: 2
+    desc: |
+      Translates and rotates with the attachment point (dummypoly). Parent transformations are ignored.
+  ParentTranslation:
+    value: 3
+    desc: |
+      Only translates with the parent node. Rotations are entirely ignored.
+  DummyPolyTranslation:
+    value: 4
+    desc: |
+      Only translates with the attachment point (dummypoly). Rotations are entirely ignored.

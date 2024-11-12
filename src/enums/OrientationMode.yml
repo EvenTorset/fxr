@@ -1,0 +1,46 @@
+name: OrientationMode
+desc: |
+  Values representing different orientation modes for most particles.
+members:
+  South:
+    value: 0
+    desc: |
+      Faces global south.
+
+      See also:
+      - {@link UnkSouth}
+  CameraPlane:
+    value: 1
+    desc: |
+      Faces the camera plane.
+
+      See also:
+      - {@link Camera}
+  LocalSouth:
+    value: 2
+    desc: |
+      Faces the -Z direction of the parent node.
+  UnkSouth:
+    value: 3
+    desc: |
+      Faces global south.
+
+      Similar to {@link South}, but this seems to change the projection of the particle in some way.
+  GlobalYaw:
+    value: 4
+    desc: |
+      Tries to face the camera, but is limited to rotation around the vertical global Y-axis.
+  East:
+    value: 5
+    desc: |
+      Faces global east.
+  Camera:
+    value: 6
+    desc: |
+      Faces the camera.
+
+      This is different from {@link CameraPlane}, as this makes it face the camera's position instead of the camera plane.
+  LocalYaw:
+    value: 7
+    desc: |
+      Tries to face the camera, but is limited to rotation around the Y-axis of the parent node.

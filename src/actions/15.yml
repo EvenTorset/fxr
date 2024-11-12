@@ -9,8 +9,9 @@ desc: |
 properties:
   translation:
     type: Vector3Value
+    components: 3
     default: [0, 0, 0]
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       An offset for the position of the node.

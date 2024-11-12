@@ -12,7 +12,7 @@ properties:
   force:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     time: true
     desc: |
       The strength of the force applied in the volume.
@@ -23,6 +23,7 @@ properties:
   shape:
     type: ForceVolumeShape
     field: int
+    enum: ForceVolumeShape
     default: ForceVolumeShape.Sphere
     desc: |
       The shape of the volume.
@@ -45,6 +46,7 @@ properties:
       - shape
   boxSize:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
@@ -155,7 +157,7 @@ properties:
     desc: |
       The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
 
-      This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+      This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
     see:
       - force
       - forceRandomMultiplierMax
@@ -166,7 +168,7 @@ properties:
     desc: |
       The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
 
-      This is multiplicative with both the base force and the {link forceMultiplier other multiplier}.
+      This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
     see:
       - force
       - forceRandomMultiplierMin
@@ -220,7 +222,7 @@ properties:
     field: int
     time: inv
     desc: |
-      The time it takes for the force to fade out after the effect has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+      The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
   unk_sdt_f1_54:
     field: float
   unk_sdt_f1_55:

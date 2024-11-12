@@ -1,0 +1,17 @@
+name: ActionType
+# Note: This file only contains actions that are a very special case, like action 0, and ones that we only know the ID of. The other actions are automatically added to the enum based on their data files in src/actions.
+desc: |
+  Values used to represent different types of FXR actions.
+members:
+  None:
+    value: 0
+    desc: |
+      This action does nothing. It fits into most action slots and acts as a way to disable the effects of the other actions that go in those slots.
+  Unk10002_Fluid:
+    value: 10002
+    desc: |
+      Unknown action that *may* exist in Dark Souls 3. It is not used in vanilla, but its name and ID have been found in the game's executable.
+  Unk10010_Tracer:
+    value: 10010
+    desc: |
+      Unknown action that *may* exist in Dark Souls 3. It is not used in vanilla, but its name and ID have been found in the game's executable.

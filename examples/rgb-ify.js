@@ -1,6 +1,5 @@
 import {
-  ActionType,
-  BasicEffect,
+  BasicConfig,
   BillboardEx,
   ConstantProperty,
   Distortion,
@@ -27,6 +26,7 @@ import {
   RichModel,
   SpotLight,
   Tracer,
+  Recolor,
 } from '@cccode/fxr'
 
 // Input folder to grab the original files from
@@ -91,12 +91,8 @@ while (ids.length) {
   // sure to let it know to parse it as an ER FXR.
   const fxr = await FXR.read(`${inputDir}/${fileName}`, Game.EldenRing)
 
-  // First make the effect grayscale by setting the RGB values to the
-  // percieved brightness of the original color
-  fxr.root.recolor(([r, g, b, a]) => {
-    const l = r * 0.21 + g * 0.72 + b * 0.07
-    return [l, l, l, a]
-  })
+  // First make the effect grayscale
+  fxr.root.recolor(Recolor.grayscale)
 
   /*
     Next, add the rainbow modifier to one of the color multipliers in the
@@ -105,10 +101,10 @@ while (ids.length) {
     Adding it to Action 131 (ParticleModifier) wouldn't work in all cases,
     because not all appearance types are particles.
   */
-  for (const effect of fxr.root.walkEffects()) {
-    if (!(effect instanceof BasicEffect)) continue
+  for (const config of fxr.root.walkConfigs()) {
+    if (!(config instanceof BasicConfig)) continue
 
-    const action = effect.appearance
+    const action = config.appearance
     if (
       action instanceof PointSprite ||
       action instanceof Line ||

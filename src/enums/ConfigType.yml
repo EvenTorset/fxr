@@ -1,0 +1,22 @@
+name: ConfigType
+desc: |
+  Values used to represent different types of node configurations, also known as "effects". There is one for each {@link NodeType type of node} that supports multiple configs.
+members:
+  LevelsOfDetail:
+    value: 1002
+    desc: |
+      Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+
+      **Class**: {@link LevelsOfDetailConfig}
+  Basic:
+    value: 1004
+    desc: |
+      Config used in {@link NodeType.Basic basic nodes} to apply transforms and to control emission and properties of particles.
+
+      **Class**: {@link BasicConfig}
+  NodeEmitter:
+    value: 1005
+    desc: |
+      Config used in {@link NodeType.NodeEmitter node emitter nodes} to control the emission of child nodes.
+
+      **Class**: {@link NodeEmitterConfig}

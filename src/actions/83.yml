@@ -16,7 +16,7 @@ properties:
       Controls the speed of the node along its Z-axis.
   accelerationZ:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     time: sq
     desc: |
@@ -24,19 +24,19 @@ properties:
   accelerationMultiplierZ:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for {@link accelerationZ}.
   accelerationY:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     time: sq
     desc: |
       Controls the acceleration of the node along its Y-axis.
   maxTurnAngle:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
   alignWithMotion:

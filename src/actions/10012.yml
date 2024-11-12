@@ -21,6 +21,7 @@ properties:
   blendMode:
     type: BlendMode | ScalarProperty
     field: int
+    enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
     desc: |
@@ -44,6 +45,7 @@ properties:
     type: ScalarValue
   color1:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -56,6 +58,7 @@ properties:
       - color3
   color2:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: EmissionTime
     color: true
@@ -68,6 +71,7 @@ properties:
       - color3
   color3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
@@ -120,34 +124,37 @@ properties:
   rgbMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
   alphaMultiplier:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Alpha multiplier.
   distortionIntensity:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Controls the intensity of the distortion effect. At 0, there is no distortion at all.
     see:
       - normalMap
   unk_ds3_p2_3:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_4:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   unk_ds3_p2_5:
     type: Vector4Value
+    components: 4
     default: [1, 1, 1, 1]
   alphaThreshold:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
 
@@ -155,6 +162,7 @@ properties:
   orientation:
     type: TracerOrientationMode
     field: int
+    enum: TracerOrientationMode
     default: TracerOrientationMode.LocalZ
     desc: |
       Tracer orientation mode. See {@link TracerOrientationMode} for more information.
@@ -263,6 +271,7 @@ properties:
       - bloomColor
   bloomColor:
     field: vec4
+    components: 4
     default: [1, 1, 1, 0]
     color: true
     desc: |
@@ -290,7 +299,7 @@ properties:
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
     see:
       - minDistance
       - maxFadeDistance
@@ -304,7 +313,7 @@ properties:
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to something other than -1.
+      This requires {@link minFadeDistance} to be set to a positive value or 0.
 
       This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
@@ -320,7 +329,7 @@ properties:
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to something other than -1. This distance limit can be disabled by setting this and minDistance to -1.
+      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
     see:
       - minFadeDistance
       - minDistance
@@ -334,7 +343,7 @@ properties:
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to something other than -1.
+      This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
       This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
     see:
@@ -399,7 +408,10 @@ properties:
     field: int
   unk_sdt_f2_32:
     field: int
-    default: 1
+    desc: |
+      Unknown integer.
+
+      When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
   specular:
     field: int
     resource: texture
@@ -422,6 +434,7 @@ properties:
   lighting:
     type: LightingMode
     field: int
+    enum: LightingMode
     default: LightingMode.Unlit
     desc: |
       Controls how the trail is lit. See {@link LightingMode} for more information.

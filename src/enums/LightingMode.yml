@@ -1,0 +1,18 @@
+name: LightingMode
+desc: |
+  Values representing different lighting modes.
+
+  These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described.
+members:
+  UnkMinus2:
+    value: -2
+    desc: |
+      Same as {@link Lit}, but this seems to sometimes have an extra light source from somewhere?
+  Unlit:
+    value: -1
+    desc: |
+      Lighting does not affect the particles. No shadows or specular hightlights.
+  Lit:
+    value: 0
+    desc: |
+      Lighting affects the particles just like most regular objects.

@@ -10,19 +10,18 @@ properties:
   threshold:
     type: ScalarValue
     default: 0.1
-    argument: EffectAge
+    argument: ActiveTime
     scale: true
     desc: |
       How much the emitter must move to trigger emission.
   unk_ds3_p1_2:
     type: ScalarValue
     default: -1
-    argument: EffectAge
   maxConcurrent:
     type: ScalarValue
     field: int
     default: -1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Maximum number of concurrent particles. Can be set to -1 to disable the limit.
   unk_ds3_p1_1:

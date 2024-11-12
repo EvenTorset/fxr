@@ -29,7 +29,7 @@ fxr.root.nodes = [
   */
   Node.fromJSON({
     "type": 2200,
-    "stateEffectMap": [ 0 ],
+    "stateConfigMap": [ 0 ],
     "effects": [
       {
         "type": 1004,
@@ -89,7 +89,7 @@ const fxr2 = FXR.fromJSON({
   "states": [ "External(0) < 1 else -1" ],
   "root": {
     "type": 2000,
-    "unk70x": { "type": 700 },
+    "termination": { "type": 700 },
     "nodes": []
   }
 })
@@ -104,7 +104,7 @@ const fxr3 = FXR.fromJSON({
     "states": [ "External(0) < 1 else -1" ],
     "root": {
       "type": 2000,
-      "unk70x": { "type": 700 },
+      "termination": { "type": 700 },
       "nodes": []
     }
   }

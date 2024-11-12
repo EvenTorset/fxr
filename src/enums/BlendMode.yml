@@ -1,0 +1,44 @@
+name: BlendMode
+desc: |
+  Values used to represent different types of blend modes.
+members:
+  Unk0:
+    value: 0
+    desc: |
+      Seemingly identical to {@link Add}?
+  Source:
+    value: 1
+    desc: |
+      Completely ignores blending. The source layer (particle) will be drawn in place of the background, ignoring the alpha of the layer.
+  Normal:
+    value: 2
+    desc: |
+      The source layer (particle) will be drawn on over the background. Transparent or partially transparent parts of the layer will allow the background to be seen through the layer.
+
+      Also known as "source-over", and is the same as the "normal" blend mode found in many image editors.
+  Multiply:
+    value: 3
+    desc: |
+      The source layer (particle) will be multiplied with the background, ignoring the alpha of the layer.
+
+      Same as the "multiply" blend mode found in many image editors.
+  Add:
+    value: 4
+    desc: |
+      The source layer (particle) multiplied by its alpha (clamped to [0, 1]) will be added to the background.
+
+      Same as the "add", "additive", or "linear dodge" blend modes found in many image editors. The opposite of {@link Subtract}.
+  Subtract:
+    value: 5
+    desc: |
+      The source layer (particle) multiplied by its alpha (clamped to [0, 1]) will be subtracted from the background.
+
+      Same as the "subtract" or "difference" blend modes found in many image editors. The opposite of {@link Add}.
+  Unk6:
+    value: 6
+    desc: |
+      Seemingly identical to {@link Normal}?
+  Unk7:
+    value: 7
+    desc: |
+      Seemingly identical to {@link Add}?

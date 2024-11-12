@@ -17,6 +17,7 @@ properties:
   attachment:
     type: AttachMode
     field: int
+    enum: AttachMode
     default: AttachMode.Parent
     desc: |
       Controls how the particles are attached to the node.

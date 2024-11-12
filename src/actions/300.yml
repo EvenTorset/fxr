@@ -10,27 +10,27 @@ properties:
   interval:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     time: inv
     desc: |
       Time between emitting new particles in seconds.
   perInterval:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       The number of particles to emit per interval. They all spawn at the same time per interval.
   totalIntervals:
     type: ScalarValue
     default: -1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
   maxConcurrent:
     type: ScalarValue
     field: int
     default: -1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Maximum number of concurrent particles. Can be set to -1 to disable the limit.
   unk_ds3_f1_1:

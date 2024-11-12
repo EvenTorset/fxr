@@ -1,22 +1,24 @@
 type: 199
-name: StateEffectMap
+name: StateConfigMap
+slot: StateConfigMap
 meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Maps states to effects in the parent node.
+  Maps states to configs in the parent node.
 properties:
-  effectIndices:
+  configIndices:
     type: number[]
     default: [0]
+    s10: true
     desc: |
-      A list of effect indices.
+      A list of config indices.
 
-      The index of each value represents the index of the state, and the value represents the index of the effect that should be active when the state is active.
+      The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
 games:
   DS3:
     section10s:
-      - effectIndices
+      - configIndices
   SDT: DS3
   ER: DS3
   AC6: DS3

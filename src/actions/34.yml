@@ -9,7 +9,7 @@ desc: |
 properties:
   angularSpeedX:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     time: true
     desc: |
       The node's angular speed around its local X-axis in degrees per second.
@@ -18,12 +18,12 @@ properties:
   angularSpeedMultiplierX:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for {@link angularSpeedX}.
   angularSpeedY:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     time: true
     desc: |
       The node's angular speed around its local Y-axis in degrees per second.
@@ -32,12 +32,12 @@ properties:
   angularSpeedMultiplierY:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for {@link angularSpeedY}.
   angularSpeedZ:
     type: ScalarValue
-    argument: EffectAge
+    argument: ActiveTime
     time: true
     desc: |
       The node's angular speed around its local Z-axis in degrees per second.
@@ -46,7 +46,7 @@ properties:
   angularSpeedMultiplierZ:
     type: ScalarValue
     default: 1
-    argument: EffectAge
+    argument: ActiveTime
     desc: |
       Multiplier for {@link angularSpeedZ}.
   unk_ds3_f1_0:

@@ -8,6 +8,7 @@ const projectDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const srcDir = path.join(projectDir, 'src')
 const distDir = path.join(projectDir, 'dist')
 const actionsDir = path.join(srcDir, 'actions')
+const enumsDir = path.join(srcDir, 'enums')
 
 const typeMap = {
   bool: 'boolean',
@@ -47,7 +48,7 @@ const argumentNames = {
   Constant0: 'Constant 0',
   ParticleAge: 'Particle age',
   EmissionTime: 'Emission time',
-  EffectAge: 'Effect age',
+  ActiveTime: 'Active time',
 }
 
 const resourceMap = {
@@ -119,6 +120,9 @@ function defValString(prop) {
 }
 
 function defValTS(prop) {
+  if (!('default' in prop) && prop.field === 'bool') {
+    return 'false'
+  }
   const defValue = prop.default ?? 0
   if (Array.isArray(defValue)) {
     return `[${defValue.join(', ')}]`
@@ -198,11 +202,10 @@ export default async function(writeToDist = true) {
     actionTypes.push(`
       /**
        * ### Action ${data.type} - ${data.name}${'slot' in data ? `
-       * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+       * - **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
+       * - **Class**: {@link ${data.name}}
        * 
        * ${data.desc.trim().replace(/\n/g, '\n   * ')}
-       * 
-       * This action type has a specialized subclass: {@link ${data.name}}
        */
       ${data.name} = ${data.type},
     `.trim().replace(/^\s{6}/gm, '  '))
@@ -225,6 +228,8 @@ export default async function(writeToDist = true) {
               'color' in v ? `, color: 1` : ''
             }${
               v.omitClassProp ? `, omit: 1` : ''
+            }${
+              v.s10 ? `, s10: 1` : ''
             } },`
           }).join('\n          ')}
         },
@@ -350,6 +355,26 @@ export default async function(writeToDist = true) {
     actionsListEntries.push(`[ActionType.${data.name}]: ${data.name}, ${data.name},`)
   }
 
+  const enums = []
+  for (const fn of fs.readdirSync(enumsDir).sort(naturalSorter)) {
+    const data = yaml.parse(await fs.promises.readFile(path.join(enumsDir, fn), 'utf-8'))
+
+    enums.push(`
+      /**
+       * ${data.desc.trim().replace(/\n/g, '\n * ')}
+       */
+      export enum ${data.name} {
+        ${Object.entries(data.members).map(([name, member]) => '  ' + `
+          /**
+           * ${member.desc.trim().replace(/\n/g, '\n   * ')}
+           */
+          ${name} = ${member.value},
+        `.trim().replace(/^\s{10}/gm, '  ')).join('\n').slice(2)}
+        ${data.name === 'ActionType' ? actionTypes.join('\n  ') : ''}
+      }
+    `.trim().replace(/^\s{6}/gm, ''))
+  }
+
   let libSrc = await fs.promises.readFile(path.join(srcDir, 'fxr.ts'), 'utf-8')
 
   const reReplacement = id => new RegExp(`( *)\\/\\*#${id} start\\*\\/[\\s\\S]*\\/\\*#${id} end\\*\\/`)
@@ -357,7 +382,7 @@ export default async function(writeToDist = true) {
     libSrc = libSrc.replace(reReplacement(id), `$1/*#${id} start*/\n${content}\n$1/*#${id} end*/`)
   }
 
-  replace('ActionType', '  '+actionTypes.join('\n  '))
+  replace('Enums', enums.join('\n\n'))
   replace('ActionData', '  '+actionDataEntries.join(',\n  '))
   replace('ActionClasses', classes.join('\n\n'))
   replace('ActionsList', '  '+actionsListEntries.join('\n  '))

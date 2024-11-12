@@ -1,0 +1,28 @@
+name: RichModelOrientationMode
+desc: |
+  Values representing different orientation modes for {@link ActionType.RichModel RichModel} particles.
+members:
+  North:
+    value: 0
+    desc: |
+      Faces global north.
+
+      Seemingly identical to {@link UnkNorth}?
+  CameraPlane:
+    value: 1
+    desc: |
+      Faces away from the camera plane, the same direction as the camera itself.
+  ParticleDirection:
+    value: 2
+    desc: |
+      Faces in the direction the particle is moving. This direction can be modified by {@link ActionSlots.DirectionSpreadAction DirectionSpread actions}, and is initially the particle's {@link InitialDirection}.
+  UnkNorth:
+    value: 3
+    desc: |
+      Faces global north.
+
+      Seemingly identical to {@link North}?
+  GlobalYaw:
+    value: 4
+    desc: |
+      Tries to face the camera, but is limited to rotation around the vertical global Y-axis.

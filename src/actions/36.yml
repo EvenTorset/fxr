@@ -9,23 +9,27 @@ desc: |
 properties:
   offset:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
       Translation of the node.
   rotation:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     desc: |
       The rotation of the node.
   offsetVariance:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     scale: true
     desc: |
       The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
   rotationVariance:
     field: vec3
+    components: 3
     default: [0, 0, 0]
     desc: |
       The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
