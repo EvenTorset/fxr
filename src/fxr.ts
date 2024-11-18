@@ -3173,18 +3173,12 @@ const ActionData: Record<string, {
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 1 },
       color3: { default: [1, 1, 1, 1], color: 1 },
-      layersColor: { default: [1, 1, 1, 1], color: 1 },
       layer1Color: { default: [1, 1, 1, 1], color: 1 },
       layer2Color: { default: [1, 1, 1, 1], color: 1 },
+      layer3Color: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
-      unk_ds3_p1_23: { default: 0 },
-      unk_ds3_p1_24: { default: 0 },
-      unk_ds3_p1_25: { default: 0 },
-      unk_ds3_p1_26: { default: 0 },
-      unk_ds3_p1_27: { default: 1 },
-      unk_ds3_p1_28: { default: 1 },
       layer1SpeedU: { default: 0 },
       layer1SpeedV: { default: 0 },
       layer1OffsetU: { default: 0 },
@@ -3197,6 +3191,12 @@ const ActionData: Record<string, {
       layer2OffsetV: { default: 0 },
       layer2ScaleU: { default: 1 },
       layer2ScaleV: { default: 1 },
+      layer3SpeedU: { default: 0 },
+      layer3SpeedV: { default: 0 },
+      layer3OffsetU: { default: 0 },
+      layer3OffsetV: { default: 0 },
+      layer3ScaleU: { default: 1 },
+      layer3ScaleV: { default: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_p2_2: { default: 0 },
@@ -3205,9 +3205,9 @@ const ActionData: Record<string, {
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
       alphaThreshold: { default: 0 },
       orientation: { default: OrientationMode.CameraPlane, field: 1 },
-      mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer2: { default: 1, field: 1, resource: 0, textureType: 'a' },
+      layer3: { default: 1, field: 1, resource: 0, textureType: 'a' },
       uniformScale: { default: false, field: 0 },
       unk_ds3_f1_6: { default: 0, field: 1 },
       columns: { default: 1, field: 1 },
@@ -3268,19 +3268,19 @@ const ActionData: Record<string, {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','mask','layer1','layer2','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
+        fields1: ['orientation','layer1','layer2','layer3','blendMode','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties1: ['offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layer1Color','layer2Color','layer3Color','alphaFadeThreshold','frameIndex','frameIndexOffset','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV','layer3SpeedU','layer3SpeedV','layer3OffsetU','layer3OffsetV','layer3ScaleU','layer3ScaleV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
+        fields1: ['orientation','layer1','layer2','layer3','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41'],
-        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layersColor','layer1Color','layer2Color','alphaFadeThreshold','frameIndex','frameIndexOffset','unk_ds3_p1_23','unk_ds3_p1_24','unk_ds3_p1_25','unk_ds3_p1_26','unk_ds3_p1_27','unk_ds3_p1_28','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV'],
+        properties1: ['blendMode','offsetX','offsetY','offsetZ','width','height','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','layer1Color','layer2Color','layer3Color','alphaFadeThreshold','frameIndex','frameIndexOffset','layer1SpeedU','layer1SpeedV','layer1OffsetU','layer1OffsetV','layer1ScaleU','layer1ScaleV','layer2SpeedU','layer2SpeedV','layer2OffsetU','layer2OffsetV','layer2ScaleU','layer2ScaleV','layer3SpeedU','layer3SpeedV','layer3OffsetU','layer3OffsetV','layer3ScaleU','layer3ScaleV'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','mask','layer1','layer2','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields1: ['orientation','layer1','layer2','layer3','uniformScale','unk_ds3_f1_6','columns','totalFrames','interpolateFrames','unk_ds3_f1_10','unk_ds3_f1_11','depthBlend','octagonal','unk_ds3_f1_14','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -19222,15 +19222,9 @@ export interface MultiTextureBillboardExParams {
    */
   color3?: Vector4Value
   /**
-   * Color multiplier for both of the texture layers.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layersColor?: Vector4Value
-  /**
    * Color multiplier for Layer 1.
+   * 
+   * Values in this will be clamped to the 0-1 range.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -19240,11 +19234,23 @@ export interface MultiTextureBillboardExParams {
   /**
    * Color multiplier for Layer 2.
    * 
+   * Values in this will be clamped to the 0-1 range.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer2Color?: Vector4Value
+  /**
+   * Color multiplier for Layer 3.
+   * 
+   * Values in this will be clamped to the 0-1 range.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3Color?: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
@@ -19273,42 +19279,6 @@ export interface MultiTextureBillboardExParams {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndexOffset?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_23?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_24?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_25?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_26?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_27?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_28?: ScalarValue
   /**
    * Horiztonal scroll speed for Layer 1.
    * 
@@ -19406,6 +19376,54 @@ export interface MultiTextureBillboardExParams {
    */
   layer2ScaleV?: ScalarValue
   /**
+   * Horiztonal scroll speed for Layer 3.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3SpeedU?: ScalarValue
+  /**
+   * Vertical scroll speed for Layer 3.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3SpeedV?: ScalarValue
+  /**
+   * Horizontal offset for the UV coordinates of Layer 3.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer3OffsetU?: ScalarValue
+  /**
+   * Vertical offset for the UV coordinates of Layer 3.
+   * 
+   * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer3OffsetV?: ScalarValue
+  /**
+   * Horizontal scale for the UV coordinates of Layer 3.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3ScaleU?: ScalarValue
+  /**
+   * Vertical scale for the UV coordinates of Layer 3.
+   * 
+   * **Default**: `1`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3ScaleV?: ScalarValue
+  /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Default**: `1`
@@ -19462,12 +19480,6 @@ export interface MultiTextureBillboardExParams {
    */
   orientation?: OrientationMode
   /**
-   * Mask texture ID.
-   * 
-   * **Default**: `1`
-   */
-  mask?: number
-  /**
    * Layer 1 texture ID.
    * 
    * **Default**: `1`
@@ -19479,6 +19491,12 @@ export interface MultiTextureBillboardExParams {
    * **Default**: `1`
    */
   layer2?: number
+  /**
+   * Layer 3 texture ID.
+   * 
+   * **Default**: `1`
+   */
+  layer3?: number
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
    * 
@@ -20090,13 +20108,9 @@ class MultiTextureBillboardEx extends DataAction {
    */
   color3: Vector4Value
   /**
-   * Color multiplier for both of the texture layers.
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layersColor: Vector4Value
-  /**
    * Color multiplier for Layer 1.
+   * 
+   * Values in this will be clamped to the 0-1 range.
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20104,9 +20118,19 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Color multiplier for Layer 2.
    * 
+   * Values in this will be clamped to the 0-1 range.
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer2Color: Vector4Value
+  /**
+   * Color multiplier for Layer 3.
+   * 
+   * Values in this will be clamped to the 0-1 range.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3Color: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
@@ -20129,12 +20153,6 @@ class MultiTextureBillboardEx extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndexOffset: ScalarValue
-  unk_ds3_p1_23: ScalarValue
-  unk_ds3_p1_24: ScalarValue
-  unk_ds3_p1_25: ScalarValue
-  unk_ds3_p1_26: ScalarValue
-  unk_ds3_p1_27: ScalarValue
-  unk_ds3_p1_28: ScalarValue
   /**
    * Horiztonal scroll speed for Layer 1.
    * 
@@ -20208,6 +20226,42 @@ class MultiTextureBillboardEx extends DataAction {
    */
   layer2ScaleV: ScalarValue
   /**
+   * Horiztonal scroll speed for Layer 3.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3SpeedU: ScalarValue
+  /**
+   * Vertical scroll speed for Layer 3.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3SpeedV: ScalarValue
+  /**
+   * Horizontal offset for the UV coordinates of Layer 3.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer3OffsetU: ScalarValue
+  /**
+   * Vertical offset for the UV coordinates of Layer 3.
+   * 
+   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
+   */
+  layer3OffsetV: ScalarValue
+  /**
+   * Horizontal scale for the UV coordinates of Layer 3.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3ScaleU: ScalarValue
+  /**
+   * Vertical scale for the UV coordinates of Layer 3.
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   */
+  layer3ScaleV: ScalarValue
+  /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
@@ -20236,10 +20290,6 @@ class MultiTextureBillboardEx extends DataAction {
    */
   orientation: OrientationMode
   /**
-   * Mask texture ID.
-   */
-  mask: number
-  /**
    * Layer 1 texture ID.
    */
   layer1: number
@@ -20247,6 +20297,10 @@ class MultiTextureBillboardEx extends DataAction {
    * Layer 2 texture ID.
    */
   layer2: number
+  /**
+   * Layer 3 texture ID.
+   */
+  layer3: number
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
    * 

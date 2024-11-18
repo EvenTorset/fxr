@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+- Updated action 604 with new names and documentation for all of the layer-specific properties and fields.
+  - `mask` is now `layer1`, and the old `layer1` and `layer2` fields are now `layer2` and `layer3` respectively.
+  - All other properties with the `layer#` prefix have also been changed to match.
+  - Previously unknown or incorrectly documented properties related to layer 1 (what used to be "mask") have been properly named and documented:
+    - `layersColor` -> `layer1Color`
+    - `unk_ds3_p1_23` -> `layer1SpeedU`
+    - `unk_ds3_p1_24` -> `layer1SpeedV`
+    - `unk_ds3_p1_25` -> `layer1OffsetU`
+    - `unk_ds3_p1_26` -> `layer1OffsetV`
+    - `unk_ds3_p1_27` -> `layer1ScaleU`
+    - `unk_ds3_p1_28` -> `layer1ScaleV`
+
 ## [17.0.0] - 2024-11-12
 
 - Named and documented three actions:
