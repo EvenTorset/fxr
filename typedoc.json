@@ -1,0 +1,16 @@
+{
+  "sidebarLinks": {
+    "FXR Playground": "https://fxr-playground.pages.dev/",
+    "Support me on Ko-fi": "https://ko-fi.com/cccode",
+  },
+  "includeVersion": true,
+  "plugin": ["typedoc-github-theme"],
+  "customCss": "typedoc.css",
+  "hideGenerator": true,
+  "sort": [
+    "enum-value-ascending",
+    "kind",
+    "instance-first",
+    "alphabetical"
+  ]
+}

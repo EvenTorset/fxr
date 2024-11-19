@@ -13,6 +13,11 @@
     - `unk_ds3_p1_26` -> `layer1OffsetV`
     - `unk_ds3_p1_27` -> `layer1ScaleU`
     - `unk_ds3_p1_28` -> `layer1ScaleV`
+- The documentation site has been updated with a few improvements.
+  - It now has a new theme, one that uses colors closer to the FXR Playground style.
+  - Enum members are now sorted in ascending order based on the value instead of alphabetically.
+  - Added links to the FXR Playground and Ko-fi to the sidebar.
+  - Added the library version number to the header.
 
 ## [17.0.0] - 2024-11-12
 
@@ -241,6 +246,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v17.0.0...HEAD
 [17.0.0]: https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0
 [16.0.0]: https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0
 [15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
