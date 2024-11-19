@@ -1805,6 +1805,12 @@ export interface ActionMeta {
   isParticle: boolean
 }
 
+export interface NodeColorOptions {
+  activeState?: number
+  side?: 'start' | 'end' | 'middle'
+  layer?: number
+}
+
 export type AnyAction = Action | DataAction
 export type Vector2 = [x: number, y: number]
 export type Vector3 = [x: number, y: number, z: number]
@@ -8149,6 +8155,14 @@ function validateDataActionProp(container: any, name: string, prop: ActionDataPr
   }
 }
 
+function clampVector<T extends Vector>(v: T, min: T, max: T): T {
+  return v.map((e, i) => Math.max(min[i], Math.min(max[i], e))) as T
+}
+
+function clampVec4Value(v: Vector4Value, min: Vector4 = [0, 0, 0, 0], max: Vector4 = [1, 1, 1, 1]) {
+  return v instanceof Property ? v.clamp(min, max) : clampVector(v, min, max)
+}
+
 const GameVersionMap = {
   [Game.DarkSouls3]: FXRVersion.DarkSouls3,
   [Game.Sekiro]: FXRVersion.Sekiro,
@@ -10318,6 +10332,25 @@ abstract class Node {
   }
 
   /**
+   * Returns true if the node has a color in the given active state, and
+   * otherwise returns false. This can be used as a fast way to check if
+   * {@link getColor} will return a color or not.
+   * @param activeState The index of a {@link State} to check.
+   */
+  abstract hasColor(activeState?: number): boolean
+
+  /**
+   * Gets a {@link Vector4Property color property} for the node based on the
+   * given options. The returned color should equal the color of the visual
+   * effect of the node in-game, if it has a visual effect, except property
+   * modifiers and other forms of randomization are not applied. Nodes without
+   * a visual effect will return `null` instead.
+   * 
+   * This may be useful for generating accurate color previews for nodes.
+   */
+  abstract getColor(opts?: NodeColorOptions): Vector4Property | null
+
+  /**
    * Remaps all resource IDs in the entire branch.
    * @param func The function that is used to map the old resource IDs to the
    * new ones.
@@ -10478,6 +10511,9 @@ class GenericNode extends Node {
     super(type)
   }
 
+  hasColor(activeState?: number) { return false }
+  getColor(opts?: NodeColorOptions): Vector4Property | null { return null }
+
   getActions(game: Game): AnyAction[] { return this.actions }
   getConfigs(game: Game): IConfig[] { return this.configs }
   getNodes(game: Game): Node[] { return this.nodes }
@@ -10549,6 +10585,9 @@ class RootNode extends Node {
       this.termination = termination
     }
   }
+
+  hasColor(activeState?: number) { return false }
+  getColor(opts?: NodeColorOptions): Vector4Property | null { return null }
 
   getActions(game: Game): AnyAction[] {
     switch (game) {
@@ -10646,6 +10685,9 @@ class ProxyNode extends Node {
    * @param sfx The ID of the SFX that this node should act as a proxy for.
    */
   constructor(public sfx: number) { super(NodeType.Proxy) }
+
+  hasColor(activeState?: number) { return false }
+  getColor(opts?: NodeColorOptions): Vector4Property | null { return null }
 
   getActions(game: Game): AnyAction[] {
     return [ new SFXReference(this.sfx) ]
@@ -10750,6 +10792,9 @@ class LevelsOfDetailNode extends NodeWithConfigs {
     }
   }
 
+  hasColor(activeState?: number) { return false }
+  getColor(opts?: NodeColorOptions): Vector4Property | null { return null }
+
   static fromJSON(obj: any): Node {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
@@ -10810,6 +10855,162 @@ class BasicNode extends NodeWithConfigs {
     }
   }
 
+  hasColor(activeState: number = 0) {
+    const config = this.getActiveConfig(activeState)
+    if (config) {
+      return config instanceof BasicConfig && (
+        config.appearance instanceof PointLight ||
+        config.appearance instanceof GPUStandardParticle ||
+        config.appearance instanceof GPUStandardCorrectParticle ||
+        config.appearance instanceof LightShaft ||
+        config.appearance instanceof GPUSparkParticle ||
+        config.appearance instanceof GPUSparkCorrectParticle ||
+        config.appearance instanceof LensFlare ||
+        config.appearance instanceof SpotLight ||
+        config.particleModifier instanceof ParticleModifier && (
+          config.appearance instanceof PointSprite ||
+          config.appearance instanceof Line ||
+          config.appearance instanceof QuadLine ||
+          config.appearance instanceof BillboardEx ||
+          config.appearance instanceof MultiTextureBillboardEx ||
+          config.appearance instanceof Model ||
+          config.appearance instanceof Tracer ||
+          config.appearance instanceof Distortion ||
+          config.appearance instanceof RadialBlur ||
+          config.appearance instanceof DynamicTracer ||
+          config.appearance instanceof RichModel
+        )
+      )
+    }
+    return false
+  }
+
+  getColor(opts: NodeColorOptions = {}): Vector4Property | null {
+    let colorProp: Property<ValueType.Vector4, PropertyFunction> = new ConstantProperty(1, 1, 1, 1)
+    let modified = false
+    const config = this.getActiveConfig(opts.activeState ?? 0)
+    if (config instanceof BasicConfig) {
+      const a = config.appearance
+      if (
+        config.particleModifier instanceof ParticleModifier && (
+          a instanceof PointSprite ||
+          a instanceof BillboardEx ||
+          a instanceof Model ||
+          a instanceof Tracer ||
+          a instanceof DynamicTracer ||
+          a instanceof RichModel
+        )
+      ) {
+        colorProp = anyValueMult(
+          anyValueMult(
+            clampVec4Value(a.color2),
+            clampVec4Value(a.color1),
+          ),
+          anyValueMult(
+            clampVec4Value(config.particleModifier.color),
+            a.color3,
+          ),
+        )
+        modified = true
+      } else if (
+        config.particleModifier instanceof ParticleModifier && (
+          a instanceof Line ||
+          a instanceof QuadLine
+        )
+      ) {
+        colorProp = anyValueMult(
+          anyValueMult(
+            anyValueMult(
+              clampVec4Value(a.color1),
+              clampVec4Value(a.color2),
+            ),
+            anyValueMult(
+              clampVec4Value(config.particleModifier.color),
+              clampVec4Value(a.color3),
+            ),
+          ),
+          opts.side === 'start' ? clampVec4Value(a.startColor) :
+          opts.side === 'end' ? clampVec4Value(a.endColor) :
+          anyValueMult(
+            0.5,
+            anyValueSum(
+              clampVec4Value(a.startColor),
+              clampVec4Value(a.endColor),
+            ),
+          ),
+        )
+        modified = true
+      } else if (
+        config.particleModifier instanceof ParticleModifier &&
+        a instanceof MultiTextureBillboardEx
+      ) {
+        colorProp = anyValueMult(
+          clampVec4Value(opts.layer === 2 ? a.layer2Color : opts.layer === 3 ? a.layer3Color : a.layer1Color),
+          anyValueMult(
+            anyValueMult(
+              clampVec4Value(a.color2),
+              clampVec4Value(a.color1),
+            ),
+            anyValueMult(
+              clampVec4Value(config.particleModifier.color),
+              a.color3,
+            ),
+          )
+        )
+        modified = true
+      } else if (
+        config.particleModifier instanceof ParticleModifier && (
+          a instanceof Distortion ||
+          a instanceof RadialBlur
+        )
+      ) {
+        colorProp = anyValueMult(
+          clampVec4Value(config.particleModifier.color),
+          clampVec4Value(a.color),
+        ) as any
+        modified = true
+      } else if (
+        a instanceof GPUStandardParticle ||
+        a instanceof GPUStandardCorrectParticle ||
+        a instanceof GPUSparkParticle ||
+        a instanceof GPUSparkCorrectParticle
+      ) {
+        colorProp = a.color as any
+        modified = true
+      } else if (
+        a instanceof PointLight ||
+        a instanceof SpotLight
+      ) {
+        colorProp = a.diffuseColor as any
+        modified = true
+      } else if (a instanceof LensFlare) {
+        switch (opts.layer ?? 1) {
+          case 1: colorProp = a.layer1Color as any; break
+          case 2: colorProp = a.layer2Color as any; break
+          case 3: colorProp = a.layer3Color as any; break
+          case 4: colorProp = a.layer4Color as any; break
+        }
+        modified = true
+      } else if (a instanceof LightShaft) {
+        colorProp = anyValueMult(
+          anyValueMult(
+            a.color2,
+            a.color1,
+          ),
+          a.color3,
+        )
+        modified = true
+      }
+      if (!(colorProp instanceof Property)) {
+        colorProp = new ConstantProperty(...(colorProp as Vector4))
+      }
+    }
+    if (modified) {
+      return colorProp
+    }
+    return null
+  }
+
   static fromJSON(obj: any): Node {
     if ('actions' in obj) {
       return GenericNode.fromJSON(obj)
@@ -10863,6 +11064,9 @@ class NodeEmitterNode extends NodeWithConfigs {
       )
     }
   }
+
+  hasColor(activeState?: number) { return false }
+  getColor(opts?: NodeColorOptions): Vector4Property | null { return null }
 
   static fromJSON(obj: any): Node {
     if ('actions' in obj) {

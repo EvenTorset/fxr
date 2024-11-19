@@ -13,6 +13,9 @@
     - `unk_ds3_p1_26` -> `layer1OffsetV`
     - `unk_ds3_p1_27` -> `layer1ScaleU`
     - `unk_ds3_p1_28` -> `layer1ScaleV`
+- Added two new methods to all node classes:
+  - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
+  - `hasColor` - A fast way to check if the `getColor` function will return a color or not. Can be used to check if it would make sense to display a color preview for a node.
 - The documentation site has been updated with a few improvements.
   - It now has a new theme, one that uses colors closer to the FXR Playground style.
   - Enum members are now sorted in ascending order based on the value instead of alphabetically.
