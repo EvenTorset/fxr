@@ -3600,7 +3600,7 @@ const ActionData: Record<string, {
       unk_sdt_f2_35: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
-      unk_sdt_f2_38: { default: 0, field: 2 },
+      unk_sdt_f2_38: { default: 0, field: 2, scale: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -23638,6 +23638,8 @@ export interface DistortionParams {
   /**
    * Unknown float.
    * 
+   * This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
+   * 
    * **Default**: `0`
    */
   unk_sdt_f2_38?: number
@@ -23985,6 +23987,11 @@ class Distortion extends DataAction {
   unk_sdt_f2_35: number
   unk_sdt_f2_36: number
   unk_sdt_f2_37: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
+   */
   unk_sdt_f2_38: number
   constructor(props: DistortionParams = {}) {
     super(ActionType.Distortion, {isAppearance:true,isParticle:true})

@@ -21,6 +21,7 @@
   - Enum members are now sorted in ascending order based on the value instead of alphabetically.
   - Added links to the FXR Playground and Ko-fi to the sidebar.
   - Added the library version number to the header.
+- The `unk_sdt_f2_38` field in `Distortion` is now scaled by the `scale` method on nodes and data actions, and its effect has been documented. Exactly what is does is still unknown, so it remains unnamed.
 
 ## [17.0.0] - 2024-11-12
 

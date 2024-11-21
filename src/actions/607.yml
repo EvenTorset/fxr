@@ -432,6 +432,11 @@ properties:
     field: int
   unk_sdt_f2_38:
     field: float
+    scale: true
+    desc: |
+      Unknown float.
+
+      This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
 games:
   DS3:
     fields1:
