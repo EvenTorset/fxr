@@ -21,6 +21,7 @@ properties:
       When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
   maxViewDistance:
     field: float
+    scale: distance
     desc: |
       All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
   unk_ds3_f1_2:

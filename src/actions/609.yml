@@ -234,6 +234,7 @@ properties:
     field: int
   maxViewDistance:
     field: float
+    scale: distance
     desc: |
       Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
 

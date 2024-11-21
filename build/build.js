@@ -61,6 +61,8 @@ const resourceMap = {
 const scaleMap = {
   true: 1,
   ifNotMinusOne: 2,
+  distance: 3,
+  distanceIfNotMinusOne: 4,
 }
 
 const timeMap = {

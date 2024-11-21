@@ -16,12 +16,17 @@
 - Added two new methods to all node classes:
   - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
   - `hasColor` - A fast way to check if the `getColor` function will return a color or not. Can be used to check if it would make sense to display a color preview for a node.
+- The `scale` methods now take an options object, which will include various options for scaling.
+  - The `recurse` parameter in the `scale` method on nodes is now a property of the options object instead of being its own parameter.
+  - For now, the only other option is `includeViewDistance`, which can be enabled to also scale properties that are based on the view distance in some way. By default, this option is disabled, which means the default behavior of the `scale` method is now different. Before, these properties were also scaled, which could cause some annoying side-effects in some cases.
+- The `maxViewDistance` fields in `PointLight` and `Unk10500` are now scaled by the `scale` methods if `includeViewDistance` is enabled. They were previously not scaled at all, which was inconsistent with the other view distance limit fields in other actions.
+- The `depthBias` field in `NodeAttributes` is now scaled by the `scale` methods.
+- The `unk_sdt_f2_38` field in `Distortion` is now scaled by the `scale` methods if `includeViewDistance` is enabled, and its effect has been documented. Exactly what it does is still unknown, so it remains unnamed.
 - The documentation site has been updated with a few improvements.
   - It now has a new theme, one that uses colors closer to the FXR Playground style.
   - Enum members are now sorted in ascending order based on the value instead of alphabetically.
   - Added links to the FXR Playground and Ko-fi to the sidebar.
   - Added the library version number to the header.
-- The `unk_sdt_f2_38` field in `Distortion` is now scaled by the `scale` method on nodes and data actions, and its effect has been documented. Exactly what is does is still unknown, so it remains unnamed.
 
 ## [17.0.0] - 2024-11-12
 
