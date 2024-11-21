@@ -1760,12 +1760,33 @@ export interface IAction {
 
 export interface IConfig {
   readonly type: ConfigType
+
+  /**
+   * Returns the number of actions this config will contain if written to the
+   * given {@link game}'s structure.
+   */
   getActionCount(game: Game): number
+
+  /**
+   * Returns and array of the actions this config will contain if written to
+   * the given {@link game}'s structure.
+   */
   getActions(game: Game): AnyAction[]
+
+  /**
+   * Create a deep copy of this config.
+   */
+  clone(): IConfig
+
+  /**
+   * Scale the config by the given {@link factor}. This can be used to change
+   * the size of effect created by the config.
+   */
+  scale(factor: number, options?: ScalingOptions): this
+
   toJSON(): any
   minify(): typeof this
   walkActions(): Generator<AnyAction>
-  clone(): IConfig
 }
 
 export interface IModifier<T extends ValueType> {
@@ -2571,11 +2592,11 @@ const ActionData: Record<string, {
   [ActionType.LevelsOfDetailThresholds]: {
     props: {
       duration: { default: -1, time: 3 },
-      threshold0: { default: 10000, field: 1 },
-      threshold1: { default: 10000, field: 1 },
-      threshold2: { default: 10000, field: 1 },
-      threshold3: { default: 10000, field: 1 },
-      threshold4: { default: 10000, field: 1 },
+      threshold0: { default: 10000, field: 1, scale: 3 },
+      threshold1: { default: 10000, field: 1, scale: 3 },
+      threshold2: { default: 10000, field: 1, scale: 3 },
+      threshold3: { default: 10000, field: 1, scale: 3 },
+      threshold4: { default: 10000, field: 1, scale: 3 },
       unk_ac6_f1_5: { default: 0, field: 1 },
     },
     games: {
@@ -9939,12 +9960,34 @@ abstract class Node {
    * lengths, and radii of the actions in the branch, except certain
    * multiplicative fields and properties.
    * @param factor The factor to scale the branch with.
-   * @param recurse Controls whether or not the scaling should be applied to
+   * @param options.recurse Controls whether or not the scaling should be applied to
    * all descendant nodes. Defaults to true.
    */
   scale(factor: number, options: ScalingOptions & { recurse?: boolean } = {}) {
-    for (const action of this.walkActions(options.recurse ?? true)) if (action instanceof DataAction) {
-      action.scale(factor, options)
+    if (this instanceof NodeWithConfigs || this instanceof GenericNode) {
+      for (const config of this.configs) {
+        config.scale(factor, options)
+      }
+      if (this instanceof GenericNode) {
+        for (const action of this.actions) if (action instanceof DataAction) {
+          action.scale(factor, options)
+        }
+      }
+    } else {
+      for (const action of this.walkActions(false)) if (action instanceof DataAction) {
+        action.scale(factor, options)
+      }
+    }
+    if ((options.recurse ?? true) && (
+      this instanceof GenericNode ||
+      this instanceof RootNode ||
+      this instanceof LevelsOfDetailNode ||
+      this instanceof BasicNode ||
+      this instanceof NodeEmitterNode
+    )) {
+      for (const node of this.nodes) {
+        node.scale(factor, options)
+      }
     }
     return this
   }
@@ -11207,6 +11250,13 @@ class NodeConfig implements IConfig {
     )
   }
 
+  scale(factor: number, options: ScalingOptions) {
+    for (const action of this.walkActions()) if (action instanceof DataAction) {
+      action.scale(factor, options)
+    }
+    return this
+  }
+
 }
 
 /**
@@ -11249,7 +11299,7 @@ class LevelsOfDetailConfig implements IConfig {
     return {
       type: this.type,
       duration: this.duration instanceof Property ? this.duration.toJSON() : this.duration,
-      thresholds: this.thresholds,
+      thresholds: this.thresholds.slice(0, 5),
       unk_ac6_f1_5: this.unk_ac6_f1_5
     }
   }
@@ -11266,6 +11316,13 @@ class LevelsOfDetailConfig implements IConfig {
       this.thresholds.slice(),
       this.unk_ac6_f1_5,
     )
+  }
+
+  scale(factor: number, options: ScalingOptions = {}) {
+    if (options.includeViewDistance) {
+      this.thresholds = this.thresholds.slice(0, 5).map(t => t * factor)
+    }
+    return this
   }
 
 }
@@ -11475,6 +11532,13 @@ class BasicConfig implements IConfig {
     })
   }
 
+  scale(factor: number, options: ScalingOptions) {
+    for (const action of this.walkActions()) if (action instanceof DataAction) {
+      action.scale(factor, options)
+    }
+    return this
+  }
+
 }
 
 export interface NodeEmitterConfigParams {
@@ -11554,7 +11618,7 @@ class NodeEmitterConfig implements IConfig {
   }
 
   getActionCount(game: Game): number {
-    return 10
+    return game === Game.DarkSouls3 ? 9 : 10
   }
 
   getActions(game: Game): AnyAction[] {
@@ -11630,6 +11694,13 @@ class NodeEmitterConfig implements IConfig {
       emissionAudio: this.emissionAudio.clone() as ActionSlots.EmissionAudioAction,
       nodeForceMovement: this.nodeForceMovement.clone() as ActionSlots.NodeForceMovementAction,
     })
+  }
+
+  scale(factor: number, options: ScalingOptions) {
+    for (const action of this.walkActions()) if (action instanceof DataAction) {
+      action.scale(factor, options)
+    }
+    return this
   }
 
 }

@@ -17,26 +17,31 @@ properties:
   threshold0:
     field: int
     default: 10000
+    scale: distance
     desc: |
       Distance threshold for child node 0.
   threshold1:
     field: int
     default: 10000
+    scale: distance
     desc: |
       Distance threshold for child node 1.
   threshold2:
     field: int
     default: 10000
+    scale: distance
     desc: |
       Distance threshold for child node 2.
   threshold3:
     field: int
     default: 10000
+    scale: distance
     desc: |
       Distance threshold for child node 3.
   threshold4:
     field: int
     default: 10000
+    scale: distance
     desc: |
       Distance threshold for child node 4.
   unk_ac6_f1_5:
