@@ -343,8 +343,10 @@ properties:
   unk_er_f1_6:
     field: int
     default: 1
-  unk_er_f1_7:
-    field: int
+  dither:
+    field: bool
+    desc: |
+      If enabled, this allows control of the model's opacity regardless of its material by using dithered transparency. If disabled, changes to the alpha values that affect the particle will not have any effect unless the material allows it, but it will look better than the dithered transparency.
   unk_er_f1_8:
     field: int
     default: -2
@@ -608,7 +610,7 @@ games:
       - uniformScale
       - unk_er_f1_5
       - unk_er_f1_6
-      - unk_er_f1_7
+      - dither
       - unk_er_f1_8
       - unk_er_f1_9
       - anibnd
@@ -711,7 +713,7 @@ games:
       - uniformScale
       - unk_er_f1_5
       - unk_er_f1_6
-      - unk_er_f1_7
+      - dither
       - unk_er_f1_8
       - unk_er_f1_9
       - anibnd
