@@ -13,11 +13,11 @@
     - `unk_ds3_p1_26` -> `layer1OffsetV`
     - `unk_ds3_p1_27` -> `layer1ScaleU`
     - `unk_ds3_p1_28` -> `layer1ScaleV`
-- The `unk_er_f1_7` field in `RichModel` has been given a name: `dither`. It's also been documented and had its type corrected.
+- The `unk_er_f1_7` field in `RichModel` has been given a name: `dither`. It has also been documented and had its type corrected.
 - Added two new methods to all node classes:
   - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. If the node wouldn't produce anything with a color, this function instead returns `null`. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
   - `hasColor` - A fast way to check if the `getColor` function will return a color or not. Can be used to check if it would make sense to display a color preview for a node.
-- Recoloring functions have been updated to work more like most people expect them to:
+- Recoloring functions have been updated to be simpler and more intuitive, but also much more useful:
   - `BasicConfig` now has a `recolor` method, which works just like the one on nodes, except this only recolors the config it is called on.
   - Recolor functions are now given the config, action, and property name for context. This can be used to make recolor functions that handle different properties differently. For example, one could change one property to be red and another property in the same action to green using the same recolor function.
   - `Recolor.isPrimary` is a new function that labeles some action color properties as "primary" and others as "secondary". By setting primary color properties to a target color and secondary color properties to white, the final color of the effect will match the target color exactly. This function is now used internally in combination with the new context explained above in some of the pre-defined recolor functions, but may also be used to create your own custom ones.
