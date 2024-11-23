@@ -34,13 +34,22 @@ properties:
     field: float
   unk_ds3_f1_6:
     field: int
-  unk_ac6_f1_7:
-    field: float
+  initialSimulationTime:
+    field:
+      DS3: int
+      SDT: int
+      ER: int
+      AC6: float
+    time: inv
+    desc: |
+      The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
+
+      Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
+
+      In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
   unk_ds3_f1_8:
     field: int
   unk_sdt_f1_9:
-    field: int
-  unk_ds3_f1_7:
     field: int
 games:
   DS3:
@@ -52,7 +61,7 @@ games:
       - unk_ds3_f1_4
       - unk_ds3_f1_5
       - unk_ds3_f1_6
-      - unk_ds3_f1_7
+      - initialSimulationTime
       - unk_ds3_f1_8
   SDT:
     fields1:
@@ -63,7 +72,7 @@ games:
       - unk_ds3_f1_4
       - unk_ds3_f1_5
       - unk_ds3_f1_6
-      - unk_ds3_f1_7
+      - initialSimulationTime
       - unk_ds3_f1_8
       - unk_sdt_f1_9
       - rateOfTime
@@ -76,7 +85,7 @@ games:
       - unk_ds3_f1_4
       - unk_ds3_f1_5
       - unk_ds3_f1_6
-      - unk_ds3_f1_7
+      - initialSimulationTime
       - unk_ds3_f1_8
       - unk_sdt_f1_9
     properties1:
@@ -90,7 +99,7 @@ games:
       - unk_ds3_f1_4
       - unk_ds3_f1_5
       - unk_ds3_f1_6
-      - unk_ac6_f1_7
+      - initialSimulationTime
       - unk_ds3_f1_8
       - unk_sdt_f1_9
     properties1: ER

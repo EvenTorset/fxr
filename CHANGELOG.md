@@ -14,6 +14,8 @@
     - `unk_ds3_p1_27` -> `layer1ScaleU`
     - `unk_ds3_p1_28` -> `layer1ScaleV`
 - The `unk_er_f1_7` field in `RichModel` has been given a name: `dither`. It has also been documented and had its type corrected.
+- The `unk_ds3_f1_7` and `unk_ac6_f1_7` fields in `Unk10500` have been merged into one named `initialSimulationTime`, and it has been properly documented. This was previously two separate fields because it was untested in AC6, where it also has a different field type and unit. It has been tested now, and it does work exactly like the field in the other games, except it's in seconds instead of 1/30s. The library will handle the type and unit conversion automatically, so the unit is always 1s and floats can be used, even if you're writing the effect for one of the other games. This field is now also scaled by the `scaleRateOfTime` methods, which means that it will work the same way on DS3 as the other games.
+  - This required some changes to how field types are stored in the library, so now each game can have its own type for each field. This is currently only used for this one field, but it might be useful later if similar fields are found.
 - Added two new methods to all node classes:
   - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. If the node wouldn't produce anything with a color, this function instead returns `null`. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
   - `hasColor` - A fast way to check if the `getColor` function will return a color or not. Can be used to check if it would make sense to display a color preview for a node.

@@ -132,6 +132,20 @@ function defValTS(prop) {
   return defValue.toString()
 }
 
+function fieldData(field) {
+  if (typeof field === 'string') {
+    return fieldMap[field]
+  }
+  return `{${Object.entries(field).map(([k, v]) => `[${gameMap[k]}]: ${fieldMap[v]}`).join(', ')}}`
+}
+
+function typeFromField(field) {
+  if (typeof field === 'string') {
+    return typeMap[field]
+  }
+  return 'number'
+}
+
 export default async function(writeToDist = true) {
 
   const actionTypes = []
@@ -217,7 +231,7 @@ export default async function(writeToDist = true) {
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
             return `${k}: { default: ${defValTS(v)}${
-              'field' in v ? `, field: ${fieldMap[v.field]}` : ''
+              'field' in v ? `, field: ${fieldData(v.field)}` : ''
             }${
               'resource' in v ? `, resource: ${resourceMap[v.resource]}` : ''
             }${
@@ -283,7 +297,7 @@ export default async function(writeToDist = true) {
                  * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
                  */
               `
-            ) + `${k}?: ${v.type ?? typeMap[v.field]}`
+            ) + `${k}?: ${v.type ?? typeFromField(v.field)}`
           })
             .join('')
             .trim()
@@ -318,7 +332,7 @@ export default async function(writeToDist = true) {
                  * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
                  */
               ` : '\n  '
-            ) + `${k}: ${v.type ?? typeMap[v.field]}`
+            ) + `${k}: ${v.type ?? typeFromField(v.field)}`
           })
             .join('')
             .trim()
@@ -343,7 +357,9 @@ export default async function(writeToDist = true) {
           constructor(${
             'properties' in data ?
               propNames.length > 1 ? `props: ${data.name}Params = {}` :
-              `${propNames[0]}: ${data.properties[propNames[0]].type ?? typeMap[data.properties[propNames[0]].field]} = ${defValTS(firstProp)}`
+              `${propNames[0]}: ${
+                data.properties[propNames[0]].type ?? typeFromField(data.properties[propNames[0]].field)
+              } = ${defValTS(firstProp)}`
             : ''}) {
             super(ActionType.${data.name}, {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}})${'properties' in data ? `
             this.assign(${propNames.length > 1 ? 'props' : `{ ${propNames[0]} }`})` : ''}

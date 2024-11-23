@@ -2065,7 +2065,7 @@ export type FilledActionGameDataEntry = {
 }
 export type ActionDataProp = (
   {
-    field?: FieldType
+    field?: FieldType | Partial<Record<Game, FieldType>>
     resource?: ResourceType
     textureType?: string
     scale?: ScaleCondition
@@ -5460,24 +5460,23 @@ const ActionData: Record<string, {
       unk_ds3_f1_4: { default: 0, field: 2 },
       unk_ds3_f1_5: { default: 0, field: 2 },
       unk_ds3_f1_6: { default: 0, field: 1 },
-      unk_ac6_f1_7: { default: 0, field: 2 },
+      initialSimulationTime: { default: 0, field: {[Game.DarkSouls3]: 1, [Game.Sekiro]: 1, [Game.EldenRing]: 1, [Game.ArmoredCore6]: 2}, time: 2 },
       unk_ds3_f1_8: { default: 0, field: 1 },
       unk_sdt_f1_9: { default: 0, field: 1 },
-      unk_ds3_f1_7: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8']
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','initialSimulationTime','unk_ds3_f1_8']
       },
       [Game.Sekiro]: {
-        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','initialSimulationTime','unk_ds3_f1_8','unk_sdt_f1_9','rateOfTime']
       },
       [Game.EldenRing]: {
-        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ds3_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','initialSimulationTime','unk_ds3_f1_8','unk_sdt_f1_9'],
         properties1: ['rateOfTime']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','unk_ac6_f1_7','unk_ds3_f1_8','unk_sdt_f1_9'],
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','initialSimulationTime','unk_ds3_f1_8','unk_sdt_f1_9'],
         properties1: Game.EldenRing
       }
     }
@@ -5572,13 +5571,17 @@ for (const [type, action] of Object.entries(ActionData)) {
     if (typeof rawGameData === 'object' && 'fields1' in rawGameData && Array.isArray(rawGameData.fields1)) {
       rawGameData.fields1.fieldsCount = 0
       for (const name of gameData.fields1) {
-        rawGameData.fields1.fieldsCount += fieldCompCount[action.props[name].field]
+        rawGameData.fields1.fieldsCount += fieldCompCount[
+          typeof action.props[name].field === 'number' ? action.props[name].field : action.props[name].field[game]
+        ]
       }
     }
     if (typeof rawGameData === 'object' && 'fields2' in rawGameData && Array.isArray(rawGameData.fields2)) {
       rawGameData.fields2.fieldsCount = 0
       for (const name of gameData.fields2) {
-        rawGameData.fields2.fieldsCount += fieldCompCount[action.props[name].field]
+        rawGameData.fields2.fieldsCount += fieldCompCount[
+          typeof action.props[name].field === 'number' ? action.props[name].field : action.props[name].field[game]
+        ]
       }
     }
   }
@@ -6046,7 +6049,9 @@ function readDataAction(
 
   br.stepIn(fieldOffset)
   if ('fields1' in gameData) {
-    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map((e: string) => adt.props[e].field), null)
+    c.fields1 = readFieldsWithTypes(br, fieldCount1, gameData.fields1.map((e: string) =>
+      typeof adt.props[e].field === 'number' ? adt.props[e].field : adt.props[e].field[game]
+    ), null)
   }
   if ('fields2' in gameData) {
 
@@ -6060,7 +6065,9 @@ function readDataAction(
       br.position += 4
     }
 
-    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map((e: string) => adt.props[e].field), null)
+    c.fields2 = readFieldsWithTypes(br, fieldCount2, gameData.fields2.map((e: string) =>
+      typeof adt.props[e].field === 'number' ? adt.props[e].field : adt.props[e].field[game]
+    ), null)
   }
   br.stepOut()
   let params = Object.fromEntries(
@@ -6099,13 +6106,17 @@ function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actio
   bw.writeUint8(0) // Unk03
   bw.writeInt32(0) // Unk04
   bw.writeInt32(data.fields1
-    .map(name => fieldCompCount[adt.props[name].field])
+    .map(name => fieldCompCount[
+      typeof adt.props[name].field === 'number' ? adt.props[name].field : adt.props[name].field[game]
+    ])
     .reduce((a, e) => a + e, 0)
   )
   bw.writeInt32(data.section10s.length)
   bw.writeInt32(data.properties1.length)
   bw.writeInt32(data.fields2
-    .map(name => fieldCompCount[adt.props[name].field])
+    .map(name => fieldCompCount[
+      typeof adt.props[name].field === 'number' ? adt.props[name].field : adt.props[name].field[game]
+    ])
     .reduce((a, e) => a + e, 0)
   )
   bw.writeInt32(0)
@@ -8834,6 +8845,20 @@ const ActionDataConversion = {
     },
     write(props: TurbulenceForceParams, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
+      return props
+    }
+  },
+  [ActionType.Unk10500]: {
+    read(props: Unk10500Params, game: Game) {
+      if (game !== Game.ArmoredCore6) {
+        props.initialSimulationTime = props.initialSimulationTime / 30
+      }
+      return props
+    },
+    write(props: Unk10500Params, game: Game) {
+      if (game === Game.EldenRing) {
+        props.initialSimulationTime = Math.round(props.initialSimulationTime * 30)
+      }
       return props
     }
   },
@@ -11989,7 +12014,7 @@ class DataAction implements IAction {
       const prop = ActionData[this.type].props[name]
       validateDataActionProp(this, name, prop)
       return Field.from(
-        prop.field,
+        typeof prop.field === 'number' ? prop.field : prop.field[game],
         this[name] instanceof Property ? this[name].valueAt(0) : this[name]
       )
     })
@@ -39735,11 +39760,15 @@ export interface Unk10500Params {
    */
   unk_ds3_f1_6?: number
   /**
-   * Unknown float.
+   * The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
+   * 
+   * Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
+   * 
+   * In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f1_7?: number
+  initialSimulationTime?: number
   /**
    * Unknown integer.
    * 
@@ -39752,12 +39781,6 @@ export interface Unk10500Params {
    * **Default**: `0`
    */
   unk_sdt_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
 }
 
 /**
@@ -39788,10 +39811,16 @@ class Unk10500 extends DataAction {
   unk_ds3_f1_4: number
   unk_ds3_f1_5: number
   unk_ds3_f1_6: number
-  unk_ac6_f1_7: number
+  /**
+   * The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
+   * 
+   * Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
+   * 
+   * In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
+   */
+  initialSimulationTime: number
   unk_ds3_f1_8: number
   unk_sdt_f1_9: number
-  unk_ds3_f1_7: number
   constructor(props: Unk10500Params = {}) {
     super(ActionType.Unk10500, {isAppearance:false,isParticle:false})
     this.assign(props)
