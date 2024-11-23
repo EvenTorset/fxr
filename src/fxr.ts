@@ -2878,7 +2878,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -2958,7 +2958,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       unk_sdt_f2_30: { default: 0, field: 1 },
       unkHideIndoors: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -3040,7 +3040,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -3152,7 +3152,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 5, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -3286,7 +3286,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 5, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -3522,7 +3522,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 5, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -4089,7 +4089,7 @@ const ActionData: Record<string, {
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -4313,7 +4313,7 @@ const ActionData: Record<string, {
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 1, field: 1 },
+      unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: LightingMode.Unlit, field: 1 },
@@ -4769,7 +4769,7 @@ const ActionData: Record<string, {
       unkDepthBlend2: { default: 0, field: 2, scale: 3 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 5, field: 2 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
       unk_sdt_f2_32: { default: 0, field: 1 },
@@ -16264,6 +16264,8 @@ export interface PointSpriteParams {
   /**
    * Unknown float.
    * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
    * **Default**: `0`
    */
   unk_ds3_f2_29?: number
@@ -16541,6 +16543,11 @@ class PointSprite extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
@@ -16966,6 +16973,8 @@ export interface LineParams {
   /**
    * Unknown float.
    * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
    * **Default**: `0`
    */
   unk_ds3_f2_29?: number
@@ -17280,6 +17289,11 @@ class Line extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   /**
@@ -17729,6 +17743,8 @@ export interface QuadLineParams {
   /**
    * Unknown float.
    * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
    * **Default**: `0`
    */
   unk_ds3_f2_29?: number
@@ -18056,6 +18072,11 @@ class QuadLine extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   unk_sdt_f2_30: number
   unk_sdt_f2_31: number
@@ -18753,7 +18774,9 @@ export interface BillboardExParams {
   /**
    * Unknown float.
    * 
-   * **Default**: `5`
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29?: number
   /**
@@ -19305,6 +19328,11 @@ class BillboardEx extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
@@ -20165,7 +20193,9 @@ export interface MultiTextureBillboardExParams {
   /**
    * Unknown float.
    * 
-   * **Default**: `5`
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29?: number
   /**
@@ -20813,6 +20843,11 @@ class MultiTextureBillboardEx extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
@@ -22728,7 +22763,9 @@ export interface TracerParams {
   /**
    * Unknown float.
    * 
-   * **Default**: `5`
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29?: number
   /**
@@ -23124,6 +23161,11 @@ class Tracer extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the trail are.
@@ -27209,7 +27251,9 @@ export interface GPUStandardParticleParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -27934,6 +27978,11 @@ class GPUStandardParticle extends DataAction {
    * Other values are used in AC6, but what they do is unknown.
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -29325,7 +29374,9 @@ export interface GPUStandardCorrectParticleParams {
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32?: number
   /**
@@ -30046,6 +30097,11 @@ class GPUStandardCorrectParticle extends DataAction {
    * Other values are used in AC6, but what they do is unknown.
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
@@ -33830,7 +33886,9 @@ export interface DynamicTracerParams {
   /**
    * Unknown float.
    * 
-   * **Default**: `5`
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29?: number
   /**
@@ -34245,6 +34303,11 @@ class DynamicTracer extends DataAction {
   unkDepthBlend2: number
   unk_ds3_f2_27: number
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the trail are.

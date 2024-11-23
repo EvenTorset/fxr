@@ -383,7 +383,11 @@ properties:
     field: int
   unk_ds3_f2_29:
     field: float
-    default: 5
+    scale: distance
+    desc: |
+      Unknown float.
+
+      This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
   shadowDarkness:
     field: float
     desc: |

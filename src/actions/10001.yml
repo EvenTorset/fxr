@@ -923,7 +923,10 @@ properties:
       Other values are used in AC6, but what they do is unknown.
   unk_sdt_f2_32:
     field: int
-    default: 1
+    desc: |
+      Unknown integer.
+
+      Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
   specular:
     field: int
     resource: texture

@@ -38,6 +38,7 @@
   - The `maxViewDistance` fields in `PointLight` and `Unk10500` and the thresholds in `LevelsOfDetailThresholds` are now scaled by the `scale` methods if `includeViewDistance` is enabled. They were previously not scaled at all, which was inconsistent with the other view distance limit fields in other actions.
   - The `depthBias` field in `NodeAttributes` is now scaled by the `scale` methods.
   - The `unk_sdt_f2_38` field in `Distortion` is now scaled by the `scale` methods if `includeViewDistance` is enabled, and its effect has been documented. Exactly what it does is still unknown, so it remains unnamed.
+  - The `unk_ds3_f2_29` field in many of the appearance actions has been identified as some kind of view distance threshold, and is therefore now also scaled by the `scale` methods if `includeViewDistance` is enabled. Exactly what this field does is still unknown.
 - The documentation site has been updated with a few improvements.
   - It now has a new theme, one that uses colors closer to the FXR Playground style.
   - Enum members are now sorted in ascending order based on the value instead of alphabetically.
