@@ -15,7 +15,7 @@
     - `unk_ds3_p1_28` -> `layer1ScaleV`
 - The `unk_er_f1_7` field in `RichModel` has been given a name: `dither`. It's also been documented and had its type corrected.
 - Added two new methods to all node classes:
-  - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
+  - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. If the node wouldn't produce anything with a color, this function instead returns `null`. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
   - `hasColor` - A fast way to check if the `getColor` function will return a color or not. Can be used to check if it would make sense to display a color preview for a node.
 - Recoloring functions have been updated to work more like most people expect them to:
   - `BasicConfig` now has a `recolor` method, which works just like the one on nodes, except this only recolors the config it is called on.
