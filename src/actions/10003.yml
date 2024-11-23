@@ -29,7 +29,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    color: true
+    color: primary
   unk_ds3_p1_5:
     type: ScalarValue
   unk_ds3_p1_6:

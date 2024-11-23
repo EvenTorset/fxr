@@ -2070,7 +2070,7 @@ export type ActionDataProp = (
     textureType?: string
     scale?: ScaleCondition
     time?: TimeOperation
-    color?: 1
+    color?: 1 | 2
     omit?: 1
     paths?: {
       [game: string]: [string, number]
@@ -2563,7 +2563,7 @@ const ActionData: Record<string, {
       scaleX: { default: 1 },
       scaleY: { default: 1 },
       scaleZ: { default: 1 },
-      color: { default: [1, 1, 1, 1], color: 1 },
+      color: { default: [1, 1, 1, 1], color: 2 },
       uniformScale: { default: false, field: 0 },
     },
     games: {
@@ -2837,8 +2837,8 @@ const ActionData: Record<string, {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       size: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
@@ -2857,7 +2857,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -2917,11 +2917,11 @@ const ActionData: Record<string, {
       blendMode: { default: BlendMode.Normal, field: 1 },
       length: { default: 1, scale: 1 },
       color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
-      startColor: { default: [1, 1, 1, 1], color: 1 },
-      endColor: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
+      startColor: { default: [1, 1, 1, 1], color: 2 },
+      endColor: { default: [1, 1, 1, 1], color: 2 },
       lengthMultiplier: { default: 1 },
-      color3: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 2 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_p2_2: { default: 0 },
@@ -2937,7 +2937,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -2998,12 +2998,12 @@ const ActionData: Record<string, {
       width: { default: 1, scale: 1 },
       length: { default: 1, scale: 1 },
       color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
-      startColor: { default: [1, 1, 1, 1], color: 1 },
-      endColor: { default: [1, 1, 1, 1], color: 1 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
+      startColor: { default: [1, 1, 1, 1], color: 2 },
+      endColor: { default: [1, 1, 1, 1], color: 2 },
       widthMultiplier: { default: 1 },
       lengthMultiplier: { default: 1 },
-      color3: { default: [1, 1, 1, 1], color: 1 },
+      color3: { default: [1, 1, 1, 1], color: 2 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_ds3_p2_2: { default: 0 },
@@ -3019,7 +3019,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -3083,8 +3083,8 @@ const ActionData: Record<string, {
       offsetZ: { default: 0, scale: 1 },
       width: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       rotationX: { default: 0 },
@@ -3131,7 +3131,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -3209,12 +3209,12 @@ const ActionData: Record<string, {
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
-      layer1Color: { default: [1, 1, 1, 1], color: 1 },
-      layer2Color: { default: [1, 1, 1, 1], color: 1 },
-      layer3Color: { default: [1, 1, 1, 1], color: 1 },
+      layer1Color: { default: [1, 1, 1, 1], color: 2 },
+      layer2Color: { default: [1, 1, 1, 1], color: 2 },
+      layer3Color: { default: [1, 1, 1, 1], color: 2 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
       frameIndexOffset: { default: 0 },
@@ -3265,7 +3265,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -3348,8 +3348,8 @@ const ActionData: Record<string, {
       angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_15: { default: 0 },
       frameIndex: { default: 0 },
@@ -3394,7 +3394,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       unk_ds3_f2_4: { default: 1, field: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -3462,8 +3462,8 @@ const ActionData: Record<string, {
       widthMultiplier: { default: 1 },
       unk_ds3_p1_2: { default: 0 },
       unk_ds3_p1_3: { default: 0 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
@@ -3501,7 +3501,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -3565,7 +3565,7 @@ const ActionData: Record<string, {
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
       sizeZ: { default: 1, scale: 1 },
-      color: { default: [1, 1, 1, 1], color: 1 },
+      color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_7: { default: [1, 1, 1, 1] },
       intensity: { default: 1 },
       unk_ds3_p1_9: { default: 0 },
@@ -3603,7 +3603,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 1, field: 2 },
       unk_ds3_f2_4: { default: 0, field: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 1 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -3666,7 +3666,7 @@ const ActionData: Record<string, {
       offsetZ: { default: 0, scale: 1 },
       width: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
-      color: { default: [1, 1, 1, 1], color: 1 },
+      color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_6: { default: [1, 1, 1, 1] },
       blurRadius: { default: 0.5 },
       rgbMultiplier: { default: 1 },
@@ -3686,7 +3686,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 1, field: 2 },
       unk_ds3_f2_4: { default: 0, field: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 1 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -4047,7 +4047,7 @@ const ActionData: Record<string, {
       unk_ds3_f1_153: { default: 0, field: 1 },
       unk_ds3_f1_154: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_sdt_f1_160: { default: 1, field: 2 },
       unk_sdt_f1_161: { default: 0, field: 1 },
       unk_sdt_f1_162: { default: 1, field: 2 },
@@ -4272,7 +4272,7 @@ const ActionData: Record<string, {
       unk_ds3_f1_153: { default: 0, field: 1 },
       unk_ds3_f1_154: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_sdt_f1_160: { default: 1, field: 2 },
       unk_sdt_f1_161: { default: 0, field: 1 },
       unk_sdt_f1_162: { default: 1, field: 2 },
@@ -4338,8 +4338,8 @@ const ActionData: Record<string, {
     props: {
       width: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_5: { default: 0 },
       unk_ds3_p1_6: { default: 0 },
@@ -4485,7 +4485,7 @@ const ActionData: Record<string, {
       unk_ac6_f1_94: { default: 0, field: 1 },
       unk_ac6_f1_95: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ac6_f1_101: { default: 1, field: 2 },
       unk_ac6_f1_102: { default: 0, field: 1 },
       unk_ac6_f1_103: { default: 1, field: 2 },
@@ -4641,7 +4641,7 @@ const ActionData: Record<string, {
       unk_ac6_f1_94: { default: 0, field: 1 },
       unk_ac6_f1_95: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ac6_f1_101: { default: 1, field: 2 },
       unk_ac6_f1_102: { default: 0, field: 1 },
       unk_ac6_f1_103: { default: 1, field: 2 },
@@ -4704,8 +4704,8 @@ const ActionData: Record<string, {
       widthMultiplier: { default: 1 },
       unk_ds3_p1_2: { default: 0 },
       unk_ds3_p1_3: { default: 0 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       alphaFadeThreshold: { default: 0 },
       frameIndex: { default: 0 },
@@ -4748,7 +4748,7 @@ const ActionData: Record<string, {
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 1 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
@@ -4853,7 +4853,7 @@ const ActionData: Record<string, {
       layer1ScaleVariationX: { default: 1, field: 2 },
       layer1ScaleVariationY: { default: 1, field: 2 },
       layer1UniformScale: { default: false, field: 0 },
-      layer1ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer1ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
       unk_er_f1_17: { default: 0, field: 1 },
       unk_er_f1_18: { default: 0, field: 2 },
       unk_er_f1_19: { default: 1, field: 2 },
@@ -4862,7 +4862,7 @@ const ActionData: Record<string, {
       layer2ScaleVariationX: { default: 1, field: 2 },
       layer2ScaleVariationY: { default: 1, field: 2 },
       layer2UniformScale: { default: false, field: 0 },
-      layer2ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer2ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
       unk_er_f1_29: { default: 0, field: 1 },
       unk_er_f1_30: { default: 0, field: 2 },
       unk_er_f1_31: { default: 1, field: 2 },
@@ -4871,7 +4871,7 @@ const ActionData: Record<string, {
       layer3ScaleVariationX: { default: 1, field: 2 },
       layer3ScaleVariationY: { default: 1, field: 2 },
       layer3UniformScale: { default: false, field: 0 },
-      layer3ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer3ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
       unk_er_f1_41: { default: 0, field: 1 },
       unk_er_f1_42: { default: 0, field: 2 },
       unk_er_f1_43: { default: 1, field: 2 },
@@ -4880,17 +4880,17 @@ const ActionData: Record<string, {
       layer4ScaleVariationX: { default: 1, field: 2 },
       layer4ScaleVariationY: { default: 1, field: 2 },
       layer4UniformScale: { default: false, field: 0 },
-      layer4ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer4ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
       unk_er_f1_53: { default: 0, field: 1 },
       unk_er_f1_54: { default: 0, field: 2 },
       unk_er_f1_55: { default: 1, field: 2 },
       unk_er_f1_56: { default: -1, field: 2 },
       unk_er_f1_57: { default: 0, field: 1 },
       bloom: { default: false, field: 0 },
-      layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
-      layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
-      layer3BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
-      layer4BloomColor: { default: [1, 1, 1, 1], field: 5, color: 1 },
+      layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
+      layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
+      layer3BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
+      layer4BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
       unk_ac6_f1_75: { default: -1, field: 2 },
       unk_ac6_f1_76: { default: -1, field: 2 },
       unk_ac6_f1_77: { default: -1, field: 2 },
@@ -4963,8 +4963,8 @@ const ActionData: Record<string, {
       angularSpeedMultiplierY: { default: 1 },
       angularSpeedZ: { default: 0, time: 1 },
       angularSpeedMultiplierZ: { default: 1 },
-      color1: { default: [1, 1, 1, 1], color: 1 },
-      color2: { default: [1, 1, 1, 1], color: 1 },
+      color1: { default: [1, 1, 1, 1], color: 2 },
+      color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
       unk_er_p1_16: { default: 0 },
       unk_er_p1_17: { default: 0 },
@@ -5028,7 +5028,7 @@ const ActionData: Record<string, {
       unk_er_f2_1: { default: 0, field: 1 },
       unk_er_f2_2: { default: 8, field: 1 },
       unk_er_f2_3: { default: 0, field: 1 },
-      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 1 },
+      bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_er_f2_8: { default: 0, field: 1 },
       unk_er_f2_9: { default: 0, field: 1 },
       unk_er_f2_10: { default: 0, field: 1 },
@@ -8196,6 +8196,272 @@ function clampVec4Value(v: Vector4Value, min: Vector4 = [0, 0, 0, 0], max: Vecto
   return v instanceof Property ? v.clamp(min, max) : clampVector(v, min, max)
 }
 
+function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
+  if (!(
+    'commonParticleNormal' in inputPalette ||
+    'commonParticleMultiply' in inputPalette ||
+    'commonParticleAdd' in inputPalette ||
+    'commonParticleSubtract' in inputPalette ||
+    'distortionParticle' in inputPalette ||
+    'blurParticle' in inputPalette ||
+    'light' in inputPalette ||
+    'gpuParticle' in inputPalette ||
+    'lensFlare' in inputPalette
+  )) {
+    throw new Error('Invalid color palette.')
+  }
+  const palette: Recolor.ColorPalette = {}
+  for (const [k, v] of Object.entries(inputPalette) as Entries<Recolor.ColorPalette>) switch (k) {
+    case 'commonParticleNormal':
+    case 'commonParticleMultiply':
+    case 'commonParticleAdd':
+    case 'commonParticleSubtract':
+      palette[k] = v.map(e => ({
+        modifier: Property.fromJSON(e.modifier),
+        color1: Property.fromJSON(e.color1),
+        color2: Property.fromJSON(e.color2),
+        color3: Property.fromJSON(e.color3),
+        rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
+        bloomColor: e.bloomColor,
+      }))
+      break
+    case 'distortionParticle':
+    case 'blurParticle':
+      palette[k] = v.map(e => ({
+        modifier: Property.fromJSON(e.modifier),
+        color: Property.fromJSON(e.color),
+        rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
+        bloomColor: e.bloomColor,
+      }))
+      break
+    case 'light':
+      palette[k] = v.map(e => ({
+        diffuseColor: Property.fromJSON(e.diffuseColor),
+        diffuseMultiplier: Property.fromJSON(e.diffuseMultiplier),
+        ...'specularColor' in e && {
+          specularColor: Property.fromJSON(e.specularColor),
+          specularMultiplier: Property.fromJSON(e.specularMultiplier),
+        }
+      }))
+      break
+    case 'gpuParticle':
+      palette[k] = v.map(e => ({
+        color: Property.fromJSON(e.color),
+        rgbMultiplier: e.rgbMultiplier,
+        colorMin: e.colorMin,
+        colorMax: e.colorMax,
+        ...'bloomColor' in e && {
+          bloomColor: e.bloomColor
+        }
+      }))
+      break
+    case 'lensFlare':
+      palette[k] = v.map(e => ({
+        color: Property.fromJSON(e.color),
+        colorMultiplier: e.colorMultiplier,
+        bloomColor: e.bloomColor,
+      }))
+      break
+  }
+
+  // Set up fallbacks for missing palette entries
+  if (!('commonParticleNormal' in palette)) {
+    if (
+      'commonParticleMultiply' in palette ||
+      'commonParticleAdd' in palette ||
+      'commonParticleSubtract' in palette
+    ) {
+      palette.commonParticleNormal =
+        palette.commonParticleMultiply ??
+        palette.commonParticleAdd ??
+        palette.commonParticleSubtract
+    } else if ('gpuParticle' in palette) {
+      const e = averagePaletteEntries(palette.gpuParticle)[0]
+      palette.commonParticleNormal = [{
+        modifier: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty(1, 1, 1, 1),
+        color2: new ConstantProperty(1, 1, 1, 1),
+        color3: e.color,
+        bloomColor: e.bloomColor ?? [1, 1, 1, 1],
+        rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
+      }]
+    } else if ('lensFlare' in palette) {
+      const e = averagePaletteEntries(palette.lensFlare)[0]
+      palette.commonParticleNormal = [{
+        modifier: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty(1, 1, 1, 1),
+        color2: new ConstantProperty(1, 1, 1, 1),
+        color3: e.color,
+        bloomColor: e.bloomColor,
+        rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
+      }]
+    } else if ('distortionParticle' in palette) {
+      const e = averagePaletteEntries(palette.distortionParticle)[0]
+      palette.commonParticleNormal = [{
+        modifier: e.modifier,
+        color1: new ConstantProperty(1, 1, 1, 1),
+        color2: new ConstantProperty(1, 1, 1, 1),
+        color3: e.color,
+        bloomColor: e.bloomColor,
+        rgbMultiplier: e.rgbMultiplier,
+      }]
+    } else if ('blurParticle' in palette) {
+      const e = averagePaletteEntries(palette.blurParticle)[0]
+      palette.commonParticleNormal = [{
+        modifier: e.modifier,
+        color1: new ConstantProperty(1, 1, 1, 1),
+        color2: new ConstantProperty(1, 1, 1, 1),
+        color3: e.color,
+        bloomColor: e.bloomColor,
+        rgbMultiplier: e.rgbMultiplier,
+      }]
+    } else if ('light' in palette) {
+      const e = averagePaletteEntries(palette.light)[0]
+      palette.commonParticleNormal = [{
+        modifier: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty(1, 1, 1, 1),
+        color2: new ConstantProperty(1, 1, 1, 1),
+        color3: e.diffuseColor,
+        bloomColor: [1, 1, 1, 0],
+        rgbMultiplier: e.diffuseMultiplier,
+      }]
+    }
+  }
+  palette.commonParticleMultiply ??= palette.commonParticleNormal
+  palette.commonParticleAdd ??= palette.commonParticleNormal
+  palette.commonParticleSubtract ??= palette.commonParticleNormal
+  let avgCommonNormal: Recolor.PaletteSlots['CommonParticle']
+  if (!('distortionParticle' in palette)) {
+    avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+    palette.distortionParticle = [{
+      modifier: new ConstantProperty(1, 1, 1, 1),
+      color: new ConstantProperty(1, 1, 1, 1),
+      rgbMultiplier: 1,
+      bloomColor: [1, 1, 1, 0]
+    }]
+  }
+  palette.blurParticle ??= palette.distortionParticle
+  if (!('light' in palette)) {
+    avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+    palette.light = [{
+      diffuseColor: anyValueMult(
+        anyValueMult(
+          avgCommonNormal.color1,
+          avgCommonNormal.color2
+        ),
+        avgCommonNormal.color3,
+      ),
+      diffuseMultiplier: avgCommonNormal.rgbMultiplier,
+    }]
+  }
+  if (!('gpuParticle' in palette)) {
+    avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+    palette.gpuParticle = [{
+      color: anyValueMult(
+        anyValueMult(
+          avgCommonNormal.color1,
+          avgCommonNormal.color2
+        ),
+        avgCommonNormal.color3,
+      ),
+      rgbMultiplier: avgCommonNormal.rgbMultiplier.valueAt(0),
+      colorMin: [0, 0, 0, 0],
+      colorMax: [0, 0, 0, 0],
+      bloomColor: avgCommonNormal.bloomColor,
+    }]
+  }
+  if (!('lensFlare' in palette)) {
+    avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
+    palette.lensFlare = [{
+      color: anyValueMult(
+        anyValueMult(
+          avgCommonNormal.color1,
+          avgCommonNormal.color2
+        ),
+        avgCommonNormal.color3,
+      ),
+      colorMultiplier: [1, 1, 1, 1],
+      bloomColor: avgCommonNormal.bloomColor,
+    }]
+  }
+
+  function durationFallback(action: any, secondary?: any) {
+    if (!(action instanceof NodeAttributes || action instanceof ParticleAttributes)) {
+      action = { duration: 1 }
+    }
+    if (!(secondary instanceof NodeAttributes || secondary instanceof ParticleAttributes)) {
+      secondary = { duration: 1 }
+    }
+    return () => {
+      let d = action.duration instanceof Property ?
+        action.duration.valueAt(0) :
+        action.duration
+      if (d <= 0) {
+        d = secondary.duration instanceof Property ?
+          secondary.duration.valueAt(0) :
+          secondary.duration
+      }
+      if (d <= 0) {
+        d = 1
+      }
+      return d
+    }
+  }
+
+  function proc<T>(
+    paletteProp: AnyValue,
+    c: T,
+    k: keyof T,
+    durationFallback: () => number = () => 1
+  ) {
+    if (k === 'bloomColor') {
+      ;(c[k] as any) = (paletteProp as Vector4).with(3, Math.min(1, paletteProp[3]) * c[k][3]) as Vector4
+    } else if (
+      paletteProp instanceof SequenceProperty ||
+      paletteProp instanceof ComponentSequenceProperty
+    ) {
+      const d = (
+        c[k] instanceof SequenceProperty ||
+        c[k] instanceof ComponentSequenceProperty ?
+          c[k].duration :
+          durationFallback()
+      )
+      let alpha: ScalarValue
+      if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+        alpha = separateComponents(c[k])[3]
+      }
+      ;(c[k] as any) = paletteProp.clone()
+      ;(c[k] as any).duration = d
+      if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+        ;(c[k] as any) = setVectorComponent(c[k] as any, 3, alpha)
+      }
+      if (c[k] instanceof Property) {
+        ;(c[k] as VectorProperty) = c[k].minify()
+      }
+    } else {
+      if (isVectorValue(c[k])) {
+        ;(c[k] as VectorValue) = setVectorComponent(
+          (
+            paletteProp instanceof Property ? paletteProp.clone() :
+            (paletteProp as Vector).slice()
+          ) as VectorValue,
+          3, separateComponents(c[k])[3]
+        )
+        if (c[k] instanceof Property) {
+          ;(c[k] as VectorProperty) = c[k].minify()
+        }
+      } else {
+        ;(c[k] as any) = (
+          paletteProp instanceof Property ? paletteProp.clone() :
+          paletteProp
+        )
+      }
+    }
+  }
+
+  return { palette, durationFallback, proc }
+}
+
 const GameVersionMap = {
   [Game.DarkSouls3]: FXRVersion.DarkSouls3,
   [Game.Sekiro]: FXRVersion.Sekiro,
@@ -10017,370 +10283,14 @@ abstract class Node {
       for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
         action.recolor(funcOrPalette)
       }
-    } else {
-      if (!(
-        'commonParticleNormal' in funcOrPalette ||
-        'commonParticleMultiply' in funcOrPalette ||
-        'commonParticleAdd' in funcOrPalette ||
-        'commonParticleSubtract' in funcOrPalette ||
-        'distortionParticle' in funcOrPalette ||
-        'blurParticle' in funcOrPalette ||
-        'light' in funcOrPalette ||
-        'gpuParticle' in funcOrPalette ||
-        'lensFlare' in funcOrPalette
-      )) {
-        throw new Error('Invalid color palette.')
-      }
-      const palette: Recolor.ColorPalette = {}
-      for (const [k, v] of Object.entries(funcOrPalette) as Entries<Recolor.ColorPalette>) switch (k) {
-        case 'commonParticleNormal':
-        case 'commonParticleMultiply':
-        case 'commonParticleAdd':
-        case 'commonParticleSubtract':
-          palette[k] = v.map(e => ({
-            modifier: Property.fromJSON(e.modifier),
-            color1: Property.fromJSON(e.color1),
-            color2: Property.fromJSON(e.color2),
-            color3: Property.fromJSON(e.color3),
-            rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
-            bloomColor: e.bloomColor,
-          }))
-          break
-        case 'distortionParticle':
-        case 'blurParticle':
-          palette[k] = v.map(e => ({
-            modifier: Property.fromJSON(e.modifier),
-            color: Property.fromJSON(e.color),
-            rgbMultiplier: Property.fromJSON(e.rgbMultiplier),
-            bloomColor: e.bloomColor,
-          }))
-          break
-        case 'light':
-          palette[k] = v.map(e => ({
-            diffuseColor: Property.fromJSON(e.diffuseColor),
-            diffuseMultiplier: Property.fromJSON(e.diffuseMultiplier),
-            ...'specularColor' in e && {
-              specularColor: Property.fromJSON(e.specularColor),
-              specularMultiplier: Property.fromJSON(e.specularMultiplier),
-            }
-          }))
-          break
-        case 'gpuParticle':
-          palette[k] = v.map(e => ({
-            color: Property.fromJSON(e.color),
-            rgbMultiplier: e.rgbMultiplier,
-            colorMin: e.colorMin,
-            colorMax: e.colorMax,
-            ...'bloomColor' in e && {
-              bloomColor: e.bloomColor
-            }
-          }))
-          break
-        case 'lensFlare':
-          palette[k] = v.map(e => ({
-            color: Property.fromJSON(e.color),
-            colorMultiplier: e.colorMultiplier,
-            bloomColor: e.bloomColor,
-          }))
-          break
-      }
-
-      // Set up fallbacks for missing palette entries
-      if (!('commonParticleNormal' in palette)) {
-        if (
-          'commonParticleMultiply' in palette ||
-          'commonParticleAdd' in palette ||
-          'commonParticleSubtract' in palette
-        ) {
-          palette.commonParticleNormal =
-            palette.commonParticleMultiply ??
-            palette.commonParticleAdd ??
-            palette.commonParticleSubtract
-        } else if ('gpuParticle' in palette) {
-          const e = averagePaletteEntries(palette.gpuParticle)[0]
-          palette.commonParticleNormal = [{
-            modifier: new ConstantProperty(1, 1, 1, 1),
-            color1: new ConstantProperty(1, 1, 1, 1),
-            color2: new ConstantProperty(1, 1, 1, 1),
-            color3: e.color,
-            bloomColor: e.bloomColor ?? [1, 1, 1, 1],
-            rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
-          }]
-        } else if ('lensFlare' in palette) {
-          const e = averagePaletteEntries(palette.lensFlare)[0]
-          palette.commonParticleNormal = [{
-            modifier: new ConstantProperty(1, 1, 1, 1),
-            color1: new ConstantProperty(1, 1, 1, 1),
-            color2: new ConstantProperty(1, 1, 1, 1),
-            color3: e.color,
-            bloomColor: e.bloomColor,
-            rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
-          }]
-        } else if ('distortionParticle' in palette) {
-          const e = averagePaletteEntries(palette.distortionParticle)[0]
-          palette.commonParticleNormal = [{
-            modifier: e.modifier,
-            color1: new ConstantProperty(1, 1, 1, 1),
-            color2: new ConstantProperty(1, 1, 1, 1),
-            color3: e.color,
-            bloomColor: e.bloomColor,
-            rgbMultiplier: e.rgbMultiplier,
-          }]
-        } else if ('blurParticle' in palette) {
-          const e = averagePaletteEntries(palette.blurParticle)[0]
-          palette.commonParticleNormal = [{
-            modifier: e.modifier,
-            color1: new ConstantProperty(1, 1, 1, 1),
-            color2: new ConstantProperty(1, 1, 1, 1),
-            color3: e.color,
-            bloomColor: e.bloomColor,
-            rgbMultiplier: e.rgbMultiplier,
-          }]
-        } else if ('light' in palette) {
-          const e = averagePaletteEntries(palette.light)[0]
-          palette.commonParticleNormal = [{
-            modifier: new ConstantProperty(1, 1, 1, 1),
-            color1: new ConstantProperty(1, 1, 1, 1),
-            color2: new ConstantProperty(1, 1, 1, 1),
-            color3: e.diffuseColor,
-            bloomColor: [1, 1, 1, 0],
-            rgbMultiplier: e.diffuseMultiplier,
-          }]
-        }
-      }
-      palette.commonParticleMultiply ??= palette.commonParticleNormal
-      palette.commonParticleAdd ??= palette.commonParticleNormal
-      palette.commonParticleSubtract ??= palette.commonParticleNormal
-      let avgCommonNormal: Recolor.PaletteSlots['CommonParticle']
-      if (!('distortionParticle' in palette)) {
-        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
-        palette.distortionParticle = [{
-          modifier: new ConstantProperty(1, 1, 1, 1),
-          color: new ConstantProperty(1, 1, 1, 1),
-          rgbMultiplier: 1,
-          bloomColor: [1, 1, 1, 0]
-        }]
-      }
-      palette.blurParticle ??= palette.distortionParticle
-      if (!('light' in palette)) {
-        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
-        palette.light = [{
-          diffuseColor: anyValueMult(
-            anyValueMult(
-              avgCommonNormal.color1,
-              avgCommonNormal.color2
-            ),
-            avgCommonNormal.color3,
-          ),
-          diffuseMultiplier: avgCommonNormal.rgbMultiplier,
-        }]
-      }
-      if (!('gpuParticle' in palette)) {
-        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
-        palette.gpuParticle = [{
-          color: anyValueMult(
-            anyValueMult(
-              avgCommonNormal.color1,
-              avgCommonNormal.color2
-            ),
-            avgCommonNormal.color3,
-          ),
-          rgbMultiplier: avgCommonNormal.rgbMultiplier.valueAt(0),
-          colorMin: [0, 0, 0, 0],
-          colorMax: [0, 0, 0, 0],
-          bloomColor: avgCommonNormal.bloomColor,
-        }]
-      }
-      if (!('lensFlare' in palette)) {
-        avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
-        palette.lensFlare = [{
-          color: anyValueMult(
-            anyValueMult(
-              avgCommonNormal.color1,
-              avgCommonNormal.color2
-            ),
-            avgCommonNormal.color3,
-          ),
-          colorMultiplier: [1, 1, 1, 1],
-          bloomColor: avgCommonNormal.bloomColor,
-        }]
-      }
-
-      function durationFallback(action: any, secondary?: any) {
-        if (!(action instanceof NodeAttributes || action instanceof ParticleAttributes)) {
-          action = { duration: 1 }
-        }
-        if (!(secondary instanceof NodeAttributes || secondary instanceof ParticleAttributes)) {
-          secondary = { duration: 1 }
-        }
-        return () => {
-          let d = action.duration instanceof Property ?
-            action.duration.valueAt(0) :
-            action.duration
-          if (d <= 0) {
-            d = secondary.duration instanceof Property ?
-              secondary.duration.valueAt(0) :
-              secondary.duration
-          }
-          if (d <= 0) {
-            d = 1
-          }
-          return d
-        }
-      }
-      function proc<T>(
-        paletteProp: AnyValue,
-        c: T,
-        k: keyof T,
-        durationFallback: () => number = () => 1
-      ) {
-        if (k === 'bloomColor') {
-          ;(c[k] as any) = (paletteProp as Vector4).with(3, Math.min(1, paletteProp[3]) * c[k][3]) as Vector4
-        } else if (
-          paletteProp instanceof SequenceProperty ||
-          paletteProp instanceof ComponentSequenceProperty
-        ) {
-          const d = (
-            c[k] instanceof SequenceProperty ||
-            c[k] instanceof ComponentSequenceProperty ?
-              c[k].duration :
-              durationFallback()
-          )
-          let alpha: ScalarValue
-          if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
-            alpha = separateComponents(c[k])[3]
-          }
-          ;(c[k] as any) = paletteProp.clone()
-          ;(c[k] as any).duration = d
-          if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
-            ;(c[k] as any) = setVectorComponent(c[k] as any, 3, alpha)
-          }
-          if (c[k] instanceof Property) {
-            ;(c[k] as VectorProperty) = c[k].minify()
-          }
-        } else {
-          if (isVectorValue(c[k])) {
-            ;(c[k] as VectorValue) = setVectorComponent(
-              (
-                paletteProp instanceof Property ? paletteProp.clone() :
-                (paletteProp as Vector).slice()
-              ) as VectorValue,
-              3, separateComponents(c[k])[3]
-            )
-            if (c[k] instanceof Property) {
-              ;(c[k] as VectorProperty) = c[k].minify()
-            }
-          } else {
-            ;(c[k] as any) = (
-              paletteProp instanceof Property ? paletteProp.clone() :
-              paletteProp
-            )
-          }
-        }
-      }
       for (const config of this.walkConfigs(recurse)) if (config instanceof BasicConfig) {
-        const a = config.appearance
-        if (
-          a instanceof PointSprite ||
-          a instanceof Line ||
-          a instanceof QuadLine ||
-          a instanceof BillboardEx ||
-          a instanceof MultiTextureBillboardEx ||
-          a instanceof Model ||
-          a instanceof RichModel ||
-          a instanceof Tracer ||
-          a instanceof DynamicTracer
-        ) {
-          if (!(config.particleModifier instanceof ParticleModifier)) continue
-          if (a instanceof MultiTextureBillboardEx) {
-            a.recolorProperty('layersColor', Recolor.grayscale)
-            a.recolorProperty('layer1Color', Recolor.grayscale)
-            a.recolorProperty('layer2Color', Recolor.grayscale)
-          } else if (a instanceof Line || a instanceof QuadLine) {
-            a.recolorProperty('startColor', Recolor.grayscale)
-            a.recolorProperty('endColor', Recolor.grayscale)
-          }
-          let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
-          if (blendMode instanceof Property) {
-            blendMode = blendMode.valueAt(0)
-          }
-          if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
-            blendMode = BlendMode.Normal
-          } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Unk7) {
-            blendMode = BlendMode.Add
-          }
-          const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
-            Recolor.ColorPalette,
-            Recolor.PaletteSlots['CommonParticle'][]
-          >
-          const pc = randomItem(palette[key])
-          const ndf = durationFallback(config.nodeAttributes)
-          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
-          proc(pc.modifier, config.particleModifier, 'color', ndf)
-          proc(pc.color1, a, 'color1', pdf)
-          proc(pc.color2, a, 'color2', ndf)
-          proc(pc.color3, a, 'color3', pdf)
-          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
-          proc(pc.bloomColor, a, 'bloomColor')
-        } else if (a instanceof Distortion) {
-          if (!(config.particleModifier instanceof ParticleModifier)) continue
-          const pc = randomItem(palette.distortionParticle)
-          const ndf = durationFallback(config.nodeAttributes)
-          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
-          proc(pc.modifier, config.particleModifier, 'color', ndf)
-          proc(pc.color, a, 'color', pdf)
-          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
-          proc(pc.bloomColor, a, 'bloomColor')
-        } else if (a instanceof RadialBlur) {
-          if (!(config.particleModifier instanceof ParticleModifier)) continue
-          const pc = randomItem(palette.blurParticle)
-          const ndf = durationFallback(config.nodeAttributes)
-          const pdf = durationFallback(config.particleAttributes, config.nodeAttributes)
-          proc(pc.modifier, config.particleModifier, 'color', ndf)
-          proc(pc.color, a, 'color', pdf)
-          proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
-          proc(pc.bloomColor, a, 'bloomColor')
-        } else if (a instanceof PointLight || a instanceof SpotLight) {
-          const pc = randomItem(palette.light)
-          const df = durationFallback(config.nodeAttributes)
-          proc(pc.diffuseColor, a, 'diffuseColor', df)
-          proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
-          a.separateSpecular = 'specularColor' in pc
-          if ('specularColor' in pc) {
-            proc(pc.specularColor, a, 'specularColor', df)
-            proc(pc.specularMultiplier, a, 'specularMultiplier', df)
-          }
-        } else if (
-          a instanceof GPUStandardParticle ||
-          a instanceof GPUStandardCorrectParticle ||
-          a instanceof GPUSparkParticle ||
-          a instanceof GPUSparkCorrectParticle
-        ) {
-          const pc = randomItem(palette.gpuParticle)
-          proc(pc.color, a, 'color', durationFallback(config.nodeAttributes))
-          proc(pc.rgbMultiplier, a, 'rgbMultiplier')
-          proc(pc.colorMin, a, 'colorMin')
-          proc(pc.colorMax, a, 'colorMax')
-          a.bloom = 'bloomColor' in pc
-          if ('bloomColor' in pc) {
-            proc(pc.bloomColor, a, 'bloomColor')
-          }
-        } else if ('lensFlare' in palette && a instanceof LensFlare) {
-          const pc = randomItem(palette.lensFlare)
-          const df = durationFallback(config.nodeAttributes)
-          proc(pc.color, a, 'layer1Color', df)
-          proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
-          proc(pc.bloomColor, a, 'layer1BloomColor', df)
-          proc(pc.color, a, 'layer2Color', df)
-          proc(pc.colorMultiplier, a, 'layer2ColorMultiplier', df)
-          proc(pc.bloomColor, a, 'layer2BloomColor', df)
-          proc(pc.color, a, 'layer3Color', df)
-          proc(pc.colorMultiplier, a, 'layer3ColorMultiplier', df)
-          proc(pc.bloomColor, a, 'layer3BloomColor', df)
-          proc(pc.color, a, 'layer4Color', df)
-          proc(pc.colorMultiplier, a, 'layer4ColorMultiplier', df)
-          proc(pc.bloomColor, a, 'layer4BloomColor', df)
-        }
+        config.recolor(funcOrPalette)
+      }
+    } else {
+      const { palette, durationFallback, proc } = genFilledPaletteAndFunctions(funcOrPalette)
+
+      for (const config of this.walkConfigs(recurse)) if (config instanceof BasicConfig) {
+        config.recolor(palette, durationFallback, proc)
       }
     }
     return this
@@ -11539,6 +11449,152 @@ class BasicConfig implements IConfig {
     return this
   }
 
+  /**
+   * Recolors the config by modifying color properties and fields using a given
+   * function.
+   * @param func A function used to remap color values. For some easy pre-made
+   * recolor functions, see the {@link Recolor} namespace.
+   */
+  recolor(func: Recolor.RecolorFunction): this
+
+  /**
+   * Recolors the config to fit a given color palette.
+   * @param palette The color palette to apply. This can be generated from
+   * existing FXR branches using the {@link Node.generateColorPalette} method.
+   */
+  recolor(palette: Recolor.ColorPalette): this
+
+  /**
+   * @internal
+   */
+  recolor(
+    funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette,
+    __durationFallback?: (action: any, secondary?: any) => () => any,
+    __proc?: <T>(paletteProp: AnyValue, c: T, k: keyof T, durationFallback?: () => number) => void
+  ): this
+
+  recolor(
+    funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette,
+    __durationFallback?: (action: any, secondary?: any) => () => any,
+    __proc?: <T>(paletteProp: AnyValue, c: T, k: keyof T, durationFallback?: () => number) => void
+  ): this {
+    if (typeof funcOrPalette === 'function') {
+      for (const action of this.walkActions()) if (action instanceof DataAction) {
+        action.recolor(funcOrPalette, this)
+      }
+    } else {
+      const { palette, durationFallback, proc } = typeof __durationFallback === 'function' ? {
+        palette: funcOrPalette,
+        durationFallback: __durationFallback,
+        proc: __proc,
+      } : genFilledPaletteAndFunctions(funcOrPalette)
+
+      const a = this.appearance
+      if (
+        a instanceof PointSprite ||
+        a instanceof Line ||
+        a instanceof QuadLine ||
+        a instanceof BillboardEx ||
+        a instanceof MultiTextureBillboardEx ||
+        a instanceof Model ||
+        a instanceof RichModel ||
+        a instanceof Tracer ||
+        a instanceof DynamicTracer
+      ) {
+        if (!(this.particleModifier instanceof ParticleModifier)) return this
+        if (a instanceof MultiTextureBillboardEx) {
+          a.recolorProperty('layer1Color', Recolor.grayscale)
+          a.recolorProperty('layer2Color', Recolor.grayscale)
+          a.recolorProperty('layer3Color', Recolor.grayscale)
+        } else if (a instanceof Line || a instanceof QuadLine) {
+          a.recolorProperty('startColor', Recolor.grayscale)
+          a.recolorProperty('endColor', Recolor.grayscale)
+        }
+        let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
+        if (blendMode instanceof Property) {
+          blendMode = blendMode.valueAt(0)
+        }
+        if (blendMode === BlendMode.Source || blendMode === BlendMode.Unk6) {
+          blendMode = BlendMode.Normal
+        } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Unk7) {
+          blendMode = BlendMode.Add
+        }
+        const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+          Recolor.ColorPalette,
+          Recolor.PaletteSlots['CommonParticle'][]
+        >
+        const pc = randomItem(palette[key])
+        const ndf = durationFallback(this.nodeAttributes)
+        const pdf = durationFallback(this.particleAttributes, this.nodeAttributes)
+        proc(pc.modifier, this.particleModifier, 'color', ndf)
+        proc(pc.color1, a, 'color1', pdf)
+        proc(pc.color2, a, 'color2', ndf)
+        proc(pc.color3, a, 'color3', pdf)
+        proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+        proc(pc.bloomColor, a, 'bloomColor')
+      } else if (a instanceof Distortion) {
+        if (!(this.particleModifier instanceof ParticleModifier)) return this
+        const pc = randomItem(palette.distortionParticle)
+        const ndf = durationFallback(this.nodeAttributes)
+        const pdf = durationFallback(this.particleAttributes, this.nodeAttributes)
+        proc(pc.modifier, this.particleModifier, 'color', ndf)
+        proc(pc.color, a, 'color', pdf)
+        proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+        proc(pc.bloomColor, a, 'bloomColor')
+      } else if (a instanceof RadialBlur) {
+        if (!(this.particleModifier instanceof ParticleModifier)) return this
+        const pc = randomItem(palette.blurParticle)
+        const ndf = durationFallback(this.nodeAttributes)
+        const pdf = durationFallback(this.particleAttributes, this.nodeAttributes)
+        proc(pc.modifier, this.particleModifier, 'color', ndf)
+        proc(pc.color, a, 'color', pdf)
+        proc(pc.rgbMultiplier, a, 'rgbMultiplier', ndf)
+        proc(pc.bloomColor, a, 'bloomColor')
+      } else if (a instanceof PointLight || a instanceof SpotLight) {
+        const pc = randomItem(palette.light)
+        const df = durationFallback(this.nodeAttributes)
+        proc(pc.diffuseColor, a, 'diffuseColor', df)
+        proc(pc.diffuseMultiplier, a, 'diffuseMultiplier', df)
+        a.separateSpecular = 'specularColor' in pc
+        if ('specularColor' in pc) {
+          proc(pc.specularColor, a, 'specularColor', df)
+          proc(pc.specularMultiplier, a, 'specularMultiplier', df)
+        }
+      } else if (
+        a instanceof GPUStandardParticle ||
+        a instanceof GPUStandardCorrectParticle ||
+        a instanceof GPUSparkParticle ||
+        a instanceof GPUSparkCorrectParticle
+      ) {
+        const pc = randomItem(palette.gpuParticle)
+        proc(pc.color, a, 'color', durationFallback(this.nodeAttributes))
+        proc(pc.rgbMultiplier, a, 'rgbMultiplier')
+        proc(pc.colorMin, a, 'colorMin')
+        proc(pc.colorMax, a, 'colorMax')
+        a.bloom = 'bloomColor' in pc
+        if ('bloomColor' in pc) {
+          proc(pc.bloomColor, a, 'bloomColor')
+        }
+      } else if ('lensFlare' in palette && a instanceof LensFlare) {
+        const pc = randomItem(palette.lensFlare)
+        const df = durationFallback(this.nodeAttributes)
+        proc(pc.color, a, 'layer1Color', df)
+        proc(pc.colorMultiplier, a, 'layer1ColorMultiplier', df)
+        proc(pc.bloomColor, a, 'layer1BloomColor', df)
+        proc(pc.color, a, 'layer2Color', df)
+        proc(pc.colorMultiplier, a, 'layer2ColorMultiplier', df)
+        proc(pc.bloomColor, a, 'layer2BloomColor', df)
+        proc(pc.color, a, 'layer3Color', df)
+        proc(pc.colorMultiplier, a, 'layer3ColorMultiplier', df)
+        proc(pc.bloomColor, a, 'layer3BloomColor', df)
+        proc(pc.color, a, 'layer4Color', df)
+        proc(pc.colorMultiplier, a, 'layer4ColorMultiplier', df)
+        proc(pc.bloomColor, a, 'layer4BloomColor', df)
+      }
+    }
+    return this
+  }
+
 }
 
 export interface NodeEmitterConfigParams {
@@ -12029,7 +12085,7 @@ class DataAction implements IAction {
    * @param key The name of the property.
    * @param func The function used to recolor the property.
    */
-  recolorProperty(key: string, func: Recolor.RecolorFunction) {
+  recolorProperty(key: string, func: Recolor.RecolorFunction, context?: BasicConfig) {
     let prop: Vector4Value = this[key]
     if (
       prop instanceof Property && prop.valueType !== ValueType.Vector4 ||
@@ -12038,17 +12094,17 @@ class DataAction implements IAction {
       throw new Error('Cannot recolor non-color property: ' + key)
     }
     if (Array.isArray(prop)) {
-      this[key] = func(prop)
+      this[key] = func(prop, context, this, key as any)
       return this
     }
     if (prop instanceof ComponentSequenceProperty) {
       prop = this[key] = prop.combineComponents()
     }
     if (prop instanceof ValueProperty) {
-      prop.value = func(prop.value)
+      prop.value = func(prop.value, context, this, key as any)
     } else if (prop instanceof SequenceProperty) {
       for (const keyframe of prop.keyframes) {
-        keyframe.value = func(keyframe.value as Vector4)
+        keyframe.value = func(keyframe.value as Vector4, context, this, key as any)
       }
     }
     prop.modifiers = prop.modifiers.filter(mod => !(
@@ -12062,13 +12118,13 @@ class DataAction implements IAction {
           mod.factor = mod.factor.combineComponents()
         }
         if (mod.factor instanceof ValueProperty) {
-          mod.factor.value = func(mod.factor.value)
+          mod.factor.value = func(mod.factor.value, context, this, key as any)
         } else if (mod.factor instanceof SequenceProperty) {
           for (const keyframe of mod.factor.keyframes) {
-            keyframe.value = func(keyframe.value as Vector4)
+            keyframe.value = func(keyframe.value as Vector4, context, this, key as any)
           }
         } else {
-          mod.factor = func(mod.factor)
+          mod.factor = func(mod.factor, context, this, key as any)
         }
       }
     }
@@ -12080,11 +12136,11 @@ class DataAction implements IAction {
    * pre-made recolor functions, see the {@link Recolor} namespace.
    * @param func A function used to remap color values.
    */
-  recolor(func: (color: Vector4) => Vector4) {
+  recolor(func: Recolor.RecolorFunction, context?: BasicConfig) {
     if ('props' in ActionData[this.type]) {
       for (const [k, v] of Object.entries(ActionData[this.type].props)) {
         if ('color' in v) {
-          this.recolorProperty(k, func)
+          this.recolorProperty(k, func, context)
         }
       }
     }
@@ -42304,7 +42360,12 @@ function PrecipitationModifier<T extends ValueType>(
  */
 namespace Recolor {
 
-  export type RecolorFunction = (color: Vector4) => Vector4
+  export type RecolorFunction = <T extends DataAction>(
+    color: Vector4,
+    config?: BasicConfig,
+    action?: T,
+    property?: keyof T
+  ) => Vector4
 
   export type PaletteSlots = {
     CommonParticle: {
@@ -42583,59 +42644,93 @@ namespace Recolor {
   }
 
   /**
-   * Creates a recolor function that preserves original colors with low
-   * saturation. This has the downside that it is unable to recolor grayscale
-   * effects, but it is probably the most useful recolor function due to how
-   * well it keeps the overall look of the original effect while changing its
-   * colors.
-   * @param targetColor The target color.
+   * Because most of the color properties in most actions are multipliers,
+   * setting all of them to the same color does not make the effect that color.
+   * Instead, it will make the color much deeper/darker unless it's just white.
+   * 
+   * This function can be used to filter properties to assign the target color
+   * to. It does this by defining "primary" and "secondary" color properties
+   * for all actions with colors. If primary color properties are set to the
+   * target color and secondary color properties (all non-primary ones) are set
+   * to white, the final color will match the target color exactly.
+   * 
+   * For example, {@link BillboardEx} has four color properties:
+   * - {@link BillboardEx.color1} - Secondary
+   * - {@link BillboardEx.color2} - Secondary
+   * - {@link BillboardEx.color3} - **Primary**
+   * - {@link BillboardEx.bloomColor} - Secondary
+   * 
+   * This function will return false for color1, color2, and bloomColor, but
+   * true for color3. Since the product of color1, color2, and color3 is the
+   * actual color of the particle, and the bloom color is the product of the
+   * particle color and bloomColor, setting only color3 to the target color
+   * and the RGB values for the rest of the properties to white will make the
+   * particle's final color match the target color.
+   * @param action Any data action.
+   * @param property A property name from the {@link action}.
    */
-  export function standardBlend(targetColor: Vector3 | Vector4): RecolorFunction {
-    return ([r, g, b, a]: Vector4): Vector4 => {
-      const scale = Math.max(r, g, b, 1)
-      r /= scale
-      g /= scale
-      b /= scale
+  export function isPrimary<T extends DataAction>(action: T, property: keyof T): boolean {
+    return ActionData[action.type]?.props?.[property]?.color === 1
+  }
 
-      const min = Math.min(r, g, b)
-      const max = Math.max(r, g, b)
-      const s = max > 0 ? (max - min) / max : 0
-
-      r = lerp(max, targetColor[0], s) * scale
-      g = lerp(max, targetColor[1], s) * scale
-      b = lerp(max, targetColor[2], s) * scale
-
-      return [r, g, b, a]
+  /**
+   * Creates a recolor function that replaces {@link isPrimary primary colors}
+   * with the given color.
+   * 
+   * Secondary color properties will be replaced with white.
+   * 
+   * Some "tricks" are used to keep opacity animations and the general
+   * brightness similar to the original color. These can be turned off by
+   * passing `false` for {@link multAlpha}, {@link keepBrightness}, and
+   * {@link keepScale}. If these are all disabled, the primary color will be
+   * replaced with the target color without any modifications to it.
+   * @param targetColor The target color.
+   * @param multAlpha If enabled, the alpha will be multiplied instead of
+   * replaced. This allows the original opacity to be maintained or just
+   * tweaked instead of replacing it entirely by a static value, which means
+   * that fade animations will still work correctly, whereas they may not in
+   * some cases if it is replaced. Defaults to `true`.
+   * @param keepBrightness If enabled, this will make the function multiply the
+   * target color by the brightness of the original color. Defaults to `true`.
+   * @param keepScale If enabled, this will force the function to maintain the
+   * scale of the original color. So, if the original color has values greater
+   * than 1, the target color will be multiplied by the highest value. This is
+   * ignored if {@link keepBrightness} is enabled. Defaults to `true`.
+   */
+  export function replace(
+    targetColor: Vector4,
+    multAlpha: boolean = true,
+    keepBrightness: boolean = true,
+    keepScale: boolean = true,
+  ): RecolorFunction {
+    const [r, g, b, a] = targetColor
+    if (multAlpha && keepBrightness) { // Extra optimization for the default settings
+      return ([r2, g2, b2, a2], config, action, prop): Vector4 => {
+        const scale = Math.max(r2, g2, b2)
+        if (!isPrimary(action, prop)) return [scale, scale, scale, a2]
+        return [r * scale, g * scale, b * scale, (a ?? 1) * a2]
+      }
+    }
+    return ([r2, g2, b2, a2], config, action, prop): Vector4 => {
+      const scale = keepBrightness ? Math.max(r2, g2, b2) : keepScale ? Math.max(1, r2, g2, b2) : 1
+      if (!isPrimary(action, prop)) return [scale, scale, scale, a2]
+      return [r * scale, g * scale, b * scale, multAlpha ? (a ?? 1) * a2 : a ?? a2]
     }
   }
 
   /**
-   * Creates a recolor function that simply replaces colors with the given
-   * color.
-   * @param targetColor The target color.
-   */
-  export function replace(targetColor: Vector4): RecolorFunction {
-    const [r, g, b, a] = targetColor
-    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r ?? r2, g ?? g2, b ?? b2, a ?? a2]
-  }
-
-  /**
-   * Creates a recolor function that multiplies the original color by the
-   * given color.
+   * Creates a recolor function that multiplies
+   * {@link isPrimary primary color properties} by the given color.
+   * 
+   * Secondary color properties are left unchanged.
    * @param targetColor The target color.
    */
   export function multiply(targetColor: Vector4): RecolorFunction {
     const [r, g, b, a] = targetColor
-    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r * r2, g * g2, b * b2, a * a2]
-  }
-
-  /**
-   * Creates a recolor function that adds the given color to the original
-   * color.
-   * @param targetColor The target color.
-   */
-  export function add([r, g, b, a]: Vector4): RecolorFunction {
-    return ([r2, g2, b2, a2]: Vector4): Vector4 => [r + r2, g + g2, b + b2, a + a2]
+    return ([r2, g2, b2, a2], config, action, prop): Vector4 => {
+      if (!isPrimary(action, prop)) return [r2, g2, b2, a2]
+      return [r * r2, g * g2, b * b2, a * a2]
+    }
   }
 
   /**
@@ -42721,29 +42816,20 @@ namespace Recolor {
   }
 
   /**
-   * Creates a recolor function that replaces the saturation of the original
-   * color with that of a given color.
-   * @param color The color whose saturation will be used.
-   */
-  export function replaceSaturation(color: Vector3 | Vector4): RecolorFunction {
-    const [ , ts ] = rgbToHsv(...(color.slice(0, 3) as Vector3))
-    return ([r, g, b, a]) => {
-      const scale = Math.max(r, g, b, 1)
-      const [ h,, v ] = rgbToHsv(r / scale, g / scale, b / scale)
-      return [...(hsvToRgb(h, ts, v).map(e => e * scale) as Vector3), a]
-    }
-  }
-
-  /**
-   * Creates a recolor function that replaces the hue and saturation of the
-   * original color with that of a given color.
+   * Creates a recolor function that replaces the hue and saturation of
+   * {@link isPrimary primary color properties} with those of a given color.
+   * 
+   * Secondary color properties will be replaced with grayscale versions of
+   * the original colors, which means the overall brightness is kept, but only
+   * the primary color properties affect the hue and saturation.
    * @param color The color whose hue and saturation will be used.
    */
   export function colorBlend(color: Vector3 | Vector4): RecolorFunction {
     const rgb = color.slice(0, 3) as Vector3
     const inputScale = Math.max(...rgb, 1)
     const [ th, ts ] = rgbToHsv(...(rgb.map(e => e / inputScale) as Vector3))
-    return ([r, g, b, a]) => {
+    return ([r, g, b, a], config, action, prop) => {
+      if (!isPrimary(action, prop)) return grayscale([r, g, b, a])
       const scale = Math.max(r, g, b, 1)
       const [ ,, v ] = rgbToHsv(r / scale, g / scale, b / scale)
       return [...(hsvToRgb(th, ts, v).map(e => e * scale) as Vector3), a]

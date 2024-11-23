@@ -227,7 +227,7 @@ export default async function(writeToDist = true) {
             }${
               'time' in v ? `, time: ${timeMap[v.time]}` : ''
             }${
-              'color' in v ? `, color: 1` : ''
+              'color' in v ? `, color: ${v.color === 'primary' ? 1 : 2}` : ''
             }${
               v.omitClassProp ? `, omit: 1` : ''
             }${

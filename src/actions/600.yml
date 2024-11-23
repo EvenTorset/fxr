@@ -62,7 +62,7 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
-    color: true
+    color: primary
     desc: |
       Color multiplier.
 
