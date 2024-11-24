@@ -72,6 +72,13 @@ const timeMap = {
   sq: 4,
 }
 
+const propTypeMap = {
+  1: 'scalar',
+  2: 'vector2',
+  3: 'vector3',
+  4: 'vector4',
+}
+
 function toTSString(v) {
   if (typeof v === 'string' || Array.isArray(v)) {
     return JSON.stringify(v)
@@ -279,35 +286,6 @@ export default async function(writeToDist = true) {
     if (!data.omitClass) {
       const propNames = Object.keys(data.properties ?? {})
       const firstProp = 'properties' in data ? data.properties[propNames[0]] : {}
-      if ('properties' in data && propNames.length > 1) classes.push(`
-        export interface ${data.name}Params {
-          ${Object.entries(data.properties).filter(e => !e[1].omitClassProp).map(([k, v]) => {
-            const defValue = defValString(v)
-            return (`
-                /**
-                 * ${'desc' in v ? v.desc.trim().replace(/\n/g, '\n   * ') : `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ''}.`}
-                 * 
-                 * **Default**: ${defValue}${
-                  'argument' in v ? `
-                 * 
-                 * **Argument**: {@link PropertyArgument.${v.argument} ${argumentNames[v.argument]}}`:''}${
-                   'see' in v ? `
-                 * 
-                 * See also:
-                 * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
-                 */
-              `
-            ) + `${k}?: ${v.type ?? typeFromField(v.field)}`
-          })
-            .join('')
-            .trim()
-            .replace(/^\s{16}(?=\/\*\*| \*)|^\s{14}(?=\w)/gm, '  ')
-          }
-        }
-      `.trim()
-        .replace(/^\s{8}(?=\})/m, '')
-        .replace(/^\s{10}(?=\/|\w)/m, '  ')
-      )
       classes.push(`
         /**
          * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
@@ -319,24 +297,27 @@ export default async function(writeToDist = true) {
           declare readonly type: ActionType.${data.name}
           declare readonly meta: ActionMeta & {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}}
           ${Object.entries(data.properties ?? {}).filter(e => !e[1].omitClassProp).map(([k, v]) => {
-            return (
-              'desc' in v ? `
-                /**
-                 * ${v.desc.trim().replace(/\n/g, '\n   * ')}${
-                  'argument' in v ? `
-                 * 
-                 * **Argument**: {@link PropertyArgument.${v.argument} ${argumentNames[v.argument]}}`:''}${
-                   'see' in v ? `
-                 * 
-                 * See also:
-                 * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
-                 */
-              ` : '\n  '
-            ) + `${k}: ${v.type ?? typeFromField(v.field)}`
+            return (`
+              /**
+               * ${
+                'desc' in v ?
+                  v.desc.trim().replace(/\n/g, '\n   * ') :
+                  `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ` ${propTypeMap[v.components] ?? 'scalar'}`}.`}
+               * 
+               * **Default**: ${defValString(v)}${
+                'argument' in v ? `
+               * 
+               * **Argument**: {@link PropertyArgument.${v.argument} ${argumentNames[v.argument]}}`:''}${
+                  'see' in v ? `
+               * 
+               * See also:
+               * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
+               */
+            `) + `${k}: ${v.type ?? typeFromField(v.field)}`
           })
             .join('')
             .trim()
-            .replace(/^\s{16}(?=\/\*\*| \*)|^\s{14}(?=\w)/gm, '  ')
+            .replace(/^\s{14}(?=\/\*\*| \*)|^\s{12}(?=\w)/gm, '  ')
           }${propNames.length === 1 ? `
           /**
            * @param ${propNames[0]} ${
@@ -356,7 +337,7 @@ export default async function(writeToDist = true) {
            */` : ''}
           constructor(${
             'properties' in data ?
-              propNames.length > 1 ? `props: ${data.name}Params = {}` :
+              propNames.length > 1 ? `props: Partial<Props<${data.name}>> = {}` :
               `${propNames[0]}: ${
                 data.properties[propNames[0]].type ?? typeFromField(data.properties[propNames[0]].field)
               } = ${defValTS(firstProp)}`

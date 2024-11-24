@@ -47,6 +47,7 @@
   - Added links to the FXR Playground and Ko-fi to the sidebar.
   - Added the library version number to the header.
 - Fixed the `getActionCount` method on `NodeEmitterConfig` objects always returning `10`. It now correctly returns `9` if the given game is `Game.DarkSouls3`, and `10` otherwise.
+- Replaced all data action constructor parameter interfaces with types based on the classes. This doesn't change anything functionally, but cleans up the code and the documentation site a lot. ~10k lines of code was removed by doing this.
 
 ## [17.0.0] - 2024-11-12
 

@@ -1014,8 +1014,7 @@ export enum ForceVolumeShape {
 
 /**
  * An emitted instance's initial direction is used for various things that require a direction, but does not have a set one to follow.
- * - {@link ActionType.ParticleModifier ParticleModifier action}'s
- * {@link ParticleModifierParams.speed speed}.
+ * - {@link ActionType.ParticleModifier ParticleModifier action}'s {@link ParticleModifier.speed speed}.
  * - {@link ActionType.Line Line action}'s initial rotation.
  * - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
  * 
@@ -1873,28 +1872,31 @@ export type GenComponents<T, V extends ValueType> = [
   [T], [T, T], [T, T, T], [T, T, T, T]
 ][V]
 
-export type NodeMovementParams =
-  | NodeSpinParams
-  | NodeAccelerationParams
-  | NodeAccelerationRandomTurnsParams
-  | NodeAccelerationPartialFollowParams
-  | NodeAccelerationSpinParams
-  | NodeSpeedParams
-  | NodeSpeedRandomTurnsParams
-  | NodeSpeedPartialFollowParams
-  | NodeSpeedSpinParams
+export type NodeMovementProps = Partial<
+  | Props<NodeSpin>
+  | Props<NodeAcceleration>
+  | Props<NodeAccelerationRandomTurns>
+  | Props<NodeAccelerationPartialFollow>
+  | Props<NodeAccelerationSpin>
+  | Props<NodeSpeed>
+  | Props<NodeSpeedRandomTurns>
+  | Props<NodeSpeedPartialFollow>
+  | Props<NodeSpeedSpin>
+>
 
-export type NodeTransformParams =
-  | StaticNodeTransformParams
-  | RandomNodeTransformParams
+export type NodeTransformProps = Partial<
+  | Props<StaticNodeTransform>
+  | Props<RandomNodeTransform>
+>
 
-export type ParticleMovementParams =
-  | ParticleAccelerationParams
-  | ParticleAccelerationRandomTurnsParams
-  | ParticleAccelerationPartialFollowParams
-  | ParticleSpeedParams
-  | ParticleSpeedRandomTurnsParams
-  | ParticleSpeedPartialFollowParams
+export type ParticleMovementProps = Partial<
+  | Props<ParticleAcceleration>
+  | Props<ParticleAccelerationRandomTurns>
+  | Props<ParticleAccelerationPartialFollow>
+  | Props<ParticleSpeed>
+  | Props<ParticleSpeedRandomTurns>
+  | Props<ParticleSpeedPartialFollow>
+>
 
 export namespace ActionSlots {
 /*#ActionSlotTypes start*/
@@ -2047,6 +2049,15 @@ export namespace ActionSlots {
     | Action
 /*#ActionSlotTypes end*/
 }
+
+export type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B
+export type WritableKeys<T> = {
+  [K in keyof T]: IfEquals<{ [P in K]: T[K] }, { -readonly [P in K]: T[K] }, K>
+}[keyof T]
+export type NonFunctionKeys<T> = {
+  [K in keyof T]: T[K] extends Function ? never : K
+}[keyof T]
+export type Props<T> = Pick<T, WritableKeys<T> & NonFunctionKeys<T>>
 
 //#region Action Data
 export type ActionGameDataEntry = {
@@ -8166,7 +8177,7 @@ function anyMatch<T>(iterator: Iterable<T>, predicate: (value: T) => boolean): b
  * Here, the point light that was created will randomize to have the same
  * specular color as its diffuse color. This example is not the best, because
  * this could also have been done by setting
- * {@link PointLightParams.separateSpecular separateSpecular} to false, but it
+ * {@link PointLight.separateSpecular separateSpecular} to false, but it
  * should at least show how this functions.
  * @param type The type of seed to generate.
  */
@@ -8482,12 +8493,12 @@ const GameVersionMap = {
 
 const ActionDataConversion = {
   [ActionType.StaticNodeTransform]: {
-    read(props: StaticNodeTransformParams, game: Game) {
+    read(props: Props<StaticNodeTransform>, game: Game) {
       props.offset[0] *= -1
       props.rotation[0] *= -1
       return props
     },
-    write(props: StaticNodeTransformParams, game: Game) {
+    write(props: Props<StaticNodeTransform>, game: Game) {
       props.offset[0] *= -1
       props.rotation[0] *= -1
       return props
@@ -8503,11 +8514,11 @@ const ActionDataConversion = {
     }
   },
   [ActionType.RandomNodeTransform]: {
-    read(props: RandomNodeTransformParams, game: Game) {
+    read(props: Props<RandomNodeTransform>, game: Game) {
       props.offset[0] *= -1
       return props
     },
-    write(props: RandomNodeTransformParams, game: Game) {
+    write(props: Props<RandomNodeTransform>, game: Game) {
       props.offset[0] *= -1
       return props
     },
@@ -8528,88 +8539,88 @@ const ActionDataConversion = {
     }
   },
   [ActionType.ParticleSpeedRandomTurns]: {
-    read(props: ParticleSpeedRandomTurnsParams, game: Game) {
+    read(props: Props<ParticleSpeedRandomTurns>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       return props
     },
-    write(props: ParticleSpeedRandomTurnsParams, game: Game) {
+    write(props: Props<ParticleSpeedRandomTurns>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       return props
     }
   },
   [ActionType.ParticleSpeedPartialFollow]: {
-    read(props: ParticleSpeedPartialFollowParams, game: Game) {
+    read(props: Props<ParticleSpeedPartialFollow>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       props.followRotation = !props.followRotation
       return props
     },
-    write(props: ParticleSpeedPartialFollowParams, game: Game) {
+    write(props: Props<ParticleSpeedPartialFollow>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       props.followRotation = !props.followRotation
       return props
     }
   },
   [ActionType.NodeAccelerationRandomTurns]: {
-    read(props: NodeAccelerationRandomTurnsParams, game: Game) {
+    read(props: Props<NodeAccelerationRandomTurns>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       return props
     },
-    write(props: NodeAccelerationRandomTurnsParams, game: Game) {
+    write(props: Props<NodeAccelerationRandomTurns>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       return props
     }
   },
   [ActionType.ParticleAccelerationRandomTurns]: {
-    read(props: ParticleAccelerationRandomTurnsParams, game: Game) {
+    read(props: Props<ParticleAccelerationRandomTurns>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       return props
     },
-    write(props: ParticleAccelerationRandomTurnsParams, game: Game) {
+    write(props: Props<ParticleAccelerationRandomTurns>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       return props
     }
   },
   [ActionType.ParticleAccelerationPartialFollow]: {
-    read(props: ParticleAccelerationPartialFollowParams, game: Game) {
+    read(props: Props<ParticleAccelerationPartialFollow>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       props.followRotation = !props.followRotation
       return props
     },
-    write(props: ParticleAccelerationPartialFollowParams, game: Game) {
+    write(props: Props<ParticleAccelerationPartialFollow>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       props.followRotation = !props.followRotation
       return props
     }
   },
   [ActionType.NodeAccelerationPartialFollow]: {
-    read(props: NodeAccelerationPartialFollowParams, game: Game) {
+    read(props: Props<NodeAccelerationPartialFollow>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       props.followRotation = !props.followRotation
       return props
     },
-    write(props: NodeAccelerationPartialFollowParams, game: Game) {
+    write(props: Props<NodeAccelerationPartialFollow>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       props.followRotation = !props.followRotation
       return props
     }
   },
   [ActionType.NodeSpeedRandomTurns]: {
-    read(props: NodeSpeedRandomTurnsParams, game: Game) {
+    read(props: Props<NodeSpeedRandomTurns>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       return props
     },
-    write(props: NodeSpeedRandomTurnsParams, game: Game) {
+    write(props: Props<NodeSpeedRandomTurns>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       return props
     }
   },
   [ActionType.NodeSpeedPartialFollow]: {
-    read(props: NodeSpeedPartialFollowParams, game: Game) {
+    read(props: Props<NodeSpeedPartialFollow>, game: Game) {
       props.turnInterval = props.turnInterval / 50
       props.followRotation = !props.followRotation
       return props
     },
-    write(props: NodeAccelerationPartialFollowParams, game: Game) {
+    write(props: Props<NodeAccelerationPartialFollow>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       props.followRotation = !props.followRotation
       return props
@@ -8624,17 +8635,17 @@ const ActionDataConversion = {
     }
   },
   [ActionType.Distortion]: {
-    read(props: DistortionParams, game: Game) {
+    read(props: Props<Distortion>, game: Game) {
       props.stirSpeed = anyValueMult(180 / Math.PI, props.stirSpeed)
       return props
     },
-    write(props: DistortionParams, game: Game) {
+    write(props: Props<Distortion>, game: Game) {
       props.stirSpeed = anyValueMult(Math.PI / 180, props.stirSpeed)
       return props
     }
   },
   [ActionType.PointLight]: {
-    read(props: PointLightParams, game: Game) {
+    read(props: Props<PointLight>, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       if (game === Game.DarkSouls3) {
         props.diffuseMultiplier = 100
@@ -8642,7 +8653,7 @@ const ActionDataConversion = {
       }
       return props
     },
-    write(props: PointLightParams, game: Game) {
+    write(props: Props<PointLight>, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
         const diffuseComps = separateComponents(props.diffuseColor)
@@ -8678,7 +8689,7 @@ const ActionDataConversion = {
     }
   },
   [ActionType.GPUStandardParticle]: {
-    read(props: GPUStandardParticleParams, game: Game) {
+    read(props: Props<GPUStandardParticle>, game: Game) {
       if (props.particleUniformScale) {
         /*
           This action's uniform scale field acts differently from every other
@@ -8710,7 +8721,7 @@ const ActionDataConversion = {
       props.particleAngularAccelerationZ = anyValueMult(180 / Math.PI, props.particleAngularAccelerationZ)
       return props
     },
-    write(props: GPUStandardParticleParams, game: Game) {
+    write(props: Props<GPUStandardParticle>, game: Game) {
       if (props.particleUniformScale) {
         props.particleSizeY = 0
         props.particleSizeYMin = 0
@@ -8730,7 +8741,7 @@ const ActionDataConversion = {
     }
   },
   [ActionType.GPUStandardCorrectParticle]: {
-    read(props: GPUStandardCorrectParticleParams, game: Game) {
+    read(props: Props<GPUStandardCorrectParticle>, game: Game) {
       if (props.particleUniformScale) {
         /*
           This action's uniform scale field acts differently from every other
@@ -8762,7 +8773,7 @@ const ActionDataConversion = {
       props.particleAngularAccelerationZ = anyValueMult(180 / Math.PI, props.particleAngularAccelerationZ)
       return props
     },
-    write(props: GPUStandardCorrectParticleParams, game: Game) {
+    write(props: Props<GPUStandardCorrectParticle>, game: Game) {
       if (props.particleUniformScale) {
         props.particleSizeY = 0
         props.particleSizeYMin = 0
@@ -8785,14 +8796,14 @@ const ActionDataConversion = {
     }
   },
   [ActionType.GPUSparkParticle]: {
-    read(props: GPUSparkParticleParams, game: Game) {
+    read(props: Props<GPUSparkParticle>, game: Game) {
       props.emissionInterval /= 30
       props.emissionIntervalMin /= 30
       props.emissionIntervalMax /= 30
       props.particleDuration /= 30
       return props
     },
-    write(props: GPUSparkParticleParams, game: Game) {
+    write(props: Props<GPUSparkParticle>, game: Game) {
       props.emissionInterval = Math.round(props.emissionInterval * 30)
       props.emissionIntervalMin = Math.round(props.emissionIntervalMin * 30)
       props.emissionIntervalMax = Math.round(props.emissionIntervalMax * 30)
@@ -8801,14 +8812,14 @@ const ActionDataConversion = {
     }
   },
   [ActionType.GPUSparkCorrectParticle]: {
-    read(props: GPUSparkCorrectParticleParams, game: Game) {
+    read(props: Props<GPUSparkCorrectParticle>, game: Game) {
       props.emissionInterval /= 30
       props.emissionIntervalMin /= 30
       props.emissionIntervalMax /= 30
       props.particleDuration /= 30
       return props
     },
-    write(props: GPUSparkCorrectParticleParams, game: Game) {
+    write(props: Props<GPUSparkCorrectParticle>, game: Game) {
       props.emissionInterval = Math.round(props.emissionInterval * 30)
       props.emissionIntervalMin = Math.round(props.emissionIntervalMin * 30)
       props.emissionIntervalMax = Math.round(props.emissionIntervalMax * 30)
@@ -8817,45 +8828,45 @@ const ActionDataConversion = {
     }
   },
   [ActionType.WindForce]: {
-    read(props: WindForceParams, game: Game) {
+    read(props: Props<WindForce>, game: Game) {
       if ('fadeOutTime' in props) {
         props.fadeOutTime = props.fadeOutTime / 30
       }
       return props
     },
-    write(props: WindForceParams, game: Game) {
+    write(props: Props<WindForce>, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
     }
   },
   [ActionType.GravityForce]: {
-    read(props: GravityForceParams, game: Game) {
+    read(props: Props<GravityForce>, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       return props
     },
-    write(props: GravityForceParams, game: Game) {
+    write(props: Props<GravityForce>, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
     }
   },
   [ActionType.TurbulenceForce]: {
-    read(props: TurbulenceForceParams, game: Game) {
+    read(props: Props<TurbulenceForce>, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       return props
     },
-    write(props: TurbulenceForceParams, game: Game) {
+    write(props: Props<TurbulenceForce>, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       return props
     }
   },
   [ActionType.Unk10500]: {
-    read(props: Unk10500Params, game: Game) {
+    read(props: Props<Unk10500>, game: Game) {
       if (game !== Game.ArmoredCore6) {
         props.initialSimulationTime = props.initialSimulationTime / 30
       }
       return props
     },
-    write(props: Unk10500Params, game: Game) {
+    write(props: Props<Unk10500>, game: Game) {
       if (game === Game.EldenRing) {
         props.initialSimulationTime = Math.round(props.initialSimulationTime * 30)
       }
@@ -8863,7 +8874,7 @@ const ActionDataConversion = {
     }
   },
   [ActionType.SpotLight]: {
-    read(props: SpotLightParams, game: Game) {
+    read(props: Props<SpotLight>, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       if (game === Game.DarkSouls3) {
         props.diffuseColor = anyValueMult(1/255, props.diffuseColor) as Vector4Value
@@ -8876,7 +8887,7 @@ const ActionDataConversion = {
       }
       return props
     },
-    write(props: SpotLightParams, game: Game) {
+    write(props: Props<SpotLight>, game: Game) {
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
         props.diffuseColor = anyValueMult(anyValueMult(100, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
@@ -11142,37 +11153,37 @@ class NodeConfig implements IConfig {
       case ConfigType.LevelsOfDetail:
         return new LevelsOfDetailConfig(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
       case ConfigType.Basic: {
-        const params: BasicConfigParams = {}
-        if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
-        if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
-        if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
-        if ('nodeAudio' in obj) params.nodeAudio = Action.fromJSON(obj.nodeAudio)
-        if ('emitter' in obj) params.emitter = Action.fromJSON(obj.emitter)
-        if ('emitterShape' in obj) params.emitterShape = Action.fromJSON(obj.emitterShape)
-        if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
-        if ('particleModifier' in obj) params.particleModifier = Action.fromJSON(obj.particleModifier)
-        if ('particleAttributes' in obj) params.particleAttributes = Action.fromJSON(obj.particleAttributes)
-        if ('appearance' in obj) params.appearance = Action.fromJSON(obj.appearance)
-        if ('particleMovement' in obj) params.particleMovement = Action.fromJSON(obj.particleMovement)
-        if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
-        if ('slot12' in obj) params.slot12 = Action.fromJSON(obj.slot12)
-        if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
-        if ('particleForceMovement' in obj) params.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
-        return new BasicConfig(params)
+        const actions: Partial<Props<BasicConfig>> = {}
+        if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
+        if ('nodeTransform' in obj) actions.nodeTransform = Action.fromJSON(obj.nodeTransform)
+        if ('nodeMovement' in obj) actions.nodeMovement = Action.fromJSON(obj.nodeMovement)
+        if ('nodeAudio' in obj) actions.nodeAudio = Action.fromJSON(obj.nodeAudio)
+        if ('emitter' in obj) actions.emitter = Action.fromJSON(obj.emitter)
+        if ('emitterShape' in obj) actions.emitterShape = Action.fromJSON(obj.emitterShape)
+        if ('directionSpread' in obj) actions.directionSpread = Action.fromJSON(obj.directionSpread)
+        if ('particleModifier' in obj) actions.particleModifier = Action.fromJSON(obj.particleModifier)
+        if ('particleAttributes' in obj) actions.particleAttributes = Action.fromJSON(obj.particleAttributes)
+        if ('appearance' in obj) actions.appearance = Action.fromJSON(obj.appearance)
+        if ('particleMovement' in obj) actions.particleMovement = Action.fromJSON(obj.particleMovement)
+        if ('emissionAudio' in obj) actions.emissionAudio = Action.fromJSON(obj.emissionAudio)
+        if ('slot12' in obj) actions.slot12 = Action.fromJSON(obj.slot12)
+        if ('nodeForceMovement' in obj) actions.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
+        if ('particleForceMovement' in obj) actions.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
+        return new BasicConfig(actions)
       }
       case ConfigType.NodeEmitter: {
-        const params: NodeEmitterConfigParams = {}
-        if ('nodeAttributes' in obj) params.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
-        if ('nodeTransform' in obj) params.nodeTransform = Action.fromJSON(obj.nodeTransform)
-        if ('nodeMovement' in obj) params.nodeMovement = Action.fromJSON(obj.nodeMovement)
-        if ('nodeAudio' in obj) params.nodeAudio = Action.fromJSON(obj.nodeAudio)
-        if ('emitter' in obj) params.emitter = Action.fromJSON(obj.emitter)
-        if ('emitterShape' in obj) params.emitterShape = Action.fromJSON(obj.emitterShape)
-        if ('directionSpread' in obj) params.directionSpread = Action.fromJSON(obj.directionSpread)
-        if ('nodeSelector' in obj) params.nodeSelector = Action.fromJSON(obj.nodeSelector)
-        if ('emissionAudio' in obj) params.emissionAudio = Action.fromJSON(obj.emissionAudio)
-        if ('nodeForceMovement' in obj) params.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
-        return new NodeEmitterConfig(params)
+        const actions: Partial<Props<NodeEmitterConfig>> = {}
+        if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
+        if ('nodeTransform' in obj) actions.nodeTransform = Action.fromJSON(obj.nodeTransform)
+        if ('nodeMovement' in obj) actions.nodeMovement = Action.fromJSON(obj.nodeMovement)
+        if ('nodeAudio' in obj) actions.nodeAudio = Action.fromJSON(obj.nodeAudio)
+        if ('emitter' in obj) actions.emitter = Action.fromJSON(obj.emitter)
+        if ('emitterShape' in obj) actions.emitterShape = Action.fromJSON(obj.emitterShape)
+        if ('directionSpread' in obj) actions.directionSpread = Action.fromJSON(obj.directionSpread)
+        if ('nodeSelector' in obj) actions.nodeSelector = Action.fromJSON(obj.nodeSelector)
+        if ('emissionAudio' in obj) actions.emissionAudio = Action.fromJSON(obj.emissionAudio)
+        if ('nodeForceMovement' in obj) actions.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
+        return new NodeEmitterConfig(actions)
       }
     }
     throw new Error('Invalid config JSON: ' + JSON.stringify(obj))
@@ -11262,24 +11273,6 @@ class LevelsOfDetailConfig implements IConfig {
 
 }
 
-export interface BasicConfigParams {
-  nodeAttributes?: ActionSlots.NodeAttributesAction
-  nodeTransform?: ActionSlots.NodeTransformAction
-  nodeMovement?: ActionSlots.NodeMovementAction
-  nodeAudio?: ActionSlots.NodeAudioAction
-  emitter?: ActionSlots.EmitterAction
-  emitterShape?:ActionSlots.EmitterShapeAction
-  directionSpread?:ActionSlots.DirectionSpreadAction
-  particleModifier?: ActionSlots.ParticleModifierAction
-  particleAttributes?: ActionSlots.ParticleAttributesAction
-  appearance?:ActionSlots.AppearanceAction
-  particleMovement?: ActionSlots.ParticleMovementAction
-  emissionAudio?: ActionSlots.EmissionAudioAction
-  slot12?: ActionSlots.Unknown130Action
-  nodeForceMovement?: ActionSlots.NodeForceMovementAction
-  particleForceMovement?: ActionSlots.ParticleForceMovementAction
-}
-
 /**
  * Config used in {@link NodeType.Basic basic nodes} to apply transforms and
  * emit particles of many different types.
@@ -11322,9 +11315,9 @@ class BasicConfig implements IConfig {
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
   particleForceMovement: ActionSlots.ParticleForceMovementAction = new Action
 
-  constructor(params: BasicConfigParams | AnyAction[] = []) {
-    if (Array.isArray(params)) {
-      for (const action of params) {
+  constructor(actions: Partial<Props<BasicConfig>> | AnyAction[] = []) {
+    if (Array.isArray(actions)) {
+      for (const action of actions) {
         const index = ConfigActionSlots[ConfigType.Basic].findIndex(a => a.includes(action.type))
         switch (index) {
           case 0:  this.nodeAttributes        = action as Action; break;
@@ -11345,21 +11338,21 @@ class BasicConfig implements IConfig {
         }
       }
     } else {
-      if ('nodeAttributes' in params) this.nodeAttributes = params.nodeAttributes
-      if ('nodeTransform' in params) this.nodeTransform = params.nodeTransform
-      if ('nodeMovement' in params) this.nodeMovement = params.nodeMovement
-      if ('nodeAudio' in params) this.nodeAudio = params.nodeAudio
-      if ('emitter' in params) this.emitter = params.emitter
-      if ('emitterShape' in params) this.emitterShape = params.emitterShape
-      if ('directionSpread' in params) this.directionSpread = params.directionSpread
-      if ('particleModifier' in params) this.particleModifier = params.particleModifier
-      if ('particleAttributes' in params) this.particleAttributes = params.particleAttributes
-      if ('appearance' in params) this.appearance = params.appearance
-      if ('particleMovement' in params) this.particleMovement = params.particleMovement
-      if ('emissionAudio' in params) this.emissionAudio = params.emissionAudio
-      if ('slot12' in params) this.slot12 = params.slot12
-      if ('nodeForceMovement' in params) this.nodeForceMovement = params.nodeForceMovement
-      if ('particleForceMovement' in params) this.particleForceMovement = params.particleForceMovement
+      if ('nodeAttributes' in actions) this.nodeAttributes = actions.nodeAttributes
+      if ('nodeTransform' in actions) this.nodeTransform = actions.nodeTransform
+      if ('nodeMovement' in actions) this.nodeMovement = actions.nodeMovement
+      if ('nodeAudio' in actions) this.nodeAudio = actions.nodeAudio
+      if ('emitter' in actions) this.emitter = actions.emitter
+      if ('emitterShape' in actions) this.emitterShape = actions.emitterShape
+      if ('directionSpread' in actions) this.directionSpread = actions.directionSpread
+      if ('particleModifier' in actions) this.particleModifier = actions.particleModifier
+      if ('particleAttributes' in actions) this.particleAttributes = actions.particleAttributes
+      if ('appearance' in actions) this.appearance = actions.appearance
+      if ('particleMovement' in actions) this.particleMovement = actions.particleMovement
+      if ('emissionAudio' in actions) this.emissionAudio = actions.emissionAudio
+      if ('slot12' in actions) this.slot12 = actions.slot12
+      if ('nodeForceMovement' in actions) this.nodeForceMovement = actions.nodeForceMovement
+      if ('particleForceMovement' in actions) this.particleForceMovement = actions.particleForceMovement
     }
   }
 
@@ -11622,19 +11615,6 @@ class BasicConfig implements IConfig {
 
 }
 
-export interface NodeEmitterConfigParams {
-  nodeAttributes?: ActionSlots.NodeAttributesAction
-  nodeTransform?: ActionSlots.NodeTransformAction
-  nodeMovement?: ActionSlots.NodeMovementAction
-  nodeAudio?: ActionSlots.NodeAudioAction
-  emitter?: ActionSlots.EmitterAction
-  emitterShape?: ActionSlots.EmitterShapeAction
-  directionSpread?: ActionSlots.DirectionSpreadAction
-  nodeSelector?: ActionSlots.NodeSelectorAction
-  emissionAudio?: ActionSlots.EmissionAudioAction
-  nodeForceMovement?: ActionSlots.NodeForceMovementAction
-}
-
 /**
  * Config used in {@link NodeType.NodeEmitter node emitter nodes} to control
  * the emission of child nodes.
@@ -11667,7 +11647,7 @@ class NodeEmitterConfig implements IConfig {
   emissionAudio: ActionSlots.EmissionAudioAction = new Action
   nodeForceMovement: ActionSlots.NodeForceMovementAction = new Action
 
-  constructor(params: NodeEmitterConfigParams | AnyAction[] = []) {
+  constructor(params: Partial<Props<NodeEmitterConfig>> | AnyAction[] = []) {
     if (Array.isArray(params)) {
       for (const action of params) {
         const index = ConfigActionSlots[ConfigType.NodeEmitter].findIndex(a => a.includes(action.type))
@@ -12318,7 +12298,7 @@ class DataAction implements IAction {
  * shortcut. It only exists to make things easier, not to control exactly what
  * happens.
  */
-function NodeMovement(params: NodeMovementParams = {}) {
+function NodeMovement(params: NodeMovementProps = {}) {
   const acceleration = 'accelerationZ' in params || 'accelerationMultiplierZ' in params,
         speed = 'speedMultiplierZ' in params,
         randomTurns = 'maxTurnAngle' in params || 'turnInterval' in params,
@@ -12381,7 +12361,7 @@ function NodeMovement(params: NodeMovementParams = {}) {
  * depends on the arguments given, which means that if any of the randomization
  * arguments are used, it will produce a {@link RandomNodeTransform}.
  */
-function NodeTransform(params: NodeTransformParams = {}) {
+function NodeTransform(params: NodeTransformProps = {}) {
   if (
     'offsetVariance' in params ||
     'rotationVariance' in params
@@ -12412,7 +12392,7 @@ function NodeTransform(params: NodeTransformParams = {}) {
  * shortcut. It only exists to make things easier, not to control exactly what
  * happens.
  */
-function ParticleMovement(params: ParticleMovementParams = {}) {
+function ParticleMovement(params: ParticleMovementProps = {}) {
   if (
     'speed' in params ||
     'speedMultiplier' in params
@@ -12453,59 +12433,6 @@ function ParticleMovement(params: ParticleMovementParams = {}) {
 }
 
 /*#ActionClasses start*/
-export interface NodeAccelerationParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationZ?: ScalarValue
-  /**
-   * Multiplier for {@link accelerationZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationMultiplierZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_2?: number
-}
-
 /**
  * ### {@link ActionType.NodeAcceleration Action 1 - NodeAcceleration}
  * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
@@ -12518,11 +12445,15 @@ class NodeAcceleration extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   speedZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -12530,42 +12461,41 @@ class NodeAcceleration extends DataAction {
   /**
    * Multiplier for {@link accelerationZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
-  unk_ds3_f1_0: number
   /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   */
-  alignWithMotion: number
-  unk_ds3_f1_2: number
-  constructor(props: NodeAccelerationParams = {}) {
-    super(ActionType.NodeAcceleration, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeTranslationParams {
-  /**
-   * An offset for the position of the node.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  translation?: Vector3Value
-  /**
-   * Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_er_f1_0?: number
+  unk_ds3_f1_0: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2: number
+  constructor(props: Partial<Props<NodeAcceleration>> = {}) {
+    super(ActionType.NodeAcceleration, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -12580,83 +12510,21 @@ class NodeTranslation extends DataAction {
   /**
    * An offset for the position of the node.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   translation: Vector3Value
   /**
    * Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+   * 
+   * **Default**: `0`
    */
   unk_er_f1_0: number
-  constructor(props: NodeTranslationParams = {}) {
+  constructor(props: Partial<Props<NodeTranslation>> = {}) {
     super(ActionType.NodeTranslation, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface NodeSpinParams {
-  /**
-   * The node's angular speed around its local X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * The node's angular speed around its local Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * The node's angular speed around its local Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_0?: number
 }
 
 /**
@@ -12671,6 +12539,8 @@ class NodeSpin extends DataAction {
   /**
    * The node's angular speed around its local X-axis in degrees per second.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -12680,11 +12550,15 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -12695,11 +12569,15 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -12710,29 +12588,21 @@ class NodeSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_0: number
-  constructor(props: NodeSpinParams = {}) {
+  constructor(props: Partial<Props<NodeSpin>> = {}) {
     super(ActionType.NodeSpin, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface StaticNodeTransformParams {
-  /**
-   * Translation of the node.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  offset?: Vector3
-  /**
-   * The rotation of the node.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  rotation?: Vector3
 }
 
 /**
@@ -12746,43 +12616,20 @@ class StaticNodeTransform extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Translation of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   offset: Vector3
   /**
    * The rotation of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   rotation: Vector3
-  constructor(props: StaticNodeTransformParams = {}) {
+  constructor(props: Partial<Props<StaticNodeTransform>> = {}) {
     super(ActionType.StaticNodeTransform, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface RandomNodeTransformParams {
-  /**
-   * Translation of the node.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  offset?: Vector3
-  /**
-   * The rotation of the node.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  rotation?: Vector3
-  /**
-   * The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  offsetVariance?: Vector3
-  /**
-   * The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  rotationVariance?: Vector3
 }
 
 /**
@@ -12796,39 +12643,32 @@ class RandomNodeTransform extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Translation of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   offset: Vector3
   /**
    * The rotation of the node.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   rotation: Vector3
   /**
    * The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   offsetVariance: Vector3
   /**
    * The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   rotationVariance: Vector3
-  constructor(props: RandomNodeTransformParams = {}) {
+  constructor(props: Partial<Props<RandomNodeTransform>> = {}) {
     super(ActionType.RandomNodeTransform, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface NodeAttachToCameraParams {
-  /**
-   * Disable this to stop the node from following the rotation of the camera.
-   * 
-   * **Default**: `true`
-   */
-  followRotation?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_1?: number
 }
 
 /**
@@ -12842,54 +12682,20 @@ class NodeAttachToCamera extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Disable this to stop the node from following the rotation of the camera.
+   * 
+   * **Default**: `true`
    */
   followRotation: boolean
-  unk_ds3_f1_1: number
-  constructor(props: NodeAttachToCameraParams = {}) {
-    super(ActionType.NodeAttachToCamera, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleAccelerationParams {
-  /**
-   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
-   * 
-   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  acceleration?: ScalarValue
-  /**
-   * Multiplier for {@link acceleration}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  accelerationMultiplier?: ScalarValue
   /**
    * Unknown integer.
    * 
-   * **Default**: `0`
+   * **Default**: `1`
    */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_1?: number
+  unk_ds3_f1_1: number
+  constructor(props: Partial<Props<NodeAttachToCamera>> = {}) {
+    super(ActionType.NodeAttachToCamera, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -12906,11 +12712,15 @@ class ParticleAcceleration extends DataAction {
    * 
    * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   gravity: ScalarValue
   /**
    * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -12918,56 +12728,27 @@ class ParticleAcceleration extends DataAction {
   /**
    * Multiplier for {@link acceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  accelerationMultiplier: ScalarValue
-  unk_ds3_f1_0: number
-  unk_ds3_f1_1: number
-  constructor(props: ParticleAccelerationParams = {}) {
-    super(ActionType.ParticleAcceleration, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleSpeedParams {
-  /**
-   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
-   * 
-   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speed?: ScalarValue
-  /**
-   * Multiplier for {@link speed}.
-   * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  speedMultiplier?: ScalarValue
+  accelerationMultiplier: ScalarValue
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_0?: number
+  unk_ds3_f1_0: number
   /**
    * Unknown float.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_1?: number
+  unk_ds3_f1_1: number
+  constructor(props: Partial<Props<ParticleAcceleration>> = {}) {
+    super(ActionType.ParticleAcceleration, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -12984,11 +12765,15 @@ class ParticleSpeed extends DataAction {
    * 
    * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   gravity: ScalarValue
   /**
    * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -12996,68 +12781,27 @@ class ParticleSpeed extends DataAction {
   /**
    * Multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedMultiplier: ScalarValue
-  unk_ds3_f1_0: number
-  unk_ds3_f1_1: number
-  constructor(props: ParticleSpeedParams = {}) {
-    super(ActionType.ParticleSpeed, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleSpeedRandomTurnsParams {
-  /**
-   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
-   * 
-   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speed?: ScalarValue
-  /**
-   * Multiplier for {@link speed}.
-   * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  speedMultiplier?: ScalarValue
+  speedMultiplier: ScalarValue
   /**
-   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * Unknown integer.
    * 
    * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  maxTurnAngle?: ScalarValue
+  unk_ds3_f1_0: number
   /**
    * Unknown float.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_0?: number
-  /**
-   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
-   * 
-   * **Default**: `0`
-   */
-  turnInterval?: number
+  unk_ds3_f1_1: number
+  constructor(props: Partial<Props<ParticleSpeed>> = {}) {
+    super(ActionType.ParticleSpeed, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -13074,17 +12818,23 @@ class ParticleSpeedRandomTurns extends DataAction {
    * 
    * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   gravity: ScalarValue
   /**
    * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   speed: ScalarValue
   /**
    * Multiplier for {@link speed}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -13094,76 +12844,17 @@ class ParticleSpeedRandomTurns extends DataAction {
    * 
    * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   maxTurnAngle: ScalarValue
-  unk_ds3_f1_0: number
-  /**
-   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
-   */
-  turnInterval: number
-  constructor(props: ParticleSpeedRandomTurnsParams = {}) {
-    super(ActionType.ParticleSpeedRandomTurns, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleSpeedPartialFollowParams {
-  /**
-   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
-   * 
-   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speed?: ScalarValue
-  /**
-   * Multiplier for {@link speed}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedMultiplier?: ScalarValue
-  /**
-   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
   /**
    * Unknown float.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_0?: number
+  unk_ds3_f1_0: number
   /**
    * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
    * 
@@ -13171,13 +12862,11 @@ export interface ParticleSpeedPartialFollowParams {
    * 
    * **Default**: `0`
    */
-  turnInterval?: number
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and not rotation.
-   * 
-   * **Default**: `true`
-   */
-  followRotation?: boolean
+  turnInterval: number
+  constructor(props: Partial<Props<ParticleSpeedRandomTurns>> = {}) {
+    super(ActionType.ParticleSpeedRandomTurns, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -13194,17 +12883,23 @@ class ParticleSpeedPartialFollow extends DataAction {
    * 
    * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link speed}. It does not affect the particles' {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   gravity: ScalarValue
   /**
    * The particles' speed in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   speed: ScalarValue
   /**
    * Multiplier for {@link speed}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -13214,11 +12909,15 @@ class ParticleSpeedPartialFollow extends DataAction {
    * 
    * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -13226,46 +12925,30 @@ class ParticleSpeedPartialFollow extends DataAction {
    * - {@link followRotation}
    */
   followFactor: ScalarValue
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_0: number
   /**
    * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
    * 
    * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link speed}.
+   * 
+   * **Default**: `0`
    */
   turnInterval: number
   /**
    * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
    */
   followRotation: boolean
-  constructor(props: ParticleSpeedPartialFollowParams = {}) {
+  constructor(props: Partial<Props<ParticleSpeedPartialFollow>> = {}) {
     super(ActionType.ParticleSpeedPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface NodeSoundParams {
-  /**
-   * The ID of the sound to play.
-   * 
-   * **Default**: `0`
-   */
-  sound?: number
-  /**
-   * Volume multiplier.
-   * 
-   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
-   * 
-   * **Default**: `1`
-   */
-  volume?: number
-  /**
-   * Controls whether the sound will repeat or not.
-   * 
-   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
-   * 
-   * **Default**: `false`
-   */
-  repeat?: boolean
 }
 
 /**
@@ -13279,39 +12962,30 @@ class NodeSound extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the sound to play.
+   * 
+   * **Default**: `0`
    */
   sound: number
   /**
    * Volume multiplier.
    * 
    * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   * 
+   * **Default**: `1`
    */
   volume: number
   /**
    * Controls whether the sound will repeat or not.
    * 
    * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   * 
+   * **Default**: `false`
    */
   repeat: boolean
-  constructor(props: NodeSoundParams = {}) {
+  constructor(props: Partial<Props<NodeSound>> = {}) {
     super(ActionType.NodeSound, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface EmissionSoundParams {
-  /**
-   * The ID of the sound to play.
-   * 
-   * **Default**: `0`
-   */
-  sound?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_1?: number
 }
 
 /**
@@ -13325,74 +12999,20 @@ class EmissionSound extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the sound to play.
+   * 
+   * **Default**: `0`
    */
   sound: number
-  unk_ds3_f1_1: number
-  constructor(props: EmissionSoundParams = {}) {
-    super(ActionType.EmissionSound, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeAccelerationRandomTurnsParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationZ?: ScalarValue
-  /**
-   * Multiplier for {@link accelerationZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationMultiplierZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
   /**
    * Unknown float.
    * 
-   * **Default**: `0`
+   * **Default**: `1`
    */
-  unk_ds3_f1_1?: number
-  /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   * 
-   * **Default**: `0`
-   */
-  turnInterval?: number
+  unk_ds3_f1_1: number
+  constructor(props: Partial<Props<EmissionSound>> = {}) {
+    super(ActionType.EmissionSound, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -13407,11 +13027,15 @@ class NodeAccelerationRandomTurns extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   speedZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -13419,11 +13043,15 @@ class NodeAccelerationRandomTurns extends DataAction {
   /**
    * Multiplier for {@link accelerationZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -13431,75 +13059,33 @@ class NodeAccelerationRandomTurns extends DataAction {
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
    */
   alignWithMotion: number
-  unk_ds3_f1_1: number
-  /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   */
-  turnInterval: number
-  constructor(props: NodeAccelerationRandomTurnsParams = {}) {
-    super(ActionType.NodeAccelerationRandomTurns, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleAccelerationRandomTurnsParams {
-  /**
-   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
-   * 
-   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  acceleration?: ScalarValue
-  /**
-   * Multiplier for {@link acceleration}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  accelerationMultiplier?: ScalarValue
-  /**
-   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  maxTurnAngle?: ScalarValue
   /**
    * Unknown float.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_0?: number
+  unk_ds3_f1_1: number
   /**
-   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
    * 
    * **Default**: `0`
    */
-  turnInterval?: number
+  turnInterval: number
+  constructor(props: Partial<Props<NodeAccelerationRandomTurns>> = {}) {
+    super(ActionType.NodeAccelerationRandomTurns, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -13516,17 +13102,23 @@ class ParticleAccelerationRandomTurns extends DataAction {
    * 
    * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   gravity: ScalarValue
   /**
    * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   acceleration: ScalarValue
   /**
    * Multiplier for {@link acceleration}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -13536,76 +13128,17 @@ class ParticleAccelerationRandomTurns extends DataAction {
    * 
    * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   maxTurnAngle: ScalarValue
-  unk_ds3_f1_0: number
-  /**
-   * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
-   */
-  turnInterval: number
-  constructor(props: ParticleAccelerationRandomTurnsParams = {}) {
-    super(ActionType.ParticleAccelerationRandomTurns, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleAccelerationPartialFollowParams {
-  /**
-   * Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
-   * 
-   * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  gravity?: ScalarValue
-  /**
-   * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  acceleration?: ScalarValue
-  /**
-   * Multiplier for {@link acceleration}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  accelerationMultiplier?: ScalarValue
-  /**
-   * The particles will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
   /**
    * Unknown float.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_0?: number
+  unk_ds3_f1_0: number
   /**
    * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
    * 
@@ -13613,13 +13146,11 @@ export interface ParticleAccelerationPartialFollowParams {
    * 
    * **Default**: `0`
    */
-  turnInterval?: number
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and not rotation.
-   * 
-   * **Default**: `true`
-   */
-  followRotation?: boolean
+  turnInterval: number
+  constructor(props: Partial<Props<ParticleAccelerationRandomTurns>> = {}) {
+    super(ActionType.ParticleAccelerationRandomTurns, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -13636,17 +13167,23 @@ class ParticleAccelerationPartialFollow extends DataAction {
    * 
    * Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   gravity: ScalarValue
   /**
    * The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   acceleration: ScalarValue
   /**
    * Multiplier for {@link acceleration}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -13656,11 +13193,15 @@ class ParticleAccelerationPartialFollow extends DataAction {
    * 
    * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the particles should follow the parent node if they are not attached. At 0, the particles will not follow at all. At 1, the particles will follow perfectly, as if attached to the parent node. Negative values will make the particles move in the opposite direction compared to the parent node. Values greater than 1 will make the particles exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -13668,104 +13209,30 @@ class ParticleAccelerationPartialFollow extends DataAction {
    * - {@link followRotation}
    */
   followFactor: ScalarValue
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_0: number
   /**
    * The particles will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
    * 
    * This turning affects the particles' current direction, which can affect various other things, for example this action's {@link acceleration}.
+   * 
+   * **Default**: `0`
    */
   turnInterval: number
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and not rotation.
-   */
-  followRotation: boolean
-  constructor(props: ParticleAccelerationPartialFollowParams = {}) {
-    super(ActionType.ParticleAccelerationPartialFollow, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeAccelerationPartialFollowParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link accelerationY}
-   */
-  accelerationZ?: ScalarValue
-  /**
-   * Multiplier for {@link accelerationZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationMultiplierZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along the global Y-axis. When set to anything that isn't 0, this overrides the direction of {@link accelerationZ}.
-   * 
-   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   * 
-   * **Default**: `0`
-   */
-  turnInterval?: number
   /**
    * Disabling this will make {@link followFactor} only affect translation and not rotation.
    * 
    * **Default**: `true`
    */
-  followRotation?: boolean
+  followRotation: boolean
+  constructor(props: Partial<Props<ParticleAccelerationPartialFollow>> = {}) {
+    super(ActionType.ParticleAccelerationPartialFollow, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -13780,11 +13247,15 @@ class NodeAccelerationPartialFollow extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   speedZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -13795,6 +13266,8 @@ class NodeAccelerationPartialFollow extends DataAction {
   /**
    * Multiplier for {@link accelerationZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
@@ -13803,17 +13276,23 @@ class NodeAccelerationPartialFollow extends DataAction {
    * 
    * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeAcceleration NodeAcceleration}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -13823,137 +13302,32 @@ class NodeAccelerationPartialFollow extends DataAction {
   followFactor: ScalarValue
   /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
    */
   alignWithMotion: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_1: number
   /**
    * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
    */
   turnInterval: number
   /**
    * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
    */
   followRotation: boolean
-  constructor(props: NodeAccelerationPartialFollowParams = {}) {
+  constructor(props: Partial<Props<NodeAccelerationPartialFollow>> = {}) {
     super(ActionType.NodeAccelerationPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface NodeAccelerationSpinParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationZ?: ScalarValue
-  /**
-   * Multiplier for {@link accelerationZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationMultiplierZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * The node's angular speed around its local X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * The node's angular speed around its local Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * The node's angular speed around its local Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_3?: number
 }
 
 /**
@@ -13968,11 +13342,15 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   speedZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -13980,17 +13358,23 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link accelerationZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14001,11 +13385,15 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14016,11 +13404,15 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14031,65 +13423,39 @@ class NodeAccelerationSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierZ: ScalarValue
-  unk_ds3_f1_0: number
-  unk_ds3_f1_1: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   */
-  alignWithMotion: number
-  unk_ds3_f1_3: number
-  constructor(props: NodeAccelerationSpinParams = {}) {
-    super(ActionType.NodeAccelerationSpin, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeSpeedParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Multiplier for {@link speedZ}.
-   * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  speedMultiplierZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY?: ScalarValue
+  angularSpeedMultiplierZ: ScalarValue
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_0?: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
+  unk_ds3_f1_0: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_2?: number
+  unk_ds3_f1_1: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3: number
+  constructor(props: Partial<Props<NodeAccelerationSpin>> = {}) {
+    super(ActionType.NodeAccelerationSpin, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -14104,42 +13470,11 @@ class NodeSpeed extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ: ScalarValue
-  /**
-   * Multiplier for {@link speedZ}.
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speedMultiplierZ: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY: ScalarValue
-  unk_ds3_f1_0: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   */
-  alignWithMotion: number
-  unk_ds3_f1_2: number
-  constructor(props: NodeSpeedParams = {}) {
-    super(ActionType.NodeSpeed, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeSpeedRandomTurnsParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  speedZ?: ScalarValue
+  speedZ: ScalarValue
   /**
    * Multiplier for {@link speedZ}.
    * 
@@ -14147,7 +13482,7 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  speedMultiplierZ?: ScalarValue
+  speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
@@ -14155,33 +13490,29 @@ export interface NodeSpeedRandomTurnsParams {
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  accelerationY?: ScalarValue
-  /**
-   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  maxTurnAngle?: ScalarValue
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
+  accelerationY: ScalarValue
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_1?: number
+  unk_ds3_f1_0: number
   /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  turnInterval?: number
+  alignWithMotion: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2: number
+  constructor(props: Partial<Props<NodeSpeed>> = {}) {
+    super(ActionType.NodeSpeed, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -14196,51 +13527,11 @@ class NodeSpeedRandomTurns extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ: ScalarValue
-  /**
-   * Multiplier for {@link speedZ}.
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speedMultiplierZ: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY: ScalarValue
-  /**
-   * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  maxTurnAngle: ScalarValue
-  /**
-   * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   */
-  alignWithMotion: number
-  unk_ds3_f1_1: number
-  /**
-   * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
-   */
-  turnInterval: number
-  constructor(props: NodeSpeedRandomTurnsParams = {}) {
-    super(ActionType.NodeSpeedRandomTurns, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeSpeedPartialFollowParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
-  speedZ?: ScalarValue
+  speedZ: ScalarValue
   /**
    * Multiplier for {@link speedZ}.
    * 
@@ -14248,17 +13539,15 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  speedMultiplierZ?: ScalarValue
+  speedMultiplierZ: ScalarValue
   /**
    * Controls the acceleration of the node along its Y-axis.
-   * 
-   * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
    * 
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  accelerationY?: ScalarValue
+  accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
@@ -14266,42 +13555,29 @@ export interface NodeSpeedPartialFollowParams {
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  maxTurnAngle?: ScalarValue
-  /**
-   * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link followRotation}
-   */
-  followFactor?: ScalarValue
+  maxTurnAngle: ScalarValue
   /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion?: number
+  alignWithMotion: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_1?: number
+  unk_ds3_f1_1: number
   /**
    * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
    * 
    * **Default**: `0`
    */
-  turnInterval?: number
-  /**
-   * Disabling this will make {@link followFactor} only affect translation and not rotation.
-   * 
-   * **Default**: `true`
-   */
-  followRotation?: boolean
+  turnInterval: number
+  constructor(props: Partial<Props<NodeSpeedRandomTurns>> = {}) {
+    super(ActionType.NodeSpeedRandomTurns, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -14316,11 +13592,15 @@ class NodeSpeedPartialFollow extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   speedZ: ScalarValue
   /**
    * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -14330,17 +13610,23 @@ class NodeSpeedPartialFollow extends DataAction {
    * 
    * Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxTurnAngle: ScalarValue
   /**
    * Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14350,129 +13636,32 @@ class NodeSpeedPartialFollow extends DataAction {
   followFactor: ScalarValue
   /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
    */
   alignWithMotion: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_1: number
   /**
    * The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+   * 
+   * **Default**: `0`
    */
   turnInterval: number
   /**
    * Disabling this will make {@link followFactor} only affect translation and not rotation.
+   * 
+   * **Default**: `true`
    */
   followRotation: boolean
-  constructor(props: NodeSpeedPartialFollowParams = {}) {
+  constructor(props: Partial<Props<NodeSpeedPartialFollow>> = {}) {
     super(ActionType.NodeSpeedPartialFollow, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface NodeSpeedSpinParams {
-  /**
-   * Controls the speed of the node along its Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  speedZ?: ScalarValue
-  /**
-   * Multiplier for {@link speedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speedMultiplierZ?: ScalarValue
-  /**
-   * Controls the acceleration of the node along its Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationY?: ScalarValue
-  /**
-   * The node's angular speed around its local X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * The node's angular speed around its local Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * The node's angular speed around its local Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   * 
-   * **Default**: `0`
-   */
-  alignWithMotion?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_3?: number
 }
 
 /**
@@ -14487,11 +13676,15 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Controls the speed of the node along its Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   speedZ: ScalarValue
   /**
    * Multiplier for {@link speedZ}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -14499,11 +13692,15 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Controls the acceleration of the node along its Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationY: ScalarValue
   /**
    * The node's angular speed around its local X-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14514,11 +13711,15 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierX: ScalarValue
   /**
    * The node's angular speed around its local Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14529,11 +13730,15 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierY: ScalarValue
   /**
    * The node's angular speed around its local Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -14544,59 +13749,39 @@ class NodeSpeedSpin extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angularSpeedMultiplierZ: ScalarValue
-  unk_ds3_f1_0: number
-  unk_ds3_f1_1: number
-  /**
-   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
-   */
-  alignWithMotion: number
-  unk_ds3_f1_3: number
-  constructor(props: NodeSpeedSpinParams = {}) {
-    super(ActionType.NodeSpeedSpin, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeAttributesParams {
-  /**
-   * The node duration in seconds. Can be set to -1 to make the node last forever.
-   * 
-   * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  duration?: ScalarValue
-  /**
-   * The delay in seconds before the node becomes active.
-   * 
-   * **Default**: `0`
-   */
-  delay?: number
   /**
    * Unknown integer.
    * 
-   * **Default**: `1`
+   * **Default**: `0`
    */
-  unk_ds3_f1_1?: number
+  unk_ds3_f1_0: number
   /**
-   * Controls how the node is attached to the parent node.
-   * 
-   * **Default**: {@link AttachMode.Parent}
-   */
-  attachment?: AttachMode
-  /**
-   * Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
-   * 
-   * This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
-   * 
-   * Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
+   * Unknown integer.
    * 
    * **Default**: `0`
    */
-  depthBias?: number
+  unk_ds3_f1_1: number
+  /**
+   * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+   * 
+   * **Default**: `0`
+   */
+  alignWithMotion: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_3: number
+  constructor(props: Partial<Props<NodeSpeedSpin>> = {}) {
+    super(ActionType.NodeSpeedSpin, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -14611,16 +13796,27 @@ class NodeAttributes extends DataAction {
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
    * 
+   * **Default**: `-1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   duration: ScalarValue
   /**
    * The delay in seconds before the node becomes active.
+   * 
+   * **Default**: `0`
    */
   delay: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_1: number
   /**
    * Controls how the node is attached to the parent node.
+   * 
+   * **Default**: {@link AttachMode.Parent}
    */
   attachment: AttachMode
   /**
@@ -14629,29 +13825,14 @@ class NodeAttributes extends DataAction {
    * This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
    * 
    * Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
+   * 
+   * **Default**: `0`
    */
   depthBias: number
-  constructor(props: NodeAttributesParams = {}) {
+  constructor(props: Partial<Props<NodeAttributes>> = {}) {
     super(ActionType.NodeAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface ParticleAttributesParams {
-  /**
-   * The particle duration in seconds. Can be set to -1 to make particles last forever.
-   * 
-   * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  duration?: ScalarValue
-  /**
-   * Controls how the particles are attached to the node.
-   * 
-   * **Default**: {@link AttachMode.Parent}
-   */
-  attachment?: AttachMode
 }
 
 /**
@@ -14666,122 +13847,21 @@ class ParticleAttributes extends DataAction {
   /**
    * The particle duration in seconds. Can be set to -1 to make particles last forever.
    * 
+   * **Default**: `-1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   duration: ScalarValue
   /**
    * Controls how the particles are attached to the node.
+   * 
+   * **Default**: {@link AttachMode.Parent}
    */
   attachment: AttachMode
-  constructor(props: ParticleAttributesParams = {}) {
+  constructor(props: Partial<Props<ParticleAttributes>> = {}) {
     super(ActionType.ParticleAttributes, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface Unk130Params {
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_0?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_3?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_4?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_5?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_6?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_7?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_6?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_8?: number
 }
 
 /**
@@ -14793,89 +13873,112 @@ export interface Unk130Params {
 class Unk130 extends DataAction {
   declare readonly type: ActionType.Unk130
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_0: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_4: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_5: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_6: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_7: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_6: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8: number
-  constructor(props: Unk130Params = {}) {
+  constructor(props: Partial<Props<Unk130>> = {}) {
     super(ActionType.Unk130, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface ParticleModifierParams {
-  /**
-   * Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speed?: ScalarValue
-  /**
-   * Multiplier for the scale along the X-axis for the particles emitted from this node.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the Y and Z axes.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  scaleX?: ScalarValue
-  /**
-   * Multiplier for the scale along the Y-axis for the particles emitted from this node.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  scaleY?: ScalarValue
-  /**
-   * Multiplier for the scale along the Z-axis for the particles emitted from this node.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  scaleZ?: ScalarValue
-  /**
-   * Color multiplier for the particles emitted from this node.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  color?: Vector4Value
-  /**
-   * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link scaleX}
-   * - {@link scaleY}
-   * - {@link scaleZ}
-   */
-  uniformScale?: boolean
 }
 
 /**
@@ -14892,6 +13995,8 @@ class ParticleModifier extends DataAction {
   /**
    * Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
@@ -14899,6 +14004,8 @@ class ParticleModifier extends DataAction {
    * Multiplier for the scale along the X-axis for the particles emitted from this node.
    * 
    * If {@link uniformScale} is enabled, this also affects the Y and Z axes.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -14908,6 +14015,8 @@ class ParticleModifier extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   scaleY: ScalarValue
@@ -14915,6 +14024,8 @@ class ParticleModifier extends DataAction {
    * Multiplier for the scale along the Z-axis for the particles emitted from this node.
    * 
    * If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -14924,11 +14035,15 @@ class ParticleModifier extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   color: Vector4Value
   /**
    * Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link scaleX}
@@ -14936,7 +14051,7 @@ class ParticleModifier extends DataAction {
    * - {@link scaleZ}
    */
   uniformScale: boolean
-  constructor(props: ParticleModifierParams = {}) {
+  constructor(props: Partial<Props<ParticleModifier>> = {}) {
     super(ActionType.ParticleModifier, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
@@ -14953,6 +14068,8 @@ class SFXReference extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The ID of the referenced SFX.
+   * 
+   * **Default**: `0`
    */
   sfx: number
   /**
@@ -14964,53 +14081,6 @@ class SFXReference extends DataAction {
     super(ActionType.SFXReference, {isAppearance:false,isParticle:false})
     this.assign({ sfx })
   }
-}
-
-export interface LevelsOfDetailThresholdsParams {
-  /**
-   * The node duration in seconds. Can be set to -1 to make the node last forever.
-   * 
-   * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  duration?: ScalarValue
-  /**
-   * Distance threshold for child node 0.
-   * 
-   * **Default**: `10000`
-   */
-  threshold0?: number
-  /**
-   * Distance threshold for child node 1.
-   * 
-   * **Default**: `10000`
-   */
-  threshold1?: number
-  /**
-   * Distance threshold for child node 2.
-   * 
-   * **Default**: `10000`
-   */
-  threshold2?: number
-  /**
-   * Distance threshold for child node 3.
-   * 
-   * **Default**: `10000`
-   */
-  threshold3?: number
-  /**
-   * Distance threshold for child node 4.
-   * 
-   * **Default**: `10000`
-   */
-  threshold4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_5?: number
 }
 
 /**
@@ -15025,31 +14095,48 @@ class LevelsOfDetailThresholds extends DataAction {
   /**
    * The node duration in seconds. Can be set to -1 to make the node last forever.
    * 
+   * **Default**: `-1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   duration: ScalarValue
   /**
    * Distance threshold for child node 0.
+   * 
+   * **Default**: `10000`
    */
   threshold0: number
   /**
    * Distance threshold for child node 1.
+   * 
+   * **Default**: `10000`
    */
   threshold1: number
   /**
    * Distance threshold for child node 2.
+   * 
+   * **Default**: `10000`
    */
   threshold2: number
   /**
    * Distance threshold for child node 3.
+   * 
+   * **Default**: `10000`
    */
   threshold3: number
   /**
    * Distance threshold for child node 4.
+   * 
+   * **Default**: `10000`
    */
   threshold4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_5: number
-  constructor(props: LevelsOfDetailThresholdsParams = {}) {
+  constructor(props: Partial<Props<LevelsOfDetailThresholds>> = {}) {
     super(ActionType.LevelsOfDetailThresholds, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
@@ -15068,6 +14155,8 @@ class StateConfigMap extends DataAction {
    * A list of config indices.
    * 
    * The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
+   * 
+   * **Default**: `[0]`
    */
   configIndices: number[]
   /**
@@ -15111,6 +14200,8 @@ class SelectRandomNode extends DataAction {
    * Probability weights for each child node to be selected for emission.
    * 
    * The weights are stored as integers, so non-integer values in this list will be truncated.
+   * 
+   * **Default**: `[1]`
    */
   weights: number[]
   /**
@@ -15126,47 +14217,6 @@ class SelectRandomNode extends DataAction {
   }
 }
 
-export interface PeriodicEmitterParams {
-  /**
-   * Time between emitting new particles in seconds.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  interval?: ScalarValue
-  /**
-   * The number of particles to emit per interval. They all spawn at the same time per interval.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  perInterval?: ScalarValue
-  /**
-   * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  totalIntervals?: ScalarValue
-  /**
-   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  maxConcurrent?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_1?: number
-}
-
 /**
  * ### {@link ActionType.PeriodicEmitter Action 300 - PeriodicEmitter}
  * **Slot**: {@link ActionSlots.EmitterAction Emitter}
@@ -15179,11 +14229,15 @@ class PeriodicEmitter extends DataAction {
   /**
    * Time between emitting new particles in seconds.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   interval: ScalarValue
   /**
    * The number of particles to emit per interval. They all spawn at the same time per interval.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -15191,63 +14245,29 @@ class PeriodicEmitter extends DataAction {
   /**
    * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   totalIntervals: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_1: number
-  constructor(props: PeriodicEmitterParams = {}) {
+  constructor(props: Partial<Props<PeriodicEmitter>> = {}) {
     super(ActionType.PeriodicEmitter, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface EqualDistanceEmitterParams {
-  /**
-   * How much the emitter must move to trigger emission.
-   * 
-   * **Default**: `0.1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  threshold?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_p1_2?: ScalarValue
-  /**
-   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  maxConcurrent?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_1?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_1?: number
 }
 
 /**
@@ -15262,20 +14282,44 @@ class EqualDistanceEmitter extends DataAction {
   /**
    * How much the emitter must move to trigger emission.
    * 
+   * **Default**: `0.1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   threshold: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_p1_2: ScalarValue
   /**
    * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   maxConcurrent: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_1: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_1: number
-  constructor(props: EqualDistanceEmitterParams = {}) {
+  constructor(props: Partial<Props<EqualDistanceEmitter>> = {}) {
     super(ActionType.EqualDistanceEmitter, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
@@ -15307,6 +14351,8 @@ class PointEmitterShape extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
    */
   direction: InitialDirection
   /**
@@ -15318,35 +14364,6 @@ class PointEmitterShape extends DataAction {
     super(ActionType.PointEmitterShape, {isAppearance:false,isParticle:false})
     this.assign({ direction })
   }
-}
-
-export interface DiskEmitterShapeParams {
-  /**
-   * Radius of the disk.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  radius?: ScalarValue
-  /**
-   * Controls how the random emission points are distributed within the disk.
-   * - At 0, particles are equally likely to emit from anywhere inside the disk.
-   * - At 1, particles have a 100% chance of being emitted from the center point.
-   * - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
-   * - Values between these smoothly blend between them.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  distribution?: ScalarValue
-  /**
-   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
-   * 
-   * **Default**: {@link InitialDirection.Emitter}
-   */
-  direction?: InitialDirection
 }
 
 /**
@@ -15361,6 +14378,8 @@ class DiskEmitterShape extends DataAction {
   /**
    * Radius of the disk.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
@@ -15371,54 +14390,21 @@ class DiskEmitterShape extends DataAction {
    * - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
    * - Values between these smoothly blend between them.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
-   */
-  direction: InitialDirection
-  constructor(props: DiskEmitterShapeParams = {}) {
-    super(ActionType.DiskEmitterShape, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface RectangleEmitterShapeParams {
-  /**
-   * Width of the rectangle.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  sizeX?: ScalarValue
-  /**
-   * Height of the rectangle.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  sizeY?: ScalarValue
-  /**
-   * Controls how the random emission points are distributed within the rectangle.
-   * - At 0, particles are equally likely to emit from anywhere inside the rectangle.
-   * - At 1, particles have a 100% chance of being emitted from the center point.
-   * - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
-   * - Values between these smoothly blend between them.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  distribution?: ScalarValue
-  /**
-   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
    * 
    * **Default**: {@link InitialDirection.Emitter}
    */
-  direction?: InitialDirection
+  direction: InitialDirection
+  constructor(props: Partial<Props<DiskEmitterShape>> = {}) {
+    super(ActionType.DiskEmitterShape, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -15433,11 +14419,15 @@ class RectangleEmitterShape extends DataAction {
   /**
    * Width of the rectangle.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX: ScalarValue
   /**
    * Height of the rectangle.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -15449,34 +14439,21 @@ class RectangleEmitterShape extends DataAction {
    * - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
    * - Values between these smoothly blend between them.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
    */
   direction: InitialDirection
-  constructor(props: RectangleEmitterShapeParams = {}) {
+  constructor(props: Partial<Props<RectangleEmitterShape>> = {}) {
     super(ActionType.RectangleEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface SphereEmitterShapeParams {
-  /**
-   * Radius of the sphere.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  radius?: ScalarValue
-  /**
-   * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
-   * 
-   * **Default**: `true`
-   */
-  emitInside?: boolean
 }
 
 /**
@@ -15491,56 +14468,21 @@ class SphereEmitterShape extends DataAction {
   /**
    * Radius of the sphere.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
    * If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
-   */
-  emitInside: boolean
-  constructor(props: SphereEmitterShapeParams = {}) {
-    super(ActionType.SphereEmitterShape, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface BoxEmitterShapeParams {
-  /**
-   * Width of the cuboid.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  sizeX?: ScalarValue
-  /**
-   * Height of the cuboid.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  sizeY?: ScalarValue
-  /**
-   * Depth of the cuboid.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  sizeZ?: ScalarValue
-  /**
-   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
-   * 
-   * **Default**: {@link InitialDirection.Emitter}
-   */
-  direction?: InitialDirection
-  /**
-   * If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
    * 
    * **Default**: `true`
    */
-  emitInside?: boolean
+  emitInside: boolean
+  constructor(props: Partial<Props<SphereEmitterShape>> = {}) {
+    super(ActionType.SphereEmitterShape, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -15555,11 +14497,15 @@ class BoxEmitterShape extends DataAction {
   /**
    * Width of the cuboid.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeX: ScalarValue
   /**
    * Height of the cuboid.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -15567,58 +14513,27 @@ class BoxEmitterShape extends DataAction {
   /**
    * Depth of the cuboid.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   sizeZ: ScalarValue
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
    */
   direction: InitialDirection
   /**
    * If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
+   * 
+   * **Default**: `true`
    */
   emitInside: boolean
-  constructor(props: BoxEmitterShapeParams = {}) {
+  constructor(props: Partial<Props<BoxEmitterShape>> = {}) {
     super(ActionType.BoxEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface CylinderEmitterShapeParams {
-  /**
-   * The radius of the cylinder.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  radius?: ScalarValue
-  /**
-   * The height of the cylinder.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  height?: ScalarValue
-  /**
-   * Controls the initial direction for particles. See {@link InitialDirection} for more information.
-   * 
-   * **Default**: {@link InitialDirection.Emitter}
-   */
-  direction?: InitialDirection
-  /**
-   * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
-   * 
-   * **Default**: `true`
-   */
-  emitInside?: boolean
-  /**
-   * If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
-   * 
-   * **Default**: `true`
-   */
-  yAxis?: boolean
 }
 
 /**
@@ -15633,28 +14548,38 @@ class CylinderEmitterShape extends DataAction {
   /**
    * The radius of the cylinder.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
   /**
    * The height of the cylinder.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   height: ScalarValue
   /**
    * Controls the initial direction for particles. See {@link InitialDirection} for more information.
+   * 
+   * **Default**: {@link InitialDirection.Emitter}
    */
   direction: InitialDirection
   /**
    * If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
+   * 
+   * **Default**: `true`
    */
   emitInside: boolean
   /**
    * If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
+   * 
+   * **Default**: `true`
    */
   yAxis: boolean
-  constructor(props: CylinderEmitterShapeParams = {}) {
+  constructor(props: Partial<Props<CylinderEmitterShape>> = {}) {
     super(ActionType.CylinderEmitterShape, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
@@ -15675,36 +14600,6 @@ class NoSpread extends DataAction {
   }
 }
 
-export interface CircularSpreadParams {
-  /**
-   * The maximum change in direction in degrees, the angle of the cone.
-   * 
-   * **Default**: `30`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  angle?: ScalarValue
-  /**
-   * Controls the distribution of the random directions that can be chosen.
-   * - At 0, all directions within the cone have an equal chance of being chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angle}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  distribution?: ScalarValue
-  /**
-   * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
-   * 
-   * **Default**: `false`
-   */
-  unk_er_f1_0?: boolean
-}
-
 /**
  * ### {@link ActionType.CircularSpread Action 501 - CircularSpread}
  * **Slot**: {@link ActionSlots.DirectionSpreadAction DirectionSpread}
@@ -15717,6 +14612,8 @@ class CircularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, the angle of the cone.
    * 
+   * **Default**: `30`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   angle: ScalarValue
@@ -15728,61 +14625,21 @@ class CircularSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
-   */
-  unk_er_f1_0: boolean
-  constructor(props: CircularSpreadParams = {}) {
-    super(ActionType.CircularSpread, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface EllipticalSpreadParams {
-  /**
-   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
-   * 
-   * **Default**: `30`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angleY}
-   */
-  angleX?: ScalarValue
-  /**
-   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
-   * 
-   * **Default**: `30`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angleY}
-   */
-  angleY?: ScalarValue
-  /**
-   * Controls the distribution of the random directions that can be chosen.
-   * - At 0, all directions within the cone have an equal chance of being chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  distribution?: ScalarValue
-  /**
-   * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
    * 
    * **Default**: `false`
    */
-  unk_er_f1_0?: boolean
+  unk_er_f1_0: boolean
+  constructor(props: Partial<Props<CircularSpread>> = {}) {
+    super(ActionType.CircularSpread, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -15797,6 +14654,8 @@ class EllipticalSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
+   * **Default**: `30`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -15805,6 +14664,8 @@ class EllipticalSpread extends DataAction {
   angleX: ScalarValue
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Default**: `30`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -15820,55 +14681,21 @@ class EllipticalSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
   /**
    * No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+   * 
+   * **Default**: `false`
    */
   unk_er_f1_0: boolean
-  constructor(props: EllipticalSpreadParams = {}) {
+  constructor(props: Partial<Props<EllipticalSpread>> = {}) {
     super(ActionType.EllipticalSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface RectangularSpreadParams {
-  /**
-   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
-   * 
-   * **Default**: `30`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angleY}
-   */
-  angleX?: ScalarValue
-  /**
-   * The maximum change in direction in degrees, one of the angles of the elliptical cone.
-   * 
-   * **Default**: `30`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link angleX}
-   */
-  angleY?: ScalarValue
-  /**
-   * Controls the distribution of the random directions that can be chosen.
-   * - At 0, all directions within the cone have an equal chance of being chosen.
-   * - At 1, the default direction is guaranteed to be chosen.
-   * - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angleX} and {@link angleY}.
-   * - Values between these values smoothly blend between them.
-   * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  distribution?: ScalarValue
 }
 
 /**
@@ -15883,6 +14710,8 @@ class RectangularSpread extends DataAction {
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
    * 
+   * **Default**: `30`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -15891,6 +14720,8 @@ class RectangularSpread extends DataAction {
   angleX: ScalarValue
   /**
    * The maximum change in direction in degrees, one of the angles of the elliptical cone.
+   * 
+   * **Default**: `30`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -15906,456 +14737,15 @@ class RectangularSpread extends DataAction {
    * - Values between these values smoothly blend between them.
    * - Values outside of the -1 to 1 range also work, but may do some unexpected things.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   distribution: ScalarValue
-  constructor(props: RectangularSpreadParams = {}) {
+  constructor(props: Partial<Props<RectangularSpread>> = {}) {
     super(ActionType.RectangularSpread, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface PointSpriteParams {
-  /**
-   * Texture ID.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  texture?: ScalarValue
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * Particle size.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  size?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_sdt_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_39?: number
 }
 
 /**
@@ -16370,17 +14760,23 @@ class PointSprite extends DataAction {
   /**
    * Texture ID.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   texture: ScalarValue
   /**
    * Blend mode.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
   /**
    * Particle size.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -16389,6 +14785,8 @@ class PointSprite extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -16402,6 +14800,8 @@ class PointSprite extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -16414,6 +14814,8 @@ class PointSprite extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -16424,35 +14826,106 @@ class PointSprite extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -16460,6 +14933,8 @@ class PointSprite extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -16472,19 +14947,48 @@ class PointSprite extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -16501,6 +15005,8 @@ class PointSprite extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -16513,6 +15019,8 @@ class PointSprite extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -16529,6 +15037,8 @@ class PointSprite extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -16539,6 +15049,8 @@ class PointSprite extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -16551,6 +15063,8 @@ class PointSprite extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -16559,514 +15073,134 @@ class PointSprite extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_sdt_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_39: number
-  constructor(props: PointSpriteParams = {}) {
+  constructor(props: Partial<Props<PointSprite>> = {}) {
     super(ActionType.PointSprite, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface LineParams {
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * The length of the line.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link lengthMultiplier}
-   */
-  length?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   * - {@link startColor}
-   * - {@link endColor}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   * - {@link startColor}
-   * - {@link endColor}
-   */
-  color2?: Vector4Value
-  /**
-   * The color for the start of the line.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   * - {@link color3}
-   * - {@link endColor}
-   */
-  startColor?: Vector4Value
-  /**
-   * The color for the end of the line.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   * - {@link color3}
-   * - {@link startColor}
-   */
-  endColor?: Vector4Value
-  /**
-   * Multiplier for the line {@link length}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  lengthMultiplier?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   * - {@link startColor}
-   * - {@link endColor}
-   */
-  color3?: Vector4Value
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_30?: number
-  /**
-   * When set to 1, this stops the particles from being shown indoors.
-   * 
-   * Other values are used in AC6, but what they do is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unkHideIndoors?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_39?: number
 }
 
 /**
@@ -17081,11 +15215,15 @@ class Line extends DataAction {
   /**
    * Blend mode.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
   /**
    * The length of the line.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
@@ -17097,6 +15235,8 @@ class Line extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -17111,6 +15251,8 @@ class Line extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -17126,6 +15268,8 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -17140,6 +15284,8 @@ class Line extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -17152,6 +15298,8 @@ class Line extends DataAction {
   /**
    * Multiplier for the line {@link length}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   lengthMultiplier: ScalarValue
@@ -17159,6 +15307,8 @@ class Line extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -17172,33 +15322,94 @@ class Line extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -17206,6 +15417,8 @@ class Line extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -17218,19 +15431,48 @@ class Line extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -17247,6 +15489,8 @@ class Line extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -17259,6 +15503,8 @@ class Line extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -17275,6 +15521,8 @@ class Line extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -17285,6 +15533,8 @@ class Line extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -17297,6 +15547,8 @@ class Line extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -17305,536 +15557,136 @@ class Line extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30: number
   /**
    * When set to 1, this stops the particles from being shown indoors.
    * 
    * Other values are used in AC6, but what they do is unknown.
+   * 
+   * **Default**: `0`
    */
   unkHideIndoors: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_39: number
-  constructor(props: LineParams = {}) {
+  constructor(props: Partial<Props<Line>> = {}) {
     super(ActionType.Line, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface QuadLineParams {
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * The width of the line.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link widthMultiplier}
-   */
-  width?: ScalarValue
-  /**
-   * The length of the line.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link lengthMultiplier}
-   */
-  length?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   * - {@link startColor}
-   * - {@link endColor}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   * - {@link startColor}
-   * - {@link endColor}
-   */
-  color2?: Vector4Value
-  /**
-   * The color for the leading edge of the quad.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   * - {@link color3}
-   * - {@link endColor}
-   */
-  startColor?: Vector4Value
-  /**
-   * The color for the trailing edge of the quad.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   * - {@link color3}
-   * - {@link startColor}
-   */
-  endColor?: Vector4Value
-  /**
-   * Multiplier for the line {@link width}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  widthMultiplier?: ScalarValue
-  /**
-   * Multiplier for the line {@link length}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  lengthMultiplier?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   * - {@link startColor}
-   * - {@link endColor}
-   */
-  color3?: Vector4Value
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_39?: number
 }
 
 /**
@@ -17849,11 +15701,15 @@ class QuadLine extends DataAction {
   /**
    * Blend mode.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
   /**
    * The width of the line.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
@@ -17863,6 +15719,8 @@ class QuadLine extends DataAction {
   width: ScalarValue
   /**
    * The length of the line.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
@@ -17874,6 +15732,8 @@ class QuadLine extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -17889,6 +15749,8 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -17902,6 +15764,8 @@ class QuadLine extends DataAction {
    * The color for the leading edge of the quad.
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -17917,6 +15781,8 @@ class QuadLine extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -17929,11 +15795,15 @@ class QuadLine extends DataAction {
   /**
    * Multiplier for the line {@link width}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   widthMultiplier: ScalarValue
   /**
    * Multiplier for the line {@link length}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -17942,6 +15812,8 @@ class QuadLine extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -17955,33 +15827,94 @@ class QuadLine extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -17989,6 +15922,8 @@ class QuadLine extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -18001,19 +15936,48 @@ class QuadLine extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -18030,6 +15994,8 @@ class QuadLine extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -18042,6 +16008,8 @@ class QuadLine extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -18058,6 +16026,8 @@ class QuadLine extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -18068,6 +16038,8 @@ class QuadLine extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -18080,6 +16052,8 @@ class QuadLine extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -18088,837 +16062,134 @@ class QuadLine extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34: number
-  unk_sdt_f2_35: number
-  unk_sdt_f2_36: number
-  unk_sdt_f2_37: number
-  unk_sdt_f2_38: number
-  unk_sdt_f2_39: number
-  constructor(props: QuadLineParams = {}) {
-    super(ActionType.QuadLine, {isAppearance:true,isParticle:true})
-    this.assign(props)
-  }
-}
-
-export interface BillboardExParams {
-  /**
-   * Texture ID.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  texture?: ScalarValue
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * X position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetX?: ScalarValue
-  /**
-   * Y position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetY?: ScalarValue
-  /**
-   * Z position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetZ?: ScalarValue
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   */
-  width?: ScalarValue
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   */
-  height?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  alphaFadeThreshold?: ScalarValue
-  /**
-   * Rotation around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  rotationX?: ScalarValue
-  /**
-   * Rotation around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  rotationY?: ScalarValue
-  /**
-   * Rotation around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  rotationZ?: ScalarValue
-  /**
-   * Angular speed around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * Angular speed around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * Angular speed around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  depthOffset?: ScalarValue
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarValue
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_21?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_22?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
-   * 
-   * **Default**: {@link OrientationMode.CameraPlane}
-   */
-  orientation?: OrientationMode
-  /**
-   * Normal map texture ID.
-   * 
-   * **Default**: `0`
-   */
-  normalMap?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   */
-  scaleVariationX?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   */
-  scaleVariationY?: number
-  /**
-   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   */
-  uniformScale?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * If enabled, the texture animation will use linear interpolation to mix frames when the frame index is not a whole number. For example, if the frame index is 0.5, enabling this will cause the average of the first two frames to be shown instead of just the first frame.
-   * 
-   * If disabled, the frame index will be truncated to get a whole number.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link frameIndex}
-   * - {@link frameIndexOffset}
-   */
-  interpolateFrames?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
-   * 
-   * **Default**: `true`
-   */
-  depthBlend?: boolean
-  /**
-   * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
-   * 
-   * **Default**: `false`
-   */
-  octagonal?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown boolean.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the particle are.
-   * 
-   * **Default**: `0`
-   */
-  shadowDarkness?: number
-  /**
-   * When set to 1, this stops the particles from being shown indoors.
-   * 
-   * Other values are used in AC6, but what they do is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unkHideIndoors?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Specular texture ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * **Default**: `0.25`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more information.
-   * 
-   * **Default**: {@link LightingMode.Unlit}
-   */
-  lighting?: LightingMode
   /**
    * Unknown integer.
    * 
    * **Default**: `-2`
    */
-  unk_sdt_f2_36?: number
+  unk_sdt_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_sdt_f2_36: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_sdt_f2_37?: number
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * **Default**: `0.5`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f2_39?: number
+  unk_sdt_f2_37: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_sdt_f2_40?: number
+  unk_sdt_f2_38: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_sdt_f2_41?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_42?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_43?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_44?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_45?: number
+  unk_sdt_f2_39: number
+  constructor(props: Partial<Props<QuadLine>> = {}) {
+    super(ActionType.QuadLine, {isAppearance:true,isParticle:true})
+    this.assign(props)
+  }
 }
 
 /**
@@ -18933,11 +16204,15 @@ class BillboardEx extends DataAction {
   /**
    * Texture ID.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   texture: ScalarValue
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -18945,17 +16220,23 @@ class BillboardEx extends DataAction {
   /**
    * X position offset.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   offsetX: ScalarValue
   /**
    * Y position offset.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   offsetY: ScalarValue
   /**
    * Z position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -18964,6 +16245,8 @@ class BillboardEx extends DataAction {
    * The width of the particle.
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -18976,6 +16259,8 @@ class BillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -18986,6 +16271,8 @@ class BillboardEx extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -18999,6 +16286,8 @@ class BillboardEx extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -19010,6 +16299,8 @@ class BillboardEx extends DataAction {
    * Color multiplier.
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -19023,11 +16314,15 @@ class BillboardEx extends DataAction {
    * 
    * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   alphaFadeThreshold: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -19039,6 +16334,8 @@ class BillboardEx extends DataAction {
   /**
    * Rotation around the Y-axis in degrees.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
@@ -19048,6 +16345,8 @@ class BillboardEx extends DataAction {
   rotationY: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -19059,6 +16358,8 @@ class BillboardEx extends DataAction {
   /**
    * Angular speed around the X-axis in degrees per second.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -19069,6 +16370,8 @@ class BillboardEx extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -19077,6 +16380,8 @@ class BillboardEx extends DataAction {
   angularSpeedMultiplierX: ScalarValue
   /**
    * Angular speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -19088,6 +16393,8 @@ class BillboardEx extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -19096,6 +16403,8 @@ class BillboardEx extends DataAction {
   angularSpeedMultiplierY: ScalarValue
   /**
    * Angular speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -19107,6 +16416,8 @@ class BillboardEx extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -19116,6 +16427,8 @@ class BillboardEx extends DataAction {
   /**
    * Positive values will make the particle draw in front of objects closer to the camera, while negative values will make it draw behind objects farther away from the camera.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   depthOffset: ScalarValue
@@ -19124,19 +16437,35 @@ class BillboardEx extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndexOffset: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_21: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_22: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -19144,33 +16473,63 @@ class BillboardEx extends DataAction {
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.CameraPlane}
    */
   orientation: OrientationMode
   /**
    * Normal map texture ID.
+   * 
+   * **Default**: `0`
    */
   normalMap: number
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
    * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -19181,12 +16540,16 @@ class BillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    */
   scaleVariationY: number
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link width}
@@ -19195,9 +16558,16 @@ class BillboardEx extends DataAction {
    * - {@link scaleVariationY}
    */
   uniformScale: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link totalFrames}
@@ -19205,6 +16575,8 @@ class BillboardEx extends DataAction {
   columns: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link columns}
@@ -19215,29 +16587,90 @@ class BillboardEx extends DataAction {
    * 
    * If disabled, the frame index will be truncated to get a whole number.
    * 
+   * **Default**: `true`
+   * 
    * See also:
    * - {@link frameIndex}
    * - {@link frameIndexOffset}
    */
   interpolateFrames: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_13: number
   /**
    * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
+   * 
+   * **Default**: `true`
    */
   depthBlend: boolean
   /**
    * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
+   * 
+   * **Default**: `false`
    */
   octagonal: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown boolean.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -19245,6 +16678,8 @@ class BillboardEx extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -19257,19 +16692,48 @@ class BillboardEx extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -19286,6 +16750,8 @@ class BillboardEx extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -19298,6 +16764,8 @@ class BillboardEx extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -19314,6 +16782,8 @@ class BillboardEx extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -19324,6 +16794,8 @@ class BillboardEx extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -19336,6 +16808,8 @@ class BillboardEx extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -19344,39 +16818,94 @@ class BillboardEx extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
    */
   shadowDarkness: number
   /**
    * When set to 1, this stops the particles from being shown indoors.
    * 
    * Other values are used in AC6, but what they do is unknown.
+   * 
+   * **Default**: `0`
    */
   unkHideIndoors: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link lighting}
@@ -19387,6 +16916,8 @@ class BillboardEx extends DataAction {
   /**
    * Controls how sharp the specular highlights are.
    * 
+   * **Default**: `0.25`
+   * 
    * See also:
    * - {@link lighting}
    * - {@link specular}
@@ -19395,12 +16926,26 @@ class BillboardEx extends DataAction {
   glossiness: number
   /**
    * Controls how the particles are lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
    */
   lighting: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
   /**
    * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
    * 
    * See also:
    * - {@link lighting}
@@ -19408,933 +16953,52 @@ class BillboardEx extends DataAction {
    * - {@link glossiness}
    */
   specularity: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_39: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_40: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_41: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_42: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_43: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_44: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_45: number
-  constructor(props: BillboardExParams = {}) {
+  constructor(props: Partial<Props<BillboardEx>> = {}) {
     super(ActionType.BillboardEx, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface MultiTextureBillboardExParams {
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * X position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetX?: ScalarValue
-  /**
-   * Y position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetY?: ScalarValue
-  /**
-   * Z position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetZ?: ScalarValue
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  width?: ScalarValue
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  height?: ScalarValue
-  /**
-   * Rotation around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  rotationX?: ScalarValue
-  /**
-   * Rotation around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  rotationY?: ScalarValue
-  /**
-   * Rotation around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  rotationZ?: ScalarValue
-  /**
-   * Angular speed around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * Angular speed around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * Angular speed around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Color multiplier for the particle.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier for the particle.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier for the particle.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Color multiplier for Layer 1.
-   * 
-   * Values in this will be clamped to the 0-1 range.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1Color?: Vector4Value
-  /**
-   * Color multiplier for Layer 2.
-   * 
-   * Values in this will be clamped to the 0-1 range.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2Color?: Vector4Value
-  /**
-   * Color multiplier for Layer 3.
-   * 
-   * Values in this will be clamped to the 0-1 range.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer3Color?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  alphaFadeThreshold?: ScalarValue
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarValue
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarValue
-  /**
-   * Horiztonal scroll speed for Layer 1.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1SpeedU?: ScalarValue
-  /**
-   * Vertical scroll speed for Layer 1.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1SpeedV?: ScalarValue
-  /**
-   * Horizontal offset for the UV coordinates of Layer 1.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer1OffsetU?: ScalarValue
-  /**
-   * Vertical offset for the UV coordinates of Layer 1.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer1OffsetV?: ScalarValue
-  /**
-   * Horizontal scale for the UV coordinates of Layer 1.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1ScaleU?: ScalarValue
-  /**
-   * Vertical scale for the UV coordinates of Layer 1.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer1ScaleV?: ScalarValue
-  /**
-   * Horiztonal scroll speed for Layer 2.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2SpeedU?: ScalarValue
-  /**
-   * Vertical scroll speed for Layer 2.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2SpeedV?: ScalarValue
-  /**
-   * Horizontal offset for the UV coordinates of Layer 2.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer2OffsetU?: ScalarValue
-  /**
-   * Vertical offset for the UV coordinates of Layer 2.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer2OffsetV?: ScalarValue
-  /**
-   * Horizontal scale for the UV coordinates of Layer 2.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2ScaleU?: ScalarValue
-  /**
-   * Vertical scale for the UV coordinates of Layer 2.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer2ScaleV?: ScalarValue
-  /**
-   * Horiztonal scroll speed for Layer 3.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer3SpeedU?: ScalarValue
-  /**
-   * Vertical scroll speed for Layer 3.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer3SpeedV?: ScalarValue
-  /**
-   * Horizontal offset for the UV coordinates of Layer 3.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer3OffsetU?: ScalarValue
-  /**
-   * Vertical offset for the UV coordinates of Layer 3.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  layer3OffsetV?: ScalarValue
-  /**
-   * Horizontal scale for the UV coordinates of Layer 3.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer3ScaleU?: ScalarValue
-  /**
-   * Vertical scale for the UV coordinates of Layer 3.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  layer3ScaleV?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
-   * 
-   * **Default**: {@link OrientationMode.CameraPlane}
-   */
-  orientation?: OrientationMode
-  /**
-   * Layer 1 texture ID.
-   * 
-   * **Default**: `1`
-   */
-  layer1?: number
-  /**
-   * Layer 2 texture ID.
-   * 
-   * **Default**: `1`
-   */
-  layer2?: number
-  /**
-   * Layer 3 texture ID.
-   * 
-   * **Default**: `1`
-   */
-  layer3?: number
-  /**
-   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   */
-  uniformScale?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_6?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * If enabled, the texture animation will use linear interpolation to mix frames when the frame index is not a whole number. For example, if the frame index is 0.5, enabling this will cause the average of the first two frames to be shown instead of just the first frame.
-   * 
-   * If disabled, the frame index will be truncated to get a whole number.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link frameIndex}
-   * - {@link frameIndexOffset}
-   */
-  interpolateFrames?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
-   * 
-   * **Default**: `true`
-   */
-  depthBlend?: boolean
-  /**
-   * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
-   * 
-   * **Default**: `false`
-   */
-  octagonal?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the particle are.
-   * 
-   * **Default**: `0`
-   */
-  shadowDarkness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Specular texture ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * **Default**: `0.25`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   */
-  glossiness?: number
-  /**
-   * Controls how the particles are lit. See {@link LightingMode} for more information.
-   * 
-   * **Default**: {@link LightingMode.Unlit}
-   */
-  lighting?: LightingMode
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f2_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f2_39?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_40?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_41?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_42?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_43?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_44?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_45?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_46?: number
 }
 
 /**
@@ -20349,11 +17013,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Blend mode.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
   /**
    * X position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20361,11 +17029,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Y position offset.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   offsetY: ScalarValue
   /**
    * Z position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20375,6 +17047,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   width: ScalarValue
@@ -20383,11 +17057,15 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   height: ScalarValue
   /**
    * Rotation around the X-axis in degrees.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -20399,6 +17077,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Rotation around the Y-axis in degrees.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
@@ -20408,6 +17088,8 @@ class MultiTextureBillboardEx extends DataAction {
   rotationY: ScalarValue
   /**
    * Rotation around the Z-axis in degrees.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -20419,6 +17101,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Angular speed around the X-axis in degrees per second.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -20429,6 +17113,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -20437,6 +17123,8 @@ class MultiTextureBillboardEx extends DataAction {
   angularSpeedMultiplierX: ScalarValue
   /**
    * Angular speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -20448,6 +17136,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -20456,6 +17146,8 @@ class MultiTextureBillboardEx extends DataAction {
   angularSpeedMultiplierY: ScalarValue
   /**
    * Angular speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -20467,6 +17159,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -20477,6 +17171,8 @@ class MultiTextureBillboardEx extends DataAction {
    * Color multiplier for the particle.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -20490,6 +17186,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -20501,6 +17199,8 @@ class MultiTextureBillboardEx extends DataAction {
    * Color multiplier for the particle.
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -20514,6 +17214,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer1Color: Vector4Value
@@ -20521,6 +17223,8 @@ class MultiTextureBillboardEx extends DataAction {
    * Color multiplier for Layer 2.
    * 
    * Values in this will be clamped to the 0-1 range.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20530,6 +17234,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer3Color: Vector4Value
@@ -20537,6 +17243,8 @@ class MultiTextureBillboardEx extends DataAction {
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20546,11 +17254,15 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20558,11 +17270,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horiztonal scroll speed for Layer 1.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer1SpeedU: ScalarValue
   /**
    * Vertical scroll speed for Layer 1.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20570,11 +17286,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal offset for the UV coordinates of Layer 1.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer1OffsetU: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 1.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -20582,11 +17302,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal scale for the UV coordinates of Layer 1.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer1ScaleU: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 1.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20594,11 +17318,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horiztonal scroll speed for Layer 2.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer2SpeedU: ScalarValue
   /**
    * Vertical scroll speed for Layer 2.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20606,11 +17334,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal offset for the UV coordinates of Layer 2.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer2OffsetU: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 2.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -20618,11 +17350,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal scale for the UV coordinates of Layer 2.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer2ScaleU: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 2.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20630,11 +17366,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horiztonal scroll speed for Layer 3.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer3SpeedU: ScalarValue
   /**
    * Vertical scroll speed for Layer 3.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20642,11 +17382,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal offset for the UV coordinates of Layer 3.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   layer3OffsetU: ScalarValue
   /**
    * Vertical offset for the UV coordinates of Layer 3.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -20654,11 +17398,15 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Horizontal scale for the UV coordinates of Layer 3.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   layer3ScaleU: ScalarValue
   /**
    * Vertical scale for the UV coordinates of Layer 3.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -20666,54 +17414,97 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.CameraPlane}
    */
   orientation: OrientationMode
   /**
    * Layer 1 texture ID.
+   * 
+   * **Default**: `1`
    */
   layer1: number
   /**
    * Layer 2 texture ID.
+   * 
+   * **Default**: `1`
    */
   layer2: number
   /**
    * Layer 3 texture ID.
+   * 
+   * **Default**: `1`
    */
   layer3: number
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link width}
    * - {@link height}
    */
   uniformScale: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_6: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link totalFrames}
@@ -20721,6 +17512,8 @@ class MultiTextureBillboardEx extends DataAction {
   columns: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link columns}
@@ -20731,28 +17524,84 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * If disabled, the frame index will be truncated to get a whole number.
    * 
+   * **Default**: `true`
+   * 
    * See also:
    * - {@link frameIndex}
    * - {@link frameIndexOffset}
    */
   interpolateFrames: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_11: number
   /**
    * Controls how the particles should render when behind something else. If disabled, the particles will simply be drawn behind anything they are behind in the world. If enabled, they will instead display in front of the object if they are close enough, and will fade out with distance from the object's surface that is blocking the view of the particle.
+   * 
+   * **Default**: `true`
    */
   depthBlend: boolean
   /**
    * Controls the shape of the particles. If disabled, the particles will be rectangular. If enabled, they will be octagonal.
+   * 
+   * **Default**: `false`
    */
   octagonal: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -20760,6 +17609,8 @@ class MultiTextureBillboardEx extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -20772,19 +17623,48 @@ class MultiTextureBillboardEx extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -20801,6 +17681,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -20813,6 +17695,8 @@ class MultiTextureBillboardEx extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -20829,6 +17713,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -20839,6 +17725,8 @@ class MultiTextureBillboardEx extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -20851,6 +17739,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -20859,34 +17749,92 @@ class MultiTextureBillboardEx extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
    */
   shadowDarkness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link lighting}
@@ -20896,6 +17844,8 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Controls how sharp the specular highlights are.
    * 
+   * **Default**: `0.25`
+   * 
    * See also:
    * - {@link lighting}
    * - {@link specular}
@@ -20903,840 +17853,80 @@ class MultiTextureBillboardEx extends DataAction {
   glossiness: number
   /**
    * Controls how the particles are lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
    */
   lighting: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f2_39: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_40: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_41: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_42: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_43: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_44: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_45: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_46: number
-  constructor(props: MultiTextureBillboardExParams = {}) {
+  constructor(props: Partial<Props<MultiTextureBillboardEx>> = {}) {
     super(ActionType.MultiTextureBillboardEx, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface ModelParams {
-  /**
-   * Model ID.
-   * 
-   * **Default**: `80201`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  model?: ScalarValue
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height and depth.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   */
-  sizeX?: ScalarValue
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   * - {@link sizeX}
-   * - {@link sizeZ}
-   */
-  sizeY?: ScalarValue
-  /**
-   * The depth of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationZ}
-   * - {@link sizeX}
-   * - {@link sizeY}
-   */
-  sizeZ?: ScalarValue
-  /**
-   * Rotation around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  rotationX?: ScalarValue
-  /**
-   * Rotation around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  rotationY?: ScalarValue
-  /**
-   * Rotation around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  rotationZ?: ScalarValue
-  /**
-   * Angular speed around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * Angular speed around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * Angular speed around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Blend mode.
-   * 
-   * Note that the materials used by the model may affect how the different blend modes work. Don't expect the blend modes to always work exactly like they do in other types of instances.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_15?: ScalarValue
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarValue
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarValue
-  /**
-   * Horizontal offset for the UV coordinates of the model.
-   * 
-   * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link speedU}
-   * - {@link offsetV}
-   */
-  offsetU?: ScalarValue
-  /**
-   * Vertical offset for the UV coordinates of the model.
-   * 
-   * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  offsetV?: ScalarValue
-  /**
-   * Horiztonal scroll speed for the model's texture.
-   * 
-   * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link speedMultiplierU}
-   * - {@link offsetU}
-   */
-  speedU?: ScalarValue
-  /**
-   * Multiplier for {@link speedU}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedMultiplierU?: ScalarValue
-  /**
-   * Vertical scroll speed for the model's texture.
-   * 
-   * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link speedMultiplierV}
-   * - {@link offsetV}
-   */
-  speedV?: ScalarValue
-  /**
-   * Multiplier for {@link speedV}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedMultiplierV?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_24?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_6?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_7?: ScalarValue
-  /**
-   * Model orientation mode. See {@link ModelOrientationMode} for more information.
-   * 
-   * **Default**: {@link ModelOrientationMode.ParticleDirection}
-   */
-  orientation?: ModelOrientationMode
-  /**
-   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  scaleVariationX?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationZ}
-   */
-  scaleVariationY?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   */
-  scaleVariationZ?: number
-  /**
-   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link sizeX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  uniformScale?: boolean
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown boolean.
-   * 
-   * **Default**: `true`
-   */
-  unk_ds3_f1_11?: boolean
-  /**
-   * Unknown boolean.
-   * 
-   * **Default**: `true`
-   */
-  unk_ds3_f1_12?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Anibnd ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link animation}
-   * - {@link loopAnimation}
-   * - {@link animationSpeed}
-   */
-  anibnd?: number
-  /**
-   * Controls which animation in the {@link anibnd} to play.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link anibnd}
-   * - {@link loopAnimation}
-   * - {@link animationSpeed}
-   */
-  animation?: number
-  /**
-   * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link anibnd}
-   * - {@link animation}
-   * - {@link animationSpeed}
-   */
-  loopAnimation?: boolean
-  /**
-   * Controls the speed at which the {@link animation} plays.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link anibnd}
-   * - {@link animation}
-   * - {@link loopAnimation}
-   */
-  animationSpeed?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_4?: number
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_26?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_38?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
 }
 
 /**
@@ -21753,6 +17943,8 @@ class Model extends DataAction {
   /**
    * Model ID.
    * 
+   * **Default**: `80201`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   model: ScalarValue
@@ -21760,6 +17952,8 @@ class Model extends DataAction {
    * The width of the particle.
    * 
    * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21774,6 +17968,8 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -21787,6 +17983,8 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -21798,6 +17996,8 @@ class Model extends DataAction {
   /**
    * Rotation around the X-axis in degrees.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
@@ -21807,6 +18007,8 @@ class Model extends DataAction {
   rotationX: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -21818,6 +18020,8 @@ class Model extends DataAction {
   /**
    * Rotation around the Z-axis in degrees.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
@@ -21827,6 +18031,8 @@ class Model extends DataAction {
   rotationZ: ScalarValue
   /**
    * Angular speed around the X-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21838,6 +18044,8 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -21846,6 +18054,8 @@ class Model extends DataAction {
   angularSpeedMultiplierX: ScalarValue
   /**
    * Angular speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21857,6 +18067,8 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -21865,6 +18077,8 @@ class Model extends DataAction {
   angularSpeedMultiplierY: ScalarValue
   /**
    * Angular speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21875,6 +18089,8 @@ class Model extends DataAction {
   angularSpeedZ: ScalarValue
   /**
    * Multiplier for {@link angularSpeedZ}.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21887,6 +18103,8 @@ class Model extends DataAction {
    * 
    * Note that the materials used by the model may affect how the different blend modes work. Don't expect the blend modes to always work exactly like they do in other types of instances.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
@@ -21894,6 +18112,8 @@ class Model extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21907,6 +18127,8 @@ class Model extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -21919,6 +18141,8 @@ class Model extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -21926,17 +18150,26 @@ class Model extends DataAction {
    * - {@link color2}
    */
   color3: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_15: ScalarValue
   /**
    * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -21945,6 +18178,8 @@ class Model extends DataAction {
    * Horizontal offset for the UV coordinates of the model.
    * 
    * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -21958,6 +18193,8 @@ class Model extends DataAction {
    * 
    * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   offsetV: ScalarValue
@@ -21965,6 +18202,8 @@ class Model extends DataAction {
    * Horiztonal scroll speed for the model's texture.
    * 
    * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21976,6 +18215,8 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link speedU}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   speedMultiplierU: ScalarValue
@@ -21983,6 +18224,8 @@ class Model extends DataAction {
    * Vertical scroll speed for the model's texture.
    * 
    * If the texture is an animation sheet that is split up into multiple frames using {@link columns} and/or {@link totalFrames}, this property has no effect.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -21994,12 +18237,21 @@ class Model extends DataAction {
   /**
    * Multiplier for {@link speedV}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   speedMultiplierV: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_24: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -22007,23 +18259,59 @@ class Model extends DataAction {
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_7: ScalarValue
   /**
    * Model orientation mode. See {@link ModelOrientationMode} for more information.
+   * 
+   * **Default**: {@link ModelOrientationMode.ParticleDirection}
    */
   orientation: ModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
    * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -22035,6 +18323,8 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    * - {@link scaleVariationZ}
@@ -22045,6 +18335,8 @@ class Model extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
@@ -22052,6 +18344,8 @@ class Model extends DataAction {
   scaleVariationZ: number
   /**
    * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link sizeX}
@@ -22065,6 +18359,8 @@ class Model extends DataAction {
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link totalFrames}
    */
@@ -22072,17 +18368,46 @@ class Model extends DataAction {
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link columns}
    */
   totalFrames: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_10: number
+  /**
+   * Unknown boolean.
+   * 
+   * **Default**: `true`
+   */
   unk_ds3_f1_11: boolean
+  /**
+   * Unknown boolean.
+   * 
+   * **Default**: `true`
+   */
   unk_ds3_f1_12: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_13: number
   /**
    * Anibnd ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link animation}
@@ -22093,6 +18418,8 @@ class Model extends DataAction {
   /**
    * Controls which animation in the {@link anibnd} to play.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link anibnd}
    * - {@link loopAnimation}
@@ -22101,6 +18428,8 @@ class Model extends DataAction {
   animation: number
   /**
    * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link anibnd}
@@ -22111,20 +18440,67 @@ class Model extends DataAction {
   /**
    * Controls the speed at which the {@link animation} plays.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link anibnd}
    * - {@link animation}
    * - {@link loopAnimation}
    */
   animationSpeed: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_4: number
   /**
    * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
@@ -22132,17 +18508,46 @@ class Model extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `[1, 1, 1, 0]`
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -22159,6 +18564,8 @@ class Model extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -22171,6 +18578,8 @@ class Model extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -22187,6 +18596,8 @@ class Model extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -22197,6 +18608,8 @@ class Model extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -22209,6 +18622,8 @@ class Model extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -22217,659 +18632,132 @@ class Model extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_26: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34: number
-  unk_sdt_f2_35: number
-  unk_sdt_f2_36: number
-  unk_sdt_f2_37: number
-  unk_ac6_f2_38: number
-  unk_ds3_f2_28: number
-  constructor(props: ModelParams = {}) {
-    super(ActionType.Model, {isAppearance:true,isParticle:true})
-    this.assign(props)
-  }
-}
-
-export interface TracerParams {
-  /**
-   * Texture ID.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  texture?: ScalarValue
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * The width of the trail.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  width?: ScalarValue
-  /**
-   * Multiplier for {@link width}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  widthMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_3?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  alphaFadeThreshold?: ScalarValue
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarValue
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarValue
-  /**
-   * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
-   * 
-   * **Default**: `0.1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  textureFraction?: ScalarValue
-  /**
-   * Controls how fast the UV coordinates should move horizontally.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedU?: ScalarValue
-  /**
-   * Controls how much the UV coordinates should be randomly offset by per segment.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  varianceV?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_p1_13?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link normalMap}
-   */
-  distortionIntensity?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
-   * 
-   * **Default**: {@link TracerOrientationMode.LocalZ}
-   */
-  orientation?: TracerOrientationMode
-  /**
-   * Normal map texture ID.
-   * 
-   * This is used to control the distortion effect of the trail.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link distortionIntensity}
-   */
-  normalMap?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
-   * 
-   * **Default**: `0`
-   */
-  segmentInterval?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
-   * 
-   * **Default**: `1`
-   */
-  segmentDuration?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
-   * 
-   * **Default**: `100`
-   */
-  concurrentSegments?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_8?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
-   * 
-   * **Default**: `true`
-   */
-  attachedUV?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown boolean.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the trail are.
-   * 
-   * **Default**: `0`
-   */
-  shadowDarkness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Specular texture ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * **Default**: `0.25`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Controls how the trail is lit. See {@link LightingMode} for more information.
-   * 
-   * **Default**: {@link LightingMode.Unlit}
-   */
-  lighting?: LightingMode
   /**
    * Unknown integer.
    * 
    * **Default**: `-2`
    */
-  unk_sdt_f2_36?: number
+  unk_sdt_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
+  unk_sdt_f2_36: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_sdt_f2_37?: number
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * **Default**: `0.5`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number
+  unk_sdt_f2_37: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_er_f2_39?: number
+  unk_ac6_f2_38: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f2_28: number
+  constructor(props: Partial<Props<Model>> = {}) {
+    super(ActionType.Model, {isAppearance:true,isParticle:true})
+    this.assign(props)
+  }
 }
 
 /**
@@ -22884,11 +18772,15 @@ class Tracer extends DataAction {
   /**
    * Texture ID.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   texture: ScalarValue
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -22896,21 +18788,37 @@ class Tracer extends DataAction {
   /**
    * The width of the trail.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   width: ScalarValue
   /**
    * Multiplier for {@link width}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   widthMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3: ScalarValue
   /**
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -22924,6 +18832,8 @@ class Tracer extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -22935,6 +18845,8 @@ class Tracer extends DataAction {
    * Color multiplier.
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -22948,6 +18860,8 @@ class Tracer extends DataAction {
    * 
    * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   alphaFadeThreshold: ScalarValue
@@ -22956,11 +18870,15 @@ class Tracer extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -22968,11 +18886,15 @@ class Tracer extends DataAction {
   /**
    * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
    * 
+   * **Default**: `0.1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   textureFraction: ScalarValue
   /**
    * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -22980,12 +18902,21 @@ class Tracer extends DataAction {
   /**
    * Controls how much the UV coordinates should be randomly offset by per segment.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   varianceV: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_p1_13: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -22993,11 +18924,15 @@ class Tracer extends DataAction {
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -23005,19 +18940,38 @@ class Tracer extends DataAction {
    * - {@link normalMap}
    */
   distortionIntensity: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+   * 
+   * **Default**: {@link TracerOrientationMode.LocalZ}
    */
   orientation: TracerOrientationMode
   /**
@@ -23025,27 +18979,52 @@ class Tracer extends DataAction {
    * 
    * This is used to control the distortion effect of the trail.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link distortionIntensity}
    */
   normalMap: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+   * 
+   * **Default**: `0`
    */
   segmentInterval: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+   * 
+   * **Default**: `1`
    */
   segmentDuration: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+   * 
+   * **Default**: `100`
    */
   concurrentSegments: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_9: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link totalFrames}
@@ -23054,23 +19033,77 @@ class Tracer extends DataAction {
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link columns}
    */
   totalFrames: number
   /**
    * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+   * 
+   * **Default**: `true`
    */
   attachedUV: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown boolean.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -23078,6 +19111,8 @@ class Tracer extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -23090,19 +19125,48 @@ class Tracer extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -23119,6 +19183,8 @@ class Tracer extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -23131,6 +19197,8 @@ class Tracer extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -23147,6 +19215,8 @@ class Tracer extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -23157,6 +19227,8 @@ class Tracer extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -23169,6 +19241,8 @@ class Tracer extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -23177,34 +19251,92 @@ class Tracer extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the trail are.
+   * 
+   * **Default**: `0`
    */
   shadowDarkness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link lighting}
@@ -23215,6 +19347,8 @@ class Tracer extends DataAction {
   /**
    * Controls how sharp the specular highlights are.
    * 
+   * **Default**: `0.25`
+   * 
    * See also:
    * - {@link lighting}
    * - {@link specular}
@@ -23223,12 +19357,26 @@ class Tracer extends DataAction {
   glossiness: number
   /**
    * Controls how the trail is lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
    */
   lighting: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
   /**
    * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
    * 
    * See also:
    * - {@link lighting}
@@ -23236,623 +19384,16 @@ class Tracer extends DataAction {
    * - {@link glossiness}
    */
   specularity: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_39: number
-  constructor(props: TracerParams = {}) {
+  constructor(props: Partial<Props<Tracer>> = {}) {
     super(ActionType.Tracer, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface DistortionParams {
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * X position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetX?: ScalarValue
-  /**
-   * Y position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetY?: ScalarValue
-  /**
-   * Z position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  offsetZ?: ScalarValue
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height and depth.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   */
-  sizeX?: ScalarValue
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   * - {@link sizeX}
-   * - {@link sizeZ}
-   */
-  sizeY?: ScalarValue
-  /**
-   * The depth of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
-   * 
-   * If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationZ}
-   * - {@link sizeX}
-   * - {@link sizeY}
-   */
-  sizeZ?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p1_7?: Vector4Value
-  /**
-   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  intensity?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_9?: ScalarValue
-  /**
-   * Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
-   * 
-   * **Default**: `60`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  stirSpeed?: ScalarValue
-  /**
-   * The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  radius?: ScalarValue
-  /**
-   * Horizontal offset for the {@link normalMap normal map}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  normalMapOffsetU?: ScalarValue
-  /**
-   * Vertical offset for the {@link normalMap normal map}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  normalMapOffsetV?: ScalarValue
-  /**
-   * Horizontal offset speed for the {@link normalMap normal map}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  normalMapSpeedU?: ScalarValue
-  /**
-   * Vertical offset speed for the {@link normalMap normal map}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  normalMapSpeedV?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_p2_7?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_p2_8?: ScalarValue
-  /**
-   * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
-   * 
-   * **Default**: {@link DistortionMode.NormalMap}
-   */
-  mode?: DistortionMode
-  /**
-   * Controls the shape of the particle. See {@link DistortionShape} for more information.
-   * 
-   * **Default**: {@link DistortionShape.Rectangle}
-   */
-  shape?: DistortionShape
-  /**
-   * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
-   * 
-   * **Default**: {@link OrientationMode.CameraPlane}
-   */
-  orientation?: OrientationMode
-  /**
-   * Texture ID.
-   * 
-   * This texture seems to completely hide the distortion effect. It's probably best to just leave it at 0 unless you are trying to figure out how to use it properly.
-   * 
-   * **Default**: `0`
-   */
-  texture?: number
-  /**
-   * Normal map texture ID.
-   * 
-   * Only used if the distortion {@link mode} is set to something that uses it.
-   * 
-   * **Default**: `0`
-   */
-  normalMap?: number
-  /**
-   * Mask texture ID. This texture is used to control the color and opacity of the particle.
-   * 
-   * **Default**: `0`
-   */
-  mask?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  scaleVariationX?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationZ}
-   */
-  scaleVariationY?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   */
-  scaleVariationZ?: number
-  /**
-   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link sizeX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  uniformScale?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_4?: number
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_sdt_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_38?: number
 }
 
 /**
@@ -23869,11 +19410,15 @@ class Distortion extends DataAction {
   /**
    * Blend mode.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
   /**
    * X position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -23881,11 +19426,15 @@ class Distortion extends DataAction {
   /**
    * Y position offset.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   offsetY: ScalarValue
   /**
    * Z position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -23894,6 +19443,8 @@ class Distortion extends DataAction {
    * The width of the particle.
    * 
    * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -23907,6 +19458,8 @@ class Distortion extends DataAction {
    * The height of the particle.
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -23923,6 +19476,8 @@ class Distortion extends DataAction {
    * 
    * If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -23936,19 +19491,35 @@ class Distortion extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p1_7: Vector4Value
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   intensity: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_9: ScalarValue
   /**
    * Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+   * 
+   * **Default**: `60`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -23956,11 +19527,15 @@ class Distortion extends DataAction {
   /**
    * The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   radius: ScalarValue
   /**
    * Horizontal offset for the {@link normalMap normal map}.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -23968,11 +19543,15 @@ class Distortion extends DataAction {
   /**
    * Vertical offset for the {@link normalMap normal map}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   normalMapOffsetV: ScalarValue
   /**
    * Horizontal offset speed for the {@link normalMap normal map}.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -23980,11 +19559,15 @@ class Distortion extends DataAction {
   /**
    * Vertical offset speed for the {@link normalMap normal map}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   normalMapSpeedV: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -23992,55 +19575,103 @@ class Distortion extends DataAction {
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_er_p2_7: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_er_p2_8: ScalarValue
   /**
    * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
+   * 
+   * **Default**: {@link DistortionMode.NormalMap}
    */
   mode: DistortionMode
   /**
    * Controls the shape of the particle. See {@link DistortionShape} for more information.
+   * 
+   * **Default**: {@link DistortionShape.Rectangle}
    */
   shape: DistortionShape
   /**
    * Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+   * 
+   * **Default**: {@link OrientationMode.CameraPlane}
    */
   orientation: OrientationMode
   /**
    * Texture ID.
    * 
    * This texture seems to completely hide the distortion effect. It's probably best to just leave it at 0 unless you are trying to figure out how to use it properly.
+   * 
+   * **Default**: `0`
    */
   texture: number
   /**
    * Normal map texture ID.
    * 
    * Only used if the distortion {@link mode} is set to something that uses it.
+   * 
+   * **Default**: `0`
    */
   normalMap: number
   /**
    * Mask texture ID. This texture is used to control the color and opacity of the particle.
+   * 
+   * **Default**: `0`
    */
   mask: number
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
    * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -24052,6 +19683,8 @@ class Distortion extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    * - {@link scaleVariationZ}
@@ -24062,6 +19695,8 @@ class Distortion extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
@@ -24069,6 +19704,8 @@ class Distortion extends DataAction {
   scaleVariationZ: number
   /**
    * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link sizeX}
@@ -24079,14 +19716,59 @@ class Distortion extends DataAction {
    * - {@link scaleVariationZ}
    */
   uniformScale: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_ds3_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_4: number
   /**
    * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
@@ -24094,17 +19776,46 @@ class Distortion extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `[1, 1, 1, 0]`
    */
   bloomColor: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -24121,6 +19832,8 @@ class Distortion extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -24133,6 +19846,8 @@ class Distortion extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -24149,6 +19864,8 @@ class Distortion extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -24159,6 +19876,8 @@ class Distortion extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -24171,6 +19890,8 @@ class Distortion extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -24179,449 +19900,126 @@ class Distortion extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_sdt_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
   /**
    * Unknown float.
    * 
    * This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_38: number
-  constructor(props: DistortionParams = {}) {
+  constructor(props: Partial<Props<Distortion>> = {}) {
     super(ActionType.Distortion, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface RadialBlurParams {
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * Mask texture ID. This texture is used to control the opacity of the particle.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  mask?: ScalarValue
-  /**
-   * X position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link offsetY}
-   * - {@link offsetZ}
-   */
-  offsetX?: ScalarValue
-  /**
-   * Y position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link offsetX}
-   * - {@link offsetZ}
-   */
-  offsetY?: ScalarValue
-  /**
-   * Z position offset.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link offsetX}
-   * - {@link offsetY}
-   */
-  offsetZ?: ScalarValue
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link height}
-   */
-  width?: ScalarValue
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link width}
-   */
-  height?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p1_6?: Vector4Value
-  /**
-   * Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
-   * 
-   * **Default**: `0.5`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  blurRadius?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link width}
-   * - {@link height}
-   */
-  uniformScale?: boolean
-  /**
-   * Controls how many times to apply the effect. Higher values can have a significant impact on performance.
-   * 
-   * **Default**: `1`
-   */
-  iterations?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_4?: number
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0.5`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_30?: number
 }
 
 /**
@@ -24638,17 +20036,23 @@ class RadialBlur extends DataAction {
   /**
    * Blend mode.
    * 
+   * **Default**: {@link BlendMode.Normal}
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   blendMode: BlendMode | ScalarProperty
   /**
    * Mask texture ID. This texture is used to control the opacity of the particle.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   mask: ScalarValue
   /**
    * X position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -24660,6 +20064,8 @@ class RadialBlur extends DataAction {
   /**
    * Y position offset.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -24669,6 +20075,8 @@ class RadialBlur extends DataAction {
   offsetY: ScalarValue
   /**
    * Z position offset.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -24682,6 +20090,8 @@ class RadialBlur extends DataAction {
    * 
    * If {@link uniformScale} is enabled, this also controls the height.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -24692,6 +20102,8 @@ class RadialBlur extends DataAction {
    * The height of the particle.
    * 
    * If {@link uniformScale} is enabled, {@link width} also controls the height, and this property is ignored.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -24704,12 +20116,21 @@ class RadialBlur extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p1_6: Vector4Value
   /**
    * Controls the amount of blur to apply. Values greater than 1 may appear glitchy.
+   * 
+   * **Default**: `0.5`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -24717,29 +20138,57 @@ class RadialBlur extends DataAction {
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier: ScalarValue
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
    * If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link width}
@@ -24748,15 +20197,57 @@ class RadialBlur extends DataAction {
   uniformScale: boolean
   /**
    * Controls how many times to apply the effect. Higher values can have a significant impact on performance.
+   * 
+   * **Default**: `1`
    */
   iterations: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_4: number
   /**
    * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
@@ -24764,17 +20255,46 @@ class RadialBlur extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `[1, 1, 1, 0]`
    */
   bloomColor: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -24791,6 +20311,8 @@ class RadialBlur extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -24803,6 +20325,8 @@ class RadialBlur extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -24819,6 +20343,8 @@ class RadialBlur extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -24829,6 +20355,8 @@ class RadialBlur extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -24841,6 +20369,8 @@ class RadialBlur extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -24849,436 +20379,76 @@ class RadialBlur extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.5`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_30: number
-  constructor(props: RadialBlurParams = {}) {
+  constructor(props: Partial<Props<RadialBlur>> = {}) {
     super(ActionType.RadialBlur, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface PointLightParams {
-  /**
-   * Controls the diffuse color of the light.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link specularColor}
-   */
-  diffuseColor?: Vector4Value
-  /**
-   * Controls the specular color of the light.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  specularColor?: Vector4Value
-  /**
-   * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
-   * 
-   * **Default**: `10`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  radius?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_3?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_4?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_5?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_6?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `10`
-   */
-  unk_ds3_p1_7?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `10`
-   */
-  unk_ds3_p1_8?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `10`
-   */
-  unk_ds3_p1_9?: ScalarValue
-  /**
-   * Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
-   * - At 0 or negative values, this completely disabled the light.
-   * - At 1, the light behaves like you would expect.
-   * - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
-   * - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link falloffExponent}
-   */
-  unk_ds3_p2_0?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p2_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_p2_2?: ScalarValue
-  /**
-   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
-   * 
-   * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  diffuseMultiplier?: ScalarValue
-  /**
-   * A scalar multiplier for the {@link specularColor specular color}.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  specularMultiplier?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Toggles the jitter and flicker animations for the light.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link jitterAcceleration}
-   * - {@link jitterX}
-   * - {@link jitterY}
-   * - {@link jitterZ}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  jitterAndFlicker?: boolean
-  /**
-   * Controls the acceleration of the jittering.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterX}
-   * - {@link jitterY}
-   * - {@link jitterZ}
-   */
-  jitterAcceleration?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls how much the light should move around randomly on the X-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   * - {@link jitterY}
-   * - {@link jitterZ}
-   */
-  jitterX?: number
-  /**
-   * Controls how much the light should move around randomly on the Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   * - {@link jitterX}
-   * - {@link jitterZ}
-   */
-  jitterY?: number
-  /**
-   * Controls how much the light should move around randomly on the Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   * - {@link jitterX}
-   * - {@link jitterY}
-   */
-  jitterZ?: number
-  /**
-   * Controls the minimum interval for flickering.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMin?: number
-  /**
-   * Controls the maximum interval for flickering.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMax?: number
-  /**
-   * Brightness multiplier for the light when it flickers.
-   * 
-   * **Default**: `0.5`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   */
-  flickerBrightness?: number
-  /**
-   * Controls if the light should have shadows or not.
-   * 
-   * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
-   * 
-   * **Default**: `false`
-   */
-  shadows?: boolean
-  /**
-   * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link diffuseColor}
-   * - {@link specularColor}
-   * - {@link diffuseMultiplier}
-   * - {@link specularMultiplier}
-   */
-  separateSpecular?: boolean
-  /**
-   * The number of seconds the light takes to fade to nothing after being destroyed.
-   * 
-   * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
-   * 
-   * **Default**: `0`
-   */
-  fadeOutTime?: number
-  /**
-   * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
-   * 
-   * **Default**: `1`
-   */
-  shadowDarkness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `2`
-   */
-  unk_ds3_f2_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_17?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_18?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_19?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `100`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
-   * 
-   * Setting this to `0` will disable the distance limit.
-   * 
-   * **Default**: `0`
-   */
-  maxViewDistance?: number
-  /**
-   * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link phaseFunction}
-   * - {@link asymmetryParam}
-   */
-  volumeDensity?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_25?: number
-  /**
-   * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
-   * 
-   * **Default**: `true`
-   */
-  phaseFunction?: boolean
-  /**
-   * Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
-   * 
-   * - At 0, the light is scattered equally in every direction.
-   * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
-   * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
-   * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
-   * 
-   * **Default**: `0.75`
-   */
-  asymmetryParam?: number
-  /**
-   * Controls the falloff exponent of the light.
-   * 
-   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link unk_ds3_p2_0}
-   */
-  falloffExponent?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f2_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f2_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_32?: number
-  /**
-   * Unknown. Only used in Dark Souls 3.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_12?: number
 }
 
 /**
@@ -25297,6 +20467,8 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -25310,21 +20482,60 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor: Vector4Value
   /**
    * The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
    * 
+   * **Default**: `10`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radius: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_4: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_5: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_6: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `10`
+   */
   unk_ds3_p1_7: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `10`
+   */
   unk_ds3_p1_8: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `10`
+   */
   unk_ds3_p1_9: ScalarValue
   /**
    * Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
@@ -25333,16 +20544,30 @@ class PointLight extends DataAction {
    * - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
    * - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link falloffExponent}
    */
   unk_ds3_p2_0: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p2_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_p2_2: ScalarValue
   /**
    * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
    * 
    * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -25352,14 +20577,33 @@ class PointLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_0: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
   /**
    * Toggles the jitter and flicker animations for the light.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link jitterAcceleration}
@@ -25374,6 +20618,8 @@ class PointLight extends DataAction {
   /**
    * Controls the acceleration of the jittering.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link jitterX}
@@ -25381,9 +20627,16 @@ class PointLight extends DataAction {
    * - {@link jitterZ}
    */
   jitterAcceleration: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls how much the light should move around randomly on the X-axis.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link jitterAndFlicker}
@@ -25395,6 +20648,8 @@ class PointLight extends DataAction {
   /**
    * Controls how much the light should move around randomly on the Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link jitterAcceleration}
@@ -25404,6 +20659,8 @@ class PointLight extends DataAction {
   jitterY: number
   /**
    * Controls how much the light should move around randomly on the Z-axis.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link jitterAndFlicker}
@@ -25415,6 +20672,8 @@ class PointLight extends DataAction {
   /**
    * Controls the minimum interval for flickering.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link flickerIntervalMax}
@@ -25424,6 +20683,8 @@ class PointLight extends DataAction {
   /**
    * Controls the maximum interval for flickering.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link flickerIntervalMin}
@@ -25432,6 +20693,8 @@ class PointLight extends DataAction {
   flickerIntervalMax: number
   /**
    * Brightness multiplier for the light when it flickers.
+   * 
+   * **Default**: `0.5`
    * 
    * See also:
    * - {@link jitterAndFlicker}
@@ -25443,10 +20706,14 @@ class PointLight extends DataAction {
    * Controls if the light should have shadows or not.
    * 
    * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+   * 
+   * **Default**: `false`
    */
   shadows: boolean
   /**
    * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link diffuseColor}
@@ -25459,38 +20726,98 @@ class PointLight extends DataAction {
    * The number of seconds the light takes to fade to nothing after being destroyed.
    * 
    * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+   * 
+   * **Default**: `0`
    */
   fadeOutTime: number
   /**
    * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+   * 
+   * **Default**: `1`
    */
   shadowDarkness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `2`
+   */
   unk_ds3_f2_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_17: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_18: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_19: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `100`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
   /**
    * Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
    * 
    * Setting this to `0` will disable the distance limit.
+   * 
+   * **Default**: `0`
    */
   maxViewDistance: number
   /**
    * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
   volumeDensity: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_25: number
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+   * 
+   * **Default**: `true`
    */
   phaseFunction: boolean
   /**
@@ -25500,6 +20827,8 @@ class PointLight extends DataAction {
    * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
    * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
    * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+   * 
+   * **Default**: `0.75`
    */
   asymmetryParam: number
   /**
@@ -25507,19 +20836,43 @@ class PointLight extends DataAction {
    * 
    * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link unk_ds3_p2_0}
    */
   falloffExponent: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f2_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f2_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_32: number
   /**
    * Unknown. Only used in Dark Souls 3.
+   * 
+   * **Default**: `1`
    */
   unk_ds3_f2_12: number
-  constructor(props: PointLightParams = {}) {
+  constructor(props: Partial<Props<PointLight>> = {}) {
     super(ActionType.PointLight, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
@@ -25556,6 +20909,8 @@ class FadeTermination extends DataAction {
   /**
    * The duration of the fade out in seconds.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   duration: ScalarValue
@@ -25589,31 +20944,6 @@ class InstantTermination extends DataAction {
   }
 }
 
-export interface NodeForceSpeedParams {
-  /**
-   * The speed in the direction of the force.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speed?: ScalarValue
-  /**
-   * A multiplier for {@link speed}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speedMultiplier?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_0?: number
-}
-
 /**
  * ### {@link ActionType.NodeForceSpeed Action 731 - NodeForceSpeed}
  * **Slot**: {@link ActionSlots.NodeForceMovementAction NodeForceMovement}
@@ -25631,51 +20961,29 @@ class NodeForceSpeed extends DataAction {
   /**
    * The speed in the direction of the force.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
    * A multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speedMultiplier: ScalarValue
-  unk_sdt_f1_0: number
-  constructor(props: NodeForceSpeedParams = {}) {
-    super(ActionType.NodeForceSpeed, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleForceSpeedParams {
-  /**
-   * The speed in the direction of the force.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speed?: ScalarValue
-  /**
-   * A multiplier for {@link speed}.
-   * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  speedMultiplier?: ScalarValue
+  speedMultiplier: ScalarValue
   /**
    * Unknown integer.
    * 
    * **Default**: `1`
    */
-  unk_sdt_f1_0?: number
-  /**
-   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_1?: number
+  unk_sdt_f1_0: number
+  constructor(props: Partial<Props<NodeForceSpeed>> = {}) {
+    super(ActionType.NodeForceSpeed, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -25695,49 +21003,35 @@ class ParticleForceSpeed extends DataAction {
   /**
    * The speed in the direction of the force.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   speed: ScalarValue
   /**
    * A multiplier for {@link speed}.
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  speedMultiplier: ScalarValue
-  unk_sdt_f1_0: number
-  /**
-   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
-   */
-  unk_sdt_f1_1: number
-  constructor(props: ParticleForceSpeedParams = {}) {
-    super(ActionType.ParticleForceSpeed, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface NodeForceAccelerationParams {
-  /**
-   * The acceleration in the direction of the force.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  acceleration?: ScalarValue
-  /**
-   * A multiplier for {@link acceleration}.
-   * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  accelerationMultiplier?: ScalarValue
+  speedMultiplier: ScalarValue
   /**
    * Unknown integer.
    * 
    * **Default**: `1`
    */
-  unk_sdt_f1_0?: number
+  unk_sdt_f1_0: number
+  /**
+   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
+   * 
+   * **Default**: `0`
+   */
+  unk_sdt_f1_1: number
+  constructor(props: Partial<Props<ParticleForceSpeed>> = {}) {
+    super(ActionType.ParticleForceSpeed, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -25757,51 +21051,29 @@ class NodeForceAcceleration extends DataAction {
   /**
    * The acceleration in the direction of the force.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration: ScalarValue
   /**
    * A multiplier for {@link acceleration}.
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  accelerationMultiplier: ScalarValue
-  unk_sdt_f1_0: number
-  constructor(props: NodeForceAccelerationParams = {}) {
-    super(ActionType.NodeForceAcceleration, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleForceAccelerationParams {
-  /**
-   * The acceleration in the direction of the force.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  acceleration?: ScalarValue
-  /**
-   * A multiplier for {@link acceleration}.
-   * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  accelerationMultiplier?: ScalarValue
+  accelerationMultiplier: ScalarValue
   /**
    * Unknown integer.
    * 
    * **Default**: `1`
    */
-  unk_sdt_f1_0?: number
-  /**
-   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_1?: number
+  unk_sdt_f1_0: number
+  constructor(props: Partial<Props<NodeForceAcceleration>> = {}) {
+    super(ActionType.NodeForceAcceleration, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -25821,57 +21093,35 @@ class ParticleForceAcceleration extends DataAction {
   /**
    * The acceleration in the direction of the force.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   acceleration: ScalarValue
   /**
    * A multiplier for {@link acceleration}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   accelerationMultiplier: ScalarValue
-  unk_sdt_f1_0: number
   /**
-   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
-   */
-  unk_sdt_f1_1: number
-  constructor(props: ParticleForceAccelerationParams = {}) {
-    super(ActionType.ParticleForceAcceleration, {isAppearance:false,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface ParticleForceCollisionParams {
-  /**
-   * The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+   * Unknown integer.
    * 
    * **Default**: `1`
    */
-  radius?: number
+  unk_sdt_f1_0: number
   /**
-   * The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
-   * | Values | Behavior |
-   * |-|-|
-   * | <0 | The particles will accelerate as they slide, going faster and faster over time. |
-   * | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
-   * | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
-   * | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+   * Unknown. 0 and 1 seems to be valid values, while all other values cause the wind to not affect the particles.
    * 
-   * **Default**: `0.5`
+   * **Default**: `0`
    */
-  friction?: number
-  /**
-   * The coefficient of restitution of the particles, or how "bouncy" they are.
-   * | Values | Behavior |
-   * |-|-|
-   * | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
-   * | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
-   * | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
-   * | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
-   * 
-   * **Default**: `0.5`
-   */
-  bounciness?: number
+  unk_sdt_f1_1: number
+  constructor(props: Partial<Props<ParticleForceAcceleration>> = {}) {
+    super(ActionType.ParticleForceAcceleration, {isAppearance:false,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -25889,6 +21139,8 @@ class ParticleForceCollision extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
   /**
    * The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+   * 
+   * **Default**: `1`
    */
   radius: number
   /**
@@ -25899,6 +21151,8 @@ class ParticleForceCollision extends DataAction {
    * | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
    * | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
    * | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+   * 
+   * **Default**: `0.5`
    */
   friction: number
   /**
@@ -25909,1435 +21163,14 @@ class ParticleForceCollision extends DataAction {
    * | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
    * | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
    * | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
+   * 
+   * **Default**: `0.5`
    */
   bounciness: number
-  constructor(props: ParticleForceCollisionParams = {}) {
+  constructor(props: Partial<Props<ParticleForceCollision>> = {}) {
     super(ActionType.ParticleForceCollision, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface GPUStandardParticleParams {
-  /**
-   * Controls how well the particles follow the node if it moves.
-   * 
-   * **Default**: `0`
-   */
-  particleFollowFactor?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_3?: ScalarValue
-  /**
-   * Particle acceleration along the X-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationMin}
-   * - {@link particleAccelerationMax}
-   */
-  particleAccelerationX?: ScalarValue
-  /**
-   * Particle acceleration along the Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationMin}
-   * - {@link particleAccelerationMax}
-   */
-  particleAccelerationY?: ScalarValue
-  /**
-   * Particle acceleration along the Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationMin}
-   * - {@link particleAccelerationMax}
-   */
-  particleAccelerationZ?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_7?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_8?: ScalarValue
-  /**
-   * Angular acceleration for particles around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationMin}
-   * - {@link particleAngularAccelerationMax}
-   */
-  particleAngularAccelerationZ?: ScalarValue
-  /**
-   * The rate of change for the width of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateXStatic}
-   */
-  particleGrowthRateX?: ScalarValue
-  /**
-   * The rate of change for the height of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateYStatic}
-   */
-  particleGrowthRateY?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_12?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_14?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_15?: ScalarValue
-  /**
-   * Seemingly identical to {@link particleAccelerationZ}?
-   * 
-   * **Default**: `0`
-   */
-  unkParticleAcceleration?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_17?: ScalarValue
-  /**
-   * Downwards acceleration for particles.
-   * 
-   * **Default**: `0`
-   */
-  particleGravity?: ScalarValue
-  /**
-   * Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleRandomTurns}
-   * - {@link particleRandomTurnIntervalMax}
-   */
-  particleRandomTurnAngle?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_20?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p2_0?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p2_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_6?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1005`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * The ID of the texture of the particles.
-   * 
-   * **Default**: `1`
-   */
-  texture?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  normalMap?: number
-  /**
-   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
-   * 
-   * **Default**: {@link EmitterShape.Box}
-   */
-  emitterShape?: EmitterShape
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * The size of the emitter.
-   * 
-   * **Default**: `[1, 1, 1]`
-   */
-  emitterSize?: Vector3
-  /**
-   * The rotation of the emitter.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  emitterRotation?: Vector3
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
-   * | Shape | Behavior |
-   * |-|-|
-   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
-   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
-   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
-   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
-   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
-   * 
-   * **Default**: `0`
-   */
-  emitterDistribution?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `100`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * The number of particles to emit per emission.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link emissionParticleCountMin}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCount?: number
-  /**
-   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCountMin?: number
-  /**
-   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMin}
-   */
-  emissionParticleCountMax?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link emissionIntervalMax}
-   */
-  emissionIntervalMin?: number
-  /**
-   * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link emissionIntervalMin}
-   */
-  emissionIntervalMax?: number
-  /**
-   * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
-   * 
-   * **Default**: `false`
-   */
-  limitEmissionCount?: boolean
-  /**
-   * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
-   * 
-   * **Default**: `0`
-   */
-  emissionCountLimit?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_30?: number
-  /**
-   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   */
-  particleDuration?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_33?: number
-  /**
-   * Particle position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleOffsetMin}
-   * - {@link particleOffsetMax}
-   */
-  particleOffset?: Vector3
-  /**
-   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMin?: Vector3
-  /**
-   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMax?: Vector3
-  /**
-   * Particle speed.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleSpeedMin}
-   * - {@link particleSpeedMax}
-   */
-  particleSpeed?: Vector3
-  /**
-   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleSpeedMin?: Vector3
-  /**
-   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleSpeedMax?: Vector3
-  /**
-   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAccelerationX}
-   * - {@link particleAccelerationY}
-   * - {@link particleAccelerationZ}
-   */
-  particleAccelerationMin?: Vector3
-  /**
-   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAccelerationX}
-   * - {@link particleAccelerationY}
-   * - {@link particleAccelerationZ}
-   */
-  particleAccelerationMax?: Vector3
-  /**
-   * Maximum amount of random rotation for each particle in degrees.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleRotationVariance?: Vector3
-  /**
-   * Maximum amount of random angular speed for each particle in degrees per second.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleAngularSpeedVariance?: Vector3
-  /**
-   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationMax}
-   */
-  particleAngularAccelerationMin?: Vector3
-  /**
-   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationMin}
-   */
-  particleAngularAccelerationMax?: Vector3
-  /**
-   * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleSizeX}
-   * - {@link particleSizeY}
-   * - {@link particleSizeXMin}
-   * - {@link particleSizeYMin}
-   * - {@link particleSizeXMax}
-   * - {@link particleSizeYMax}
-   * - {@link particleGrowthRateX}
-   * - {@link particleGrowthRateY}
-   * - {@link particleGrowthRateXStatic}
-   * - {@link particleGrowthRateYStatic}
-   * - {@link particleGrowthAccelerationXMin}
-   * - {@link particleGrowthAccelerationYMin}
-   * - {@link particleGrowthAccelerationXMax}
-   * - {@link particleGrowthAccelerationYMax}
-   */
-  particleUniformScale?: boolean
-  /**
-   * The width of the particle.
-   * 
-   * **Default**: `1`
-   */
-  particleSizeX?: number
-  /**
-   * The height of the particle.
-   * 
-   * **Default**: `1`
-   */
-  particleSizeY?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_73?: number
-  /**
-   * The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeXMin?: number
-  /**
-   * The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeYMin?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_76?: number
-  /**
-   * The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeXMax?: number
-  /**
-   * The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeYMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_79?: number
-  /**
-   * The rate of change for the width of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateX}
-   */
-  particleGrowthRateXStatic?: number
-  /**
-   * The rate of change for the height of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateY}
-   */
-  particleGrowthRateYStatic?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_82?: number
-  /**
-   * Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateXMin?: number
-  /**
-   * Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateYMin?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_85?: number
-  /**
-   * Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateXMax?: number
-  /**
-   * Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateYMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_88?: number
-  /**
-   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationXMin?: number
-  /**
-   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationYMin?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_91?: number
-  /**
-   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationXMax?: number
-  /**
-   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationYMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_94?: number
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   */
-  rgbMultiplier?: number
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   */
-  alphaMultiplier?: number
-  /**
-   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMin?: Vector4
-  /**
-   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMax?: Vector4
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   */
-  blendMode?: BlendMode
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * When enabled, this makes each particle pick a random frame from the animation and only display that one frame.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link columns}
-   * - {@link totalFrames}
-   * - {@link maxFrameIndex}
-   */
-  randomTextureFrame?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_109?: number
-  /**
-   * Controls the maximum frame index when {@link randomTextureFrame picking a random frame to display}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link randomTextureFrame}
-   */
-  maxFrameIndex?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_111?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_112?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_113?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_114?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_115?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_116?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_117?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_118?: number
-  /**
-   * Multiplier for {@link particleDuration}.
-   * 
-   * **Default**: `1`
-   */
-  particleDurationMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_120?: number
-  /**
-   * Scalar multiplier for the size of the particles.
-   * 
-   * **Default**: `1`
-   */
-  particleSizeMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_122?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_123?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_124?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_125?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_126?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_127?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_128?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_129?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_130?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_131?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_132?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_133?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_134?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_135?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_136?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_137?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f1_138?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_139?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_140?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_141?: number
-  /**
-   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
-   * 
-   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
-   * 
-   * **Default**: `0`
-   */
-  limitUpdateDistance?: boolean
-  /**
-   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
-   * 
-   * **Default**: `0`
-   */
-  updateDistance?: number
-  /**
-   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleBounciness}
-   */
-  particleCollision?: boolean
-  /**
-   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleCollision}
-   */
-  particleBounciness?: number
-  /**
-   * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleRandomTurnIntervalMax}
-   * - {@link particleRandomTurnAngle}
-   */
-  particleRandomTurns?: boolean
-  /**
-   * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link particleRandomTurns}
-   * - {@link particleRandomTurnAngle}
-   */
-  particleRandomTurnIntervalMax?: number
-  /**
-   * If enabled, this causes the particles to orient themselves and stretch in the direction they are moving on the screen, making them almost resemble {@link ActionType.Tracer Tracer} particles.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleTraceLength}
-   */
-  traceParticles?: boolean
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_149?: number
-  /**
-   * Controls how much the particles are stretched when {@link traceParticles} is enabled.
-   * 
-   * **Default**: `1`
-   */
-  particleTraceLength?: number
-  /**
-   * A central fraction of the emitter volume where the particles will not be trace particles. In this volume, the particles act as if {@link traceParticles} is disabled.
-   * 
-   * **Default**: `0`
-   */
-  traceParticlesThreshold?: number
-  /**
-   * If enabled, this will add a billboarding sprite to the leading end of trace particles.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link traceParticles}
-   */
-  traceParticleHead?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_153?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_154?: number
-  /**
-   * Controls whether or not the particles have a bloom effect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_160?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_161?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_162?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_163?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_164?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_165?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_166?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_167?: number
-  /**
-   * Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
-   * 
-   * **Default**: `0`
-   */
-  desaturate?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_4?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_5?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_6?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_7?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the particle are.
-   * 
-   * **Default**: `0`
-   */
-  shadowDarkness?: number
-  /**
-   * When set to 1, this stops the particles from being shown indoors.
-   * 
-   * Other values are used in AC6, but what they do is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unkHideIndoors?: number
-  /**
-   * Unknown integer.
-   * 
-   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Specular texture ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * **Default**: `0.25`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: {@link LightingMode.Unlit}
-   */
-  lighting?: LightingMode
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_sdt_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_37?: number
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * **Default**: `0.5`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_39?: number
 }
 
 /**
@@ -27355,13 +21188,32 @@ class GPUStandardParticle extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `0`
    */
   particleFollowFactor: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3: ScalarValue
   /**
    * Particle acceleration along the X-axis.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleAccelerationMin}
@@ -27371,6 +21223,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * Particle acceleration along the Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleAccelerationMin}
    * - {@link particleAccelerationMax}
@@ -27379,15 +21233,29 @@ class GPUStandardParticle extends DataAction {
   /**
    * Particle acceleration along the Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleAccelerationMin}
    * - {@link particleAccelerationMax}
    */
   particleAccelerationZ: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_7: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_8: ScalarValue
   /**
    * Angular acceleration for particles around the Z-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleAngularAccelerationMin}
@@ -27397,6 +21265,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * The rate of change for the width of the particles.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleGrowthRateXStatic}
    */
@@ -27404,68 +21274,181 @@ class GPUStandardParticle extends DataAction {
   /**
    * The rate of change for the height of the particles.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleGrowthRateYStatic}
    */
   particleGrowthRateY: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_12: ScalarValue
   /**
    * Color multiplier.
    * 
    * Values in this are unrestricted and can go above 1.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_14: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_15: ScalarValue
   /**
    * Seemingly identical to {@link particleAccelerationZ}?
+   * 
+   * **Default**: `0`
    */
   unkParticleAcceleration: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_17: ScalarValue
   /**
    * Downwards acceleration for particles.
+   * 
+   * **Default**: `0`
    */
   particleGravity: ScalarValue
   /**
    * Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleRandomTurns}
    * - {@link particleRandomTurnIntervalMax}
    */
   particleRandomTurnAngle: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_20: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p2_0: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p2_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1005`
+   */
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
    */
   texture: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   normalMap: number
   /**
    * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
    */
   emitterShape: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_5: number
   /**
    * The size of the emitter.
+   * 
+   * **Default**: `[1, 1, 1]`
    */
   emitterSize: Vector3
   /**
    * The rotation of the emitter.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   emitterRotation: Vector3
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_14: number
   /**
    * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
@@ -27476,16 +21459,50 @@ class GPUStandardParticle extends DataAction {
    * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
    * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
    * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
    */
   emitterDistribution: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `100`
+   */
   unk_ds3_f1_21: number
   /**
    * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link emissionParticleCountMin}
@@ -27495,6 +21512,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionParticleCount}
    * - {@link emissionParticleCountMax}
@@ -27503,14 +21522,23 @@ class GPUStandardParticle extends DataAction {
   /**
    * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionParticleCount}
    * - {@link emissionParticleCountMin}
    */
   emissionParticleCountMax: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_25: number
   /**
    * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link emissionIntervalMax}
@@ -27519,27 +21547,52 @@ class GPUStandardParticle extends DataAction {
   /**
    * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link emissionIntervalMin}
    */
   emissionIntervalMax: number
   /**
    * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+   * 
+   * **Default**: `false`
    */
   limitEmissionCount: boolean
   /**
    * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+   * 
+   * **Default**: `0`
    */
   emissionCountLimit: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_30: number
   /**
    * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
    */
   particleDuration: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_33: number
   /**
    * Particle position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleOffsetMin}
@@ -27548,14 +21601,20 @@ class GPUStandardParticle extends DataAction {
   particleOffset: Vector3
   /**
    * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMin: Vector3
   /**
    * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMax: Vector3
   /**
    * Particle speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleSpeedMin}
@@ -27564,14 +21623,20 @@ class GPUStandardParticle extends DataAction {
   particleSpeed: Vector3
   /**
    * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleSpeedMin: Vector3
   /**
    * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleSpeedMax: Vector3
   /**
    * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleAccelerationX}
@@ -27582,6 +21647,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link particleAccelerationX}
    * - {@link particleAccelerationY}
@@ -27590,14 +21657,20 @@ class GPUStandardParticle extends DataAction {
   particleAccelerationMax: Vector3
   /**
    * Maximum amount of random rotation for each particle in degrees.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleRotationVariance: Vector3
   /**
    * Maximum amount of random angular speed for each particle in degrees per second.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleAngularSpeedVariance: Vector3
   /**
    * Minimum amount of random angular acceleration for each particle in degrees per second squared.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleAngularAccelerationMax}
@@ -27606,12 +21679,16 @@ class GPUStandardParticle extends DataAction {
   /**
    * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link particleAngularAccelerationMin}
    */
   particleAngularAccelerationMax: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleSizeX}
@@ -27632,33 +21709,62 @@ class GPUStandardParticle extends DataAction {
   particleUniformScale: boolean
   /**
    * The width of the particle.
+   * 
+   * **Default**: `1`
    */
   particleSizeX: number
   /**
    * The height of the particle.
+   * 
+   * **Default**: `1`
    */
   particleSizeY: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_73: number
   /**
    * The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
+   * 
+   * **Default**: `0`
    */
   particleSizeXMin: number
   /**
    * The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
+   * 
+   * **Default**: `0`
    */
   particleSizeYMin: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_76: number
   /**
    * The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
+   * 
+   * **Default**: `0`
    */
   particleSizeXMax: number
   /**
    * The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
+   * 
+   * **Default**: `0`
    */
   particleSizeYMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_79: number
   /**
    * The rate of change for the width of the particles.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleGrowthRateX}
@@ -27667,69 +21773,124 @@ class GPUStandardParticle extends DataAction {
   /**
    * The rate of change for the height of the particles.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleGrowthRateY}
    */
   particleGrowthRateYStatic: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_82: number
   /**
    * Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateXMin: number
   /**
    * Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateYMin: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_85: number
   /**
    * Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateXMax: number
   /**
    * Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateYMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_88: number
   /**
    * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationXMin: number
   /**
    * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationYMin: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_91: number
   /**
    * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationXMax: number
   /**
    * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationYMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_94: number
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    */
   rgbMultiplier: number
   /**
    * Alpha multiplier.
+   * 
+   * **Default**: `1`
    */
   alphaMultiplier: number
   /**
    * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMin: Vector4
   /**
    * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMax: Vector4
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
    */
   blendMode: BlendMode
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link totalFrames}
@@ -27738,6 +21899,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link columns}
    */
@@ -27745,69 +21908,233 @@ class GPUStandardParticle extends DataAction {
   /**
    * When enabled, this makes each particle pick a random frame from the animation and only display that one frame.
    * 
+   * **Default**: `false`
+   * 
    * See also:
    * - {@link columns}
    * - {@link totalFrames}
    * - {@link maxFrameIndex}
    */
   randomTextureFrame: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_109: number
   /**
    * Controls the maximum frame index when {@link randomTextureFrame picking a random frame to display}.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link randomTextureFrame}
    */
   maxFrameIndex: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_111: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_112: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_113: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_114: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_115: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_116: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_117: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_118: number
   /**
    * Multiplier for {@link particleDuration}.
+   * 
+   * **Default**: `1`
    */
   particleDurationMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_120: number
   /**
    * Scalar multiplier for the size of the particles.
+   * 
+   * **Default**: `1`
    */
   particleSizeMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_122: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_123: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_124: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_125: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_126: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_127: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_128: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_129: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_130: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_131: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_132: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_133: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_134: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_135: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_136: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_137: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f1_138: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_139: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_140: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_141: number
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * 
+   * **Default**: `0`
    */
   limitUpdateDistance: boolean
   /**
    * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   * 
+   * **Default**: `0`
    */
   updateDistance: number
   /**
    * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleBounciness}
@@ -27816,12 +22143,16 @@ class GPUStandardParticle extends DataAction {
   /**
    * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleCollision}
    */
   particleBounciness: number
   /**
    * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleRandomTurnIntervalMax}
@@ -27831,6 +22162,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link particleRandomTurns}
    * - {@link particleRandomTurnAngle}
@@ -27839,30 +22172,55 @@ class GPUStandardParticle extends DataAction {
   /**
    * If enabled, this causes the particles to orient themselves and stretch in the direction they are moving on the screen, making them almost resemble {@link ActionType.Tracer Tracer} particles.
    * 
+   * **Default**: `false`
+   * 
    * See also:
    * - {@link particleTraceLength}
    */
   traceParticles: boolean
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_149: number
   /**
    * Controls how much the particles are stretched when {@link traceParticles} is enabled.
+   * 
+   * **Default**: `1`
    */
   particleTraceLength: number
   /**
    * A central fraction of the emitter volume where the particles will not be trace particles. In this volume, the particles act as if {@link traceParticles} is disabled.
+   * 
+   * **Default**: `0`
    */
   traceParticlesThreshold: number
   /**
    * If enabled, this will add a billboarding sprite to the leading end of trace particles.
    * 
+   * **Default**: `false`
+   * 
    * See also:
    * - {@link traceParticles}
    */
   traceParticleHead: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_153: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_154: number
   /**
    * Controls whether or not the particles have a bloom effect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -27875,40 +22233,156 @@ class GPUStandardParticle extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_160: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_161: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_162: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_163: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_164: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_165: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_166: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_167: number
   /**
    * Desaturates the particles, making them more grayscale. At 0, the particles will have their regular colors. At 1, they will be entirely grayscale.
+   * 
+   * **Default**: `0`
    */
   desaturate: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_4: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_5: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_6: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_7: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -27925,6 +22399,8 @@ class GPUStandardParticle extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -27937,6 +22413,8 @@ class GPUStandardParticle extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -27953,6 +22431,8 @@ class GPUStandardParticle extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -27963,6 +22443,8 @@ class GPUStandardParticle extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -27975,6 +22457,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -27983,34 +22467,92 @@ class GPUStandardParticle extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
    */
   shadowDarkness: number
   /**
    * When set to 1, this stops the particles from being shown indoors.
    * 
    * Other values are used in AC6, but what they do is unknown.
+   * 
+   * **Default**: `0`
    */
   unkHideIndoors: number
   /**
    * Unknown integer.
    * 
    * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link lighting}
@@ -28021,1403 +22563,6 @@ class GPUStandardParticle extends DataAction {
   /**
    * Controls how sharp the specular highlights are.
    * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness: number
-  lighting: LightingMode
-  unk_sdt_f2_36: number
-  unk_sdt_f2_37: number
-  /**
-   * Controls how bright the specular highlights are.
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
-   */
-  specularity: number
-  unk_er_f2_39: number
-  constructor(props: GPUStandardParticleParams = {}) {
-    super(ActionType.GPUStandardParticle, {isAppearance:true,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface GPUStandardCorrectParticleParams {
-  /**
-   * Controls how well the particles follow the node if it moves.
-   * 
-   * **Default**: `0`
-   */
-  particleFollowFactor?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_3?: ScalarValue
-  /**
-   * Particle acceleration along the X-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationMin}
-   * - {@link particleAccelerationMax}
-   */
-  particleAccelerationX?: ScalarValue
-  /**
-   * Particle acceleration along the Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationMin}
-   * - {@link particleAccelerationMax}
-   */
-  particleAccelerationY?: ScalarValue
-  /**
-   * Particle acceleration along the Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAccelerationMin}
-   * - {@link particleAccelerationMax}
-   */
-  particleAccelerationZ?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_7?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_8?: ScalarValue
-  /**
-   * Angular acceleration for particles around the Z-axis in degrees per second squared.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationMin}
-   * - {@link particleAngularAccelerationMax}
-   */
-  particleAngularAccelerationZ?: ScalarValue
-  /**
-   * The rate of change for the width of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateXStatic}
-   */
-  particleGrowthRateX?: ScalarValue
-  /**
-   * The rate of change for the height of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateYStatic}
-   */
-  particleGrowthRateY?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_12?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_14?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_15?: ScalarValue
-  /**
-   * Seemingly identical to {@link particleAccelerationZ}?
-   * 
-   * **Default**: `0`
-   */
-  unkParticleAcceleration?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_17?: ScalarValue
-  /**
-   * Downwards acceleration for particles.
-   * 
-   * **Default**: `0`
-   */
-  particleGravity?: ScalarValue
-  /**
-   * Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleRandomTurns}
-   * - {@link particleRandomTurnIntervalMax}
-   */
-  particleRandomTurnAngle?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_20?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p2_0?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p2_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p2_6?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1005`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * The ID of the texture of the particles.
-   * 
-   * **Default**: `1`
-   */
-  texture?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  normalMap?: number
-  /**
-   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
-   * 
-   * **Default**: {@link EmitterShape.Box}
-   */
-  emitterShape?: EmitterShape
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * The size of the emitter.
-   * 
-   * **Default**: `[1, 1, 1]`
-   */
-  emitterSize?: Vector3
-  /**
-   * The rotation of the emitter.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  emitterRotation?: Vector3
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
-   * | Shape | Behavior |
-   * |-|-|
-   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
-   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
-   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
-   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
-   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
-   * 
-   * **Default**: `0`
-   */
-  emitterDistribution?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `100`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * The number of particles to emit per emission.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link emissionParticleCountMin}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCount?: number
-  /**
-   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCountMin?: number
-  /**
-   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMin}
-   */
-  emissionParticleCountMax?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link emissionIntervalMax}
-   */
-  emissionIntervalMin?: number
-  /**
-   * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link emissionIntervalMin}
-   */
-  emissionIntervalMax?: number
-  /**
-   * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
-   * 
-   * **Default**: `false`
-   */
-  limitEmissionCount?: boolean
-  /**
-   * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
-   * 
-   * **Default**: `0`
-   */
-  emissionCountLimit?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_30?: number
-  /**
-   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   */
-  particleDuration?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_33?: number
-  /**
-   * Particle position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleOffsetMin}
-   * - {@link particleOffsetMax}
-   */
-  particleOffset?: Vector3
-  /**
-   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMin?: Vector3
-  /**
-   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMax?: Vector3
-  /**
-   * Particle speed.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleSpeedMin}
-   * - {@link particleSpeedMax}
-   */
-  particleSpeed?: Vector3
-  /**
-   * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleSpeedMin?: Vector3
-  /**
-   * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleSpeedMax?: Vector3
-  /**
-   * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAccelerationX}
-   * - {@link particleAccelerationY}
-   * - {@link particleAccelerationZ}
-   */
-  particleAccelerationMin?: Vector3
-  /**
-   * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAccelerationX}
-   * - {@link particleAccelerationY}
-   * - {@link particleAccelerationZ}
-   */
-  particleAccelerationMax?: Vector3
-  /**
-   * Maximum amount of random rotation for each particle in degrees.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleRotationVariance?: Vector3
-  /**
-   * Maximum amount of random angular speed for each particle in degrees per second.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleAngularSpeedVariance?: Vector3
-  /**
-   * Minimum amount of random angular acceleration for each particle in degrees per second squared.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationMax}
-   */
-  particleAngularAccelerationMin?: Vector3
-  /**
-   * Maximum amount of random angular acceleration for each particle in degrees per second squared.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleAngularAccelerationMin}
-   */
-  particleAngularAccelerationMax?: Vector3
-  /**
-   * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleSizeX}
-   * - {@link particleSizeY}
-   * - {@link particleSizeXMin}
-   * - {@link particleSizeYMin}
-   * - {@link particleSizeXMax}
-   * - {@link particleSizeYMax}
-   * - {@link particleGrowthRateX}
-   * - {@link particleGrowthRateY}
-   * - {@link particleGrowthRateXStatic}
-   * - {@link particleGrowthRateYStatic}
-   * - {@link particleGrowthAccelerationXMin}
-   * - {@link particleGrowthAccelerationYMin}
-   * - {@link particleGrowthAccelerationXMax}
-   * - {@link particleGrowthAccelerationYMax}
-   */
-  particleUniformScale?: boolean
-  /**
-   * The width of the particle.
-   * 
-   * **Default**: `1`
-   */
-  particleSizeX?: number
-  /**
-   * The height of the particle.
-   * 
-   * **Default**: `1`
-   */
-  particleSizeY?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_73?: number
-  /**
-   * The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeXMin?: number
-  /**
-   * The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeYMin?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_76?: number
-  /**
-   * The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeXMax?: number
-  /**
-   * The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
-   * 
-   * **Default**: `0`
-   */
-  particleSizeYMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_79?: number
-  /**
-   * The rate of change for the width of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateX}
-   */
-  particleGrowthRateXStatic?: number
-  /**
-   * The rate of change for the height of the particles.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleGrowthRateY}
-   */
-  particleGrowthRateYStatic?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_82?: number
-  /**
-   * Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateXMin?: number
-  /**
-   * Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateYMin?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_85?: number
-  /**
-   * Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateXMax?: number
-  /**
-   * Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthRateYMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_88?: number
-  /**
-   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationXMin?: number
-  /**
-   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationYMin?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_91?: number
-  /**
-   * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationXMax?: number
-  /**
-   * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
-   * 
-   * **Default**: `0`
-   */
-  particleGrowthAccelerationYMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_94?: number
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   */
-  rgbMultiplier?: number
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   */
-  alphaMultiplier?: number
-  /**
-   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMin?: Vector4
-  /**
-   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMax?: Vector4
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   */
-  blendMode?: BlendMode
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * When enabled, this makes each particle pick a random frame from the animation and only display that one frame.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link columns}
-   * - {@link totalFrames}
-   * - {@link maxFrameIndex}
-   */
-  randomTextureFrame?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_109?: number
-  /**
-   * Controls the maximum frame index when {@link randomTextureFrame picking a random frame to display}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link randomTextureFrame}
-   */
-  maxFrameIndex?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_111?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_112?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_113?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_114?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_115?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_116?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_117?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_118?: number
-  /**
-   * Multiplier for {@link particleDuration}.
-   * 
-   * **Default**: `1`
-   */
-  particleDurationMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_120?: number
-  /**
-   * Scalar multiplier for the size of the particles.
-   * 
-   * **Default**: `1`
-   */
-  particleSizeMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_122?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_123?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_124?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_125?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_126?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_127?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_128?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_129?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_130?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_131?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_132?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_133?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_134?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_135?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_136?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_137?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f1_138?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_139?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_140?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_141?: number
-  /**
-   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
-   * 
-   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
-   * 
-   * **Default**: `0`
-   */
-  limitUpdateDistance?: boolean
-  /**
-   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
-   * 
-   * **Default**: `0`
-   */
-  updateDistance?: number
-  /**
-   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleBounciness}
-   */
-  particleCollision?: boolean
-  /**
-   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleCollision}
-   */
-  particleBounciness?: number
-  /**
-   * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleRandomTurnIntervalMax}
-   * - {@link particleRandomTurnAngle}
-   */
-  particleRandomTurns?: boolean
-  /**
-   * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link particleRandomTurns}
-   * - {@link particleRandomTurnAngle}
-   */
-  particleRandomTurnIntervalMax?: number
-  /**
-   * If enabled, this causes the particles to orient themselves and stretch in the direction they are moving on the screen, making them almost resemble {@link ActionType.Tracer Tracer} particles.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleTraceLength}
-   */
-  traceParticles?: boolean
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_149?: number
-  /**
-   * Controls how much the particles are stretched when {@link traceParticles} is enabled.
-   * 
-   * **Default**: `1`
-   */
-  particleTraceLength?: number
-  /**
-   * A central fraction of the emitter volume where the particles will not be trace particles. In this volume, the particles act as if {@link traceParticles} is disabled.
-   * 
-   * **Default**: `0`
-   */
-  traceParticlesThreshold?: number
-  /**
-   * If enabled, this will add a billboarding sprite to the leading end of trace particles.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link traceParticles}
-   */
-  traceParticleHead?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_153?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_154?: number
-  /**
-   * Controls whether or not the particles have a bloom effect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_160?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_161?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_162?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_163?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_164?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_165?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_166?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_167?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_4?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_5?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_6?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_7?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the particle are.
-   * 
-   * **Default**: `0`
-   */
-  shadowDarkness?: number
-  /**
-   * When set to 1, this stops the particles from being shown indoors.
-   * 
-   * Other values are used in AC6, but what they do is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unkHideIndoors?: number
-  /**
-   * Unknown integer.
-   * 
-   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Specular texture ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
    * **Default**: `0.25`
    * 
    * See also:
@@ -29425,25 +22570,25 @@ export interface GPUStandardCorrectParticleParams {
    * - {@link specular}
    * - {@link specularity}
    */
-  glossiness?: number
+  glossiness: number
   /**
    * Unknown integer.
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting?: LightingMode
+  lighting: LightingMode
   /**
    * Unknown integer.
    * 
    * **Default**: `-2`
    */
-  unk_sdt_f2_36?: number
+  unk_sdt_f2_36: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_sdt_f2_37?: number
+  unk_sdt_f2_37: number
   /**
    * Controls how bright the specular highlights are.
    * 
@@ -29454,13 +22599,17 @@ export interface GPUStandardCorrectParticleParams {
    * - {@link specular}
    * - {@link glossiness}
    */
-  specularity?: number
+  specularity: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_er_f2_39?: number
+  unk_er_f2_39: number
+  constructor(props: Partial<Props<GPUStandardParticle>> = {}) {
+    super(ActionType.GPUStandardParticle, {isAppearance:true,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -29478,13 +22627,32 @@ class GPUStandardCorrectParticle extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `0`
    */
   particleFollowFactor: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3: ScalarValue
   /**
    * Particle acceleration along the X-axis.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleAccelerationMin}
@@ -29494,6 +22662,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Particle acceleration along the Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleAccelerationMin}
    * - {@link particleAccelerationMax}
@@ -29502,15 +22672,29 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Particle acceleration along the Z-axis.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleAccelerationMin}
    * - {@link particleAccelerationMax}
    */
   particleAccelerationZ: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_7: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_8: ScalarValue
   /**
    * Angular acceleration for particles around the Z-axis in degrees per second squared.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleAngularAccelerationMin}
@@ -29520,6 +22704,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The rate of change for the width of the particles.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleGrowthRateXStatic}
    */
@@ -29527,68 +22713,181 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The rate of change for the height of the particles.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleGrowthRateYStatic}
    */
   particleGrowthRateY: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_12: ScalarValue
   /**
    * Color multiplier.
    * 
    * Values in this are unrestricted and can go above 1.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_14: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_15: ScalarValue
   /**
    * Seemingly identical to {@link particleAccelerationZ}?
+   * 
+   * **Default**: `0`
    */
   unkParticleAcceleration: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_17: ScalarValue
   /**
    * Downwards acceleration for particles.
+   * 
+   * **Default**: `0`
    */
   particleGravity: ScalarValue
   /**
    * Maximum random turn angle for particles. Requires {@link particleRandomTurns} to be enabled.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleRandomTurns}
    * - {@link particleRandomTurnIntervalMax}
    */
   particleRandomTurnAngle: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_20: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p2_0: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p2_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p2_6: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1005`
+   */
   unk_ds3_f1_0: number
   /**
    * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
    */
   texture: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   normalMap: number
   /**
    * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
    */
   emitterShape: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_5: number
   /**
    * The size of the emitter.
+   * 
+   * **Default**: `[1, 1, 1]`
    */
   emitterSize: Vector3
   /**
    * The rotation of the emitter.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   emitterRotation: Vector3
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_14: number
   /**
    * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
@@ -29599,16 +22898,50 @@ class GPUStandardCorrectParticle extends DataAction {
    * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
    * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
    * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
    */
   emitterDistribution: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `100`
+   */
   unk_ds3_f1_21: number
   /**
    * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link emissionParticleCountMin}
@@ -29618,6 +22951,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionParticleCount}
    * - {@link emissionParticleCountMax}
@@ -29626,14 +22961,23 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionParticleCount}
    * - {@link emissionParticleCountMin}
    */
   emissionParticleCountMax: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_25: number
   /**
    * The minimum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link emissionIntervalMax}
@@ -29642,27 +22986,52 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The maximum time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link emissionIntervalMin}
    */
   emissionIntervalMax: number
   /**
    * If enabled, the number of emissions will be limited by {@link emissionCountLimit}.
+   * 
+   * **Default**: `false`
    */
   limitEmissionCount: boolean
   /**
    * The total number of emissions. This limit is only applied if {@link limitEmissionCount} is enabled.
+   * 
+   * **Default**: `0`
    */
   emissionCountLimit: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_30: number
   /**
    * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
    */
   particleDuration: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_33: number
   /**
    * Particle position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleOffsetMin}
@@ -29671,14 +23040,20 @@ class GPUStandardCorrectParticle extends DataAction {
   particleOffset: Vector3
   /**
    * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMin: Vector3
   /**
    * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMax: Vector3
   /**
    * Particle speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleSpeedMin}
@@ -29687,14 +23062,20 @@ class GPUStandardCorrectParticle extends DataAction {
   particleSpeed: Vector3
   /**
    * Minimum particle speed. A random value between this and {@link particleSpeedMax} will be added to {@link particleSpeed} to get the final speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleSpeedMin: Vector3
   /**
    * Maximum particle speed. A random value between this and {@link particleSpeedMin} will be added to {@link particleSpeed} to get the final speed.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleSpeedMax: Vector3
   /**
    * Minimum particle acceleration. A random value between this and {@link particleAccelerationMax} will be added to the three acceleration properties to get the final acceleration.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleAccelerationX}
@@ -29705,6 +23086,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Maximum particle acceleration. A random value between this and {@link particleAccelerationMin} will be added to the three acceleration properties to get the final acceleration.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link particleAccelerationX}
    * - {@link particleAccelerationY}
@@ -29713,14 +23096,20 @@ class GPUStandardCorrectParticle extends DataAction {
   particleAccelerationMax: Vector3
   /**
    * Maximum amount of random rotation for each particle in degrees.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleRotationVariance: Vector3
   /**
    * Maximum amount of random angular speed for each particle in degrees per second.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleAngularSpeedVariance: Vector3
   /**
    * Minimum amount of random angular acceleration for each particle in degrees per second squared.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleAngularAccelerationMax}
@@ -29729,12 +23118,16 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Maximum amount of random angular acceleration for each particle in degrees per second squared.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link particleAngularAccelerationMin}
    */
   particleAngularAccelerationMax: Vector3
   /**
    * When enabled, the height of the particles will be based on the {@link particleSizeX width} instead of the {@link particleSizeY height field}, and the height field is ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleSizeX}
@@ -29755,33 +23148,62 @@ class GPUStandardCorrectParticle extends DataAction {
   particleUniformScale: boolean
   /**
    * The width of the particle.
+   * 
+   * **Default**: `1`
    */
   particleSizeX: number
   /**
    * The height of the particle.
+   * 
+   * **Default**: `1`
    */
   particleSizeY: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_73: number
   /**
    * The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
+   * 
+   * **Default**: `0`
    */
   particleSizeXMin: number
   /**
    * The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
+   * 
+   * **Default**: `0`
    */
   particleSizeYMin: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_76: number
   /**
    * The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
+   * 
+   * **Default**: `0`
    */
   particleSizeXMax: number
   /**
    * The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
+   * 
+   * **Default**: `0`
    */
   particleSizeYMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_79: number
   /**
    * The rate of change for the width of the particles.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link particleGrowthRateX}
@@ -29790,69 +23212,124 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The rate of change for the height of the particles.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleGrowthRateY}
    */
   particleGrowthRateYStatic: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_82: number
   /**
    * Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateXMin: number
   /**
    * Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateYMin: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_85: number
   /**
    * Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateXMax: number
   /**
    * Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
+   * 
+   * **Default**: `0`
    */
   particleGrowthRateYMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_88: number
   /**
    * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationXMin: number
   /**
    * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationYMin: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_91: number
   /**
    * Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationXMax: number
   /**
    * Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
+   * 
+   * **Default**: `0`
    */
   particleGrowthAccelerationYMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_94: number
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    */
   rgbMultiplier: number
   /**
    * Alpha multiplier.
+   * 
+   * **Default**: `1`
    */
   alphaMultiplier: number
   /**
    * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMin: Vector4
   /**
    * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMax: Vector4
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
    */
   blendMode: BlendMode
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link totalFrames}
@@ -29861,6 +23338,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link columns}
    */
@@ -29868,69 +23347,233 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * When enabled, this makes each particle pick a random frame from the animation and only display that one frame.
    * 
+   * **Default**: `false`
+   * 
    * See also:
    * - {@link columns}
    * - {@link totalFrames}
    * - {@link maxFrameIndex}
    */
   randomTextureFrame: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_109: number
   /**
    * Controls the maximum frame index when {@link randomTextureFrame picking a random frame to display}.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link randomTextureFrame}
    */
   maxFrameIndex: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_111: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_112: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_113: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_114: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_115: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_116: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_117: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_118: number
   /**
    * Multiplier for {@link particleDuration}.
+   * 
+   * **Default**: `1`
    */
   particleDurationMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_120: number
   /**
    * Scalar multiplier for the size of the particles.
+   * 
+   * **Default**: `1`
    */
   particleSizeMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_122: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_123: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_124: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_125: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_126: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_127: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_128: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_129: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_130: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_131: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_132: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_133: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_134: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_135: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_136: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_137: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f1_138: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_139: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_140: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_141: number
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * 
+   * **Default**: `0`
    */
   limitUpdateDistance: boolean
   /**
    * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   * 
+   * **Default**: `0`
    */
   updateDistance: number
   /**
    * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleBounciness}
@@ -29939,12 +23582,16 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleCollision}
    */
   particleBounciness: number
   /**
    * If enabled, particles will randomly make sharp turns that affect the direction of various speed and acceleration properties. Both the time between turns and the turn angle are randomized for each turn and for each particle, and they are based on {@link particleRandomTurnIntervalMax} and {@link particleRandomTurnAngle} respectively.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleRandomTurnIntervalMax}
@@ -29954,6 +23601,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link particleRandomTurns}
    * - {@link particleRandomTurnAngle}
@@ -29962,30 +23611,55 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * If enabled, this causes the particles to orient themselves and stretch in the direction they are moving on the screen, making them almost resemble {@link ActionType.Tracer Tracer} particles.
    * 
+   * **Default**: `false`
+   * 
    * See also:
    * - {@link particleTraceLength}
    */
   traceParticles: boolean
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_149: number
   /**
    * Controls how much the particles are stretched when {@link traceParticles} is enabled.
+   * 
+   * **Default**: `1`
    */
   particleTraceLength: number
   /**
    * A central fraction of the emitter volume where the particles will not be trace particles. In this volume, the particles act as if {@link traceParticles} is disabled.
+   * 
+   * **Default**: `0`
    */
   traceParticlesThreshold: number
   /**
    * If enabled, this will add a billboarding sprite to the leading end of trace particles.
    * 
+   * **Default**: `false`
+   * 
    * See also:
    * - {@link traceParticles}
    */
   traceParticleHead: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_153: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_154: number
   /**
    * Controls whether or not the particles have a bloom effect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -29998,36 +23672,150 @@ class GPUStandardCorrectParticle extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_160: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_161: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_162: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_163: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_164: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_165: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_166: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_167: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_4: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_5: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_6: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_7: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -30044,6 +23832,8 @@ class GPUStandardCorrectParticle extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -30056,6 +23846,8 @@ class GPUStandardCorrectParticle extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -30072,6 +23864,8 @@ class GPUStandardCorrectParticle extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -30082,6 +23876,8 @@ class GPUStandardCorrectParticle extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -30094,6 +23890,8 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -30102,34 +23900,92 @@ class GPUStandardCorrectParticle extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `0`
    */
   shadowDarkness: number
   /**
    * When set to 1, this stops the particles from being shown indoors.
    * 
    * Other values are used in AC6, but what they do is unknown.
+   * 
+   * **Default**: `0`
    */
   unkHideIndoors: number
   /**
    * Unknown integer.
    * 
    * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link lighting}
@@ -30140,17 +23996,36 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Controls how sharp the specular highlights are.
    * 
+   * **Default**: `0.25`
+   * 
    * See also:
    * - {@link lighting}
    * - {@link specular}
    * - {@link specularity}
    */
   glossiness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
+   */
   lighting: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
   /**
    * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
    * 
    * See also:
    * - {@link lighting}
@@ -30158,254 +24033,16 @@ class GPUStandardCorrectParticle extends DataAction {
    * - {@link glossiness}
    */
   specularity: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_39: number
-  constructor(props: GPUStandardCorrectParticleParams = {}) {
+  constructor(props: Partial<Props<GPUStandardCorrectParticle>> = {}) {
     super(ActionType.GPUStandardCorrectParticle, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface LightShaftParams {
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  width?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  height?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  color1?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  color2?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  color3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_5?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_6?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_7?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_8?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_9?: ScalarValue
-  /**
-   * Texture ID.
-   * 
-   * **Default**: `0`
-   */
-  texture?: number
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Add}
-   */
-  blendMode?: BlendMode
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0.75`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0.75`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `2`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0.1`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_6?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
-   * 
-   * **Default**: `30`
-   */
-  layers?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_22?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_26?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_27?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_29?: number
 }
 
 /**
@@ -30417,1041 +24054,250 @@ export interface LightShaftParams {
 class LightShaft extends DataAction {
   declare readonly type: ActionType.LightShaft
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   width: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   height: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   color1: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   color2: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   color3: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_5: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_6: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_7: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_8: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_9: ScalarValue
   /**
    * Texture ID.
+   * 
+   * **Default**: `0`
    */
   texture: number
-  /**
-   * Blend mode.
-   */
-  blendMode: BlendMode
-  unk_ds3_f1_2: number
-  unk_ds3_f1_3: number
-  unk_ds3_f1_4: number
-  unk_ds3_f1_5: number
-  unk_ds3_f1_6: number
-  unk_ds3_f1_7: number
-  /**
-   * The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
-   */
-  layers: number
-  unk_ds3_f1_9: number
-  unk_ds3_f1_10: number
-  unk_ds3_f1_11: number
-  unk_ds3_f1_12: number
-  unk_ds3_f1_13: number
-  unk_ds3_f1_14: number
-  unk_ds3_f1_15: number
-  unk_ds3_f1_16: number
-  unk_ds3_f1_17: number
-  unk_ds3_f1_18: number
-  unk_ds3_f1_19: number
-  unk_ds3_f1_20: number
-  unk_ds3_f1_21: number
-  unk_ds3_f1_22: number
-  unk_ds3_f1_23: number
-  unk_ds3_f1_24: number
-  unk_ds3_f1_25: number
-  unk_ds3_f1_26: number
-  unk_ds3_f1_27: number
-  unk_ds3_f1_28: number
-  unk_ds3_f1_29: number
-  constructor(props: LightShaftParams = {}) {
-    super(ActionType.LightShaft, {isAppearance:true,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface GPUSparkParticleParams {
-  /**
-   * Controls how well the particles follow the node if it moves.
-   * 
-   * **Default**: `0`
-   */
-  particleFollowFactor?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_3?: ScalarValue
-  /**
-   * Particle acceleration along the X-axis.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationX?: ScalarValue
-  /**
-   * Particle acceleration along the Y-axis.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationY?: ScalarValue
-  /**
-   * Particle acceleration along the Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZ?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color?: Vector4Value
-  /**
-   * The length of the particles.
-   * 
-   * **Default**: `1`
-   */
-  particleLength?: ScalarValue
-  /**
-   * The width of the particles.
-   * 
-   * **Default**: `0.1`
-   */
-  particleWidth?: ScalarValue
-  /**
-   * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
-   * 
-   * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedMin}
-   * - {@link particleSpeedMax}
-   * 
-   * **Default**: `0`
-   */
-  unkParticleAcceleration?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_11?: ScalarValue
-  /**
-   * Downwards acceleration for particles.
-   * 
-   * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedMin}
-   * - {@link particleSpeedMax}
-   * 
-   * **Default**: `1`
-   */
-  particleGravity?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_13?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_p2_0?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_p2_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ac6_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ac6_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ac6_p2_5?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p2_6?: ScalarValue
-  /**
-   * The ID of the texture of the particles.
-   * 
-   * **Default**: `1`
-   */
-  texture?: number
-  /**
-   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
-   * 
-   * **Default**: {@link EmitterShape.Box}
-   */
-  emitterShape?: EmitterShape
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_2?: number
-  /**
-   * The size of the emitter.
-   * 
-   * **Default**: `[1, 1, 1]`
-   */
-  emitterSize?: Vector3
-  /**
-   * The rotation of the emitter.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  emitterRotation?: Vector3
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_9?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_10?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_11?: number
-  /**
-   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
-   * | Shape | Behavior |
-   * |-|-|
-   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
-   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
-   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
-   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
-   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
-   * 
-   * **Default**: `0`
-   */
-  emitterDistribution?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_13?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_17?: number
-  /**
-   * The number of particles to emit per emission.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link emissionParticleCountMin}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCount?: number
-  /**
-   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCountMin?: number
-  /**
-   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMin}
-   */
-  emissionParticleCountMax?: number
-  /**
-   * The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionIntervalMin}
-   * - {@link emissionIntervalMax}
-   */
-  emissionInterval?: number
-  /**
-   * The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionInterval}
-   * - {@link emissionIntervalMax}
-   */
-  emissionIntervalMin?: number
-  /**
-   * The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionInterval}
-   * - {@link emissionIntervalMin}
-   */
-  emissionIntervalMax?: number
-  /**
-   * If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
-   * 
-   * **Default**: `false`
-   */
-  limitConcurrentEmissions?: boolean
-  /**
-   * The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
-   * 
-   * **Default**: `0`
-   */
-  concurrentEmissionsLimit?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_26?: number
-  /**
-   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   */
-  particleDuration?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_29?: number
-  /**
-   * Particle position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleOffsetMin}
-   * - {@link particleOffsetMax}
-   */
-  particleOffset?: Vector3
-  /**
-   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMin?: Vector3
-  /**
-   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMax?: Vector3
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_39?: number
-  /**
-   * Minimum particle speed.
-   * 
-   * **Default**: `[-0.01, -0.01, -0.01]`
-   * 
-   * See also:
-   * - {@link particleSpeedMax}
-   */
-  particleSpeedMin?: Vector3
-  /**
-   * Maximum particle speed.
-   * 
-   * **Default**: `[0.01, 0.01, 0.01]`
-   * 
-   * See also:
-   * - {@link particleSpeedMin}
-   */
-  particleSpeedMax?: Vector3
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   */
-  rgbMultiplier?: number
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   */
-  alphaMultiplier?: number
-  /**
-   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMin?: Vector4
-  /**
-   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMax?: Vector4
   /**
    * Blend mode.
    * 
    * **Default**: {@link BlendMode.Add}
    */
-  blendMode?: BlendMode
+  blendMode: BlendMode
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.75`
+   */
+  unk_ds3_f1_2: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.75`
+   */
+  unk_ds3_f1_3: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `2`
+   */
+  unk_ds3_f1_4: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.1`
+   */
+  unk_ds3_f1_5: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_6: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_7: number
+  /**
+   * The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
+   * 
+   * **Default**: `30`
+   */
+  layers: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_9: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_10: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_11: number
   /**
    * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_14: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_17: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_18: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_19: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_20: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
+  unk_ds3_f1_21: number
+  /**
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
-  unk_ac6_f1_57?: number
+  unk_ds3_f1_22: number
   /**
-   * Unknown integer.
+   * Unknown float.
    * 
    * **Default**: `-1`
    */
-  unk_ac6_f1_58?: number
+  unk_ds3_f1_23: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f1_59?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_60?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_61?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_62?: number
-  /**
-   * Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
-   * 
-   * **Default**: `1`
-   */
-  particleLengthMin?: number
-  /**
-   * Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
-   * 
-   * **Default**: `1`
-   */
-  particleLengthMax?: number
-  /**
-   * Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
-   * 
-   * **Default**: `1`
-   */
-  particleWidthMin?: number
-  /**
-   * Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
-   * 
-   * **Default**: `1`
-   */
-  particleWidthMax?: number
+  unk_ds3_f1_24: number
   /**
    * Unknown float.
    * 
    * **Default**: `1`
    */
-  unk_ac6_f1_67?: number
+  unk_ds3_f1_25: number
   /**
    * Unknown float.
    * 
    * **Default**: `1`
    */
-  unk_ac6_f1_68?: number
-  /**
-   * Multiplier for {@link particleDuration}.
-   * 
-   * **Default**: `1`
-   */
-  particleDurationMultiplier?: number
+  unk_ds3_f1_26: number
   /**
    * Unknown float.
    * 
    * **Default**: `1`
    */
-  unk_ac6_f1_70?: number
+  unk_ds3_f1_27: number
   /**
    * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_71?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_72?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_73?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_74?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_75?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_76?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_77?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_78?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_79?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_80?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_81?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_82?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_83?: number
-  /**
-   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_84?: number
-  /**
-   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_85?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_86?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ac6_f1_87?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_88?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_89?: number
-  /**
-   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
-   * 
-   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
-   * 
-   * **Default**: `0`
-   */
-  limitUpdateDistance?: boolean
-  /**
-   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
-   * 
-   * **Default**: `0`
-   */
-  updateDistance?: number
-  /**
-   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleBounciness}
-   */
-  particleCollision?: boolean
-  /**
-   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleCollision}
-   */
-  particleBounciness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_94?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_95?: number
-  /**
-   * Controls whether or not the particles have a bloom effect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_101?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_102?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_103?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ac6_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_4?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_5?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_6?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_7?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_13?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
    * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
    */
-  minFadeDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
+  unk_ds3_f1_28: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the particle are.
-   * 
-   * **Default**: `1`
-   */
-  shadowDarkness?: number
-  /**
-   * When set to 1, this stops the particles from being shown indoors.
-   * 
-   * Other values are used in AC6, but what they do is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unkHideIndoors?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0.5`
-   */
-  unk_ac6_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: {@link LightingMode.Unlit}
-   */
-  lighting?: LightingMode
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_ac6_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_37?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_39?: number
+  unk_ds3_f1_29: number
+  constructor(props: Partial<Props<LightShaft>> = {}) {
+    super(ActionType.LightShaft, {isAppearance:true,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -31471,21 +24317,44 @@ class GPUSparkParticle extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `0`
    */
   particleFollowFactor: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_3: ScalarValue
   /**
    * Particle acceleration along the X-axis.
+   * 
+   * **Default**: `0`
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
+   * 
+   * **Default**: `0`
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
+   * 
+   * **Default**: `0`
    */
   particleAccelerationZ: ScalarValue
   /**
@@ -31493,15 +24362,21 @@ class GPUSparkParticle extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
   /**
    * The length of the particles.
+   * 
+   * **Default**: `1`
    */
   particleLength: ScalarValue
   /**
    * The width of the particles.
+   * 
+   * **Default**: `0.1`
    */
   particleWidth: ScalarValue
   /**
@@ -31510,8 +24385,15 @@ class GPUSparkParticle extends DataAction {
    * This requires any of the following fields to have a non-zero value:
    * - {@link particleSpeedMin}
    * - {@link particleSpeedMax}
+   * 
+   * **Default**: `0`
    */
   unkParticleAcceleration: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_11: ScalarValue
   /**
    * Downwards acceleration for particles.
@@ -31519,35 +24401,105 @@ class GPUSparkParticle extends DataAction {
    * This requires any of the following fields to have a non-zero value:
    * - {@link particleSpeedMin}
    * - {@link particleSpeedMax}
+   * 
+   * **Default**: `1`
    */
   particleGravity: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_13: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_p2_0: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_p2_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ac6_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ac6_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ac6_p2_5: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p2_6: ScalarValue
   /**
    * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
    */
   texture: number
   /**
    * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
    */
   emitterShape: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_2: number
   /**
    * The size of the emitter.
+   * 
+   * **Default**: `[1, 1, 1]`
    */
   emitterSize: Vector3
   /**
    * The rotation of the emitter.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   emitterRotation: Vector3
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_9: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_10: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_11: number
   /**
    * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
@@ -31558,15 +24510,44 @@ class GPUSparkParticle extends DataAction {
    * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
    * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
    * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
    */
   emitterDistribution: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_13: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_17: number
   /**
    * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link emissionParticleCountMin}
@@ -31576,6 +24557,8 @@ class GPUSparkParticle extends DataAction {
   /**
    * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionParticleCount}
    * - {@link emissionParticleCountMax}
@@ -31583,6 +24566,8 @@ class GPUSparkParticle extends DataAction {
   emissionParticleCountMin: number
   /**
    * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link emissionParticleCount}
@@ -31592,6 +24577,8 @@ class GPUSparkParticle extends DataAction {
   /**
    * The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionIntervalMin}
    * - {@link emissionIntervalMax}
@@ -31599,6 +24586,8 @@ class GPUSparkParticle extends DataAction {
   emissionInterval: number
   /**
    * The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link emissionInterval}
@@ -31608,6 +24597,8 @@ class GPUSparkParticle extends DataAction {
   /**
    * The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionInterval}
    * - {@link emissionIntervalMin}
@@ -31615,21 +24606,44 @@ class GPUSparkParticle extends DataAction {
   emissionIntervalMax: number
   /**
    * If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
+   * 
+   * **Default**: `false`
    */
   limitConcurrentEmissions: boolean
   /**
    * The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
+   * 
+   * **Default**: `0`
    */
   concurrentEmissionsLimit: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_26: number
   /**
    * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
    */
   particleDuration: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_29: number
   /**
    * Particle position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleOffsetMin}
@@ -31638,15 +24652,26 @@ class GPUSparkParticle extends DataAction {
   particleOffset: Vector3
   /**
    * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMin: Vector3
   /**
    * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMax: Vector3
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_39: number
   /**
    * Minimum particle speed.
+   * 
+   * **Default**: `[-0.01, -0.01, -0.01]`
    * 
    * See also:
    * - {@link particleSpeedMax}
@@ -31655,96 +24680,258 @@ class GPUSparkParticle extends DataAction {
   /**
    * Maximum particle speed.
    * 
+   * **Default**: `[0.01, 0.01, 0.01]`
+   * 
    * See also:
    * - {@link particleSpeedMin}
    */
   particleSpeedMax: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    */
   rgbMultiplier: number
   /**
    * Alpha multiplier.
+   * 
+   * **Default**: `1`
    */
   alphaMultiplier: number
   /**
    * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMin: Vector4
   /**
    * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMax: Vector4
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode: BlendMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_57: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_58: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_59: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_60: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_61: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_62: number
   /**
    * Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
+   * 
+   * **Default**: `1`
    */
   particleLengthMin: number
   /**
    * Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
+   * 
+   * **Default**: `1`
    */
   particleLengthMax: number
   /**
    * Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   * 
+   * **Default**: `1`
    */
   particleWidthMin: number
   /**
    * Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   * 
+   * **Default**: `1`
    */
   particleWidthMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_67: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_68: number
   /**
    * Multiplier for {@link particleDuration}.
+   * 
+   * **Default**: `1`
    */
   particleDurationMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_70: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_71: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_72: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_73: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_74: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_75: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_76: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_77: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_78: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_79: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_80: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_81: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_82: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_83: number
   /**
    * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
+   * 
+   * **Default**: `0`
    */
   unk_ac6_f1_84: number
   /**
    * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
+   * 
+   * **Default**: `0`
    */
   unk_ac6_f1_85: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_86: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ac6_f1_87: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_88: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_89: number
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * 
+   * **Default**: `0`
    */
   limitUpdateDistance: boolean
   /**
    * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   * 
+   * **Default**: `0`
    */
   updateDistance: number
   /**
    * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleBounciness}
@@ -31753,14 +24940,28 @@ class GPUSparkParticle extends DataAction {
   /**
    * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleCollision}
    */
   particleBounciness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_94: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_95: number
   /**
    * Controls whether or not the particles have a bloom effect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -31773,26 +24974,113 @@ class GPUSparkParticle extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_101: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_102: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_103: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ac6_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_4: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_5: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_6: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_7: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_13: number
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
@@ -31800,6 +25088,8 @@ class GPUSparkParticle extends DataAction {
    * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -31814,6 +25104,8 @@ class GPUSparkParticle extends DataAction {
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minDistance}
    * - {@link maxFadeDistance}
@@ -31826,6 +25118,8 @@ class GPUSparkParticle extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -31842,6 +25136,8 @@ class GPUSparkParticle extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -31852,6 +25148,8 @@ class GPUSparkParticle extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -31864,6 +25162,8 @@ class GPUSparkParticle extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -31872,1020 +25172,132 @@ class GPUSparkParticle extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `1`
    */
   shadowDarkness: number
   /**
    * When set to 1, this stops the particles from being shown indoors.
    * 
    * Other values are used in AC6, but what they do is unknown.
+   * 
+   * **Default**: `0`
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_33: number
-  unk_ac6_f2_34: number
-  lighting: LightingMode
-  unk_ac6_f2_36: number
-  unk_ac6_f2_37: number
-  unk_ac6_f2_38: number
-  unk_ac6_f2_39: number
-  constructor(props: GPUSparkParticleParams = {}) {
-    super(ActionType.GPUSparkParticle, {isAppearance:true,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface GPUSparkCorrectParticleParams {
-  /**
-   * Controls how well the particles follow the node if it moves.
-   * 
-   * **Default**: `0`
-   */
-  particleFollowFactor?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_3?: ScalarValue
-  /**
-   * Particle acceleration along the X-axis.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationX?: ScalarValue
-  /**
-   * Particle acceleration along the Y-axis.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationY?: ScalarValue
-  /**
-   * Particle acceleration along the Z-axis.
-   * 
-   * **Default**: `0`
-   */
-  particleAccelerationZ?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  color?: Vector4Value
-  /**
-   * The length of the particles.
-   * 
-   * **Default**: `1`
-   */
-  particleLength?: ScalarValue
-  /**
-   * The width of the particles.
-   * 
-   * **Default**: `0.1`
-   */
-  particleWidth?: ScalarValue
-  /**
-   * Similar to {@link particleAccelerationZ}, but this does not go exactly north?
-   * 
-   * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedMin}
-   * - {@link particleSpeedMax}
-   * 
-   * **Default**: `0`
-   */
-  unkParticleAcceleration?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_11?: ScalarValue
-  /**
-   * Downwards acceleration for particles.
-   * 
-   * This requires any of the following fields to have a non-zero value:
-   * - {@link particleSpeedMin}
-   * - {@link particleSpeedMax}
-   * 
-   * **Default**: `1`
-   */
-  particleGravity?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p1_13?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_p2_0?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_p2_1?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ac6_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ac6_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ac6_p2_5?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_p2_6?: ScalarValue
-  /**
-   * The ID of the texture of the particles.
-   * 
-   * **Default**: `1`
-   */
-  texture?: number
-  /**
-   * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
-   * 
-   * **Default**: {@link EmitterShape.Box}
-   */
-  emitterShape?: EmitterShape
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_2?: number
-  /**
-   * The size of the emitter.
-   * 
-   * **Default**: `[1, 1, 1]`
-   */
-  emitterSize?: Vector3
-  /**
-   * The rotation of the emitter.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  emitterRotation?: Vector3
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_9?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_10?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_11?: number
-  /**
-   * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
-   * | Shape | Behavior |
-   * |-|-|
-   * | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
-   * | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
-   * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
-   * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
-   * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
-   * 
-   * **Default**: `0`
-   */
-  emitterDistribution?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_13?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_17?: number
-  /**
-   * The number of particles to emit per emission.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link emissionParticleCountMin}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCount?: number
-  /**
-   * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMax}
-   */
-  emissionParticleCountMin?: number
-  /**
-   * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionParticleCount}
-   * - {@link emissionParticleCountMin}
-   */
-  emissionParticleCountMax?: number
-  /**
-   * The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionIntervalMin}
-   * - {@link emissionIntervalMax}
-   */
-  emissionInterval?: number
-  /**
-   * The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionInterval}
-   * - {@link emissionIntervalMax}
-   */
-  emissionIntervalMin?: number
-  /**
-   * The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link emissionInterval}
-   * - {@link emissionIntervalMin}
-   */
-  emissionIntervalMax?: number
-  /**
-   * If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
-   * 
-   * **Default**: `false`
-   */
-  limitConcurrentEmissions?: boolean
-  /**
-   * The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
-   * 
-   * **Default**: `0`
-   */
-  concurrentEmissionsLimit?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_26?: number
-  /**
-   * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `1`
-   */
-  particleDuration?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_29?: number
-  /**
-   * Particle position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link particleOffsetMin}
-   * - {@link particleOffsetMax}
-   */
-  particleOffset?: Vector3
-  /**
-   * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMin?: Vector3
-  /**
-   * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
-   * 
-   * **Default**: `[0, 0, 0]`
-   */
-  particleOffsetMax?: Vector3
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_39?: number
-  /**
-   * Minimum particle speed.
-   * 
-   * **Default**: `[-0.01, -0.01, -0.01]`
-   * 
-   * See also:
-   * - {@link particleSpeedMax}
-   */
-  particleSpeedMin?: Vector3
-  /**
-   * Maximum particle speed.
-   * 
-   * **Default**: `[0.01, 0.01, 0.01]`
-   * 
-   * See also:
-   * - {@link particleSpeedMin}
-   */
-  particleSpeedMax?: Vector3
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   */
-  rgbMultiplier?: number
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   */
-  alphaMultiplier?: number
-  /**
-   * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMin?: Vector4
-  /**
-   * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
-   * 
-   * **Default**: `[0, 0, 0, 0]`
-   */
-  colorMax?: Vector4
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Add}
-   */
-  blendMode?: BlendMode
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_57?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_58?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_59?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_60?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_61?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_62?: number
-  /**
-   * Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
-   * 
-   * **Default**: `1`
-   */
-  particleLengthMin?: number
-  /**
-   * Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
-   * 
-   * **Default**: `1`
-   */
-  particleLengthMax?: number
-  /**
-   * Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
-   * 
-   * **Default**: `1`
-   */
-  particleWidthMin?: number
-  /**
-   * Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
-   * 
-   * **Default**: `1`
-   */
-  particleWidthMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_67?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_68?: number
-  /**
-   * Multiplier for {@link particleDuration}.
-   * 
-   * **Default**: `1`
-   */
-  particleDurationMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_70?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_71?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_72?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_73?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_74?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_75?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_76?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_77?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_78?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_79?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_80?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_81?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_82?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_83?: number
-  /**
-   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_84?: number
-  /**
-   * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_85?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_86?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ac6_f1_87?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_88?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_89?: number
-  /**
-   * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
-   * 
-   * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
-   * 
-   * **Default**: `0`
-   */
-  limitUpdateDistance?: boolean
-  /**
-   * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
-   * 
-   * **Default**: `0`
-   */
-  updateDistance?: number
-  /**
-   * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link particleBounciness}
-   */
-  particleCollision?: boolean
-  /**
-   * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link particleCollision}
-   */
-  particleBounciness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_94?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_95?: number
-  /**
-   * Controls whether or not the particles have a bloom effect.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_101?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_102?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_103?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ac6_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_4?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_5?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_6?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_7?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_13?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the particle are.
-   * 
-   * **Default**: `1`
-   */
-  shadowDarkness?: number
-  /**
-   * When set to 1, this stops the particles from being shown indoors.
-   * 
-   * Other values are used in AC6, but what they do is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unkHideIndoors?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_33?: number
   /**
    * Unknown float.
    * 
    * **Default**: `0.5`
    */
-  unk_ac6_f2_34?: number
+  unk_ac6_f2_34: number
   /**
    * Unknown integer.
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting?: LightingMode
+  lighting: LightingMode
   /**
    * Unknown integer.
    * 
    * **Default**: `-2`
    */
-  unk_ac6_f2_36?: number
+  unk_ac6_f2_36: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f2_37?: number
+  unk_ac6_f2_37: number
   /**
    * Unknown float.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f2_38?: number
+  unk_ac6_f2_38: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_ac6_f2_39?: number
+  unk_ac6_f2_39: number
+  constructor(props: Partial<Props<GPUSparkParticle>> = {}) {
+    super(ActionType.GPUSparkParticle, {isAppearance:true,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -32906,21 +25318,44 @@ class GPUSparkCorrectParticle extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Controls how well the particles follow the node if it moves.
+   * 
+   * **Default**: `0`
    */
   particleFollowFactor: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_3: ScalarValue
   /**
    * Particle acceleration along the X-axis.
+   * 
+   * **Default**: `0`
    */
   particleAccelerationX: ScalarValue
   /**
    * Particle acceleration along the Y-axis.
+   * 
+   * **Default**: `0`
    */
   particleAccelerationY: ScalarValue
   /**
    * Particle acceleration along the Z-axis.
+   * 
+   * **Default**: `0`
    */
   particleAccelerationZ: ScalarValue
   /**
@@ -32928,15 +25363,21 @@ class GPUSparkCorrectParticle extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   color: Vector4Value
   /**
    * The length of the particles.
+   * 
+   * **Default**: `1`
    */
   particleLength: ScalarValue
   /**
    * The width of the particles.
+   * 
+   * **Default**: `0.1`
    */
   particleWidth: ScalarValue
   /**
@@ -32945,8 +25386,15 @@ class GPUSparkCorrectParticle extends DataAction {
    * This requires any of the following fields to have a non-zero value:
    * - {@link particleSpeedMin}
    * - {@link particleSpeedMax}
+   * 
+   * **Default**: `0`
    */
   unkParticleAcceleration: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_11: ScalarValue
   /**
    * Downwards acceleration for particles.
@@ -32954,35 +25402,105 @@ class GPUSparkCorrectParticle extends DataAction {
    * This requires any of the following fields to have a non-zero value:
    * - {@link particleSpeedMin}
    * - {@link particleSpeedMax}
+   * 
+   * **Default**: `1`
    */
   particleGravity: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p1_13: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_p2_0: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_p2_1: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ac6_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ac6_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ac6_p2_5: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_p2_6: ScalarValue
   /**
    * The ID of the texture of the particles.
+   * 
+   * **Default**: `1`
    */
   texture: number
   /**
    * Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+   * 
+   * **Default**: {@link EmitterShape.Box}
    */
   emitterShape: EmitterShape
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_2: number
   /**
    * The size of the emitter.
+   * 
+   * **Default**: `[1, 1, 1]`
    */
   emitterSize: Vector3
   /**
    * The rotation of the emitter.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   emitterRotation: Vector3
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_9: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_10: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_11: number
   /**
    * Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
@@ -32993,15 +25511,44 @@ class GPUSparkCorrectParticle extends DataAction {
    * | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
    * | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
    * | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+   * 
+   * **Default**: `0`
    */
   emitterDistribution: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_13: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_17: number
   /**
    * The number of particles to emit per emission.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link emissionParticleCountMin}
@@ -33011,6 +25558,8 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionParticleCount}
    * - {@link emissionParticleCountMax}
@@ -33018,6 +25567,8 @@ class GPUSparkCorrectParticle extends DataAction {
   emissionParticleCountMin: number
   /**
    * The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link emissionParticleCount}
@@ -33027,6 +25578,8 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionIntervalMin}
    * - {@link emissionIntervalMax}
@@ -33034,6 +25587,8 @@ class GPUSparkCorrectParticle extends DataAction {
   emissionInterval: number
   /**
    * The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link emissionInterval}
@@ -33043,6 +25598,8 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link emissionInterval}
    * - {@link emissionIntervalMin}
@@ -33050,21 +25607,44 @@ class GPUSparkCorrectParticle extends DataAction {
   emissionIntervalMax: number
   /**
    * If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
+   * 
+   * **Default**: `false`
    */
   limitConcurrentEmissions: boolean
   /**
    * The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
+   * 
+   * **Default**: `0`
    */
   concurrentEmissionsLimit: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_26: number
   /**
    * The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `1`
    */
   particleDuration: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_29: number
   /**
    * Particle position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    * 
    * See also:
    * - {@link particleOffsetMin}
@@ -33073,15 +25653,26 @@ class GPUSparkCorrectParticle extends DataAction {
   particleOffset: Vector3
   /**
    * Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMin: Vector3
   /**
    * Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+   * 
+   * **Default**: `[0, 0, 0]`
    */
   particleOffsetMax: Vector3
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_39: number
   /**
    * Minimum particle speed.
+   * 
+   * **Default**: `[-0.01, -0.01, -0.01]`
    * 
    * See also:
    * - {@link particleSpeedMax}
@@ -33090,96 +25681,258 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Maximum particle speed.
    * 
+   * **Default**: `[0.01, 0.01, 0.01]`
+   * 
    * See also:
    * - {@link particleSpeedMin}
    */
   particleSpeedMax: Vector3
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    */
   rgbMultiplier: number
   /**
    * Alpha multiplier.
+   * 
+   * **Default**: `1`
    */
   alphaMultiplier: number
   /**
    * Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMin: Vector4
   /**
    * Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
+   * 
+   * **Default**: `[0, 0, 0, 0]`
    */
   colorMax: Vector4
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode: BlendMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_57: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_58: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_59: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_60: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_61: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_62: number
   /**
    * Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
+   * 
+   * **Default**: `1`
    */
   particleLengthMin: number
   /**
    * Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
+   * 
+   * **Default**: `1`
    */
   particleLengthMax: number
   /**
    * Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   * 
+   * **Default**: `1`
    */
   particleWidthMin: number
   /**
    * Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
+   * 
+   * **Default**: `1`
    */
   particleWidthMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_67: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_68: number
   /**
    * Multiplier for {@link particleDuration}.
+   * 
+   * **Default**: `1`
    */
   particleDurationMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_70: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_71: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_72: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_73: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_74: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_75: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_76: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_77: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_78: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_79: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_80: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_81: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_82: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_83: number
   /**
    * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
+   * 
+   * **Default**: `0`
    */
   unk_ac6_f1_84: number
   /**
    * Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
+   * 
+   * **Default**: `0`
    */
   unk_ac6_f1_85: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_86: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ac6_f1_87: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_88: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_89: number
   /**
    * If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+   * 
+   * **Default**: `0`
    */
   limitUpdateDistance: boolean
   /**
    * Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+   * 
+   * **Default**: `0`
    */
   updateDistance: number
   /**
    * When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link particleBounciness}
@@ -33188,14 +25941,28 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link particleCollision}
    */
   particleBounciness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_94: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_95: number
   /**
    * Controls whether or not the particles have a bloom effect.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -33208,26 +25975,113 @@ class GPUSparkCorrectParticle extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_101: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_102: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_103: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ac6_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_4: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_5: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_6: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_7: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_13: number
   /**
    * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
@@ -33235,6 +26089,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * This requires {@link minFadeDistance} to be set to a positive value or 0.
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -33249,6 +26105,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minDistance}
    * - {@link maxFadeDistance}
@@ -33261,6 +26119,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -33277,6 +26137,8 @@ class GPUSparkCorrectParticle extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -33287,6 +26149,8 @@ class GPUSparkCorrectParticle extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -33299,6 +26163,8 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -33307,704 +26173,132 @@ class GPUSparkCorrectParticle extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_28: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_29: number
   /**
    * Controls how dark shaded parts of the particle are.
+   * 
+   * **Default**: `1`
    */
   shadowDarkness: number
   /**
    * When set to 1, this stops the particles from being shown indoors.
    * 
    * Other values are used in AC6, but what they do is unknown.
+   * 
+   * **Default**: `0`
    */
   unkHideIndoors: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.5`
+   */
   unk_ac6_f2_34: number
-  lighting: LightingMode
-  unk_ac6_f2_36: number
-  unk_ac6_f2_37: number
-  unk_ac6_f2_38: number
-  unk_ac6_f2_39: number
-  constructor(props: GPUSparkCorrectParticleParams = {}) {
-    super(ActionType.GPUSparkCorrectParticle, {isAppearance:true,isParticle:false})
-    this.assign(props)
-  }
-}
-
-export interface DynamicTracerParams {
-  /**
-   * Texture ID.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  texture?: ScalarValue
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Normal}
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  blendMode?: BlendMode | ScalarProperty
-  /**
-   * The width of the trail.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  width?: ScalarValue
-  /**
-   * Multiplier for {@link width}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   */
-  widthMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_p1_3?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  alphaFadeThreshold?: ScalarValue
-  /**
-   * The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
-   * 
-   * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndex?: ScalarValue
-  /**
-   * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  frameIndexOffset?: ScalarValue
-  /**
-   * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
-   * 
-   * **Default**: `0.1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  textureFraction?: ScalarValue
-  /**
-   * Controls how fast the UV coordinates should move horizontally.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  speedU?: ScalarValue
-  /**
-   * Controls how much the UV coordinates should be randomly offset by per segment.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  varianceV?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_p1_13?: ScalarValue
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link normalMap}
-   */
-  distortionIntensity?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_ds3_p2_5?: Vector4Value
-  /**
-   * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
-   * 
-   * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaThreshold?: ScalarValue
-  /**
-   * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
-   * 
-   * **Default**: {@link TracerOrientationMode.LocalZ}
-   */
-  orientation?: TracerOrientationMode
-  /**
-   * Normal map texture ID.
-   * 
-   * This is used to control the distortion effect of the trail.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link distortionIntensity}
-   */
-  normalMap?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
-   * 
-   * **Default**: `0`
-   */
-  segmentInterval?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
-   * 
-   * **Default**: `1`
-   */
-  segmentDuration?: number
-  /**
-   * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
-   * 
-   * **Default**: `100`
-   */
-  concurrentSegments?: number
   /**
    * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_8?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link totalFrames}
-   */
-  columns?: number
-  /**
-   * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link columns}
-   */
-  totalFrames?: number
-  /**
-   * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
-   * 
-   * **Default**: `true`
-   */
-  attachedUV?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_14?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_15?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_16?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_20?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_0?: number
-  /**
-   * Unknown boolean.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_1?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_ds3_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_3?: number
-  /**
-   * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link bloomColor}
-   */
-  bloom?: boolean
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   * 
-   * See also:
-   * - {@link bloom}
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_28?: number
-  /**
-   * Unknown float.
-   * 
-   * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f2_29?: number
-  /**
-   * Controls how dark shaded parts of the trail are.
-   * 
-   * **Default**: `0`
-   */
-  shadowDarkness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f2_32?: number
-  /**
-   * Specular texture ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link glossiness}
-   * - {@link specularity}
-   */
-  specular?: number
-  /**
-   * Controls how sharp the specular highlights are.
-   * 
-   * **Default**: `0.25`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link specularity}
-   */
-  glossiness?: number
-  /**
-   * Controls how the trail is lit. See {@link LightingMode} for more information.
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting?: LightingMode
+  lighting: LightingMode
   /**
    * Unknown integer.
    * 
    * **Default**: `-2`
    */
-  unk_sdt_f2_36?: number
+  unk_ac6_f2_36: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_sdt_f2_37?: number
+  unk_ac6_f2_37: number
   /**
-   * Controls how bright the specular highlights are.
+   * Unknown float.
    * 
-   * **Default**: `0.5`
-   * 
-   * See also:
-   * - {@link lighting}
-   * - {@link specular}
-   * - {@link glossiness}
+   * **Default**: `0`
    */
-  specularity?: number
+  unk_ac6_f2_38: number
   /**
    * Unknown integer.
    * 
    * **Default**: `0`
    */
-  unk_er_f2_39?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f2_40?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f2_41?: number
+  unk_ac6_f2_39: number
+  constructor(props: Partial<Props<GPUSparkCorrectParticle>> = {}) {
+    super(ActionType.GPUSparkCorrectParticle, {isAppearance:true,isParticle:false})
+    this.assign(props)
+  }
 }
 
 /**
@@ -34021,11 +26315,15 @@ class DynamicTracer extends DataAction {
   /**
    * Texture ID.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   texture: ScalarValue
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Normal}
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
@@ -34033,21 +26331,37 @@ class DynamicTracer extends DataAction {
   /**
    * The width of the trail.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   width: ScalarValue
   /**
    * Multiplier for {@link width}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   widthMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_p1_3: ScalarValue
   /**
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -34061,6 +26375,8 @@ class DynamicTracer extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -34072,6 +26388,8 @@ class DynamicTracer extends DataAction {
    * Color multiplier.
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -34085,6 +26403,8 @@ class DynamicTracer extends DataAction {
    * 
    * Values above this threshold will be stretched to fill the alpha range, so values near the threshold will be less visible, creating a smooth transition between the parts that have been hidden by the threshold and the ones that are still visible.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   alphaFadeThreshold: ScalarValue
@@ -34093,11 +26413,15 @@ class DynamicTracer extends DataAction {
    * 
    * Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   frameIndex: ScalarValue
   /**
    * Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -34105,11 +26429,15 @@ class DynamicTracer extends DataAction {
   /**
    * Controls how much of the texture's width is used per segment. If {@link attachedUV} is enabled, this instead controls how much of the texture's width to use for the entire trail.
    * 
+   * **Default**: `0.1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   textureFraction: ScalarValue
   /**
    * Controls how fast the UV coordinates should move horizontally.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
@@ -34117,12 +26445,21 @@ class DynamicTracer extends DataAction {
   /**
    * Controls how much the UV coordinates should be randomly offset by per segment.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   varianceV: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_p1_13: ScalarValue
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -34130,11 +26467,15 @@ class DynamicTracer extends DataAction {
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
   /**
    * Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -34142,19 +26483,38 @@ class DynamicTracer extends DataAction {
    * - {@link normalMap}
    */
   distortionIntensity: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_ds3_p2_5: Vector4Value
   /**
    * Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
    * 
    * This threshold creates a hard cut-off between visible and not visible, which is unlike the {@link alphaFadeThreshold}.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaThreshold: ScalarValue
   /**
    * Tracer orientation mode. See {@link TracerOrientationMode} for more information.
+   * 
+   * **Default**: {@link TracerOrientationMode.LocalZ}
    */
   orientation: TracerOrientationMode
   /**
@@ -34162,27 +26522,52 @@ class DynamicTracer extends DataAction {
    * 
    * This is used to control the distortion effect of the trail.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link distortionIntensity}
    */
   normalMap: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how many seconds to wait between new segments being created. Lower values produce a smoother trail.
+   * 
+   * **Default**: `0`
    */
   segmentInterval: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
+   * 
+   * **Default**: `1`
    */
   segmentDuration: number
   /**
    * The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
+   * 
+   * **Default**: `100`
    */
   concurrentSegments: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_9: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link totalFrames}
@@ -34191,28 +26576,107 @@ class DynamicTracer extends DataAction {
   /**
    * To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link columns}
    */
   totalFrames: number
   /**
    * Controls whether or not the UV of the trail should be attached to the node or not. If it is attached, the texture will slide along the segments to follow the source wherever it moves, as if it was a flag attached to a pole. If it is not attached, the texture will stay where it was when the segment was created, like a skid mark on a road where the road is the segments and the mark is the texture, it wouldn't follow the car/node that made it.
+   * 
+   * **Default**: `true`
    */
   attachedUV: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_14: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_15: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_16: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_20: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_0: number
+  /**
+   * Unknown boolean.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_1: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_ds3_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_3: number
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
@@ -34220,6 +26684,8 @@ class DynamicTracer extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link bloomColor}
@@ -34232,19 +26698,48 @@ class DynamicTracer extends DataAction {
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
+   * **Default**: `[1, 1, 1, 0]`
+   * 
    * See also:
    * - {@link bloom}
    */
   bloomColor: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -34261,6 +26756,8 @@ class DynamicTracer extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -34273,6 +26770,8 @@ class DynamicTracer extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -34289,6 +26788,8 @@ class DynamicTracer extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -34299,6 +26800,8 @@ class DynamicTracer extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -34311,6 +26814,8 @@ class DynamicTracer extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -34319,34 +26824,92 @@ class DynamicTracer extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f2_28: number
   /**
    * Unknown float.
    * 
    * This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f2_29: number
   /**
    * Controls how dark shaded parts of the trail are.
+   * 
+   * **Default**: `0`
    */
   shadowDarkness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_31: number
   /**
    * Unknown integer.
    * 
    * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * 
+   * **Default**: `0`
    */
   unk_sdt_f2_32: number
   /**
    * Specular texture ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link lighting}
@@ -34357,6 +26920,8 @@ class DynamicTracer extends DataAction {
   /**
    * Controls how sharp the specular highlights are.
    * 
+   * **Default**: `0.25`
+   * 
    * See also:
    * - {@link lighting}
    * - {@link specular}
@@ -34365,12 +26930,26 @@ class DynamicTracer extends DataAction {
   glossiness: number
   /**
    * Controls how the trail is lit. See {@link LightingMode} for more information.
+   * 
+   * **Default**: {@link LightingMode.Unlit}
    */
   lighting: LightingMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_sdt_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f2_37: number
   /**
    * Controls how bright the specular highlights are.
+   * 
+   * **Default**: `0.5`
    * 
    * See also:
    * - {@link lighting}
@@ -34378,46 +26957,28 @@ class DynamicTracer extends DataAction {
    * - {@link glossiness}
    */
   specularity: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_39: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f2_40: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f2_41: number
-  constructor(props: DynamicTracerParams = {}) {
+  constructor(props: Partial<Props<DynamicTracer>> = {}) {
     super(ActionType.DynamicTracer, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface WaterInteractionParams {
-  /**
-   * The ID for a texture that controls the shape of the interaction.
-   * 
-   * **Default**: `50004`
-   */
-  texture?: number
-  /**
-   * Controls how deep to push the water, or how intense the ripples caused by the interaction are.
-   * 
-   * **Default**: `1`
-   */
-  depth?: number
-  /**
-   * Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
-   * 
-   * **Default**: `1`
-   */
-  size?: number
-  /**
-   * The time it takes for the water to be pushed down to the {@link depth} in seconds.
-   * 
-   * **Default**: `0.15`
-   */
-  descent?: number
-  /**
-   * The duration of the interaction in seconds. Basically how long to hold the water pressed down.
-   * 
-   * **Default**: `0.15`
-   */
-  duration?: number
 }
 
 /**
@@ -34431,789 +26992,38 @@ class WaterInteraction extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The ID for a texture that controls the shape of the interaction.
+   * 
+   * **Default**: `50004`
    */
   texture: number
   /**
    * Controls how deep to push the water, or how intense the ripples caused by the interaction are.
+   * 
+   * **Default**: `1`
    */
   depth: number
   /**
    * Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
+   * 
+   * **Default**: `1`
    */
   size: number
   /**
    * The time it takes for the water to be pushed down to the {@link depth} in seconds.
+   * 
+   * **Default**: `0.15`
    */
   descent: number
   /**
    * The duration of the interaction in seconds. Basically how long to hold the water pressed down.
+   * 
+   * **Default**: `0.15`
    */
   duration: number
-  constructor(props: WaterInteractionParams = {}) {
+  constructor(props: Partial<Props<WaterInteraction>> = {}) {
     super(ActionType.WaterInteraction, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface LensFlareParams {
-  /**
-   * Layer 1 width.
-   * 
-   * **Default**: `1`
-   */
-  layer1Width?: ScalarValue
-  /**
-   * Layer 1 height.
-   * 
-   * **Default**: `1`
-   */
-  layer1Height?: ScalarValue
-  /**
-   * Layer 1 color.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  layer1Color?: Vector4Value
-  /**
-   * Layer 2 width.
-   * 
-   * **Default**: `1`
-   */
-  layer2Width?: ScalarValue
-  /**
-   * Layer 2 height.
-   * 
-   * **Default**: `1`
-   */
-  layer2Height?: ScalarValue
-  /**
-   * Layer 2 color.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  layer2Color?: Vector4Value
-  /**
-   * Layer 3 width.
-   * 
-   * **Default**: `1`
-   */
-  layer3Width?: ScalarValue
-  /**
-   * Layer 3 height.
-   * 
-   * **Default**: `1`
-   */
-  layer3Height?: ScalarValue
-  /**
-   * Layer 3 color.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  layer3Color?: Vector4Value
-  /**
-   * Layer 4 width.
-   * 
-   * **Default**: `1`
-   */
-  layer4Width?: ScalarValue
-  /**
-   * Layer 4 height.
-   * 
-   * **Default**: `1`
-   */
-  layer4Height?: ScalarValue
-  /**
-   * Layer 4 color.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  layer4Color?: Vector4Value
-  /**
-   * Layer 1 texture ID.
-   * 
-   * **Default**: `1`
-   */
-  layer1?: number
-  /**
-   * Layer 2 texture ID.
-   * 
-   * **Default**: `0`
-   */
-  layer2?: number
-  /**
-   * Layer 3 texture ID.
-   * 
-   * **Default**: `0`
-   */
-  layer3?: number
-  /**
-   * Layer 4 texture ID.
-   * 
-   * This layer seems to work a bit differently from the others in Sekiro.
-   * 
-   * **Default**: `0`
-   */
-  layer4?: number
-  /**
-   * Blend mode.
-   * 
-   * **Default**: {@link BlendMode.Add}
-   */
-  blendMode?: BlendMode
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_4?: number
-  /**
-   * Diameter of the lens flare source sphere.
-   * 
-   * The opacity of the lens flare depends on how much of the source is in view.
-   * 
-   * **Default**: `1`
-   */
-  sourceSize?: number
-  /**
-   * The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
-   * 
-   * **Default**: `1`
-   */
-  opacityTransitionDuration?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_8?: number
-  /**
-   * Number of copies of layer 1. Why this exists is unknown, they all just stack on top of each other.
-   * 
-   * Each copy will pick its own random values for the scale variation.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1ScaleVariationX}
-   * - {@link layer1ScaleVariationY}
-   */
-  layer1Count?: number
-  /**
-   * The {@link layer1Width layer's width} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Count}
-   * - {@link layer1UniformScale}
-   * - {@link layer1ScaleVariationY}
-   */
-  layer1ScaleVariationX?: number
-  /**
-   * The {@link layer1Height layer's height} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer1Count}
-   * - {@link layer1UniformScale}
-   * - {@link layer1ScaleVariationX}
-   */
-  layer1ScaleVariationY?: number
-  /**
-   * When enabled, the {@link layer1Width layer's width} also controls the {@link layer1Height height}, and the height property is ignored. The same is also true for the scale variation fields.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link layer1Width}
-   * - {@link layer1Height}
-   * - {@link layer1ScaleVariationX}
-   * - {@link layer1ScaleVariationX}
-   */
-  layer1UniformScale?: boolean
-  /**
-   * Multiplier for the {@link layer1Color layer's color}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link layer1Color}
-   */
-  layer1ColorMultiplier?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_17?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_18?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_19?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_er_f1_20?: number
-  /**
-   * Number of copies of layer 2. Why this exists is unknown, they all just stack on top of each other.
-   * 
-   * Each copy will pick its own random values for the scale variation.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2ScaleVariationX}
-   * - {@link layer2ScaleVariationY}
-   */
-  layer2Count?: number
-  /**
-   * The {@link layer2Width layer's width} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Count}
-   * - {@link layer2UniformScale}
-   * - {@link layer2ScaleVariationY}
-   */
-  layer2ScaleVariationX?: number
-  /**
-   * The {@link layer2Height layer's height} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer2Count}
-   * - {@link layer2UniformScale}
-   * - {@link layer2ScaleVariationX}
-   */
-  layer2ScaleVariationY?: number
-  /**
-   * When enabled, the {@link layer2Width layer's width} also controls the {@link layer2Height height}, and the height property is ignored. The same is also true for the scale variation fields.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link layer2Width}
-   * - {@link layer2Height}
-   * - {@link layer2ScaleVariationX}
-   * - {@link layer2ScaleVariationX}
-   */
-  layer2UniformScale?: boolean
-  /**
-   * Multiplier for the {@link layer2Color layer's color}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link layer2Color}
-   */
-  layer2ColorMultiplier?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_29?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_30?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_31?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_er_f1_32?: number
-  /**
-   * Number of copies of layer 3. Why this exists is unknown, they all just stack on top of each other.
-   * 
-   * Each copy will pick its own random values for the scale variation.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3ScaleVariationX}
-   * - {@link layer3ScaleVariationY}
-   */
-  layer3Count?: number
-  /**
-   * The {@link layer3Width layer's width} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Count}
-   * - {@link layer3UniformScale}
-   * - {@link layer3ScaleVariationY}
-   */
-  layer3ScaleVariationX?: number
-  /**
-   * The {@link layer3Height layer's height} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer3Count}
-   * - {@link layer3UniformScale}
-   * - {@link layer3ScaleVariationX}
-   */
-  layer3ScaleVariationY?: number
-  /**
-   * When enabled, the {@link layer3Width layer's width} also controls the {@link layer3Height height}, and the height property is ignored. The same is also true for the scale variation fields.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link layer3Width}
-   * - {@link layer3Height}
-   * - {@link layer3ScaleVariationX}
-   * - {@link layer3ScaleVariationX}
-   */
-  layer3UniformScale?: boolean
-  /**
-   * Multiplier for the {@link layer3Color layer's color}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link layer3Color}
-   */
-  layer3ColorMultiplier?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_41?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_42?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_43?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_er_f1_44?: number
-  /**
-   * Number of copies of layer 4. Why this exists is unknown, they all just stack on top of each other.
-   * 
-   * Each copy will pick its own random values for the scale variation.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4ScaleVariationX}
-   * - {@link layer4ScaleVariationY}
-   */
-  layer4Count?: number
-  /**
-   * The {@link layer4Width layer's width} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Count}
-   * - {@link layer4UniformScale}
-   * - {@link layer4ScaleVariationY}
-   */
-  layer4ScaleVariationX?: number
-  /**
-   * The {@link layer4Height layer's height} is multiplied by a random value between this and 1.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link layer4Count}
-   * - {@link layer4UniformScale}
-   * - {@link layer4ScaleVariationX}
-   */
-  layer4ScaleVariationY?: number
-  /**
-   * When enabled, the {@link layer4Width layer's width} also controls the {@link layer4Height height}, and the height property is ignored. The same is also true for the scale variation fields.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link layer4Width}
-   * - {@link layer4Height}
-   * - {@link layer4ScaleVariationX}
-   * - {@link layer4ScaleVariationX}
-   */
-  layer4UniformScale?: boolean
-  /**
-   * Multiplier for the {@link layer4Color layer's color}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link layer4Color}
-   */
-  layer4ColorMultiplier?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_53?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_54?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_55?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_er_f1_56?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_57?: number
-  /**
-   * When enabled, this allows the lens flare to have a bloom effect.
-   * 
-   * Does not seem to work in Sekiro.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link layer1BloomColor}
-   * - {@link layer2BloomColor}
-   * - {@link layer3BloomColor}
-   * - {@link layer4BloomColor}
-   */
-  bloom?: boolean
-  /**
-   * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link layer1Color}
-   */
-  layer1BloomColor?: Vector4
-  /**
-   * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link layer2Color}
-   */
-  layer2BloomColor?: Vector4
-  /**
-   * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link layer3Color}
-   */
-  layer3BloomColor?: Vector4
-  /**
-   * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * See also:
-   * - {@link bloom}
-   * - {@link layer4Color}
-   */
-  layer4BloomColor?: Vector4
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_75?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_76?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_77?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_78?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_79?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_80?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_6?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_7?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_24?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_26?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_33?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_er_f2_36?: number
 }
 
 /**
@@ -35227,90 +27037,140 @@ class LensFlare extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * Layer 1 width.
+   * 
+   * **Default**: `1`
    */
   layer1Width: ScalarValue
   /**
    * Layer 1 height.
+   * 
+   * **Default**: `1`
    */
   layer1Height: ScalarValue
   /**
    * Layer 1 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    */
   layer1Color: Vector4Value
   /**
    * Layer 2 width.
+   * 
+   * **Default**: `1`
    */
   layer2Width: ScalarValue
   /**
    * Layer 2 height.
+   * 
+   * **Default**: `1`
    */
   layer2Height: ScalarValue
   /**
    * Layer 2 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    */
   layer2Color: Vector4Value
   /**
    * Layer 3 width.
+   * 
+   * **Default**: `1`
    */
   layer3Width: ScalarValue
   /**
    * Layer 3 height.
+   * 
+   * **Default**: `1`
    */
   layer3Height: ScalarValue
   /**
    * Layer 3 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    */
   layer3Color: Vector4Value
   /**
    * Layer 4 width.
+   * 
+   * **Default**: `1`
    */
   layer4Width: ScalarValue
   /**
    * Layer 4 height.
+   * 
+   * **Default**: `1`
    */
   layer4Height: ScalarValue
   /**
    * Layer 4 color.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    */
   layer4Color: Vector4Value
   /**
    * Layer 1 texture ID.
+   * 
+   * **Default**: `1`
    */
   layer1: number
   /**
    * Layer 2 texture ID.
+   * 
+   * **Default**: `0`
    */
   layer2: number
   /**
    * Layer 3 texture ID.
+   * 
+   * **Default**: `0`
    */
   layer3: number
   /**
    * Layer 4 texture ID.
    * 
    * This layer seems to work a bit differently from the others in Sekiro.
+   * 
+   * **Default**: `0`
    */
   layer4: number
   /**
    * Blend mode.
+   * 
+   * **Default**: {@link BlendMode.Add}
    */
   blendMode: BlendMode
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_4: number
   /**
    * Diameter of the lens flare source sphere.
    * 
    * The opacity of the lens flare depends on how much of the source is in view.
+   * 
+   * **Default**: `1`
    */
   sourceSize: number
   /**
    * The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
+   * 
+   * **Default**: `1`
    */
   opacityTransitionDuration: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_8: number
   /**
    * Number of copies of layer 1. Why this exists is unknown, they all just stack on top of each other.
    * 
    * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer1ScaleVariationX}
@@ -35319,6 +27179,8 @@ class LensFlare extends DataAction {
   layer1Count: number
   /**
    * The {@link layer1Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer1Count}
@@ -35329,6 +27191,8 @@ class LensFlare extends DataAction {
   /**
    * The {@link layer1Height layer's height} is multiplied by a random value between this and 1.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link layer1Count}
    * - {@link layer1UniformScale}
@@ -35337,6 +27201,8 @@ class LensFlare extends DataAction {
   layer1ScaleVariationY: number
   /**
    * When enabled, the {@link layer1Width layer's width} also controls the {@link layer1Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link layer1Width}
@@ -35348,18 +27214,42 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer1Color layer's color}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link layer1Color}
    */
   layer1ColorMultiplier: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_17: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_18: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_19: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_er_f1_20: number
   /**
    * Number of copies of layer 2. Why this exists is unknown, they all just stack on top of each other.
    * 
    * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer2ScaleVariationX}
@@ -35368,6 +27258,8 @@ class LensFlare extends DataAction {
   layer2Count: number
   /**
    * The {@link layer2Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer2Count}
@@ -35378,6 +27270,8 @@ class LensFlare extends DataAction {
   /**
    * The {@link layer2Height layer's height} is multiplied by a random value between this and 1.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link layer2Count}
    * - {@link layer2UniformScale}
@@ -35386,6 +27280,8 @@ class LensFlare extends DataAction {
   layer2ScaleVariationY: number
   /**
    * When enabled, the {@link layer2Width layer's width} also controls the {@link layer2Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link layer2Width}
@@ -35397,18 +27293,42 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer2Color layer's color}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link layer2Color}
    */
   layer2ColorMultiplier: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_29: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_30: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_31: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_er_f1_32: number
   /**
    * Number of copies of layer 3. Why this exists is unknown, they all just stack on top of each other.
    * 
    * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer3ScaleVariationX}
@@ -35417,6 +27337,8 @@ class LensFlare extends DataAction {
   layer3Count: number
   /**
    * The {@link layer3Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer3Count}
@@ -35427,6 +27349,8 @@ class LensFlare extends DataAction {
   /**
    * The {@link layer3Height layer's height} is multiplied by a random value between this and 1.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link layer3Count}
    * - {@link layer3UniformScale}
@@ -35435,6 +27359,8 @@ class LensFlare extends DataAction {
   layer3ScaleVariationY: number
   /**
    * When enabled, the {@link layer3Width layer's width} also controls the {@link layer3Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link layer3Width}
@@ -35446,18 +27372,42 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer3Color layer's color}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link layer3Color}
    */
   layer3ColorMultiplier: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_41: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_42: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_43: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_er_f1_44: number
   /**
    * Number of copies of layer 4. Why this exists is unknown, they all just stack on top of each other.
    * 
    * Each copy will pick its own random values for the scale variation.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer4ScaleVariationX}
@@ -35466,6 +27416,8 @@ class LensFlare extends DataAction {
   layer4Count: number
   /**
    * The {@link layer4Width layer's width} is multiplied by a random value between this and 1.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link layer4Count}
@@ -35476,6 +27428,8 @@ class LensFlare extends DataAction {
   /**
    * The {@link layer4Height layer's height} is multiplied by a random value between this and 1.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link layer4Count}
    * - {@link layer4UniformScale}
@@ -35484,6 +27438,8 @@ class LensFlare extends DataAction {
   layer4ScaleVariationY: number
   /**
    * When enabled, the {@link layer4Width layer's width} also controls the {@link layer4Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link layer4Width}
@@ -35495,19 +27451,48 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer4Color layer's color}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link layer4Color}
    */
   layer4ColorMultiplier: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_53: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_54: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_55: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_er_f1_56: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_57: number
   /**
    * When enabled, this allows the lens flare to have a bloom effect.
    * 
    * Does not seem to work in Sekiro.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link layer1BloomColor}
@@ -35519,6 +27504,8 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link bloom}
    * - {@link layer1Color}
@@ -35526,6 +27513,8 @@ class LensFlare extends DataAction {
   layer1BloomColor: Vector4
   /**
    * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
    * - {@link bloom}
@@ -35535,6 +27524,8 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link bloom}
    * - {@link layer3Color}
@@ -35543,904 +27534,269 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * See also:
    * - {@link bloom}
    * - {@link layer4Color}
    */
   layer4BloomColor: Vector4
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_75: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_76: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_77: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_78: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_79: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_80: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_6: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_7: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_24: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_26: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_33: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_er_f2_36: number
-  constructor(props: LensFlareParams = {}) {
+  constructor(props: Partial<Props<LensFlare>> = {}) {
     super(ActionType.LensFlare, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface RichModelParams {
-  /**
-   * Model ID.
-   * 
-   * **Default**: `80201`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   */
-  model?: ScalarValue
-  /**
-   * The width of the particle.
-   * 
-   * If {@link uniformScale} is enabled, this also controls the height and depth.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   */
-  sizeX?: ScalarValue
-  /**
-   * The height of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   * - {@link sizeX}
-   * - {@link sizeZ}
-   */
-  sizeY?: ScalarValue
-  /**
-   * The depth of the particle.
-   * 
-   * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link scaleVariationZ}
-   * - {@link sizeX}
-   * - {@link sizeY}
-   */
-  sizeZ?: ScalarValue
-  /**
-   * Rotation around the X-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  rotationX?: ScalarValue
-  /**
-   * Rotation around the Y-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  rotationY?: ScalarValue
-  /**
-   * Rotation around the Z-axis in degrees.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link angularSpeedZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  rotationZ?: ScalarValue
-  /**
-   * Angular speed around the X-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   * - {@link angularSpeedMultiplierX}
-   */
-  angularSpeedX?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedX}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationX}
-   */
-  angularSpeedMultiplierX?: ScalarValue
-  /**
-   * Angular speed around the Y-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   * - {@link angularSpeedMultiplierY}
-   */
-  angularSpeedY?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedY}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationY}
-   */
-  angularSpeedMultiplierY?: ScalarValue
-  /**
-   * Angular speed around the Z-axis in degrees per second.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   * - {@link angularSpeedMultiplierZ}
-   */
-  angularSpeedZ?: ScalarValue
-  /**
-   * Multiplier for {@link angularSpeedZ}.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link rotationZ}
-   */
-  angularSpeedMultiplierZ?: ScalarValue
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color2}
-   * - {@link color3}
-   */
-  color1?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color3}
-   */
-  color2?: Vector4Value
-  /**
-   * Color multiplier.
-   * 
-   * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link color1}
-   * - {@link color2}
-   */
-  color3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_p1_16?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_p1_17?: ScalarValue
-  /**
-   * Seemingly identical to {@link rgbMultiplier}?
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_p1_19?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_p1_20?: ScalarValue
-  /**
-   * Offset for the UV coordinates of the model.
-   * 
-   * **Default**: `[0, 0]`
-   * 
-   * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
-   * 
-   * See also:
-   * - {@link uvSpeed}
-   */
-  uvOffset?: Vector2Value
-  /**
-   * Scroll speed for the model's texture.
-   * 
-   * **Default**: `[0, 0]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   * 
-   * See also:
-   * - {@link uvSpeedMultiplier}
-   */
-  uvSpeed?: Vector2Value
-  /**
-   * Multiplier for {@link uvSpeed}
-   * 
-   * **Default**: `[1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
-   */
-  uvSpeedMultiplier?: Vector2Value
-  /**
-   * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rgbMultiplier?: ScalarValue
-  /**
-   * Alpha multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  alphaMultiplier?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_p2_2?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_er_p2_3?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_er_p2_4?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   */
-  unk_er_p2_5?: Vector4Value
-  /**
-   * Unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_p2_6?: ScalarValue
-  /**
-   * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
-   * 
-   * **Default**: {@link RichModelOrientationMode.ParticleDirection}
-   */
-  orientation?: RichModelOrientationMode
-  /**
-   * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
-   * 
-   * If {@link uniformScale} is enabled, this also affects the height.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  scaleVariationX?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationZ}
-   */
-  scaleVariationY?: number
-  /**
-   * Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
-   * 
-   * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   */
-  scaleVariationZ?: number
-  /**
-   * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link sizeX}
-   * - {@link sizeY}
-   * - {@link sizeZ}
-   * - {@link scaleVariationX}
-   * - {@link scaleVariationY}
-   * - {@link scaleVariationZ}
-   */
-  uniformScale?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_6?: number
-  /**
-   * If enabled, this allows control of the model's opacity regardless of its material by using dithered transparency. If disabled, changes to the alpha values that affect the particle will not have any effect unless the material allows it, but it will look better than the dithered transparency.
-   * 
-   * **Default**: `0`
-   */
-  dither?: boolean
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_er_f1_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_er_f1_9?: number
-  /**
-   * Anibnd ID.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link animation}
-   * - {@link loopAnimation}
-   * - {@link animationSpeed}
-   */
-  anibnd?: number
-  /**
-   * Controls which animation in the {@link anibnd} to play.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link anibnd}
-   * - {@link loopAnimation}
-   * - {@link animationSpeed}
-   */
-  animation?: number
-  /**
-   * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
-   * 
-   * **Default**: `true`
-   * 
-   * See also:
-   * - {@link anibnd}
-   * - {@link animation}
-   * - {@link animationSpeed}
-   */
-  loopAnimation?: boolean
-  /**
-   * Controls the speed at which the {@link animation} plays.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link anibnd}
-   * - {@link animation}
-   * - {@link loopAnimation}
-   */
-  animationSpeed?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_23?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_25?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_26?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_27?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ac6_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_30?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ac6_f1_33?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ac6_f1_34?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_24?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `8`
-   */
-  unk_er_f2_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_3?: number
-  /**
-   * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
-   * 
-   * Note:
-   * - This has no effect if the "Effects Quality" setting is set to "Low".
-   * - This does not affect the natural bloom effect from high color values.
-   * 
-   * **Default**: `[1, 1, 1, 0]`
-   */
-  bloomColor?: Vector4
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_13?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link minFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistance?: number
-  /**
-   * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
-   * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxFadeDistance?: number
-  /**
-   * Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * This requires {@link maxFadeDistance} to be set to a positive value or 0.
-   * 
-   * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link minDistanceThreshold}
-   * - {@link maxDistanceThreshold}
-   */
-  maxDistance?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link maxDistanceThreshold}
-   */
-  minDistanceThreshold?: number
-  /**
-   * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
-   * 
-   * **Default**: `-1`
-   * 
-   * See also:
-   * - {@link minFadeDistance}
-   * - {@link minDistance}
-   * - {@link maxFadeDistance}
-   * - {@link maxDistance}
-   * - {@link minDistanceThreshold}
-   */
-  maxDistanceThreshold?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unkDepthBlend1?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unkDepthBlend2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f2_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_30?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f2_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0.5`
-   */
-  unk_er_f2_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_er_f2_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-2`
-   */
-  unk_er_f2_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f2_37?: number
 }
 
 /**
@@ -36457,6 +27813,8 @@ class RichModel extends DataAction {
   /**
    * Model ID.
    * 
+   * **Default**: `80201`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    */
   model: ScalarValue
@@ -36464,6 +27822,8 @@ class RichModel extends DataAction {
    * The width of the particle.
    * 
    * If {@link uniformScale} is enabled, this also controls the height and depth.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -36478,6 +27838,8 @@ class RichModel extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36491,6 +27853,8 @@ class RichModel extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36502,6 +27866,8 @@ class RichModel extends DataAction {
   /**
    * Rotation around the X-axis in degrees.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
@@ -36511,6 +27877,8 @@ class RichModel extends DataAction {
   rotationX: ScalarValue
   /**
    * Rotation around the Y-axis in degrees.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -36522,6 +27890,8 @@ class RichModel extends DataAction {
   /**
    * Rotation around the Z-axis in degrees.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
@@ -36531,6 +27901,8 @@ class RichModel extends DataAction {
   rotationZ: ScalarValue
   /**
    * Angular speed around the X-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -36542,6 +27914,8 @@ class RichModel extends DataAction {
   /**
    * Multiplier for {@link angularSpeedX}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36550,6 +27924,8 @@ class RichModel extends DataAction {
   angularSpeedMultiplierX: ScalarValue
   /**
    * Angular speed around the Y-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -36561,6 +27937,8 @@ class RichModel extends DataAction {
   /**
    * Multiplier for {@link angularSpeedY}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36569,6 +27947,8 @@ class RichModel extends DataAction {
   angularSpeedMultiplierY: ScalarValue
   /**
    * Angular speed around the Z-axis in degrees per second.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -36580,6 +27960,8 @@ class RichModel extends DataAction {
   /**
    * Multiplier for {@link angularSpeedZ}.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36590,6 +27972,8 @@ class RichModel extends DataAction {
    * Color multiplier.
    * 
    * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
@@ -36603,6 +27987,8 @@ class RichModel extends DataAction {
    * 
    * Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    * 
    * See also:
@@ -36615,6 +28001,8 @@ class RichModel extends DataAction {
    * 
    * Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36622,18 +28010,42 @@ class RichModel extends DataAction {
    * - {@link color2}
    */
   color3: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_er_p1_16: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_er_p1_17: ScalarValue
   /**
    * Seemingly identical to {@link rgbMultiplier}?
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rgbMultiplier2: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_er_p1_19: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_er_p1_20: ScalarValue
   /**
    * Offset for the UV coordinates of the model.
+   * 
+   * **Default**: `[0, 0]`
    * 
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
@@ -36644,6 +28056,8 @@ class RichModel extends DataAction {
   /**
    * Scroll speed for the model's texture.
    * 
+   * **Default**: `[0, 0]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
@@ -36653,11 +28067,15 @@ class RichModel extends DataAction {
   /**
    * Multiplier for {@link uvSpeed}
    * 
+   * **Default**: `[1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
   uvSpeedMultiplier: Vector2Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -36665,22 +28083,53 @@ class RichModel extends DataAction {
   /**
    * Alpha multiplier.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   alphaMultiplier: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_er_p2_2: ScalarValue
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_er_p2_3: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_er_p2_4: Vector4Value
+  /**
+   * Unknown vector4.
+   * 
+   * **Default**: `[1, 1, 1, 1]`
+   */
   unk_er_p2_5: Vector4Value
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
   unk_er_p2_6: ScalarValue
   /**
    * Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
+   * 
+   * **Default**: {@link RichModelOrientationMode.ParticleDirection}
    */
   orientation: RichModelOrientationMode
   /**
    * Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
    * 
    * If {@link uniformScale} is enabled, this also affects the height.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link scaleVariationY}
@@ -36692,6 +28141,8 @@ class RichModel extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    * - {@link scaleVariationZ}
@@ -36702,6 +28153,8 @@ class RichModel extends DataAction {
    * 
    * If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link scaleVariationX}
    * - {@link scaleVariationY}
@@ -36709,6 +28162,8 @@ class RichModel extends DataAction {
   scaleVariationZ: number
   /**
    * If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link sizeX}
@@ -36719,16 +28174,40 @@ class RichModel extends DataAction {
    * - {@link scaleVariationZ}
    */
   uniformScale: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_6: number
   /**
    * If enabled, this allows control of the model's opacity regardless of its material by using dithered transparency. If disabled, changes to the alpha values that affect the particle will not have any effect unless the material allows it, but it will look better than the dithered transparency.
+   * 
+   * **Default**: `0`
    */
   dither: boolean
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_er_f1_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_er_f1_9: number
   /**
    * Anibnd ID.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link animation}
@@ -36739,6 +28218,8 @@ class RichModel extends DataAction {
   /**
    * Controls which animation in the {@link anibnd} to play.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link anibnd}
    * - {@link loopAnimation}
@@ -36747,6 +28228,8 @@ class RichModel extends DataAction {
   animation: number
   /**
    * If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
+   * 
+   * **Default**: `true`
    * 
    * See also:
    * - {@link anibnd}
@@ -36757,38 +28240,175 @@ class RichModel extends DataAction {
   /**
    * Controls the speed at which the {@link animation} plays.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link anibnd}
    * - {@link animation}
    * - {@link loopAnimation}
    */
   animationSpeed: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_23: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_25: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_26: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_27: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `-1`
+   */
   unk_ac6_f1_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_30: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ac6_f1_33: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ac6_f1_34: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_24: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `8`
+   */
   unk_er_f2_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_3: number
   /**
    * Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
@@ -36796,18 +28416,52 @@ class RichModel extends DataAction {
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
+   * 
+   * **Default**: `[1, 1, 1, 0]`
    */
   bloomColor: Vector4
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_13: number
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minDistance}
@@ -36824,6 +28478,8 @@ class RichModel extends DataAction {
    * 
    * This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link maxFadeDistance}
@@ -36836,6 +28492,8 @@ class RichModel extends DataAction {
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
    * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -36852,6 +28510,8 @@ class RichModel extends DataAction {
    * 
    * This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -36862,6 +28522,8 @@ class RichModel extends DataAction {
   maxDistance: number
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+   * 
+   * **Default**: `-1`
    * 
    * See also:
    * - {@link minFadeDistance}
@@ -36874,6 +28536,8 @@ class RichModel extends DataAction {
   /**
    * A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
    * 
+   * **Default**: `-1`
+   * 
    * See also:
    * - {@link minFadeDistance}
    * - {@link minDistance}
@@ -36882,367 +28546,118 @@ class RichModel extends DataAction {
    * - {@link minDistanceThreshold}
    */
   maxDistanceThreshold: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unkDepthBlend1: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unkDepthBlend2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f2_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_30: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f2_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0.5`
+   */
   unk_er_f2_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_er_f2_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-2`
+   */
   unk_er_f2_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f2_37: number
-  constructor(props: RichModelParams = {}) {
+  constructor(props: Partial<Props<RichModel>> = {}) {
     super(ActionType.RichModel, {isAppearance:true,isParticle:true})
     this.assign(props)
   }
-}
-
-export interface Unk10100Params {
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_6?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `-1`
-   */
-  unk_ds3_f1_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_24?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_26?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_33?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_39?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_40?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_41?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_42?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_43?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_44?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_45?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_46?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_47?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_48?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_49?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_50?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_51?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_52?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_53?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_54?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_55?: number
 }
 
 /**
@@ -37254,145 +28669,346 @@ export interface Unk10100Params {
 class Unk10100 extends DataAction {
   declare readonly type: ActionType.Unk10100
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_2: number
   /**
    * Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
+   * 
+   * **Default**: `1`
    */
   unk_ds3_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_6: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `-1`
+   */
   unk_ds3_f1_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_24: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_26: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_33: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_39: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_40: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_41: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_42: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_43: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_44: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_45: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_46: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_47: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_48: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_49: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_50: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_51: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_52: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_53: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_54: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_55: number
-  constructor(props: Unk10100Params = {}) {
+  constructor(props: Partial<Props<Unk10100>> = {}) {
     super(ActionType.Unk10100, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface CancelForceParams {
-  /**
-   * The shape of the volume.
-   * 
-   * Each shape has different fields controlling the size of the volume:
-   * | Shape | Fields | Origin |
-   * |-|-|-|
-   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
-   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
-   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
-   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
-   * 
-   * **Default**: {@link ForceVolumeShape.Sphere}
-   */
-  shape?: ForceVolumeShape
-  /**
-   * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  sphereRadius?: number
-  /**
-   * The size of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  boxSize?: Vector3
-  /**
-   * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderRadius}
-   */
-  cylinderHeight?: number
-  /**
-   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderHeight}
-   */
-  cylinderRadius?: number
-  /**
-   * The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismApothem}
-   */
-  squarePrismHeight?: number
-  /**
-   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismHeight}
-   */
-  squarePrismApothem?: number
 }
 
 /**
@@ -37420,10 +29036,14 @@ class CancelForce extends DataAction {
    * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
    */
   shape: ForceVolumeShape
   /**
    * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link shape}
@@ -37432,12 +29052,16 @@ class CancelForce extends DataAction {
   /**
    * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link shape}
    */
   boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -37447,6 +29071,8 @@ class CancelForce extends DataAction {
   /**
    * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link cylinderHeight}
@@ -37454,6 +29080,8 @@ class CancelForce extends DataAction {
   cylinderRadius: number
   /**
    * The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -37463,447 +29091,17 @@ class CancelForce extends DataAction {
   /**
    * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link squarePrismHeight}
    */
   squarePrismApothem: number
-  constructor(props: CancelForceParams = {}) {
+  constructor(props: Partial<Props<CancelForce>> = {}) {
     super(ActionType.CancelForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface WindForceParams {
-  /**
-   * The strength of the force applied in the volume.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceRandomMultiplierMax}
-   * - {@link forceMultiplier}
-   */
-  force?: ScalarValue
-  /**
-   * The shape of the volume.
-   * 
-   * Each shape has different fields controlling the size of the volume:
-   * | Shape | Fields | Origin |
-   * |-|-|-|
-   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
-   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
-   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
-   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
-   * 
-   * **Default**: {@link ForceVolumeShape.Sphere}
-   */
-  shape?: ForceVolumeShape
-  /**
-   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  sphereRadius?: number
-  /**
-   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  boxSize?: Vector3
-  /**
-   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderRadius}
-   */
-  cylinderHeight?: number
-  /**
-   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderHeight}
-   */
-  cylinderRadius?: number
-  /**
-   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismApothem}
-   */
-  squarePrismHeight?: number
-  /**
-   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismHeight}
-   */
-  squarePrismApothem?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_26?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_27?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `30`
-   */
-  unk_ds3_f1_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_30?: number
-  /**
-   * When this is set to 0, the wind will be able to affect sfx, including the one with this action. When it's set to 1, it seems to only affect non-sfx things, like plants and trees.
-   * 
-   * The way non-sfx are affected by the wind seems to also change a bit between values 0 and 1, but exactly how is unknown.
-   * 
-   * In DS3 and Sekiro, some effects have this set to 2, so it is not just a boolean. What 2 does is unknown.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_33?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_34?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_35?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_36?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_37?: number
-  /**
-   * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
-   * 
-   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMax}
-   * - {@link forceMultiplier}
-   */
-  forceRandomMultiplierMin?: number
-  /**
-   * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
-   * 
-   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceMultiplier}
-   */
-  forceRandomMultiplierMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_40?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_41?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_42?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_44?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_45?: number
-  /**
-   * A multiplier for {@link force}.
-   * 
-   * This is multiplicative with both the base force and the random multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceRandomMultiplierMax}
-   */
-  forceMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_47?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_48?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_48?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_49?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_50?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_51?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_52?: number
-  /**
-   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   */
-  fadeOutTime?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_54?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_55?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_56?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_57?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_f1_58?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `10`
-   */
-  unk_ds3_f1_49?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `60`
-   */
-  unk_ds3_f1_50?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_43?: number
 }
 
 /**
@@ -37920,6 +29118,8 @@ class WindForce extends DataAction {
   /**
    * The strength of the force applied in the volume.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -37939,10 +29139,14 @@ class WindForce extends DataAction {
    * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
    */
   shape: ForceVolumeShape
   /**
    * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link shape}
@@ -37951,12 +29155,16 @@ class WindForce extends DataAction {
   /**
    * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link shape}
    */
   boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -37966,6 +29174,8 @@ class WindForce extends DataAction {
   /**
    * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link cylinderHeight}
@@ -37973,6 +29183,8 @@ class WindForce extends DataAction {
   cylinderRadius: number
   /**
    * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -37982,32 +29194,144 @@ class WindForce extends DataAction {
   /**
    * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link squarePrismHeight}
    */
   squarePrismApothem: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_26: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_27: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `30`
+   */
   unk_ds3_f1_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_30: number
   /**
    * When this is set to 0, the wind will be able to affect sfx, including the one with this action. When it's set to 1, it seems to only affect non-sfx things, like plants and trees.
@@ -38015,18 +29339,52 @@ class WindForce extends DataAction {
    * The way non-sfx are affected by the wind seems to also change a bit between values 0 and 1, but exactly how is unknown.
    * 
    * In DS3 and Sekiro, some effects have this set to 2, so it is not just a boolean. What 2 does is unknown.
+   * 
+   * **Default**: `0`
    */
   unk_ds3_f1_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_33: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_34: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_35: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_36: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_37: number
   /**
    * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
    * 
    * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link force}
@@ -38039,21 +29397,50 @@ class WindForce extends DataAction {
    * 
    * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link force}
    * - {@link forceRandomMultiplierMin}
    * - {@link forceMultiplier}
    */
   forceRandomMultiplierMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_40: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_41: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_42: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_44: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_45: number
   /**
    * A multiplier for {@link force}.
    * 
    * This is multiplicative with both the base force and the random multiplier.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link force}
@@ -38061,319 +29448,106 @@ class WindForce extends DataAction {
    * - {@link forceRandomMultiplierMax}
    */
   forceMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_47: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_48: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_48: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_49: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_50: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_51: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_52: number
   /**
    * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
    */
   fadeOutTime: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_54: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_55: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_56: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_57: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_f1_58: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `10`
+   */
   unk_ds3_f1_49: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `60`
+   */
   unk_ds3_f1_50: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_43: number
-  constructor(props: WindForceParams = {}) {
+  constructor(props: Partial<Props<WindForce>> = {}) {
     super(ActionType.WindForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface GravityForceParams {
-  /**
-   * The strength of the force applied in the volume.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceRandomMultiplierMax}
-   * - {@link forceMultiplier}
-   */
-  force?: ScalarValue
-  /**
-   * The shape of the volume.
-   * 
-   * Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
-   * | Shape | Fields | Origin | Center of mass |
-   * |-|-|-|-|
-   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
-   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
-   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
-   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
-   * 
-   * **Default**: {@link ForceVolumeShape.Sphere}
-   */
-  shape?: ForceVolumeShape
-  /**
-   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  sphereRadius?: number
-  /**
-   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  boxSize?: Vector3
-  /**
-   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderRadius}
-   */
-  cylinderHeight?: number
-  /**
-   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderHeight}
-   */
-  cylinderRadius?: number
-  /**
-   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismApothem}
-   */
-  squarePrismHeight?: number
-  /**
-   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismHeight}
-   */
-  squarePrismApothem?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_24?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_26?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_27?: number
-  /**
-   * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
-   * 
-   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMax}
-   * - {@link forceMultiplier}
-   */
-  forceRandomMultiplierMin?: number
-  /**
-   * The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
-   * 
-   * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceMultiplier}
-   */
-  forceRandomMultiplierMax?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_32?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_33?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `3`
-   */
-  unk_ds3_f1_34?: number
-  /**
-   * A multiplier for {@link force}.
-   * 
-   * This is multiplicative with both the base force and the "random" multiplier.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceRandomMultiplierMax}
-   */
-  forceMultiplier?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_36?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_37?: number
-  /**
-   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   */
-  fadeOutTime?: number
 }
 
 /**
@@ -38389,6 +29563,8 @@ class GravityForce extends DataAction {
   declare readonly meta: ActionMeta & {isAppearance:true,isParticle:false}
   /**
    * The strength of the force applied in the volume.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -38409,10 +29585,14 @@ class GravityForce extends DataAction {
    * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
    */
   shape: ForceVolumeShape
   /**
    * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link shape}
@@ -38421,12 +29601,16 @@ class GravityForce extends DataAction {
   /**
    * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link shape}
    */
   boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -38436,6 +29620,8 @@ class GravityForce extends DataAction {
   /**
    * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link cylinderHeight}
@@ -38443,6 +29629,8 @@ class GravityForce extends DataAction {
   cylinderRadius: number
   /**
    * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -38452,34 +29640,133 @@ class GravityForce extends DataAction {
   /**
    * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link squarePrismHeight}
    */
   squarePrismApothem: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_24: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_26: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_27: number
   /**
    * The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
    * 
    * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link force}
@@ -38492,21 +29779,50 @@ class GravityForce extends DataAction {
    * 
    * This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link force}
    * - {@link forceRandomMultiplierMin}
    * - {@link forceMultiplier}
    */
   forceRandomMultiplierMax: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_32: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_33: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `3`
+   */
   unk_ds3_f1_34: number
   /**
    * A multiplier for {@link force}.
    * 
    * This is multiplicative with both the base force and the "random" multiplier.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link force}
@@ -38514,73 +29830,28 @@ class GravityForce extends DataAction {
    * - {@link forceRandomMultiplierMax}
    */
   forceMultiplier: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_36: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_37: number
   /**
    * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
    */
   fadeOutTime: number
-  constructor(props: GravityForceParams = {}) {
+  constructor(props: Partial<Props<GravityForce>> = {}) {
     super(ActionType.GravityForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface ForceCollisionParams {
-  /**
-   * The shape of the volume.
-   * 
-   * Each shape has different fields controlling the size of the volume:
-   * | Shape | Fields |
-   * |-|-|
-   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
-   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
-   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
-   * 
-   * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
-   * 
-   * **Default**: {@link ForceVolumeShape.Sphere}
-   */
-  shape?: ForceVolumeShape
-  /**
-   * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  sphereRadius?: number
-  /**
-   * The size of the {@link ForceVolumeShape.Box box} volume.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  boxSize?: Vector3
-  /**
-   * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderRadius}
-   */
-  cylinderHeight?: number
-  /**
-   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderHeight}
-   */
-  cylinderRadius?: number
 }
 
 /**
@@ -38606,10 +29877,14 @@ class ForceCollision extends DataAction {
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
    * 
    * **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
    */
   shape: ForceVolumeShape
   /**
    * The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link shape}
@@ -38618,12 +29893,16 @@ class ForceCollision extends DataAction {
   /**
    * The size of the {@link ForceVolumeShape.Box box} volume.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link shape}
    */
   boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -38633,413 +29912,17 @@ class ForceCollision extends DataAction {
   /**
    * The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link cylinderHeight}
    */
   cylinderRadius: number
-  constructor(props: ForceCollisionParams = {}) {
+  constructor(props: Partial<Props<ForceCollision>> = {}) {
     super(ActionType.ForceCollision, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface TurbulenceForceParams {
-  /**
-   * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link noiseOffsetY}
-   * - {@link noiseOffsetZ}
-   */
-  noiseOffsetX?: ScalarValue
-  /**
-   * Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link noiseOffsetX}
-   * - {@link noiseOffsetZ}
-   */
-  noiseOffsetY?: ScalarValue
-  /**
-   * Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
-   * 
-   * **Default**: `0`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link noiseOffsetX}
-   * - {@link noiseOffsetY}
-   */
-  noiseOffsetZ?: ScalarValue
-  /**
-   * The strength of the force applied in the volume.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   * 
-   * See also:
-   * - {@link forceRandomMultiplierMin}
-   * - {@link forceRandomMultiplierMax}
-   */
-  force?: ScalarValue
-  /**
-   * The shape of the volume.
-   * 
-   * Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
-   * | Shape | Fields | Origin |
-   * |-|-|-|
-   * | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
-   * | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-   * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
-   * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
-   * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
-   * 
-   * **Default**: {@link ForceVolumeShape.Sphere}
-   */
-  shape?: ForceVolumeShape
-  /**
-   * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
-   * 
-   * **Default**: `10`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  sphereRadius?: number
-  /**
-   * The size of the {@link ForceVolumeShape.Box box} where the force is active.
-   * 
-   * **Default**: `[0, 0, 0]`
-   * 
-   * See also:
-   * - {@link shape}
-   */
-  boxSize?: Vector3
-  /**
-   * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderRadius}
-   */
-  cylinderHeight?: number
-  /**
-   * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link cylinderHeight}
-   */
-  cylinderRadius?: number
-  /**
-   * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismApothem}
-   */
-  squarePrismHeight?: number
-  /**
-   * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link shape}
-   * - {@link squarePrismHeight}
-   */
-  squarePrismApothem?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_23?: number
-  /**
-   * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMax}
-   */
-  forceRandomMultiplierMin?: number
-  /**
-   * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link force}
-   * - {@link forceRandomMultiplierMin}
-   */
-  forceRandomMultiplierMax?: number
-  /**
-   * The scale of the 3D noise used to control the strength and direction of the force in the volume. Lower values makes it more noisy, with small vortices forming everywhere. Higher values makes the noise smoother.
-   * 
-   * **Default**: `1`
-   */
-  noiseScale?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_28?: number
-  /**
-   * Controls whether or not {@link softRadius} is effective.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link softRadius}
-   */
-  enableSoftRadius?: boolean
-  /**
-   * The radius of a sphere where the force gets weaker with the distance from the origin. Very similar to the {@link sphereRadius sphere radius} when the {@link shape} of the volume is a sphere, but this has a smooth transition from inside the radius to the outside.
-   * 
-   * This requires {@link enableSoftRadius} to be enabled.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link enableSoftRadius}
-   */
-  softRadius?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_33?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_39?: number
-  /**
-   * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
-   * 
-   * **Default**: `0`
-   */
-  fadeOutTime?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_41?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_42?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_43?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_44?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_45?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_46?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_47?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_48?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_49?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_50?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_unk_f1_51?: number
 }
 
 /**
@@ -39056,6 +29939,8 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the X-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -39065,6 +29950,8 @@ class TurbulenceForce extends DataAction {
   noiseOffsetX: ScalarValue
   /**
    * Offset along the Y-axis for the 3D noise used to control the strength and direction of the force in the volume.
+   * 
+   * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -39076,6 +29963,8 @@ class TurbulenceForce extends DataAction {
   /**
    * Offset along the Z-axis for the 3D noise used to control the strength and direction of the force in the volume.
    * 
+   * **Default**: `0`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
    * See also:
@@ -39085,6 +29974,8 @@ class TurbulenceForce extends DataAction {
   noiseOffsetZ: ScalarValue
   /**
    * The strength of the force applied in the volume.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    * 
@@ -39104,10 +29995,14 @@ class TurbulenceForce extends DataAction {
    * | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
    * | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? |
    * | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+   * 
+   * **Default**: {@link ForceVolumeShape.Sphere}
    */
   shape: ForceVolumeShape
   /**
    * The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+   * 
+   * **Default**: `10`
    * 
    * See also:
    * - {@link shape}
@@ -39116,12 +30011,16 @@ class TurbulenceForce extends DataAction {
   /**
    * The size of the {@link ForceVolumeShape.Box box} where the force is active.
    * 
+   * **Default**: `[0, 0, 0]`
+   * 
    * See also:
    * - {@link shape}
    */
   boxSize: Vector3
   /**
    * The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -39131,6 +30030,8 @@ class TurbulenceForce extends DataAction {
   /**
    * The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link cylinderHeight}
@@ -39138,6 +30039,8 @@ class TurbulenceForce extends DataAction {
   cylinderRadius: number
   /**
    * The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link shape}
@@ -39147,28 +30050,107 @@ class TurbulenceForce extends DataAction {
   /**
    * The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link shape}
    * - {@link squarePrismHeight}
    */
   squarePrismApothem: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_23: number
   /**
    * The minimum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMax}.
+   * 
+   * **Default**: `1`
    * 
    * See also:
    * - {@link force}
@@ -39178,6 +30160,8 @@ class TurbulenceForce extends DataAction {
   /**
    * The maximum random multiplier for {@link force}. This multiplier will randomly change to different values in the range defined by this and {@link forceRandomMultiplierMin}.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link force}
    * - {@link forceRandomMultiplierMin}
@@ -39185,12 +30169,26 @@ class TurbulenceForce extends DataAction {
   forceRandomMultiplierMax: number
   /**
    * The scale of the 3D noise used to control the strength and direction of the force in the volume. Lower values makes it more noisy, with small vortices forming everywhere. Higher values makes the noise smoother.
+   * 
+   * **Default**: `1`
    */
   noiseScale: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_28: number
   /**
    * Controls whether or not {@link softRadius} is effective.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link softRadius}
@@ -39201,431 +30199,142 @@ class TurbulenceForce extends DataAction {
    * 
    * This requires {@link enableSoftRadius} to be enabled.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link enableSoftRadius}
    */
   softRadius: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_33: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_39: number
   /**
    * The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+   * 
+   * **Default**: `0`
    */
   fadeOutTime: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_41: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_42: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_43: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_44: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_45: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_46: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_47: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_48: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_49: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_50: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_unk_f1_51: number
-  constructor(props: TurbulenceForceParams = {}) {
+  constructor(props: Partial<Props<TurbulenceForce>> = {}) {
     super(ActionType.TurbulenceForce, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface Unk10400Params {
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_1?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_6?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_9?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_10?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_11?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_12?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_13?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_14?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_15?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_17?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_18?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_19?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_20?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_21?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_22?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_23?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_24?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_26?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_28?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_29?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_30?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_31?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_32?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_33?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_34?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_35?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_36?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_37?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_38?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_39?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_40?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_41?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_42?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_43?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_44?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_45?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_46?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_47?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_48?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_49?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_50?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_51?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_52?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_53?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_54?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_55?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_56?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_57?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_58?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_59?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_60?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_61?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_62?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_63?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_64?: number
 }
 
 /**
@@ -39637,150 +30346,400 @@ export interface Unk10400Params {
 class Unk10400 extends DataAction {
   declare readonly type: ActionType.Unk10400
   declare readonly meta: ActionMeta & {isAppearance:false,isParticle:false}
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_0: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_1: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_2: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_4: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_6: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_7: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_10: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_11: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_12: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_13: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_14: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_15: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_17: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_18: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_19: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_20: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_21: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_22: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_23: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_24: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_26: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_28: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_30: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_31: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_32: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_33: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_34: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_39: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_40: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_41: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_42: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_43: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_44: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_45: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_46: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_47: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_48: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_49: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_50: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_51: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_52: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_53: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_54: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_55: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_56: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_57: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_58: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_59: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_60: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_61: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_62: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_63: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_64: number
-  constructor(props: Unk10400Params = {}) {
+  constructor(props: Partial<Props<Unk10400>> = {}) {
     super(ActionType.Unk10400, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface Unk10500Params {
-  /**
-   * Controls how fast time passes for the entire effect.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  rateOfTime?: ScalarValue
-  /**
-   * When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
-   * 
-   * **Default**: `false`
-   */
-  limitViewDistance?: boolean
-  /**
-   * All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
-   * 
-   * **Default**: `0`
-   */
-  maxViewDistance?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_2?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_6?: number
-  /**
-   * The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
-   * 
-   * Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
-   * 
-   * In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
-   * 
-   * **Default**: `0`
-   */
-  initialSimulationTime?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_8?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_9?: number
 }
 
 /**
@@ -39795,21 +30754,52 @@ class Unk10500 extends DataAction {
   /**
    * Controls how fast time passes for the entire effect.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   rateOfTime: ScalarValue
   /**
    * When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
+   * 
+   * **Default**: `false`
    */
   limitViewDistance: boolean
   /**
    * All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
+   * 
+   * **Default**: `0`
    */
   maxViewDistance: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_2: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_3: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_4: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_6: number
   /**
    * The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
@@ -39817,372 +30807,26 @@ class Unk10500 extends DataAction {
    * Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
    * 
    * In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
+   * 
+   * **Default**: `0`
    */
   initialSimulationTime: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_9: number
-  constructor(props: Unk10500Params = {}) {
+  constructor(props: Partial<Props<Unk10500>> = {}) {
     super(ActionType.Unk10500, {isAppearance:false,isParticle:false})
     this.assign(props)
   }
-}
-
-export interface SpotLightParams {
-  /**
-   * Controls the diffuse color of the light.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  diffuseColor?: Vector4Value
-  /**
-   * Controls the specular color of the light.
-   * 
-   * Values in this are unrestricted and can go above 1.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
-   * 
-   * **Default**: `[1, 1, 1, 1]`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  specularColor?: Vector4Value
-  /**
-   * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
-   * 
-   * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  diffuseMultiplier?: ScalarValue
-  /**
-   * A scalar multiplier for the {@link specularColor specular color}.
-   * 
-   * If {@link separateSpecular} is disabled, this property is ignored.
-   * 
-   * **Default**: `1`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  specularMultiplier?: ScalarValue
-  /**
-   * Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
-   * 
-   * **Default**: `0.01`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  near?: ScalarValue
-  /**
-   * Controls how far away the base of the cone is from the light source.
-   * 
-   * **Default**: `50`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  far?: ScalarValue
-  /**
-   * The X radius for the elliptic base of the cone.
-   * 
-   * **Default**: `50`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  radiusX?: ScalarValue
-  /**
-   * The Y radius for the elliptic base of the cone.
-   * 
-   * **Default**: `50`
-   * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
-   */
-  radiusY?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_6?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_p1_7?: ScalarValue
-  /**
-   * Unknown.
-   * 
-   * **Default**: `1`
-   */
-  unk_sdt_p1_10?: ScalarValue
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_0?: number
-  /**
-   * Toggles the jitter and flicker animations for the light.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link jitterAcceleration}
-   * - {@link jitterX}
-   * - {@link jitterY}
-   * - {@link jitterZ}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  jitterAndFlicker?: boolean
-  /**
-   * Controls the acceleration of the jittering.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterX}
-   * - {@link jitterY}
-   * - {@link jitterZ}
-   */
-  jitterAcceleration?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_3?: number
-  /**
-   * Controls how much the light should move around randomly on the X-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   * - {@link jitterY}
-   * - {@link jitterZ}
-   */
-  jitterX?: number
-  /**
-   * Controls how much the light should move around randomly on the Y-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   * - {@link jitterX}
-   * - {@link jitterZ}
-   */
-  jitterY?: number
-  /**
-   * Controls how much the light should move around randomly on the Z-axis.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link jitterAcceleration}
-   * - {@link jitterX}
-   * - {@link jitterY}
-   */
-  jitterZ?: number
-  /**
-   * Controls the minimum interval for flickering.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMax}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMin?: number
-  /**
-   * Controls the maximum interval for flickering.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerBrightness}
-   */
-  flickerIntervalMax?: number
-  /**
-   * Brightness multiplier for the light when it flickers.
-   * 
-   * **Default**: `0.5`
-   * 
-   * See also:
-   * - {@link jitterAndFlicker}
-   * - {@link flickerIntervalMin}
-   * - {@link flickerIntervalMax}
-   */
-  flickerBrightness?: number
-  /**
-   * Controls if the light should have shadows or not.
-   * 
-   * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
-   * 
-   * **Default**: `false`
-   */
-  shadows?: boolean
-  /**
-   * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
-   * 
-   * **Default**: `false`
-   * 
-   * See also:
-   * - {@link diffuseColor}
-   * - {@link specularColor}
-   * - {@link diffuseMultiplier}
-   * - {@link specularMultiplier}
-   */
-  separateSpecular?: boolean
-  /**
-   * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
-   * 
-   * **Default**: `1`
-   */
-  shadowDarkness?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `2`
-   */
-  unk_ds3_f1_3?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_4?: number
-  /**
-   * The number of seconds the light takes to fade to nothing after being destroyed.
-   * 
-   * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
-   * 
-   * **Default**: `0`
-   */
-  fadeOutTime?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `100`
-   */
-  unk_sdt_f1_16?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_17?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_18?: number
-  /**
-   * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
-   * 
-   * **Default**: `0`
-   * 
-   * See also:
-   * - {@link phaseFunction}
-   * - {@link asymmetryParam}
-   */
-  volumeDensity?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `0`
-   */
-  unk_sdt_f1_20?: number
-  /**
-   * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
-   * 
-   * **Default**: `true`
-   */
-  phaseFunction?: boolean
-  /**
-   * Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
-   * 
-   * - At 0, the light is scattered equally in every direction.
-   * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
-   * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
-   * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
-   * 
-   * **Default**: `0.75`
-   */
-  asymmetryParam?: number
-  /**
-   * Controls the falloff exponent of the light.
-   * 
-   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
-   * 
-   * **Default**: `1`
-   */
-  falloffExponent?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_24?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_25?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_er_f1_26?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_er_f1_27?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_0?: number
-  /**
-   * Unknown float.
-   * 
-   * **Default**: `1`
-   */
-  unk_ds3_f1_5?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_7?: number
-  /**
-   * Unknown integer.
-   * 
-   * **Default**: `0`
-   */
-  unk_ds3_f1_8?: number
 }
 
 /**
@@ -40201,6 +30845,8 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this also controls the specular color of the light.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   diffuseColor: Vector4Value
@@ -40211,6 +30857,8 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
    * 
+   * **Default**: `[1, 1, 1, 1]`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularColor: Vector4Value
@@ -40218,6 +30866,8 @@ class SpotLight extends DataAction {
    * A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
    * 
    * If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+   * 
+   * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -40227,11 +30877,15 @@ class SpotLight extends DataAction {
    * 
    * If {@link separateSpecular} is disabled, this property is ignored.
    * 
+   * **Default**: `1`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   specularMultiplier: ScalarValue
   /**
    * Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
+   * 
+   * **Default**: `0.01`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -40239,11 +30893,15 @@ class SpotLight extends DataAction {
   /**
    * Controls how far away the base of the cone is from the light source.
    * 
+   * **Default**: `50`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   far: ScalarValue
   /**
    * The X radius for the elliptic base of the cone.
+   * 
+   * **Default**: `50`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
@@ -40251,15 +30909,39 @@ class SpotLight extends DataAction {
   /**
    * The Y radius for the elliptic base of the cone.
    * 
+   * **Default**: `50`
+   * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
   radiusY: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_6: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_p1_7: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `1`
+   */
   unk_sdt_p1_10: ScalarValue
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_0: number
   /**
    * Toggles the jitter and flicker animations for the light.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link jitterAcceleration}
@@ -40274,6 +30956,8 @@ class SpotLight extends DataAction {
   /**
    * Controls the acceleration of the jittering.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link jitterX}
@@ -40281,9 +30965,16 @@ class SpotLight extends DataAction {
    * - {@link jitterZ}
    */
   jitterAcceleration: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_3: number
   /**
    * Controls how much the light should move around randomly on the X-axis.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link jitterAndFlicker}
@@ -40295,6 +30986,8 @@ class SpotLight extends DataAction {
   /**
    * Controls how much the light should move around randomly on the Y-axis.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link jitterAcceleration}
@@ -40304,6 +30997,8 @@ class SpotLight extends DataAction {
   jitterY: number
   /**
    * Controls how much the light should move around randomly on the Z-axis.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link jitterAndFlicker}
@@ -40315,6 +31010,8 @@ class SpotLight extends DataAction {
   /**
    * Controls the minimum interval for flickering.
    * 
+   * **Default**: `0`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link flickerIntervalMax}
@@ -40324,6 +31021,8 @@ class SpotLight extends DataAction {
   /**
    * Controls the maximum interval for flickering.
    * 
+   * **Default**: `1`
+   * 
    * See also:
    * - {@link jitterAndFlicker}
    * - {@link flickerIntervalMin}
@@ -40332,6 +31031,8 @@ class SpotLight extends DataAction {
   flickerIntervalMax: number
   /**
    * Brightness multiplier for the light when it flickers.
+   * 
+   * **Default**: `0.5`
    * 
    * See also:
    * - {@link jitterAndFlicker}
@@ -40343,10 +31044,14 @@ class SpotLight extends DataAction {
    * Controls if the light should have shadows or not.
    * 
    * Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+   * 
+   * **Default**: `false`
    */
   shadows: boolean
   /**
    * When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+   * 
+   * **Default**: `false`
    * 
    * See also:
    * - {@link diffuseColor}
@@ -40357,30 +31062,68 @@ class SpotLight extends DataAction {
   separateSpecular: boolean
   /**
    * Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+   * 
+   * **Default**: `1`
    */
   shadowDarkness: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `2`
+   */
   unk_ds3_f1_3: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_4: number
   /**
    * The number of seconds the light takes to fade to nothing after being destroyed.
    * 
    * Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+   * 
+   * **Default**: `0`
    */
   fadeOutTime: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `100`
+   */
   unk_sdt_f1_16: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_17: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_18: number
   /**
    * Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+   * 
+   * **Default**: `0`
    * 
    * See also:
    * - {@link phaseFunction}
    * - {@link asymmetryParam}
    */
   volumeDensity: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `0`
+   */
   unk_sdt_f1_20: number
   /**
    * Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+   * 
+   * **Default**: `true`
    */
   phaseFunction: boolean
   /**
@@ -40390,23 +31133,67 @@ class SpotLight extends DataAction {
    * - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
    * - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
    * - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+   * 
+   * **Default**: `0.75`
    */
   asymmetryParam: number
   /**
    * Controls the falloff exponent of the light.
    * 
    * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+   * 
+   * **Default**: `1`
    */
   falloffExponent: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_24: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_25: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_er_f1_26: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_er_f1_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_0: number
+  /**
+   * Unknown float.
+   * 
+   * **Default**: `1`
+   */
   unk_ds3_f1_5: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_7: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
   unk_ds3_f1_8: number
-  constructor(props: SpotLightParams = {}) {
+  constructor(props: Partial<Props<SpotLight>> = {}) {
     super(ActionType.SpotLight, {isAppearance:true,isParticle:false})
     this.assign(props)
   }
@@ -43627,7 +34414,7 @@ namespace FXRUtility {
     size: Vector3 = [1, 1, 1],
     color?: Vector4Value,
     lineWidth?: ScalarValue,
-    args?: BillboardExParams
+    args?: Partial<Props<BillboardEx>>
   ) {
     const x1 = pos[0] - size[0] * 0.5
     const y1 = pos[1] - size[1] * 0.5
@@ -43666,7 +34453,7 @@ namespace FXRUtility {
     height: number = 1,
     color?: Vector4Value,
     lineWidth?: ScalarValue,
-    args?: BillboardExParams
+    args?: Partial<Props<BillboardEx>>
   ) {
     const w = width * 0.5
     const h = height * 0.5
@@ -43694,7 +34481,7 @@ namespace FXRUtility {
     segments: number = 16,
     color?: Vector4Value,
     lineWidth?: ScalarValue,
-    args?: BillboardExParams,
+    args?: Partial<Props<BillboardEx>>,
   ) {
     const angleInc = 2 * Math.PI / segments
     return new BasicNode([], arrayOf(segments, i => {
@@ -43729,7 +34516,7 @@ namespace FXRUtility {
     segments: number = 16,
     color?: Vector4Value,
     lineWidth?: ScalarValue,
-    args?: BillboardExParams,
+    args?: Partial<Props<BillboardEx>>,
   ) {
     return new BasicNode([], [
       ellipse(radiusX, radiusY, segments, color, lineWidth, args),
@@ -43757,7 +34544,7 @@ namespace FXRUtility {
     segments: number = 16,
     color?: Vector4Value,
     lineWidth?: ScalarValue,
-    args?: BillboardExParams,
+    args?: Partial<Props<BillboardEx>>,
   ) {
     return new BasicNode([], [
       transform([0, 0, -height * 0.5], [0, 0, 0], 0, ellipse(radiusX, radiusY, segments, color, lineWidth, args).nodes),
@@ -43787,7 +34574,7 @@ namespace FXRUtility {
     recurse: boolean = true,
     color?: Vector4Value,
     lineWidth?: ScalarValue,
-    args?: BillboardExParams
+    args?: Partial<Props<BillboardEx>>
   ) {
     const nodes = recurse ? Array.from(node.walk()) : [node]
     for (const n of nodes) {
@@ -43843,7 +34630,7 @@ namespace FXRUtility {
       originY?: 'baseline' | 'top' | 'middle' | 'bottom'
       fontSize?: number
       color?: Vector4Value
-      args?: BillboardExParams
+      args?: Partial<Props<BillboardEx>>
     } = {}
   ): BasicNode {
     const lines = text.split('\n')

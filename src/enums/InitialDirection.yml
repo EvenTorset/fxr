@@ -1,8 +1,7 @@
 name: InitialDirection
 desc: |
   An emitted instance's initial direction is used for various things that require a direction, but does not have a set one to follow.
-  - {@link ActionType.ParticleModifier ParticleModifier action}'s
-  {@link ParticleModifierParams.speed speed}.
+  - {@link ActionType.ParticleModifier ParticleModifier action}'s {@link ParticleModifier.speed speed}.
   - {@link ActionType.Line Line action}'s initial rotation.
   - {@link ActionType.QuadLine QuadLine action}'s initial rotation.
 
