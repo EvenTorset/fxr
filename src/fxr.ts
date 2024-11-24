@@ -9851,6 +9851,22 @@ class FXR {
    */
   get gameHint() { return this.#gameHint }
 
+  /**
+   * True only if the effect contains an appearance action, and false
+   * otherwise. This may be useful for filtering FXR files that are "empty".
+   * 
+   * Note that this does not check if any referenced FXR files have appearance
+   * actions, so an effect that only contains a proxy will return false.
+   */
+  get hasAppearance() {
+    for (const config of this.root.walkConfigs()) {
+      if (config instanceof BasicConfig && config.appearance.type !== 0) {
+        return true
+      }
+    }
+    return false
+  }
+
 }
 
 //#region State
