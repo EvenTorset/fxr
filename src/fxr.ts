@@ -9565,7 +9565,7 @@ class FXR {
     bw.fill('NodeOffset', bw.position)
     const nodes: Node[] = []
     const root = game === Game.DarkSouls3 && this.root instanceof RootNode ?
-      this.root.scaleRateOfTime(rateOfTime) :
+      this.root.clone().scaleRateOfTime(rateOfTime) :
       this.root
     writeNode(root, bw, game, nodes)
     writeNodeChildren(root, bw, game, nodes)

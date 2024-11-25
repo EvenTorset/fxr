@@ -48,6 +48,7 @@
   - Added links to the FXR Playground and Ko-fi to the sidebar.
   - Added the library version number to the header.
 - Fixed the `getActionCount` method on `NodeEmitterConfig` objects always returning `10`. It now correctly returns `9` if the given game is `Game.DarkSouls3`, and `10` otherwise.
+- Fixed writing effects for Dark Souls 3 being destructive if the rate of time was set to anything other than 1. It now creates a clone of the tree structure and scales the rate of time in the clone before writing it instead of scaling the rate on the original directly. This shouldn't matter unless the same FXR object was written to a file multiple times, which most people would rarely have to do.
 - Replaced all data action constructor parameter interfaces with types based on the classes. This doesn't change anything functionally, but cleans up the code and the documentation site a lot. ~10k lines of code was removed by doing this.
 
 ## [17.0.0] - 2024-11-12
