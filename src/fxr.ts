@@ -10332,9 +10332,6 @@ abstract class Node {
 
   recolor(funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette, recurse: boolean = true) {
     if (typeof funcOrPalette === 'function') {
-      for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
-        action.recolor(funcOrPalette)
-      }
       for (const config of this.walkConfigs(recurse)) if (config instanceof BasicConfig) {
         config.recolor(funcOrPalette)
       }
