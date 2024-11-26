@@ -3138,7 +3138,7 @@ const ActionData: Record<string, {
       unk_sdt_f1_16: { default: 1, field: 1 },
       unk_sdt_f1_17: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: false, field: 0 },
+      unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
       bloom: { default: true, field: 0 },
@@ -16668,11 +16668,11 @@ class BillboardEx extends DataAction {
    */
   unk_ds3_f2_0: number
   /**
-   * Unknown boolean.
+   * Unknown integer. Possibly boolean?
    * 
    * **Default**: `0`
    */
-  unk_ds3_f2_1: boolean
+  unk_ds3_f2_1: number
   /**
    * Unknown integer.
    * 
