@@ -3508,7 +3508,7 @@ const ActionData: Record<string, {
       unk_er_f1_15: { default: 1, field: 1 },
       unk_er_f1_16: { default: 0, field: 1 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: false, field: 0 },
+      unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
@@ -4755,7 +4755,7 @@ const ActionData: Record<string, {
       unk_er_f1_20: { default: 0, field: 1 },
       unk_er_f1_21: { default: 0, field: 2 },
       unk_ds3_f2_0: { default: 0, field: 1 },
-      unk_ds3_f2_1: { default: false, field: 0 },
+      unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
       bloom: { default: true, field: 0 },
@@ -19101,11 +19101,11 @@ class Tracer extends DataAction {
    */
   unk_ds3_f2_0: number
   /**
-   * Unknown boolean.
+   * Unknown integer. Possibly boolean?
    * 
    * **Default**: `0`
    */
-  unk_ds3_f2_1: boolean
+  unk_ds3_f2_1: number
   /**
    * Unknown integer.
    * 
@@ -22135,7 +22135,7 @@ class GPUStandardParticle extends DataAction {
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
   limitUpdateDistance: boolean
   /**
@@ -23574,7 +23574,7 @@ class GPUStandardCorrectParticle extends DataAction {
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
   limitUpdateDistance: boolean
   /**
@@ -24932,7 +24932,7 @@ class GPUSparkParticle extends DataAction {
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
   limitUpdateDistance: boolean
   /**
@@ -25933,7 +25933,7 @@ class GPUSparkCorrectParticle extends DataAction {
    * 
    * It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
   limitUpdateDistance: boolean
   /**
@@ -26674,11 +26674,11 @@ class DynamicTracer extends DataAction {
    */
   unk_ds3_f2_0: number
   /**
-   * Unknown boolean.
+   * Unknown integer. Possibly boolean?
    * 
    * **Default**: `0`
    */
-  unk_ds3_f2_1: boolean
+  unk_ds3_f2_1: number
   /**
    * Unknown integer.
    * 
@@ -28202,7 +28202,7 @@ class RichModel extends DataAction {
   /**
    * If enabled, this allows control of the model's opacity regardless of its material by using dithered transparency. If disabled, changes to the alpha values that affect the particle will not have any effect unless the material allows it, but it will look better than the dithered transparency.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
   dither: boolean
   /**

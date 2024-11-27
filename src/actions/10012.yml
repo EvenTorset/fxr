@@ -252,7 +252,9 @@ properties:
   unk_ds3_f2_0:
     field: int
   unk_ds3_f2_1:
-    field: bool
+    field: int
+    desc: |
+      Unknown integer. Possibly boolean?
   unk_ds3_f2_2:
     field: int
     default: 8

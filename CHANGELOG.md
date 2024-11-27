@@ -47,8 +47,10 @@
   - Enum members are now sorted in ascending order based on the value instead of alphabetically.
   - Added links to the FXR Playground and Ko-fi to the sidebar.
   - Added the library version number to the header.
+- The `unk_ds3_f2_1` field in `BillboardEx`, `Tracer`, and `DynamicTracer` has been changed to be an integer field. It was previously a boolean field, which was possibly an error because this field is entirely unknown. It is only ever 0 or 1 in vanilla, but that doesn't mean that those are the only possible values. As a side-effect of this, converting between `BillboardEx` and `MultiTextureBillboardEx` is now a bit easier, since the latter has always had this field as an integer.
 - Fixed the `getActionCount` method on `NodeEmitterConfig` objects always returning `10`. It now correctly returns `9` if the given game is `Game.DarkSouls3`, and `10` otherwise.
 - Fixed writing effects for Dark Souls 3 being destructive if the rate of time was set to anything other than 1. It now creates a clone of the tree structure and scales the rate of time in the clone before writing it instead of scaling the rate on the original directly. This shouldn't matter unless the same FXR object was written to a file multiple times, which most people would rarely have to do.
+- Fixed the documented default value of some boolean fields being `0` instead of `false`. The actual default value was `false`, so this was just an error in the documentation.
 - Replaced all data action constructor parameter interfaces with types based on the classes. This doesn't change anything functionally, but cleans up the code and the documentation site a lot. ~10k lines of code was removed by doing this.
 
 ## [17.0.0] - 2024-11-12

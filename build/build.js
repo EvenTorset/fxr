@@ -117,6 +117,9 @@ function naturalSorter(as, bs) {
 }
 
 function defValString(prop) {
+  if (!('default' in prop) && prop.field === 'bool') {
+    return '`false`'
+  }
   let defValue = prop.default ?? 0
   if (typeof defValue === 'string') {
     defValue = `{@link ${defValue}}`
