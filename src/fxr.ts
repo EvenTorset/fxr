@@ -8902,7 +8902,7 @@ const ActionDataConversion = {
 }
 
 //#region Binary Reader/Writer
-class BinaryReader extends DataView {
+class BinaryReader extends DataView<ArrayBuffer> {
 
   position: number = 0
   littleEndian: boolean = true
