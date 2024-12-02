@@ -48,7 +48,7 @@
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.1",
     "npm-run-all2": "^7.0.1",
-    "typedoc": "^0.26.11",
+    "typedoc": "^0.27.2",
     "typedoc-github-theme": "^0.1.2",
     "typescript": "^5.6.3",
     "yaml": "^2.6.0"
