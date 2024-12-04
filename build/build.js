@@ -61,6 +61,8 @@ const resourceMap = {
 const scaleMap = {
   true: 1,
   ifNotMinusOne: 2,
+  distance: 3,
+  distanceIfNotMinusOne: 4,
 }
 
 const timeMap = {
@@ -68,6 +70,13 @@ const timeMap = {
   inv: 2,
   invIfPositive: 3,
   sq: 4,
+}
+
+const propTypeMap = {
+  1: 'scalar',
+  2: 'vector2',
+  3: 'vector3',
+  4: 'vector4',
 }
 
 function toTSString(v) {
@@ -108,6 +117,9 @@ function naturalSorter(as, bs) {
 }
 
 function defValString(prop) {
+  if (!('default' in prop) && prop.field === 'bool') {
+    return '`false`'
+  }
   let defValue = prop.default ?? 0
   if (typeof defValue === 'string') {
     defValue = `{@link ${defValue}}`
@@ -128,6 +140,20 @@ function defValTS(prop) {
     return `[${defValue.join(', ')}]`
   }
   return defValue.toString()
+}
+
+function fieldData(field) {
+  if (typeof field === 'string') {
+    return fieldMap[field]
+  }
+  return `{${Object.entries(field).map(([k, v]) => `[${gameMap[k]}]: ${fieldMap[v]}`).join(', ')}}`
+}
+
+function typeFromField(field) {
+  if (typeof field === 'string') {
+    return typeMap[field]
+  }
+  return 'number'
 }
 
 export default async function(writeToDist = true) {
@@ -211,11 +237,13 @@ export default async function(writeToDist = true) {
     `.trim().replace(/^\s{6}/gm, '  '))
 
     actionDataEntries.push(`
-      [ActionType.${data.name}]: {${'properties' in data ? `
+      [ActionType.${data.name}]: {
+        isAppearance: ${data.meta.isAppearance},
+        isParticle: ${data.meta.isParticle}${'properties' in data ? `,
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
             return `${k}: { default: ${defValTS(v)}${
-              'field' in v ? `, field: ${fieldMap[v.field]}` : ''
+              'field' in v ? `, field: ${fieldData(v.field)}` : ''
             }${
               'resource' in v ? `, resource: ${resourceMap[v.resource]}` : ''
             }${
@@ -225,7 +253,7 @@ export default async function(writeToDist = true) {
             }${
               'time' in v ? `, time: ${timeMap[v.time]}` : ''
             }${
-              'color' in v ? `, color: 1` : ''
+              'color' in v ? `, color: ${v.color === 'primary' ? 1 : 2}` : ''
             }${
               v.omitClassProp ? `, omit: 1` : ''
             }${
@@ -256,42 +284,13 @@ export default async function(writeToDist = true) {
               }
             `.trim().replace(/^\s{14}(?=\})/m, ' '.repeat(10)).replace(/^\s{16}/m, ' '.repeat(12))
           }).join(',\n          ')}
-        }
-      ` : ''}}
+        }` : ''}
+      }
     `.trim().replace(/^\s{4}/gm, ''))
 
     if (!data.omitClass) {
       const propNames = Object.keys(data.properties ?? {})
       const firstProp = 'properties' in data ? data.properties[propNames[0]] : {}
-      if ('properties' in data && propNames.length > 1) classes.push(`
-        export interface ${data.name}Params {
-          ${Object.entries(data.properties).filter(e => !e[1].omitClassProp).map(([k, v]) => {
-            const defValue = defValString(v)
-            return (`
-                /**
-                 * ${'desc' in v ? v.desc.trim().replace(/\n/g, '\n   * ') : `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ''}.`}
-                 * 
-                 * **Default**: ${defValue}${
-                  'argument' in v ? `
-                 * 
-                 * **Argument**: {@link PropertyArgument.${v.argument} ${argumentNames[v.argument]}}`:''}${
-                   'see' in v ? `
-                 * 
-                 * See also:
-                 * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
-                 */
-              `
-            ) + `${k}?: ${v.type ?? typeMap[v.field]}`
-          })
-            .join('')
-            .trim()
-            .replace(/^\s{16}(?=\/\*\*| \*)|^\s{14}(?=\w)/gm, '  ')
-          }
-        }
-      `.trim()
-        .replace(/^\s{8}(?=\})/m, '')
-        .replace(/^\s{10}(?=\/|\w)/m, '  ')
-      )
       classes.push(`
         /**
          * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
@@ -301,26 +300,28 @@ export default async function(writeToDist = true) {
          */
         class ${data.name} extends DataAction {
           declare readonly type: ActionType.${data.name}
-          declare readonly meta: ActionMeta & {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}}
           ${Object.entries(data.properties ?? {}).filter(e => !e[1].omitClassProp).map(([k, v]) => {
-            return (
-              'desc' in v ? `
-                /**
-                 * ${v.desc.trim().replace(/\n/g, '\n   * ')}${
-                  'argument' in v ? `
-                 * 
-                 * **Argument**: {@link PropertyArgument.${v.argument} ${argumentNames[v.argument]}}`:''}${
-                   'see' in v ? `
-                 * 
-                 * See also:
-                 * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
-                 */
-              ` : '\n  '
-            ) + `${k}: ${v.type ?? typeMap[v.field]}`
+            return (`
+              /**
+               * ${
+                'desc' in v ?
+                  v.desc.trim().replace(/\n/g, '\n   * ') :
+                  `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ` ${propTypeMap[v.components] ?? 'scalar'}`}.`}
+               * 
+               * **Default**: ${defValString(v)}${
+                'argument' in v ? `
+               * 
+               * **Argument**: {@link PropertyArgument.${v.argument} ${argumentNames[v.argument]}}`:''}${
+                  'see' in v ? `
+               * 
+               * See also:
+               * - ${v.see.map(e => `{@link ${e}}`).join('\n   * - ')}`:''}
+               */
+            `) + `${k}: ${v.type ?? typeFromField(v.field)}`
           })
             .join('')
             .trim()
-            .replace(/^\s{16}(?=\/\*\*| \*)|^\s{14}(?=\w)/gm, '  ')
+            .replace(/^\s{14}(?=\/\*\*| \*)|^\s{12}(?=\w)/gm, '  ')
           }${propNames.length === 1 ? `
           /**
            * @param ${propNames[0]} ${
@@ -340,10 +341,12 @@ export default async function(writeToDist = true) {
            */` : ''}
           constructor(${
             'properties' in data ?
-              propNames.length > 1 ? `props: ${data.name}Params = {}` :
-              `${propNames[0]}: ${data.properties[propNames[0]].type ?? typeMap[data.properties[propNames[0]].field]} = ${defValTS(firstProp)}`
+              propNames.length > 1 ? `props: Partial<Props<${data.name}>> = {}` :
+              `${propNames[0]}: ${
+                data.properties[propNames[0]].type ?? typeFromField(data.properties[propNames[0]].field)
+              } = ${defValTS(firstProp)}`
             : ''}) {
-            super(ActionType.${data.name}, {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}})${'properties' in data ? `
+            super(ActionType.${data.name})${'properties' in data ? `
             this.assign(${propNames.length > 1 ? 'props' : `{ ${propNames[0]} }`})` : ''}
           }
         }

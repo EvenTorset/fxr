@@ -1,5 +1,5 @@
 # Before you continue
-Just in case you happened upon this page before finding out about it: The [FXR Playground](https://fxr-playground.pages.dev) is website where you can use the library without having to install anything. It is recommended that you check it out before continuing to find out if you really need to install the library locally.
+Just in case you happened upon this page before finding out about it: The [FXR Playground](https://fxr-playground.pages.dev) is a website where you can use the library without having to install anything. It is recommended that you check it out before continuing to find out if you really need to install the library locally.
 
 The playground includes a UI for performing simple actions such as recoloring or resizing existing effects, as well as things to simplify manual edits and running scripts that perform more advanced or bulk edits, or create entirely new effects from scratch.
 
@@ -100,7 +100,7 @@ npm ls @cccode/fxr
 ```
 If an update has broken your scripts or if you just want to go back to an older version of the library, you can install any specific version by putting the version number after `@` at the end of the package name in the install command. For example, this is how you would install version 10.0.0:
 ```text
-npm i @cccode/fxr@10.0.0 --omit=dev
+npm i @cccode/fxr@10.0.0
 ```
 
 <br>

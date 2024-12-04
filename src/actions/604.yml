@@ -157,7 +157,7 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
-    color: true
+    color: primary
     desc: |
       Color multiplier for the particle.
 
@@ -165,14 +165,6 @@ properties:
     see:
       - color1
       - color2
-  layersColor:
-    type: Vector4Value
-    components: 4
-    default: [1, 1, 1, 1]
-    argument: ParticleAge
-    color: true
-    desc: |
-      Color multiplier for both of the texture layers.
   layer1Color:
     type: Vector4Value
     components: 4
@@ -181,6 +173,8 @@ properties:
     color: true
     desc: |
       Color multiplier for Layer 1.
+
+      Values in this will be clamped to the 0-1 range.
   layer2Color:
     type: Vector4Value
     components: 4
@@ -189,6 +183,18 @@ properties:
     color: true
     desc: |
       Color multiplier for Layer 2.
+
+      Values in this will be clamped to the 0-1 range.
+  layer3Color:
+    type: Vector4Value
+    components: 4
+    default: [1, 1, 1, 1]
+    argument: ParticleAge
+    color: true
+    desc: |
+      Color multiplier for Layer 3.
+
+      Values in this will be clamped to the 0-1 range.
   alphaFadeThreshold:
     type: ScalarValue
     argument: ParticleAge
@@ -208,41 +214,23 @@ properties:
     argument: ParticleAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
-  unk_ds3_p1_23:
-    type: ScalarValue
-  unk_ds3_p1_24:
-    type: ScalarValue
-  unk_ds3_p1_25:
-    type: ScalarValue
-  unk_ds3_p1_26:
-    type: ScalarValue
-  unk_ds3_p1_27:
-    type: ScalarValue
-    default: 1
-  unk_ds3_p1_28:
-    type: ScalarValue
-    default: 1
   layer1SpeedU:
     type: ScalarValue
-    default: 0
     argument: ParticleAge
     desc: |
       Horiztonal scroll speed for Layer 1.
   layer1SpeedV:
     type: ScalarValue
-    default: 0
     argument: ParticleAge
     desc: |
       Vertical scroll speed for Layer 1.
   layer1OffsetU:
     type: ScalarValue
-    default: 0
     argument: Constant0
     desc: |
       Horizontal offset for the UV coordinates of Layer 1.
   layer1OffsetV:
     type: ScalarValue
-    default: 0
     argument: Constant0
     desc: |
       Vertical offset for the UV coordinates of Layer 1.
@@ -260,25 +248,21 @@ properties:
       Vertical scale for the UV coordinates of Layer 1.
   layer2SpeedU:
     type: ScalarValue
-    default: 0
     argument: ParticleAge
     desc: |
       Horiztonal scroll speed for Layer 2.
   layer2SpeedV:
     type: ScalarValue
-    default: 0
     argument: ParticleAge
     desc: |
       Vertical scroll speed for Layer 2.
   layer2OffsetU:
     type: ScalarValue
-    default: 0
     argument: Constant0
     desc: |
       Horizontal offset for the UV coordinates of Layer 2.
   layer2OffsetV:
     type: ScalarValue
-    default: 0
     argument: Constant0
     desc: |
       Vertical offset for the UV coordinates of Layer 2.
@@ -294,6 +278,38 @@ properties:
     argument: ParticleAge
     desc: |
       Vertical scale for the UV coordinates of Layer 2.
+  layer3SpeedU:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      Horiztonal scroll speed for Layer 3.
+  layer3SpeedV:
+    type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      Vertical scroll speed for Layer 3.
+  layer3OffsetU:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Horizontal offset for the UV coordinates of Layer 3.
+  layer3OffsetV:
+    type: ScalarValue
+    argument: Constant0
+    desc: |
+      Vertical offset for the UV coordinates of Layer 3.
+  layer3ScaleU:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Horizontal scale for the UV coordinates of Layer 3.
+  layer3ScaleV:
+    type: ScalarValue
+    default: 1
+    argument: ParticleAge
+    desc: |
+      Vertical scale for the UV coordinates of Layer 3.
   rgbMultiplier:
     type: ScalarValue
     default: 1
@@ -334,13 +350,6 @@ properties:
     default: OrientationMode.CameraPlane
     desc: |
       Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
-  mask:
-    field: int
-    default: 1
-    resource: texture
-    textureType: a
-    desc: |
-      Mask texture ID.
   layer1:
     field: int
     default: 1
@@ -355,6 +364,13 @@ properties:
     textureType: a
     desc: |
       Layer 2 texture ID.
+  layer3:
+    field: int
+    default: 1
+    resource: texture
+    textureType: a
+    desc: |
+      Layer 3 texture ID.
   uniformScale:
     field: bool
     default: false
@@ -461,7 +477,7 @@ properties:
   minFadeDistance:
     field: float
     default: -1
-    scale: ifNotMinusOne
+    scale: distanceIfNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -475,7 +491,7 @@ properties:
   minDistance:
     field: float
     default: -1
-    scale: ifNotMinusOne
+    scale: distanceIfNotMinusOne
     desc: |
       Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -491,7 +507,7 @@ properties:
   maxFadeDistance:
     field: float
     default: -1
-    scale: ifNotMinusOne
+    scale: distanceIfNotMinusOne
     desc: |
       This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
@@ -505,7 +521,7 @@ properties:
   maxDistance:
     field: float
     default: -1
-    scale: ifNotMinusOne
+    scale: distanceIfNotMinusOne
     desc: |
       Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
@@ -521,7 +537,7 @@ properties:
   minDistanceThreshold:
     field: float
     default: -1
-    scale: ifNotMinusOne
+    scale: distanceIfNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -533,7 +549,7 @@ properties:
   maxDistanceThreshold:
     field: float
     default: -1
-    scale: ifNotMinusOne
+    scale: distanceIfNotMinusOne
     desc: |
       A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
     see:
@@ -557,7 +573,7 @@ properties:
     default: 1
   unkDepthBlend2:
     field: float
-    scale: true
+    scale: distance
   unk_ds3_f2_27:
     field: int
     default: 1
@@ -565,7 +581,11 @@ properties:
     field: int
   unk_ds3_f2_29:
     field: float
-    default: 5
+    scale: distance
+    desc: |
+      Unknown float.
+
+      This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
   shadowDarkness:
     field: float
     desc: |
@@ -631,9 +651,9 @@ games:
   DS3:
     fields1:
       - orientation
-      - mask
       - layer1
       - layer2
+      - layer3
       - blendMode
       - uniformScale
       - unk_ds3_f1_6
@@ -694,18 +714,12 @@ games:
       - color1
       - color2
       - color3
-      - layersColor
       - layer1Color
       - layer2Color
+      - layer3Color
       - alphaFadeThreshold
       - frameIndex
       - frameIndexOffset
-      - unk_ds3_p1_23
-      - unk_ds3_p1_24
-      - unk_ds3_p1_25
-      - unk_ds3_p1_26
-      - unk_ds3_p1_27
-      - unk_ds3_p1_28
       - layer1SpeedU
       - layer1SpeedV
       - layer1OffsetU
@@ -718,6 +732,12 @@ games:
       - layer2OffsetV
       - layer2ScaleU
       - layer2ScaleV
+      - layer3SpeedU
+      - layer3SpeedV
+      - layer3OffsetU
+      - layer3OffsetV
+      - layer3ScaleU
+      - layer3ScaleV
     properties2:
       - rgbMultiplier
       - alphaMultiplier
@@ -729,9 +749,9 @@ games:
   SDT:
     fields1:
       - orientation
-      - mask
       - layer1
       - layer2
+      - layer3
       - uniformScale
       - unk_ds3_f1_6
       - columns
@@ -804,18 +824,12 @@ games:
       - color1
       - color2
       - color3
-      - layersColor
       - layer1Color
       - layer2Color
+      - layer3Color
       - alphaFadeThreshold
       - frameIndex
       - frameIndexOffset
-      - unk_ds3_p1_23
-      - unk_ds3_p1_24
-      - unk_ds3_p1_25
-      - unk_ds3_p1_26
-      - unk_ds3_p1_27
-      - unk_ds3_p1_28
       - layer1SpeedU
       - layer1SpeedV
       - layer1OffsetU
@@ -828,13 +842,19 @@ games:
       - layer2OffsetV
       - layer2ScaleU
       - layer2ScaleV
+      - layer3SpeedU
+      - layer3SpeedV
+      - layer3OffsetU
+      - layer3OffsetV
+      - layer3ScaleU
+      - layer3ScaleV
     properties2: DS3
   ER:
     fields1:
       - orientation
-      - mask
       - layer1
       - layer2
+      - layer3
       - uniformScale
       - unk_ds3_f1_6
       - columns

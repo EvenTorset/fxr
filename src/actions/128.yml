@@ -31,6 +31,7 @@ properties:
       Controls how the node is attached to the parent node.
   depthBias:
     field: float
+    scale: true
     desc: |
       Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
 

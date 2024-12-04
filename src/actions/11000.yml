@@ -12,7 +12,7 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     argument: ActiveTime
-    color: true
+    color: primary
     desc: |
       Controls the diffuse color of the light.
 
@@ -24,7 +24,7 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     argument: ActiveTime
-    color: true
+    color: primary
     desc: |
       Controls the specular color of the light.
 

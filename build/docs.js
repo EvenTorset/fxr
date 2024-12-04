@@ -265,7 +265,14 @@ for (const fn of (await fs.readdir(actionsDir)).sort(naturalSorter)) {
         jsonProp.components = prop.components ?? 1
       }
       if ('field' in prop) {
-        jsonProp.fieldType = fieldTypeNameMap[prop.field]
+        if (typeof prop.field === 'string') {
+          jsonProp.fieldType = fieldTypeNameMap[prop.field]
+        } else {
+          jsonProp.fieldType = Object.fromEntries(Object.entries(prop.field).map(([k, v]) => [
+            gameMap[k],
+            fieldTypeNameMap[v]
+          ]))
+        }
       }
       if ('argument' in prop) {
         jsonProp.argument = prop.argument

@@ -1,5 +1,62 @@
 # Changelog
 
+## [18.0.0] - 2024-12-05
+
+- Updated action 604 with new names and documentation for all of the layer-specific properties and fields.
+  - `mask` is now `layer1`, and the old `layer1` and `layer2` fields are now `layer2` and `layer3` respectively.
+  - All other properties with the `layer#` prefix have also been changed to match.
+  - Previously unknown or incorrectly documented properties related to layer 1 (what used to be "mask") have been properly named and documented:
+    - `layersColor` -> `layer1Color`
+    - `unk_ds3_p1_23` -> `layer1SpeedU`
+    - `unk_ds3_p1_24` -> `layer1SpeedV`
+    - `unk_ds3_p1_25` -> `layer1OffsetU`
+    - `unk_ds3_p1_26` -> `layer1OffsetV`
+    - `unk_ds3_p1_27` -> `layer1ScaleU`
+    - `unk_ds3_p1_28` -> `layer1ScaleV`
+- The `unk_er_f1_7` field in `RichModel` has been given a name: `dither`. It has also been documented and had its type corrected.
+- The `unk_ds3_f1_7` and `unk_ac6_f1_7` fields in `Unk10500` have been merged into one named `initialSimulationTime`, and it has been properly documented. This was previously two separate fields because it was untested in AC6, where it also has a different field type and unit. It has been tested now, and it does work exactly like the field in the other games, except it's in seconds instead of 1/30s. The library will handle the type and unit conversion automatically, so the unit is always 1s and floats can be used, even if you're writing the effect for one of the other games. This field is now also scaled by the `scaleRateOfTime` methods, which means that it will work the same way on DS3 as the other games.
+  - This required some changes to how field types are stored in the library, so now each game can have its own type for each field. This is currently only used for this one field, but it might be useful later if similar fields are found.
+- Added two new methods to all node classes:
+  - `getColor` - Calculates the color value for the node the same way that the games do, which can be used to generate accurate color previews for nodes. If the node wouldn't produce anything with a color, this function instead returns `null`. This function was originally made for the FXR Playground to generate the color previews there, but has been improved slightly since then.
+  - `hasColor` - A fast way to check if the `getColor` function will return a color or not. Can be used to check if it would make sense to display a color preview for a node.
+- Recoloring functions have been updated to be simpler and more intuitive, but also much more useful:
+  - `BasicConfig` now has a `recolor` method, which works just like the one on nodes, except this only recolors the config it is called on.
+  - Recolor functions are now given the config, action, and property name for context. This can be used to make recolor functions that handle different properties differently. For example, one could change one property to be red and another property in the same action to green using the same recolor function.
+  - `Recolor.isPrimary` is a new function that labeles some action color properties as "primary" and others as "secondary". By setting primary color properties to a target color and secondary color properties to white, the final color of the effect will match the target color exactly. This function is now used internally in combination with the new context explained above in some of the pre-defined recolor functions, but may also be used to create your own custom ones.
+  - The `Recolor.replace`, `Recolor.multiply`, and `Recolor.colorBlend` functions have been updated to use this new system for separating primary and secondary color properties, which means that they will produce colors that more closely match what you would expect. For example, using `Recolor.replace` with an orange color should now make the effect orange, whereas before it would most likely end up being pretty red, depending on what actions were used in the effect.
+  - The `Recolor.replace` function has also been updated to handle opacity and brightness in a smarter way. Optional parameters have been added to disable these changes if needed. This function should now be considered the "standard" recolor function, because it should handle most cases in the most intuitive way. Without messing with the optional parameters, this function should basically just make any effect have exactly the color you give it.
+  - Some less useful recolor functions have been **removed** in order to make it easier to pick the right function for a job:
+    - `Recolor.standardBlend` - This function should simply not be needed anymore. It was designed as a hacky way around the old problem of requiring a single recolor function that handled every property equally. `Recolor.replace` can be used in place of this to get similar results, and it also works with grayscale effects, which `Recolor.standardBlend` couldn't handle.
+    - `Recolor.add` - This recolor function caused a bit of confusion for some and wasn't all that useful anyway. If anyone finds a good use for this, it may be added back, but maybe with some tweaks.
+    - `Recolor.replaceSaturation` - Similar to the `add` function, this was just not very useful, but it may be added back in some form if needed.
+- A few improvements and fixes have been made to scaling:
+  - Configs now have a `scale` method.
+    - This works just like method on nodes and data actions, but only affects the config it is called on and the actions it contains.
+    - The `scale` method on nodes with configs now call the method on the configs instead of calling it on the data actions directly.
+      - This fixes an issue where the view distance thresholds in `LevelsOfDetailConfig` objects would not be scaled by the `scale` method on nodes since these thresholds are stored in the config instead of in an action internally.
+  - All of the `scale` methods now take a factor and an options object.
+    - The old `recurse` parameter in the `scale` method on nodes is now a property of the options object instead of being its own parameter.
+    - For now, the only other option is `includeViewDistance`, which can be enabled to also scale properties that are based on the view distance in some way. By default, this option is disabled, which means the default behavior of the `scale` method is now different. Before, these properties were also scaled, which could cause some annoying side-effects in some cases.
+  - The `maxViewDistance` fields in `PointLight` and `Unk10500` and the thresholds in `LevelsOfDetailThresholds` are now scaled by the `scale` methods if `includeViewDistance` is enabled. They were previously not scaled at all, which was inconsistent with the other view distance limit fields in other actions.
+  - The `depthBias` field in `NodeAttributes` is now scaled by the `scale` methods.
+  - The `unk_sdt_f2_38` field in `Distortion` is now scaled by the `scale` methods if `includeViewDistance` is enabled, and its effect has been documented. Exactly what it does is still unknown, so it remains unnamed.
+  - The `unk_ds3_f2_29` field in many of the appearance actions has been identified as some kind of view distance threshold, and is therefore now also scaled by the `scale` methods if `includeViewDistance` is enabled. Exactly what this field does is still unknown.
+- A new read-only `hasAppearance` property has been added to FXR objects, which can be used to check if an effect contains any appearance actions.
+- The documentation site has been updated with a few improvements.
+  - It now has a new theme, one that uses colors closer to the FXR Playground style.
+  - Enum members are now sorted in ascending order based on the value instead of alphabetically.
+  - Added links to the FXR Playground and Ko-fi to the sidebar.
+  - Added the library version number to the header.
+- The `unk_ds3_f2_1` field in `BillboardEx`, `Tracer`, and `DynamicTracer` has been changed to be an integer field. It was previously a boolean field, which was possibly an error because this field is entirely unknown. It is only ever 0 or 1 in vanilla, but that doesn't mean that those are the only possible values. As a side-effect of this, converting between `BillboardEx` and `MultiTextureBillboardEx` is now a bit easier, since the latter has always had this field as an integer.
+- Fixed the `getActionCount` method on `NodeEmitterConfig` objects always returning `10`. It now correctly returns `9` if the given game is `Game.DarkSouls3`, and `10` otherwise.
+- Fixed writing effects for Dark Souls 3 being destructive if the rate of time was set to anything other than 1. It now creates a clone of the tree structure and scales the rate of time in the clone before writing it instead of scaling the rate on the original directly. This shouldn't matter unless the same FXR object was written to a file multiple times, which most people would rarely have to do.
+- `DataAction`s (basically any class that represents a specific action in the library) now have a `$data` property for easily accessing most of the data stored in the library about the action type the class is for. This was already accessible from the `ActionData` object, and this property is just making it easier to access it.
+  - The `meta` property on `DataAction`s has been merged into the `ActionData` object, which means that any references to this property should be replaced with `$data` now.
+  - This uses a new naming scheme in the library. Properties with a name starting with `$` are for accessing various internal functions and information in the library. These are not meant to be useful for most people. They may be useful for some more advanced operations, but they are primarily for use internally.
+- Similar to the note above, `DataAction`s now have a `$convert` property for accessing internal conversion functions for the action, which were only accessible from the `ActionDataConversion` object before.
+- Fixed the documented default value of some boolean fields being `0` instead of `false`. The actual default value was `false`, so this was just an error in the documentation.
+- Replaced all data action constructor parameter interfaces with types based on the classes. This doesn't change anything functionally, but cleans up the code and the documentation site a lot. ~10k lines of code was removed by doing this.
+
 ## [17.0.0] - 2024-11-12
 
 - Named and documented three actions:
@@ -227,6 +284,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[18.0.0]: https://github.com/EvenTorset/fxr/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0
 [16.0.0]: https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0
 [15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0

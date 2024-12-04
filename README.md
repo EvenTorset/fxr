@@ -15,7 +15,7 @@ The library is available on [npm](https://www.npmjs.com/package/@cccode/fxr), so
 
 If you *are* familiar with JS and Node.js, you can install the library with this command:
 ```
-npm i @cccode/fxr --omit=dev
+npm i @cccode/fxr
 ```
 
 ## Documentation
@@ -48,7 +48,7 @@ const fxr = await FXR.read('f000450360.fxr')
 fxr.root.scale(0.5)
 
 // Or you can recolor the effect:
-fxr.root.recolor(Recolor.standardBlend(hex`ff4d00`))
+fxr.root.recolor(Recolor.replace(hex`ff4d00`))
 
 // Write the modified file. Note that you may change the game to output this
 // for to any of the four supported games, as long as the game supports all

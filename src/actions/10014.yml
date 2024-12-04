@@ -23,7 +23,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    color: true
+    color: primary
     desc: |
       Layer 1 color.
   layer2Width:
@@ -42,7 +42,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    color: true
+    color: primary
     desc: |
       Layer 2 color.
   layer3Width:
@@ -61,7 +61,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    color: true
+    color: primary
     desc: |
       Layer 3 color.
   layer4Width:
@@ -80,7 +80,7 @@ properties:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
-    color: true
+    color: primary
     desc: |
       Layer 4 color.
   layer1:
