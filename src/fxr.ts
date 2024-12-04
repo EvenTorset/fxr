@@ -6312,8 +6312,8 @@ function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actio
 
 function writeDataActionProperties(action: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   const conProps = bw.convertedDataActions.get(action)
-  const properties1: AnyProperty[] = action.getProperties.call(conProps, game, 'properties1')
-  const properties2: AnyProperty[] = action.getProperties.call(conProps, game, 'properties2')
+  const properties1: AnyProperty[] = action.getProperties(game, 'properties1', conProps)
+  const properties2: AnyProperty[] = action.getProperties(game, 'properties2', conProps)
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
     writeProperty(property, bw, game, properties, false)
@@ -6332,8 +6332,8 @@ function writeDataActionSection10s(action: DataAction, bw: BinaryWriter, game: G
 
 function writeDataActionFields(action: DataAction, bw: BinaryWriter, game: Game, index: number): number {
   const conProps = bw.convertedDataActions.get(action)
-  const fields1: Field<FieldType>[] = action.getFields.call(conProps, game, 'fields1')
-  const fields2: Field<FieldType>[] = action.getFields.call(conProps, game, 'fields2')
+  const fields1: Field<FieldType>[] = action.getFields(game, 'fields1', conProps)
+  const fields2: Field<FieldType>[] = action.getFields(game, 'fields2', conProps)
   if (fields1.length + fields2.length === 0) {
     bw.fill(`ActionFieldsOffset${index}`, 0)
     return 0
@@ -12180,32 +12180,34 @@ class DataAction implements IAction {
     return minified
   }
 
-  getFields(game: Game, list: 'fields1' | 'fields2'): Field<FieldType>[] {
+  getFields(game: Game, list: 'fields1' | 'fields2', props: Props<this> = this): Field<FieldType>[] {
     const data = getActionGameData(this.type, game)
+    const ade = this.$data
     return data[list].map((name: string) => {
-      const prop = this.$data.props[name]
-      validateDataActionProp(this, name, prop)
+      const prop = ade.props[name]
+      validateDataActionProp(props, name, prop)
       return Field.from(
         typeof prop.field === 'number' ? prop.field : prop.field[game],
-        this[name] instanceof Property ? this[name].valueAt(0) : this[name]
+        props[name] instanceof Property ? props[name].valueAt(0) : props[name]
       )
     })
   }
 
-  getProperties(game: Game, list: 'properties1' | 'properties2'): AnyProperty[] {
+  getProperties(game: Game, list: 'properties1' | 'properties2', props: Props<this> = this): AnyProperty[] {
     const data = getActionGameData(this.type, game)
+    const ade = this.$data
     return (data[list] ?? []).map((name: string) => {
-      const prop = this.$data.props[name]
-      validateDataActionProp(this, name, prop)
-      return this[name] instanceof Property ? this[name].for(game) : Array.isArray(prop.default) ?
-        new ConstantProperty(...this[name]).for(game) :
-        new ConstantProperty(this[name]).for(game)
+      const prop = ade.props[name]
+      validateDataActionProp(props, name, prop)
+      return props[name] instanceof Property ? props[name].for(game) : Array.isArray(prop.default) ?
+        new ConstantProperty(...props[name]).for(game) :
+        new ConstantProperty(props[name]).for(game)
     })
   }
 
-  getSection10s(game: Game): number[][] {
+  getSection10s(game: Game, props: Props<this> = this): number[][] {
     const data = getActionGameData(this.type, game)
-    return (data.section10s ?? []).map((name: string) => this[name])
+    return (data.section10s ?? []).map((name: string) => props[name])
   }
 
   toAction(game: Game) {
@@ -12214,11 +12216,11 @@ class DataAction implements IAction {
       this
     return new Action(
       this.type,
-      this.getFields.call(convertedProps, game, 'fields1'),
-      this.getFields.call(convertedProps, game, 'fields2'),
-      this.getProperties.call(convertedProps, game, 'properties1'),
-      this.getProperties.call(convertedProps, game, 'properties2'),
-      this.getSection10s.call(convertedProps, game)
+      this.getFields(game, 'fields1', convertedProps),
+      this.getFields(game, 'fields2', convertedProps),
+      this.getProperties(game, 'properties1', convertedProps),
+      this.getProperties(game, 'properties2', convertedProps),
+      this.getSection10s(game, convertedProps)
     )
   }
 
