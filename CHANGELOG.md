@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [18.0.0] - 2024-12-05
 
 - Updated action 604 with new names and documentation for all of the layer-specific properties and fields.
   - `mask` is now `layer1`, and the old `layer1` and `layer2` fields are now `layer2` and `layer3` respectively.
@@ -284,7 +284,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
-[Unreleased]: https://github.com/EvenTorset/fxr/compare/v17.0.0...HEAD
+[18.0.0]: https://github.com/EvenTorset/fxr/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0
 [16.0.0]: https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0
 [15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
