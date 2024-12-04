@@ -237,7 +237,9 @@ export default async function(writeToDist = true) {
     `.trim().replace(/^\s{6}/gm, '  '))
 
     actionDataEntries.push(`
-      [ActionType.${data.name}]: {${'properties' in data ? `
+      [ActionType.${data.name}]: {
+        isAppearance: ${data.meta.isAppearance},
+        isParticle: ${data.meta.isParticle}${'properties' in data ? `,
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
             return `${k}: { default: ${defValTS(v)}${
@@ -282,8 +284,8 @@ export default async function(writeToDist = true) {
               }
             `.trim().replace(/^\s{14}(?=\})/m, ' '.repeat(10)).replace(/^\s{16}/m, ' '.repeat(12))
           }).join(',\n          ')}
-        }
-      ` : ''}}
+        }` : ''}
+      }
     `.trim().replace(/^\s{4}/gm, ''))
 
     if (!data.omitClass) {
@@ -298,7 +300,6 @@ export default async function(writeToDist = true) {
          */
         class ${data.name} extends DataAction {
           declare readonly type: ActionType.${data.name}
-          declare readonly meta: ActionMeta & {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}}
           ${Object.entries(data.properties ?? {}).filter(e => !e[1].omitClassProp).map(([k, v]) => {
             return (`
               /**
@@ -345,7 +346,7 @@ export default async function(writeToDist = true) {
                 data.properties[propNames[0]].type ?? typeFromField(data.properties[propNames[0]].field)
               } = ${defValTS(firstProp)}`
             : ''}) {
-            super(ActionType.${data.name}, {${Object.entries(data.meta).map(e => `${e[0]}:${toTSString(e[1])}`)}})${'properties' in data ? `
+            super(ActionType.${data.name})${'properties' in data ? `
             this.assign(${propNames.length > 1 ? 'props' : `{ ${propNames[0]} }`})` : ''}
           }
         }
