@@ -1,5 +1,9 @@
 # Changelog
 
+## [18.0.1] - 2024-12-05
+
+- The `Recolor.isPrimary` function now returns `true` instead of throwing an error when the `action` parameter is `undefined`. This fixes an issue where trying to use one of the recolor functions that use the `Recolor.isPrimary` function without giving it context would cause it to throw an error.
+
 ## [18.0.0] - 2024-12-05
 
 - Updated action 604 with new names and documentation for all of the layer-specific properties and fields.
