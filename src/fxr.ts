@@ -33664,7 +33664,7 @@ namespace Recolor {
    * @param property A property name from the {@link action}.
    */
   export function isPrimary<T extends DataAction>(action: T, property: keyof T): boolean {
-    return action.$data.props?.[property]?.color === 1
+    return !action || action.$data.props?.[property]?.color === 1
   }
 
   /**
