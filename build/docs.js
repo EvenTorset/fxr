@@ -59,7 +59,7 @@ for await (const filePath of getFiles('docs')) {
 
 {
   const content = await fs.readFile('docs/assets/navigation.js', 'utf-8')
-  const list = JSON.parse(zlib.gunzipSync(Buffer.from(content.match(/;base64,(.*)"/)[1], 'base64')).toString('utf-8'))
+  const list = JSON.parse(zlib.inflateSync(Buffer.from(content.match(/window\.navigationData = "(.*)"/)[1], 'base64')).toString('utf-8'))
   const todo = list.slice()
   while (todo.length > 0) {
     const e = todo.shift()
@@ -70,18 +70,18 @@ for await (const filePath of getFiles('docs')) {
   }
   await fs.writeFile(
     'docs/assets/navigation.js',
-    content.replace(/;base64,(.*)"/, ';base64,'+zlib.gzipSync(Buffer.from(JSON.stringify(list))).toString('base64')+'"')
+    content.replace(/window\.navigationData = "(.*)"/, 'window.navigationData = "'+zlib.deflateSync(Buffer.from(JSON.stringify(list))).toString('base64')+'"')
   )
 }
 
 {
   const content = await fs.readFile('docs/assets/search.js', 'utf-8')
-  const json = zlib.gunzipSync(Buffer.from(content.match(/;base64,(.*)"/)[1], 'base64'))
+  const json = zlib.inflateSync(Buffer.from(content.match(/window\.searchData = "(.*)"/)[1], 'base64'))
     .toString('utf-8')
     .replace(/"functions\//g, '"funcs/')
   await fs.writeFile(
     'docs/assets/search.js',
-    content.replace(/;base64,(.*)"/, ';base64,'+zlib.gzipSync(Buffer.from(json)).toString('base64')+'"')
+    content.replace(/window\.searchData = "(.*)"/, 'window.searchData = "'+zlib.deflateSync(Buffer.from(json)).toString('base64')+'"')
   )
 }
 
