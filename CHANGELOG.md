@@ -1,5 +1,10 @@
 # Changelog
 
+## [18.0.2] - 2024-12-21
+
+- Fixed the `depth` parameter for the `clone` method in the base `Node` class not being marked as optional. It *is* optional, and always has been for all of the subclasses.
+- Added a note about proxy nodes not being able to contain child nodes to the `ProxyNode` class description since it is the only node type with that property.
+
 ## [18.0.1] - 2024-12-05
 
 - The `Recolor.isPrimary` function now returns `true` instead of throwing an error when the `action` parameter is `undefined`. This fixes an issue where trying to use one of the recolor functions that use the `Recolor.isPrimary` function without giving it context would cause it to throw an error.
@@ -288,6 +293,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[18.0.2]: https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2
 [18.0.1]: https://github.com/EvenTorset/fxr/compare/v18.0.0...v18.0.1
 [18.0.0]: https://github.com/EvenTorset/fxr/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0
