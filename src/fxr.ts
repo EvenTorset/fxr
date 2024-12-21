@@ -10859,6 +10859,8 @@ class RootNode extends Node {
 
 /**
  * Acts as a node containing another SFX.
+ * 
+ * This node cannot contain other nodes.
  */
 class ProxyNode extends Node {
 
