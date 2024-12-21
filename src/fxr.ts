@@ -10321,7 +10321,7 @@ abstract class Node {
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
   minify(): Node { return this }
-  abstract clone(depth: number): Node
+  abstract clone(depth?: number): Node
 
   static fromJSON(obj: any): Node {
     if (obj instanceof Node) {
@@ -10891,7 +10891,7 @@ class ProxyNode extends Node {
     }
   }
 
-  clone(): ProxyNode {
+  clone(depth?: number): ProxyNode {
     return new ProxyNode(this.sfx)
   }
 
