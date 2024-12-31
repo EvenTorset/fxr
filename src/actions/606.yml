@@ -192,12 +192,18 @@ properties:
     default: 100
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
-  unk_ds3_f1_7:
+  segmentSubdivision:
     field: int
+    desc: |
+      The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
+
+      A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
   unk_ds3_f1_8:
     field: float
-  unk_ds3_f1_9:
+  fadeOutTime:
     field: float
+    desc: |
+      When the particle is meant to terminate, the trail will linger for this many seconds and its opacity will fade to 0 in that time.
   columns:
     field: int
     default: 1
@@ -454,9 +460,9 @@ games:
       - segmentInterval
       - segmentDuration
       - concurrentSegments
-      - unk_ds3_f1_7
+      - segmentSubdivision
       - unk_ds3_f1_8
-      - unk_ds3_f1_9
+      - fadeOutTime
       - columns
       - totalFrames
       - attachedUV
@@ -524,9 +530,9 @@ games:
       - segmentInterval
       - segmentDuration
       - concurrentSegments
-      - unk_ds3_f1_7
+      - segmentSubdivision
       - unk_ds3_f1_8
-      - unk_ds3_f1_9
+      - fadeOutTime
       - columns
       - totalFrames
       - attachedUV
@@ -598,9 +604,9 @@ games:
       - segmentInterval
       - segmentDuration
       - concurrentSegments
-      - unk_ds3_f1_7
+      - segmentSubdivision
       - unk_ds3_f1_8
-      - unk_ds3_f1_9
+      - fadeOutTime
       - columns
       - totalFrames
       - attachedUV

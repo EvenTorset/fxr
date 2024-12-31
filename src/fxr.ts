@@ -3602,9 +3602,9 @@ const ActionData: Record<string, ActionDataEntry> = {
       segmentInterval: { default: 0, field: 2, time: 2 },
       segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
-      unk_ds3_f1_7: { default: 0, field: 1 },
+      segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
-      unk_ds3_f1_9: { default: 0, field: 2 },
+      fadeOutTime: { default: 0, field: 2 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
@@ -3654,19 +3654,19 @@ const ActionData: Record<string, ActionDataEntry> = {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -4880,9 +4880,9 @@ const ActionData: Record<string, ActionDataEntry> = {
       segmentInterval: { default: 0, field: 2, time: 2 },
       segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
-      unk_ds3_f1_7: { default: 0, field: 1 },
+      segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
-      unk_ds3_f1_9: { default: 0, field: 2 },
+      fadeOutTime: { default: 0, field: 2 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
@@ -4939,19 +4939,19 @@ const ActionData: Record<string, ActionDataEntry> = {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
         properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -19160,11 +19160,13 @@ class Tracer extends DataAction {
    */
   concurrentSegments: number
   /**
-   * Unknown integer.
+   * The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
+   * 
+   * A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_7: number
+  segmentSubdivision: number
   /**
    * Unknown float.
    * 
@@ -19172,11 +19174,11 @@ class Tracer extends DataAction {
    */
   unk_ds3_f1_8: number
   /**
-   * Unknown float.
+   * When the particle is meant to terminate, the trail will linger for this many seconds and its opacity will fade to 0 in that time.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_9: number
+  fadeOutTime: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
    * 
@@ -26686,11 +26688,15 @@ class DynamicTracer extends DataAction {
    */
   concurrentSegments: number
   /**
-   * Unknown integer.
+   * The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
+   * 
+   * A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
+   * 
+   * Increasing this may make the opacity of the trail inconsistent in some cases. This seems to be unique to {@link DynamicTracer}; it does not happen with {@link Tracer}.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_7: number
+  segmentSubdivision: number
   /**
    * Unknown float.
    * 
@@ -26698,11 +26704,11 @@ class DynamicTracer extends DataAction {
    */
   unk_ds3_f1_8: number
   /**
-   * Unknown float.
+   * When the particle is meant to terminate, the trail will linger for this many seconds and its opacity will fade to 0 in that time.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_9: number
+  fadeOutTime: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
    * 
