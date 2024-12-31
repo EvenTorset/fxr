@@ -14,12 +14,16 @@ properties:
     scale: true
     desc: |
       Translation of the node.
+
+      This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
   rotation:
     field: vec3
     components: 3
     default: [0, 0, 0]
     desc: |
       The rotation of the node.
+
+      The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
 games:
   DS3:
     fields1:

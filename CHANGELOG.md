@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Documented the order that the rotations and translations from `StaticNodeTransform` and `RandomNodeTransform` are applied in.
+- Updated the documentation for the `totalIntervals` property in `PeriodicEmitter` to clarify exactly what it does when the limit is reached.
+
 ## [18.0.2] - 2024-12-21
 
 - Fixed the `depth` parameter for the `clone` method in the base `Node` class not being marked as optional. It *is* optional, and always has been for all of the subclasses.
@@ -293,6 +298,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v18.0.2...HEAD
 [18.0.2]: https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2
 [18.0.1]: https://github.com/EvenTorset/fxr/compare/v18.0.0...v18.0.1
 [18.0.0]: https://github.com/EvenTorset/fxr/compare/v17.0.0...v18.0.0
