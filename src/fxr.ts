@@ -34718,7 +34718,7 @@ namespace FXRUtility {
               n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
             } else if (emShape instanceof RectangleEmitterShape) {
               const width = constantValueOf(emShape.sizeX)
-              const height = constantValueOf(emShape.sizeX)
+              const height = constantValueOf(emShape.sizeY)
               n.nodes.push(rect(width, height, color, lineWidth, args))
             } else if (emShape instanceof SphereEmitterShape) {
               const radius = constantValueOf(emShape.radius)
