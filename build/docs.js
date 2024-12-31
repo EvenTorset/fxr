@@ -97,7 +97,7 @@ await fs.writeFile('docs/~/index.html', /*html*/`
       const navData = await new Response(
         new Blob([
           await(await fetch(window.navigationData)).arrayBuffer()
-        ]).stream().pipeThrough(new DecompressionStream('gzip'))
+        ]).stream().pipeThrough(new DecompressionStream('deflate'))
       ).json()
       const linkMap = {}
       for (const entry of navData) {
