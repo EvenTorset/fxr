@@ -2,9 +2,10 @@
 
 ## [Unreleased]
 
-- Fixed the `FXRUtilities.outlineEmitters` function using the `sizeX` property instead of `sizeY` for the height of `RectangleEmitterShape`s.
 - Documented the order that the rotations and translations from `StaticNodeTransform` and `RandomNodeTransform` are applied in.
 - Updated the documentation for the `totalIntervals` property in `PeriodicEmitter` to clarify exactly what it does when the limit is reached.
+- Fixed the `FXRUtilities.outlineEmitters` function using the `sizeX` property instead of `sizeY` for the height of `RectangleEmitterShape`s.
+- Fixed the `FXRUtilities.line` function not always rotating the line correctly. This function is used by many of the other functions in the `FXRUtilities` namespace, so this also fixes issues with those.
 
 ## [18.0.2] - 2024-12-21
 

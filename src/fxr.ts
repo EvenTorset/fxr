@@ -34505,8 +34505,8 @@ namespace FXRUtility {
         offset: [cx, cy, cz],
         rotation: [
           0,
-          -rad2deg(Math.atan2(dz, dx)),
-          rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
+          rad2deg(Math.atan2(dz, dx)),
+          -rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
         ]
       })
     ], [
@@ -34629,7 +34629,7 @@ namespace FXRUtility {
    * Creates a node with three elliptical outlines forming an ellipsoid.
    * @param radiusX The X radius of the ellipsoid.
    * @param radiusY The Y radius of the ellipsoid.
-   * @param radiusY The Z radius of the ellipsoid.
+   * @param radiusZ The Z radius of the ellipsoid.
    * @param segments The number of line segments to use to approximate the
    * ellipses.
    * @param color The color of the outline.
