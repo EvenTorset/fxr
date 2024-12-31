@@ -12809,11 +12809,15 @@ class StaticNodeTransform extends DataAction {
   /**
    * Translation of the node.
    * 
+   * This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+   * 
    * **Default**: `[0, 0, 0]`
    */
   offset: Vector3
   /**
    * The rotation of the node.
+   * 
+   * The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
    * 
    * **Default**: `[0, 0, 0]`
    */
@@ -12835,11 +12839,15 @@ class RandomNodeTransform extends DataAction {
   /**
    * Translation of the node.
    * 
+   * This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+   * 
    * **Default**: `[0, 0, 0]`
    */
   offset: Vector3
   /**
    * The rotation of the node.
+   * 
+   * The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
    * 
    * **Default**: `[0, 0, 0]`
    */
@@ -14408,7 +14416,9 @@ class PeriodicEmitter extends DataAction {
    */
   perInterval: ScalarValue
   /**
-   * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
+   * The total number of intervals to emit particles. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+   * 
+   * Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
    * 
@@ -14416,7 +14426,7 @@ class PeriodicEmitter extends DataAction {
    */
   totalIntervals: ScalarValue
   /**
-   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * Maximum number of concurrent particles. Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
    * 
