@@ -2,9 +2,11 @@
 
 ## [Unreleased]
 
-- Named and documented some fields in the `Tracer` and `DynamicTracer` actions:
+- Named and documented some properties in the `Tracer` and `DynamicTracer` actions:
   - `unk_ds3_f1_7` -> `segmentSubdivision`
   - `unk_ds3_f1_9` -> `fadeOutTime`
+  - `unk_ds3_p1_2` -> `startFadeEndpoint`
+  - `unk_ds3_p1_3` -> `endFadeEndpoint`
 - Documented the order that the rotations and translations from `StaticNodeTransform` and `RandomNodeTransform` are applied in.
 - Updated the documentation for the `totalIntervals` property in `PeriodicEmitter` to clarify exactly what it does when the limit is reached.
 - Fixed the `FXRUtility.outlineEmitters` function using the `sizeX` property instead of `sizeY` for the height of `RectangleEmitterShape`s.

@@ -3578,8 +3578,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       widthMultiplier: { default: 1 },
-      unk_ds3_p1_2: { default: 0 },
-      unk_ds3_p1_3: { default: 0 },
+      startFadeEndpoint: { default: 0 },
+      endFadeEndpoint: { default: 0 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3656,13 +3656,13 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -4856,8 +4856,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       widthMultiplier: { default: 1 },
-      unk_ds3_p1_2: { default: 0 },
-      unk_ds3_p1_3: { default: 0 },
+      startFadeEndpoint: { default: 0 },
+      endFadeEndpoint: { default: 0 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -4941,13 +4941,13 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.DarkSouls3]: {
         fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
         fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
@@ -18958,17 +18958,33 @@ class Tracer extends DataAction {
    */
   widthMultiplier: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the start of the trail where the trail's opacity will start fading out towards the start. The trail will have 0 opacity at the start, and it will linearly increase towards full opacity at the point represented by this percentage.
+   * 
+   * The percentage is of the way from the start of the trail to the end of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the start to 50% (100% / 200%) at the end of the trail.
+   * 
+   * If this value and {@link endFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by this value and each part will fade separately based on the repsective value. For example, if this is set to 50 and {@link endFadeEndpoint} is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_2: ScalarValue
+  startFadeEndpoint: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the end of the trail where the trail's opacity will start fading out towards the end. The trail will have full opacity at the point represented by this percentage, and it will linearly decrease towards 0 opacity at the end.
+   * 
+   * The percentage is of the way from the end of the trail to the start of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the end to 50% (100% / 200%) at the start of the trail.
+   * 
+   * If this value and {@link startFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by {@link startFadeEndpoint} and each part will fade separately based on the repsective value. For example, if {@link startFadeEndpoint} is set to 50 and this is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_3: ScalarValue
+  endFadeEndpoint: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -26486,17 +26502,33 @@ class DynamicTracer extends DataAction {
    */
   widthMultiplier: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the start of the trail where the trail's opacity will start fading out towards the start. The trail will have 0 opacity at the start, and it will linearly increase towards full opacity at the point represented by this percentage.
+   * 
+   * The percentage is of the way from the start of the trail to the end of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the start to 50% (100% / 200%) at the end of the trail.
+   * 
+   * If this value and {@link endFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by this value and each part will fade separately based on the repsective value. For example, if this is set to 50 and {@link endFadeEndpoint} is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_2: ScalarValue
+  startFadeEndpoint: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the end of the trail where the trail's opacity will start fading out towards the end. The trail will have full opacity at the point represented by this percentage, and it will linearly decrease towards 0 opacity at the end.
+   * 
+   * The percentage is of the way from the end of the trail to the start of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the end to 50% (100% / 200%) at the start of the trail.
+   * 
+   * If this value and {@link startFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by {@link startFadeEndpoint} and each part will fade separately based on the repsective value. For example, if {@link startFadeEndpoint} is set to 50 and this is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_3: ScalarValue
+  endFadeEndpoint: ScalarValue
   /**
    * Color multiplier.
    * 
