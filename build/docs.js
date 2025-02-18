@@ -108,13 +108,13 @@ await fs.writeFile('docs/~/index.html', /*html*/`
       const parts = location.hash.slice(1).replace(/\.prototype(?=\.)/, '').split('.')
       if (parts.slice(0, 2).join('.') in linkMap) {
         if (parts.length > 2) {
-          location.href = '/' + linkMap[parts.slice(0, 2).join('.')] + '#' + parts[2]
+          location.href = '/' + linkMap[parts.slice(0, 2).join('.')] + '#' + parts[2].toLowerCase()
         } else {
           location.href = '/' + linkMap[parts.slice(0, 2).join('.')]
         }
       } else if (parts[0] in linkMap) {
         if (parts.length > 1) {
-          location.href = '/' + linkMap[parts[0]] + '#' + parts[1]
+          location.href = '/' + linkMap[parts[0]] + '#' + parts[1].toLowerCase()
         } else {
           location.href = '/' + linkMap[parts[0]]
         }
