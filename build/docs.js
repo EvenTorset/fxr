@@ -94,10 +94,9 @@ await fs.writeFile('docs/~/index.html', /*html*/`
     <style>:root{color-scheme:dark;}</style>
     <script src="/assets/navigation.js"></script>
     <script type="module">
+      const navDataCompressed = Uint8Array.from(atob(window.navigationData), s => s.charCodeAt(0))
       const navData = await new Response(
-        new Blob([
-          await(await fetch(window.navigationData)).arrayBuffer()
-        ]).stream().pipeThrough(new DecompressionStream('gzip'))
+        new Blob([navDataCompressed]).stream().pipeThrough(new DecompressionStream('deflate'))
       ).json()
       const linkMap = {}
       for (const entry of navData) {

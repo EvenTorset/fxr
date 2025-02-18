@@ -39,10 +39,28 @@ properties:
     argument: EmissionTime
     desc: |
       Multiplier for {@link width}.
-  unk_ds3_p1_2:
+  startFadeEndpoint:
     type: ScalarValue
-  unk_ds3_p1_3:
+    argument: ParticleAge
+    desc: |
+      Percentage along the trail from the start of the trail where the trail's opacity will start fading out towards the start. The trail will have 0 opacity at the start, and it will linearly increase towards full opacity at the point represented by this percentage.
+
+      The percentage is of the way from the start of the trail to the end of it, so if the trail gets longer or shorter, this point will move with it.
+
+      Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the start to 50% (100% / 200%) at the end of the trail.
+
+      If this value and {@link endFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by this value and each part will fade separately based on the repsective value. For example, if this is set to 50 and {@link endFadeEndpoint} is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
+  endFadeEndpoint:
     type: ScalarValue
+    argument: ParticleAge
+    desc: |
+      Percentage along the trail from the end of the trail where the trail's opacity will start fading out towards the end. The trail will have full opacity at the point represented by this percentage, and it will linearly decrease towards 0 opacity at the end.
+
+      The percentage is of the way from the end of the trail to the start of it, so if the trail gets longer or shorter, this point will move with it.
+
+      Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the end to 50% (100% / 200%) at the start of the trail.
+
+      If this value and {@link startFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by {@link startFadeEndpoint} and each part will fade separately based on the repsective value. For example, if {@link startFadeEndpoint} is set to 50 and this is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
   color1:
     type: Vector4Value
     components: 4
@@ -194,12 +212,20 @@ properties:
     default: 100
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how many segments may exist at the same time.
-  unk_ds3_f1_7:
+  segmentSubdivision:
     field: int
+    desc: |
+      The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
+
+      A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
+
+      Increasing this may make the opacity of the trail inconsistent in some cases. This seems to be unique to {@link DynamicTracer}; it does not happen with {@link Tracer}.
   unk_ds3_f1_8:
     field: float
-  unk_ds3_f1_9:
+  fadeOutTime:
     field: float
+    desc: |
+      When the particle is meant to terminate, the trail will linger for this many seconds and its opacity will fade to 0 in that time.
   columns:
     field: int
     default: 1
@@ -475,9 +501,9 @@ games:
       - segmentInterval
       - segmentDuration
       - concurrentSegments
-      - unk_ds3_f1_7
+      - segmentSubdivision
       - unk_ds3_f1_8
-      - unk_ds3_f1_9
+      - fadeOutTime
       - columns
       - totalFrames
       - attachedUV
@@ -518,8 +544,8 @@ games:
     properties1:
       - width
       - widthMultiplier
-      - unk_ds3_p1_2
-      - unk_ds3_p1_3
+      - startFadeEndpoint
+      - endFadeEndpoint
       - color1
       - color2
       - color3
@@ -545,9 +571,9 @@ games:
       - segmentInterval
       - segmentDuration
       - concurrentSegments
-      - unk_ds3_f1_7
+      - segmentSubdivision
       - unk_ds3_f1_8
-      - unk_ds3_f1_9
+      - fadeOutTime
       - columns
       - totalFrames
       - attachedUV
@@ -603,8 +629,8 @@ games:
       - blendMode
       - width
       - widthMultiplier
-      - unk_ds3_p1_2
-      - unk_ds3_p1_3
+      - startFadeEndpoint
+      - endFadeEndpoint
       - color1
       - color2
       - color3
@@ -623,9 +649,9 @@ games:
       - segmentInterval
       - segmentDuration
       - concurrentSegments
-      - unk_ds3_f1_7
+      - segmentSubdivision
       - unk_ds3_f1_8
-      - unk_ds3_f1_9
+      - fadeOutTime
       - columns
       - totalFrames
       - attachedUV

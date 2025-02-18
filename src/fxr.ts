@@ -3578,8 +3578,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       widthMultiplier: { default: 1 },
-      unk_ds3_p1_2: { default: 0 },
-      unk_ds3_p1_3: { default: 0 },
+      startFadeEndpoint: { default: 0 },
+      endFadeEndpoint: { default: 0 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3602,9 +3602,9 @@ const ActionData: Record<string, ActionDataEntry> = {
       segmentInterval: { default: 0, field: 2, time: 2 },
       segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
-      unk_ds3_f1_7: { default: 0, field: 1 },
+      segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
-      unk_ds3_f1_9: { default: 0, field: 2 },
+      fadeOutTime: { default: 0, field: 2 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
@@ -3654,19 +3654,19 @@ const ActionData: Record<string, ActionDataEntry> = {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -4856,8 +4856,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       blendMode: { default: BlendMode.Normal, field: 1 },
       width: { default: 1, scale: 1 },
       widthMultiplier: { default: 1 },
-      unk_ds3_p1_2: { default: 0 },
-      unk_ds3_p1_3: { default: 0 },
+      startFadeEndpoint: { default: 0 },
+      endFadeEndpoint: { default: 0 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -4880,9 +4880,9 @@ const ActionData: Record<string, ActionDataEntry> = {
       segmentInterval: { default: 0, field: 2, time: 2 },
       segmentDuration: { default: 1, field: 2, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
-      unk_ds3_f1_7: { default: 0, field: 1 },
+      segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
-      unk_ds3_f1_9: { default: 0, field: 2 },
+      fadeOutTime: { default: 0, field: 2 },
       columns: { default: 1, field: 1 },
       totalFrames: { default: 1, field: 1 },
       attachedUV: { default: true, field: 0 },
@@ -4939,19 +4939,19 @@ const ActionData: Record<string, ActionDataEntry> = {
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
+        fields1: ['orientation','texture','normalMap','blendMode','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29'],
-        properties1: ['width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
-        properties1: ['texture','blendMode','width','widthMultiplier','unk_ds3_p1_2','unk_ds3_p1_3','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
+        properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','unk_ds3_f1_7','unk_ds3_f1_8','unk_ds3_f1_9','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -12809,11 +12809,15 @@ class StaticNodeTransform extends DataAction {
   /**
    * Translation of the node.
    * 
+   * This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+   * 
    * **Default**: `[0, 0, 0]`
    */
   offset: Vector3
   /**
    * The rotation of the node.
+   * 
+   * The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
    * 
    * **Default**: `[0, 0, 0]`
    */
@@ -12835,11 +12839,15 @@ class RandomNodeTransform extends DataAction {
   /**
    * Translation of the node.
    * 
+   * This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+   * 
    * **Default**: `[0, 0, 0]`
    */
   offset: Vector3
   /**
    * The rotation of the node.
+   * 
+   * The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
    * 
    * **Default**: `[0, 0, 0]`
    */
@@ -14408,7 +14416,9 @@ class PeriodicEmitter extends DataAction {
    */
   perInterval: ScalarValue
   /**
-   * The total number of intervals to emit particles. Once this limit is reached, the emitter is will stop emitting. Can be set to -1 to disable the limit.
+   * The total number of intervals to emit particles. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+   * 
+   * Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
    * 
@@ -14416,7 +14426,7 @@ class PeriodicEmitter extends DataAction {
    */
   totalIntervals: ScalarValue
   /**
-   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * Maximum number of concurrent particles. Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
    * 
@@ -18948,17 +18958,33 @@ class Tracer extends DataAction {
    */
   widthMultiplier: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the start of the trail where the trail's opacity will start fading out towards the start. The trail will have 0 opacity at the start, and it will linearly increase towards full opacity at the point represented by this percentage.
+   * 
+   * The percentage is of the way from the start of the trail to the end of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the start to 50% (100% / 200%) at the end of the trail.
+   * 
+   * If this value and {@link endFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by this value and each part will fade separately based on the repsective value. For example, if this is set to 50 and {@link endFadeEndpoint} is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_2: ScalarValue
+  startFadeEndpoint: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the end of the trail where the trail's opacity will start fading out towards the end. The trail will have full opacity at the point represented by this percentage, and it will linearly decrease towards 0 opacity at the end.
+   * 
+   * The percentage is of the way from the end of the trail to the start of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the end to 50% (100% / 200%) at the start of the trail.
+   * 
+   * If this value and {@link startFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by {@link startFadeEndpoint} and each part will fade separately based on the repsective value. For example, if {@link startFadeEndpoint} is set to 50 and this is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_3: ScalarValue
+  endFadeEndpoint: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -19150,11 +19176,13 @@ class Tracer extends DataAction {
    */
   concurrentSegments: number
   /**
-   * Unknown integer.
+   * The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
+   * 
+   * A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_7: number
+  segmentSubdivision: number
   /**
    * Unknown float.
    * 
@@ -19162,11 +19190,11 @@ class Tracer extends DataAction {
    */
   unk_ds3_f1_8: number
   /**
-   * Unknown float.
+   * When the particle is meant to terminate, the trail will linger for this many seconds and its opacity will fade to 0 in that time.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_9: number
+  fadeOutTime: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
    * 
@@ -26474,17 +26502,33 @@ class DynamicTracer extends DataAction {
    */
   widthMultiplier: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the start of the trail where the trail's opacity will start fading out towards the start. The trail will have 0 opacity at the start, and it will linearly increase towards full opacity at the point represented by this percentage.
+   * 
+   * The percentage is of the way from the start of the trail to the end of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the start to 50% (100% / 200%) at the end of the trail.
+   * 
+   * If this value and {@link endFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by this value and each part will fade separately based on the repsective value. For example, if this is set to 50 and {@link endFadeEndpoint} is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_2: ScalarValue
+  startFadeEndpoint: ScalarValue
   /**
-   * Unknown scalar.
+   * Percentage along the trail from the end of the trail where the trail's opacity will start fading out towards the end. The trail will have full opacity at the point represented by this percentage, and it will linearly decrease towards 0 opacity at the end.
+   * 
+   * The percentage is of the way from the end of the trail to the start of it, so if the trail gets longer or shorter, this point will move with it.
+   * 
+   * Values greater than 100 will make the trail never reach full opacity. For example, a value of 200 will make the trail fade from 0 opacity at the end to 50% (100% / 200%) at the start of the trail.
+   * 
+   * If this value and {@link startFadeEndpoint} sum to a value greater than 100, the trail will be "split" at the point controlled by {@link startFadeEndpoint} and each part will fade separately based on the repsective value. For example, if {@link startFadeEndpoint} is set to 50 and this is 1000, the first half of the trail will fade normally from 0 opacity at the start to full opacity at the mid point, but the other half will fade from 5% opacity ((100% - 50%) / 1000%) at the mid point to 0 at the end. Where the two parts meet, the opacity will fade from one to the other across a single segment of the trail.
    * 
    * **Default**: `0`
+   * 
+   * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  unk_ds3_p1_3: ScalarValue
+  endFadeEndpoint: ScalarValue
   /**
    * Color multiplier.
    * 
@@ -26676,11 +26720,15 @@ class DynamicTracer extends DataAction {
    */
   concurrentSegments: number
   /**
-   * Unknown integer.
+   * The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
+   * 
+   * A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
+   * 
+   * Increasing this may make the opacity of the trail inconsistent in some cases. This seems to be unique to {@link DynamicTracer}; it does not happen with {@link Tracer}.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_7: number
+  segmentSubdivision: number
   /**
    * Unknown float.
    * 
@@ -26688,11 +26736,11 @@ class DynamicTracer extends DataAction {
    */
   unk_ds3_f1_8: number
   /**
-   * Unknown float.
+   * When the particle is meant to terminate, the trail will linger for this many seconds and its opacity will fade to 0 in that time.
    * 
    * **Default**: `0`
    */
-  unk_ds3_f1_9: number
+  fadeOutTime: number
   /**
    * To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
    * 
@@ -34495,8 +34543,8 @@ namespace FXRUtility {
         offset: [cx, cy, cz],
         rotation: [
           0,
-          -rad2deg(Math.atan2(dz, dx)),
-          rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
+          rad2deg(Math.atan2(dz, dx)),
+          -rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
         ]
       })
     ], [
@@ -34619,7 +34667,7 @@ namespace FXRUtility {
    * Creates a node with three elliptical outlines forming an ellipsoid.
    * @param radiusX The X radius of the ellipsoid.
    * @param radiusY The Y radius of the ellipsoid.
-   * @param radiusY The Z radius of the ellipsoid.
+   * @param radiusZ The Z radius of the ellipsoid.
    * @param segments The number of line segments to use to approximate the
    * ellipses.
    * @param color The color of the outline.
@@ -34708,7 +34756,7 @@ namespace FXRUtility {
               n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
             } else if (emShape instanceof RectangleEmitterShape) {
               const width = constantValueOf(emShape.sizeX)
-              const height = constantValueOf(emShape.sizeX)
+              const height = constantValueOf(emShape.sizeY)
               n.nodes.push(rect(width, height, color, lineWidth, args))
             } else if (emShape instanceof SphereEmitterShape) {
               const radius = constantValueOf(emShape.radius)
