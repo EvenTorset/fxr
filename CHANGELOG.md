@@ -313,7 +313,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
-[19.0.0]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
+[19.0.1]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
 [19.0.0]: https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0
 [18.0.2]: https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2
 [18.0.1]: https://github.com/EvenTorset/fxr/compare/v18.0.0...v18.0.1
