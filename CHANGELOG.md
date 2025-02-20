@@ -1,5 +1,13 @@
 # Changelog
 
+## [19.0.1] - 2025-02-20
+
+- To match the behavior of the games, the field count in property modifiers is now ignored when reading FXR files unless it is reading it as a generic modifier. The field count is now calculated based on the modifer and value types instead, and if the calculated count does not match the count in the file it will print a warning to notify the user about the error, but it will continue to correctly read the file and not throw because of the field count value being wrong.
+  - The games apparently ignore this field count value and just reads the correct number of fields anyway.
+  - Generic modifiers have unknown structures, so this fix cannot be applied to those. Modifiers are only read as generic ones if [`Game.Generic`](https://fxr-docs.pages.dev/~#Game.Generic) is passed to the [`FXR.read`](https://fxr-docs.pages.dev/~#FXR.read) function, which is only meant for debugging and research anyway.
+  - It may still fail at reading the modifier fields if there are not enough fields to read, but that most likely errors in-game as well.
+  - TL;DR: The library can now read some files that contain certain invalid values, but still work in-game.
+
 ## [19.0.0] - 2025-02-18
 
 - Named and documented some properties in the `Tracer` and `DynamicTracer` actions:
@@ -305,6 +313,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[19.0.0]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
 [19.0.0]: https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0
 [18.0.2]: https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2
 [18.0.1]: https://github.com/EvenTorset/fxr/compare/v18.0.0...v18.0.1

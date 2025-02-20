@@ -6728,7 +6728,11 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
     return new GenericModifier(modifierType, valueType, fields, properties)
   } else switch (modifierType) {
     case ModifierType.RandomDelta: {
-      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [
+      const expFieldCount = (valueType + 1) * 2
+      if (fieldCount !== expFieldCount) {
+        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} RandomDelta modifier: ${fieldCount}, expected ${expFieldCount}.`)
+      }
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
         ...arrayOf(valueType + 1, () => FieldType.Float),
       ], this) as NumericalField[]
@@ -6741,7 +6745,11 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
       )
     }
     case ModifierType.RandomRange: {
-      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [
+      const expFieldCount = (valueType + 1) * 3
+      if (fieldCount !== expFieldCount) {
+        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} RandomRange modifier: ${fieldCount}, expected ${expFieldCount}.`)
+      }
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
         ...arrayOf((valueType + 1) * 2, () => FieldType.Float),
       ], this) as NumericalField[]
@@ -6755,7 +6763,11 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
       )
     }
     case ModifierType.RandomFraction: {
-      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [
+      const expFieldCount = (valueType + 1) * 2
+      if (fieldCount !== expFieldCount) {
+        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} RandomFraction modifier: ${fieldCount}, expected ${expFieldCount}.`)
+      }
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
         ...arrayOf(valueType + 1, () => FieldType.Float),
       ], this) as NumericalField[]
@@ -6768,11 +6780,19 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
       )
     }
     case ModifierType.ExternalValue1: {
-      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [FieldType.Integer], this) as NumericalField[]
+      const expFieldCount = 1
+      if (fieldCount !== expFieldCount) {
+        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} ExternalValue1 modifier: ${fieldCount}, expected ${expFieldCount}.`)
+      }
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], this) as NumericalField[]
       return new ExternalValue1Modifier(fields[0].value, properties[0])
     }
     case ModifierType.ExternalValue2: {
-      const fields = readFieldsWithTypesAt(br, fieldOffset, fieldCount, [FieldType.Integer], this) as NumericalField[]
+      const expFieldCount = 1
+      if (fieldCount !== expFieldCount) {
+        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} ExternalValue2 modifier: ${fieldCount}, expected ${expFieldCount}.`)
+      }
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], this) as NumericalField[]
       return new ExternalValue2Modifier(fields[0].value, properties[0])
     }
   }
