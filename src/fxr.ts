@@ -8368,6 +8368,8 @@ function anyMatch<T>(iterator: Iterable<T>, predicate: (value: T) => boolean): b
  * should at least show how this functions.
  * @param type The type of seed to generate.
  */
+function randomSeed(): number
+function randomSeed(type: ValueType): TypeMap.PropertyValue[typeof type]
 function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[typeof type] {
   switch (type) {
     case ValueType.Scalar: return randomInt32()
