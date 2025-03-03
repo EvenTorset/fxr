@@ -1,5 +1,9 @@
 # Changelog
 
+## [19.0.2] - 2025-03-03
+
+- Fixed a couple of small TypeScript errors. There should not be any functional changes.
+
 ## [19.0.1] - 2025-02-20
 
 - To match the behavior of the games, the field count in property modifiers is now ignored when reading FXR files unless it is reading it as a generic modifier. The field count is now calculated based on the modifer and value types instead, and if the calculated count does not match the count in the file it will print a warning to notify the user about the error, but it will continue to correctly read the file and not throw because of the field count value being wrong.
@@ -313,6 +317,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[19.0.2]: https://github.com/EvenTorset/fxr/compare/v19.0.1...v19.0.2
 [19.0.1]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
 [19.0.0]: https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0
 [18.0.2]: https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2
