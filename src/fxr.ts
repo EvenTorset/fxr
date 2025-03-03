@@ -1784,7 +1784,7 @@ export interface IConfig {
   scale(factor: number, options?: ScalingOptions): this
 
   toJSON(): any
-  minify(): typeof this
+  minify(): this
   walkActions(): Generator<AnyAction>
 }
 
