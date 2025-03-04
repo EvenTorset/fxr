@@ -996,19 +996,19 @@ export enum ForceVolumeShape {
   /**
    * A spherical volume.
    */
-  Sphere = 0,
+  Sphere = 1,
   /**
    * A cuboid volume.
    */
-  Box = 0,
+  Box = 2,
   /**
    * A cylindrical volume.
    */
-  Cylinder = 0,
+  Cylinder = 3,
   /**
    * A square prism volume.
    */
-  SquarePrism = 0,
+  SquarePrism = 4,
   
 }
 

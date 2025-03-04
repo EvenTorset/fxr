@@ -7,18 +7,18 @@ members:
     desc: |
       Allows the force to affect everything, everywhere.
   Sphere:
-    value: 0
+    value: 1
     desc: |
       A spherical volume.
   Box:
-    value: 0
+    value: 2
     desc: |
       A cuboid volume.
   Cylinder:
-    value: 0
+    value: 3
     desc: |
       A cylindrical volume.
   SquarePrism:
-    value: 0
+    value: 4
     desc: |
       A square prism volume.
