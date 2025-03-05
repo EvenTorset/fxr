@@ -34,3 +34,7 @@ members:
     value: 4
     desc: |
       A cylinder.
+  Unk5:
+    value: 5
+    desc: |
+      Not yet tested. Found in 800020 in Sekiro.

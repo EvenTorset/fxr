@@ -204,6 +204,7 @@ properties:
     field: int
   fadeOutTime:
     field: int
+    lib: float
     time: inv
     desc: |
       The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.

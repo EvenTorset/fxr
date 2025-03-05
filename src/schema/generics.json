@@ -1,0 +1,104 @@
+{
+  "GenericNode": {
+    "$id": "#GenericNode",
+    "type": "object",
+    "properties": {
+      "type": { "type": "number" },
+      "$generic": { "const": true },
+      "actions": {
+        "type": "array",
+        "items": { "$ref": "#AnyAction" }
+      },
+      "configs": {
+        "type": "array",
+        "items": { "$ref": "#AnyConfig" }
+      },
+      "nodes": {
+        "type": "array",
+        "items": { "$ref": "#Node" }
+      }
+    },
+    "required": ["type", "$generic"]
+  },
+
+  "Node": {
+    "$id": "#Node",
+    "anyOf": [
+      { "$ref": "#GenericNode" },
+      { "$ref": "#ProxyNode" },
+      { "$ref": "#NodeWithConfigs" }
+    ]
+  },
+
+  "NodeConfig": {
+    "$id": "#NodeConfig",
+    "type": "object",
+    "properties": {
+      "type": { "type": "number" },
+      "$generic": { "const": true },
+      "actions": {
+        "type": "array",
+        "items": { "$ref": "#AnyAction" }
+      }
+    },
+    "required": ["type", "$generic"]
+  },
+
+  "AnyConfig": {
+    "$id": "#AnyConfig",
+    "anyOf": [
+      { "$ref": "#NodeConfig" },
+      { "$ref": "#LevelsOfDetailConfig" },
+      { "$ref": "#BasicConfig" },
+      { "$ref": "#NodeEmitterConfig" }
+    ]
+  },
+
+  "Action": {
+    "$id": "#Action",
+    "anyOf": [
+      { "type": "null" },
+      {
+        "type": "object",
+        "properties": {
+          "type": { "$ref": "#ActionType" },
+          "$generic": { "const": true },
+          "fields1": {
+            "type": "array",
+            "items": { "$ref": "#AnyField" }
+          },
+          "fields2": {
+            "type": "array",
+            "items": { "$ref": "#AnyField" }
+          },
+          "properties1": {
+            "type": "array",
+            "items": { "$ref": "#AnyProperty" }
+          },
+          "properties2": {
+            "type": "array",
+            "items": { "$ref": "#AnyProperty" }
+          },
+          "section10s": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": { "type": "integer" }
+            }
+          }
+        },
+        "required": ["type", "$generic"],
+        "additionalProperties": false
+      }
+    ]
+  },
+
+  "AnyAction": {
+    "$id": "#AnyAction",
+    "anyOf": [
+      { "type": "null" },
+      { "$ref": "#DataAction" },
+      { "$ref": "#Action" }
+    ]
+  }
+}

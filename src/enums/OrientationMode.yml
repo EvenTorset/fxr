@@ -44,3 +44,7 @@ members:
     value: 7
     desc: |
       Tries to face the camera, but is limited to rotation around the Y-axis of the parent node.
+  Unk11:
+    value: 11
+    desc: |
+      Not yet tested. Found in 639742 in Elden Ring. This also implies the existence of 8, 9, and 10, but they have not been tested or found yet.

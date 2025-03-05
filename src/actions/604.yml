@@ -616,7 +616,6 @@ properties:
       - lighting
       - specular
   lighting:
-    type: LightingMode
     field: int
     enum: LightingMode
     default: LightingMode.Unlit

@@ -1,0 +1,55 @@
+NodeMovement:
+  default: null
+  nullable: true
+NodeTransform:
+  default: null
+  nullable: true
+ParticleMovement:
+  default: null
+  nullable: true
+NodeAudio:
+  default: null
+  nullable: true
+EmissionAudio:
+  default: null
+  nullable: true
+NodeAttributes:
+  default: NodeAttributes
+ParticleAttributes:
+  default: ParticleAttributes
+Unknown130:
+  default: Unk130
+ParticleModifier:
+  default: null
+  nullable: true
+SFXReference:
+  default: SFXReference
+LevelsOfDetailThresholds:
+  default: LevelsOfDetailThresholds
+StateConfigMap:
+  default: StateConfigMap
+NodeSelector:
+  default: SelectAllNodes
+Emitter:
+  default: OneTimeEmitter
+EmitterShape:
+  default: PointEmitterShape
+DirectionSpread:
+  default: NoSpread
+Appearance:
+  default: null
+  nullable: true
+Termination:
+  default: SimulateTermination
+NodeForceMovement:
+  default: null
+  nullable: true
+ParticleForceMovement:
+  default: null
+  nullable: true
+Unknown10100:
+  default: Unk10100
+Unknown10400:
+  default: Unk10400
+Unknown10500:
+  default: Unk10500
