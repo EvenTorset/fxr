@@ -10975,6 +10975,10 @@ class ProxyNode extends Node {
  */
 abstract class NodeWithConfigs extends Node {
 
+  /**
+   * Maps FXR {@link State states} to node configs. The node will be disabled
+   * if the current state maps to `-1`.
+   */
   stateConfigMap: number[] = [0]
 
   constructor(type: NodeType, public configs: IConfig[], public nodes: Node[]) {
