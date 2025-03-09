@@ -12,6 +12,7 @@
 - Added `Unk11` with a value of `11` to the `OrientationMode` enum. Found in FXR 639742 in Elden Ring.
 - Fixed all of the values in the `ForceVolumeShape` enum being 0. They should now be the correct values instead.
 - All fields of type `LightingMode` are now just generic integer fields. This enum still exists and partially documents some of the tested values for these fields, but since some vanilla effects contain different values that have not been tested or documented yet and this whole field still needs to be better understood, the library will now accept any integer value for these fields.
+- Added the TypeScript type of action properties that have one to the [actions.json file on the docs site](https://fxr-docs.pages.dev/data/actions.json).
 - Updated the description for the `particleRandomTurnIntervalMax` field in `GPUStandardParticle` and `GPUStandardCorrectParticle` to mention the fact that the value will be rounded to the nearest 1/30s due to how the value is stored.
 
 ## [19.0.2] - 2025-03-03

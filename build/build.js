@@ -241,6 +241,7 @@ export default async function(writeToDist = true) {
             .map(([k, v]) => [k, valueSchema(v)])
         )
       },
+      additionalProperties: false,
       required: ['type']
     }
     dataActionNames.push(data.name)

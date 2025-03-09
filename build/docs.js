@@ -292,6 +292,9 @@ for (const fn of (await fs.readdir(actionsDir)).sort(naturalSorter)) {
       if ('see' in prop) {
         jsonProp.related = prop.see
       }
+      if ('type' in prop) {
+        jsonProp.tsType = prop.type
+      }
     }
   }
 

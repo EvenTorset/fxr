@@ -216,92 +216,29 @@
       ]
     },
 
-    "BooleanField": {
-      "$id": "#BooleanField",
-      "type": "object",
-      "properties": {
-        "type": { "const": "Boolean" },
-        "value": { "type": "boolean" }
-      },
-      "required": ["type", "value"]
-    },
-    "IntegerField": {
-      "$id": "#IntegerField",
-      "type": "object",
-      "properties": {
-        "type": { "const": "Integer" },
-        "value": { "type": "integer" }
-      },
-      "required": ["type", "value"]
-    },
-    "FloatField": {
-      "$id": "#FloatField",
-      "type": "object",
-      "properties": {
-        "type": { "const": "Float" },
-        "value": { "type": "number" }
-      },
-      "required": ["type", "value"]
-    },
-    "Vector2Field": {
-      "$id": "#Vector2Field",
-      "type": "object",
-      "properties": {
-        "type": { "const": "Vector2" },
-        "value": { "$ref": "#Vector2" }
-      },
-      "required": ["type", "value"]
-    },
-    "Vector3Field": {
-      "$id": "#Vector3Field",
-      "type": "object",
-      "properties": {
-        "type": { "const": "Vector3" },
-        "value": { "$ref": "#Vector3" }
-      },
-      "required": ["type", "value"]
-    },
-    "Vector4Field": {
-      "$id": "#Vector4Field",
-      "type": "object",
-      "properties": {
-        "type": { "const": "Vector4" },
-        "value": { "$ref": "#Vector4" }
-      },
-      "required": ["type", "value"]
-    },
-    "AnyField": {
-      "$id": "#AnyField",
-      "anyOf": [
-        { "$ref": "#BooleanField" },
-        { "$ref": "#IntegerField" },
-        { "$ref": "#FloatField" },
-        { "$ref": "#Vector2Field" },
-        { "$ref": "#Vector3Field" },
-        { "$ref": "#Vector4Field" }
-      ]
-    },
-
     "Vector2": {
       "$id": "#Vector2",
       "type": "array",
       "items": { "type": "number" },
       "minItems": 2,
-      "maxItems": 2
+      "maxItems": 2,
+      "errorMessage": "Incorrect type. Expected Vector2."
     },
     "Vector3": {
       "$id": "#Vector3",
       "type": "array",
       "items": { "type": "number" },
       "minItems": 3,
-      "maxItems": 3
+      "maxItems": 3,
+      "errorMessage": "Incorrect type. Expected Vector3."
     },
     "Vector4": {
       "$id": "#Vector4",
       "type": "array",
       "items": { "type": "number" },
       "minItems": 4,
-      "maxItems": 4
+      "maxItems": 4,
+      "errorMessage": "Incorrect type. Expected Vector4."
     },
     "PropertyValue": {
       "$id": "#PropertyValue",
