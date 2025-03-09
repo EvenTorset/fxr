@@ -11465,7 +11465,7 @@ class NodeConfig implements IConfig {
 
 /**
  * Manages the duration and thresholds for the
- * {@link NodeType.LevelsOfDetail level of detail node}.
+ * {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailConfig implements IConfig {
   readonly type = ConfigType.LevelsOfDetail
