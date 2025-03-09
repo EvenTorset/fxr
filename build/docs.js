@@ -324,3 +324,7 @@ for (const fn of (await fs.readdir(actionsDir)).sort(naturalSorter)) {
 await fs.mkdir('docs/data', { recursive: true })
 await fs.writeFile('docs/data/enums.json', JSON.stringify(enumsJSON))
 await fs.writeFile('docs/data/actions.json', JSON.stringify(actionsJSON))
+
+await fs.mkdir('docs/json', { recursive: true })
+await fs.copyFile('dist/schema.json', 'docs/json/schema.json')
+await fs.copyFile('dist/schema_strict.json', 'docs/json/schema_strict.json')

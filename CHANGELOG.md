@@ -3,8 +3,8 @@
 ## [Unreleased]
 
 - Added two JSON Schemas that can be used to validate FXR JSON objects. They are accessible through subpath exports:
-  - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects.
-  - `/schema/strict` - Same as the other one, but disallows generic objects and is much stricter about where certain actions can be placed.
+  - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects. Also available at https://fxr-docs.pages.dev/json/schema.json
+  - `/schema/strict` - Same as the other one, but disallows generic objects and is much stricter about where certain actions can be placed. Also available at https://fxr-docs.pages.dev/json/schema_strict.json
 - All generic classes (`GenericNode`, `NodeConfig`, `Action`) and their JSON form now have a `$generic` property with a value of `true`.
   - The property in the JSON form prevents an issue where converting an node, config, or action to JSON and then back to the class object could produce unexpected results in some cases. Since the JSON now requires this property for the generic types, the library is able to correctly determine what class to construct based on its presence and value.
   - This also allows validation of the JSON objects to correctly determine what kind of structure the object must have.
