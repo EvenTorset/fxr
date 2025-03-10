@@ -161,7 +161,7 @@ function typeFromField(field) {
 }
 
 function valueSchema(prop) {
-  if (!('type' in prop)) {
+  if ('lib' in prop || !('type' in prop)) {
     const fieldType = prop.lib ?? prop.field
     if (typeof fieldType === 'object') {
       const anyOf = Array.from(new Set(Object.values(fieldType))).map(fieldType => {
