@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import yaml from 'yaml'
-import beautify from 'json-beautify'
+import stringify from 'fabulous-json'
 
 import baseSchema from '../src/schema/base.json' with { type: 'json' }
 import schemaGenerics from '../src/schema/generics.json' with { type: 'json' }
@@ -516,6 +516,16 @@ export default async function(writeToDist = true) {
     await fs.promises.mkdir(distDir, { recursive: true })
     await fs.promises.writeFile(path.join(distDir, 'fxr.ts'), libSrc)
 
+    const stringifyOpts = {
+      tables: false,
+      allowInline(key, value) {
+        return (
+          key !== 'properties' &&
+          (!('type' in value) || Object.keys(value).length === 1)
+        )
+      },
+    }
+
     Object.assign(
       baseSchema.$defs,
       schemaActionDefs,
@@ -530,7 +540,7 @@ export default async function(writeToDist = true) {
       },
       schemaEnumDefs
     )
-    await fs.promises.writeFile(path.join(distDir, 'schema_strict.json'), beautify(baseSchema, null, 2, 80) + '\n')
+    await fs.promises.writeFile(path.join(distDir, 'schema_strict.json'), stringify(baseSchema, stringifyOpts) + '\n')
 
     baseSchema.properties.root = {
       anyOf: [
@@ -539,7 +549,7 @@ export default async function(writeToDist = true) {
       ]
     }
     Object.assign(baseSchema.$defs, schemaSlotDefs, schemaGenerics)
-    await fs.promises.writeFile(path.join(distDir, 'schema.json'), beautify(baseSchema, null, 2, 80) + '\n')
+    await fs.promises.writeFile(path.join(distDir, 'schema.json'), stringify(baseSchema, stringifyOpts) + '\n')
   }
 
 }
