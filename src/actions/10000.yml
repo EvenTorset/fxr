@@ -236,6 +236,7 @@ properties:
     field: int
   emissionIntervalMin:
     field: int
+    lib: float
     default: 1
     time: inv
     desc: |
@@ -244,6 +245,7 @@ properties:
       - emissionIntervalMax
   emissionIntervalMax:
     field: int
+    lib: float
     default: 1
     time: inv
     desc: |
@@ -263,6 +265,7 @@ properties:
     field: int
   particleDuration:
     field: int
+    lib: float
     default: 1
     time: inv
     desc: |
@@ -690,10 +693,11 @@ properties:
       - particleRandomTurnAngle
   particleRandomTurnIntervalMax:
     field: int
+    lib: float
     default: 1
     time: inv
     desc: |
-      The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
+      The maximum amount of time in seconds to wait between making random turns. Due to the way this field works, the value will be rounded to the nearest 1/30s. Requires {@link particleRandomTurns} to be enabled.
     see:
       - particleRandomTurns
       - particleRandomTurnAngle
@@ -951,7 +955,6 @@ properties:
       - specular
       - specularity
   lighting:
-    type: LightingMode
     field: int
     enum: LightingMode
     default: LightingMode.Unlit

@@ -193,6 +193,7 @@ properties:
       - emissionParticleCountMin
   emissionInterval:
     field: int
+    lib: float
     time: inv
     desc: |
       The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
@@ -201,6 +202,7 @@ properties:
       - emissionIntervalMax
   emissionIntervalMin:
     field: int
+    lib: float
     time: inv
     desc: |
       The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
@@ -209,6 +211,7 @@ properties:
       - emissionIntervalMax
   emissionIntervalMax:
     field: int
+    lib: float
     time: inv
     desc: |
       The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
@@ -228,6 +231,7 @@ properties:
     field: int
   particleDuration:
     field: int
+    lib: float
     default: 1
     time: inv
     desc: |
@@ -634,7 +638,6 @@ properties:
     field: float
     default: 0.5
   lighting:
-    type: LightingMode
     field: int
     enum: LightingMode
     default: LightingMode.Unlit

@@ -1,0 +1,1448 @@
+{
+  "$id": "#FXR",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 999999999
+    },
+    "states": {
+      "type": "array",
+      "items": { "$ref": "#State" }
+    },
+    "root": { "$ref": "#RootNode" }
+  },
+  "required": ["id"],
+
+  "$defs": {
+
+    "StateCondition": {
+      "$id": "#StateCondition",
+      "type": "string",
+      "pattern": "^\\s*(?<left>(?:[Ss][Tt][Aa][Tt][Ee])?[Tt][Ii][Mm][Ee]|(?:[Uu][Nn][Kk])?[Mm][Ii][Nn][Uu][Ss]2|[Ee][Xx][Tt](?:[Ee][Rr][Nn][Aa][Ll])?\\(\\d+\\)|-?\\d+(?:\\.\\d+)?|-?\\.\\d+)\\s*(?<op>==?|<=?|>=?|!=)\\s*(?<right>(?:[Ss][Tt][Aa][Tt][Ee])?[Tt][Ii][Mm][Ee]|(?:[Uu][Nn][Kk])?[Mm][Ii][Nn][Uu][Ss]2|[Ee][Xx][Tt](?:[Ee][Rr][Nn][Aa][Ll])?\\(\\d+\\)|-?\\d+(?:\\.\\d+)?|-?\\.\\d+)\\s*(?:[Ee][Ll][Ss][Ee](?:\\s[Gg][Oo][Tt][Oo])?\\s+(?<else>-?\\d+|[Nn][Oo][Nn][Ee]))?\\s*$"
+    },
+
+    "State": {
+      "$id": "#State",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^\\s*$"
+        },
+        { "$ref": "#StateCondition" },
+        {
+          "type": "array",
+          "items": { "$ref": "#StateCondition" }
+        }
+      ]
+    },
+
+    "RootNode": {
+      "$id": "#RootNode",
+      "type": "object",
+      "properties": {
+        "type": { "const": 2000 },
+        "termination": { "$ref": "#TerminationAction" },
+        "unk10100": { "$ref": "#Unknown10100Action" },
+        "unk10400": { "$ref": "#Unknown10400Action" },
+        "unk10500": { "$ref": "#Unknown10500Action" },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#Node" }
+        }
+      },
+      "required": ["type"]
+    },
+
+    "Node": {
+      "$id": "#Node",
+      "anyOf": [
+        { "$ref": "#ProxyNode" },
+        { "$ref": "#NodeWithConfigs" }
+      ]
+    },
+
+    "ProxyNode": {
+      "$id": "#ProxyNode",
+      "type": "object",
+      "properties": {
+        "type": { "const": 2001 },
+        "sfx": { "type": "number" }
+      }
+    },
+
+    "NodeWithConfigs": {
+      "$id": "#NodeWithConfigs",
+      "anyOf": [
+        { "$ref": "#LevelsOfDetailNode" },
+        { "$ref": "#BasicNode" },
+        { "$ref": "#NodeEmitterNode" }
+      ]
+    },
+
+    "LevelsOfDetailNode": {
+      "$id": "#LevelsOfDetailNode",
+      "type": "object",
+      "properties": {
+        "type": { "const": 2002 },
+        "configs": {
+          "type": "array",
+          "items": { "$ref": "#LevelsOfDetailConfig" }
+        },
+        "stateConfigMap": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#Node" }
+        }
+      }
+    },
+
+    "BasicNode": {
+      "$id": "#BasicNode",
+      "type": "object",
+      "properties": {
+        "type": { "const": 2200 },
+        "configs": {
+          "type": "array",
+          "items": { "$ref": "#BasicConfig" }
+        },
+        "stateConfigMap": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#Node" }
+        }
+      }
+    },
+
+    "NodeEmitterNode": {
+      "$id": "#NodeEmitterNode",
+      "type": "object",
+      "properties": {
+        "type": { "const": 2202 },
+        "configs": {
+          "type": "array",
+          "items": { "$ref": "#NodeEmitterConfig" }
+        },
+        "stateConfigMap": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#Node" }
+        }
+      }
+    },
+
+    "LevelsOfDetailConfig": {
+      "$id": "#LevelsOfDetailConfig",
+      "type": "object",
+      "properties": {
+        "type": { "const": 1002 },
+        "duration": { "$ref": "#ScalarValue" },
+        "thresholds": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "unk_ac6_f1_5": { "type": "number" }
+      },
+      "required": ["type"]
+    },
+
+    "BasicConfig": {
+      "$id": "#BasicConfig",
+      "type": "object",
+      "properties": {
+        "type": { "const": 1004 },
+        "nodeAttributes": { "$ref": "#NodeAttributesAction" },
+        "nodeTransform": { "$ref": "#NodeTransformAction" },
+        "nodeMovement": { "$ref": "#NodeMovementAction" },
+        "nodeAudio": { "$ref": "#NodeAudioAction" },
+        "emitter": { "$ref": "#EmitterAction" },
+        "emitterShape": { "$ref": "#EmitterShapeAction" },
+        "directionSpread": { "$ref": "#DirectionSpreadAction" },
+        "particleModifier": { "$ref": "#ParticleModifierAction" },
+        "particleAttributes": { "$ref": "#ParticleAttributesAction" },
+        "appearance": { "$ref": "#AppearanceAction" },
+        "particleMovement": { "$ref": "#ParticleMovementAction" },
+        "emissionAudio": { "$ref": "#EmissionAudioAction" },
+        "slot12": { "$ref": "#Unknown130Action" },
+        "nodeForceMovement": { "$ref": "#NodeForceMovementAction" },
+        "particleForceMovement": { "$ref": "#ParticleForceMovementAction" }
+      },
+      "required": ["type"]
+    },
+
+    "NodeEmitterConfig": {
+      "$id": "#NodeEmitterConfig",
+      "type": "object",
+      "properties": {
+        "type": { "const": 1005 },
+        "nodeAttributes": { "$ref": "#NodeAttributesAction" },
+        "nodeTransform": { "$ref": "#NodeTransformAction" },
+        "nodeMovement": { "$ref": "#NodeMovementAction" },
+        "nodeAudio": { "$ref": "#NodeAudioAction" },
+        "emitter": { "$ref": "#EmitterAction" },
+        "emitterShape": { "$ref": "#EmitterShapeAction" },
+        "directionSpread": { "$ref": "#DirectionSpreadAction" },
+        "nodeSelector": { "$ref": "#NodeSelectorAction" },
+        "emissionAudio": { "$ref": "#EmissionAudioAction" },
+        "nodeForceMovement": { "$ref": "#NodeForceMovementAction" }
+      },
+      "required": ["type"]
+    },
+
+    "AnyConfig": {
+      "$id": "#AnyConfig",
+      "anyOf": [
+        { "$ref": "#LevelsOfDetailConfig" },
+        { "$ref": "#BasicConfig" },
+        { "$ref": "#NodeEmitterConfig" }
+      ]
+    },
+
+    "AnyAction": {
+      "$id": "#AnyAction",
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#DataAction" }
+      ]
+    },
+
+    "Vector2": {
+      "$id": "#Vector2",
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2,
+      "errorMessage": "Incorrect type. Expected Vector2."
+    },
+    "Vector3": {
+      "$id": "#Vector3",
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3,
+      "errorMessage": "Incorrect type. Expected Vector3."
+    },
+    "Vector4": {
+      "$id": "#Vector4",
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 4,
+      "maxItems": 4,
+      "errorMessage": "Incorrect type. Expected Vector4."
+    },
+    "PropertyValue": {
+      "$id": "#PropertyValue",
+      "anyOf": [
+        { "type": "number" },
+        { "$ref": "#Vector2" },
+        { "$ref": "#Vector3" },
+        { "$ref": "#Vector4" }
+      ]
+    },
+
+    "RandomDeltaModifier": {
+      "$id": "#RandomDeltaModifier",
+      "type": "object",
+      "properties": {
+        "type": { "const": "RandomDelta" },
+        "seed": { "$ref": "#PropertyValue" },
+        "max": { "$ref": "#PropertyValue" }
+      },
+      "required": ["type", "seed", "max"]
+    },
+    "ScalarRandomDeltaModifier": {
+      "$id": "#ScalarRandomDeltaModifier",
+      "allOf": [
+        { "$ref": "#RandomDeltaModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "Vector2RandomDeltaModifier": {
+      "$id": "#Vector2RandomDeltaModifier",
+      "allOf": [
+        { "$ref": "#RandomDeltaModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector2" },
+            "max": { "$ref": "#Vector2" }
+          }
+        }
+      ]
+    },
+    "Vector3RandomDeltaModifier": {
+      "$id": "#Vector3RandomDeltaModifier",
+      "allOf": [
+        { "$ref": "#RandomDeltaModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector3" },
+            "max": { "$ref": "#Vector3" }
+          }
+        }
+      ]
+    },
+    "Vector4RandomDeltaModifier": {
+      "$id": "#Vector4RandomDeltaModifier",
+      "allOf": [
+        { "$ref": "#RandomDeltaModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector4" },
+            "max": { "$ref": "#Vector4" }
+          }
+        }
+      ]
+    },
+
+    "RandomRangeModifier": {
+      "$id": "#RandomRangeModifier",
+      "type": "object",
+      "properties": {
+        "type": { "const": "RandomRange" },
+        "seed": { "$ref": "#PropertyValue" },
+        "min": { "$ref": "#PropertyValue" },
+        "max": { "$ref": "#PropertyValue" }
+      },
+      "required": ["type", "seed", "min", "max"]
+    },
+    "ScalarRandomRangeModifier": {
+      "$id": "#ScalarRandomRangeModifier",
+      "allOf": [
+        { "$ref": "#RandomRangeModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "type": "number" },
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "Vector2RandomRangeModifier": {
+      "$id": "#Vector2RandomRangeModifier",
+      "allOf": [
+        { "$ref": "#RandomRangeModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector2" },
+            "min": { "$ref": "#Vector2" },
+            "max": { "$ref": "#Vector2" }
+          }
+        }
+      ]
+    },
+    "Vector3RandomRangeModifier": {
+      "$id": "#Vector3RandomRangeModifier",
+      "allOf": [
+        { "$ref": "#RandomRangeModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector3" },
+            "min": { "$ref": "#Vector3" },
+            "max": { "$ref": "#Vector3" }
+          }
+        }
+      ]
+    },
+    "Vector4RandomRangeModifier": {
+      "$id": "#Vector4RandomRangeModifier",
+      "allOf": [
+        { "$ref": "#RandomRangeModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector4" },
+            "min": { "$ref": "#Vector4" },
+            "max": { "$ref": "#Vector4" }
+          }
+        }
+      ]
+    },
+
+    "RandomFractionModifier": {
+      "$id": "#RandomFractionModifier",
+      "type": "object",
+      "properties": {
+        "type": { "const": "RandomFraction" },
+        "seed": { "$ref": "#PropertyValue" },
+        "max": { "$ref": "#PropertyValue" }
+      },
+      "required": ["type", "seed", "max"]
+    },
+    "ScalarRandomFractionModifier": {
+      "$id": "#ScalarRandomFractionModifier",
+      "allOf": [
+        { "$ref": "#RandomFractionModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "Vector2RandomFractionModifier": {
+      "$id": "#Vector2RandomFractionModifier",
+      "allOf": [
+        { "$ref": "#RandomFractionModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector2" },
+            "max": { "$ref": "#Vector2" }
+          }
+        }
+      ]
+    },
+    "Vector3RandomFractionModifier": {
+      "$id": "#Vector3RandomFractionModifier",
+      "allOf": [
+        { "$ref": "#RandomFractionModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector3" },
+            "max": { "$ref": "#Vector3" }
+          }
+        }
+      ]
+    },
+    "Vector4RandomFractionModifier": {
+      "$id": "#Vector4RandomFractionModifier",
+      "allOf": [
+        { "$ref": "#RandomFractionModifier" },
+        {
+          "type": "object",
+          "properties": {
+            "seed": { "$ref": "#Vector4" },
+            "max": { "$ref": "#Vector4" }
+          }
+        }
+      ]
+    },
+
+    "ExternalValue1Modifier": {
+      "$id": "#ExternalValue1Modifier",
+      "type": "object",
+      "properties": {
+        "type": { "const": "ExternalValue1" },
+        "externalValue": { "type": "number" },
+        "factor": { "$ref": "#AnyProperty" }
+      },
+      "required": ["type", "externalValue", "factor"]
+    },
+    "ScalarExternalValue1Modifier": {
+      "$id": "#ScalarExternalValue1Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue1Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#ScalarProperty" }
+          }
+        }
+      ]
+    },
+    "Vector2ExternalValue1Modifier": {
+      "$id": "#Vector2ExternalValue1Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue1Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#Vector2Property" }
+          }
+        }
+      ]
+    },
+    "Vector3ExternalValue1Modifier": {
+      "$id": "#Vector3ExternalValue1Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue1Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#Vector3Property" }
+          }
+        }
+      ]
+    },
+    "Vector4ExternalValue1Modifier": {
+      "$id": "#Vector4ExternalValue1Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue1Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#Vector4Property" }
+          }
+        }
+      ]
+    },
+
+    "ExternalValue2Modifier": {
+      "$id": "#ExternalValue2Modifier",
+      "type": "object",
+      "properties": {
+        "type": { "const": "ExternalValue2" },
+        "externalValue": { "type": "number" },
+        "factor": { "$ref": "#AnyProperty" }
+      },
+      "required": ["type", "externalValue", "factor"]
+    },
+    "ScalarExternalValue2Modifier": {
+      "$id": "#ScalarExternalValue2Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue2Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#ScalarProperty" }
+          }
+        }
+      ]
+    },
+    "Vector2ExternalValue2Modifier": {
+      "$id": "#Vector2ExternalValue2Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue2Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#Vector2Property" }
+          }
+        }
+      ]
+    },
+    "Vector3ExternalValue2Modifier": {
+      "$id": "#Vector3ExternalValue2Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue2Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#Vector3Property" }
+          }
+        }
+      ]
+    },
+    "Vector4ExternalValue2Modifier": {
+      "$id": "#Vector4ExternalValue2Modifier",
+      "allOf": [
+        { "$ref": "#ExternalValue2Modifier" },
+        {
+          "type": "object",
+          "properties": {
+            "factor": { "$ref": "#Vector4Property" }
+          }
+        }
+      ]
+    },
+
+    "Modifier": {
+      "$id": "#Modifier",
+      "anyOf": [
+        { "$ref": "#RandomDeltaModifier" },
+        { "$ref": "#RandomRangeModifier" },
+        { "$ref": "#RandomFractionModifier" },
+        { "$ref": "#ExternalValue1Modifier" },
+        { "$ref": "#ExternalValue2Modifier" }
+      ]
+    },
+    "ScalarModifier": {
+      "$id": "#ScalarModifier",
+      "anyOf": [
+        { "$ref": "#ScalarRandomDeltaModifier" },
+        { "$ref": "#ScalarRandomRangeModifier" },
+        { "$ref": "#ScalarRandomFractionModifier" },
+        { "$ref": "#ScalarExternalValue1Modifier" },
+        { "$ref": "#ScalarExternalValue2Modifier" }
+      ]
+    },
+    "Vector2Modifier": {
+      "$id": "#Vector2Modifier",
+      "anyOf": [
+        { "$ref": "#Vector2RandomDeltaModifier" },
+        { "$ref": "#Vector2RandomRangeModifier" },
+        { "$ref": "#Vector2RandomFractionModifier" },
+        { "$ref": "#Vector2ExternalValue1Modifier" },
+        { "$ref": "#Vector2ExternalValue2Modifier" }
+      ]
+    },
+    "Vector3Modifier": {
+      "$id": "#Vector3Modifier",
+      "anyOf": [
+        { "$ref": "#Vector3RandomDeltaModifier" },
+        { "$ref": "#Vector3RandomRangeModifier" },
+        { "$ref": "#Vector3RandomFractionModifier" },
+        { "$ref": "#Vector3ExternalValue1Modifier" },
+        { "$ref": "#Vector3ExternalValue2Modifier" }
+      ]
+    },
+    "Vector4Modifier": {
+      "$id": "#Vector4Modifier",
+      "anyOf": [
+        { "$ref": "#Vector4RandomDeltaModifier" },
+        { "$ref": "#Vector4RandomRangeModifier" },
+        { "$ref": "#Vector4RandomFractionModifier" },
+        { "$ref": "#Vector4ExternalValue1Modifier" },
+        { "$ref": "#Vector4ExternalValue2Modifier" }
+      ]
+    },
+
+    "Keyframe": {
+      "$id": "#Keyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#PropertyValue" }
+      },
+      "required": ["position", "value"]
+    },
+    "ScalarKeyframe": {
+      "$id": "#ScalarKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "type": "number" }
+      },
+      "required": ["position", "value"]
+    },
+    "Vector2Keyframe": {
+      "$id": "#Vector2Keyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector2" }
+      },
+      "required": ["position", "value"]
+    },
+    "Vector3Keyframe": {
+      "$id": "#Vector3Keyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector3" }
+      },
+      "required": ["position", "value"]
+    },
+    "Vector4Keyframe": {
+      "$id": "#Vector4Keyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector4" }
+      },
+      "required": ["position", "value"]
+    },
+
+    "BezierKeyframe": {
+      "$id": "#BezierKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#PropertyValue" },
+        "p1": { "$ref": "#PropertyValue" },
+        "p2": { "$ref": "#PropertyValue" }
+      },
+      "required": ["position", "value", "p1", "p2"]
+    },
+    "ScalarBezierKeyframe": {
+      "$id": "#ScalarBezierKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "type": "number" },
+        "p1": { "type": "number" },
+        "p2": { "type": "number" }
+      },
+      "required": ["position", "value", "p1", "p2"]
+    },
+    "Vector2BezierKeyframe": {
+      "$id": "#Vector2BezierKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector2" },
+        "p1": { "$ref": "#Vector2" },
+        "p2": { "$ref": "#Vector2" }
+      },
+      "required": ["position", "value", "p1", "p2"]
+    },
+    "Vector3BezierKeyframe": {
+      "$id": "#Vector3BezierKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector3" },
+        "p1": { "$ref": "#Vector3" },
+        "p2": { "$ref": "#Vector3" }
+      },
+      "required": ["position", "value", "p1", "p2"]
+    },
+    "Vector4BezierKeyframe": {
+      "$id": "#Vector4BezierKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector4" },
+        "p1": { "$ref": "#Vector4" },
+        "p2": { "$ref": "#Vector4" }
+      },
+      "required": ["position", "value", "p1", "p2"]
+    },
+
+    "HermiteKeyframe": {
+      "$id": "#HermiteKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#PropertyValue" },
+        "tangent1": { "$ref": "#PropertyValue" },
+        "tangent2": { "$ref": "#PropertyValue" }
+      },
+      "required": ["position", "value", "tangent1", "tangent2"]
+    },
+    "ScalarHermiteKeyframe": {
+      "$id": "#ScalarHermiteKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "type": "number" },
+        "tangent1": { "type": "number" },
+        "tangent2": { "type": "number" }
+      },
+      "required": ["position", "value", "tangent1", "tangent2"]
+    },
+    "Vector2HermiteKeyframe": {
+      "$id": "#Vector2HermiteKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector2" },
+        "tangent1": { "$ref": "#Vector2" },
+        "tangent2": { "$ref": "#Vector2" }
+      },
+      "required": ["position", "value", "tangent1", "tangent2"]
+    },
+    "Vector3HermiteKeyframe": {
+      "$id": "#Vector3HermiteKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector3" },
+        "tangent1": { "$ref": "#Vector3" },
+        "tangent2": { "$ref": "#Vector3" }
+      },
+      "required": ["position", "value", "tangent1", "tangent2"]
+    },
+    "Vector4HermiteKeyframe": {
+      "$id": "#Vector4HermiteKeyframe",
+      "type": "object",
+      "properties": {
+        "position": { "type": "number" },
+        "value": { "$ref": "#Vector4" },
+        "tangent1": { "$ref": "#Vector4" },
+        "tangent2": { "$ref": "#Vector4" }
+      },
+      "required": ["position", "value", "tangent1", "tangent2"]
+    },
+
+    "ConstantProperty": {
+      "$id": "#ConstantProperty",
+      "type": "object",
+      "properties": {
+        "value": { "$ref": "#PropertyValue" },
+        "modifiers": {
+          "type": "array",
+          "items": { "$ref": "#Modifier" }
+        }
+      },
+      "required": ["value"]
+    },
+    "ConstantScalarProperty": {
+      "$id": "#ConstantScalarProperty",
+      "allOf": [
+        { "$ref": "#ConstantProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "ConstantVector2Property": {
+      "$id": "#ConstantVector2Property",
+      "allOf": [
+        { "$ref": "#ConstantProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "value": { "$ref": "#Vector2" }
+          }
+        }
+      ]
+    },
+    "ConstantVector3Property": {
+      "$id": "#ConstantVector3Property",
+      "allOf": [
+        { "$ref": "#ConstantProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "value": { "$ref": "#Vector3" }
+          }
+        }
+      ]
+    },
+    "ConstantVector4Property": {
+      "$id": "#ConstantVector4Property",
+      "allOf": [
+        { "$ref": "#ConstantProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "value": { "$ref": "#Vector4" }
+          }
+        }
+      ]
+    },
+
+    "SteppedProperty": {
+      "$id": "#SteppedProperty",
+      "type": "object",
+      "properties": {
+        "function": { "const": "Stepped" },
+        "loop": { "type": "boolean" },
+        "keyframes": {
+          "type": "array",
+          "items": { "$ref": "#Keyframe" },
+          "minItems": 1
+        },
+        "modifiers": {
+          "type": "array",
+          "items": { "$ref": "#Modifier" }
+        }
+      },
+      "required": ["function", "loop", "keyframes"]
+    },
+    "SteppedScalarProperty": {
+      "$id": "#SteppedScalarProperty",
+      "allOf": [
+        { "$ref": "#SteppedProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#ScalarKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#ScalarModifier" }
+            }
+          }
+        }
+      ]
+    },
+    "SteppedVector2Property": {
+      "$id": "#SteppedVector2Property",
+      "allOf": [
+        { "$ref": "#SteppedProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Keyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "SteppedVector3Property": {
+      "$id": "#SteppedVector3Property",
+      "allOf": [
+        { "$ref": "#SteppedProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Keyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "SteppedVector4Property": {
+      "$id": "#SteppedVector4Property",
+      "allOf": [
+        { "$ref": "#SteppedProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Keyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Modifier" }
+            }
+          }
+        }
+      ]
+    },
+
+    "LinearProperty": {
+      "$id": "#LinearProperty",
+      "type": "object",
+      "properties": {
+        "function": { "const": "Linear" },
+        "loop": { "type": "boolean" },
+        "keyframes": {
+          "type": "array",
+          "items": { "$ref": "#Keyframe" },
+          "minItems": 1
+        },
+        "modifiers": {
+          "type": "array",
+          "items": { "$ref": "#Modifier" }
+        }
+      },
+      "required": ["function", "loop", "keyframes"]
+    },
+    "LinearScalarProperty": {
+      "$id": "#LinearScalarProperty",
+      "allOf": [
+        { "$ref": "#LinearProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#ScalarKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#ScalarModifier" }
+            }
+          }
+        }
+      ]
+    },
+    "LinearVector2Property": {
+      "$id": "#LinearVector2Property",
+      "allOf": [
+        { "$ref": "#LinearProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Keyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "LinearVector3Property": {
+      "$id": "#LinearVector3Property",
+      "allOf": [
+        { "$ref": "#LinearProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Keyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "LinearVector4Property": {
+      "$id": "#LinearVector4Property",
+      "allOf": [
+        { "$ref": "#LinearProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Keyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Modifier" }
+            }
+          }
+        }
+      ]
+    },
+
+    "BezierProperty": {
+      "$id": "#BezierProperty",
+      "type": "object",
+      "properties": {
+        "function": { "const": "Bezier" },
+        "loop": { "type": "boolean" },
+        "keyframes": {
+          "type": "array",
+          "items": { "$ref": "#BezierKeyframe" },
+          "minItems": 1
+        },
+        "modifiers": {
+          "type": "array",
+          "items": { "$ref": "#Modifier" }
+        }
+      },
+      "required": ["function", "loop", "keyframes"]
+    },
+    "BezierScalarProperty": {
+      "$id": "#BezierScalarProperty",
+      "allOf": [
+        { "$ref": "#BezierProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#ScalarBezierKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#ScalarModifier" }
+            }
+          }
+        }
+      ]
+    },
+    "BezierVector2Property": {
+      "$id": "#BezierVector2Property",
+      "allOf": [
+        { "$ref": "#BezierProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector2BezierKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "BezierVector3Property": {
+      "$id": "#BezierVector3Property",
+      "allOf": [
+        { "$ref": "#BezierProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector3BezierKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "BezierVector4Property": {
+      "$id": "#BezierVector4Property",
+      "allOf": [
+        { "$ref": "#BezierProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector4BezierKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Modifier" }
+            }
+          }
+        }
+      ]
+    },
+
+    "HermiteProperty": {
+      "$id": "#HermiteProperty",
+      "type": "object",
+      "properties": {
+        "function": { "const": "Hermite" },
+        "loop": { "type": "boolean" },
+        "keyframes": {
+          "type": "array",
+          "items": { "$ref": "#HermiteKeyframe" },
+          "minItems": 1
+        },
+        "modifiers": {
+          "type": "array",
+          "items": { "$ref": "#Modifier" }
+        }
+      },
+      "required": ["function", "loop", "keyframes"]
+    },
+    "HermiteScalarProperty": {
+      "$id": "#HermiteScalarProperty",
+      "allOf": [
+        { "$ref": "#HermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#ScalarHermiteKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#ScalarModifier" }
+            }
+          }
+        }
+      ]
+    },
+    "HermiteVector2Property": {
+      "$id": "#HermiteVector2Property",
+      "allOf": [
+        { "$ref": "#HermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector2HermiteKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "HermiteVector3Property": {
+      "$id": "#HermiteVector3Property",
+      "allOf": [
+        { "$ref": "#HermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector3HermiteKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "HermiteVector4Property": {
+      "$id": "#HermiteVector4Property",
+      "allOf": [
+        { "$ref": "#HermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "keyframes": {
+              "type": "array",
+              "items": { "$ref": "#Vector4HermiteKeyframe" }
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Modifier" }
+            }
+          }
+        }
+      ]
+    },
+
+    "ComponentHermiteProperty": {
+      "$id": "#ComponentHermiteProperty",
+      "type": "object",
+      "properties": {
+        "function": { "const": "ComponentHermite" },
+        "loop": { "type": "boolean" },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#ScalarHermiteKeyframe" }
+          }
+        },
+        "modifiers": {
+          "type": "array",
+          "items": { "$ref": "#Modifier" }
+        }
+      },
+      "required": ["function", "loop", "components"]
+    },
+    "ComponentHermiteScalarProperty": {
+      "$id": "#ComponentHermiteScalarProperty",
+      "allOf": [
+        { "$ref": "#ComponentHermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "$ref": "#ScalarHermiteKeyframe" }
+              },
+              "minItems": 1,
+              "maxItems": 1
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#ScalarModifier" }
+            }
+          }
+        }
+      ]
+    },
+    "ComponentHermiteVector2Property": {
+      "$id": "#ComponentHermiteVector2Property",
+      "allOf": [
+        { "$ref": "#ComponentHermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "$ref": "#ScalarHermiteKeyframe" }
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector2Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "ComponentHermiteVector3Property": {
+      "$id": "#ComponentHermiteVector3Property",
+      "allOf": [
+        { "$ref": "#ComponentHermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "$ref": "#ScalarHermiteKeyframe" }
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector3Modifier" }
+            }
+          }
+        }
+      ]
+    },
+    "ComponentHermiteVector4Property": {
+      "$id": "#ComponentHermiteVector4Property",
+      "allOf": [
+        { "$ref": "#ComponentHermiteProperty" },
+        {
+          "type": "object",
+          "properties": {
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "$ref": "#ScalarHermiteKeyframe" }
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "modifiers": {
+              "type": "array",
+              "items": { "$ref": "#Vector4Modifier" }
+            }
+          }
+        }
+      ]
+    },
+
+    "ScalarProperty": {
+      "$id": "#ScalarProperty",
+      "anyOf": [
+        { "$ref": "#ConstantScalarProperty" },
+        { "$ref": "#SteppedScalarProperty" },
+        { "$ref": "#LinearScalarProperty" },
+        { "$ref": "#BezierScalarProperty" },
+        { "$ref": "#HermiteScalarProperty" },
+        { "$ref": "#ComponentHermiteScalarProperty" }
+      ]
+    },
+    "Vector2Property": {
+      "$id": "#Vector2Property",
+      "anyOf": [
+        { "$ref": "#ConstantVector2Property" },
+        { "$ref": "#SteppedVector2Property" },
+        { "$ref": "#LinearVector2Property" },
+        { "$ref": "#BezierVector2Property" },
+        { "$ref": "#HermiteVector2Property" },
+        { "$ref": "#ComponentHermiteVector2Property" }
+      ]
+    },
+    "Vector3Property": {
+      "$id": "#Vector3Property",
+      "anyOf": [
+        { "$ref": "#ConstantVector3Property" },
+        { "$ref": "#SteppedVector3Property" },
+        { "$ref": "#LinearVector3Property" },
+        { "$ref": "#BezierVector3Property" },
+        { "$ref": "#HermiteVector3Property" },
+        { "$ref": "#ComponentHermiteVector3Property" }
+      ]
+    },
+    "Vector4Property": {
+      "$id": "#Vector4Property",
+      "anyOf": [
+        { "$ref": "#ConstantVector4Property" },
+        { "$ref": "#SteppedVector4Property" },
+        { "$ref": "#LinearVector4Property" },
+        { "$ref": "#BezierVector4Property" },
+        { "$ref": "#HermiteVector4Property" },
+        { "$ref": "#ComponentHermiteVector4Property" }
+      ]
+    },
+    "AnyProperty": {
+      "$id": "#AnyProperty",
+      "anyOf": [
+        { "$ref": "#ScalarProperty" },
+        { "$ref": "#Vector2Property" },
+        { "$ref": "#Vector3Property" },
+        { "$ref": "#Vector4Property" }
+      ]
+    },
+
+    "ScalarValue": {
+      "$id": "#ScalarValue",
+      "anyOf": [
+        {
+          "type": "number",
+          "errorMessage": "Incorrect type. Expected number or ScalarProperty."
+        },
+        {
+          "$ref": "#ScalarProperty",
+          "errorMessage": "Incorrect type. Expected number or ScalarProperty."
+        }
+      ]
+    },
+    "Vector2Value": {
+      "$id": "#Vector2Value",
+      "anyOf": [
+        {
+          "$ref": "#Vector2",
+          "errorMessage": "Incorrect type. Expected Vector2 or Vector2Property."
+        },
+        {
+          "$ref": "#Vector2Property",
+          "errorMessage": "Incorrect type. Expected Vector2 or Vector2Property."
+        }
+      ]
+    },
+    "Vector3Value": {
+      "$id": "#Vector3Value",
+      "anyOf": [
+        {
+          "$ref": "#Vector3",
+          "errorMessage": "Incorrect type. Expected Vector3 or Vector3Property."
+        },
+        {
+          "$ref": "#Vector3Property",
+          "errorMessage": "Incorrect type. Expected Vector3 or Vector3Property."
+        }
+      ]
+    },
+    "Vector4Value": {
+      "$id": "#Vector4Value",
+      "anyOf": [
+        {
+          "$ref": "#Vector4",
+          "errorMessage": "Incorrect type. Expected Vector4 or Vector4Property."
+        },
+        {
+          "$ref": "#Vector4Property",
+          "errorMessage": "Incorrect type. Expected Vector4 or Vector4Property."
+        }
+      ]
+    },
+    "AnyValue": {
+      "$id": "#AnyValue",
+      "anyOf": [
+        { "$ref": "#ScalarValue" },
+        { "$ref": "#Vector2Value" },
+        { "$ref": "#Vector3Value" },
+        { "$ref": "#Vector4Value" }
+      ]
+    }
+  }
+}

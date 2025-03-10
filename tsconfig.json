@@ -3,7 +3,8 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "libReplacement": false
   },
   "files": ["src/fxr.ts"],
   "typedocOptions": {

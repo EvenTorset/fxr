@@ -1,0 +1,170 @@
+{
+  "GenericNode": {
+    "$id": "#GenericNode",
+    "type": "object",
+    "properties": {
+      "type": { "type": "number" },
+      "$generic": { "const": true },
+      "actions": {
+        "type": "array",
+        "items": { "$ref": "#AnyAction" }
+      },
+      "configs": {
+        "type": "array",
+        "items": { "$ref": "#AnyConfig" }
+      },
+      "nodes": {
+        "type": "array",
+        "items": { "$ref": "#Node" }
+      }
+    },
+    "required": ["type", "$generic"]
+  },
+
+  "Node": {
+    "$id": "#Node",
+    "anyOf": [
+      { "$ref": "#GenericNode" },
+      { "$ref": "#ProxyNode" },
+      { "$ref": "#NodeWithConfigs" }
+    ]
+  },
+
+  "NodeConfig": {
+    "$id": "#NodeConfig",
+    "type": "object",
+    "properties": {
+      "type": { "type": "number" },
+      "$generic": { "const": true },
+      "actions": {
+        "type": "array",
+        "items": { "$ref": "#AnyAction" }
+      }
+    },
+    "required": ["type", "$generic"]
+  },
+
+  "AnyConfig": {
+    "$id": "#AnyConfig",
+    "anyOf": [
+      { "$ref": "#NodeConfig" },
+      { "$ref": "#LevelsOfDetailConfig" },
+      { "$ref": "#BasicConfig" },
+      { "$ref": "#NodeEmitterConfig" }
+    ]
+  },
+
+  "Action": {
+    "$id": "#Action",
+    "anyOf": [
+      { "type": "null" },
+      {
+        "type": "object",
+        "properties": {
+          "type": { "$ref": "#ActionType" },
+          "$generic": { "const": true },
+          "fields1": {
+            "type": "array",
+            "items": { "$ref": "#AnyField" }
+          },
+          "fields2": {
+            "type": "array",
+            "items": { "$ref": "#AnyField" }
+          },
+          "properties1": {
+            "type": "array",
+            "items": { "$ref": "#AnyProperty" }
+          },
+          "properties2": {
+            "type": "array",
+            "items": { "$ref": "#AnyProperty" }
+          },
+          "section10s": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": { "type": "integer" }
+            }
+          }
+        },
+        "required": ["type", "$generic"],
+        "additionalProperties": false
+      }
+    ]
+  },
+
+  "AnyAction": {
+    "$id": "#AnyAction",
+    "anyOf": [
+      { "type": "null" },
+      { "$ref": "#DataAction" },
+      { "$ref": "#Action" }
+    ]
+  },
+
+  "BooleanField": {
+    "$id": "#BooleanField",
+    "type": "object",
+    "properties": {
+      "type": { "const": "Boolean" },
+      "value": { "type": "boolean" }
+    },
+    "required": ["type", "value"]
+  },
+  "IntegerField": {
+    "$id": "#IntegerField",
+    "type": "object",
+    "properties": {
+      "type": { "const": "Integer" },
+      "value": { "type": "integer" }
+    },
+    "required": ["type", "value"]
+  },
+  "FloatField": {
+    "$id": "#FloatField",
+    "type": "object",
+    "properties": {
+      "type": { "const": "Float" },
+      "value": { "type": "number" }
+    },
+    "required": ["type", "value"]
+  },
+  "Vector2Field": {
+    "$id": "#Vector2Field",
+    "type": "object",
+    "properties": {
+      "type": { "const": "Vector2" },
+      "value": { "$ref": "#Vector2" }
+    },
+    "required": ["type", "value"]
+  },
+  "Vector3Field": {
+    "$id": "#Vector3Field",
+    "type": "object",
+    "properties": {
+      "type": { "const": "Vector3" },
+      "value": { "$ref": "#Vector3" }
+    },
+    "required": ["type", "value"]
+  },
+  "Vector4Field": {
+    "$id": "#Vector4Field",
+    "type": "object",
+    "properties": {
+      "type": { "const": "Vector4" },
+      "value": { "$ref": "#Vector4" }
+    },
+    "required": ["type", "value"]
+  },
+  "AnyField": {
+    "$id": "#AnyField",
+    "anyOf": [
+      { "$ref": "#BooleanField" },
+      { "$ref": "#IntegerField" },
+      { "$ref": "#FloatField" },
+      { "$ref": "#Vector2Field" },
+      { "$ref": "#Vector3Field" },
+      { "$ref": "#Vector4Field" }
+    ]
+  }
+}

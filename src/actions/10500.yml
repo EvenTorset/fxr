@@ -35,11 +35,13 @@ properties:
   unk_ds3_f1_6:
     field: int
   initialSimulationTime:
+    type: number
     field:
       DS3: int
       SDT: int
       ER: int
       AC6: float
+    lib: float
     time: inv
     desc: |
       The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.

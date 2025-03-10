@@ -200,6 +200,7 @@ properties:
       - specularMultiplier
   fadeOutTime:
     field: int
+    lib: float
     default: 0
     time: inv
     desc: |

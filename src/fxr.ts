@@ -982,6 +982,10 @@ export enum EmitterShape {
    * A cylinder.
    */
   Cylinder = 4,
+  /**
+   * Not yet tested. Found in 800020 in Sekiro.
+   */
+  Unk5 = 5,
   
 }
 
@@ -996,19 +1000,19 @@ export enum ForceVolumeShape {
   /**
    * A spherical volume.
    */
-  Sphere = 0,
+  Sphere = 1,
   /**
    * A cuboid volume.
    */
-  Box = 0,
+  Box = 2,
   /**
    * A cylindrical volume.
    */
-  Cylinder = 0,
+  Cylinder = 3,
   /**
    * A square prism volume.
    */
-  SquarePrism = 0,
+  SquarePrism = 4,
   
 }
 
@@ -1067,7 +1071,7 @@ export enum InitialDirection {
 /**
  * Values representing different lighting modes.
  * 
- * These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described.
+ * These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described. Values not covered by this enum are also used in vanilla effects, so there are a lot of unknown things about this.
  */
 export enum LightingMode {
   /**
@@ -1203,6 +1207,10 @@ export enum OrientationMode {
    * Tries to face the camera, but is limited to rotation around the Y-axis of the parent node.
    */
   LocalYaw = 7,
+  /**
+   * Not yet tested. Found in 639742 in Elden Ring. This also implies the existence of 8, 9, and 10, but they have not been tested or found yet.
+   */
+  Unk11 = 11,
   
 }
 
@@ -8337,6 +8345,39 @@ function anyMatch<T>(iterator: Iterable<T>, predicate: (value: T) => boolean): b
 }
 
 /**
+ * Generates a random scalar seed.
+ * 
+ * The function can be useful together with the randomization modifiers for
+ * properties:
+ * - {@link RandomDeltaModifier}
+ * - {@link RandomRangeModifier}
+ * - {@link RandomFractionModifier}
+ * 
+ * Or the functions that generate simple properties with these modifiers:
+ * - {@link RandomDeltaProperty}
+ * - {@link RandomRangeProperty}
+ * - {@link RandomFractionProperty}
+ * 
+ * To link multiple random values, so that they change the same amount if
+ * randomized at the same time, you can use this function to generate a seed
+ * that you can use multiple times. For example:
+ * ```js
+ * const seed = randomSeed()
+ * new PointLight({
+ *   separateSpecular: true,
+ *   diffuseMultiplier: RandomDeltaProperty(1, 5, seed),
+ *   specularMultiplier: RandomDeltaProperty(1, 5, seed),
+ * })
+ * ```
+ * Here, the point light that was created will randomize to have the same
+ * specular multiplier as its diffuse multiplier. This example is not the best, because
+ * this could also have been done by setting
+ * {@link PointLight.separateSpecular separateSpecular} to false, but it
+ * should at least show how this functions.
+ */
+function randomSeed(): number
+
+/**
  * Generates a random seed of the given type.
  * 
  * The function can be useful together with the randomization modifiers for
@@ -8368,7 +8409,6 @@ function anyMatch<T>(iterator: Iterable<T>, predicate: (value: T) => boolean): b
  * should at least show how this functions.
  * @param type The type of seed to generate.
  */
-function randomSeed(): number
 function randomSeed(type: ValueType): TypeMap.PropertyValue[typeof type]
 function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[typeof type] {
   switch (type) {
@@ -10349,6 +10389,9 @@ abstract class Node {
     if (obj instanceof Node) {
       return obj
     }
+    if (obj.$generic === true) {
+      return GenericNode.fromJSON(obj)
+    }
     switch (obj.type) {
       case NodeType.Root:
         return RootNode.fromJSON(obj)
@@ -10361,7 +10404,7 @@ abstract class Node {
       case NodeType.NodeEmitter:
         return NodeEmitterNode.fromJSON(obj)
       default:
-        return GenericNode.fromJSON(obj)
+        throw new Error(`Unrecognized non-generic node type: ${obj.type}`)
     }
   }
 
@@ -10705,6 +10748,8 @@ abstract class Node {
  */
 class GenericNode extends Node {
 
+  readonly $generic = true
+
   constructor(
     type: NodeType,
     public actions: AnyAction[],
@@ -10723,15 +10768,20 @@ class GenericNode extends Node {
 
   static fromJSON({
     type,
+    $generic,
     actions,
     configs,
     nodes
   }: {
     type: number
+    $generic?: boolean
     actions: any[]
     configs?: any[]
     nodes?: any[]
   }) {
+    if ($generic !== true) {
+      throw new Error('Untagged generic node JSON. Generic nodes must have a `$generic` property with the value `true` in JSON form.')
+    }
     return new GenericNode(
       type,
       actions.map(action => Action.fromJSON(action)),
@@ -10743,6 +10793,7 @@ class GenericNode extends Node {
   toJSON() {
     return {
       type: this.type,
+      $generic: true,
       actions: this.actions.map(action => action.toJSON()),
       configs: this.configs.map(config => config.toJSON()),
       nodes: this.nodes.map(node => node.toJSON()),
@@ -10924,6 +10975,10 @@ class ProxyNode extends Node {
  */
 abstract class NodeWithConfigs extends Node {
 
+  /**
+   * Maps FXR {@link State states} to node configs. The node will be disabled
+   * if the current state maps to `-1`.
+   */
   stateConfigMap: number[] = [0]
 
   constructor(type: NodeType, public configs: IConfig[], public nodes: Node[]) {
@@ -11321,6 +11376,8 @@ const Nodes = {
  */
 class NodeConfig implements IConfig {
 
+  readonly $generic = true
+
   constructor(public type: ConfigType, public actions: AnyAction[]) {}
 
   getActionCount(game: Game): number {
@@ -11334,6 +11391,7 @@ class NodeConfig implements IConfig {
   toJSON() {
     return {
       type: this.type,
+      $generic: true,
       actions: this.actions.map(action => action.toJSON())
     }
   }
@@ -11351,7 +11409,7 @@ class NodeConfig implements IConfig {
     if (obj instanceof NodeConfig) {
       return obj
     }
-    if ('actions' in obj) {
+    if (obj.$generic === true) {
       return new NodeConfig(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
       case ConfigType.LevelsOfDetail:
@@ -11411,7 +11469,7 @@ class NodeConfig implements IConfig {
 
 /**
  * Manages the duration and thresholds for the
- * {@link NodeType.LevelsOfDetail level of detail node}.
+ * {@link NodeType.LevelsOfDetail levels of detail node}.
  */
 class LevelsOfDetailConfig implements IConfig {
   readonly type = ConfigType.LevelsOfDetail
@@ -12043,14 +12101,16 @@ class Action implements IAction {
     if (obj instanceof Action || obj instanceof DataAction) {
       return obj
     }
-    if (
-      obj.type in ActionData &&
-      !('fields1' in obj) &&
-      !('fields2' in obj) &&
-      !('properties1' in obj) &&
-      !('properties2' in obj) &&
-      !('section10s' in obj)
-    ) {
+    if (obj.$generic === true) {
+      return new Action(
+        obj.type,
+        (obj.fields1 ?? []).map((e: any) => Field.fromJSON(e)),
+        (obj.fields2 ?? []).map((e: any) => Field.fromJSON(e)),
+        (obj.properties1 ?? []).map((e: any) => Property.fromJSON(e)),
+        (obj.properties2 ?? []).map((e: any) => Property.fromJSON(e)),
+        obj.section10s
+      )
+    } else {
       if ('props' in ActionData[obj.type]) {
         const propKeys = Object.keys(ActionData[obj.type].props)
         if (propKeys.length === 1) {
@@ -12062,14 +12122,7 @@ class Action implements IAction {
       } else {
         return new DataActions[obj.type]
       }
-    } else return new Action(
-      obj.type,
-      (obj.fields1 ?? []).map(e => Field.fromJSON(e)),
-      (obj.fields2 ?? []).map(e => Field.fromJSON(e)),
-      (obj.properties1 ?? []).map(e => Property.fromJSON(e)),
-      (obj.properties2 ?? []).map(e => Property.fromJSON(e)),
-      obj.section10s
-    )
+    }
   }
 
   toJSON() {
@@ -12078,12 +12131,13 @@ class Action implements IAction {
     }
     const o: {
       type: ActionType
+      $generic: true
       fields1?: any[]
       fields2?: any[]
       properties1?: any[]
       properties2?: any[]
       section10s?: any[]
-    } = { type: this.type }
+    } = { type: this.type, $generic: true }
     if (this.fields1.length > 0) o.fields1 = this.fields1.map(field => field.toJSON())
     if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
     if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
@@ -17110,7 +17164,7 @@ class BillboardEx extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -18036,7 +18090,7 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -19556,7 +19610,7 @@ class Tracer extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -22344,7 +22398,7 @@ class GPUStandardParticle extends DataAction {
    */
   particleRandomTurns: boolean
   /**
-   * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
+   * The maximum amount of time in seconds to wait between making random turns. Due to the way this field works, the value will be rounded to the nearest 1/30s. Requires {@link particleRandomTurns} to be enabled.
    * 
    * **Default**: `1`
    * 
@@ -22760,7 +22814,7 @@ class GPUStandardParticle extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -23782,7 +23836,7 @@ class GPUStandardCorrectParticle extends DataAction {
    */
   particleRandomTurns: boolean
   /**
-   * The maximum amount of time in seconds to wait between making random turns. Requires {@link particleRandomTurns} to be enabled.
+   * The maximum amount of time in seconds to wait between making random turns. Due to the way this field works, the value will be rounded to the nearest 1/30s. Requires {@link particleRandomTurns} to be enabled.
    * 
    * **Default**: `1`
    * 
@@ -24192,7 +24246,7 @@ class GPUStandardCorrectParticle extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -25450,7 +25504,7 @@ class GPUSparkParticle extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -26450,7 +26504,7 @@ class GPUSparkCorrectParticle extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 
@@ -27132,7 +27186,7 @@ class DynamicTracer extends DataAction {
    * 
    * **Default**: {@link LightingMode.Unlit}
    */
-  lighting: LightingMode
+  lighting: number
   /**
    * Unknown integer.
    * 

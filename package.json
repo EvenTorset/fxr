@@ -1,14 +1,18 @@
 {
   "name": "@cccode/fxr",
-  "version": "19.0.2",
+  "version": "20.0.0",
   "description": "JavaScript library for creating and editing FXR files for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6.",
   "author": "CCCode",
   "type": "module",
   "main": "./dist/esm/fxr.js",
   "module": "./dist/esm/fxr.js",
   "exports": {
-    "import": "./dist/esm/fxr.js",
-    "require": "./dist/cjs/fxr.js"
+    ".": {
+      "import": "./dist/esm/fxr.js",
+      "require": "./dist/cjs/fxr.js"
+    },
+    "./schema": "./dist/schema.json",
+    "./schema/strict": "./dist/schema_strict.json"
   },
   "types": "./dist/esm/fxr.d.ts",
   "scripts": {
@@ -47,6 +51,7 @@
     "@types/node": "^22.9.0",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.1",
+    "fabulous-json": "^0.1.1",
     "npm-run-all2": "^7.0.1",
     "typedoc": "^0.27.2",
     "typedoc-github-theme": "^0.2.0",

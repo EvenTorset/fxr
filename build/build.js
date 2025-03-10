@@ -3,6 +3,10 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import yaml from 'yaml'
+import stringify from 'fabulous-json'
+
+import baseSchema from '../src/schema/base.json' with { type: 'json' }
+import schemaGenerics from '../src/schema/generics.json' with { type: 'json' }
 
 const projectDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const srcDir = path.join(projectDir, 'src')
@@ -156,6 +160,53 @@ function typeFromField(field) {
   return 'number'
 }
 
+function valueSchema(prop) {
+  if (!('type' in prop)) {
+    const fieldType = prop.lib ?? prop.field
+    if (typeof fieldType === 'object') {
+      const anyOf = Array.from(new Set(Object.values(fieldType))).map(fieldType => {
+        switch (fieldType) {
+          case 'bool': return { type: 'boolean' }
+          case 'int': return { type: 'integer' }
+          case 'float': return { type: 'number' }
+          case 'vec2': return { $ref: `#Vector2` }
+          case 'vec3': return { $ref: `#Vector3` }
+          case 'vec4': return { $ref: `#Vector4` }
+          default: throw new Error(`Invalid field type: ${JSON.stringify(fieldType)}`)
+        }
+      })
+      if (anyOf.some(e => e.type === 'integer') && anyOf.some(e => e.type === 'number')) {
+        anyOf.splice(anyOf.findIndex(e => e.type === 'integer'), 1)
+        if (anyOf.length === 1) {
+          return anyOf[0]
+        }
+      }
+      return { anyOf }
+    }
+    switch (fieldType) {
+      case 'bool': return { type: 'boolean' }
+      case 'int': return { type: 'integer' }
+      case 'float': return { type: 'number' }
+      case 'vec2': return { $ref: `#Vector2` }
+      case 'vec3': return { $ref: `#Vector3` }
+      case 'vec4': return { $ref: `#Vector4` }
+      default: throw new Error(`Missing or invalid property type: ${JSON.stringify(prop)}`)
+    }
+  }
+  if (prop.type === 'number[]') {
+    return {
+      type: 'array',
+      items: { type: 'integer' }
+    }
+  }
+  if (prop.type.includes('|')) {
+    return {
+      anyOf: prop.type.split('|').map(e => ({ $ref: `#${e.trim()}` }))
+    }
+  }
+  return { $ref: `#${prop.type}` }
+}
+
 export default async function(writeToDist = true) {
 
   const actionTypes = []
@@ -164,6 +215,13 @@ export default async function(writeToDist = true) {
   const actionsListEntries = []
   const actionsExport = []
   const actionSlots = new Map
+  const schemaActionDefs = {}
+  const schemaSlotDefs = {}
+  const schemaStrictSlotDefs = {}
+  const dataActionNames = []
+  const actionTypeValues = []
+
+  const actionSlotsData = yaml.parse(await fs.promises.readFile(path.join(srcDir, 'action_slots.yml'), 'utf-8'))
 
   for (const fn of fs.readdirSync(actionsDir).sort(naturalSorter)) {
     const data = yaml.parse(await fs.promises.readFile(path.join(actionsDir, fn), 'utf-8'))
@@ -172,11 +230,59 @@ export default async function(writeToDist = true) {
       throw new Error('Missing meta object in action data: ' + fn)
     }
 
+    schemaActionDefs[data.name] = {
+      $id: `#${data.name}`,
+      type: 'object',
+      properties: {
+        type: { const: data.type },
+        ...Object.fromEntries(
+          Object.entries(data.properties ?? {})
+            .filter(([k, v]) => !v.omitClassProp)
+            .map(([k, v]) => [k, valueSchema(v)])
+        )
+      },
+      additionalProperties: false,
+      required: ['type']
+    }
+    dataActionNames.push(data.name)
+
     if ('slot' in data) {
+      const slotName = `${data.slot}Action`
       if (!actionSlots.has(data.slot)) {
         actionSlots.set(data.slot, [])
+        schemaSlotDefs[slotName] = {
+          $id: `#${data.slot}Action`,
+          anyOf: [{ $ref: '#Action' }]
+        }
+        if (actionSlotsData[data.slot].nullable) {
+          schemaStrictSlotDefs[slotName] = {
+            $id: `#${data.slot}Action`,
+            anyOf: [
+              { type: 'null' },
+              { $ref: `#${data.name}` }
+            ]
+          }
+        } else {
+          schemaStrictSlotDefs[slotName] = {
+            $id: `#${data.slot}Action`,
+            $ref: `#${data.name}`
+          }
+        }
+      } else {
+        if ('$ref' in schemaStrictSlotDefs[slotName]) {
+          schemaStrictSlotDefs[slotName] = {
+            $id: `#${data.slot}Action`,
+            anyOf: [{ $ref: schemaStrictSlotDefs[slotName].$ref }]
+          }
+        }
+        schemaStrictSlotDefs[slotName].anyOf.push({
+          $ref: `#${data.name}`
+        })
       }
       actionSlots.get(data.slot).push(data.name)
+      schemaSlotDefs[slotName].anyOf.push({
+        $ref: `#${data.name}`
+      })
     }
 
     if ('properties' in data) {
@@ -225,6 +331,7 @@ export default async function(writeToDist = true) {
 
     actionsExport.push(data.name)
 
+    actionTypeValues.push(data.type)
     actionTypes.push(`
       /**
        * ### Action ${data.type} - ${data.name}${'slot' in data ? `
@@ -359,8 +466,18 @@ export default async function(writeToDist = true) {
   }
 
   const enums = []
+  const schemaEnumDefs = {}
   for (const fn of fs.readdirSync(enumsDir).sort(naturalSorter)) {
     const data = yaml.parse(await fs.promises.readFile(path.join(enumsDir, fn), 'utf-8'))
+
+    schemaEnumDefs[data.name] = {
+      $id: `#${data.name}`,
+      enum: Array.from(new Set(
+        data.name === 'ActionType' ?
+          Object.values(data.members).map(e => e.value).concat(actionTypeValues) :
+          Object.values(data.members).map(e => e.value)
+      )).sort(naturalSorter)
+    }
 
     enums.push(`
       /**
@@ -398,6 +515,41 @@ export default async function(writeToDist = true) {
   if (writeToDist) {
     await fs.promises.mkdir(distDir, { recursive: true })
     await fs.promises.writeFile(path.join(distDir, 'fxr.ts'), libSrc)
+
+    const stringifyOpts = {
+      tables: false,
+      allowInline(key, value) {
+        return (
+          key !== 'properties' &&
+          (!('type' in value) || Object.keys(value).length === 1)
+        )
+      },
+    }
+
+    Object.assign(
+      baseSchema.$defs,
+      schemaActionDefs,
+      schemaStrictSlotDefs,
+      {
+        DataAction: {
+          $id: '#DataAction',
+          anyOf: dataActionNames.map(e => ({
+            $ref: `#${e}`
+          }))
+        }
+      },
+      schemaEnumDefs
+    )
+    await fs.promises.writeFile(path.join(distDir, 'schema_strict.json'), stringify(baseSchema, stringifyOpts) + '\n')
+
+    baseSchema.properties.root = {
+      anyOf: [
+        { $ref: '#RootNode' },
+        { $ref: '#GenericNode' }
+      ]
+    }
+    Object.assign(baseSchema.$defs, schemaSlotDefs, schemaGenerics)
+    await fs.promises.writeFile(path.join(distDir, 'schema.json'), stringify(baseSchema, stringifyOpts) + '\n')
   }
 
 }

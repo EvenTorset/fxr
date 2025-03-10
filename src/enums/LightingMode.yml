@@ -2,7 +2,7 @@ name: LightingMode
 desc: |
   Values representing different lighting modes.
 
-  These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described.
+  These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described. Values not covered by this enum are also used in vanilla effects, so there are a lot of unknown things about this.
 members:
   UnkMinus2:
     value: -2

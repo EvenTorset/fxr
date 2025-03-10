@@ -1,5 +1,20 @@
 # Changelog
 
+## [20.0.0] - 2025-03-10
+
+- Added two JSON Schemas that can be used to validate FXR JSON objects. They are accessible through subpath exports:
+  - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects. Also available at https://fxr-docs.pages.dev/json/schema.json
+  - `/schema/strict` - Same as the other one, but disallows generic objects and is much stricter about where certain actions can be placed. Also available at https://fxr-docs.pages.dev/json/schema_strict.json
+- All generic classes (`GenericNode`, `NodeConfig`, `Action`) and their JSON form now have a `$generic` property with a value of `true`.
+  - The property in the JSON form prevents an issue where converting an node, config, or action to JSON and then back to the class object could produce unexpected results in some cases. Since the JSON now requires this property for the generic types, the library is able to correctly determine what class to construct based on its presence and value.
+  - This also allows validation of the JSON objects to correctly determine what kind of structure the object must have.
+- Added `Unk5` with a value of `5` to the `EmitterShape` enum. Found in FXR 800020 in Sekiro.
+- Added `Unk11` with a value of `11` to the `OrientationMode` enum. Found in FXR 639742 in Elden Ring.
+- Fixed all of the values in the `ForceVolumeShape` enum being 0. They should now be the correct values instead.
+- All fields of type `LightingMode` are now just generic integer fields. This enum still exists and partially documents some of the tested values for these fields, but since some vanilla effects contain different values that have not been tested or documented yet and this whole field still needs to be better understood, the library will now accept any integer value for these fields.
+- Added the TypeScript type of action properties that have one to the [actions.json file on the docs site](https://fxr-docs.pages.dev/data/actions.json).
+- Updated the description for the `particleRandomTurnIntervalMax` field in `GPUStandardParticle` and `GPUStandardCorrectParticle` to mention the fact that the value will be rounded to the nearest 1/30s due to how the value is stored.
+
 ## [19.0.2] - 2025-03-03
 
 - Fixed a couple of small TypeScript errors. There should not be any functional changes.
@@ -317,6 +332,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[20.0.0]: https://github.com/EvenTorset/fxr/compare/v19.0.2...v20.0.0
 [19.0.2]: https://github.com/EvenTorset/fxr/compare/v19.0.1...v19.0.2
 [19.0.1]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
 [19.0.0]: https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0

@@ -58,6 +58,7 @@ properties:
     field: int
   turnInterval:
     field: int
+    lib: float
     time: inv
     desc: |
       The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
