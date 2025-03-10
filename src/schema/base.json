@@ -1386,29 +1386,53 @@
     "ScalarValue": {
       "$id": "#ScalarValue",
       "anyOf": [
-        { "type": "number" },
-        { "$ref": "#ScalarProperty" }
+        {
+          "type": "number",
+          "errorMessage": "Incorrect type. Expected number or ScalarProperty."
+        },
+        {
+          "$ref": "#ScalarProperty",
+          "errorMessage": "Incorrect type. Expected number or ScalarProperty."
+        }
       ]
     },
     "Vector2Value": {
       "$id": "#Vector2Value",
       "anyOf": [
-        { "$ref": "#Vector2" },
-        { "$ref": "#Vector2Property" }
+        {
+          "$ref": "#Vector2",
+          "errorMessage": "Incorrect type. Expected Vector2 or Vector2Property."
+        },
+        {
+          "$ref": "#Vector2Property",
+          "errorMessage": "Incorrect type. Expected Vector2 or Vector2Property."
+        }
       ]
     },
     "Vector3Value": {
       "$id": "#Vector3Value",
       "anyOf": [
-        { "$ref": "#Vector3" },
-        { "$ref": "#Vector3Property" }
+        {
+          "$ref": "#Vector3",
+          "errorMessage": "Incorrect type. Expected Vector3 or Vector3Property."
+        },
+        {
+          "$ref": "#Vector3Property",
+          "errorMessage": "Incorrect type. Expected Vector3 or Vector3Property."
+        }
       ]
     },
     "Vector4Value": {
       "$id": "#Vector4Value",
       "anyOf": [
-        { "$ref": "#Vector4" },
-        { "$ref": "#Vector4Property" }
+        {
+          "$ref": "#Vector4",
+          "errorMessage": "Incorrect type. Expected Vector4 or Vector4Property."
+        },
+        {
+          "$ref": "#Vector4Property",
+          "errorMessage": "Incorrect type. Expected Vector4 or Vector4Property."
+        }
       ]
     },
     "AnyValue": {
