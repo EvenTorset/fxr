@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [20.0.0] - 2025-03-10
 
 - Added two JSON Schemas that can be used to validate FXR JSON objects. They are accessible through subpath exports:
   - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects. Also available at https://fxr-docs.pages.dev/json/schema.json
@@ -332,7 +332,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
-[Unreleased]: https://github.com/EvenTorset/fxr/compare/v19.0.2...HEAD
+[20.0.0]: https://github.com/EvenTorset/fxr/compare/v19.0.2...v20.0.0
 [19.0.2]: https://github.com/EvenTorset/fxr/compare/v19.0.1...v19.0.2
 [19.0.1]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
 [19.0.0]: https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0
