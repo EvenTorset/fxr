@@ -35,6 +35,7 @@ properties:
   unk_ds3_f1_6:
     field: int
   initialSimulationTime:
+    type: number
     field:
       DS3: int
       SDT: int
