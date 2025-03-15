@@ -22,3 +22,9 @@ members:
     value: 3
     desc: |
       Time in seconds between the effect being created and the particle being emitted. Stays constant per particle.
+  ExternalValue:
+    value: 4
+    desc: |
+      An external value.
+      
+      In property modifiers, which external value is used is controlled by a field in the modifier.
