@@ -1238,6 +1238,12 @@ export enum PropertyArgument {
    * Time in seconds between the effect being created and the particle being emitted. Stays constant per particle.
    */
   EmissionTime = 3,
+  /**
+   * An external value.
+   * 
+   * In property modifiers, which external value is used is controlled by a field in the modifier.
+   */
+  ExternalValue = 4,
   
 }
 
