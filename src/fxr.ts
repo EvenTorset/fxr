@@ -7609,7 +7609,7 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       return new ComponentSequenceProperty(
         av2.loop,
         arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
-          .map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value))
+          .map(kf => Keyframe.scale(Keyframe.copy(kf), typeof cav1.value === 'number' ? cav1.value : cav1.value[i]))
         ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         [
           ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
@@ -7804,7 +7804,7 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       return new ComponentSequenceProperty(
         cav2.loop,
         arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
-          .map(kf => Keyframe.add(Keyframe.copy(kf), cav1.value))
+          .map(kf => Keyframe.add(Keyframe.copy(kf), typeof cav1.value === 'number' ? cav1.value : cav1.value[i]))
         ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
         [
           ...av1Mods.map(mod => mod.clone()),
