@@ -1,5 +1,9 @@
 # Changelog
 
+## [20.1.1] - 2025-03-19
+
+- Fixed the `anyValueMult` and `anyValueSum` functions creating invalid properties when operating on a value property and a component sequence property.
+
 ## [20.1.0] - 2025-03-15
 
 - Added a new member to the `PropertyArgument` enum to describe the argument given to properties in modifiers: `ExternalValue`.
