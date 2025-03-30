@@ -62,7 +62,7 @@ properties:
       - particleAngularAccelerationMax
   particleGrowthRateX:
     type: ScalarValue
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       The rate of change for the width of the particles.
@@ -70,7 +70,7 @@ properties:
       - particleGrowthRateXStatic
   particleGrowthRateY:
     type: ScalarValue
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       The rate of change for the height of the particles.
@@ -403,13 +403,13 @@ properties:
   particleSizeX:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       The width of the particle.
   particleSizeY:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       The height of the particle.
   unk_ds3_f1_73:
@@ -417,31 +417,31 @@ properties:
     default: 1
   particleSizeXMin:
     field: float
-    scale: true
+    scale: instanceSize
     desc: |
       The minimum width of the particle. A random value between this and {@link particleSizeXMin} will be added to {@link particleSizeX} to get the final width.
   particleSizeYMin:
     field: float
-    scale: true
+    scale: instanceSize
     desc: |
       The minimum height of the particle. A random value between this and {@link particleSizeYMin} will be added to {@link particleSizeY} to get the final height.
   unk_ds3_f1_76:
     field: float
   particleSizeXMax:
     field: float
-    scale: true
+    scale: instanceSize
     desc: |
       The maximum width of the particle. A random value between this and {@link particleSizeXMax} will be added to {@link particleSizeX} to get the final width.
   particleSizeYMax:
     field: float
-    scale: true
+    scale: instanceSize
     desc: |
       The maximum height of the particle. A random value between this and {@link particleSizeYMax} will be added to {@link particleSizeY} to get the final height.
   unk_ds3_f1_79:
     field: float
   particleGrowthRateXStatic:
     field: float
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       The rate of change for the width of the particles.
@@ -449,7 +449,7 @@ properties:
       - particleGrowthRateX
   particleGrowthRateYStatic:
     field: float
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       The rate of change for the height of the particles.
@@ -459,13 +459,13 @@ properties:
     field: float
   particleGrowthRateXMin:
     field: float
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       Minimum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
   particleGrowthRateYMin:
     field: float
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       Minimum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
@@ -473,13 +473,13 @@ properties:
     field: float
   particleGrowthRateXMax:
     field: float
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       Maximum rate of change for the width of the particles. A random value between this and {@link particleGrowthRateXMax} will be added to {@link particleGrowthRateX} and {@link particleGrowthRateXStatic} to get the final growth rate.
   particleGrowthRateYMax:
     field: float
-    scale: true
+    scale: instanceSize
     time: true
     desc: |
       Maximum rate of change for the height of the particles. A random value between this and {@link particleGrowthRateYMax} will be added to {@link particleGrowthRateY} and {@link particleGrowthRateYStatic} to get the final growth rate.
@@ -487,13 +487,13 @@ properties:
     field: float
   particleGrowthAccelerationXMin:
     field: float
-    scale: true
+    scale: instanceSize
     time: sq
     desc: |
       Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMax} will be the final growth acceleration.
   particleGrowthAccelerationYMin:
     field: float
-    scale: true
+    scale: instanceSize
     time: sq
     desc: |
       Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMax} will be the final growth acceleration.
@@ -501,13 +501,13 @@ properties:
     field: float
   particleGrowthAccelerationXMax:
     field: float
-    scale: true
+    scale: instanceSize
     time: sq
     desc: |
       Minimum acceleration of change for the width of the particles. A random value between this and {@link particleGrowthAccelerationXMin} will be the final growth acceleration.
   particleGrowthAccelerationYMax:
     field: float
-    scale: true
+    scale: instanceSize
     time: sq
     desc: |
       Minimum acceleration of change for the height of the particles. A random value between this and {@link particleGrowthAccelerationYMin} will be the final growth acceleration.
@@ -714,7 +714,7 @@ properties:
   particleTraceLength:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     time: inv
     desc: |
       Controls how much the particles are stretched when {@link traceParticles} is enabled.

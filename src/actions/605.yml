@@ -21,7 +21,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    scale: true
+    scale: instanceSize
     desc: |
       The width of the particle.
 
@@ -34,7 +34,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    scale: true
+    scale: instanceSize
     desc: |
       The height of the particle.
 
@@ -47,7 +47,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    scale: true
+    scale: instanceSize
     desc: |
       The depth of the particle.
 

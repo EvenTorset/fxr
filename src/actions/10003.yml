@@ -10,11 +10,11 @@ properties:
   width:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
   height:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
   color1:
     type: Vector4Value
     components: 4

@@ -19,7 +19,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: EmissionTime
-    scale: true
+    scale: instanceSize
     desc: |
       The length of the line.
     see:

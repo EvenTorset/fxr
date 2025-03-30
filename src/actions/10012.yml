@@ -30,7 +30,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    scale: true
+    scale: instanceSize
     desc: |
       The width of the trail.
   widthMultiplier:
@@ -204,6 +204,7 @@ properties:
   segmentDuration:
     field: float
     default: 1
+    scale: instanceSize
     time: inv
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.

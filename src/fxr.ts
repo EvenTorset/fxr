@@ -1580,7 +1580,7 @@ enum ResourceType {
  */
 export enum ScaleCondition {
   /**
-   * Always scale the property.
+   * Always scale the property, unless the {@link ScalingMode scaling mode} is {@link ScalingMode.InstancesOnly}.
    */
   True = 1,
   /**
@@ -1595,6 +1595,33 @@ export enum ScaleCondition {
    * Only scale the property if view distance properties are being scaled and the value is not -1.
    */
   DistanceIfNotMinusOne = 4,
+  /**
+   * Always scale the property.
+   */
+  InstanceSize = 5
+}
+
+/**
+ * Controls what properties are scaled by the `scale` methods for nodes,
+ * configs, and actions.
+ */
+export enum ScalingMode {
+  /**
+   * Scale all scaling properties.
+   */
+  All = 0,
+  /**
+   * Scale all non-view distance-based scaling properties.
+   */
+  NoViewDistance = 1,
+  /**
+   * Only scale properties that control the size of instances.
+   * 
+   * "Instances" here refer to particles and certain other visual effects, like
+   * light sources. This option will not change the size of emitters, or any
+   * translations, only individual appearance instances.
+   */
+  InstancesOnly = 2,
 }
 
 /**
@@ -1795,7 +1822,7 @@ export interface IConfig {
    * Scale the config by the given `factor`. This can be used to change
    * the size of effect created by the config.
    */
-  scale(factor: number, options?: ScalingOptions): this
+  scale(factor: number, options?: { mode?: ScalingMode }): this
 
   toJSON(): any
   minify(): this
@@ -1819,10 +1846,6 @@ export interface NodeColorOptions {
   activeState?: number
   side?: 'start' | 'end' | 'middle'
   layer?: number
-}
-
-export interface ScalingOptions {
-  includeViewDistance?: boolean
 }
 
 export type AnyAction = Action | DataAction
@@ -2956,7 +2979,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      size: { default: 1, scale: 1 },
+      size: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3037,7 +3060,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: true,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      length: { default: 1, scale: 1 },
+      length: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       startColor: { default: [1, 1, 1, 1], color: 2 },
@@ -3119,8 +3142,8 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: true,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 1 },
-      length: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      length: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       startColor: { default: [1, 1, 1, 1], color: 2 },
@@ -3207,8 +3230,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3326,8 +3349,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -3465,9 +3488,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: true,
     props: {
       model: { default: 80201, field: 1, resource: 1 },
-      sizeX: { default: 1, scale: 1 },
-      sizeY: { default: 1, scale: 1 },
-      sizeZ: { default: 1, scale: 1 },
+      sizeX: { default: 1, scale: 5 },
+      sizeY: { default: 1, scale: 5 },
+      sizeZ: { default: 1, scale: 5 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -3590,7 +3613,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
       widthMultiplier: { default: 1 },
       startFadeEndpoint: { default: 0 },
       endFadeEndpoint: { default: 0 },
@@ -3614,7 +3637,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, scale: 5, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -3696,9 +3719,9 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      sizeX: { default: 1, scale: 1 },
-      sizeY: { default: 1, scale: 1 },
-      sizeZ: { default: 1, scale: 1 },
+      sizeX: { default: 1, scale: 5 },
+      sizeY: { default: 1, scale: 5 },
+      sizeZ: { default: 1, scale: 5 },
       color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_7: { default: [1, 1, 1, 1] },
       intensity: { default: 1 },
@@ -3800,8 +3823,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_6: { default: [1, 1, 1, 1] },
       blurRadius: { default: 0.5 },
@@ -3874,7 +3897,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       diffuseColor: { default: [1, 1, 1, 1], color: 1 },
       specularColor: { default: [1, 1, 1, 1], color: 1 },
-      radius: { default: 10, scale: 1 },
+      radius: { default: 10, scale: 5 },
       unk_ds3_p1_3: { default: 0 },
       unk_ds3_p1_4: { default: 0 },
       unk_ds3_p1_5: { default: 0 },
@@ -4065,8 +4088,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
       particleAngularAccelerationZ: { default: 0, time: 4 },
-      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
-      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateX: { default: 0, scale: 5, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 5, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
@@ -4126,29 +4149,29 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
       particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
-      particleSizeX: { default: 1, field: 2, scale: 1 },
-      particleSizeY: { default: 1, field: 2, scale: 1 },
+      particleSizeX: { default: 1, field: 2, scale: 5 },
+      particleSizeY: { default: 1, field: 2, scale: 5 },
       unk_ds3_f1_73: { default: 1, field: 2 },
-      particleSizeXMin: { default: 0, field: 2, scale: 1 },
-      particleSizeYMin: { default: 0, field: 2, scale: 1 },
+      particleSizeXMin: { default: 0, field: 2, scale: 5 },
+      particleSizeYMin: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_76: { default: 0, field: 2 },
-      particleSizeXMax: { default: 0, field: 2, scale: 1 },
-      particleSizeYMax: { default: 0, field: 2, scale: 1 },
+      particleSizeXMax: { default: 0, field: 2, scale: 5 },
+      particleSizeYMax: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4199,7 +4222,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
+      particleTraceLength: { default: 1, field: 2, scale: 5, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4292,8 +4315,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
       particleAngularAccelerationZ: { default: 0, time: 4 },
-      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
-      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateX: { default: 0, scale: 5, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 5, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
@@ -4353,29 +4376,29 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
       particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
-      particleSizeX: { default: 1, field: 2, scale: 1 },
-      particleSizeY: { default: 1, field: 2, scale: 1 },
+      particleSizeX: { default: 1, field: 2, scale: 5 },
+      particleSizeY: { default: 1, field: 2, scale: 5 },
       unk_ds3_f1_73: { default: 1, field: 2 },
-      particleSizeXMin: { default: 0, field: 2, scale: 1 },
-      particleSizeYMin: { default: 0, field: 2, scale: 1 },
+      particleSizeXMin: { default: 0, field: 2, scale: 5 },
+      particleSizeYMin: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_76: { default: 0, field: 2 },
-      particleSizeXMax: { default: 0, field: 2, scale: 1 },
-      particleSizeYMax: { default: 0, field: 2, scale: 1 },
+      particleSizeXMax: { default: 0, field: 2, scale: 5 },
+      particleSizeYMax: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4426,7 +4449,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
+      particleTraceLength: { default: 1, field: 2, scale: 5, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4498,8 +4521,8 @@ const ActionData: Record<string, ActionDataEntry> = {
     isAppearance: true,
     isParticle: false,
     props: {
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -4615,10 +4638,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_60: { default: 0, field: 1 },
       unk_ac6_f1_61: { default: 0, field: 1 },
       unk_ac6_f1_62: { default: 0, field: 1 },
-      particleLengthMin: { default: 1, field: 2, scale: 1 },
-      particleLengthMax: { default: 1, field: 2, scale: 1 },
-      particleWidthMin: { default: 1, field: 2, scale: 1 },
-      particleWidthMax: { default: 1, field: 2, scale: 1 },
+      particleLengthMin: { default: 1, field: 2, scale: 5 },
+      particleLengthMax: { default: 1, field: 2, scale: 5 },
+      particleWidthMin: { default: 1, field: 2, scale: 5 },
+      particleWidthMax: { default: 1, field: 2, scale: 5 },
       unk_ac6_f1_67: { default: 1, field: 2 },
       unk_ac6_f1_68: { default: 1, field: 2 },
       particleDurationMultiplier: { default: 1, field: 2 },
@@ -4773,10 +4796,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_60: { default: 0, field: 1 },
       unk_ac6_f1_61: { default: 0, field: 1 },
       unk_ac6_f1_62: { default: 0, field: 1 },
-      particleLengthMin: { default: 1, field: 2, scale: 1 },
-      particleLengthMax: { default: 1, field: 2, scale: 1 },
-      particleWidthMin: { default: 1, field: 2, scale: 1 },
-      particleWidthMax: { default: 1, field: 2, scale: 1 },
+      particleLengthMin: { default: 1, field: 2, scale: 5 },
+      particleLengthMax: { default: 1, field: 2, scale: 5 },
+      particleWidthMin: { default: 1, field: 2, scale: 5 },
+      particleWidthMax: { default: 1, field: 2, scale: 5 },
       unk_ac6_f1_67: { default: 1, field: 2 },
       unk_ac6_f1_68: { default: 1, field: 2 },
       particleDurationMultiplier: { default: 1, field: 2 },
@@ -4868,7 +4891,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
       widthMultiplier: { default: 1 },
       startFadeEndpoint: { default: 0 },
       endFadeEndpoint: { default: 0 },
@@ -4892,7 +4915,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, scale: 5, time: 2 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -4983,8 +5006,8 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: false,
     props: {
       texture: { default: 50004, field: 1, resource: 0, textureType: 'd' },
-      depth: { default: 1, field: 2, scale: 1 },
-      size: { default: 1, field: 2, scale: 1 },
+      depth: { default: 1, field: 2, scale: 5 },
+      size: { default: 1, field: 2, scale: 5 },
       descent: { default: 0.15, field: 2, time: 2 },
       duration: { default: 0.15, field: 2, time: 2 },
     },
@@ -5000,17 +5023,17 @@ const ActionData: Record<string, ActionDataEntry> = {
     isAppearance: true,
     isParticle: false,
     props: {
-      layer1Width: { default: 1, scale: 1 },
-      layer1Height: { default: 1, scale: 1 },
+      layer1Width: { default: 1, scale: 5 },
+      layer1Height: { default: 1, scale: 5 },
       layer1Color: { default: [1, 1, 1, 1], color: 1 },
-      layer2Width: { default: 1, scale: 1 },
-      layer2Height: { default: 1, scale: 1 },
+      layer2Width: { default: 1, scale: 5 },
+      layer2Height: { default: 1, scale: 5 },
       layer2Color: { default: [1, 1, 1, 1], color: 1 },
-      layer3Width: { default: 1, scale: 1 },
-      layer3Height: { default: 1, scale: 1 },
+      layer3Width: { default: 1, scale: 5 },
+      layer3Height: { default: 1, scale: 5 },
       layer3Color: { default: [1, 1, 1, 1], color: 1 },
-      layer4Width: { default: 1, scale: 1 },
-      layer4Height: { default: 1, scale: 1 },
+      layer4Width: { default: 1, scale: 5 },
+      layer4Height: { default: 1, scale: 5 },
       layer4Color: { default: [1, 1, 1, 1], color: 1 },
       layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
@@ -5125,9 +5148,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: true,
     props: {
       model: { default: 80201, resource: 1 },
-      sizeX: { default: 1, scale: 1 },
-      sizeY: { default: 1, scale: 1 },
-      sizeZ: { default: 1, scale: 1 },
+      sizeX: { default: 1, scale: 5 },
+      sizeY: { default: 1, scale: 5 },
+      sizeZ: { default: 1, scale: 5 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -5679,10 +5702,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       specularColor: { default: [1, 1, 1, 1], color: 1 },
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
-      near: { default: 0.01, scale: 1 },
-      far: { default: 50, scale: 1 },
-      radiusX: { default: 50, scale: 1 },
-      radiusY: { default: 50, scale: 1 },
+      near: { default: 0.01, scale: 5 },
+      far: { default: 50, scale: 5 },
+      radiusX: { default: 50, scale: 5 },
+      radiusY: { default: 50, scale: 5 },
       unk_ds3_p1_6: { default: 1 },
       unk_ds3_p1_7: { default: 1 },
       unk_sdt_p1_10: { default: 1 },
@@ -10521,7 +10544,7 @@ abstract class Node {
    * @param options.recurse Controls whether or not the scaling should be applied to
    * all descendant nodes. Defaults to true.
    */
-  scale(factor: number, options: ScalingOptions & { recurse?: boolean } = {}) {
+  scale(factor: number, options: { recurse?: boolean, mode?: ScalingMode } = {}) {
     if (this instanceof NodeWithConfigs || this instanceof GenericNode) {
       for (const config of this.configs) {
         config.scale(factor, options)
@@ -11466,7 +11489,7 @@ class NodeConfig implements IConfig {
     )
   }
 
-  scale(factor: number, options: ScalingOptions) {
+  scale(factor: number, options?: { mode?: ScalingMode }) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -11534,8 +11557,8 @@ class LevelsOfDetailConfig implements IConfig {
     )
   }
 
-  scale(factor: number, options: ScalingOptions = {}) {
-    if (options.includeViewDistance) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
+    if (options.mode === ScalingMode.All) {
       this.thresholds = this.thresholds.slice(0, 5).map(t => t * factor)
     }
     return this
@@ -11730,7 +11753,7 @@ class BasicConfig implements IConfig {
     })
   }
 
-  scale(factor: number, options: ScalingOptions) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -12027,7 +12050,7 @@ class NodeEmitterConfig implements IConfig {
     })
   }
 
-  scale(factor: number, options: ScalingOptions) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -12344,17 +12367,19 @@ class DataAction implements IAction {
    * used with actions that have scaling properties.
    * @param factor The factor to scale by.
    */
-  scale(factor: number, { includeViewDistance }: ScalingOptions = {}) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
     if ('props' in this.$data) {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('scale' in v) {
-          if (v.scale === ScaleCondition.True) {
+          if (v.scale === ScaleCondition.True && options.mode !== ScalingMode.InstancesOnly) {
+            this[k] = anyValueMult(factor, this[k])
+          } else if (v.scale === ScaleCondition.InstanceSize) {
             this[k] = anyValueMult(factor, this[k])
           } else if (v.scale === ScaleCondition.IfNotMinusOne && this[k] !== -1) {
             this[k] *= factor
-          } else if (v.scale === ScaleCondition.Distance && includeViewDistance) {
+          } else if (v.scale === ScaleCondition.Distance && options.mode === ScalingMode.All) {
             this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.DistanceIfNotMinusOne && includeViewDistance && this[k] !== -1) {
+          } else if (v.scale === ScaleCondition.DistanceIfNotMinusOne && options.mode === ScalingMode.All && this[k] !== -1) {
             this[k] *= factor
           }
         }

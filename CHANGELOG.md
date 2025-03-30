@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- The `includeViewDistance` scaling option has been replaced by a `mode` option with more options for limiting what properties are scaled. This can have three different values:
+  - `ScalingMode.All`: Scale all scaling properties.
+  - `ScalingMode.NoViewDistance`: Scale all non-view distance-based scaling properties.
+  - `ScalingMode.InstancesOnly`: Only scale properties that control the size of appearance instances, like particles and light sources.
 - Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value below 1. The incorrectly rounded numbers had much higher precision than intended.
 
 ## [20.1.1] - 2025-03-19

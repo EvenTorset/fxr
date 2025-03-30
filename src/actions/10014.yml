@@ -10,13 +10,13 @@ properties:
   layer1Width:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 1 width.
   layer1Height:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 1 height.
   layer1Color:
@@ -29,13 +29,13 @@ properties:
   layer2Width:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 2 width.
   layer2Height:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 2 height.
   layer2Color:
@@ -48,13 +48,13 @@ properties:
   layer3Width:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 3 width.
   layer3Height:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 3 height.
   layer3Color:
@@ -67,13 +67,13 @@ properties:
   layer4Width:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 4 width.
   layer4Height:
     type: ScalarValue
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Layer 4 height.
   layer4Color:

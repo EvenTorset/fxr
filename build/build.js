@@ -67,6 +67,7 @@ const scaleMap = {
   ifNotMinusOne: 2,
   distance: 3,
   distanceIfNotMinusOne: 4,
+  instanceSize: 5,
 }
 
 const timeMap = {

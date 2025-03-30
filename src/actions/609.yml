@@ -37,7 +37,7 @@ properties:
     type: ScalarValue
     default: 10
     argument: ActiveTime
-    scale: true
+    scale: instanceSize
     desc: |
       The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
   unk_ds3_p1_3:
