@@ -6,6 +6,7 @@
   - `ScalingMode.All`: Scale all scaling properties.
   - `ScalingMode.NoViewDistance`: Scale all non-view distance-based scaling properties.
   - `ScalingMode.InstancesOnly`: Only scale properties that control the size of appearance instances, like particles and light sources.
+- Fixed the `scaleRateOfTime` method on nodes and actions scaling the `segmentDuration` property on tracer actions, and added an option to re-enable scaling for this property. This duration is for some reason not affected by the `rateOfTime` property in action 10500 and, since this method's main purpose is to act as a fallback for when that property is not available (DS3), the option to scale this duration property is disabled by default.
 - Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value below 1. The incorrectly rounded numbers had much higher precision than intended.
 
 ## [20.1.1] - 2025-03-19

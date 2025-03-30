@@ -75,6 +75,7 @@ const timeMap = {
   inv: 2,
   invIfPositive: 3,
   sq: 4,
+  tracerDuration: 5,
 }
 
 const propTypeMap = {

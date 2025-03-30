@@ -1636,6 +1636,12 @@ export enum TimeOperation {
   Divide = 2,
   DivideIfPositive = 3,
   Square = 4,
+  /**
+   * The tracer segment duration fields are not scaled by the rate of time
+   * property, but scaling it may still be desired in some cases, so these
+   * fields are marked with this value so they can get special handling.
+   */
+  TracerDuration = 5,
 }
 
 /**
@@ -3637,7 +3643,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, scale: 5, time: 2 },
+      segmentDuration: { default: 1, field: 2, scale: 5, time: 5 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -4915,7 +4921,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, scale: 5, time: 2 },
+      segmentDuration: { default: 1, field: 2, scale: 5, time: 5 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -10671,23 +10677,23 @@ abstract class Node {
   }
 
   /**
-   * Scale the rate of time for the branch, or optionally just the node. If you
-   * want to change the rate of time for the entire effect, set the
-   * {@link RootNode.prototype.rateOfTime} property instead of using this
-   * method.
+   * Scale the rate of time for the branch, or optionally just the node.
    * 
    * This method's main purpose is to serve as a fallback for changing the rate
    * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
    * property. The rate of time is automatically scaled when writing effects
    * for DS3, you do not need to do this yourself. As such, this method is only
-   * useful if you want to scale the rate of time for parts of an effect.
+   * useful if you want to scale the rate of time for individual parts of an
+   * effect, or if you need the extra options available for this method.
    * @param factor The factor to scale the rate of time by. Setting this to 2
    * will make the node play twice as fast. Setting it to 0.5 will make it
    * play half as fast.
+   * @param [options={}] Extra options for changing how the scaling is applied
+   * to different properties and descendant nodes.
    */
-  scaleRateOfTime(factor: number, recurse: boolean = true) {
-    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
-      action.scaleRateOfTime(factor)
+  scaleRateOfTime(factor: number, options: { scaleTracerDuration?: boolean, recurse?: boolean } = {}) {
+    for (const action of this.walkActions(options.recurse ?? true)) if (action instanceof DataAction) {
+      action.scaleRateOfTime(factor, options)
     }
     return this
   }
@@ -12518,20 +12524,21 @@ class DataAction implements IAction {
   }
 
   /**
-   * Scale the rate of time for the action. If you want to change the rate of
-   * time for the entire effect, set the {@link RootNode.prototype.rateOfTime}
-   * property instead of using this method.
+   * Scale the rate of time for the action.
    * 
    * This method's main purpose is to serve as a fallback for changing the rate
    * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
    * property. The rate of time is automatically scaled when writing effects
    * for DS3, you do not need to do this yourself. As such, this method is only
-   * useful if you want to scale the rate of time for a single action.
+   * useful if you want to scale the rate of time for individual parts of an
+   * effect, or if you need the extra options available for this method.
    * @param factor The factor to scale the rate of time by. Setting this to 2
    * will make the action play twice as fast. Setting it to 0.5 will make it
    * play half as fast.
+   * @param [options={}] Extra options for changing how the scaling is applied
+   * to different properties.
    */
-  scaleRateOfTime(factor: number) {
+  scaleRateOfTime(factor: number, options: { scaleTracerDuration?: boolean } = {}) {
     const inv = 1 / factor
     const sq = factor * factor
     if ('props' in this.$data) {
@@ -12546,6 +12553,10 @@ class DataAction implements IAction {
           case TimeOperation.Multiply:
             this[name] = anyValueMult(factor, this[name])
             break
+          case TimeOperation.TracerDuration:
+            if (options.scaleTracerDuration !== true) {
+              break
+            }
           case TimeOperation.Divide:
             this[name] = anyValueMult(inv, this[name])
             break
