@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value below 1. The incorrectly rounded numbers had much higher precision than intended.
+
 ## [20.1.1] - 2025-03-19
 
 - Fixed the `anyValueMult` and `anyValueSum` functions creating invalid properties when operating on a value property and a component sequence property.
@@ -344,6 +348,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v20.1.1...HEAD
 [20.1.1]: https://github.com/EvenTorset/fxr/compare/v20.1.0...v20.1.1
 [20.1.0]: https://github.com/EvenTorset/fxr/compare/v20.0.1...v20.1.0
 [20.0.1]: https://github.com/EvenTorset/fxr/compare/v20.0.0...v20.0.1

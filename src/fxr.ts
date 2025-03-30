@@ -9163,7 +9163,9 @@ class BinaryReader extends DataView<ArrayBuffer> {
 
   getFloat32(offset: number) {
     if (this.round) {
-      return +super.getFloat32(offset, this.littleEndian).toPrecision(7)
+      const f = +super.getFloat32(offset, this.littleEndian).toPrecision(7)
+      const a = Math.abs(f)
+      return a < 1e-6 ? 0 : a < 1 ? +String(f).slice(0, 8) : f
     } else {
       return super.getFloat32(offset, this.littleEndian)
     }
