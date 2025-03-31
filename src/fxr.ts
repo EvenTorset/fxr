@@ -11175,19 +11175,25 @@ class LevelsOfDetailNode extends NodeWithConfigs {
   declare configs: LevelsOfDetailConfig[]
 
   /**
-   * @param configsOrThresholds An array of
-   * {@link ConfigType.LevelsOfDetail LOD configs} or an array of LOD
-   * thresholds. Use an array of LOD configs if you need multiple configs or
-   * a finite node duration.
+   * @param thresholds An array of LOD thresholds.
    * @param nodes An array of child nodes.
    */
-  constructor(configsOrThresholds: IConfig[] | number[], nodes: Node[] = []) {
+  constructor(thresholds: number[], nodes?: Node[])
+
+  /**
+   * @param thresholds An array of
+   * {@link ConfigType.LevelsOfDetail LOD configs}.
+   * @param nodes An array of child nodes.
+   */
+  constructor(configs: LevelsOfDetailConfig[], nodes?: Node[])
+
+  constructor(configsOrThresholds: LevelsOfDetailConfig[] | number[], nodes: Node[] = []) {
     if (configsOrThresholds.every(e => typeof e === 'number')) {
       super(NodeType.LevelsOfDetail, [
-        new LevelsOfDetailConfig(-1, configsOrThresholds as number[])
+        new LevelsOfDetailConfig(-1, configsOrThresholds)
       ], nodes)
     } else {
-      super(NodeType.LevelsOfDetail, configsOrThresholds as IConfig[], nodes)
+      super(NodeType.LevelsOfDetail, configsOrThresholds, nodes)
     }
   }
 
@@ -11232,23 +11238,29 @@ class BasicNode extends NodeWithConfigs {
   declare configs: BasicConfig[]
 
   /**
-   * @param configsOrConfigActions This is either the list of configs to add
-   * to the node or a list of actions to create a {@link BasicConfig} with to
-   * add to the node.
+   * @param actions A list of actions to construct a {@link BasicConfig} with.
    * @param nodes A list of child nodes.
    */
-  constructor(configsOrConfigActions: IConfig[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(actions?: AnyAction[], nodes?: Node[])
+
+  /**
+   * @param actions A list of configs.
+   * @param nodes A list of child nodes.
+   */
+  constructor(configs?: BasicConfig[], nodes?: Node[])
+
+  constructor(configsOrConfigActions: BasicConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
     if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicConfig(configsOrConfigActions as AnyAction[])
+        new BasicConfig(configsOrConfigActions)
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        configsOrConfigActions as IConfig[],
+        configsOrConfigActions,
         nodes
       )
     }
@@ -11447,18 +11459,31 @@ class NodeEmitterNode extends NodeWithConfigs {
 
   declare configs: NodeEmitterConfig[]
 
-  constructor(configsOrConfigActions: IConfig[] | Action[] = [], nodes: Node[] = []) {
+  /**
+   * @param actions A list of actions to construct a {@link NodeEmitterConfig} 
+   * with.
+   * @param nodes A list of child nodes.
+   */
+  constructor(actions?: AnyAction[], nodes?: Node[])
+
+  /**
+   * @param actions A list of configs.
+   * @param nodes A list of child nodes.
+   */
+  constructor(configs?: NodeEmitterConfig[], nodes?: Node[])
+
+  constructor(configsOrConfigActions: NodeEmitterConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
     if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.NodeEmitter, [
-        new NodeEmitterConfig(configsOrConfigActions as Action[])
+        new NodeEmitterConfig(configsOrConfigActions)
       ], nodes)
     } else {
       super(
         NodeType.NodeEmitter,
-        configsOrConfigActions as IConfig[],
+        configsOrConfigActions,
         nodes
       )
     }
