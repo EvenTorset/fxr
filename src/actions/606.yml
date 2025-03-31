@@ -1,11 +1,13 @@
 type: 606
-name: Tracer
+name: LegacyTracer
 slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
 desc: |
   Creates a trail behind moving effects.
+
+  This is an older version of {@link Tracer} with fewer features.
 properties:
   texture:
     type: ScalarValue

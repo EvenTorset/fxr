@@ -488,13 +488,15 @@ export enum ActionType {
    */
   Model = 605,
   /**
-   * ### Action 606 - Tracer
+   * ### Action 606 - LegacyTracer
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * - **Class**: {@link Tracer}
+   * - **Class**: {@link LegacyTracer}
    * 
    * Creates a trail behind moving effects.
+   * 
+   * This is an older version of {@link Tracer} with fewer features.
    */
-  Tracer = 606,
+  LegacyTracer = 606,
   /**
    * ### Action 607 - Distortion
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -679,15 +681,15 @@ export enum ActionType {
    */
   GPUSparkCorrectParticle = 10009,
   /**
-   * ### Action 10012 - DynamicTracer
+   * ### Action 10012 - Tracer
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * - **Class**: {@link DynamicTracer}
+   * - **Class**: {@link Tracer}
    * 
    * Creates a trail behind moving effects.
    * 
-   * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+   * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
    */
-  DynamicTracer = 10012,
+  Tracer = 10012,
   /**
    * ### Action 10013 - WaterInteraction
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1918,7 +1920,7 @@ export namespace ActionSlots {
     | BillboardEx
     | MultiTextureBillboardEx
     | Model
-    | Tracer
+    | LegacyTracer
     | Distortion
     | RadialBlur
     | PointLight
@@ -1927,7 +1929,7 @@ export namespace ActionSlots {
     | LightShaft
     | GPUSparkParticle
     | GPUSparkCorrectParticle
-    | DynamicTracer
+    | Tracer
     | WaterInteraction
     | LensFlare
     | RichModel
@@ -3613,7 +3615,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       }
     }
   },
-  [ActionType.Tracer]: {
+  [ActionType.LegacyTracer]: {
     isAppearance: true,
     isParticle: true,
     props: {
@@ -4891,7 +4893,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       }
     }
   },
-  [ActionType.DynamicTracer]: {
+  [ActionType.Tracer]: {
     isAppearance: true,
     isParticle: true,
     props: {
@@ -4932,7 +4934,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f1_13: { default: -1, field: 1 },
       unk_ds3_f1_14: { default: -1, field: 1 },
       unk_ds3_f1_15: { default: 0, field: 1 },
-      unk_sdt_f1_14: { default: 1, field: 1 },
+      dynamicOpacity: { default: false, field: 0 },
       unk_sdt_f1_15: { default: 1, field: 2 },
       unk_sdt_f1_16: { default: 1, field: 2 },
       unk_sdt_f1_17: { default: 1, field: 2 },
@@ -4988,13 +4990,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -5865,7 +5867,7 @@ const ConfigActionSlots = {
       ActionType.BillboardEx,
       ActionType.MultiTextureBillboardEx,
       ActionType.Model,
-      ActionType.Tracer,
+      ActionType.LegacyTracer,
       ActionType.Distortion,
       ActionType.RadialBlur,
       ActionType.PointLight,
@@ -5876,7 +5878,7 @@ const ConfigActionSlots = {
       ActionType.GPUSparkParticle,
       ActionType.GPUSparkCorrectParticle,
       ActionType.Unk10010_Tracer,
-      ActionType.DynamicTracer,
+      ActionType.Tracer,
       ActionType.WaterInteraction,
       ActionType.LensFlare,
       ActionType.RichModel,
@@ -6281,7 +6283,7 @@ function readDataAction(
       list, which shifts all of the other indices. This checks for that value
       and just skips past it if it's there.
     */
-    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer && br.getInt32(br.position) === -2) {
+    if (game === Game.DarkSouls3 && type === ActionType.Tracer && br.getInt32(br.position) === -2) {
       fieldCount2--
       br.position += 4
     }
@@ -6442,7 +6444,7 @@ function readAnyAction(br: BinaryReader): AnyAction {
         game = br.game = Game.ArmoredCore6
         break heuristic
       }
-      if (type === ActionType.DynamicTracer && fieldCount2 === 42) {
+      if (type === ActionType.Tracer && fieldCount2 === 42) {
         game = br.game = Game.ArmoredCore6
         break heuristic
       }
@@ -6470,7 +6472,7 @@ function readAnyAction(br: BinaryReader): AnyAction {
       fieldCount1 <= data.fields1.fieldsCount &&
       ( // Deal with DS3's action 10012 special case where it has 1 extra field
         // that is skipped while reading
-        game === Game.DarkSouls3 && type === ActionType.DynamicTracer ?
+        game === Game.DarkSouls3 && type === ActionType.Tracer ?
         fieldCount2 - 1 :
         fieldCount2
       ) <= data.fields2.fieldsCount &&
@@ -11285,10 +11287,10 @@ class BasicNode extends NodeWithConfigs {
           config.appearance instanceof BillboardEx ||
           config.appearance instanceof MultiTextureBillboardEx ||
           config.appearance instanceof Model ||
-          config.appearance instanceof Tracer ||
+          config.appearance instanceof LegacyTracer ||
           config.appearance instanceof Distortion ||
           config.appearance instanceof RadialBlur ||
-          config.appearance instanceof DynamicTracer ||
+          config.appearance instanceof Tracer ||
           config.appearance instanceof RichModel
         )
       )
@@ -11307,8 +11309,8 @@ class BasicNode extends NodeWithConfigs {
           a instanceof PointSprite ||
           a instanceof BillboardEx ||
           a instanceof Model ||
+          a instanceof LegacyTracer ||
           a instanceof Tracer ||
-          a instanceof DynamicTracer ||
           a instanceof RichModel
         )
       ) {
@@ -11942,8 +11944,8 @@ class BasicConfig implements IConfig {
         a instanceof MultiTextureBillboardEx ||
         a instanceof Model ||
         a instanceof RichModel ||
-        a instanceof Tracer ||
-        a instanceof DynamicTracer
+        a instanceof LegacyTracer ||
+        a instanceof Tracer
       ) {
         if (!(this.particleModifier instanceof ParticleModifier)) return this
         if (a instanceof MultiTextureBillboardEx) {
@@ -19165,13 +19167,15 @@ class Model extends DataAction {
 }
 
 /**
- * ### {@link ActionType.Tracer Action 606 - Tracer}
+ * ### {@link ActionType.LegacyTracer Action 606 - LegacyTracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Creates a trail behind moving effects.
+ * 
+ * This is an older version of {@link Tracer} with fewer features.
  */
-class Tracer extends DataAction {
-  declare readonly type: ActionType.Tracer
+class LegacyTracer extends DataAction {
+  declare readonly type: ActionType.LegacyTracer
   /**
    * Texture ID.
    * 
@@ -19811,8 +19815,8 @@ class Tracer extends DataAction {
    * **Default**: `0`
    */
   unk_er_f2_39: number
-  constructor(props: Partial<Props<Tracer>> = {}) {
-    super(ActionType.Tracer)
+  constructor(props: Partial<Props<LegacyTracer>> = {}) {
+    super(ActionType.LegacyTracer)
     this.assign(props)
   }
 }
@@ -26707,15 +26711,15 @@ class GPUSparkCorrectParticle extends DataAction {
 }
 
 /**
- * ### {@link ActionType.DynamicTracer Action 10012 - DynamicTracer}
+ * ### {@link ActionType.Tracer Action 10012 - Tracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Creates a trail behind moving effects.
  * 
- * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+ * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
  */
-class DynamicTracer extends DataAction {
-  declare readonly type: ActionType.DynamicTracer
+class Tracer extends DataAction {
+  declare readonly type: ActionType.Tracer
   /**
    * Texture ID.
    * 
@@ -26971,8 +26975,6 @@ class DynamicTracer extends DataAction {
    * 
    * A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
    * 
-   * Increasing this may make the opacity of the trail inconsistent in some cases. This seems to be unique to {@link DynamicTracer}; it does not happen with {@link Tracer}.
-   * 
    * **Default**: `0`
    */
   segmentSubdivision: number
@@ -27031,11 +27033,11 @@ class DynamicTracer extends DataAction {
    */
   unk_ds3_f1_15: number
   /**
-   * Unknown integer.
+   * When `true`, this will cause the trail's opacity to be based on the speed it's moving at. This dynamic opacity is per-segment, so each segment will remember what speed the tracer source had when the segment was created.
    * 
-   * **Default**: `1`
+   * **Default**: `false`
    */
-  unk_sdt_f1_14: number
+  dynamicOpacity: boolean
   /**
    * Unknown float.
    * 
@@ -27399,8 +27401,8 @@ class DynamicTracer extends DataAction {
    * **Default**: `0`
    */
   unk_ac6_f2_41: number
-  constructor(props: Partial<Props<DynamicTracer>> = {}) {
-    super(ActionType.DynamicTracer)
+  constructor(props: Partial<Props<Tracer>> = {}) {
+    super(ActionType.Tracer)
     this.assign(props)
   }
 }
@@ -31663,7 +31665,7 @@ const DataActions = {
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
-  [ActionType.Tracer]: Tracer, Tracer,
+  [ActionType.LegacyTracer]: LegacyTracer, LegacyTracer,
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
@@ -31680,7 +31682,7 @@ const DataActions = {
   [ActionType.LightShaft]: LightShaft, LightShaft,
   [ActionType.GPUSparkParticle]: GPUSparkParticle, GPUSparkParticle,
   [ActionType.GPUSparkCorrectParticle]: GPUSparkCorrectParticle, GPUSparkCorrectParticle,
-  [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
+  [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
   [ActionType.RichModel]: RichModel, RichModel,
@@ -33819,8 +33821,8 @@ namespace Recolor {
           a instanceof MultiTextureBillboardEx ||
           a instanceof Model ||
           a instanceof RichModel ||
-          a instanceof Tracer ||
-          a instanceof DynamicTracer
+          a instanceof LegacyTracer ||
+          a instanceof Tracer
         ) {
           if (!(config.particleModifier instanceof ParticleModifier)) continue
           let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
@@ -35269,7 +35271,7 @@ export {
   BillboardEx,
   MultiTextureBillboardEx,
   Model,
-  Tracer,
+  LegacyTracer,
   Distortion,
   RadialBlur,
   PointLight,
@@ -35286,7 +35288,7 @@ export {
   LightShaft,
   GPUSparkParticle,
   GPUSparkCorrectParticle,
-  DynamicTracer,
+  Tracer,
   WaterInteraction,
   LensFlare,
   RichModel,

@@ -1,5 +1,5 @@
 type: 10012
-name: DynamicTracer
+name: Tracer
 slot: Appearance
 meta:
   isAppearance: true
@@ -7,7 +7,7 @@ meta:
 desc: |
   Creates a trail behind moving effects.
 
-  This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+  This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
 properties:
   texture:
     type: ScalarValue
@@ -219,8 +219,6 @@ properties:
       The trail is made up of multiple quads, or *segments*. This controls how many times each completed segment should be subdivided. Higher values makes the trail look smoother.
 
       A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
-
-      Increasing this may make the opacity of the trail inconsistent in some cases. This seems to be unique to {@link DynamicTracer}; it does not happen with {@link Tracer}.
   unk_ds3_f1_8:
     field: float
   fadeOutTime:
@@ -254,9 +252,11 @@ properties:
     default: -1
   unk_ds3_f1_15:
     field: int
-  unk_sdt_f1_14:
-    field: int
-    default: 1
+  dynamicOpacity:
+    field: bool
+    default: false
+    desc: |
+      When `true`, this will cause the trail's opacity to be based on the speed it's moving at. This dynamic opacity is per-segment, so each segment will remember what speed the tracer source had when the segment was created.
   unk_sdt_f1_15:
     field: float
     default: 1
@@ -580,7 +580,7 @@ games:
       - unk_ds3_f1_13
       - unk_ds3_f1_14
       - unk_ds3_f1_15
-      - unk_sdt_f1_14
+      - dynamicOpacity
       - unk_sdt_f1_15
       - unk_sdt_f1_16
       - unk_sdt_f1_17
@@ -658,7 +658,7 @@ games:
       - unk_ds3_f1_13
       - unk_ds3_f1_14
       - unk_ds3_f1_15
-      - unk_sdt_f1_14
+      - dynamicOpacity
       - unk_sdt_f1_15
       - unk_sdt_f1_16
       - unk_sdt_f1_17
