@@ -9529,16 +9529,118 @@ export interface FXRReadOptions {
 class FXR {
 
   #gameHint: Game = Game.Generic
+  states: State[]
+  root: RootNode | GenericNode
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param terminate Controls whether or not to add a state that causes the
+   * effect to terminate when {@link ExternalValue external value} 0 becomes 1.
+   * @param rootChildren A list of nodes to add as direct children of the root
+   * node.
+   */
+  constructor(id: number, terminate: boolean, rootChildren: Node[])
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param duration A duration for the effect. This is applied through a state
+   * with a condition that compares the state time to the duration value.
+   * @param rootChildren A list of nodes to add as direct children of the root
+   * node.
+   */
+  constructor(id: number, duration: number, rootChildren: Node[])
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param states A list of states for the effect.
+   * @param rootChildren A list of nodes to add as direct children of the root
+   * node.
+   */
+  constructor(id: number, states: State[], rootChildren: Node[])
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param terminate Controls whether or not to add a state that causes the
+   * effect to terminate when {@link ExternalValue external value} 0 becomes 1.
+   * @param root The root node of the effect.
+   */
+  constructor(id: number, terminate: boolean, root: RootNode | GenericNode)
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param duration A duration for the effect. This is applied through a state
+   * with a condition that compares the state time to the duration value.
+   * @param root The root node of the effect.
+   */
+  constructor(id: number, duration: number, root: RootNode | GenericNode)
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param states A list of states for the effect.
+   * @param root The root node of the effect.
+   */
+  constructor(id: number, states: State[], root: RootNode | GenericNode)
 
   constructor(
     public id: number,
-    public root: RootNode | GenericNode = new RootNode,
-    public states: State[] = [ new State ],
-    // sfxReferences: number[] = [],
-    // externalValues1: number[] = [],
-    // externalValues2: number[] = [],
-    // unkEmpty: number[] = [],
-  ) {}
+    states: State[] | boolean | number = [ new State ],
+    root: RootNode | GenericNode | Node[] = new RootNode,
+  ) {
+    if (typeof states === 'boolean') {
+      if (states) {
+        this.states = [ State.from('ext(0) < 1') ]
+      } else {
+        this.states = [ new State ]
+      }
+    } else if (typeof states === 'number') {
+      this.states = [
+        new State([
+          new StateCondition(
+            Operator.LessThan, 2, -1,
+            OperandType.StateTime, null,
+            OperandType.Literal, states
+          )
+        ])
+      ]
+    } else {
+      this.states = states
+    }
+    if (Array.isArray(root)) {
+      this.root = new RootNode(root)
+    } else {
+      this.root = root
+    }
+  }
 
   /**
    * Parses an FXR file.
@@ -9685,8 +9787,8 @@ class FXR {
 
     const fxr = new this(
       id,
-      rootNode,
       states,
+      rootNode,
       // sfxReferences,
       // externalValues1,
       // externalValues2,
@@ -9955,14 +10057,14 @@ class FXR {
     if ('fxr' in obj) {
       return new this(
         obj.fxr.id,
-        'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
         'states' in obj.fxr ? obj.fxr.states.map(state => State.from(state)) : undefined,
+        'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
       ) as InstanceType<T>
     }
     return new this(
       obj.id,
-      'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
       'states' in obj ? obj.states.map(state => State.from(state)) : undefined,
+      'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
     ) as InstanceType<T>
   }
 
@@ -9983,8 +10085,8 @@ class FXR {
   minify() {
     return new FXR(
       this.id,
-      this.root.minify() as RootNode | GenericNode,
       this.states,
+      this.root.minify() as RootNode | GenericNode,
     )
   }
 
@@ -10055,8 +10157,8 @@ class FXR {
   clone(): FXR {
     return new FXR(
       this.id,
+      this.states.map(e => State.from(e.toJSON())),
       this.root.clone(),
-      this.states.map(e => State.from(e.toJSON()))
     )
   }
 

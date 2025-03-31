@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Changed the order of the parameters for the `FXR` constructor and added some overloads.
+  - The states list and root node have swapped places, so now the order is `id, states, root`.
+  - Instead of passing an array of states to the constructor, a boolean can now also be used, which controls whether or not to add a state that makes the effect terminate when external value 0 becomes 1 or not. (`ext(0) < 1 else -1`)
+  - Also instead of the states, a number can be passed to set the duration of the effect through a state that compares the state time to the given duration value.
+  - Instead of passing a root node, an array of child nodes can now also be used, which will create a default root node and add the child nodes to it.
+  - These changes should make it easier to construct FXRs now, since the typical way to do it before was to just pass the ID to the constructor, then set up states after it had been constructed, and then add child nodes to the root. Now it should be easier to put it all directly in the constructor.
 - The `includeViewDistance` scaling option has been replaced by a `mode` option with more options for limiting what properties are scaled. This can have three different values:
   - `ScalingMode.All`: Scale all scaling properties.
   - `ScalingMode.NoViewDistance`: Scale all non-view distance-based scaling properties.
