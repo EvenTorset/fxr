@@ -952,7 +952,6 @@ properties:
       - specularity
   lighting:
     field: int
-    enum: LightingMode
     default: LightingMode.Unlit
   unk_sdt_f2_36:
     field: int

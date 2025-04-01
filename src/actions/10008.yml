@@ -641,7 +641,6 @@ properties:
     default: 0.5
   lighting:
     field: int
-    enum: LightingMode
     default: LightingMode.Unlit
   unk_ac6_f2_36:
     field: int

@@ -528,7 +528,6 @@ properties:
       - specularity
   lighting:
     field: int
-    enum: LightingMode
     default: LightingMode.Unlit
     desc: |
       Controls how the particles are lit. See {@link LightingMode} for more information.

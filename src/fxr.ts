@@ -1281,7 +1281,7 @@ export enum RichModelOrientationMode {
 }
 
 /**
- * Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.DynamicTracer DynamicTracer} particles.
+ * Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.LegacyTracer LegacyTracer} particles.
  */
 export enum TracerOrientationMode {
   /**
@@ -11183,7 +11183,7 @@ class LevelsOfDetailNode extends NodeWithConfigs {
   constructor(thresholds: number[], nodes?: Node[])
 
   /**
-   * @param thresholds An array of
+   * @param configs An array of
    * {@link ConfigType.LevelsOfDetail LOD configs}.
    * @param nodes An array of child nodes.
    */
@@ -11246,7 +11246,7 @@ class BasicNode extends NodeWithConfigs {
   constructor(actions?: AnyAction[], nodes?: Node[])
 
   /**
-   * @param actions A list of configs.
+   * @param configs A list of configs.
    * @param nodes A list of child nodes.
    */
   constructor(configs?: BasicConfig[], nodes?: Node[])
@@ -11469,7 +11469,7 @@ class NodeEmitterNode extends NodeWithConfigs {
   constructor(actions?: AnyAction[], nodes?: Node[])
 
   /**
-   * @param actions A list of configs.
+   * @param configs A list of configs.
    * @param nodes A list of child nodes.
    */
   constructor(configs?: NodeEmitterConfig[], nodes?: Node[])

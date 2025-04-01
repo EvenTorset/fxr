@@ -466,7 +466,6 @@ properties:
       - specularity
   lighting:
     field: int
-    enum: LightingMode
     default: LightingMode.Unlit
     desc: |
       Controls how the trail is lit. See {@link LightingMode} for more information.
