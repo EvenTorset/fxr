@@ -530,7 +530,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.TerminationAction Termination}
    * - **Class**: {@link SimulateTermination}
    * 
-   * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
+   * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
    * 
    * Note: An effect terminates when it reaches {@link State} -1.
    */
@@ -21304,7 +21304,7 @@ class PointLight extends DataAction {
  * ### {@link ActionType.SimulateTermination Action 700 - SimulateTermination}
  * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
+ * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
  * 
  * Note: An effect terminates when it reaches {@link State} -1.
  */
