@@ -11513,7 +11513,10 @@ class BasicNode extends NodeWithConfigs {
         a instanceof GPUSparkParticle ||
         a instanceof GPUSparkCorrectParticle
       ) {
-        colorProp = a.color as any
+        colorProp = anyValueSum(
+          anyValueMult(0.5, anyValueSum(a.colorMin, a.colorMax)),
+          a.color
+        ) as any
         modified = true
       } else if (
         a instanceof PointLight ||

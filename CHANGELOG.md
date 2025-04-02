@@ -23,7 +23,8 @@
   - `ScalingMode.NoViewDistance`: Scale all non-view distance-based scaling properties.
   - `ScalingMode.InstancesOnly`: Only scale properties that control the size of appearance instances, like particles and light sources.
 - Fixed the `scaleRateOfTime` method on nodes and actions scaling the `segmentDuration` property on tracer actions, and added an option to re-enable scaling for this property. This duration is for some reason not affected by the `rateOfTime` property in action 10500 and, since this method's main purpose is to act as a fallback for when that property is not available (DS3), the option to scale this duration property is disabled by default.
-- Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value below 1. The incorrectly rounded numbers had much higher precision than intended.
+- The `getColor` method on nodes containing GPU particle emitters now returns the base `color` property plus the average value of the `colorMin` and `colorMax` fields. Previously, it only returned the base `color` property. This should more accurately represent the color of the particles seen in-game.
+- Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value less than 1. The incorrectly rounded numbers had much higher precision than intended.
 - Fixed a bug in the JSON schema where the `particleModifier` slot in `BasicConfig` objects could be `null`. This slot must have a `ParticleModifier` action, it cannot be action 0.
 - Added overloads for the node constructors. This improves documentation and autocomplete in editors.
 
