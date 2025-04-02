@@ -348,7 +348,8 @@ export default async function(writeToDist = true) {
     actionDataEntries.push(`
       [ActionType.${data.name}]: {
         isAppearance: ${data.meta.isAppearance},
-        isParticle: ${data.meta.isParticle}${'properties' in data ? `,
+        isParticle: ${data.meta.isParticle},
+        slotDefault: ${actionSlotsData[data.slot].default === data.name}${'properties' in data ? `,
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
             return `${k}: { default: ${defValTS(v)}${

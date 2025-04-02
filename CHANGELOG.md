@@ -14,12 +14,17 @@
   - Also instead of the states, a number can be passed to set the duration of the effect through a state that compares the state time to the given duration value.
   - Instead of passing a root node, an array of child nodes can now also be used, which will create a default root node and add the child nodes to it.
   - These changes should make it easier to construct FXRs now, since the typical way to do it before was to just pass the ID to the constructor, then set up states after it had been constructed, and then add child nodes to the root. Now it should be easier to put it all directly in the constructor.
+- All classes that have a `toJSON` method now also have a new `serialize` method that works the same way as the old `toJSON` method did by default, but it can also take an object with options for the serialization process.
+  - The `toJSON` methods now call the new `serialize` methods with the default options.
+  - `excludeDefaults` option: A boolean that, when `true`, strips all values in the structure that would be equal to the default value. This causes the output JSON to be much more compact without losing any information. The output can be parsed using the `fromJSON` methods to regenerate everything like normally.
+  - `requireActionDefinition` option: A boolean that, when `true`, forces actions to stay defined when `excludeDefaults` is `true`. This is mainly used internally to prevent generic classes from outputting nonsense, but can also be used if you want to keep all actions as their minimum form (`{ type: number } | null`) for some reason.
 - The `includeViewDistance` scaling option has been replaced by a `mode` option with more options for limiting what properties are scaled. This can have three different values:
   - `ScalingMode.All`: Scale all scaling properties.
   - `ScalingMode.NoViewDistance`: Scale all non-view distance-based scaling properties.
   - `ScalingMode.InstancesOnly`: Only scale properties that control the size of appearance instances, like particles and light sources.
 - Fixed the `scaleRateOfTime` method on nodes and actions scaling the `segmentDuration` property on tracer actions, and added an option to re-enable scaling for this property. This duration is for some reason not affected by the `rateOfTime` property in action 10500 and, since this method's main purpose is to act as a fallback for when that property is not available (DS3), the option to scale this duration property is disabled by default.
 - Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value below 1. The incorrectly rounded numbers had much higher precision than intended.
+- Fixed a bug in the JSON schema where the `particleModifier` slot in `BasicConfig` objects could be `null`. This slot must have a `ParticleModifier` action, it cannot be action 0.
 - Added overloads for the node constructors. This improves documentation and autocomplete in editors.
 
 ## [20.1.1] - 2025-03-19
