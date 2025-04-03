@@ -29,10 +29,10 @@
 - Added overloads for the node constructors. This improves documentation and autocomplete in editors.
 - The action and enum data JSON files that were previously only hosted on the documentation site is now also exported by the package.
   - ```ts
-    import actions from '@cccode/fxr/data/actions'
-    import enums from '@cccode/fxr/data/enums'
+    import actions from '@cccode/fxr/data/actions' with { type: 'json' }
+    import enums from '@cccode/fxr/data/enums' with { type: 'json' }
     ```
-  - This allows other tools using the library to easily document parts of it.
+  - This makes it easier for other tools using the library to display parts of the documentation for it.
 
 ## [20.1.1] - 2025-03-19
 
