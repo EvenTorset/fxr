@@ -617,7 +617,7 @@ properties:
       - specular
   lighting:
     field: int
-    default: LightingMode.Unlit
+    default: -1
     desc: |
       Controls how the particles are lit. See {@link LightingMode} for more information.
   unk_sdt_f2_36:

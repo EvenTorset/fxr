@@ -3370,7 +3370,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -3507,7 +3507,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       unk_sdt_f2_38: { default: 1, field: 1 },
@@ -3749,7 +3749,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -4351,7 +4351,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -4578,7 +4578,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -4792,7 +4792,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f2_32: { default: 0, field: 1 },
       unk_ac6_f2_33: { default: 0, field: 1 },
       unk_ac6_f2_34: { default: 0.5, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_ac6_f2_36: { default: -2, field: 1 },
       unk_ac6_f2_37: { default: 0, field: 1 },
       unk_ac6_f2_38: { default: 0, field: 2 },
@@ -4951,7 +4951,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f2_32: { default: 0, field: 1 },
       unk_ac6_f2_33: { default: 0, field: 1 },
       unk_ac6_f2_34: { default: 0.5, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_ac6_f2_36: { default: -2, field: 1 },
       unk_ac6_f2_37: { default: 0, field: 1 },
       unk_ac6_f2_38: { default: 0, field: 2 },
@@ -5049,7 +5049,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -17504,7 +17504,7 @@ class BillboardEx extends DataAction {
   /**
    * Controls how the particles are lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -18430,7 +18430,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Controls how the particles are lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -19952,7 +19952,7 @@ class LegacyTracer extends DataAction {
   /**
    * Controls how the trail is lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -23156,7 +23156,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -24588,7 +24588,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -25846,7 +25846,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -26846,7 +26846,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -27526,7 +27526,7 @@ class Tracer extends DataAction {
   /**
    * Controls how the trail is lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
