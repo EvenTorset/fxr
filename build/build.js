@@ -556,10 +556,10 @@ export default async function(writeToDist = true) {
     await fs.promises.writeFile(path.join(distDir, 'schema.json'), stringify(baseSchema, stringifyOpts) + '\n')
   }
 
-}
+  {
+    const jsons = await generateDocsJSONs()
+    await fs.promises.writeFile('dist/enums.json', JSON.stringify(jsons.enums))
+    await fs.promises.writeFile('dist/actions.json', JSON.stringify(jsons.actions))
+  }
 
-{
-  const jsons = await generateDocsJSONs()
-  await fs.promises.writeFile('dist/enums.json', JSON.stringify(jsons.enums))
-  await fs.promises.writeFile('dist/actions.json', JSON.stringify(jsons.actions))
 }
