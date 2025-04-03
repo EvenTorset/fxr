@@ -12,7 +12,9 @@
       "require": "./dist/cjs/fxr.js"
     },
     "./schema": "./dist/schema.json",
-    "./schema/strict": "./dist/schema_strict.json"
+    "./schema/strict": "./dist/schema_strict.json",
+    "./data/actions": "./dist/actions.json",
+    "./data/enums": "./dist/enums.json"
   },
   "types": "./dist/esm/fxr.d.ts",
   "scripts": {

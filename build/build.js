@@ -7,6 +7,7 @@ import stringify from 'fabulous-json'
 
 import baseSchema from '../src/schema/base.json' with { type: 'json' }
 import schemaGenerics from '../src/schema/generics.json' with { type: 'json' }
+import generateDocsJSONs from './generate_docs_json.js'
 
 const projectDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const srcDir = path.join(projectDir, 'src')
@@ -555,4 +556,10 @@ export default async function(writeToDist = true) {
     await fs.promises.writeFile(path.join(distDir, 'schema.json'), stringify(baseSchema, stringifyOpts) + '\n')
   }
 
+}
+
+{
+  const jsons = await generateDocsJSONs()
+  await fs.promises.writeFile('dist/enums.json', JSON.stringify(jsons.enums))
+  await fs.promises.writeFile('dist/actions.json', JSON.stringify(jsons.actions))
 }

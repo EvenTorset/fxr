@@ -27,6 +27,12 @@
 - Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value less than 1. The incorrectly rounded numbers had much higher precision than intended.
 - Fixed a bug in the JSON schema where the `particleModifier` slot in `BasicConfig` objects could be `null`. This slot must have a `ParticleModifier` action, it cannot be action 0.
 - Added overloads for the node constructors. This improves documentation and autocomplete in editors.
+- The action and enum data JSON files that were previously only hosted on the documentation site is now also exported by the package.
+  - ```ts
+    import actions from '@cccode/fxr/data/actions'
+    import enums from '@cccode/fxr/data/enums'
+    ```
+  - This allows other tools using the library to easily document parts of it.
 
 ## [20.1.1] - 2025-03-19
 
