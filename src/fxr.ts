@@ -11043,17 +11043,21 @@ class GenericNode extends Node {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const actionOptions: FXRSerializeOptions = Object.assign({}, options ?? {}, {
       requireActionDefinition: true
     })
-    return {
+    const obj = {
       type: this.type,
       $generic: true,
       actions: this.actions.map(action => action.serialize(actionOptions)),
       configs: this.configs.map(config => config.serialize(options)),
       nodes: this.nodes.map(node => node.serialize(options)),
     }
+    if (options?.excludeDefaults && obj.nodes.length === 1) {
+      delete obj.nodes
+    }
+    return obj
   }
 
   minify() {
@@ -11147,7 +11151,7 @@ class RootNode extends Node {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const obj = {
       type: this.type,
       termination: this.termination.serialize(options),
@@ -11157,7 +11161,11 @@ class RootNode extends Node {
       nodes: this.nodes.map(node => node.serialize(options))
     }
     if (options?.excludeDefaults) {
-      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+      const defaultless = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+      if (defaultless.nodes.length === 0) {
+        delete defaultless.nodes
+      }
+      return defaultless
     }
     return obj
   }
@@ -11263,13 +11271,17 @@ abstract class NodeWithConfigs extends Node {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
-    return {
+  serialize(options?: FXRSerializeOptions): any {
+    const obj = {
       type: this.type,
       stateConfigMap: this.stateConfigMap,
       configs: this.configs.map(e => e.serialize(options)),
       nodes: this.nodes.map(e => e.serialize(options))
     }
+    if (options?.excludeDefaults && obj.nodes.length === 0) {
+      delete obj.nodes
+    }
+    return obj
   }
 
   mapStates(...configIndices: number[]) {
@@ -11684,7 +11696,7 @@ class NodeConfig implements IConfig {
 
   toJSON = this.serialize
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const actionOptions: FXRSerializeOptions = Object.assign({}, options ?? {}, {
       requireActionDefinition: true
     })
@@ -11809,7 +11821,7 @@ class LevelsOfDetailConfig implements IConfig {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const obj = {
       type: this.type,
       duration: this.duration instanceof Property ? this.duration.serialize(options) : this.duration,
@@ -11956,7 +11968,7 @@ class BasicConfig implements IConfig {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const obj = {
       type: this.type,
       nodeAttributes: this.nodeAttributes.serialize(options),
@@ -12279,7 +12291,7 @@ class NodeEmitterConfig implements IConfig {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const obj = {
       type: this.type,
       nodeAttributes: this.nodeAttributes.serialize(options),
@@ -12534,7 +12546,7 @@ class DataAction implements IAction {
 
   toJSON() { return this.serialize() }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     const obj: any = {
       type: this.type,
       ...Object.fromEntries(
@@ -32214,7 +32226,7 @@ class ValueProperty<T extends ValueType>
     )
   }
 
-  serialize(options?: FXRSerializeOptions) {
+  serialize(options?: FXRSerializeOptions): any {
     if (this.modifiers.length > 0) {
       return {
         value: this.value,
