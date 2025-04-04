@@ -1,5 +1,9 @@
 # Changelog
 
+## [21.0.1] - 2025-04-04
+
+- The `nodes` array property in node JSON objects is now excluded when empty and the `excludeDefaults` option is `true`.
+
 ## [21.0.0] - 2025-04-04
 
 - The two tracer actions have been renamed:
