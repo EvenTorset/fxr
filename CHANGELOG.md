@@ -1,6 +1,6 @@
 # Changelog
 
-## [21.0.0] 2025-04-04
+## [21.0.0] - 2025-04-04
 
 - The two tracer actions have been renamed:
   - Action 606: `Tracer` -> `LegacyTracer`
