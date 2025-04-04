@@ -1,5 +1,40 @@
 # Changelog
 
+## [21.0.0] 2025-04-04
+
+- The two tracer actions have been renamed:
+  - Action 606: `Tracer` -> `LegacyTracer`
+  - Action 10012: `DynamicTracer` -> `Tracer`
+  - This change happened because it was discovered that action 10012 has a field that toggles its dynamic opacity, and this field has now been named and documented:
+    - `unk_sdt_f1_14` -> `dynamicOpacity` - Its type has been changed to boolean and its default value has been changed to `false`, while before it was `1` (integer), which would be equal to `true` now. So, to update scripts using this action, make sure to set this property to `true` to get the old behavior back.
+    - With this and everything else known about these two actions, it seems pretty likely that 10012 is just a newer version of 606 with more features. In Elden Ring's RTTI, they are both just called `Tracer`.
+- The `ConstantProperty` constructor now takes the value as a single argument instead of it needing to be spread.
+- Changed the order of the parameters for the `FXR` constructor and added some overloads.
+  - The states list and root node have swapped places, so now the order is `id, states, root`.
+  - Instead of passing an array of states to the constructor, a boolean can now also be used, which controls whether or not to add a state that makes the effect terminate when external value 0 becomes 1 or not. (`ext(0) < 1 else -1`)
+  - Also instead of the states, a number can be passed to set the duration of the effect through a state that compares the state time to the given duration value.
+  - Instead of passing a root node, an array of child nodes can now also be used, which will create a default root node and add the child nodes to it.
+  - These changes should make it easier to construct FXRs now, since the typical way to do it before was to just pass the ID to the constructor, then set up states after it had been constructed, and then add child nodes to the root. Now it should be easier to put it all directly in the constructor.
+- All classes that have a `toJSON` method now also have a new `serialize` method that works the same way as the old `toJSON` method did by default, but it can also take an object with options for the serialization process.
+  - The `toJSON` methods now call the new `serialize` methods with the default options.
+  - `excludeDefaults` option: A boolean that, when `true`, strips all values in the structure that would be equal to the default value. This causes the output JSON to be much more compact without losing any information. The output can be parsed using the `fromJSON` methods to regenerate everything like normally.
+  - `requireActionDefinition` option: A boolean that, when `true`, forces actions to stay defined when `excludeDefaults` is `true`. This is mainly used internally to prevent generic classes from outputting nonsense, but can also be used if you want to keep all actions as their minimum form (`{ type: number } | null`) for some reason.
+- The `includeViewDistance` scaling option has been replaced by a `mode` option with more options for limiting what properties are scaled. This can have three different values:
+  - `ScalingMode.All`: Scale all scaling properties.
+  - `ScalingMode.NoViewDistance`: Scale all non-view distance-based scaling properties.
+  - `ScalingMode.InstancesOnly`: Only scale properties that control the size of appearance instances, like particles and light sources.
+- Fixed the `scaleRateOfTime` method on nodes and actions scaling the `segmentDuration` property on tracer actions, and added an option to re-enable scaling for this property. This duration is for some reason not affected by the `rateOfTime` property in action 10500 and, since this method's main purpose is to act as a fallback for when that property is not available (DS3), the option to scale this duration property is disabled by default.
+- The `getColor` method on nodes containing GPU particle emitters now returns the base `color` property plus the average value of the `colorMin` and `colorMax` fields. Previously, it only returned the base `color` property. This should more accurately represent the color of the particles seen in-game.
+- Fixed the rounding option for the `FXR.read` function incorrectly rounding numbers with an absolute value less than 1. The incorrectly rounded numbers had much higher precision than intended.
+- Fixed a bug in the JSON schema where the `particleModifier` slot in `BasicConfig` objects could be `null`. This slot must have a `ParticleModifier` action, it cannot be action 0.
+- Added overloads for the node constructors. This improves documentation and autocomplete in editors.
+- The action and enum data JSON files that were previously only hosted on the documentation site is now also exported by the package.
+  - ```ts
+    import actions from '@cccode/fxr/data/actions' with { type: 'json' }
+    import enums from '@cccode/fxr/data/enums' with { type: 'json' }
+    ```
+  - This makes it easier for other tools using the library to display parts of the documentation for it.
+
 ## [20.1.1] - 2025-03-19
 
 - Fixed the `anyValueMult` and `anyValueSum` functions creating invalid properties when operating on a value property and a component sequence property.
@@ -344,6 +379,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[21.0.0]: https://github.com/EvenTorset/fxr/compare/v20.1.1...v21.0.0
 [20.1.1]: https://github.com/EvenTorset/fxr/compare/v20.1.0...v20.1.1
 [20.1.0]: https://github.com/EvenTorset/fxr/compare/v20.0.1...v20.1.0
 [20.0.1]: https://github.com/EvenTorset/fxr/compare/v20.0.0...v20.0.1

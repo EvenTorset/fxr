@@ -55,12 +55,14 @@ properties:
   particleLength:
     type: ScalarValue
     default: 1
+    # No scaling - That is handled by the multiplicative min/max fields instead
     time: inv
     desc: |
       The length of the particles.
   particleWidth:
     type: ScalarValue
     default: 0.1
+    # No scaling - That is handled by the multiplicative min/max fields instead
     desc: |
       The width of the particles.
   unkParticleAcceleration:
@@ -333,25 +335,25 @@ properties:
   particleLengthMin:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
   particleLengthMax:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
   particleWidthMin:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
   particleWidthMax:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
   unk_ac6_f1_67:
@@ -640,8 +642,7 @@ properties:
     default: 0.5
   lighting:
     field: int
-    enum: LightingMode
-    default: LightingMode.Unlit
+    default: -1
   unk_ac6_f2_36:
     field: int
     default: -2

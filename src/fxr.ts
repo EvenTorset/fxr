@@ -488,13 +488,15 @@ export enum ActionType {
    */
   Model = 605,
   /**
-   * ### Action 606 - Tracer
+   * ### Action 606 - LegacyTracer
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * - **Class**: {@link Tracer}
+   * - **Class**: {@link LegacyTracer}
    * 
    * Creates a trail behind moving effects.
+   * 
+   * This is an older version of {@link Tracer} with fewer features.
    */
-  Tracer = 606,
+  LegacyTracer = 606,
   /**
    * ### Action 607 - Distortion
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -528,7 +530,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.TerminationAction Termination}
    * - **Class**: {@link SimulateTermination}
    * 
-   * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
+   * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
    * 
    * Note: An effect terminates when it reaches {@link State} -1.
    */
@@ -679,15 +681,15 @@ export enum ActionType {
    */
   GPUSparkCorrectParticle = 10009,
   /**
-   * ### Action 10012 - DynamicTracer
+   * ### Action 10012 - Tracer
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
-   * - **Class**: {@link DynamicTracer}
+   * - **Class**: {@link Tracer}
    * 
    * Creates a trail behind moving effects.
    * 
-   * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+   * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
    */
-  DynamicTracer = 10012,
+  Tracer = 10012,
   /**
    * ### Action 10013 - WaterInteraction
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
@@ -1279,7 +1281,7 @@ export enum RichModelOrientationMode {
 }
 
 /**
- * Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.DynamicTracer DynamicTracer} particles.
+ * Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.LegacyTracer LegacyTracer} particles.
  */
 export enum TracerOrientationMode {
   /**
@@ -1580,7 +1582,7 @@ enum ResourceType {
  */
 export enum ScaleCondition {
   /**
-   * Always scale the property.
+   * Always scale the property, unless the {@link ScalingMode scaling mode} is {@link ScalingMode.InstancesOnly}.
    */
   True = 1,
   /**
@@ -1595,6 +1597,33 @@ export enum ScaleCondition {
    * Only scale the property if view distance properties are being scaled and the value is not -1.
    */
   DistanceIfNotMinusOne = 4,
+  /**
+   * Always scale the property.
+   */
+  InstanceSize = 5
+}
+
+/**
+ * Controls what properties are scaled by the `scale` methods for nodes,
+ * configs, and actions.
+ */
+export enum ScalingMode {
+  /**
+   * Scale all scaling properties.
+   */
+  All = 0,
+  /**
+   * Scale all non-view distance-based scaling properties.
+   */
+  NoViewDistance = 1,
+  /**
+   * Only scale properties that control the size of instances.
+   * 
+   * "Instances" here refer to particles and certain other visual effects, like
+   * light sources. This option will not change the size of emitters, or any
+   * translations, only individual appearance instances.
+   */
+  InstancesOnly = 2,
 }
 
 /**
@@ -1609,6 +1638,12 @@ export enum TimeOperation {
   Divide = 2,
   DivideIfPositive = 3,
   Square = 4,
+  /**
+   * The tracer segment duration fields are not scaled by the rate of time
+   * property, but scaling it may still be desired in some cases, so these
+   * fields are marked with this value so they can get special handling.
+   */
+  TracerDuration = 5,
 }
 
 /**
@@ -1740,6 +1775,7 @@ export interface IProperty<T extends ValueType, F extends PropertyFunction> {
   fieldCount: number
   fields: NumericalField[]
   toJSON(): any
+  serialize(options?: FXRSerializeOptions): any
   scale(factor: TypeMap.PropertyValue[T] | number): this
   add(summand: TypeMap.PropertyValue[T] | number): this
   valueAt(arg: number): TypeMap.PropertyValue[T]
@@ -1759,6 +1795,7 @@ export interface IAction {
   readonly type: ActionType
   readonly $data: ActionDataEntry
   toJSON(): any
+  serialize(options?: FXRSerializeOptions): any
   /**
    * Creates a minified version of this action.
    * 
@@ -1795,9 +1832,10 @@ export interface IConfig {
    * Scale the config by the given `factor`. This can be used to change
    * the size of effect created by the config.
    */
-  scale(factor: number, options?: ScalingOptions): this
+  scale(factor: number, options?: { mode?: ScalingMode }): this
 
   toJSON(): any
+  serialize(options?: FXRSerializeOptions): any
   minify(): this
   walkActions(): Generator<AnyAction>
 }
@@ -1810,6 +1848,7 @@ export interface IModifier<T extends ValueType> {
   getPropertyCount(): number
   getProperties(game: Game): AnyProperty[]
   toJSON(): any
+  serialize(options?: FXRSerializeOptions): any
   clone(): IModifier<T>
   separateComponents(): IModifier<ValueType.Scalar>[]
   minify(): IModifier<T>
@@ -1819,10 +1858,6 @@ export interface NodeColorOptions {
   activeState?: number
   side?: 'start' | 'end' | 'middle'
   layer?: number
-}
-
-export interface ScalingOptions {
-  includeViewDistance?: boolean
 }
 
 export type AnyAction = Action | DataAction
@@ -1889,7 +1924,7 @@ export namespace ActionSlots {
     | BillboardEx
     | MultiTextureBillboardEx
     | Model
-    | Tracer
+    | LegacyTracer
     | Distortion
     | RadialBlur
     | PointLight
@@ -1898,7 +1933,7 @@ export namespace ActionSlots {
     | LightShaft
     | GPUSparkParticle
     | GPUSparkCorrectParticle
-    | DynamicTracer
+    | Tracer
     | WaterInteraction
     | LensFlare
     | RichModel
@@ -2108,6 +2143,10 @@ export type ActionDataEntry = {
    * node's emitter slot.
    */
   isParticle: boolean
+  /**
+   * Is `true` if the action is the default action for its slot.
+   */
+  slotDefault: boolean
   props?: Record<string, ActionDataProp>
   games?: Record<string, ActionGameDataEntry | Game | -2>
 }
@@ -2122,6 +2161,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeAcceleration]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       accelerationZ: { default: 0, scale: 1, time: 4 },
@@ -2144,6 +2184,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeTranslation]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       translation: { default: [0, 0, 0], scale: 1 },
       unk_er_f1_0: { default: 0, field: 1 },
@@ -2163,6 +2204,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeSpin]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       angularSpeedX: { default: 0, time: 1 },
       angularSpeedMultiplierX: { default: 1 },
@@ -2185,6 +2227,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.StaticNodeTransform]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       offset: { default: [0, 0, 0], field: 4, scale: 1 },
       rotation: { default: [0, 0, 0], field: 4 },
@@ -2201,6 +2244,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.RandomNodeTransform]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       offset: { default: [0, 0, 0], field: 4, scale: 1 },
       rotation: { default: [0, 0, 0], field: 4 },
@@ -2219,6 +2263,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeAttachToCamera]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       followRotation: { default: true, field: 0 },
       unk_ds3_f1_1: { default: 1, field: 1 },
@@ -2235,6 +2280,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleAcceleration]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       gravity: { default: 0, scale: 1, time: 4 },
       acceleration: { default: 0, scale: 1, time: 4 },
@@ -2255,6 +2301,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleSpeed]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       gravity: { default: 0, scale: 1, time: 4 },
       speed: { default: 0, scale: 1, time: 1 },
@@ -2275,6 +2322,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleSpeedRandomTurns]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       gravity: { default: 0, scale: 1, time: 4 },
       speed: { default: 0, scale: 1, time: 1 },
@@ -2296,6 +2344,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleSpeedPartialFollow]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       gravity: { default: 0, scale: 1, time: 4 },
       speed: { default: 0, scale: 1, time: 1 },
@@ -2319,6 +2368,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeSound]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       sound: { default: 0, field: 1, resource: 3 },
       volume: { default: 1, field: 2 },
@@ -2336,6 +2386,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.EmissionSound]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       sound: { default: 0, field: 1, resource: 3 },
       unk_ds3_f1_1: { default: 1, field: 2 },
@@ -2352,6 +2403,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeAccelerationRandomTurns]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       accelerationZ: { default: 0, scale: 1, time: 4 },
@@ -2375,6 +2427,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleAccelerationRandomTurns]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       gravity: { default: 0, scale: 1, time: 4 },
       acceleration: { default: 0, scale: 1, time: 4 },
@@ -2396,6 +2449,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleAccelerationPartialFollow]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       gravity: { default: 0, scale: 1, time: 4 },
       acceleration: { default: 0, scale: 1, time: 4 },
@@ -2419,6 +2473,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeAccelerationPartialFollow]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       accelerationZ: { default: 0, scale: 1, time: 4 },
@@ -2444,6 +2499,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeAccelerationSpin]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       accelerationZ: { default: 0, scale: 1, time: 4 },
@@ -2473,6 +2529,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeSpeed]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
@@ -2494,6 +2551,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeSpeedRandomTurns]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
@@ -2516,6 +2574,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeSpeedPartialFollow]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
@@ -2540,6 +2599,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeSpeedSpin]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speedZ: { default: 0, scale: 1, time: 1 },
       speedMultiplierZ: { default: 1 },
@@ -2568,6 +2628,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeAttributes]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       duration: { default: -1, time: 3 },
       delay: { default: 0, field: 2, time: 2 },
@@ -2588,6 +2649,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleAttributes]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       duration: { default: -1, time: 3 },
       attachment: { default: AttachMode.Parent, field: 1 },
@@ -2605,6 +2667,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Unk130]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       unk_ds3_p1_0: { default: 0 },
       unk_ds3_p1_1: { default: 0 },
@@ -2637,6 +2700,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleModifier]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       speed: { default: 0, scale: 1, time: 1 },
       scaleX: { default: 1 },
@@ -2658,6 +2722,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.SFXReference]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       sfx: { default: 0, field: 1 },
     },
@@ -2673,6 +2738,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.LevelsOfDetailThresholds]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       duration: { default: -1, time: 3 },
       threshold0: { default: 10000, field: 1, scale: 3 },
@@ -2698,6 +2764,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.StateConfigMap]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       configIndices: { default: [0], s10: 1 },
     },
@@ -2712,11 +2779,13 @@ const ActionData: Record<string, ActionDataEntry> = {
   },
   [ActionType.SelectAllNodes]: {
     isAppearance: false,
-    isParticle: false
+    isParticle: false,
+    slotDefault: true
   },
   [ActionType.SelectRandomNode]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       weights: { default: [1], s10: 1 },
     },
@@ -2732,6 +2801,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.PeriodicEmitter]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       interval: { default: 1, time: 2 },
       perInterval: { default: 1 },
@@ -2755,6 +2825,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.EqualDistanceEmitter]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       threshold: { default: 0.1, scale: 1 },
       unk_ds3_p1_2: { default: -1 },
@@ -2778,11 +2849,13 @@ const ActionData: Record<string, ActionDataEntry> = {
   },
   [ActionType.OneTimeEmitter]: {
     isAppearance: false,
-    isParticle: false
+    isParticle: false,
+    slotDefault: true
   },
   [ActionType.PointEmitterShape]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       direction: { default: InitialDirection.Emitter, field: 1 },
     },
@@ -2798,6 +2871,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.DiskEmitterShape]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       radius: { default: 1, scale: 1 },
       distribution: { default: 0 },
@@ -2816,6 +2890,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.RectangleEmitterShape]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
@@ -2835,6 +2910,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.SphereEmitterShape]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       radius: { default: 1, scale: 1 },
       emitInside: { default: true, field: 0 },
@@ -2852,6 +2928,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.BoxEmitterShape]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       sizeX: { default: 1, scale: 1 },
       sizeY: { default: 1, scale: 1 },
@@ -2872,6 +2949,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.CylinderEmitterShape]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       radius: { default: 1, scale: 1 },
       height: { default: 1, scale: 1 },
@@ -2890,11 +2968,13 @@ const ActionData: Record<string, ActionDataEntry> = {
   },
   [ActionType.NoSpread]: {
     isAppearance: false,
-    isParticle: false
+    isParticle: false,
+    slotDefault: true
   },
   [ActionType.CircularSpread]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       angle: { default: 30 },
       distribution: { default: 0 },
@@ -2915,6 +2995,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.EllipticalSpread]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       angleX: { default: 30 },
       angleY: { default: 30 },
@@ -2936,6 +3017,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.RectangularSpread]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       angleX: { default: 30 },
       angleY: { default: 30 },
@@ -2953,10 +3035,11 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.PointSprite]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      size: { default: 1, scale: 1 },
+      size: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3035,9 +3118,10 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Line]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      length: { default: 1, scale: 1 },
+      length: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       startColor: { default: [1, 1, 1, 1], color: 2 },
@@ -3117,10 +3201,11 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.QuadLine]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 1 },
-      length: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      length: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       startColor: { default: [1, 1, 1, 1], color: 2 },
@@ -3201,14 +3286,15 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.BillboardEx]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3284,7 +3370,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -3321,13 +3407,14 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.MultiTextureBillboardEx]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -3420,7 +3507,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       unk_sdt_f2_38: { default: 1, field: 1 },
@@ -3463,11 +3550,12 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Model]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       model: { default: 80201, field: 1, resource: 1 },
-      sizeX: { default: 1, scale: 1 },
-      sizeY: { default: 1, scale: 1 },
-      sizeZ: { default: 1, scale: 1 },
+      sizeX: { default: 1, scale: 5 },
+      sizeY: { default: 1, scale: 5 },
+      sizeZ: { default: 1, scale: 5 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -3584,13 +3672,14 @@ const ActionData: Record<string, ActionDataEntry> = {
       }
     }
   },
-  [ActionType.Tracer]: {
+  [ActionType.LegacyTracer]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
       widthMultiplier: { default: 1 },
       startFadeEndpoint: { default: 0 },
       endFadeEndpoint: { default: 0 },
@@ -3614,7 +3703,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, scale: 5, time: 5 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -3660,7 +3749,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -3691,14 +3780,15 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Distortion]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      sizeX: { default: 1, scale: 1 },
-      sizeY: { default: 1, scale: 1 },
-      sizeZ: { default: 1, scale: 1 },
+      sizeX: { default: 1, scale: 5 },
+      sizeY: { default: 1, scale: 5 },
+      sizeZ: { default: 1, scale: 5 },
       color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_7: { default: [1, 1, 1, 1] },
       intensity: { default: 1 },
@@ -3794,14 +3884,15 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.RadialBlur]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
       offsetX: { default: 0, scale: 1 },
       offsetY: { default: 0, scale: 1 },
       offsetZ: { default: 0, scale: 1 },
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_6: { default: [1, 1, 1, 1] },
       blurRadius: { default: 0.5 },
@@ -3871,10 +3962,11 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.PointLight]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       diffuseColor: { default: [1, 1, 1, 1], color: 1 },
       specularColor: { default: [1, 1, 1, 1], color: 1 },
-      radius: { default: 10, scale: 1 },
+      radius: { default: 10, scale: 5 },
       unk_ds3_p1_3: { default: 0 },
       unk_ds3_p1_4: { default: 0 },
       unk_ds3_p1_5: { default: 0 },
@@ -3948,11 +4040,13 @@ const ActionData: Record<string, ActionDataEntry> = {
   },
   [ActionType.SimulateTermination]: {
     isAppearance: false,
-    isParticle: false
+    isParticle: false,
+    slotDefault: true
   },
   [ActionType.FadeTermination]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       duration: { default: 1, time: 2 },
     },
@@ -3965,11 +4059,13 @@ const ActionData: Record<string, ActionDataEntry> = {
   },
   [ActionType.InstantTermination]: {
     isAppearance: false,
-    isParticle: false
+    isParticle: false,
+    slotDefault: false
   },
   [ActionType.NodeForceSpeed]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
@@ -3987,6 +4083,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleForceSpeed]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       speed: { default: 0, scale: 1, time: 1 },
       speedMultiplier: { default: 1 },
@@ -4005,6 +4102,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.NodeForceAcceleration]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
@@ -4022,6 +4120,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleForceAcceleration]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       acceleration: { default: 0, scale: 1, time: 4 },
       accelerationMultiplier: { default: 1 },
@@ -4040,6 +4139,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ParticleForceCollision]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: false,
     props: {
       radius: { default: 1, field: 2 },
       friction: { default: 0.5, field: 2 },
@@ -4054,6 +4154,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.GPUStandardParticle]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       particleFollowFactor: { default: 0 },
       unk_ds3_p1_1: { default: 0 },
@@ -4065,8 +4166,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
       particleAngularAccelerationZ: { default: 0, time: 4 },
-      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
-      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateX: { default: 0, scale: 5, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 5, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
@@ -4126,29 +4227,29 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
       particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
-      particleSizeX: { default: 1, field: 2, scale: 1 },
-      particleSizeY: { default: 1, field: 2, scale: 1 },
+      particleSizeX: { default: 1, field: 2, scale: 5 },
+      particleSizeY: { default: 1, field: 2, scale: 5 },
       unk_ds3_f1_73: { default: 1, field: 2 },
-      particleSizeXMin: { default: 0, field: 2, scale: 1 },
-      particleSizeYMin: { default: 0, field: 2, scale: 1 },
+      particleSizeXMin: { default: 0, field: 2, scale: 5 },
+      particleSizeYMin: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_76: { default: 0, field: 2 },
-      particleSizeXMax: { default: 0, field: 2, scale: 1 },
-      particleSizeYMax: { default: 0, field: 2, scale: 1 },
+      particleSizeXMax: { default: 0, field: 2, scale: 5 },
+      particleSizeYMax: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4199,7 +4300,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
+      particleTraceLength: { default: 1, field: 2, scale: 5, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4250,7 +4351,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -4281,6 +4382,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.GPUStandardCorrectParticle]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       particleFollowFactor: { default: 0 },
       unk_ds3_p1_1: { default: 0 },
@@ -4292,8 +4394,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
       particleAngularAccelerationZ: { default: 0, time: 4 },
-      particleGrowthRateX: { default: 0, scale: 1, time: 1 },
-      particleGrowthRateY: { default: 0, scale: 1, time: 1 },
+      particleGrowthRateX: { default: 0, scale: 5, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 5, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
@@ -4353,29 +4455,29 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
       particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
-      particleSizeX: { default: 1, field: 2, scale: 1 },
-      particleSizeY: { default: 1, field: 2, scale: 1 },
+      particleSizeX: { default: 1, field: 2, scale: 5 },
+      particleSizeY: { default: 1, field: 2, scale: 5 },
       unk_ds3_f1_73: { default: 1, field: 2 },
-      particleSizeXMin: { default: 0, field: 2, scale: 1 },
-      particleSizeYMin: { default: 0, field: 2, scale: 1 },
+      particleSizeXMin: { default: 0, field: 2, scale: 5 },
+      particleSizeYMin: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_76: { default: 0, field: 2 },
-      particleSizeXMax: { default: 0, field: 2, scale: 1 },
-      particleSizeYMax: { default: 0, field: 2, scale: 1 },
+      particleSizeXMax: { default: 0, field: 2, scale: 5 },
+      particleSizeYMax: { default: 0, field: 2, scale: 5 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 1, time: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 1, time: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 5, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 1, time: 4 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 1, time: 4 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 5, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4426,7 +4528,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 1, time: 2 },
+      particleTraceLength: { default: 1, field: 2, scale: 5, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4476,7 +4578,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -4497,9 +4599,10 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.LightShaft]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
-      width: { default: 1, scale: 1 },
-      height: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
+      height: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -4550,6 +4653,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.GPUSparkParticle]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       particleFollowFactor: { default: 0 },
       unk_ac6_p1_1: { default: 0 },
@@ -4615,10 +4719,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_60: { default: 0, field: 1 },
       unk_ac6_f1_61: { default: 0, field: 1 },
       unk_ac6_f1_62: { default: 0, field: 1 },
-      particleLengthMin: { default: 1, field: 2, scale: 1 },
-      particleLengthMax: { default: 1, field: 2, scale: 1 },
-      particleWidthMin: { default: 1, field: 2, scale: 1 },
-      particleWidthMax: { default: 1, field: 2, scale: 1 },
+      particleLengthMin: { default: 1, field: 2, scale: 5 },
+      particleLengthMax: { default: 1, field: 2, scale: 5 },
+      particleWidthMin: { default: 1, field: 2, scale: 5 },
+      particleWidthMax: { default: 1, field: 2, scale: 5 },
       unk_ac6_f1_67: { default: 1, field: 2 },
       unk_ac6_f1_68: { default: 1, field: 2 },
       particleDurationMultiplier: { default: 1, field: 2 },
@@ -4688,7 +4792,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f2_32: { default: 0, field: 1 },
       unk_ac6_f2_33: { default: 0, field: 1 },
       unk_ac6_f2_34: { default: 0.5, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_ac6_f2_36: { default: -2, field: 1 },
       unk_ac6_f2_37: { default: 0, field: 1 },
       unk_ac6_f2_38: { default: 0, field: 2 },
@@ -4708,6 +4812,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.GPUSparkCorrectParticle]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       particleFollowFactor: { default: 0 },
       unk_ac6_p1_1: { default: 0 },
@@ -4773,10 +4878,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_60: { default: 0, field: 1 },
       unk_ac6_f1_61: { default: 0, field: 1 },
       unk_ac6_f1_62: { default: 0, field: 1 },
-      particleLengthMin: { default: 1, field: 2, scale: 1 },
-      particleLengthMax: { default: 1, field: 2, scale: 1 },
-      particleWidthMin: { default: 1, field: 2, scale: 1 },
-      particleWidthMax: { default: 1, field: 2, scale: 1 },
+      particleLengthMin: { default: 1, field: 2, scale: 5 },
+      particleLengthMax: { default: 1, field: 2, scale: 5 },
+      particleWidthMin: { default: 1, field: 2, scale: 5 },
+      particleWidthMax: { default: 1, field: 2, scale: 5 },
       unk_ac6_f1_67: { default: 1, field: 2 },
       unk_ac6_f1_68: { default: 1, field: 2 },
       particleDurationMultiplier: { default: 1, field: 2 },
@@ -4846,7 +4951,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f2_32: { default: 0, field: 1 },
       unk_ac6_f2_33: { default: 0, field: 1 },
       unk_ac6_f2_34: { default: 0.5, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_ac6_f2_36: { default: -2, field: 1 },
       unk_ac6_f2_37: { default: 0, field: 1 },
       unk_ac6_f2_38: { default: 0, field: 2 },
@@ -4862,13 +4967,14 @@ const ActionData: Record<string, ActionDataEntry> = {
       }
     }
   },
-  [ActionType.DynamicTracer]: {
+  [ActionType.Tracer]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 1 },
+      width: { default: 1, scale: 5 },
       widthMultiplier: { default: 1 },
       startFadeEndpoint: { default: 0 },
       endFadeEndpoint: { default: 0 },
@@ -4892,7 +4998,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, time: 2 },
+      segmentDuration: { default: 1, field: 2, scale: 5, time: 5 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -4903,7 +5009,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f1_13: { default: -1, field: 1 },
       unk_ds3_f1_14: { default: -1, field: 1 },
       unk_ds3_f1_15: { default: 0, field: 1 },
-      unk_sdt_f1_14: { default: 1, field: 1 },
+      dynamicOpacity: { default: false, field: 0 },
       unk_sdt_f1_15: { default: 1, field: 2 },
       unk_sdt_f1_16: { default: 1, field: 2 },
       unk_sdt_f1_17: { default: 1, field: 2 },
@@ -4943,7 +5049,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_32: { default: 0, field: 1 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
-      lighting: { default: LightingMode.Unlit, field: 1 },
+      lighting: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
       specularity: { default: 0.5, field: 2 },
@@ -4959,13 +5065,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','unk_sdt_f1_14','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -4981,10 +5087,11 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.WaterInteraction]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       texture: { default: 50004, field: 1, resource: 0, textureType: 'd' },
-      depth: { default: 1, field: 2, scale: 1 },
-      size: { default: 1, field: 2, scale: 1 },
+      depth: { default: 1, field: 2, scale: 5 },
+      size: { default: 1, field: 2, scale: 5 },
       descent: { default: 0.15, field: 2, time: 2 },
       duration: { default: 0.15, field: 2, time: 2 },
     },
@@ -4999,18 +5106,19 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.LensFlare]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
-      layer1Width: { default: 1, scale: 1 },
-      layer1Height: { default: 1, scale: 1 },
+      layer1Width: { default: 1, scale: 5 },
+      layer1Height: { default: 1, scale: 5 },
       layer1Color: { default: [1, 1, 1, 1], color: 1 },
-      layer2Width: { default: 1, scale: 1 },
-      layer2Height: { default: 1, scale: 1 },
+      layer2Width: { default: 1, scale: 5 },
+      layer2Height: { default: 1, scale: 5 },
       layer2Color: { default: [1, 1, 1, 1], color: 1 },
-      layer3Width: { default: 1, scale: 1 },
-      layer3Height: { default: 1, scale: 1 },
+      layer3Width: { default: 1, scale: 5 },
+      layer3Height: { default: 1, scale: 5 },
       layer3Color: { default: [1, 1, 1, 1], color: 1 },
-      layer4Width: { default: 1, scale: 1 },
-      layer4Height: { default: 1, scale: 1 },
+      layer4Width: { default: 1, scale: 5 },
+      layer4Height: { default: 1, scale: 5 },
       layer4Color: { default: [1, 1, 1, 1], color: 1 },
       layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
@@ -5123,11 +5231,12 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.RichModel]: {
     isAppearance: true,
     isParticle: true,
+    slotDefault: false,
     props: {
       model: { default: 80201, resource: 1 },
-      sizeX: { default: 1, scale: 1 },
-      sizeY: { default: 1, scale: 1 },
-      sizeZ: { default: 1, scale: 1 },
+      sizeX: { default: 1, scale: 5 },
+      sizeY: { default: 1, scale: 5 },
+      sizeZ: { default: 1, scale: 5 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -5252,6 +5361,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Unk10100]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 1, field: 1 },
@@ -5322,6 +5432,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.CancelForce]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
@@ -5343,6 +5454,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.WindForce]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
@@ -5422,6 +5534,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.GravityForce]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       force: { default: 1, time: 1 },
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
@@ -5475,6 +5588,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.ForceCollision]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       shape: { default: ForceVolumeShape.Sphere, field: 1 },
       sphereRadius: { default: 10, field: 2, scale: 1 },
@@ -5494,6 +5608,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.TurbulenceForce]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       noiseOffsetX: { default: 0, scale: 1 },
       noiseOffsetY: { default: 0, scale: 1 },
@@ -5562,6 +5677,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Unk10400]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       unk_ds3_f1_0: { default: 1, field: 1 },
       unk_ds3_f1_1: { default: 1, field: 1 },
@@ -5641,6 +5757,7 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.Unk10500]: {
     isAppearance: false,
     isParticle: false,
+    slotDefault: true,
     props: {
       rateOfTime: { default: 1, field: 2 },
       limitViewDistance: { default: false, field: 0 },
@@ -5674,15 +5791,16 @@ const ActionData: Record<string, ActionDataEntry> = {
   [ActionType.SpotLight]: {
     isAppearance: true,
     isParticle: false,
+    slotDefault: false,
     props: {
       diffuseColor: { default: [1, 1, 1, 1], color: 1 },
       specularColor: { default: [1, 1, 1, 1], color: 1 },
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
-      near: { default: 0.01, scale: 1 },
-      far: { default: 50, scale: 1 },
-      radiusX: { default: 50, scale: 1 },
-      radiusY: { default: 50, scale: 1 },
+      near: { default: 0.01, scale: 5 },
+      far: { default: 50, scale: 5 },
+      radiusX: { default: 50, scale: 5 },
+      radiusY: { default: 50, scale: 5 },
       unk_ds3_p1_6: { default: 1 },
       unk_ds3_p1_7: { default: 1 },
       unk_sdt_p1_10: { default: 1 },
@@ -5836,7 +5954,7 @@ const ConfigActionSlots = {
       ActionType.BillboardEx,
       ActionType.MultiTextureBillboardEx,
       ActionType.Model,
-      ActionType.Tracer,
+      ActionType.LegacyTracer,
       ActionType.Distortion,
       ActionType.RadialBlur,
       ActionType.PointLight,
@@ -5847,7 +5965,7 @@ const ConfigActionSlots = {
       ActionType.GPUSparkParticle,
       ActionType.GPUSparkCorrectParticle,
       ActionType.Unk10010_Tracer,
-      ActionType.DynamicTracer,
+      ActionType.Tracer,
       ActionType.WaterInteraction,
       ActionType.LensFlare,
       ActionType.RichModel,
@@ -6252,7 +6370,7 @@ function readDataAction(
       list, which shifts all of the other indices. This checks for that value
       and just skips past it if it's there.
     */
-    if (game === Game.DarkSouls3 && type === ActionType.DynamicTracer && br.getInt32(br.position) === -2) {
+    if (game === Game.DarkSouls3 && type === ActionType.Tracer && br.getInt32(br.position) === -2) {
       fieldCount2--
       br.position += 4
     }
@@ -6413,7 +6531,7 @@ function readAnyAction(br: BinaryReader): AnyAction {
         game = br.game = Game.ArmoredCore6
         break heuristic
       }
-      if (type === ActionType.DynamicTracer && fieldCount2 === 42) {
+      if (type === ActionType.Tracer && fieldCount2 === 42) {
         game = br.game = Game.ArmoredCore6
         break heuristic
       }
@@ -6441,7 +6559,7 @@ function readAnyAction(br: BinaryReader): AnyAction {
       fieldCount1 <= data.fields1.fieldsCount &&
       ( // Deal with DS3's action 10012 special case where it has 1 extra field
         // that is skipped while reading
-        game === Game.DarkSouls3 && type === ActionType.DynamicTracer ?
+        game === Game.DarkSouls3 && type === ActionType.Tracer ?
         fieldCount2 - 1 :
         fieldCount2
       ) <= data.fields2.fieldsCount &&
@@ -7996,7 +8114,7 @@ function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorCo
     ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   } else {
     return new ConstantProperty<T>(
-      ...comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
+      comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
     ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   }
 }
@@ -8535,9 +8653,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('gpuParticle' in palette) {
       const e = averagePaletteEntries(palette.gpuParticle)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty(1, 1, 1, 1),
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        modifier: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor ?? [1, 1, 1, 1],
         rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
@@ -8545,9 +8663,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('lensFlare' in palette) {
       const e = averagePaletteEntries(palette.lensFlare)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty(1, 1, 1, 1),
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        modifier: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
@@ -8556,8 +8674,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
       const e = averagePaletteEntries(palette.distortionParticle)[0]
       palette.commonParticleNormal = [{
         modifier: e.modifier,
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: e.rgbMultiplier,
@@ -8566,8 +8684,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
       const e = averagePaletteEntries(palette.blurParticle)[0]
       palette.commonParticleNormal = [{
         modifier: e.modifier,
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: e.rgbMultiplier,
@@ -8575,9 +8693,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('light' in palette) {
       const e = averagePaletteEntries(palette.light)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty(1, 1, 1, 1),
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        modifier: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.diffuseColor,
         bloomColor: [1, 1, 1, 0],
         rgbMultiplier: e.diffuseMultiplier,
@@ -8591,8 +8709,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
   if (!('distortionParticle' in palette)) {
     avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
     palette.distortionParticle = [{
-      modifier: new ConstantProperty(1, 1, 1, 1),
-      color: new ConstantProperty(1, 1, 1, 1),
+      modifier: new ConstantProperty([1, 1, 1, 1]),
+      color: new ConstantProperty([1, 1, 1, 1]),
       rgbMultiplier: 1,
       bloomColor: [1, 1, 1, 0]
     }]
@@ -9163,7 +9281,9 @@ class BinaryReader extends DataView<ArrayBuffer> {
 
   getFloat32(offset: number) {
     if (this.round) {
-      return +super.getFloat32(offset, this.littleEndian).toPrecision(7)
+      const f = +super.getFloat32(offset, this.littleEndian).toPrecision(7)
+      const a = Math.abs(f)
+      return a < 1e-6 ? 0 : a < 1 ? +String(f).slice(0, 8) : f
     } else {
       return super.getFloat32(offset, this.littleEndian)
     }
@@ -9491,6 +9611,24 @@ export interface FXRReadOptions {
 }
 
 /**
+ * An object containing options for the `serialize` method in most classes that
+ * are part of the FXR tree structure.
+ */
+export interface FXRSerializeOptions {
+  /**
+   * Excludes all properties with default values from the output JSON.
+   */
+  excludeDefaults?: boolean
+  /**
+   * Forces actions to not turn into `undefined` when {@link excludeDefaults}
+   * is `true`. This is mainly used internally to stop generic classes from
+   * outputting nonsense, but it may also be useful if you want to prevent
+   * actions from disappearing entirely from the output.
+   */
+  requireActionDefinition?: boolean
+}
+
+/**
  * An effects resource (FXR, version 4 or 5) for FromSoftware's game engine.
  * Used in Dark Souls III, Sekiro: Shadows Die Twice, Elden Ring, and Armored
  * Core VI Fires of Rubicon.
@@ -9498,16 +9636,118 @@ export interface FXRReadOptions {
 class FXR {
 
   #gameHint: Game = Game.Generic
+  states: State[]
+  root: RootNode | GenericNode
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param terminate Controls whether or not to add a state that causes the
+   * effect to terminate when {@link ExternalValue external value} 0 becomes 1.
+   * @param rootChildren A list of nodes to add as direct children of the root
+   * node.
+   */
+  constructor(id: number, terminate: boolean, rootChildren: Node[])
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param duration A duration for the effect. This is applied through a state
+   * with a condition that compares the state time to the duration value.
+   * @param rootChildren A list of nodes to add as direct children of the root
+   * node.
+   */
+  constructor(id: number, duration: number, rootChildren: Node[])
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param states A list of states for the effect.
+   * @param rootChildren A list of nodes to add as direct children of the root
+   * node.
+   */
+  constructor(id: number, states: State[], rootChildren: Node[])
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param terminate Controls whether or not to add a state that causes the
+   * effect to terminate when {@link ExternalValue external value} 0 becomes 1.
+   * @param root The root node of the effect.
+   */
+  constructor(id: number, terminate: boolean, root: RootNode | GenericNode)
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param duration A duration for the effect. This is applied through a state
+   * with a condition that compares the state time to the duration value.
+   * @param root The root node of the effect.
+   */
+  constructor(id: number, duration: number, root: RootNode | GenericNode)
+
+  /**
+   * @param id Internal FXR ID. This ID is used to refer to the effect in other
+   * effects, or in params, TAE, and possibly other parts of the game.
+   * 
+   * This ID must be between 1 and 999,999,999 (inclusive), and it must match
+   * the ID in the FXR's filename. If the internal ID does not match the
+   * filename, it may cause unexpected behavior.
+   * @param states A list of states for the effect.
+   * @param root The root node of the effect.
+   */
+  constructor(id: number, states: State[], root: RootNode | GenericNode)
 
   constructor(
     public id: number,
-    public root: RootNode | GenericNode = new RootNode,
-    public states: State[] = [ new State ],
-    // sfxReferences: number[] = [],
-    // externalValues1: number[] = [],
-    // externalValues2: number[] = [],
-    // unkEmpty: number[] = [],
-  ) {}
+    states: State[] | boolean | number = [ new State ],
+    root: RootNode | GenericNode | Node[] = new RootNode,
+  ) {
+    if (typeof states === 'boolean') {
+      if (states) {
+        this.states = [ State.from('ext(0) < 1') ]
+      } else {
+        this.states = [ new State ]
+      }
+    } else if (typeof states === 'number') {
+      this.states = [
+        new State([
+          new StateCondition(
+            Operator.LessThan, 2, -1,
+            OperandType.StateTime, null,
+            OperandType.Literal, states
+          )
+        ])
+      ]
+    } else {
+      this.states = states
+    }
+    if (Array.isArray(root)) {
+      this.root = new RootNode(root)
+    } else {
+      this.root = root
+    }
+  }
 
   /**
    * Parses an FXR file.
@@ -9654,8 +9894,8 @@ class FXR {
 
     const fxr = new this(
       id,
-      rootNode,
       states,
+      rootNode,
       // sfxReferences,
       // externalValues1,
       // externalValues2,
@@ -9924,22 +10164,24 @@ class FXR {
     if ('fxr' in obj) {
       return new this(
         obj.fxr.id,
-        'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
         'states' in obj.fxr ? obj.fxr.states.map(state => State.from(state)) : undefined,
+        'root' in obj.fxr ? Node.fromJSON(obj.fxr.root) as RootNode | GenericNode : undefined,
       ) as InstanceType<T>
     }
     return new this(
       obj.id,
-      'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
       'states' in obj ? obj.states.map(state => State.from(state)) : undefined,
+      'root' in obj ? Node.fromJSON(obj.root) as RootNode | GenericNode : undefined,
     ) as InstanceType<T>
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       id: this.id,
-      states: this.states.map(state => state.toJSON()),
-      root: this.root.toJSON(),
+      states: this.states.map(state => state.serialize(options)),
+      root: this.root.serialize(options),
     }
   }
 
@@ -9952,8 +10194,8 @@ class FXR {
   minify() {
     return new FXR(
       this.id,
-      this.root.minify() as RootNode | GenericNode,
       this.states,
+      this.root.minify() as RootNode | GenericNode,
     )
   }
 
@@ -10024,8 +10266,8 @@ class FXR {
   clone(): FXR {
     return new FXR(
       this.id,
+      this.states.map(e => State.from(e.toJSON())),
       this.root.clone(),
-      this.states.map(e => State.from(e.toJSON()))
     )
   }
 
@@ -10130,7 +10372,9 @@ class State {
     return new State
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     if (this.conditions.length === 0) {
       return ''
     }
@@ -10388,6 +10632,7 @@ abstract class Node {
   getConfigs(game: Game): IConfig[] { return [] }
   getNodes(game: Game): Node[] { return [] }
   abstract toJSON(): any
+  abstract serialize(options?: FXRSerializeOptions): any
   minify(): Node { return this }
   abstract clone(depth?: number): Node
 
@@ -10519,7 +10764,7 @@ abstract class Node {
    * @param options.recurse Controls whether or not the scaling should be applied to
    * all descendant nodes. Defaults to true.
    */
-  scale(factor: number, options: ScalingOptions & { recurse?: boolean } = {}) {
+  scale(factor: number, options: { recurse?: boolean, mode?: ScalingMode } = {}) {
     if (this instanceof NodeWithConfigs || this instanceof GenericNode) {
       for (const config of this.configs) {
         config.scale(factor, options)
@@ -10646,23 +10891,23 @@ abstract class Node {
   }
 
   /**
-   * Scale the rate of time for the branch, or optionally just the node. If you
-   * want to change the rate of time for the entire effect, set the
-   * {@link RootNode.prototype.rateOfTime} property instead of using this
-   * method.
+   * Scale the rate of time for the branch, or optionally just the node.
    * 
    * This method's main purpose is to serve as a fallback for changing the rate
    * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
    * property. The rate of time is automatically scaled when writing effects
    * for DS3, you do not need to do this yourself. As such, this method is only
-   * useful if you want to scale the rate of time for parts of an effect.
+   * useful if you want to scale the rate of time for individual parts of an
+   * effect, or if you need the extra options available for this method.
    * @param factor The factor to scale the rate of time by. Setting this to 2
    * will make the node play twice as fast. Setting it to 0.5 will make it
    * play half as fast.
+   * @param [options={}] Extra options for changing how the scaling is applied
+   * to different properties and descendant nodes.
    */
-  scaleRateOfTime(factor: number, recurse: boolean = true) {
-    for (const action of this.walkActions(recurse)) if (action instanceof DataAction) {
-      action.scaleRateOfTime(factor)
+  scaleRateOfTime(factor: number, options: { scaleTracerDuration?: boolean, recurse?: boolean } = {}) {
+    for (const action of this.walkActions(options.recurse ?? true)) if (action instanceof DataAction) {
+      action.scaleRateOfTime(factor, options)
     }
     return this
   }
@@ -10796,13 +11041,18 @@ class GenericNode extends Node {
     )
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
+    const actionOptions: FXRSerializeOptions = Object.assign({}, options ?? {}, {
+      requireActionDefinition: true
+    })
     return {
       type: this.type,
       $generic: true,
-      actions: this.actions.map(action => action.toJSON()),
-      configs: this.configs.map(config => config.toJSON()),
-      nodes: this.nodes.map(node => node.toJSON()),
+      actions: this.actions.map(action => action.serialize(actionOptions)),
+      configs: this.configs.map(config => config.serialize(options)),
+      nodes: this.nodes.map(node => node.serialize(options)),
     }
   }
 
@@ -10895,15 +11145,21 @@ class RootNode extends Node {
     )
   }
 
-  toJSON() {
-    return {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
+    const obj = {
       type: this.type,
-      termination: this.termination.toJSON(),
-      unk10100: this.unk10100.toJSON(),
-      unk10400: this.unk10400.toJSON(),
-      unk10500: this.unk10500.toJSON(),
-      nodes: this.nodes.map(node => node.toJSON())
+      termination: this.termination.serialize(options),
+      unk10100: this.unk10100.serialize(options),
+      unk10400: this.unk10400.serialize(options),
+      unk10500: this.unk10500.serialize(options),
+      nodes: this.nodes.map(node => node.serialize(options))
     }
+    if (options?.excludeDefaults) {
+      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+    }
+    return obj
   }
 
   clone(depth: number = Infinity): RootNode {
@@ -10955,7 +11211,9 @@ class ProxyNode extends Node {
     return [ new SFXReference(this.sfx) ]
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: this.type,
       sfx: this.sfx
@@ -11003,12 +11261,14 @@ abstract class NodeWithConfigs extends Node {
     return this.nodes
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: this.type,
       stateConfigMap: this.stateConfigMap,
-      configs: this.configs.map(e => e.toJSON()),
-      nodes: this.nodes.map(e => e.toJSON())
+      configs: this.configs.map(e => e.serialize(options)),
+      nodes: this.nodes.map(e => e.serialize(options))
     }
   }
 
@@ -11042,19 +11302,25 @@ class LevelsOfDetailNode extends NodeWithConfigs {
   declare configs: LevelsOfDetailConfig[]
 
   /**
-   * @param configsOrThresholds An array of
-   * {@link ConfigType.LevelsOfDetail LOD configs} or an array of LOD
-   * thresholds. Use an array of LOD configs if you need multiple configs or
-   * a finite node duration.
+   * @param thresholds An array of LOD thresholds.
    * @param nodes An array of child nodes.
    */
-  constructor(configsOrThresholds: IConfig[] | number[], nodes: Node[] = []) {
+  constructor(thresholds: number[], nodes?: Node[])
+
+  /**
+   * @param configs An array of
+   * {@link ConfigType.LevelsOfDetail LOD configs}.
+   * @param nodes An array of child nodes.
+   */
+  constructor(configs: LevelsOfDetailConfig[], nodes?: Node[])
+
+  constructor(configsOrThresholds: LevelsOfDetailConfig[] | number[], nodes: Node[] = []) {
     if (configsOrThresholds.every(e => typeof e === 'number')) {
       super(NodeType.LevelsOfDetail, [
-        new LevelsOfDetailConfig(-1, configsOrThresholds as number[])
+        new LevelsOfDetailConfig(-1, configsOrThresholds)
       ], nodes)
     } else {
-      super(NodeType.LevelsOfDetail, configsOrThresholds as IConfig[], nodes)
+      super(NodeType.LevelsOfDetail, configsOrThresholds, nodes)
     }
   }
 
@@ -11099,23 +11365,29 @@ class BasicNode extends NodeWithConfigs {
   declare configs: BasicConfig[]
 
   /**
-   * @param configsOrConfigActions This is either the list of configs to add
-   * to the node or a list of actions to create a {@link BasicConfig} with to
-   * add to the node.
+   * @param actions A list of actions to construct a {@link BasicConfig} with.
    * @param nodes A list of child nodes.
    */
-  constructor(configsOrConfigActions: IConfig[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(actions?: AnyAction[], nodes?: Node[])
+
+  /**
+   * @param configs A list of configs.
+   * @param nodes A list of child nodes.
+   */
+  constructor(configs?: BasicConfig[], nodes?: Node[])
+
+  constructor(configsOrConfigActions: BasicConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
     if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicConfig(configsOrConfigActions as AnyAction[])
+        new BasicConfig(configsOrConfigActions)
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        configsOrConfigActions as IConfig[],
+        configsOrConfigActions,
         nodes
       )
     }
@@ -11140,10 +11412,10 @@ class BasicNode extends NodeWithConfigs {
           config.appearance instanceof BillboardEx ||
           config.appearance instanceof MultiTextureBillboardEx ||
           config.appearance instanceof Model ||
-          config.appearance instanceof Tracer ||
+          config.appearance instanceof LegacyTracer ||
           config.appearance instanceof Distortion ||
           config.appearance instanceof RadialBlur ||
-          config.appearance instanceof DynamicTracer ||
+          config.appearance instanceof Tracer ||
           config.appearance instanceof RichModel
         )
       )
@@ -11152,7 +11424,7 @@ class BasicNode extends NodeWithConfigs {
   }
 
   getColor(opts: NodeColorOptions = {}): Vector4Property | null {
-    let colorProp: Property<ValueType.Vector4, PropertyFunction> = new ConstantProperty(1, 1, 1, 1)
+    let colorProp: Property<ValueType.Vector4, PropertyFunction> = new ConstantProperty([1, 1, 1, 1])
     let modified = false
     const config = this.getActiveConfig(opts.activeState ?? 0)
     if (config instanceof BasicConfig) {
@@ -11162,8 +11434,8 @@ class BasicNode extends NodeWithConfigs {
           a instanceof PointSprite ||
           a instanceof BillboardEx ||
           a instanceof Model ||
+          a instanceof LegacyTracer ||
           a instanceof Tracer ||
-          a instanceof DynamicTracer ||
           a instanceof RichModel
         )
       ) {
@@ -11241,7 +11513,10 @@ class BasicNode extends NodeWithConfigs {
         a instanceof GPUSparkParticle ||
         a instanceof GPUSparkCorrectParticle
       ) {
-        colorProp = a.color as any
+        colorProp = anyValueSum(
+          anyValueMult(0.5, anyValueSum(a.colorMin, a.colorMax)),
+          a.color
+        ) as any
         modified = true
       } else if (
         a instanceof PointLight ||
@@ -11268,7 +11543,7 @@ class BasicNode extends NodeWithConfigs {
         modified = true
       }
       if (!(colorProp instanceof Property)) {
-        colorProp = new ConstantProperty(...(colorProp as Vector4))
+        colorProp = new ConstantProperty(colorProp as Vector4)
       }
     }
     if (modified) {
@@ -11314,18 +11589,31 @@ class NodeEmitterNode extends NodeWithConfigs {
 
   declare configs: NodeEmitterConfig[]
 
-  constructor(configsOrConfigActions: IConfig[] | Action[] = [], nodes: Node[] = []) {
+  /**
+   * @param actions A list of actions to construct a {@link NodeEmitterConfig} 
+   * with.
+   * @param nodes A list of child nodes.
+   */
+  constructor(actions?: AnyAction[], nodes?: Node[])
+
+  /**
+   * @param configs A list of configs.
+   * @param nodes A list of child nodes.
+   */
+  constructor(configs?: NodeEmitterConfig[], nodes?: Node[])
+
+  constructor(configsOrConfigActions: NodeEmitterConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to NodeEmitterNode.')
     }
     if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.NodeEmitter, [
-        new NodeEmitterConfig(configsOrConfigActions as Action[])
+        new NodeEmitterConfig(configsOrConfigActions)
       ], nodes)
     } else {
       super(
         NodeType.NodeEmitter,
-        configsOrConfigActions as IConfig[],
+        configsOrConfigActions,
         nodes
       )
     }
@@ -11394,11 +11682,16 @@ class NodeConfig implements IConfig {
     return this.actions
   }
 
-  toJSON() {
+  toJSON = this.serialize
+
+  serialize(options?: FXRSerializeOptions) {
+    const actionOptions: FXRSerializeOptions = Object.assign({}, options ?? {}, {
+      requireActionDefinition: true
+    })
     return {
       type: this.type,
       $generic: true,
-      actions: this.actions.map(action => action.toJSON())
+      actions: this.actions.map(action => action.serialize(actionOptions))
     }
   }
 
@@ -11412,7 +11705,12 @@ class NodeConfig implements IConfig {
   }
 
   static fromJSON(obj: any): IConfig {
-    if (obj instanceof NodeConfig) {
+    if (
+      obj instanceof NodeConfig ||
+      obj instanceof LevelsOfDetailConfig ||
+      obj instanceof BasicConfig ||
+      obj instanceof NodeEmitterConfig
+    ) {
       return obj
     }
     if (obj.$generic === true) {
@@ -11464,7 +11762,7 @@ class NodeConfig implements IConfig {
     )
   }
 
-  scale(factor: number, options: ScalingOptions) {
+  scale(factor: number, options?: { mode?: ScalingMode }) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -11509,13 +11807,19 @@ class LevelsOfDetailConfig implements IConfig {
     ]
   }
 
-  toJSON() {
-    return {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
+    const obj = {
       type: this.type,
-      duration: this.duration instanceof Property ? this.duration.toJSON() : this.duration,
+      duration: this.duration instanceof Property ? this.duration.serialize(options) : this.duration,
       thresholds: this.thresholds.slice(0, 5),
-      unk_ac6_f1_5: this.unk_ac6_f1_5
+      ...!options?.excludeDefaults && this.unk_ac6_f1_5 !== 0 && { unk_ac6_f1_5: this.unk_ac6_f1_5 }
     }
+    if (options?.excludeDefaults) {
+      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+    }
+    return obj
   }
 
   minify() {
@@ -11532,8 +11836,8 @@ class LevelsOfDetailConfig implements IConfig {
     )
   }
 
-  scale(factor: number, options: ScalingOptions = {}) {
-    if (options.includeViewDistance) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
+    if (options.mode === ScalingMode.All) {
       this.thresholds = this.thresholds.slice(0, 5).map(t => t * factor)
     }
     return this
@@ -11650,25 +11954,31 @@ class BasicConfig implements IConfig {
     ].flat()
   }
 
-  toJSON() {
-    return {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
+    const obj = {
       type: this.type,
-      nodeAttributes: this.nodeAttributes.toJSON(),
-      nodeTransform: this.nodeTransform.toJSON(),
-      nodeMovement: this.nodeMovement.toJSON(),
-      nodeAudio: this.nodeAudio.toJSON(),
-      emitter: this.emitter.toJSON(),
-      emitterShape: this.emitterShape.toJSON(),
-      directionSpread: this.directionSpread.toJSON(),
-      particleModifier: this.particleModifier.toJSON(),
-      particleAttributes: this.particleAttributes.toJSON(),
-      appearance: this.appearance.toJSON(),
-      particleMovement: this.particleMovement.toJSON(),
-      emissionAudio: this.emissionAudio.toJSON(),
-      slot12: this.slot12.toJSON(),
-      nodeForceMovement: this.nodeForceMovement.toJSON(),
-      particleForceMovement: this.particleForceMovement.toJSON(),
+      nodeAttributes: this.nodeAttributes.serialize(options),
+      nodeTransform: this.nodeTransform.serialize(options),
+      nodeMovement: this.nodeMovement.serialize(options),
+      nodeAudio: this.nodeAudio.serialize(options),
+      emitter: this.emitter.serialize(options),
+      emitterShape: this.emitterShape.serialize(options),
+      directionSpread: this.directionSpread.serialize(options),
+      particleModifier: this.particleModifier.serialize(options),
+      particleAttributes: this.particleAttributes.serialize(options),
+      appearance: this.appearance.serialize(options),
+      particleMovement: this.particleMovement.serialize(options),
+      emissionAudio: this.emissionAudio.serialize(options),
+      slot12: this.slot12.serialize(options),
+      nodeForceMovement: this.nodeForceMovement.serialize(options),
+      particleForceMovement: this.particleForceMovement.serialize(options),
     }
+    if (options?.excludeDefaults) {
+      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+    }
+    return obj
   }
 
   minify() {
@@ -11728,7 +12038,7 @@ class BasicConfig implements IConfig {
     })
   }
 
-  scale(factor: number, options: ScalingOptions) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -11784,8 +12094,8 @@ class BasicConfig implements IConfig {
         a instanceof MultiTextureBillboardEx ||
         a instanceof Model ||
         a instanceof RichModel ||
-        a instanceof Tracer ||
-        a instanceof DynamicTracer
+        a instanceof LegacyTracer ||
+        a instanceof Tracer
       ) {
         if (!(this.particleModifier instanceof ParticleModifier)) return this
         if (a instanceof MultiTextureBillboardEx) {
@@ -11967,20 +12277,26 @@ class NodeEmitterConfig implements IConfig {
     ].flat()
   }
 
-  toJSON() {
-    return {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
+    const obj = {
       type: this.type,
-      nodeAttributes: this.nodeAttributes.toJSON(),
-      nodeTransform: this.nodeTransform.toJSON(),
-      nodeMovement: this.nodeMovement.toJSON(),
-      nodeAudio: this.nodeAudio.toJSON(),
-      emitter: this.emitter.toJSON(),
-      emitterShape: this.emitterShape.toJSON(),
-      directionSpread: this.directionSpread.toJSON(),
-      nodeSelector: this.nodeSelector.toJSON(),
-      emissionAudio: this.emissionAudio.toJSON(),
-      nodeForceMovement: this.nodeForceMovement.toJSON(),
+      nodeAttributes: this.nodeAttributes.serialize(options),
+      nodeTransform: this.nodeTransform.serialize(options),
+      nodeMovement: this.nodeMovement.serialize(options),
+      nodeAudio: this.nodeAudio.serialize(options),
+      emitter: this.emitter.serialize(options),
+      emitterShape: this.emitterShape.serialize(options),
+      directionSpread: this.directionSpread.serialize(options),
+      nodeSelector: this.nodeSelector.serialize(options),
+      emissionAudio: this.emissionAudio.serialize(options),
+      nodeForceMovement: this.nodeForceMovement.serialize(options),
     }
+    if (options?.excludeDefaults) {
+      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+    }
+    return obj
   }
 
   minify() {
@@ -12025,7 +12341,7 @@ class NodeEmitterConfig implements IConfig {
     })
   }
 
-  scale(factor: number, options: ScalingOptions) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -12037,7 +12353,7 @@ class NodeEmitterConfig implements IConfig {
 //#region Action
 class Action implements IAction {
 
-  readonly $data = { isAppearance: false, isParticle: false }
+  readonly $data = { isAppearance: false, isParticle: false, slotDefault: false }
 
   constructor(
     public type: ActionType = ActionType.None,
@@ -12075,11 +12391,7 @@ class Action implements IAction {
       if (property instanceof Property) {
         this.properties1[index] = property
       } else {
-        if (Array.isArray(property)) {
-          this.properties1[index] = new ConstantProperty(...property)
-        } else {
-          this.properties1[index] = new ConstantProperty(property)
-        }
+        this.properties1[index] = new ConstantProperty(property)
       }
     }
     return this
@@ -12090,11 +12402,7 @@ class Action implements IAction {
       if (property instanceof Property) {
         this.properties2[index] = property
       } else {
-        if (Array.isArray(property)) {
-          this.properties2[index] = new ConstantProperty(...property)
-        } else {
-          this.properties2[index] = new ConstantProperty(property)
-        }
+        this.properties2[index] = new ConstantProperty(property)
       }
     }
     return this
@@ -12131,9 +12439,11 @@ class Action implements IAction {
     }
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     if (this.type === 0) {
-      return null
+      return options?.excludeDefaults && !options?.requireActionDefinition ? undefined : null
     }
     const o: {
       type: ActionType
@@ -12144,10 +12454,10 @@ class Action implements IAction {
       properties2?: any[]
       section10s?: any[]
     } = { type: this.type, $generic: true }
-    if (this.fields1.length > 0) o.fields1 = this.fields1.map(field => field.toJSON())
-    if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.toJSON())
-    if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.toJSON())
-    if (this.properties2.length > 0) o.properties2 = this.properties2.map(prop => prop.toJSON())
+    if (this.fields1.length > 0) o.fields1 = this.fields1.map(field => field.serialize(options))
+    if (this.fields2.length > 0) o.fields2 = this.fields2.map(field => field.serialize(options))
+    if (this.properties1.length > 0) o.properties1 = this.properties1.map(prop => prop.serialize(options))
+    if (this.properties2.length > 0) o.properties2 = this.properties2.map(prop => prop.serialize(options))
     if (this.section10s.length > 0) o.section10s = this.section10s
     return o
   }
@@ -12222,24 +12532,35 @@ class DataAction implements IAction {
     return this
   }
 
-  toJSON() {
-    if (!('props' in this.$data)) {
-      return { type: this.type }
-    }
-    return {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
+    const obj: any = {
       type: this.type,
       ...Object.fromEntries(
-        Object.entries(this.$data.props)
-          .filter(([_, prop]) => !('omit' in prop))
-          .map(([prop]) => {
-            const v = this[prop]
+        Object.entries(this.$data.props ?? {})
+          .filter(([propName, prop]) => {
+            return !('omit' in prop) && !(
+              options?.excludeDefaults && JSON.stringify(prop.default) === JSON.stringify(this[propName])
+            )
+          })
+          .map(([propName]) => {
+            const v = this[propName]
             if (v instanceof Property) {
-              return [prop, v.toJSON()]
+              return [propName, v.serialize(options)]
             }
-            return [prop, v]
+            return [propName, v]
           })
       )
     }
+    if (
+      options?.excludeDefaults &&
+      !options.requireActionDefinition &&
+      ActionData[this.type].slotDefault && Object.keys(obj).length === 1
+    ) {
+      return undefined
+    }
+    return obj
   }
 
   minify() {
@@ -12283,9 +12604,7 @@ class DataAction implements IAction {
     return (data[list] ?? []).map((name: string) => {
       const prop = ade.props[name]
       validateDataActionProp(props, name, prop)
-      return props[name] instanceof Property ? props[name].for(game) : Array.isArray(prop.default) ?
-        new ConstantProperty(...props[name]).for(game) :
-        new ConstantProperty(props[name]).for(game)
+      return props[name] instanceof Property ? props[name].for(game) : new ConstantProperty(props[name]).for(game)
     })
   }
 
@@ -12342,17 +12661,19 @@ class DataAction implements IAction {
    * used with actions that have scaling properties.
    * @param factor The factor to scale by.
    */
-  scale(factor: number, { includeViewDistance }: ScalingOptions = {}) {
+  scale(factor: number, options: { mode?: ScalingMode } = {}) {
     if ('props' in this.$data) {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('scale' in v) {
-          if (v.scale === ScaleCondition.True) {
+          if (v.scale === ScaleCondition.True && options.mode !== ScalingMode.InstancesOnly) {
+            this[k] = anyValueMult(factor, this[k])
+          } else if (v.scale === ScaleCondition.InstanceSize) {
             this[k] = anyValueMult(factor, this[k])
           } else if (v.scale === ScaleCondition.IfNotMinusOne && this[k] !== -1) {
             this[k] *= factor
-          } else if (v.scale === ScaleCondition.Distance && includeViewDistance) {
+          } else if (v.scale === ScaleCondition.Distance && options.mode === ScalingMode.All) {
             this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.DistanceIfNotMinusOne && includeViewDistance && this[k] !== -1) {
+          } else if (v.scale === ScaleCondition.DistanceIfNotMinusOne && options.mode === ScalingMode.All && this[k] !== -1) {
             this[k] *= factor
           }
         }
@@ -12491,20 +12812,21 @@ class DataAction implements IAction {
   }
 
   /**
-   * Scale the rate of time for the action. If you want to change the rate of
-   * time for the entire effect, set the {@link RootNode.prototype.rateOfTime}
-   * property instead of using this method.
+   * Scale the rate of time for the action.
    * 
    * This method's main purpose is to serve as a fallback for changing the rate
    * of time for Dark Souls 3 effects, which doesn't support the rateOfTime
    * property. The rate of time is automatically scaled when writing effects
    * for DS3, you do not need to do this yourself. As such, this method is only
-   * useful if you want to scale the rate of time for a single action.
+   * useful if you want to scale the rate of time for individual parts of an
+   * effect, or if you need the extra options available for this method.
    * @param factor The factor to scale the rate of time by. Setting this to 2
    * will make the action play twice as fast. Setting it to 0.5 will make it
    * play half as fast.
+   * @param [options={}] Extra options for changing how the scaling is applied
+   * to different properties.
    */
-  scaleRateOfTime(factor: number) {
+  scaleRateOfTime(factor: number, options: { scaleTracerDuration?: boolean } = {}) {
     const inv = 1 / factor
     const sq = factor * factor
     if ('props' in this.$data) {
@@ -12519,6 +12841,10 @@ class DataAction implements IAction {
           case TimeOperation.Multiply:
             this[name] = anyValueMult(factor, this[name])
             break
+          case TimeOperation.TracerDuration:
+            if (options.scaleTracerDuration !== true) {
+              break
+            }
           case TimeOperation.Divide:
             this[name] = anyValueMult(inv, this[name])
             break
@@ -17168,7 +17494,7 @@ class BillboardEx extends DataAction {
   /**
    * Controls how the particles are lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -18094,7 +18420,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Controls how the particles are lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -19000,13 +19326,15 @@ class Model extends DataAction {
 }
 
 /**
- * ### {@link ActionType.Tracer Action 606 - Tracer}
+ * ### {@link ActionType.LegacyTracer Action 606 - LegacyTracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Creates a trail behind moving effects.
+ * 
+ * This is an older version of {@link Tracer} with fewer features.
  */
-class Tracer extends DataAction {
-  declare readonly type: ActionType.Tracer
+class LegacyTracer extends DataAction {
+  declare readonly type: ActionType.LegacyTracer
   /**
    * Texture ID.
    * 
@@ -19614,7 +19942,7 @@ class Tracer extends DataAction {
   /**
    * Controls how the trail is lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -19646,8 +19974,8 @@ class Tracer extends DataAction {
    * **Default**: `0`
    */
   unk_er_f2_39: number
-  constructor(props: Partial<Props<Tracer>> = {}) {
-    super(ActionType.Tracer)
+  constructor(props: Partial<Props<LegacyTracer>> = {}) {
+    super(ActionType.LegacyTracer)
     this.assign(props)
   }
 }
@@ -21135,7 +21463,7 @@ class PointLight extends DataAction {
  * ### {@link ActionType.SimulateTermination Action 700 - SimulateTermination}
  * **Slot**: {@link ActionSlots.TerminationAction Termination}
  * 
- * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a limited duration that have already been emitted will stay around for as long as their duration allows them to.
+ * Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
  * 
  * Note: An effect terminates when it reaches {@link State} -1.
  */
@@ -22818,7 +23146,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -24250,7 +24578,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -25508,7 +25836,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -26508,7 +26836,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * Unknown integer.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -26542,15 +26870,15 @@ class GPUSparkCorrectParticle extends DataAction {
 }
 
 /**
- * ### {@link ActionType.DynamicTracer Action 10012 - DynamicTracer}
+ * ### {@link ActionType.Tracer Action 10012 - Tracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
  * Creates a trail behind moving effects.
  * 
- * This is slightly different from {@link Tracer}, as the trail from this is less visible when it's moving slower.
+ * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
  */
-class DynamicTracer extends DataAction {
-  declare readonly type: ActionType.DynamicTracer
+class Tracer extends DataAction {
+  declare readonly type: ActionType.Tracer
   /**
    * Texture ID.
    * 
@@ -26806,8 +27134,6 @@ class DynamicTracer extends DataAction {
    * 
    * A "completed" segment is any segment that is not the leading one. The leading segment has one side attached to the end of the previous segment and the other attached to the tracer source, and is always a simple quad.
    * 
-   * Increasing this may make the opacity of the trail inconsistent in some cases. This seems to be unique to {@link DynamicTracer}; it does not happen with {@link Tracer}.
-   * 
    * **Default**: `0`
    */
   segmentSubdivision: number
@@ -26866,11 +27192,11 @@ class DynamicTracer extends DataAction {
    */
   unk_ds3_f1_15: number
   /**
-   * Unknown integer.
+   * When `true`, this will cause the trail's opacity to be based on the speed it's moving at. This dynamic opacity is per-segment, so each segment will remember what speed the tracer source had when the segment was created.
    * 
-   * **Default**: `1`
+   * **Default**: `false`
    */
-  unk_sdt_f1_14: number
+  dynamicOpacity: boolean
   /**
    * Unknown float.
    * 
@@ -27190,7 +27516,7 @@ class DynamicTracer extends DataAction {
   /**
    * Controls how the trail is lit. See {@link LightingMode} for more information.
    * 
-   * **Default**: {@link LightingMode.Unlit}
+   * **Default**: `-1`
    */
   lighting: number
   /**
@@ -27234,8 +27560,8 @@ class DynamicTracer extends DataAction {
    * **Default**: `0`
    */
   unk_ac6_f2_41: number
-  constructor(props: Partial<Props<DynamicTracer>> = {}) {
-    super(ActionType.DynamicTracer)
+  constructor(props: Partial<Props<Tracer>> = {}) {
+    super(ActionType.Tracer)
     this.assign(props)
   }
 }
@@ -31498,7 +31824,7 @@ const DataActions = {
   [ActionType.BillboardEx]: BillboardEx, BillboardEx,
   [ActionType.MultiTextureBillboardEx]: MultiTextureBillboardEx, MultiTextureBillboardEx,
   [ActionType.Model]: Model, Model,
-  [ActionType.Tracer]: Tracer, Tracer,
+  [ActionType.LegacyTracer]: LegacyTracer, LegacyTracer,
   [ActionType.Distortion]: Distortion, Distortion,
   [ActionType.RadialBlur]: RadialBlur, RadialBlur,
   [ActionType.PointLight]: PointLight, PointLight,
@@ -31515,7 +31841,7 @@ const DataActions = {
   [ActionType.LightShaft]: LightShaft, LightShaft,
   [ActionType.GPUSparkParticle]: GPUSparkParticle, GPUSparkParticle,
   [ActionType.GPUSparkCorrectParticle]: GPUSparkCorrectParticle, GPUSparkCorrectParticle,
-  [ActionType.DynamicTracer]: DynamicTracer, DynamicTracer,
+  [ActionType.Tracer]: Tracer, Tracer,
   [ActionType.WaterInteraction]: WaterInteraction, WaterInteraction,
   [ActionType.LensFlare]: LensFlare, LensFlare,
   [ActionType.RichModel]: RichModel, RichModel,
@@ -31563,7 +31889,9 @@ abstract class Field<T extends FieldType> {
     }
   }
 
-  toJSON(): {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions): {
     type: TypeMap.FieldTypeName[T],
     value: TypeMap.FieldValue[T]
   } {
@@ -31797,9 +32125,11 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return clampProp(this, min, max)
   }
 
+  toJSON() { return this.serialize() }
+
   abstract fieldCount: number
   abstract fields: NumericalField[]
-  abstract toJSON(): any
+  abstract serialize(options?: FXRSerializeOptions): any
   abstract scale(factor: PropertyValue): this
   abstract add(summand: PropertyValue): this
   abstract valueAt(arg: number): TypeMap.PropertyValue[T]
@@ -31854,15 +32184,15 @@ class ValueProperty<T extends ValueType>
   ): ValueProperty<T> {
     switch (func) {
       case PropertyFunction.Zero:
-        return new ConstantProperty(...(Array(valueType + 1).fill(0) as [number] | Vector)).withModifiers(
+        return new ConstantProperty(valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0) as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
-        return new ConstantProperty(...(Array(valueType + 1).fill(1) as [number] | Vector)).withModifiers(
+        return new ConstantProperty(valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1) as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
-        return new ConstantProperty(...(fieldValues as [number] | Vector)).withModifiers(
+        return new ConstantProperty(valueType === ValueType.Scalar ? fieldValues[0] : fieldValues as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       default:
@@ -31875,20 +32205,20 @@ class ValueProperty<T extends ValueType>
     modifiers?: any[]
   } | PropertyValue): ConstantProperty<T> {
     if (Array.isArray(obj)) {
-      return new ConstantProperty(...obj)
+      return new ConstantProperty(obj as TypeMap.PropertyValue[T])
     } else if (typeof obj === 'number') {
-      return new ConstantProperty(obj)
+      return new ConstantProperty(obj as TypeMap.PropertyValue[T])
     }
-    return new ConstantProperty<T>(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
+    return new ConstantProperty<T>(obj.value as TypeMap.PropertyValue[T]).withModifiers(
       ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e) as IModifier<T>)
     )
   }
 
-  toJSON() {
+  serialize(options?: FXRSerializeOptions) {
     if (this.modifiers.length > 0) {
       return {
         value: this.value,
-        modifiers: this.modifiers.map(mod => mod.toJSON())
+        modifiers: this.modifiers.map(mod => mod.serialize(options))
       }
     } else {
       return this.value
@@ -32112,7 +32442,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     )
   }
 
-  toJSON() {
+  serialize(options?: FXRSerializeOptions) {
     switch (this.function) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear: {
@@ -32129,7 +32459,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
             value: e.value
           }))
         }
-        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.serialize(options))
         return o
       }
       case PropertyFunction.Bezier: {
@@ -32148,7 +32478,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
             p2: (e as IBezierKeyframe<T>).p2,
           }))
         }
-        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.serialize(options))
         return o
       }
       case PropertyFunction.Hermite: {
@@ -32167,7 +32497,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
             tangent2: (e as IHermiteKeyframe<T>).tangent2,
           }))
         }
-        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.toJSON())
+        if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.serialize(options))
         return o
       }
     }
@@ -32278,11 +32608,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   minify(): Property<T, PropertyFunction> {
     const mods = this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
-      if (this.valueType === ValueType.Scalar) {
-        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(...mods)
-      } else {
-        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(...mods)
-      }
+      return new ConstantProperty<T>(this.keyframes[0].value).withModifiers(...mods)
     }
     const clone = this.clone()
     clone.modifiers = mods
@@ -32369,7 +32695,7 @@ class ComponentSequenceProperty<T extends ValueType>
     }) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>, modifiers)
   }
 
-  toJSON() {
+  serialize(options?: FXRSerializeOptions) {
     const o: {
       function: 'ComponentHermite'
       loop: boolean
@@ -32385,7 +32711,7 @@ class ComponentSequenceProperty<T extends ValueType>
         tangent2: f.tangent2,
       })))
     }
-    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.toJSON())
+    if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.serialize(options))
     return o
   }
 
@@ -32538,7 +32864,9 @@ class ComponentSequenceProperty<T extends ValueType>
       )
     ) {
       return new ConstantProperty<T>(
-        ...this.components.map(c => c.keyframes[0].value)
+        this.valueType === ValueType.Scalar ?
+          this.components[0].keyframes[0].value as TypeMap.PropertyValue[T] :
+          this.components.map(c => c.keyframes[0].value) as TypeMap.PropertyValue[T]
       ).withModifiers(
         ...this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
       )
@@ -32563,9 +32891,8 @@ class ComponentSequenceProperty<T extends ValueType>
 
 class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
-  constructor(...args: number[]) {
-    args = args.slice(0, 4)
-    super(args.length - 1 as T, (args.length === 1 ? args[0] : args) as TypeMap.PropertyValue[T])
+  constructor(value: TypeMap.PropertyValue[T]) {
+    super(getValueType(value), value)
   }
 
 }
@@ -32732,7 +33059,7 @@ function RandomDeltaProperty<T extends ValueType>(
   devation: TypeMap.PropertyValue[T],
   seed?: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(...(typeof mean === 'number' ? [mean] : mean as Vector)).withModifiers(
+  return new ConstantProperty<T>(mean).withModifiers(
     new RandomDeltaModifier(devation, seed)
   )
 }
@@ -32755,7 +33082,7 @@ function RandomRangeProperty<T extends ValueType>(
   seed?: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
   return new ConstantProperty<T>(
-    ...(Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : [0])
+    (Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0) as TypeMap.PropertyValue[T]
   ).withModifiers(
     new RandomRangeModifier(minValue, maxValue, seed)
   )
@@ -32778,7 +33105,7 @@ function RandomFractionProperty<T extends ValueType>(
   devationFract: TypeMap.PropertyValue[T],
   seed?: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(...(typeof mean === 'number' ? [mean] : mean as Vector)).withModifiers(
+  return new ConstantProperty<T>(mean).withModifiers(
     new RandomFractionModifier(devationFract, seed)
   )
 }
@@ -32820,7 +33147,7 @@ function BloodVisibilityProperty<T extends ValueType>(
   mildValue: TypeMap.PropertyValue[T],
   offValue: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(...(typeof onValue === 'number' ? [1] : onValue.map(() => 1))).withModifiers(
+  return new ConstantProperty<T>((typeof onValue === 'number' ? 1 : onValue.map(() => 1)) as TypeMap.PropertyValue[T]).withModifiers(
     BloodVisibilityModifier(onValue, mildValue, offValue)
   )
 }
@@ -33045,7 +33372,9 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
     return this.properties.map(prop => prop.for(game) as AnyProperty)
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     const o: {
       type: string
       valueType: T
@@ -33056,10 +33385,10 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
       valueType: this.valueType
     }
     if (this.fields.length !== 0) {
-      o.fields = this.fields.map(e => e.toJSON())
+      o.fields = this.fields.map(e => e.serialize(options))
     }
     if (this.properties.length !== 0) {
-      o.properties = this.properties.map(e => e.toJSON())
+      o.properties = this.properties.map(e => e.serialize(options))
     }
     return o
   }
@@ -33130,7 +33459,9 @@ class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
     return []
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: ModifierType[this.type],
       seed: this.seed,
@@ -33206,7 +33537,9 @@ class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
     return []
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: ModifierType[this.type],
       seed: this.seed,
@@ -33284,7 +33617,9 @@ class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
     return []
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: ModifierType[this.type],
       seed: this.seed,
@@ -33348,11 +33683,13 @@ class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
     ]
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: ModifierType[this.type],
       externalValue: this.externalValue,
-      factor: this.factor.toJSON()
+      factor: this.factor.serialize(options)
     }
   }
 
@@ -33410,11 +33747,13 @@ class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
     ]
   }
 
-  toJSON() {
+  toJSON() { return this.serialize() }
+
+  serialize(options?: FXRSerializeOptions) {
     return {
       type: ModifierType[this.type],
       externalValue: this.externalValue,
-      factor: this.factor.toJSON()
+      factor: this.factor.serialize(options)
     }
   }
 
@@ -33654,8 +33993,8 @@ namespace Recolor {
           a instanceof MultiTextureBillboardEx ||
           a instanceof Model ||
           a instanceof RichModel ||
-          a instanceof Tracer ||
-          a instanceof DynamicTracer
+          a instanceof LegacyTracer ||
+          a instanceof Tracer
         ) {
           if (!(config.particleModifier instanceof ParticleModifier)) continue
           let blendMode = 'blendMode' in a ? a.blendMode : BlendMode.Normal
@@ -35104,7 +35443,7 @@ export {
   BillboardEx,
   MultiTextureBillboardEx,
   Model,
-  Tracer,
+  LegacyTracer,
   Distortion,
   RadialBlur,
   PointLight,
@@ -35121,7 +35460,7 @@ export {
   LightShaft,
   GPUSparkParticle,
   GPUSparkCorrectParticle,
-  DynamicTracer,
+  Tracer,
   WaterInteraction,
   LensFlare,
   RichModel,

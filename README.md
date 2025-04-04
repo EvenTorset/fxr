@@ -82,8 +82,8 @@ const fxr = new FXR(402030)
 
 fxr.root.nodes = [
   // The BasicNode class makes it very easy to create new nodes. You can give
-  // it a list of effects, or just a list of actions that it will create an
-  // effect out of.
+  // it a list of configs, or just a list of actions that it will create a
+  // config out of.
   new BasicNode([
     // The order of the actions in this list does not matter, they will be put
     // in the correct slot automatically. If you add more than one action that

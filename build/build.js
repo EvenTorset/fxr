@@ -7,6 +7,7 @@ import stringify from 'fabulous-json'
 
 import baseSchema from '../src/schema/base.json' with { type: 'json' }
 import schemaGenerics from '../src/schema/generics.json' with { type: 'json' }
+import generateDocsJSONs from './generate_docs_json.js'
 
 const projectDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const srcDir = path.join(projectDir, 'src')
@@ -67,6 +68,7 @@ const scaleMap = {
   ifNotMinusOne: 2,
   distance: 3,
   distanceIfNotMinusOne: 4,
+  instanceSize: 5,
 }
 
 const timeMap = {
@@ -74,6 +76,7 @@ const timeMap = {
   inv: 2,
   invIfPositive: 3,
   sq: 4,
+  tracerDuration: 5,
 }
 
 const propTypeMap = {
@@ -346,7 +349,8 @@ export default async function(writeToDist = true) {
     actionDataEntries.push(`
       [ActionType.${data.name}]: {
         isAppearance: ${data.meta.isAppearance},
-        isParticle: ${data.meta.isParticle}${'properties' in data ? `,
+        isParticle: ${data.meta.isParticle},
+        slotDefault: ${actionSlotsData[data.slot].default === data.name}${'properties' in data ? `,
         props: {
           ${Object.entries(data.properties).map(([k, v]) => {
             return `${k}: { default: ${defValTS(v)}${
@@ -550,6 +554,12 @@ export default async function(writeToDist = true) {
     }
     Object.assign(baseSchema.$defs, schemaSlotDefs, schemaGenerics)
     await fs.promises.writeFile(path.join(distDir, 'schema.json'), stringify(baseSchema, stringifyOpts) + '\n')
+  }
+
+  {
+    const jsons = await generateDocsJSONs()
+    await fs.promises.writeFile('dist/enums.json', JSON.stringify(jsons.enums))
+    await fs.promises.writeFile('dist/actions.json', JSON.stringify(jsons.actions))
   }
 
 }

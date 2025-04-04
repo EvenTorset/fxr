@@ -1,11 +1,13 @@
 type: 606
-name: Tracer
+name: LegacyTracer
 slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
 desc: |
   Creates a trail behind moving effects.
+
+  This is an older version of {@link Tracer} with fewer features.
 properties:
   texture:
     type: ScalarValue
@@ -28,7 +30,7 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    scale: true
+    scale: instanceSize
     desc: |
       The width of the trail.
   widthMultiplier:
@@ -202,7 +204,8 @@ properties:
   segmentDuration:
     field: float
     default: 1
-    time: inv
+    time: tracerDuration
+    scale: instanceSize
     desc: |
       The trail is made up of multiple quads, or *segments*. This controls how long each segment should last in seconds.
   concurrentSegments:
@@ -447,8 +450,7 @@ properties:
       - specularity
   lighting:
     field: int
-    enum: LightingMode
-    default: LightingMode.Unlit
+    default: -1
     desc: |
       Controls how the trail is lit. See {@link LightingMode} for more information.
   unk_sdt_f2_36:

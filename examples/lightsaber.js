@@ -20,7 +20,7 @@ import {
   PointLight,
   RandomRangeProperty,
   State,
-  Tracer,
+  LegacyTracer,
 } from '@cccode/fxr'
 
 // Choose an ID for the effect here. 402030 is the ghostflame torch flame/light
@@ -188,7 +188,7 @@ fxr.root.nodes = [
     // Trail
     new BasicNode([
       NodeTransform({ rotation: [90, 0, 0] }),
-      new Tracer({
+      new LegacyTracer({
         blendMode: BlendMode.Add,
         width: 0.5,
         segmentDuration: 0.06,

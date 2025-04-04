@@ -1,6 +1,6 @@
 name: TracerOrientationMode
 desc: |
-  Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.DynamicTracer DynamicTracer} particles.
+  Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.LegacyTracer LegacyTracer} particles.
 members:
   Travel:
     value: 0

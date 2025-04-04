@@ -17,13 +17,13 @@ properties:
   depth:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Controls how deep to push the water, or how intense the ripples caused by the interaction are.
   size:
     field: float
     default: 1
-    scale: true
+    scale: instanceSize
     desc: |
       Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
   descent:

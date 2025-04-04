@@ -51,28 +51,28 @@ properties:
     type: ScalarValue
     default: 0.01
     argument: ActiveTime
-    scale: true
+    scale: instanceSize
     desc: |
       Controls where the light starts in the cone. It bascially "slices off" the tip of the cone. If set to 0, it acts as if it is set to 0.5.
   far:
     type: ScalarValue
     default: 50
     argument: ActiveTime
-    scale: true
+    scale: instanceSize
     desc: |
       Controls how far away the base of the cone is from the light source.
   radiusX:
     type: ScalarValue
     default: 50
     argument: ActiveTime
-    scale: true
+    scale: instanceSize
     desc: |
       The X radius for the elliptic base of the cone.
   radiusY:
     type: ScalarValue
     default: 50
     argument: ActiveTime
-    scale: true
+    scale: instanceSize
     desc: |
       The Y radius for the elliptic base of the cone.
   unk_ds3_p1_6:

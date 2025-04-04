@@ -3,7 +3,7 @@ import {
   BillboardEx,
   ConstantProperty,
   Distortion,
-  DynamicTracer,
+  LegacyTracer,
   ExternalValue,
   ExternalValue1Modifier,
   LinearProperty,
@@ -61,7 +61,7 @@ const rainbowDuration = 4
 const partDuration = rainbowDuration / 360
 function procProp(list, idx) {
   if (!(list[idx] instanceof Property)) {
-    list[idx] = new ConstantProperty(...list[idx])
+    list[idx] = new ConstantProperty(list[idx])
   }
   list[idx].modifiers.push(
     new ExternalValue1Modifier(ExternalValue.EldenRing.TimeOfDay, new LinearProperty(true, [
@@ -113,8 +113,8 @@ while (ids.length) {
       action instanceof MultiTextureBillboardEx ||
       action instanceof Model ||
       action instanceof RichModel ||
-      action instanceof Tracer ||
-      action instanceof DynamicTracer
+      action instanceof LegacyTracer ||
+      action instanceof Tracer
     ) {
       procProp(action, 'color1')
     } else if (
