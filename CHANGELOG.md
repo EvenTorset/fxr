@@ -8,6 +8,7 @@
   - This change happened because it was discovered that action 10012 has a field that toggles its dynamic opacity, and this field has now been named and documented:
     - `unk_sdt_f1_14` -> `dynamicOpacity` - Its type has been changed to boolean and its default value has been changed to `false`, while before it was `1` (integer), which would be equal to `true` now. So, to update scripts using this action, make sure to set this property to `true` to get the old behavior back.
     - With this and everything else known about these two actions, it seems pretty likely that 10012 is just a newer version of 606 with more features. In Elden Ring's RTTI, they are both just called `Tracer`.
+- The `ConstantProperty` constructor now takes the value as a single argument instead of it needing to be spread.
 - Changed the order of the parameters for the `FXR` constructor and added some overloads.
   - The states list and root node have swapped places, so now the order is `id, states, root`.
   - Instead of passing an array of states to the constructor, a boolean can now also be used, which controls whether or not to add a state that makes the effect terminate when external value 0 becomes 1 or not. (`ext(0) < 1 else -1`)

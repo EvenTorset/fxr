@@ -8114,7 +8114,7 @@ function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorCo
     ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   } else {
     return new ConstantProperty<T>(
-      ...comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
+      comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
     ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
   }
 }
@@ -8653,9 +8653,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('gpuParticle' in palette) {
       const e = averagePaletteEntries(palette.gpuParticle)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty(1, 1, 1, 1),
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        modifier: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor ?? [1, 1, 1, 1],
         rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
@@ -8663,9 +8663,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('lensFlare' in palette) {
       const e = averagePaletteEntries(palette.lensFlare)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty(1, 1, 1, 1),
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        modifier: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
@@ -8674,8 +8674,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
       const e = averagePaletteEntries(palette.distortionParticle)[0]
       palette.commonParticleNormal = [{
         modifier: e.modifier,
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: e.rgbMultiplier,
@@ -8684,8 +8684,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
       const e = averagePaletteEntries(palette.blurParticle)[0]
       palette.commonParticleNormal = [{
         modifier: e.modifier,
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: e.rgbMultiplier,
@@ -8693,9 +8693,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('light' in palette) {
       const e = averagePaletteEntries(palette.light)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty(1, 1, 1, 1),
-        color1: new ConstantProperty(1, 1, 1, 1),
-        color2: new ConstantProperty(1, 1, 1, 1),
+        modifier: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ConstantProperty([1, 1, 1, 1]),
+        color2: new ConstantProperty([1, 1, 1, 1]),
         color3: e.diffuseColor,
         bloomColor: [1, 1, 1, 0],
         rgbMultiplier: e.diffuseMultiplier,
@@ -8709,8 +8709,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
   if (!('distortionParticle' in palette)) {
     avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
     palette.distortionParticle = [{
-      modifier: new ConstantProperty(1, 1, 1, 1),
-      color: new ConstantProperty(1, 1, 1, 1),
+      modifier: new ConstantProperty([1, 1, 1, 1]),
+      color: new ConstantProperty([1, 1, 1, 1]),
       rgbMultiplier: 1,
       bloomColor: [1, 1, 1, 0]
     }]
@@ -11424,7 +11424,7 @@ class BasicNode extends NodeWithConfigs {
   }
 
   getColor(opts: NodeColorOptions = {}): Vector4Property | null {
-    let colorProp: Property<ValueType.Vector4, PropertyFunction> = new ConstantProperty(1, 1, 1, 1)
+    let colorProp: Property<ValueType.Vector4, PropertyFunction> = new ConstantProperty([1, 1, 1, 1])
     let modified = false
     const config = this.getActiveConfig(opts.activeState ?? 0)
     if (config instanceof BasicConfig) {
@@ -11543,7 +11543,7 @@ class BasicNode extends NodeWithConfigs {
         modified = true
       }
       if (!(colorProp instanceof Property)) {
-        colorProp = new ConstantProperty(...(colorProp as Vector4))
+        colorProp = new ConstantProperty(colorProp as Vector4)
       }
     }
     if (modified) {
@@ -12391,11 +12391,7 @@ class Action implements IAction {
       if (property instanceof Property) {
         this.properties1[index] = property
       } else {
-        if (Array.isArray(property)) {
-          this.properties1[index] = new ConstantProperty(...property)
-        } else {
-          this.properties1[index] = new ConstantProperty(property)
-        }
+        this.properties1[index] = new ConstantProperty(property)
       }
     }
     return this
@@ -12406,11 +12402,7 @@ class Action implements IAction {
       if (property instanceof Property) {
         this.properties2[index] = property
       } else {
-        if (Array.isArray(property)) {
-          this.properties2[index] = new ConstantProperty(...property)
-        } else {
-          this.properties2[index] = new ConstantProperty(property)
-        }
+        this.properties2[index] = new ConstantProperty(property)
       }
     }
     return this
@@ -12612,9 +12604,7 @@ class DataAction implements IAction {
     return (data[list] ?? []).map((name: string) => {
       const prop = ade.props[name]
       validateDataActionProp(props, name, prop)
-      return props[name] instanceof Property ? props[name].for(game) : Array.isArray(prop.default) ?
-        new ConstantProperty(...props[name]).for(game) :
-        new ConstantProperty(props[name]).for(game)
+      return props[name] instanceof Property ? props[name].for(game) : new ConstantProperty(props[name]).for(game)
     })
   }
 
@@ -32194,15 +32184,15 @@ class ValueProperty<T extends ValueType>
   ): ValueProperty<T> {
     switch (func) {
       case PropertyFunction.Zero:
-        return new ConstantProperty(...(Array(valueType + 1).fill(0) as [number] | Vector)).withModifiers(
+        return new ConstantProperty(valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0) as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
-        return new ConstantProperty(...(Array(valueType + 1).fill(1) as [number] | Vector)).withModifiers(
+        return new ConstantProperty(valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1) as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
-        return new ConstantProperty(...(fieldValues as [number] | Vector)).withModifiers(
+        return new ConstantProperty(valueType === ValueType.Scalar ? fieldValues[0] : fieldValues as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       default:
@@ -32215,11 +32205,11 @@ class ValueProperty<T extends ValueType>
     modifiers?: any[]
   } | PropertyValue): ConstantProperty<T> {
     if (Array.isArray(obj)) {
-      return new ConstantProperty(...obj)
+      return new ConstantProperty(obj as TypeMap.PropertyValue[T])
     } else if (typeof obj === 'number') {
-      return new ConstantProperty(obj)
+      return new ConstantProperty(obj as TypeMap.PropertyValue[T])
     }
-    return new ConstantProperty<T>(...(Array.isArray(obj.value) ? obj.value : [obj.value])).withModifiers(
+    return new ConstantProperty<T>(obj.value as TypeMap.PropertyValue[T]).withModifiers(
       ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e) as IModifier<T>)
     )
   }
@@ -32618,11 +32608,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
   minify(): Property<T, PropertyFunction> {
     const mods = this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
-      if (this.valueType === ValueType.Scalar) {
-        return new ConstantProperty<T>(this.keyframes[0].value as number).withModifiers(...mods)
-      } else {
-        return new ConstantProperty<T>(...(this.keyframes[0].value as Vector)).withModifiers(...mods)
-      }
+      return new ConstantProperty<T>(this.keyframes[0].value).withModifiers(...mods)
     }
     const clone = this.clone()
     clone.modifiers = mods
@@ -32878,7 +32864,9 @@ class ComponentSequenceProperty<T extends ValueType>
       )
     ) {
       return new ConstantProperty<T>(
-        ...this.components.map(c => c.keyframes[0].value)
+        this.valueType === ValueType.Scalar ?
+          this.components[0].keyframes[0].value as TypeMap.PropertyValue[T] :
+          this.components.map(c => c.keyframes[0].value) as TypeMap.PropertyValue[T]
       ).withModifiers(
         ...this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
       )
@@ -32903,9 +32891,8 @@ class ComponentSequenceProperty<T extends ValueType>
 
 class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
-  constructor(...args: number[]) {
-    args = args.slice(0, 4)
-    super(args.length - 1 as T, (args.length === 1 ? args[0] : args) as TypeMap.PropertyValue[T])
+  constructor(value: TypeMap.PropertyValue[T]) {
+    super(getValueType(value), value)
   }
 
 }
@@ -33072,7 +33059,7 @@ function RandomDeltaProperty<T extends ValueType>(
   devation: TypeMap.PropertyValue[T],
   seed?: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(...(typeof mean === 'number' ? [mean] : mean as Vector)).withModifiers(
+  return new ConstantProperty<T>(mean).withModifiers(
     new RandomDeltaModifier(devation, seed)
   )
 }
@@ -33095,7 +33082,7 @@ function RandomRangeProperty<T extends ValueType>(
   seed?: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
   return new ConstantProperty<T>(
-    ...(Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : [0])
+    (Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0) as TypeMap.PropertyValue[T]
   ).withModifiers(
     new RandomRangeModifier(minValue, maxValue, seed)
   )
@@ -33118,7 +33105,7 @@ function RandomFractionProperty<T extends ValueType>(
   devationFract: TypeMap.PropertyValue[T],
   seed?: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(...(typeof mean === 'number' ? [mean] : mean as Vector)).withModifiers(
+  return new ConstantProperty<T>(mean).withModifiers(
     new RandomFractionModifier(devationFract, seed)
   )
 }
@@ -33160,7 +33147,7 @@ function BloodVisibilityProperty<T extends ValueType>(
   mildValue: TypeMap.PropertyValue[T],
   offValue: TypeMap.PropertyValue[T]
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(...(typeof onValue === 'number' ? [1] : onValue.map(() => 1))).withModifiers(
+  return new ConstantProperty<T>((typeof onValue === 'number' ? 1 : onValue.map(() => 1)) as TypeMap.PropertyValue[T]).withModifiers(
     BloodVisibilityModifier(onValue, mildValue, offValue)
   )
 }
