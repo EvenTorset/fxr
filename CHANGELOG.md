@@ -1,5 +1,27 @@
 # Changelog
 
+## [21.1.0] - 2025-04-07
+
+- Added a bunch of static utility methods to the `HermiteKeyframe` class for easily generating keyframes with different easing functions. Some of them are based on the [CSS easing function keywords](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/ease.svg) with the same names, though they may not match exactly:
+  - `HermiteKeyframe.ease`: Starts somewhat slow, but speeds up until the end where it slows down again.
+  - `HermiteKeyframe.easeIn`:Starts slow and speeds up over time.
+  - `HermiteKeyframe.easeOut`: Starts fast and slows down over time.
+  - `HermiteKeyframe.easeInOut`: Similar to `ease`, but starts slower.
+  - `HermiteKeyframe.launch`: Starts very slow, but very quickly ramps up near the end.
+  - `HermiteKeyframe.explosive`: Starts very fast, but very quickly slows down a lot.
+  - `HermiteKeyframe.linear`: Linear function.
+- Added static methods matching most of the keyframe ones to the `HermiteProperty` class. These work the same way as `LinearProperty.basic`, and are just shortcuts for simple animations between two values.
+  - `HermiteProperty.ease`
+  - `HermiteProperty.easeIn`
+  - `HermiteProperty.easeOut`
+  - `HermiteProperty.easeInOut`
+  - `HermiteProperty.launch`
+  - `HermiteProperty.explosive`
+- The documentation and error messages in various property class methods have been updated with spelling/grammatical corrections and to use terms that are more consistent the rest of the library.
+- Partially documented some unknown fields in `MultiTextureBillboardEx`.
+  - `unk_ds3_f2_10`
+  - `unk_ds3_f2_13`
+
 ## [21.0.1] - 2025-04-04
 
 - The `nodes` array property in node JSON objects is now excluded when empty and the `excludeDefaults` option is `true`.
@@ -383,6 +405,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[21.1.0]: https://github.com/EvenTorset/fxr/compare/v21.0.1...v21.1.0
 [21.0.1]: https://github.com/EvenTorset/fxr/compare/v21.0.0...v21.0.1
 [21.0.0]: https://github.com/EvenTorset/fxr/compare/v20.1.1...v21.0.0
 [20.1.1]: https://github.com/EvenTorset/fxr/compare/v20.1.0...v20.1.1

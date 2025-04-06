@@ -468,12 +468,20 @@ properties:
     field: float
   unk_ds3_f2_10:
     field: int
+    desc: |
+      | Value | Behavior |
+      |-|-|
+      | 0 | All layers may have colors, and the layer textures are all multiplied when blending. The opacity is based only on the alpha of the {@link layer1} texture. |
+      | 1 | Removes all color from layers {@link layer2 2} and {@link layer3 3}, and makes the brightness of the pixels in the texture of those layers affect the opacity. |
+      | 2 | Removes all color from {@link layer2 layer 2} only, and makes the brightness of the pixels in the texture of that layer affect the opacity. |
   unk_ds3_f2_11:
     field: int
   unk_ds3_f2_12:
     field: int
   unk_ds3_f2_13:
     field: int
+    desc: |
+      Unknown integer, however it seems to affect the blending of the layers and color multipliers in some way.
   minFadeDistance:
     field: float
     default: -1
