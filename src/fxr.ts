@@ -7293,6 +7293,8 @@ function writeField(field: Field<FieldType>, bw: BinaryWriter) {
 }
 
 //#region Conversion / Utility
+const deg2rad = Math.PI / 180
+
 function arrayOf<T>(size: number, func: (index: number) => T): T[] {
   return Array(size).fill(null).map((e, i) => func(i))
 }
@@ -8835,6 +8837,10 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
   }
 
   return { palette, durationFallback, proc }
+}
+
+function valueWithType<T extends ValueType>(type: T, val: number): TypeMap.PropertyValue[T] {
+  return (type === ValueType.Scalar ? val : arrayOf(type + 1, () => val)) as TypeMap.PropertyValue[T]
 }
 
 const GameVersionMap = {
@@ -18214,7 +18220,11 @@ class MultiTextureBillboardEx extends DataAction {
    */
   unk_ds3_f2_9: number
   /**
-   * Unknown integer.
+   * | Value | Behavior |
+   * |-|-|
+   * | 0 | All layers may have colors, and the layer textures are all multiplied when blending. The opacity is based only on the alpha of the {@link layer1} texture. |
+   * | 1 | Removes all color from layers {@link layer2 2} and {@link layer3 3}, and makes the brightness of the pixels in the texture of those layers affect the opacity. |
+   * | 2 | Removes all color from {@link layer2 layer 2} only, and makes the brightness of the pixels in the texture of that layer affect the opacity. |
    * 
    * **Default**: `0`
    */
@@ -18232,7 +18242,7 @@ class MultiTextureBillboardEx extends DataAction {
    */
   unk_ds3_f2_12: number
   /**
-   * Unknown integer.
+   * Unknown integer, however it seems to affect the blending of the layers and color multipliers in some way.
    * 
    * **Default**: `0`
    */
@@ -32051,6 +32061,72 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
     super(position, value)
   }
 
+  /**
+   * Creates a new keyframe with an easing function that starts slow, speeds up
+   * towards the midpoint, and slows down towards the end.
+   * 
+   * Similar to {@link easeInOut}, but this starts slightly faster.
+   */
+  static ease<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 21.8 * deg2rad), valueWithType(valType, 0))
+  }
+
+  /**
+   * Creates a new keyframe with an easing function that starts slow and speeds
+   * up towards the end.
+   */
+  static easeIn<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 0), valueWithType(valType, 45 * deg2rad))
+  }
+
+  /**
+   * Creates a new keyframe with an easing function that starts fast and slows
+   * down towards the end.
+   */
+  static easeOut<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 45 * deg2rad), valueWithType(valType, 0))
+  }
+
+  /**
+   * Creates a new keyframe with an easing function that starts slow, speeds up
+   * towards the midpoint, and slows down towards the end.
+   * 
+   * Similar to {@link ease}, but this starts slightly slower.
+   */
+  static easeInOut<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 0), valueWithType(valType, 0))
+  }
+
+  /**
+   * Creates a new keyframe with an easing function that starts very slow, but
+   * speeds up very quickly near the end.
+   */
+  static launch<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 0), valueWithType(valType, 90 * deg2rad))
+  }
+
+  /**
+   * Creates a new keyframe with an easing function that starts very fast, but
+   * very quickly slows down.
+   */
+  static explosive<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 90 * deg2rad), valueWithType(valType, 0))
+  }
+
+  /**
+   * Creates a new keyframe with a linear easing function.
+   */
+  static linear<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+    const valType = getValueType(value)
+    return new HermiteKeyframe(position, value, valueWithType(valType, 45 * deg2rad), valueWithType(valType, 45 * deg2rad))
+  }
+
 }
 
 //#region Property
@@ -32913,7 +32989,7 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 
   constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
     if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframes.')
+      throw new Error ('Sequence properties must have at least one keyframe.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
@@ -32925,67 +33001,67 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
   constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
     if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframes.')
+      throw new Error ('Sequence properties must have at least one keyframe.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Linear, loop, keyframes)
   }
 
   /**
-   * Creates a new linear property with only two steps.
-   * @param loop Controls whether the property should loop or not.
-   * @param endPosition The position of the second stop.
-   * @param startValue The value of the first stop.
-   * @param endValue The value of the second stop.
-   * @returns The new linear property.
+   * Creates a new sequence property that linearly transitions from one value
+   * to another.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
    */
   static basic<T extends ValueType>(
     loop: boolean,
-    endPosition: number,
+    duration: number,
     startValue: TypeMap.PropertyValue[T],
     endValue: TypeMap.PropertyValue[T]
   ): LinearProperty<T> {
     return new LinearProperty(loop, [
       new Keyframe(0, startValue),
-      new Keyframe(endPosition, endValue),
+      new Keyframe(duration, endValue),
     ])
   }
 
   /**
    * Creates a new linear property that approximates a power function.
-   * @param loop Controls whether the property should loop or not.
+   * @param loop Controls whether the animation should loop or not.
    * @param exponent The exponent used in the power function. For example,
    * setting this to values greater than 1 will make the property value change
    * slowly at the start, but get faster and faster until it reaches the end.
-   * @param stops How many stops to use. Must be greater than or equal to 2.
+   * @param keyframeCount How many keyframes to use for the approximation. Must
+   * be greater than or equal to 2.
    * Using higher values will produce a smoother curve. Setting it to 2 will
    * make it linear, which means you might as well use the {@link basic} 
    * method instead of this.
-   * @param endPosition The position of the last stop.
-   * @param startValue The value of the first stop.
-   * @param endValue The value of the last stop.
-   * @returns The new linear property.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
    */
   static power<T extends ValueType>(
     loop: boolean,
     exponent: number,
-    stops: number,
-    endPosition: number,
+    keyframeCount: number,
+    duration: number,
     startValue: TypeMap.PropertyValue[T],
     endValue: TypeMap.PropertyValue[T]
   ): LinearProperty<T> {
-    if (stops < 2) {
+    if (keyframeCount < 2) {
       throw new Error('Property stop count must be greater than or equal to 2.')
     }
     if (Array.isArray(startValue) && Array.isArray(endValue)) {
-      return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
-        i / (stops - 1) * endPosition,
-        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (stops - 1)) ** exponent)) as TypeMap.PropertyValue[T]
+      return new LinearProperty(loop, arrayOf(keyframeCount, i => new Keyframe(
+        i / (keyframeCount - 1) * duration,
+        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (keyframeCount - 1)) ** exponent)) as TypeMap.PropertyValue[T]
       )))
     } else if (typeof startValue === 'number' && typeof endValue === 'number') {
-      return new LinearProperty(loop, arrayOf(stops, i => new Keyframe(
-        i / (stops - 1) * endPosition,
-        lerp(startValue, endValue, (i / (stops - 1)) ** exponent) as TypeMap.PropertyValue[T]
+      return new LinearProperty(loop, arrayOf(keyframeCount, i => new Keyframe(
+        i / (keyframeCount - 1) * duration,
+        lerp(startValue, endValue, (i / (keyframeCount - 1)) ** exponent) as TypeMap.PropertyValue[T]
       )))
     } else {
       throw new Error('startValue and endValue must be of the same type.')
@@ -32997,11 +33073,10 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param min The value used when the sine wave is at its minimum.
    * @param max The value used when the sine wave is at its maximum.
    * @param period The period of the sine wave.
-   * @param phaseShift The pahse shift of the sine wave. 1 shifts it by one
+   * @param phaseShift The phase shift of the sine wave. 1 shifts it by one
    * period.
    * @param stops The number of stops to use to approximate the sine wave.
    * Higher values result in a smoother curve. Defaults to 21.
-   * @returns The new linear property.
    */
   static sine<T extends ValueType>(
     min: TypeMap.PropertyValue[T],
@@ -33035,7 +33110,7 @@ class BezierProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
   constructor(loop: boolean, keyframes: IBezierKeyframe<T>[]) {
     if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframes.')
+      throw new Error ('Sequence properties must have at least one keyframe.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Bezier, loop, keyframes)
@@ -33047,10 +33122,148 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 
   constructor(loop: boolean, keyframes: IHermiteKeyframe<T>[]) {
     if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframes.')
+      throw new Error ('Sequence properties must have at least one keyframe.')
     }
     const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
     super(comps - 1 as T, PropertyFunction.Hermite, loop, keyframes)
+  }
+
+  /**
+   * Creates a new sequence property that smoothly transitions from one value
+   * to another using an easing function that starts slowly, speeds up towards
+   * the midpoint, and then slows down towards the end.
+   * 
+   * This is very similar to the {@link https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease ease}
+   * keyword in CSS.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static ease<T extends ValueType>(
+    loop: boolean,
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): HermiteProperty<T> {
+    return new HermiteProperty(loop, [
+      HermiteKeyframe.ease(0, startValue),
+      HermiteKeyframe.easeInOut(duration, endValue),
+    ])
+  }
+
+  /**
+   * Creates a new sequence property that smoothly transitions from one value
+   * to another using an easing function that starts slowly and speeds up
+   * towards the end.
+   * 
+   * This is very similar to the {@link https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-in ease-in}
+   * keyword in CSS.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static easeIn<T extends ValueType>(
+    loop: boolean,
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): HermiteProperty<T> {
+    return new HermiteProperty(loop, [
+      HermiteKeyframe.easeIn(0, startValue),
+      HermiteKeyframe.easeInOut(duration, endValue),
+    ])
+  }
+
+  /**
+   * Creates a new sequence property that smoothly transitions from one value
+   * to another using an easing function that starts fast and slows down
+   * towards the end.
+   * 
+   * This is very similar to the {@link https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-out ease-out}
+   * keyword in CSS.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static easeOut<T extends ValueType>(
+    loop: boolean,
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): HermiteProperty<T> {
+    return new HermiteProperty(loop, [
+      HermiteKeyframe.easeOut(0, startValue),
+      HermiteKeyframe.easeInOut(duration, endValue),
+    ])
+  }
+
+  /**
+   * Creates a new sequence property that smoothly transitions from one value
+   * to another using an easing function that starts slowly, speeds up towards
+   * the midpoint, and then slows down towards the end.
+   * 
+   * This is very similar to the {@link https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-in-out ease-in-out}
+   * keyword in CSS.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static easeInOut<T extends ValueType>(
+    loop: boolean,
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): HermiteProperty<T> {
+    return new HermiteProperty(loop, [
+      HermiteKeyframe.easeInOut(0, startValue),
+      HermiteKeyframe.easeInOut(duration, endValue),
+    ])
+  }
+
+  /**
+   * Creates a new sequence property that transitions from one value to another
+   * using an easing function that starts very slow, but speeds up very quickly
+   * near the end.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static launch<T extends ValueType>(
+    loop: boolean,
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): HermiteProperty<T> {
+    return new HermiteProperty(loop, [
+      HermiteKeyframe.launch(0, startValue),
+      HermiteKeyframe.easeInOut(duration, endValue),
+    ])
+  }
+
+  /**
+   * Creates a new sequence property that transitions from one value to another
+   * using an easing function that starts very fast, but very quickly slows
+   * down.
+   * @param loop Controls whether the animation should loop or not.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static explosive<T extends ValueType>(
+    loop: boolean,
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): HermiteProperty<T> {
+    return new HermiteProperty(loop, [
+      HermiteKeyframe.explosive(0, startValue),
+      HermiteKeyframe.easeInOut(duration, endValue),
+    ])
   }
 
 }
