@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+- Named and documented a field in `BillboardEx` and `MultiTextureBillboardEx`.
+  - `BillboardEx`: `unk_ds3_f1_7` -> `scaleBeforeRotation`
+  - `MultiTextureBillboardEx`: `unk_ds3_f1_6` -> `scaleBeforeRotation`
+  - Their type has been changed to boolean, and their default value is now `true`. The default value before was `0`, so this is a breaking change for rotated particles without this property set.
+
 ## [21.1.0] - 2025-04-07
 
 - Added a bunch of static utility methods to the `HermiteKeyframe` class for easily generating keyframes with different easing functions. Some of them are based on the [CSS easing function keywords](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/ease.svg) with the same names, though they may not match exactly:
@@ -405,6 +412,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v21.1.0...HEAD
 [21.1.0]: https://github.com/EvenTorset/fxr/compare/v21.0.1...v21.1.0
 [21.0.1]: https://github.com/EvenTorset/fxr/compare/v21.0.0...v21.0.1
 [21.0.0]: https://github.com/EvenTorset/fxr/compare/v20.1.1...v21.0.0

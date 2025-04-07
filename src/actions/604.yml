@@ -379,8 +379,11 @@ properties:
     see:
       - width
       - height
-  unk_ds3_f1_6:
-    field: int
+  scaleBeforeRotation:
+    field: bool
+    default: true
+    desc: |
+      When `true`, scaling is applied before rotation for the particle, which allows non-square particles to maintain their shape when rotated. When `false`, scaling is applied after rotation, which allows particles to be skewed, for example a square rotated 45 degrees and then made thinner will turn into a diamond shape.
   columns:
     field: int
     default: 1
@@ -662,7 +665,7 @@ games:
       - layer3
       - blendMode
       - uniformScale
-      - unk_ds3_f1_6
+      - scaleBeforeRotation
       - columns
       - totalFrames
       - interpolateFrames
@@ -759,7 +762,7 @@ games:
       - layer2
       - layer3
       - uniformScale
-      - unk_ds3_f1_6
+      - scaleBeforeRotation
       - columns
       - totalFrames
       - interpolateFrames
@@ -862,7 +865,7 @@ games:
       - layer2
       - layer3
       - uniformScale
-      - unk_ds3_f1_6
+      - scaleBeforeRotation
       - columns
       - totalFrames
       - interpolateFrames
