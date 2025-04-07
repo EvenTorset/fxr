@@ -496,6 +496,8 @@ properties:
     field: int
   unk_er_f2_29:
     field: int
+  unk_er_f2_30:
+    field: int
   unk_er_f2_31:
     field: int
   unk_er_f2_32:
@@ -615,11 +617,11 @@ games:
       - unk_er_f2_23
       - unk_er_f2_24
       - unk_er_f2_25
-      - unk_er_f2_25
       - unk_er_f2_26
       - unk_er_f2_27
       - unk_er_f2_28
       - unk_er_f2_29
+      - unk_er_f2_30
       - unk_er_f2_31
       - unk_er_f2_32
       - unk_er_f2_33

@@ -5207,6 +5207,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_er_f2_27: { default: 0, field: 1 },
       unk_er_f2_28: { default: 0, field: 1 },
       unk_er_f2_29: { default: 0, field: 1 },
+      unk_er_f2_30: { default: 0, field: 1 },
       unk_er_f2_31: { default: 0, field: 1 },
       unk_er_f2_32: { default: 0, field: 1 },
       unk_er_f2_33: { default: 0, field: 1 },
@@ -5218,7 +5219,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.Sekiro]: Game.EldenRing,
       [Game.EldenRing]: {
         fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor'],
-        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36'],
+        fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36'],
         properties1: ['layer1Width','layer1Height','layer1Color','layer2Width','layer2Height','layer2Color','layer3Width','layer3Height','layer3Color','layer4Width','layer4Height','layer4Color']
       },
       [Game.ArmoredCore6]: {
@@ -28362,6 +28363,12 @@ class LensFlare extends DataAction {
    * **Default**: `0`
    */
   unk_er_f2_29: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_er_f2_30: number
   /**
    * Unknown integer.
    * 
