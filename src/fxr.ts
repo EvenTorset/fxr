@@ -35197,7 +35197,7 @@ namespace FXRUtility {
         rotation: [
           0,
           rad2deg(Math.atan2(dz, dx)),
-          -rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
+          rad2deg(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz))),
         ]
       })
     ], [

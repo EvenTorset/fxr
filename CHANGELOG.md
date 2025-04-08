@@ -7,6 +7,7 @@
   - `MultiTextureBillboardEx`: `unk_ds3_f1_6` -> `scaleBeforeRotation`
   - Their type has been changed to boolean, and their default value is now `true`. The default value before was `0`, so this is a breaking change for rotated particles without this property set.
 - Added a field that was missing from the `LensFlare` class. Instead of this field it had another field duplicated, and both of them are usually just `0`, so it's unlikely that this has caused any serious issues with lens flares.
+- Fixed the `FXRUtility.line` function not always rotating the line correctly, *again*. Something must have changed that caused this to break twice, but I don't know what.
 
 ## [21.1.0] - 2025-04-07
 
