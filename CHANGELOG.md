@@ -2,11 +2,31 @@
 
 ## [Unreleased]
 
+- Named and documented **16** fields in `LensFlare` actions, and fixed some issues with other fields:
+  - `unk_er_f1_17` -> `layer1Reflection`
+  - `unk_er_f1_18` -> `layer1Offset`
+  - `unk_er_f1_19` -> `layer1OffsetVariation`
+  - `unk_er_f1_20` -> `layer1AttenuationRadius`
+  - `unk_er_f1_29` -> `layer2Reflection`
+  - `unk_er_f1_30` -> `layer2Offset`
+  - `unk_er_f1_31` -> `layer2OffsetVariation`
+  - `unk_er_f1_32` -> `layer2AttenuationRadius`
+  - `unk_er_f1_41` -> `layer3Reflection`
+  - `unk_er_f1_42` -> `layer3Offset`
+  - `unk_er_f1_43` -> `layer3OffsetVariation`
+  - `unk_er_f1_44` -> `layer3AttenuationRadius`
+  - `unk_er_f1_53` -> `layer4Reflection`
+  - `unk_er_f1_54` -> `layer4Offset`
+  - `unk_er_f1_55` -> `layer4OffsetVariation`
+  - `unk_er_f1_56` -> `layer4AttenuationRadius`
+  - 12 other fields have also had their documentation updated to be clearer or to refer to these newly named fields.
+  - `unk_er_f1_57` has had its default value changed from `0` to `1`. This has a noticeable impact on the visuals, but what it does exactly is still unknown. The reason for this change is that over 99% of vanilla lens flares have it set to `1`, so the previous default value was wrong.
+  - Fixed `unk_er_f2_25` being read twice when reading FXR files and duplicated when writing them.
+  - Added the missing `unk_er_f2_30` field, which was missing for the same reason the other field was duplicated.
 - Named and documented a field in `BillboardEx` and `MultiTextureBillboardEx`.
   - `BillboardEx`: `unk_ds3_f1_7` -> `scaleBeforeRotation`
   - `MultiTextureBillboardEx`: `unk_ds3_f1_6` -> `scaleBeforeRotation`
   - Their type has been changed to boolean, and their default value is now `true`. The default value before was `0`, so this is a breaking change for rotated particles without this property set.
-- Added a field that was missing from the `LensFlare` class. Instead of this field it had another field duplicated, and both of them are usually just `0`, so it's unlikely that this has caused any serious issues with lens flares.
 - Fixed the `FXRUtility.line` function not always rotating the line correctly, *again*. Something must have changed that caused this to break twice, but I don't know what.
 
 ## [21.1.0] - 2025-04-07

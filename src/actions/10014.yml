@@ -140,17 +140,20 @@ properties:
     field: int
     default: 1
     desc: |
-      Number of copies of layer 1. Why this exists is unknown, they all just stack on top of each other.
+      The number of flares to create from {@link layer1}. Unless given {@link layer1OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Each copy will pick its own random values for the scale variation.
+      Setting it to very high values can have a significant impact on performance.
     see:
       - layer1ScaleVariationX
       - layer1ScaleVariationY
+      - layer1Reflection
+      - layer1Offset
+      - layer1OffsetVariation
   layer1ScaleVariationX:
     field: float
     default: 1
     desc: |
-      The {@link layer1Width layer's width} is multiplied by a random value between this and 1.
+      The {@link layer1Width width} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer1Count
       - layer1UniformScale
@@ -159,7 +162,7 @@ properties:
     field: float
     default: 1
     desc: |
-      The {@link layer1Height layer's height} is multiplied by a random value between this and 1.
+      The {@link layer1Height height} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer1Count
       - layer1UniformScale
@@ -183,31 +186,68 @@ properties:
       Multiplier for the {@link layer1Color layer's color}.
     see:
       - layer1Color
-  unk_er_f1_17:
+  layer1Reflection:
     field: int
-  unk_er_f1_18:
+    enum: ReflectionMode
+    default: ReflectionMode.None
+    desc: |
+      Controls how the offset vector is calculated for {@link layer1}. See {@link ReflectionMode} for more details.
+    see:
+      - layer1Offset
+      - layer1OffsetVariation
+  layer1Offset:
     field: float
-  unk_er_f1_19:
+    desc: |
+      Controls where the lens flare(s) from {@link layer1} will appear on the screen relative to the source and the center of the screen.
+
+      This is basically a scalar multiplier for the {@link layer1Reflection offset vector}.
+
+      This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer1Reflection
+      - layer1OffsetVariation
+      - layer1AttenuationRadius
+  layer1OffsetVariation:
     field: float
     default: 1
-  unk_er_f1_20:
+    desc: |
+      For {@link layer1Count each flare} of {@link layer1}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer1Offset} to get the final offset for the flare.
+
+      This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer1Reflection
+      - layer1Offset
+  layer1AttenuationRadius:
     field: float
     default: -1
+    desc:
+      This controls the radius of a sphere around the source for {@link layer1}. {@link layer1Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer1Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+
+      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+
+      Can be set to -1 to disable this limit and always display the flare(s).
+    see:
+      - layer1Reflection
+      - layer1Offset
+      - layer1OffsetVariation
   layer2Count:
     field: int
     default: 1
     desc: |
-      Number of copies of layer 2. Why this exists is unknown, they all just stack on top of each other.
+      The number of flares to create from {@link layer2}. Unless given {@link layer2OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Each copy will pick its own random values for the scale variation.
+      Setting it to very high values can have a significant impact on performance.
     see:
       - layer2ScaleVariationX
       - layer2ScaleVariationY
+      - layer2Reflection
+      - layer2Offset
+      - layer2OffsetVariation
   layer2ScaleVariationX:
     field: float
     default: 1
     desc: |
-      The {@link layer2Width layer's width} is multiplied by a random value between this and 1.
+      The {@link layer2Width width} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer2Count
       - layer2UniformScale
@@ -216,7 +256,7 @@ properties:
     field: float
     default: 1
     desc: |
-      The {@link layer2Height layer's height} is multiplied by a random value between this and 1.
+      The {@link layer2Height height} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer2Count
       - layer2UniformScale
@@ -240,31 +280,68 @@ properties:
       Multiplier for the {@link layer2Color layer's color}.
     see:
       - layer2Color
-  unk_er_f1_29:
+  layer2Reflection:
     field: int
-  unk_er_f1_30:
+    enum: ReflectionMode
+    default: ReflectionMode.None
+    desc: |
+      Controls how the offset vector is calculated for {@link layer2}. See {@link ReflectionMode} for more details.
+    see:
+      - layer2Offset
+      - layer2OffsetVariation
+  layer2Offset:
     field: float
-  unk_er_f1_31:
+    desc: |
+      Controls where the lens flare(s) from {@link layer2} will appear on the screen relative to the source and the center of the screen.
+
+      This is basically a scalar multiplier for the {@link layer2Reflection offset vector}.
+
+      This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer2Reflection
+      - layer2OffsetVariation
+      - layer2AttenuationRadius
+  layer2OffsetVariation:
     field: float
     default: 1
-  unk_er_f1_32:
+    desc: |
+      For {@link layer2Count each flare} of {@link layer2}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer2Offset} to get the final offset for the flare.
+
+      This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer2Reflection
+      - layer2Offset
+  layer2AttenuationRadius:
     field: float
     default: -1
+    desc:
+      This controls the radius of a sphere around the source for {@link layer2}. {@link layer2Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer2Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+
+      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+
+      Can be set to -1 to disable this limit and always display the flare(s).
+    see:
+      - layer2Reflection
+      - layer2Offset
+      - layer2OffsetVariation
   layer3Count:
     field: int
     default: 1
     desc: |
-      Number of copies of layer 3. Why this exists is unknown, they all just stack on top of each other.
+      The number of flares to create from {@link layer3}. Unless given {@link layer3OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Each copy will pick its own random values for the scale variation.
+      Setting it to very high values can have a significant impact on performance.
     see:
       - layer3ScaleVariationX
       - layer3ScaleVariationY
+      - layer3Reflection
+      - layer3Offset
+      - layer3OffsetVariation
   layer3ScaleVariationX:
     field: float
     default: 1
     desc: |
-      The {@link layer3Width layer's width} is multiplied by a random value between this and 1.
+      The {@link layer3Width width} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer3Count
       - layer3UniformScale
@@ -273,7 +350,7 @@ properties:
     field: float
     default: 1
     desc: |
-      The {@link layer3Height layer's height} is multiplied by a random value between this and 1.
+      The {@link layer3Height height} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer3Count
       - layer3UniformScale
@@ -297,31 +374,68 @@ properties:
       Multiplier for the {@link layer3Color layer's color}.
     see:
       - layer3Color
-  unk_er_f1_41:
+  layer3Reflection:
     field: int
-  unk_er_f1_42:
+    enum: ReflectionMode
+    default: ReflectionMode.None
+    desc: |
+      Controls how the offset vector is calculated for {@link layer3}. See {@link ReflectionMode} for more details.
+    see:
+      - layer3Offset
+      - layer3OffsetVariation
+  layer3Offset:
     field: float
-  unk_er_f1_43:
+    desc: |
+      Controls where the lens flare(s) from {@link layer3} will appear on the screen relative to the source and the center of the screen.
+
+      This is basically a scalar multiplier for the {@link layer3Reflection offset vector}.
+
+      This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer3Reflection
+      - layer3OffsetVariation
+      - layer3AttenuationRadius
+  layer3OffsetVariation:
     field: float
     default: 1
-  unk_er_f1_44:
+    desc: |
+      For {@link layer3Count each flare} of {@link layer3}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer3Offset} to get the final offset for the flare.
+
+      This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer3Reflection
+      - layer3Offset
+  layer3AttenuationRadius:
     field: float
     default: -1
+    desc:
+      This controls the radius of a sphere around the source for {@link layer3}. {@link layer3Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer3Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+
+      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+
+      Can be set to -1 to disable this limit and always display the flare(s).
+    see:
+      - layer3Reflection
+      - layer3Offset
+      - layer3OffsetVariation
   layer4Count:
     field: int
     default: 1
     desc: |
-      Number of copies of layer 4. Why this exists is unknown, they all just stack on top of each other.
+      The number of flares to create from {@link layer4}. Unless given {@link layer4OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Each copy will pick its own random values for the scale variation.
+      Setting it to very high values can have a significant impact on performance.
     see:
       - layer4ScaleVariationX
       - layer4ScaleVariationY
+      - layer4Reflection
+      - layer4Offset
+      - layer4OffsetVariation
   layer4ScaleVariationX:
     field: float
     default: 1
     desc: |
-      The {@link layer4Width layer's width} is multiplied by a random value between this and 1.
+      The {@link layer4Width width} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer4Count
       - layer4UniformScale
@@ -330,7 +444,7 @@ properties:
     field: float
     default: 1
     desc: |
-      The {@link layer4Height layer's height} is multiplied by a random value between this and 1.
+      The {@link layer4Height height} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
     see:
       - layer4Count
       - layer4UniformScale
@@ -354,18 +468,53 @@ properties:
       Multiplier for the {@link layer4Color layer's color}.
     see:
       - layer4Color
-  unk_er_f1_53:
+  layer4Reflection:
     field: int
-  unk_er_f1_54:
+    enum: ReflectionMode
+    default: ReflectionMode.None
+    desc: |
+      Controls how the offset vector is calculated for {@link layer4}. See {@link ReflectionMode} for more details.
+    see:
+      - layer4Offset
+      - layer4OffsetVariation
+  layer4Offset:
     field: float
-  unk_er_f1_55:
+    desc: |
+      Controls where the lens flare(s) from {@link layer4} will appear on the screen relative to the source and the center of the screen.
+
+      This is basically a scalar multiplier for the {@link layer4Reflection offset vector}.
+
+      This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer4Reflection
+      - layer4OffsetVariation
+      - layer4AttenuationRadius
+  layer4OffsetVariation:
     field: float
     default: 1
-  unk_er_f1_56:
+    desc: |
+      For {@link layer4Count each flare} of {@link layer4}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer4Offset} to get the final offset for the flare.
+
+      This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
+    see:
+      - layer4Reflection
+      - layer4Offset
+  layer4AttenuationRadius:
     field: float
     default: -1
+    desc:
+      This controls the radius of a sphere around the source for {@link layer4}. {@link layer4Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer4Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+
+      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+
+      Can be set to -1 to disable this limit and always display the flare(s).
+    see:
+      - layer4Reflection
+      - layer4Offset
+      - layer4OffsetVariation
   unk_er_f1_57:
     field: int
+    default: 1
   bloom:
     field: bool
     default: false
@@ -532,10 +681,10 @@ games:
       #
       #
       #
-      - unk_er_f1_17
-      - unk_er_f1_18
-      - unk_er_f1_19
-      - unk_er_f1_20
+      - layer1Reflection
+      - layer1Offset
+      - layer1OffsetVariation
+      - layer1AttenuationRadius
       - layer2Count
       - layer2ScaleVariationX
       - layer2ScaleVariationY
@@ -544,10 +693,10 @@ games:
       #
       #
       #
-      - unk_er_f1_29
-      - unk_er_f1_30
-      - unk_er_f1_31
-      - unk_er_f1_32
+      - layer2Reflection
+      - layer2Offset
+      - layer2OffsetVariation
+      - layer2AttenuationRadius
       - layer3Count
       - layer3ScaleVariationX
       - layer3ScaleVariationY
@@ -556,10 +705,10 @@ games:
       #
       #
       #
-      - unk_er_f1_41
-      - unk_er_f1_42
-      - unk_er_f1_43
-      - unk_er_f1_44
+      - layer3Reflection
+      - layer3Offset
+      - layer3OffsetVariation
+      - layer3AttenuationRadius
       - layer4Count
       - layer4ScaleVariationX
       - layer4ScaleVariationY
@@ -568,10 +717,10 @@ games:
       #
       #
       #
-      - unk_er_f1_53
-      - unk_er_f1_54
-      - unk_er_f1_55
-      - unk_er_f1_56
+      - layer4Reflection
+      - layer4Offset
+      - layer4OffsetVariation
+      - layer4AttenuationRadius
       - unk_er_f1_57
       - bloom
       - layer1BloomColor
@@ -660,10 +809,10 @@ games:
       #
       #
       #
-      - unk_er_f1_17
-      - unk_er_f1_18
-      - unk_er_f1_19
-      - unk_er_f1_20
+      - layer1Reflection
+      - layer1Offset
+      - layer1OffsetVariation
+      - layer1AttenuationRadius
       - layer2Count
       - layer2ScaleVariationX
       - layer2ScaleVariationY
@@ -672,10 +821,10 @@ games:
       #
       #
       #
-      - unk_er_f1_29
-      - unk_er_f1_30
-      - unk_er_f1_31
-      - unk_er_f1_32
+      - layer2Reflection
+      - layer2Offset
+      - layer2OffsetVariation
+      - layer2AttenuationRadius
       - layer3Count
       - layer3ScaleVariationX
       - layer3ScaleVariationY
@@ -684,10 +833,10 @@ games:
       #
       #
       #
-      - unk_er_f1_41
-      - unk_er_f1_42
-      - unk_er_f1_43
-      - unk_er_f1_44
+      - layer3Reflection
+      - layer3Offset
+      - layer3OffsetVariation
+      - layer3AttenuationRadius
       - layer4Count
       - layer4ScaleVariationX
       - layer4ScaleVariationY
@@ -696,10 +845,10 @@ games:
       #
       #
       #
-      - unk_er_f1_53
-      - unk_er_f1_54
-      - unk_er_f1_55
-      - unk_er_f1_56
+      - layer4Reflection
+      - layer4Offset
+      - layer4OffsetVariation
+      - layer4AttenuationRadius
       - unk_er_f1_57
       - bloom
       - layer1BloomColor

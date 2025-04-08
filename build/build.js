@@ -493,8 +493,9 @@ export default async function(writeToDist = true) {
            * ${member.desc.trim().replace(/\n/g, '\n   * ')}
            */
           ${name} = ${member.value},
-        `.trim().replace(/^\s{10}/gm, '  ')).join('\n').slice(2)}
-        ${data.name === 'ActionType' ? actionTypes.join('\n  ') : ''}
+        `.trim().replace(/^\s{10}/gm, '  ')).join('\n').slice(2)}${
+          data.name === 'ActionType' ? '\n  ' + actionTypes.join('\n  ') : ''
+        }
       }
     `.trim().replace(/^\s{6}/gm, ''))
   }

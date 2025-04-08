@@ -827,7 +827,6 @@ export enum AttachMode {
    * Only translates with the attachment point (dummypoly). Rotations are entirely ignored.
    */
   DummyPolyTranslation = 4,
-  
 }
 
 /**
@@ -874,7 +873,6 @@ export enum BlendMode {
    * Seemingly identical to {@link Add}?
    */
   Unk7 = 7,
-  
 }
 
 /**
@@ -899,7 +897,6 @@ export enum ConfigType {
    * **Class**: {@link NodeEmitterConfig}
    */
   NodeEmitter = 1005,
-  
 }
 
 /**
@@ -926,7 +923,6 @@ export enum DistortionMode {
    * This seems to just squeeze everything to the bottom left corner?
    */
   Unk4 = 4,
-  
 }
 
 /**
@@ -945,7 +941,6 @@ export enum DistortionShape {
    * An ellipsoid. (Like a sphere, but with three different radii.)
    */
   Ellipsoid = 2,
-  
 }
 
 /**
@@ -988,7 +983,6 @@ export enum EmitterShape {
    * Not yet tested. Found in 800020 in Sekiro.
    */
   Unk5 = 5,
-  
 }
 
 /**
@@ -1015,7 +1009,6 @@ export enum ForceVolumeShape {
    * A square prism volume.
    */
   SquarePrism = 4,
-  
 }
 
 /**
@@ -1067,7 +1060,6 @@ export enum InitialDirection {
    * Local north. (+Z)
    */
   LocalNorth = 6,
-  
 }
 
 /**
@@ -1088,7 +1080,6 @@ export enum LightingMode {
    * Lighting affects the particles just like most regular objects.
    */
   Lit = 0,
-  
 }
 
 /**
@@ -1123,7 +1114,6 @@ export enum ModelOrientationMode {
    * Seemingly identical to {@link GlobalPitch}?
    */
   UnkGlobalPitch = 5,
-  
 }
 
 /**
@@ -1160,7 +1150,6 @@ export enum NodeType {
    * **Class**: {@link NodeEmitterNode}
    */
   NodeEmitter = 2202,
-  
 }
 
 /**
@@ -1213,7 +1202,6 @@ export enum OrientationMode {
    * Not yet tested. Found in 639742 in Elden Ring. This also implies the existence of 8, 9, and 10, but they have not been tested or found yet.
    */
   Unk11 = 11,
-  
 }
 
 /**
@@ -1246,7 +1234,24 @@ export enum PropertyArgument {
    * In property modifiers, which external value is used is controlled by a field in the modifier.
    */
   ExternalValue = 4,
-  
+}
+
+/**
+ * Used by {@link ActionType.LensFlare lens flares} to control the direction of the offset vector.
+ */
+export enum ReflectionMode {
+  /**
+   * No offsets. The flare(s) will appear at the source's position.
+   */
+  None = 0,
+  /**
+   * The source's screen-space position will be reflected through the center of the screen to calculate the offset vector.
+   */
+  Radial = 1,
+  /**
+   * The source's screen-space position will be flipped horizontally to calculate the offset vector.
+   */
+  Horizontal = 2,
 }
 
 /**
@@ -1277,7 +1282,6 @@ export enum RichModelOrientationMode {
    * Tries to face the camera, but is limited to rotation around the vertical global Y-axis.
    */
   GlobalYaw = 4,
-  
 }
 
 /**
@@ -1308,7 +1312,6 @@ export enum TracerOrientationMode {
    * The tracer source is parallel to the global diagonal (1, 1, 1).
    */
   Diagonal = 5,
-  
 }
 /*#Enums end*/
 
@@ -5134,38 +5137,38 @@ const ActionData: Record<string, ActionDataEntry> = {
       layer1ScaleVariationY: { default: 1, field: 2 },
       layer1UniformScale: { default: false, field: 0 },
       layer1ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      unk_er_f1_17: { default: 0, field: 1 },
-      unk_er_f1_18: { default: 0, field: 2 },
-      unk_er_f1_19: { default: 1, field: 2 },
-      unk_er_f1_20: { default: -1, field: 2 },
+      layer1Reflection: { default: ReflectionMode.None, field: 1 },
+      layer1Offset: { default: 0, field: 2 },
+      layer1OffsetVariation: { default: 1, field: 2 },
+      layer1AttenuationRadius: { default: -1, field: 2 },
       layer2Count: { default: 1, field: 1 },
       layer2ScaleVariationX: { default: 1, field: 2 },
       layer2ScaleVariationY: { default: 1, field: 2 },
       layer2UniformScale: { default: false, field: 0 },
       layer2ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      unk_er_f1_29: { default: 0, field: 1 },
-      unk_er_f1_30: { default: 0, field: 2 },
-      unk_er_f1_31: { default: 1, field: 2 },
-      unk_er_f1_32: { default: -1, field: 2 },
+      layer2Reflection: { default: ReflectionMode.None, field: 1 },
+      layer2Offset: { default: 0, field: 2 },
+      layer2OffsetVariation: { default: 1, field: 2 },
+      layer2AttenuationRadius: { default: -1, field: 2 },
       layer3Count: { default: 1, field: 1 },
       layer3ScaleVariationX: { default: 1, field: 2 },
       layer3ScaleVariationY: { default: 1, field: 2 },
       layer3UniformScale: { default: false, field: 0 },
       layer3ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      unk_er_f1_41: { default: 0, field: 1 },
-      unk_er_f1_42: { default: 0, field: 2 },
-      unk_er_f1_43: { default: 1, field: 2 },
-      unk_er_f1_44: { default: -1, field: 2 },
+      layer3Reflection: { default: ReflectionMode.None, field: 1 },
+      layer3Offset: { default: 0, field: 2 },
+      layer3OffsetVariation: { default: 1, field: 2 },
+      layer3AttenuationRadius: { default: -1, field: 2 },
       layer4Count: { default: 1, field: 1 },
       layer4ScaleVariationX: { default: 1, field: 2 },
       layer4ScaleVariationY: { default: 1, field: 2 },
       layer4UniformScale: { default: false, field: 0 },
       layer4ColorMultiplier: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      unk_er_f1_53: { default: 0, field: 1 },
-      unk_er_f1_54: { default: 0, field: 2 },
-      unk_er_f1_55: { default: 1, field: 2 },
-      unk_er_f1_56: { default: -1, field: 2 },
-      unk_er_f1_57: { default: 0, field: 1 },
+      layer4Reflection: { default: ReflectionMode.None, field: 1 },
+      layer4Offset: { default: 0, field: 2 },
+      layer4OffsetVariation: { default: 1, field: 2 },
+      layer4AttenuationRadius: { default: -1, field: 2 },
+      unk_er_f1_57: { default: 1, field: 1 },
       bloom: { default: false, field: 0 },
       layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
       layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
@@ -5218,12 +5221,12 @@ const ActionData: Record<string, ActionDataEntry> = {
     games: {
       [Game.Sekiro]: Game.EldenRing,
       [Game.EldenRing]: {
-        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor'],
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','layer1Reflection','layer1Offset','layer1OffsetVariation','layer1AttenuationRadius','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','layer2Reflection','layer2Offset','layer2OffsetVariation','layer2AttenuationRadius','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','layer3Reflection','layer3Offset','layer3OffsetVariation','layer3AttenuationRadius','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','layer4Reflection','layer4Offset','layer4OffsetVariation','layer4AttenuationRadius','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','unk_er_f2_4','unk_er_f2_5','unk_er_f2_6','unk_er_f2_7','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','unk_er_f2_14','unk_er_f2_15','unk_er_f2_16','unk_er_f2_17','unk_er_f2_18','unk_er_f2_19','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unk_er_f2_25','unk_er_f2_26','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36'],
         properties1: ['layer1Width','layer1Height','layer1Color','layer2Width','layer2Height','layer2Color','layer3Width','layer3Height','layer3Color','layer4Width','layer4Height','layer4Color']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','unk_er_f1_29','unk_er_f1_30','unk_er_f1_31','unk_er_f1_32','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','unk_er_f1_41','unk_er_f1_42','unk_er_f1_43','unk_er_f1_44','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','unk_er_f1_53','unk_er_f1_54','unk_er_f1_55','unk_er_f1_56','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
+        fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','layer1Reflection','layer1Offset','layer1OffsetVariation','layer1AttenuationRadius','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','layer2Reflection','layer2Offset','layer2OffsetVariation','layer2AttenuationRadius','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','layer3Reflection','layer3Offset','layer3OffsetVariation','layer3AttenuationRadius','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','layer4Reflection','layer4Offset','layer4OffsetVariation','layer4AttenuationRadius','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
         fields2: Game.EldenRing,
         properties1: Game.EldenRing
       }
@@ -27772,19 +27775,22 @@ class LensFlare extends DataAction {
    */
   unk_er_f1_8: number
   /**
-   * Number of copies of layer 1. Why this exists is unknown, they all just stack on top of each other.
+   * The number of flares to create from {@link layer1}. Unless given {@link layer1OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
    * 
-   * Each copy will pick its own random values for the scale variation.
+   * Setting it to very high values can have a significant impact on performance.
    * 
    * **Default**: `1`
    * 
    * See also:
    * - {@link layer1ScaleVariationX}
    * - {@link layer1ScaleVariationY}
+   * - {@link layer1Reflection}
+   * - {@link layer1Offset}
+   * - {@link layer1OffsetVariation}
    */
   layer1Count: number
   /**
-   * The {@link layer1Width layer's width} is multiplied by a random value between this and 1.
+   * The {@link layer1Width width} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -27795,7 +27801,7 @@ class LensFlare extends DataAction {
    */
   layer1ScaleVariationX: number
   /**
-   * The {@link layer1Height layer's height} is multiplied by a random value between this and 1.
+   * The {@link layer1Height height} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -27827,43 +27833,72 @@ class LensFlare extends DataAction {
    */
   layer1ColorMultiplier: Vector4
   /**
-   * Unknown integer.
+   * Controls how the offset vector is calculated for {@link layer1}. See {@link ReflectionMode} for more details.
+   * 
+   * **Default**: {@link ReflectionMode.None}
+   * 
+   * See also:
+   * - {@link layer1Offset}
+   * - {@link layer1OffsetVariation}
+   */
+  layer1Reflection: number
+  /**
+   * Controls where the lens flare(s) from {@link layer1} will appear on the screen relative to the source and the center of the screen.
+   * 
+   * This is basically a scalar multiplier for the {@link layer1Reflection offset vector}.
+   * 
+   * This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `0`
-   */
-  unk_er_f1_17: number
-  /**
-   * Unknown float.
    * 
-   * **Default**: `0`
+   * See also:
+   * - {@link layer1Reflection}
+   * - {@link layer1OffsetVariation}
+   * - {@link layer1AttenuationRadius}
    */
-  unk_er_f1_18: number
+  layer1Offset: number
   /**
-   * Unknown float.
+   * For {@link layer1Count each flare} of {@link layer1}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer1Offset} to get the final offset for the flare.
+   * 
+   * This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer1Reflection}
+   * - {@link layer1Offset}
    */
-  unk_er_f1_19: number
+  layer1OffsetVariation: number
   /**
-   * Unknown float.
+   * This controls the radius of a sphere around the source for {@link layer1}. {@link layer1Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer1Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
-   */
-  unk_er_f1_20: number
-  /**
-   * Number of copies of layer 2. Why this exists is unknown, they all just stack on top of each other.
    * 
-   * Each copy will pick its own random values for the scale variation.
+   * See also:
+   * - {@link layer1Reflection}
+   * - {@link layer1Offset}
+   * - {@link layer1OffsetVariation}
+   */
+  layer1AttenuationRadius: number
+  /**
+   * The number of flares to create from {@link layer2}. Unless given {@link layer2OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+   * 
+   * Setting it to very high values can have a significant impact on performance.
    * 
    * **Default**: `1`
    * 
    * See also:
    * - {@link layer2ScaleVariationX}
    * - {@link layer2ScaleVariationY}
+   * - {@link layer2Reflection}
+   * - {@link layer2Offset}
+   * - {@link layer2OffsetVariation}
    */
   layer2Count: number
   /**
-   * The {@link layer2Width layer's width} is multiplied by a random value between this and 1.
+   * The {@link layer2Width width} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -27874,7 +27909,7 @@ class LensFlare extends DataAction {
    */
   layer2ScaleVariationX: number
   /**
-   * The {@link layer2Height layer's height} is multiplied by a random value between this and 1.
+   * The {@link layer2Height height} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -27906,43 +27941,72 @@ class LensFlare extends DataAction {
    */
   layer2ColorMultiplier: Vector4
   /**
-   * Unknown integer.
+   * Controls how the offset vector is calculated for {@link layer2}. See {@link ReflectionMode} for more details.
+   * 
+   * **Default**: {@link ReflectionMode.None}
+   * 
+   * See also:
+   * - {@link layer2Offset}
+   * - {@link layer2OffsetVariation}
+   */
+  layer2Reflection: number
+  /**
+   * Controls where the lens flare(s) from {@link layer2} will appear on the screen relative to the source and the center of the screen.
+   * 
+   * This is basically a scalar multiplier for the {@link layer2Reflection offset vector}.
+   * 
+   * This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `0`
-   */
-  unk_er_f1_29: number
-  /**
-   * Unknown float.
    * 
-   * **Default**: `0`
+   * See also:
+   * - {@link layer2Reflection}
+   * - {@link layer2OffsetVariation}
+   * - {@link layer2AttenuationRadius}
    */
-  unk_er_f1_30: number
+  layer2Offset: number
   /**
-   * Unknown float.
+   * For {@link layer2Count each flare} of {@link layer2}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer2Offset} to get the final offset for the flare.
+   * 
+   * This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer2Reflection}
+   * - {@link layer2Offset}
    */
-  unk_er_f1_31: number
+  layer2OffsetVariation: number
   /**
-   * Unknown float.
+   * This controls the radius of a sphere around the source for {@link layer2}. {@link layer2Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer2Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
-   */
-  unk_er_f1_32: number
-  /**
-   * Number of copies of layer 3. Why this exists is unknown, they all just stack on top of each other.
    * 
-   * Each copy will pick its own random values for the scale variation.
+   * See also:
+   * - {@link layer2Reflection}
+   * - {@link layer2Offset}
+   * - {@link layer2OffsetVariation}
+   */
+  layer2AttenuationRadius: number
+  /**
+   * The number of flares to create from {@link layer3}. Unless given {@link layer3OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+   * 
+   * Setting it to very high values can have a significant impact on performance.
    * 
    * **Default**: `1`
    * 
    * See also:
    * - {@link layer3ScaleVariationX}
    * - {@link layer3ScaleVariationY}
+   * - {@link layer3Reflection}
+   * - {@link layer3Offset}
+   * - {@link layer3OffsetVariation}
    */
   layer3Count: number
   /**
-   * The {@link layer3Width layer's width} is multiplied by a random value between this and 1.
+   * The {@link layer3Width width} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -27953,7 +28017,7 @@ class LensFlare extends DataAction {
    */
   layer3ScaleVariationX: number
   /**
-   * The {@link layer3Height layer's height} is multiplied by a random value between this and 1.
+   * The {@link layer3Height height} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -27985,43 +28049,72 @@ class LensFlare extends DataAction {
    */
   layer3ColorMultiplier: Vector4
   /**
-   * Unknown integer.
+   * Controls how the offset vector is calculated for {@link layer3}. See {@link ReflectionMode} for more details.
+   * 
+   * **Default**: {@link ReflectionMode.None}
+   * 
+   * See also:
+   * - {@link layer3Offset}
+   * - {@link layer3OffsetVariation}
+   */
+  layer3Reflection: number
+  /**
+   * Controls where the lens flare(s) from {@link layer3} will appear on the screen relative to the source and the center of the screen.
+   * 
+   * This is basically a scalar multiplier for the {@link layer3Reflection offset vector}.
+   * 
+   * This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `0`
-   */
-  unk_er_f1_41: number
-  /**
-   * Unknown float.
    * 
-   * **Default**: `0`
+   * See also:
+   * - {@link layer3Reflection}
+   * - {@link layer3OffsetVariation}
+   * - {@link layer3AttenuationRadius}
    */
-  unk_er_f1_42: number
+  layer3Offset: number
   /**
-   * Unknown float.
+   * For {@link layer3Count each flare} of {@link layer3}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer3Offset} to get the final offset for the flare.
+   * 
+   * This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer3Reflection}
+   * - {@link layer3Offset}
    */
-  unk_er_f1_43: number
+  layer3OffsetVariation: number
   /**
-   * Unknown float.
+   * This controls the radius of a sphere around the source for {@link layer3}. {@link layer3Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer3Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
-   */
-  unk_er_f1_44: number
-  /**
-   * Number of copies of layer 4. Why this exists is unknown, they all just stack on top of each other.
    * 
-   * Each copy will pick its own random values for the scale variation.
+   * See also:
+   * - {@link layer3Reflection}
+   * - {@link layer3Offset}
+   * - {@link layer3OffsetVariation}
+   */
+  layer3AttenuationRadius: number
+  /**
+   * The number of flares to create from {@link layer4}. Unless given {@link layer4OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+   * 
+   * Setting it to very high values can have a significant impact on performance.
    * 
    * **Default**: `1`
    * 
    * See also:
    * - {@link layer4ScaleVariationX}
    * - {@link layer4ScaleVariationY}
+   * - {@link layer4Reflection}
+   * - {@link layer4Offset}
+   * - {@link layer4OffsetVariation}
    */
   layer4Count: number
   /**
-   * The {@link layer4Width layer's width} is multiplied by a random value between this and 1.
+   * The {@link layer4Width width} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -28032,7 +28125,7 @@ class LensFlare extends DataAction {
    */
   layer4ScaleVariationX: number
   /**
-   * The {@link layer4Height layer's height} is multiplied by a random value between this and 1.
+   * The {@link layer4Height height} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
    * 
    * **Default**: `1`
    * 
@@ -28064,33 +28157,59 @@ class LensFlare extends DataAction {
    */
   layer4ColorMultiplier: Vector4
   /**
-   * Unknown integer.
+   * Controls how the offset vector is calculated for {@link layer4}. See {@link ReflectionMode} for more details.
+   * 
+   * **Default**: {@link ReflectionMode.None}
+   * 
+   * See also:
+   * - {@link layer4Offset}
+   * - {@link layer4OffsetVariation}
+   */
+  layer4Reflection: number
+  /**
+   * Controls where the lens flare(s) from {@link layer4} will appear on the screen relative to the source and the center of the screen.
+   * 
+   * This is basically a scalar multiplier for the {@link layer4Reflection offset vector}.
+   * 
+   * This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `0`
-   */
-  unk_er_f1_53: number
-  /**
-   * Unknown float.
    * 
-   * **Default**: `0`
+   * See also:
+   * - {@link layer4Reflection}
+   * - {@link layer4OffsetVariation}
+   * - {@link layer4AttenuationRadius}
    */
-  unk_er_f1_54: number
+  layer4Offset: number
   /**
-   * Unknown float.
+   * For {@link layer4Count each flare} of {@link layer4}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer4Offset} to get the final offset for the flare.
+   * 
+   * This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
    * 
    * **Default**: `1`
+   * 
+   * See also:
+   * - {@link layer4Reflection}
+   * - {@link layer4Offset}
    */
-  unk_er_f1_55: number
+  layer4OffsetVariation: number
   /**
-   * Unknown float.
+   * This controls the radius of a sphere around the source for {@link layer4}. {@link layer4Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer4Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
+   * 
+   * See also:
+   * - {@link layer4Reflection}
+   * - {@link layer4Offset}
+   * - {@link layer4OffsetVariation}
    */
-  unk_er_f1_56: number
+  layer4AttenuationRadius: number
   /**
    * Unknown integer.
    * 
-   * **Default**: `0`
+   * **Default**: `1`
    */
   unk_er_f1_57: number
   /**
