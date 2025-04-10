@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Named and documented a field in `Tracer` actions:
+  - `unk_sdt_f1_17` -> `varianceU` - The default value has been changed from `1` to `0`.
+
 ## [22.0.0] - 2025-04-10
 
 - Named and documented **16** fields in `LensFlare` actions, and fixed some issues with other fields:

@@ -5015,7 +5015,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       dynamicOpacity: { default: false, field: 0 },
       unk_sdt_f1_15: { default: 1, field: 2 },
       unk_sdt_f1_16: { default: 1, field: 2 },
-      unk_sdt_f1_17: { default: 1, field: 2 },
+      varianceU: { default: 0, field: 2 },
       unk_er_f1_18: { default: 1, field: 1 },
       unk_er_f1_19: { default: 1, field: 1 },
       unk_er_f1_20: { default: 0, field: 1 },
@@ -5068,13 +5068,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','varianceU'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','varianceU','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -27235,11 +27235,11 @@ class Tracer extends DataAction {
    */
   unk_sdt_f1_16: number
   /**
-   * Unknown float.
+   * Maximum random horizontal offset for the UV.
    * 
-   * **Default**: `1`
+   * **Default**: `0`
    */
-  unk_sdt_f1_17: number
+  varianceU: number
   /**
    * Unknown integer.
    * 
