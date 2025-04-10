@@ -8983,7 +8983,7 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
       props.followRotation = !props.followRotation
       return props
     },
-    write(props: Props<NodeAccelerationPartialFollow>, game: Game) {
+    write(props: Props<NodeSpeedPartialFollow>, game: Game) {
       props.turnInterval = Math.round(props.turnInterval * 50)
       props.followRotation = !props.followRotation
       return props
