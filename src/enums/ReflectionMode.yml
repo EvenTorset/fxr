@@ -1,0 +1,16 @@
+name: ReflectionMode
+desc: |
+  Used by {@link ActionType.LensFlare lens flares} to control the direction of the offset vector.
+members:
+  None:
+    value: 0
+    desc: |
+      No offsets. The flare(s) will appear at the source's position.
+  Radial:
+    value: 1
+    desc: |
+      The source's screen-space position will be reflected through the center of the screen to calculate the offset vector.
+  Horizontal:
+    value: 2
+    desc: |
+      The source's screen-space position will be flipped horizontally to calculate the offset vector.
