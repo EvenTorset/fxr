@@ -5258,15 +5258,15 @@ const ActionData: Record<string, ActionDataEntry> = {
       rgbMultiplier2: { default: 1 },
       unk_er_p1_19: { default: 0 },
       unk_er_p1_20: { default: 0 },
-      uvOffset: { default: [0, 0] },
-      uvSpeed: { default: [0, 0], time: 1 },
-      uvSpeedMultiplier: { default: [1, 1] },
-      uOffset: { default: 0, omit: 1 },
-      vOffset: { default: 0, omit: 1 },
-      uSpeed: { default: 0, omit: 1 },
-      uSpeedMultiplier: { default: 0, omit: 1 },
-      vSpeed: { default: 0, omit: 1 },
-      vSpeedMultiplier: { default: 0, omit: 1 },
+      offsetUV: { default: [0, 0] },
+      speedUV: { default: [0, 0], time: 1 },
+      speedMultiplierUV: { default: [1, 1] },
+      offsetU: { default: 0, omit: 1 },
+      offsetV: { default: 0, omit: 1 },
+      speedU: { default: 0, omit: 1 },
+      speedMultiplierU: { default: 0, omit: 1 },
+      speedV: { default: 0, omit: 1 },
+      speedMultiplierV: { default: 0, omit: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_er_p2_2: { default: 0 },
@@ -5351,13 +5351,13 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomColor','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
       [Game.ArmoredCore6]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
         fields2: Game.EldenRing,
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','offsetUV','speedUV','speedMultiplierUV'],
         properties2: Game.EldenRing
       }
     }
@@ -9036,17 +9036,17 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
   [ActionType.RichModel]: {
     read(props: any, game: Game) {
       if (game === Game.EldenRing) {
-        props.uvOffset = combineComponents(props.uOffset, props.vOffset)
-        props.uvSpeed = combineComponents(props.uSpeed, props.vSpeed)
-        props.uvSpeedMultiplier = combineComponents(props.uSpeedMultiplier, props.vSpeedMultiplier)
+        props.offsetUV = combineComponents(props.offsetU, props.offsetV)
+        props.speedUV = combineComponents(props.speedU, props.speedV)
+        props.speedMultiplierUV = combineComponents(props.speedMultiplierU, props.speedMultiplierV)
       }
       return props
     },
     write(props: any, game: Game) {
       if (game === Game.EldenRing) {
-        ;[props.uOffset, props.vOffset] = separateComponents(props.uvOffset)
-        ;[props.uSpeed, props.vSpeed] = separateComponents(props.uvSpeed)
-        ;[props.uSpeedMultiplier, props.vSpeedMultiplier] = separateComponents(props.uvSpeedMultiplier)
+        ;[props.offsetU, props.offsetV] = separateComponents(props.offsetUV)
+        ;[props.speedU, props.speedV] = separateComponents(props.speedUV)
+        ;[props.speedMultiplierU, props.speedMultiplierV] = separateComponents(props.speedMultiplierUV)
       }
       return props
     }
@@ -28779,9 +28779,9 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link uvSpeed}
+   * - {@link speedUV}
    */
-  uvOffset: Vector2Value
+  offsetUV: Vector2Value
   /**
    * Scroll speed for the model's texture.
    * 
@@ -28790,17 +28790,17 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
-   * - {@link uvSpeedMultiplier}
+   * - {@link speedMultiplierUV}
    */
-  uvSpeed: Vector2Value
+  speedUV: Vector2Value
   /**
-   * Multiplier for {@link uvSpeed}
+   * Multiplier for {@link speedUV}
    * 
    * **Default**: `[1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  uvSpeedMultiplier: Vector2Value
+  speedMultiplierUV: Vector2Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 

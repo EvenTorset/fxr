@@ -4,6 +4,10 @@
 
 - Named and documented a field in `Tracer` actions:
   - `unk_sdt_f1_17` -> `varianceU` - The default value has been changed from `1` to `0`.
+- A few properties in the `RichModel` class have been renamed to be more consistent with similar property names in other classes:
+  - `uvOffset` -> `offsetUV`
+  - `uvSpeed` -> `speedUV`
+  - `uvSpeedMultiplier` -> `speedMultiplierUV`
 
 ## [22.0.0] - 2025-04-10
 
