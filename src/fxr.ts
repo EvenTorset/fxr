@@ -11612,8 +11612,7 @@ class NodeEmitterNode extends NodeWithConfigs {
   declare configs: NodeEmitterConfig[]
 
   /**
-   * @param actions A list of actions to construct a {@link NodeEmitterConfig} 
-   * with.
+   * @param actions A list of actions to construct a {@link NodeEmitterConfig} with.
    * @param nodes A list of child nodes.
    */
   constructor(actions?: AnyAction[], nodes?: Node[])
