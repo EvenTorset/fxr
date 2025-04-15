@@ -8,6 +8,12 @@
   - `uvOffset` -> `offsetUV`
   - `uvSpeed` -> `speedUV`
   - `uvSpeedMultiplier` -> `speedMultiplierUV`
+- The offset properties in the following actions no longer scale when using the `scale` method on nodes and actions:
+  - `BillboardEx`
+  - `MultiTextureBillboardEx`
+  - `Distortion`
+  - `RadialBlur`
+  - These offsets are based on the particle size, so the offset would previously be scaled by the square of the scaling factor.
 
 ## [22.0.0] - 2025-04-10
 
