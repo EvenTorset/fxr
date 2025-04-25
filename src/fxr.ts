@@ -711,9 +711,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link RichModel}
    * 
-   * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+   * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
    * 
    * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
+   * 
+   * The name is from Elden Ring's RTTI.
    */
   RichModel = 10015,
   /**
@@ -2807,19 +2809,19 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       interval: { default: 1, time: 2 },
-      perInterval: { default: 1 },
-      totalIntervals: { default: -1 },
+      perEmission: { default: 1 },
+      totalEmissions: { default: -1 },
       maxConcurrent: { default: -1, field: 1 },
       unk_ds3_f1_1: { default: 1, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
         fields1: ['maxConcurrent','unk_ds3_f1_1'],
-        properties1: ['interval','perInterval','totalIntervals']
+        properties1: ['interval','perEmission','totalEmissions']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1'],
-        properties1: ['interval','perInterval','totalIntervals','maxConcurrent']
+        properties1: ['interval','perEmission','totalEmissions','maxConcurrent']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -2831,7 +2833,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       threshold: { default: 0.1, scale: 1 },
-      unk_ds3_p1_2: { default: -1 },
+      totalEmissions: { default: -1 },
       maxConcurrent: { default: -1, field: 1 },
       unk_ds3_p1_1: { default: 1 },
       unk_ds3_f1_1: { default: 1, field: 1 },
@@ -2840,11 +2842,11 @@ const ActionData: Record<string, ActionDataEntry> = {
     games: {
       [Game.DarkSouls3]: {
         fields1: ['maxConcurrent','unk_ds3_f1_1'],
-        properties1: ['threshold','unk_ds3_p1_1','unk_ds3_p1_2']
+        properties1: ['threshold','unk_ds3_p1_1','totalEmissions']
       },
       [Game.Sekiro]: {
         fields1: ['unk_ds3_f1_1','unk_sdt_f1_1'],
-        properties1: ['threshold','unk_ds3_p1_2','maxConcurrent']
+        properties1: ['threshold','totalEmissions','maxConcurrent']
       },
       [Game.EldenRing]: Game.Sekiro,
       [Game.ArmoredCore6]: Game.Sekiro
@@ -3293,9 +3295,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      offsetX: { default: 0, scale: 1 },
-      offsetY: { default: 0, scale: 1 },
-      offsetZ: { default: 0, scale: 1 },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
       width: { default: 1, scale: 5 },
       height: { default: 1, scale: 5 },
       color1: { default: [1, 1, 1, 1], color: 2 },
@@ -3413,9 +3415,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      offsetX: { default: 0, scale: 1 },
-      offsetY: { default: 0, scale: 1 },
-      offsetZ: { default: 0, scale: 1 },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
       width: { default: 1, scale: 5 },
       height: { default: 1, scale: 5 },
       rotationX: { default: 0 },
@@ -3786,9 +3788,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      offsetX: { default: 0, scale: 1 },
-      offsetY: { default: 0, scale: 1 },
-      offsetZ: { default: 0, scale: 1 },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
       sizeX: { default: 1, scale: 5 },
       sizeY: { default: 1, scale: 5 },
       sizeZ: { default: 1, scale: 5 },
@@ -3891,9 +3893,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
       mask: { default: 1, field: 1, resource: 0, textureType: 'a' },
-      offsetX: { default: 0, scale: 1 },
-      offsetY: { default: 0, scale: 1 },
-      offsetZ: { default: 0, scale: 1 },
+      offsetX: { default: 0 },
+      offsetY: { default: 0 },
+      offsetZ: { default: 0 },
       width: { default: 1, scale: 5 },
       height: { default: 1, scale: 5 },
       color: { default: [1, 1, 1, 1], color: 2 },
@@ -4012,7 +4014,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_25: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
       asymmetryParam: { default: 0.75, field: 2 },
-      falloffExponent: { default: 1, field: 2 },
+      adaptationExponent: { default: 0, field: 2 },
       unk_er_f2_29: { default: 1, field: 1 },
       unk_er_f2_30: { default: 1, field: 2 },
       unk_er_f2_31: { default: 1, field: 1 },
@@ -4028,13 +4030,13 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: {
         fields1: Game.DarkSouls3,
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','adaptationExponent'],
         properties1: Game.DarkSouls3,
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_sdt_p2_2','diffuseMultiplier','specularMultiplier']
       },
       [Game.EldenRing]: {
         fields1: Game.DarkSouls3,
-        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','falloffExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','adaptationExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32'],
         properties1: Game.DarkSouls3,
         properties2: Game.Sekiro
       },
@@ -5015,7 +5017,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       dynamicOpacity: { default: false, field: 0 },
       unk_sdt_f1_15: { default: 1, field: 2 },
       unk_sdt_f1_16: { default: 1, field: 2 },
-      unk_sdt_f1_17: { default: 1, field: 2 },
+      varianceU: { default: 0, field: 2 },
       unk_er_f1_18: { default: 1, field: 1 },
       unk_er_f1_19: { default: 1, field: 1 },
       unk_er_f1_20: { default: 0, field: 1 },
@@ -5068,13 +5070,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties2: ['rgbMultiplier','alphaMultiplier','distortionIntensity','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold']
       },
       [Game.Sekiro]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','varianceU'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity'],
         properties1: ['texture','blendMode','width','widthMultiplier','startFadeEndpoint','endFadeEndpoint','color1','color2','color3','alphaFadeThreshold','frameIndex','frameIndexOffset','textureFraction','speedU','varianceV','unk_ds3_p1_13'],
         properties2: Game.DarkSouls3
       },
       [Game.EldenRing]: {
-        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','unk_sdt_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
+        fields1: ['orientation','normalMap','segmentInterval','segmentDuration','concurrentSegments','segmentSubdivision','unk_ds3_f1_8','fadeOutTime','columns','totalFrames','attachedUV','unk_ds3_f1_13','unk_ds3_f1_14','unk_ds3_f1_15','dynamicOpacity','unk_sdt_f1_15','unk_sdt_f1_16','varianceU','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21'],
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
@@ -5258,15 +5260,15 @@ const ActionData: Record<string, ActionDataEntry> = {
       rgbMultiplier2: { default: 1 },
       unk_er_p1_19: { default: 0 },
       unk_er_p1_20: { default: 0 },
-      uvOffset: { default: [0, 0] },
-      uvSpeed: { default: [0, 0], time: 1 },
-      uvSpeedMultiplier: { default: [1, 1] },
-      uOffset: { default: 0, omit: 1 },
-      vOffset: { default: 0, omit: 1 },
-      uSpeed: { default: 0, omit: 1 },
-      uSpeedMultiplier: { default: 0, omit: 1 },
-      vSpeed: { default: 0, omit: 1 },
-      vSpeedMultiplier: { default: 0, omit: 1 },
+      offsetUV: { default: [0, 0] },
+      speedUV: { default: [0, 0], time: 1 },
+      speedMultiplierUV: { default: [1, 1] },
+      offsetU: { default: 0, omit: 1 },
+      offsetV: { default: 0, omit: 1 },
+      speedU: { default: 0, omit: 1 },
+      speedMultiplierU: { default: 0, omit: 1 },
+      speedV: { default: 0, omit: 1 },
+      speedMultiplierV: { default: 0, omit: 1 },
       rgbMultiplier: { default: 1 },
       alphaMultiplier: { default: 1 },
       unk_er_p2_2: { default: 0 },
@@ -5297,7 +5299,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_er_f1_20: { default: 0, field: 1 },
       unk_er_f1_21: { default: 0, field: 1 },
       unk_er_f1_22: { default: 0, field: 1 },
-      unk_er_f1_23: { default: 0, field: 1 },
+      unkBlendMode: { default: 0, field: 1 },
       unk_ac6_f1_24: { default: 0, field: 2 },
       unk_ac6_f1_25: { default: -1, field: 2 },
       unk_ac6_f1_26: { default: -1, field: 2 },
@@ -5349,15 +5351,15 @@ const ActionData: Record<string, ActionDataEntry> = {
     },
     games: {
       [Game.EldenRing]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_er_f1_24','unk_er_f1_25'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unkBlendMode','unk_er_f1_24','unk_er_f1_25'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomColor','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uOffset','vOffset','uSpeed','uSpeedMultiplier','vSpeed','vSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','offsetU','offsetV','speedU','speedMultiplierU','speedV','speedMultiplierV'],
         properties2: ['rgbMultiplier','alphaMultiplier','unk_er_p2_2','unk_er_p2_3','unk_er_p2_4','unk_er_p2_5','unk_er_p2_6']
       },
       [Game.ArmoredCore6]: {
-        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unk_er_f1_23','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unkBlendMode','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34'],
         fields2: Game.EldenRing,
-        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','uvOffset','uvSpeed','uvSpeedMultiplier'],
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','offsetUV','speedUV','speedMultiplierUV'],
         properties2: Game.EldenRing
       }
     }
@@ -5831,7 +5833,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f1_20: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
       asymmetryParam: { default: 0.75, field: 2 },
-      falloffExponent: { default: 1, field: 2 },
+      adaptationExponent: { default: 0, field: 2 },
       unk_er_f1_24: { default: 1, field: 1 },
       unk_er_f1_25: { default: 1, field: 2 },
       unk_er_f1_26: { default: 1, field: 1 },
@@ -5847,11 +5849,11 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['diffuseColor','specularColor','near','far','radiusX','radiusY','unk_ds3_p1_6','unk_ds3_p1_7']
       },
       [Game.Sekiro]: {
-        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent'],
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','adaptationExponent'],
         properties1: ['diffuseColor','specularColor','diffuseMultiplier','specularMultiplier','near','far','radiusX','radiusY','unk_ds3_p1_6','unk_ds3_p1_7','unk_sdt_p1_10']
       },
       [Game.EldenRing]: {
-        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','falloffExponent','unk_er_f1_24','unk_er_f1_25','unk_er_f1_26','unk_er_f1_27'],
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','adaptationExponent','unk_er_f1_24','unk_er_f1_25','unk_er_f1_26','unk_er_f1_27'],
         properties1: Game.Sekiro
       },
       [Game.ArmoredCore6]: Game.EldenRing
@@ -9011,8 +9013,8 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
     read(props: Props<PointLight>, game: Game) {
       props.fadeOutTime = props.fadeOutTime / 30
       if (game === Game.DarkSouls3) {
-        props.diffuseMultiplier = 100
-        props.specularMultiplier = 100
+        props.diffuseMultiplier = 10
+        props.specularMultiplier = 10
       }
       return props
     },
@@ -9022,12 +9024,12 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
         const diffuseComps = separateComponents(props.diffuseColor)
         props.diffuseColor = combineComponents<ValueType.Vector4>(
           ...diffuseComps.slice(0, 3) as Vector3Components,
-          anyValueMult(diffuseComps[3], anyValueMult(1/100, props.diffuseMultiplier))
+          anyValueMult(diffuseComps[3], anyValueMult(1/10, props.diffuseMultiplier))
         ) as Vector4Value
         const specularComps = separateComponents(props.specularColor)
         props.specularColor = combineComponents<ValueType.Vector4>(
           ...specularComps.slice(0, 3) as Vector3Components,
-          anyValueMult(specularComps[3], anyValueMult(1/100, props.specularMultiplier))
+          anyValueMult(specularComps[3], anyValueMult(1/10, props.specularMultiplier))
         ) as Vector4Value
       }
       return props
@@ -9036,17 +9038,17 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
   [ActionType.RichModel]: {
     read(props: any, game: Game) {
       if (game === Game.EldenRing) {
-        props.uvOffset = combineComponents(props.uOffset, props.vOffset)
-        props.uvSpeed = combineComponents(props.uSpeed, props.vSpeed)
-        props.uvSpeedMultiplier = combineComponents(props.uSpeedMultiplier, props.vSpeedMultiplier)
+        props.offsetUV = combineComponents(props.offsetU, props.offsetV)
+        props.speedUV = combineComponents(props.speedU, props.speedV)
+        props.speedMultiplierUV = combineComponents(props.speedMultiplierU, props.speedMultiplierV)
       }
       return props
     },
     write(props: any, game: Game) {
       if (game === Game.EldenRing) {
-        ;[props.uOffset, props.vOffset] = separateComponents(props.uvOffset)
-        ;[props.uSpeed, props.vSpeed] = separateComponents(props.uvSpeed)
-        ;[props.uSpeedMultiplier, props.vSpeedMultiplier] = separateComponents(props.uvSpeedMultiplier)
+        ;[props.offsetU, props.offsetV] = separateComponents(props.offsetUV)
+        ;[props.speedU, props.speedV] = separateComponents(props.speedUV)
+        ;[props.speedMultiplierU, props.speedMultiplierV] = separateComponents(props.speedMultiplierUV)
       }
       return props
     }
@@ -9245,8 +9247,8 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
         props.diffuseMultiplier = 255/100
         props.specularMultiplier = 255/100
       } else {
-        props.diffuseMultiplier = anyValueMult(1/100, props.diffuseMultiplier) as ScalarValue
-        props.specularMultiplier = anyValueMult(1/100, props.specularMultiplier) as ScalarValue
+        props.diffuseMultiplier = anyValueMult(1/10, props.diffuseMultiplier) as ScalarValue
+        props.specularMultiplier = anyValueMult(1/10, props.specularMultiplier) as ScalarValue
       }
       return props
     },
@@ -9256,8 +9258,8 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
         props.diffuseColor = anyValueMult(anyValueMult(100, props.diffuseMultiplier), props.diffuseColor) as Vector4Value
         props.specularColor = anyValueMult(anyValueMult(100, props.specularMultiplier), props.specularColor) as Vector4Value
       } else {
-        props.diffuseMultiplier = anyValueMult(100, props.diffuseMultiplier) as ScalarValue
-        props.specularMultiplier = anyValueMult(100, props.specularMultiplier) as ScalarValue
+        props.diffuseMultiplier = anyValueMult(10, props.diffuseMultiplier) as ScalarValue
+        props.specularMultiplier = anyValueMult(10, props.specularMultiplier) as ScalarValue
       }
       return props
     }
@@ -11612,8 +11614,7 @@ class NodeEmitterNode extends NodeWithConfigs {
   declare configs: NodeEmitterConfig[]
 
   /**
-   * @param actions A list of actions to construct a {@link NodeEmitterConfig} 
-   * with.
+   * @param actions A list of actions to construct a {@link NodeEmitterConfig} with.
    * @param nodes A list of child nodes.
    */
   constructor(actions?: AnyAction[], nodes?: Node[])
@@ -14838,15 +14839,15 @@ class PeriodicEmitter extends DataAction {
    */
   interval: ScalarValue
   /**
-   * The number of particles to emit per interval. They all spawn at the same time per interval.
+   * The number of particles or nodes to emit per emission.
    * 
    * **Default**: `1`
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  perInterval: ScalarValue
+  perEmission: ScalarValue
   /**
-   * The total number of intervals to emit particles. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+   * The total number of emissions. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
    * 
    * Can be set to `-1` to disable the limit.
    * 
@@ -14854,9 +14855,9 @@ class PeriodicEmitter extends DataAction {
    * 
    * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  totalIntervals: ScalarValue
+  totalEmissions: ScalarValue
   /**
-   * Maximum number of concurrent particles. Can be set to `-1` to disable the limit.
+   * Maximum number of concurrent emitted particles or nodes. Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
    * 
@@ -14892,13 +14893,17 @@ class EqualDistanceEmitter extends DataAction {
    */
   threshold: ScalarValue
   /**
-   * Unknown scalar.
+   * The total number of emissions. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+   * 
+   * Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
+   * 
+   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
    */
-  unk_ds3_p1_2: ScalarValue
+  totalEmissions: ScalarValue
   /**
-   * Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+   * Maximum number of concurrent emitted particles or nodes. Can be set to `-1` to disable the limit.
    * 
    * **Default**: `-1`
    * 
@@ -21146,15 +21151,12 @@ class PointLight extends DataAction {
   unk_ds3_p1_9: ScalarValue
   /**
    * Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
-   * - At 0 or negative values, this completely disabled the light.
-   * - At 1, the light behaves like you would expect.
+   * - At 0 or negative values, this completely disables the light.
+   * - At 1, the light behaves normally, like you would expect it to.
    * - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
    * - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
    * 
    * **Default**: `1`
-   * 
-   * See also:
-   * - {@link falloffExponent}
    */
   unk_ds3_p2_0: ScalarValue
   /**
@@ -21439,16 +21441,11 @@ class PointLight extends DataAction {
    */
   asymmetryParam: number
   /**
-   * Controls the falloff exponent of the light.
+   * When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
    * 
-   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
-   * 
-   * **Default**: `1`
-   * 
-   * See also:
-   * - {@link unk_ds3_p2_0}
+   * **Default**: `0`
    */
-  falloffExponent: number
+  adaptationExponent: number
   /**
    * Unknown integer.
    * 
@@ -27236,11 +27233,11 @@ class Tracer extends DataAction {
    */
   unk_sdt_f1_16: number
   /**
-   * Unknown float.
+   * Maximum random horizontal offset for the UV.
    * 
-   * **Default**: `1`
+   * **Default**: `0`
    */
-  unk_sdt_f1_17: number
+  varianceU: number
   /**
    * Unknown integer.
    * 
@@ -28534,9 +28531,11 @@ class LensFlare extends DataAction {
  * ### {@link ActionType.RichModel Action 10015 - RichModel}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+ * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
  * 
  * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
+ * 
+ * The name is from Elden Ring's RTTI.
  */
 class RichModel extends DataAction {
   declare readonly type: ActionType.RichModel
@@ -28780,9 +28779,9 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.Constant0 Constant 0}
    * 
    * See also:
-   * - {@link uvSpeed}
+   * - {@link speedUV}
    */
-  uvOffset: Vector2Value
+  offsetUV: Vector2Value
   /**
    * Scroll speed for the model's texture.
    * 
@@ -28791,17 +28790,17 @@ class RichModel extends DataAction {
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    * 
    * See also:
-   * - {@link uvSpeedMultiplier}
+   * - {@link speedMultiplierUV}
    */
-  uvSpeed: Vector2Value
+  speedUV: Vector2Value
   /**
-   * Multiplier for {@link uvSpeed}
+   * Multiplier for {@link speedUV}
    * 
    * **Default**: `[1, 1]`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
    */
-  uvSpeedMultiplier: Vector2Value
+  speedMultiplierUV: Vector2Value
   /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
@@ -29035,9 +29034,11 @@ class RichModel extends DataAction {
   /**
    * Unknown integer.
    * 
+   * This is somewhat similar to the `blendMode` property of other appearance actions, but the values do not match the ones in {@link BlendMode}.
+   * 
    * **Default**: `0`
    */
-  unk_er_f1_23: number
+  unkBlendMode: number
   /**
    * Unknown float.
    * 
@@ -31859,13 +31860,11 @@ class SpotLight extends DataAction {
    */
   asymmetryParam: number
   /**
-   * Controls the falloff exponent of the light.
+   * When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
    * 
-   * Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
-   * 
-   * **Default**: `1`
+   * **Default**: `0`
    */
-  falloffExponent: number
+  adaptationExponent: number
   /**
    * Unknown integer.
    * 

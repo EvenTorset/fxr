@@ -1,5 +1,32 @@
 # Changelog
 
+## [23.0.0] - 2025-04-25
+
+### Renamed properties
+The following properties have been renamed and some have had their documentation updated. The changes improve accuracy with the games and/or consisitency with other parts of the library.
+- In `PeriodicEmitter`:
+  - `perInterval` -> `perEmission`
+  - `totalIntervals` -> `totalEmissions`
+- In `EqualDistanceEmitter`:
+  - `unk_ds3_p1_2` -> `totalEmissions`
+- In `Tracer` and `LegacyTracer`:
+  - `unk_sdt_f1_17` -> `varianceU` - The default value has changed from `1` to `0`.
+- In `PointLight` and `SpotLight`:
+  - `falloffExponent` -> `adaptationExponent` - The default value has changed from `1` to `0`.
+- In `RichModel`:
+  - `uvOffset` -> `offsetUV`
+  - `uvSpeed` -> `speedUV`
+  - `uvSpeedMultiplier` -> `speedMultiplierUV`
+  - `unk_er_f1_23` -> `unkBlendMode`
+
+### Bug Fixes
+- The offset properties in the following actions no longer scale when using the `scale` method on nodes and actions:
+  - `BillboardEx`
+  - `MultiTextureBillboardEx`
+  - `Distortion`
+  - `RadialBlur`
+  - These offsets are based on the particle size, so the actual offset in-game would previously be scaled by the square of the scaling factor.
+
 ## [22.0.0] - 2025-04-10
 
 - Named and documented **16** fields in `LensFlare` actions, and fixed some issues with other fields:
@@ -434,6 +461,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[23.0.0]: https://github.com/EvenTorset/fxr/compare/v22.0.0...v23.0.0
 [22.0.0]: https://github.com/EvenTorset/fxr/compare/v21.1.0...v22.0.0
 [21.1.0]: https://github.com/EvenTorset/fxr/compare/v21.0.1...v21.1.0
 [21.0.1]: https://github.com/EvenTorset/fxr/compare/v21.0.0...v21.0.1

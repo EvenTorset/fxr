@@ -62,12 +62,10 @@ properties:
     default: 1
     desc: |
       Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
-      - At 0 or negative values, this completely disabled the light.
-      - At 1, the light behaves like you would expect.
+      - At 0 or negative values, this completely disables the light.
+      - At 1, the light behaves normally, like you would expect it to.
       - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
       - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
-    see:
-      - falloffExponent
   unk_ds3_p2_1:
     type: ScalarValue
     default: 1
@@ -265,15 +263,11 @@ properties:
       - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
       - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
       - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
-  falloffExponent:
+  adaptationExponent:
     field: float
-    default: 1
+    default: 0
     desc: |
-      Controls the falloff exponent of the light.
-
-      Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
-    see:
-      - unk_ds3_p2_0
+      When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
   unk_er_f2_29:
     field: int
     default: 1
@@ -366,7 +360,7 @@ games:
       - unk_sdt_f2_25
       - phaseFunction
       - asymmetryParam
-      - falloffExponent
+      - adaptationExponent
     properties1: DS3
     properties2:
       - unk_ds3_p2_0
@@ -405,7 +399,7 @@ games:
       - unk_sdt_f2_25
       - phaseFunction
       - asymmetryParam
-      - falloffExponent
+      - adaptationExponent
       - unk_er_f2_29
       - unk_er_f2_30
       - unk_er_f2_31

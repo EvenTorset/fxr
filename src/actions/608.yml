@@ -29,7 +29,7 @@ properties:
   offsetX:
     type: ScalarValue
     argument: ParticleAge
-    scale: true
+    # Not scaling, because it is based on the particle size
     desc: |
       X position offset.
     see:
@@ -38,7 +38,7 @@ properties:
   offsetY:
     type: ScalarValue
     argument: ParticleAge
-    scale: true
+    # Not scaling, because it is based on the particle size
     desc: |
       Y position offset.
     see:
@@ -47,7 +47,7 @@ properties:
   offsetZ:
     type: ScalarValue
     argument: ParticleAge
-    scale: true
+    # Not scaling, because it is based on the particle size
     desc: |
       Z position offset.
     see:

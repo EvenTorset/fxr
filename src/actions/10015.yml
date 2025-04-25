@@ -5,9 +5,11 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options and seemingly no way to change the blend mode.
+  Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
 
   Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
+
+  The name is from Elden Ring's RTTI.
 properties:
   model:
     type: ScalarValue
@@ -183,7 +185,7 @@ properties:
     type: ScalarValue
   unk_er_p1_20:
     type: ScalarValue
-  uvOffset:
+  offsetUV:
     type: Vector2Value
     components: 2
     default: [0, 0]
@@ -191,8 +193,8 @@ properties:
     desc: |
       Offset for the UV coordinates of the model.
     see:
-      - uvSpeed
-  uvSpeed:
+      - speedUV
+  speedUV:
     type: Vector2Value
     components: 2
     default: [0, 0]
@@ -201,15 +203,15 @@ properties:
     desc: |
       Scroll speed for the model's texture.
     see:
-      - uvSpeedMultiplier
-  uvSpeedMultiplier:
+      - speedMultiplierUV
+  speedMultiplierUV:
     type: Vector2Value
     components: 2
     default: [1, 1]
     argument: ParticleAge
     desc: |
-      Multiplier for {@link uvSpeed}
-  uOffset:
+      Multiplier for {@link speedUV}
+  offsetU:
     omitClassProp: true
     type: ScalarValue
     default: 0
@@ -217,16 +219,16 @@ properties:
     desc: |
       Horizontal offset for the UV coordinates of the model.
     see:
-      - uSpeed
-      - vOffset
-  vOffset:
+      - speedU
+      - offsetV
+  offsetV:
     omitClassProp: true
     type: ScalarValue
     default: 0
     argument: Constant0
     desc: |
       Vertical offset for the UV coordinates of the model.
-  uSpeed:
+  speedU:
     omitClassProp: true
     type: ScalarValue
     default: 0
@@ -234,16 +236,16 @@ properties:
     desc: |
       Horiztonal scroll speed for the model's texture.
     see:
-      - uSpeedMultiplier
-      - uOffset
-  uSpeedMultiplier:
+      - speedMultiplierU
+      - offsetU
+  speedMultiplierU:
     omitClassProp: true
     type: ScalarValue
     default: 0
     argument: ParticleAge
     desc: |
-      Multiplier for {@link uSpeed}.
-  vSpeed:
+      Multiplier for {@link speedU}.
+  speedV:
     omitClassProp: true
     type: ScalarValue
     default: 0
@@ -251,15 +253,15 @@ properties:
     desc: |
       Vertical scroll speed for the model's texture.
     see:
-      - vSpeedMultiplier
-      - vOffset
-  vSpeedMultiplier:
+      - speedMultiplierV
+      - offsetV
+  speedMultiplierV:
     omitClassProp: true
     type: ScalarValue
     default: 0
     argument: ParticleAge
     desc: |
-      Multiplier for {@link vSpeed}.
+      Multiplier for {@link speedV}.
   rgbMultiplier:
     type: ScalarValue
     default: 1
@@ -407,8 +409,12 @@ properties:
     field: int
   unk_er_f1_22:
     field: int
-  unk_er_f1_23:
+  unkBlendMode:
     field: int
+    desc: |
+      Unknown integer.
+
+      This is somewhat similar to the `blendMode` property of other appearance actions, but the values do not match the ones in {@link BlendMode}.
   unk_ac6_f1_24:
     field: float
   unk_ac6_f1_25:
@@ -626,7 +632,7 @@ games:
       - unk_er_f1_20
       - unk_er_f1_21
       - unk_er_f1_22
-      - unk_er_f1_23
+      - unkBlendMode
       - unk_er_f1_24
       - unk_er_f1_25
     fields2:
@@ -690,12 +696,12 @@ games:
       - rgbMultiplier2
       - unk_er_p1_19
       - unk_er_p1_20
-      - uOffset
-      - vOffset
-      - uSpeed
-      - uSpeedMultiplier
-      - vSpeed
-      - vSpeedMultiplier
+      - offsetU
+      - offsetV
+      - speedU
+      - speedMultiplierU
+      - speedV
+      - speedMultiplierV
     properties2:
       - rgbMultiplier
       - alphaMultiplier
@@ -729,7 +735,7 @@ games:
       - unk_er_f1_20
       - unk_er_f1_21
       - unk_er_f1_22
-      - unk_er_f1_23
+      - unkBlendMode
       - unk_ac6_f1_24
       - unk_ac6_f1_25
       - unk_ac6_f1_26
@@ -764,7 +770,7 @@ games:
       - rgbMultiplier2
       - unk_er_p1_19
       - unk_er_p1_20
-      - uvOffset
-      - uvSpeed
-      - uvSpeedMultiplier
+      - offsetUV
+      - speedUV
+      - speedMultiplierUV
     properties2: ER
