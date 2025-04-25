@@ -14,18 +14,18 @@ properties:
     time: inv
     desc: |
       Time between emitting new particles in seconds.
-  perInterval:
+  perEmission:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     desc: |
-      The number of particles to emit per interval. They all spawn at the same time per interval.
-  totalIntervals:
+      The number of particles or nodes to emit per emission.
+  totalEmissions:
     type: ScalarValue
     default: -1
     argument: ActiveTime
     desc: |
-      The total number of intervals to emit particles. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+      The total number of emissions. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
 
       Can be set to `-1` to disable the limit.
   maxConcurrent:
@@ -34,7 +34,7 @@ properties:
     default: -1
     argument: ActiveTime
     desc: |
-      Maximum number of concurrent particles. Can be set to `-1` to disable the limit.
+      Maximum number of concurrent emitted particles or nodes. Can be set to `-1` to disable the limit.
   unk_ds3_f1_1:
     field: int
     default: 1
@@ -45,15 +45,15 @@ games:
       - unk_ds3_f1_1
     properties1:
       - interval
-      - perInterval
-      - totalIntervals
+      - perEmission
+      - totalEmissions
   SDT:
     fields1:
       - unk_ds3_f1_1
     properties1:
       - interval
-      - perInterval
-      - totalIntervals
+      - perEmission
+      - totalEmissions
       - maxConcurrent
   ER: SDT
   AC6: SDT

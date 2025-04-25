@@ -240,13 +240,11 @@ properties:
       - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
       - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
       - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
-  falloffExponent:
+  adaptationExponent:
     field: float
-    default: 1
+    default: 0
     desc: |
-      Controls the falloff exponent of the light.
-
-      Note: This is possibly something else, but the behavior is pretty similar to a falloff exponent in a few ways.
+      When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
   unk_er_f1_24:
     field: int
     default: 1
@@ -314,7 +312,7 @@ games:
       - unk_sdt_f1_20
       - phaseFunction
       - asymmetryParam
-      - falloffExponent
+      - adaptationExponent
     properties1:
       - diffuseColor
       - specularColor
@@ -352,7 +350,7 @@ games:
       - unk_sdt_f1_20
       - phaseFunction
       - asymmetryParam
-      - falloffExponent
+      - adaptationExponent
       - unk_er_f1_24
       - unk_er_f1_25
       - unk_er_f1_26

@@ -14,16 +14,21 @@ properties:
     scale: true
     desc: |
       How much the emitter must move to trigger emission.
-  unk_ds3_p1_2:
+  totalEmissions:
     type: ScalarValue
     default: -1
+    argument: ActiveTime
+    desc: |
+      The total number of emissions. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+
+      Can be set to `-1` to disable the limit.
   maxConcurrent:
     type: ScalarValue
     field: int
     default: -1
     argument: ActiveTime
     desc: |
-      Maximum number of concurrent particles. Can be set to -1 to disable the limit.
+      Maximum number of concurrent emitted particles or nodes. Can be set to `-1` to disable the limit.
   unk_ds3_p1_1:
     type: ScalarValue
     default: 1
@@ -41,14 +46,14 @@ games:
     properties1:
       - threshold
       - unk_ds3_p1_1
-      - unk_ds3_p1_2
+      - totalEmissions
   SDT:
     fields1:
       - unk_ds3_f1_1
       - unk_sdt_f1_1
     properties1:
       - threshold
-      - unk_ds3_p1_2
+      - totalEmissions
       - maxConcurrent
   ER: SDT
   AC6: SDT
