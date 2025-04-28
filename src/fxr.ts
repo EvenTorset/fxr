@@ -9663,7 +9663,7 @@ class FXR {
    * @param rootChildren A list of nodes to add as direct children of the root
    * node.
    */
-  constructor(id: number, terminate: boolean, rootChildren: Node[])
+  constructor(id: number, terminate?: boolean, rootChildren?: Node[])
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9677,7 +9677,7 @@ class FXR {
    * @param rootChildren A list of nodes to add as direct children of the root
    * node.
    */
-  constructor(id: number, duration: number, rootChildren: Node[])
+  constructor(id: number, duration?: number, rootChildren?: Node[])
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9690,7 +9690,7 @@ class FXR {
    * @param rootChildren A list of nodes to add as direct children of the root
    * node.
    */
-  constructor(id: number, states: State[], rootChildren: Node[])
+  constructor(id: number, states?: State[], rootChildren?: Node[])
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9703,7 +9703,7 @@ class FXR {
    * effect to terminate when {@link ExternalValue external value} 0 becomes 1.
    * @param root The root node of the effect.
    */
-  constructor(id: number, terminate: boolean, root: RootNode | GenericNode)
+  constructor(id: number, terminate?: boolean, root?: RootNode | GenericNode)
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9716,7 +9716,7 @@ class FXR {
    * with a condition that compares the state time to the duration value.
    * @param root The root node of the effect.
    */
-  constructor(id: number, duration: number, root: RootNode | GenericNode)
+  constructor(id: number, duration?: number, root?: RootNode | GenericNode)
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9728,7 +9728,7 @@ class FXR {
    * @param states A list of states for the effect.
    * @param root The root node of the effect.
    */
-  constructor(id: number, states: State[], root: RootNode | GenericNode)
+  constructor(id: number, states?: State[], root?: RootNode | GenericNode)
 
   constructor(
     public id: number,
