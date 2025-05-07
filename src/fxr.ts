@@ -27656,7 +27656,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 1 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer1ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer1ColorMultiplier}
    */
   layer1Color: Vector4Value
   /**
@@ -27674,7 +27679,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 2 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer2ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer2ColorMultiplier}
    */
   layer2Color: Vector4Value
   /**
@@ -27692,7 +27702,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 3 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer3ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer3ColorMultiplier}
    */
   layer3Color: Vector4Value
   /**
@@ -27710,7 +27725,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 4 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer4ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer4ColorMultiplier}
    */
   layer4Color: Vector4Value
   /**
@@ -27823,6 +27843,8 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer1Color layer's color}.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
@@ -27930,6 +27952,8 @@ class LensFlare extends DataAction {
   layer2UniformScale: boolean
   /**
    * Multiplier for the {@link layer2Color layer's color}.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -28039,6 +28063,8 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer3Color layer's color}.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
@@ -28146,6 +28172,8 @@ class LensFlare extends DataAction {
   layer4UniformScale: boolean
   /**
    * Multiplier for the {@link layer4Color layer's color}.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 

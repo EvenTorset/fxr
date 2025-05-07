@@ -26,6 +26,10 @@ properties:
     color: primary
     desc: |
       Layer 1 color.
+
+      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer1ColorMultiplier}.
+    see:
+      - layer1ColorMultiplier
   layer2Width:
     type: ScalarValue
     default: 1
@@ -45,6 +49,10 @@ properties:
     color: primary
     desc: |
       Layer 2 color.
+
+      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer2ColorMultiplier}.
+    see:
+      - layer2ColorMultiplier
   layer3Width:
     type: ScalarValue
     default: 1
@@ -64,6 +72,10 @@ properties:
     color: primary
     desc: |
       Layer 3 color.
+
+      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer3ColorMultiplier}.
+    see:
+      - layer3ColorMultiplier
   layer4Width:
     type: ScalarValue
     default: 1
@@ -83,6 +95,10 @@ properties:
     color: primary
     desc: |
       Layer 4 color.
+
+      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer4ColorMultiplier}.
+    see:
+      - layer4ColorMultiplier
   layer1:
     field: int
     default: 1
@@ -184,6 +200,8 @@ properties:
     color: true
     desc: |
       Multiplier for the {@link layer1Color layer's color}.
+
+      Values in this are unrestricted and can go above 1.
     see:
       - layer1Color
   layer1Reflection:
@@ -278,6 +296,8 @@ properties:
     color: true
     desc: |
       Multiplier for the {@link layer2Color layer's color}.
+
+      Values in this are unrestricted and can go above 1.
     see:
       - layer2Color
   layer2Reflection:
@@ -372,6 +392,8 @@ properties:
     color: true
     desc: |
       Multiplier for the {@link layer3Color layer's color}.
+
+      Values in this are unrestricted and can go above 1.
     see:
       - layer3Color
   layer3Reflection:
@@ -466,6 +488,8 @@ properties:
     color: true
     desc: |
       Multiplier for the {@link layer4Color layer's color}.
+
+      Values in this are unrestricted and can go above 1.
     see:
       - layer4Color
   layer4Reflection:
