@@ -14617,7 +14617,7 @@ class ParticleModifier extends DataAction {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   scaleX: ScalarValue
   /**
@@ -14627,7 +14627,7 @@ class ParticleModifier extends DataAction {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   scaleY: ScalarValue
   /**
@@ -14637,7 +14637,7 @@ class ParticleModifier extends DataAction {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   scaleZ: ScalarValue
   /**

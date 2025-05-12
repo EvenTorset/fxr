@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Documentation changes
+The following changes have no effects on anything functional.
+- Documented the value ranges for the color properties in the `LensFlare` action.
+- Fixed the argument for the scale properties in the `ParticleModifier` action being the *active* time instead of *emission* time.
+
 ## [23.0.0] - 2025-04-25
 
 ### Renamed properties
@@ -461,6 +468,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
 
+[Unreleased]: https://github.com/EvenTorset/fxr/compare/v23.0.0...HEAD
 [23.0.0]: https://github.com/EvenTorset/fxr/compare/v22.0.0...v23.0.0
 [22.0.0]: https://github.com/EvenTorset/fxr/compare/v21.1.0...v22.0.0
 [21.1.0]: https://github.com/EvenTorset/fxr/compare/v21.0.1...v21.1.0
