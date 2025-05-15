@@ -163,6 +163,10 @@ properties:
       Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
   unk_ds3_f1_5:
     field: int
+    desc: |
+      Unknown integer.
+
+      When set to `1`, this seems to allow the emitter to be rotated, but it also limits the direction particles can move. For example, with a box emitter shape, this makes the particles only able to move along one of the three axes of the box.
   emitterSize:
     field: vec3
     components: 3

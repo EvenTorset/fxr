@@ -22012,6 +22012,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * Unknown integer.
    * 
+   * When set to `1`, this seems to allow the emitter to be rotated, but it also limits the direction particles can move. For example, with a box emitter shape, this makes the particles only able to move along one of the three axes of the box.
+   * 
    * **Default**: `0`
    */
   unk_ds3_f1_5: number

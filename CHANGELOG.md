@@ -5,6 +5,7 @@
 ### Documentation changes
 The following changes have no effects on anything functional.
 - Documented the value ranges for the color properties in the `LensFlare` action.
+- Partially documented the behavior of `unk_ds3_f1_5` in `GPUStandardParticle` actions.
 - Fixed the argument for the scale properties in the `ParticleModifier` action being the *active* time instead of *emission* time.
 
 ## [23.0.0] - 2025-04-25
