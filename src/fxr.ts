@@ -9690,10 +9690,10 @@ export interface FXRSerializeOptions {
    */
   filter?: FXRSerializeFilter
   /**
-   * Forces actions to not turn into `undefined` when {@link excludeDefaults}
-   * is `true`. This is mainly used internally to stop generic classes from
-   * outputting nonsense, but it may also be useful if you want to prevent
-   * actions from disappearing entirely from the output.
+   * Forces actions to not be filtered out. This is mainly used internally to
+   * stop generic classes from outputting nonsense when the {@link filter}
+   * allows removing default actions, but it may also be useful if you want to
+   * prevent actions from disappearing entirely from the output.
    */
   requireActionDefinition?: boolean
 }
