@@ -13,7 +13,7 @@ import {
   increasing the contrast and giving it a more dramatic look.
 */
 
-const fxr = new FXR(402030)
+
 
 /*
   These values control the size of the particle used as a screen effect.
@@ -34,7 +34,7 @@ const height = 9
 */
 const distance = 0.08
 
-fxr.root.nodes = [
+const fxr = new FXR(402030, true, [
   new BasicNode([
     // This action is what actually attaches the node to the camera.
     new NodeAttachToCamera,
@@ -58,4 +58,4 @@ fxr.root.nodes = [
       blurRadius: 0.4
     })
   ])
-]
+])

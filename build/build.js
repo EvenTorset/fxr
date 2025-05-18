@@ -69,6 +69,7 @@ const scaleMap = {
   distance: 3,
   distanceIfNotMinusOne: 4,
   instanceSize: 5,
+  particleModifier: 6,
 }
 
 const timeMap = {

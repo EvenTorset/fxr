@@ -19,7 +19,8 @@ properties:
   scaleX:
     type: ScalarValue
     default: 1
-    argument: ActiveTime
+    argument: EmissionTime
+    scale: particleModifier
     desc: |
       Multiplier for the scale along the X-axis for the particles emitted from this node.
 
@@ -27,7 +28,8 @@ properties:
   scaleY:
     type: ScalarValue
     default: 1
-    argument: ActiveTime
+    argument: EmissionTime
+    scale: particleModifier
     desc: |
       Multiplier for the scale along the Y-axis for the particles emitted from this node.
 
@@ -35,7 +37,8 @@ properties:
   scaleZ:
     type: ScalarValue
     default: 1
-    argument: ActiveTime
+    argument: EmissionTime
+    scale: particleModifier
     desc: |
       Multiplier for the scale along the Z-axis for the particles emitted from this node.
 

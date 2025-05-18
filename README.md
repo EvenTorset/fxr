@@ -108,7 +108,7 @@ fxr.root.nodes = [
     new StaticNodeTransform({ offset: [0, 0.5, 0] }),
 
 
-    new PeriodicEmitter({ interval: 0.1, perInterval: 10 }), // Action 300
+    new PeriodicEmitter({ interval: 0.1, perEmission: 10 }), // Action 300
     new CylinderEmitterShape({ radius: 0.2 }), // Action 405
     new ParticleAttributes({ duration: 1 }), // Action 129
     new BillboardEx({ // Action 603

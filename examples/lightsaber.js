@@ -23,11 +23,6 @@ import {
   LegacyTracer,
 } from '@cccode/fxr'
 
-// Choose an ID for the effect here. 402030 is the ghostflame torch flame/light
-// which I commonly use for testing. The sfx should be attached to Miséricorde
-// dummy poly 120.
-const fxr = new FXR(402030)
-
 // Colors for the lightsaber
 const color = [1, 0.05, 0.1] // Red
 // const color = [0.1, 0.3, 1] // Blue
@@ -35,15 +30,6 @@ const color = [1, 0.05, 0.1] // Red
 // const color = [0.35, 0.9, 0.3] // Green
 
 const bloomMultiplier = 1
-
-// This effect uses states to enable the steam when it's raining or snowing
-fxr.states = [
-  // State 0, no rain/snow
-  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 0 else 1`),
-
-  // State 1, rain/snow
-  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 1 else 0`),
-]
 
 // The crossguard is made of two identical pieces with different offsets, so
 // this function was made to generate them without duping code
@@ -88,7 +74,14 @@ function bladeCap(position) {
   ]).mapStates(0, 0)
 }
 
-fxr.root.nodes = [
+const fxr = new FXR(1, [
+  // This effect uses states to enable the steam when it's raining or snowing
+  // State 0, no rain/snow
+  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 0 else 1`),
+
+  // State 1, rain/snow
+  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 1 else 0`),
+], [
   new BasicNode([
     // This is used to position the entire effect
     NodeTransform({
@@ -159,7 +152,7 @@ fxr.root.nodes = [
 
     // Electric arcs
     new BasicNode([
-      new PeriodicEmitter({ interval: 0.1, perInterval: 2 }),
+      new PeriodicEmitter({ interval: 0.1, perEmission: 2 }),
       new CylinderEmitterShape({
         radius: 0.01,
         height: 0.5,
@@ -222,4 +215,4 @@ fxr.root.nodes = [
       })
     ]).mapStates(0, 0),
   ])
-]
+])

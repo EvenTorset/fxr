@@ -39,7 +39,7 @@ fxr.root.nodes = [
     /*
       The emitter will emit 2 instances of the same node every 0.5 seconds.
     */
-    new PeriodicEmitter({ interval: 0.5, perInterval: 2 }),
+    new PeriodicEmitter({ interval: 0.5, perEmission: 2 }),
     new SphereEmitterShape,
   ], [
     new BasicNode([ // Child node 0 - red light

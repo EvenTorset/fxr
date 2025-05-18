@@ -19,12 +19,13 @@ import {
   that a single emitter could not.
 */
 
-const fxr = new FXR(402030)
+
 
 /*
   To make a node emit particles when it's just sitting still, you need a
-  periodic emitter. But, to make a node consitently emit particles close enough
-  to each other when the node is moving, you need an equal distance emitter.
+  periodic emitter. But, to make a node consistently emit particles close
+  enough to each other when the node is moving, you need an equal distance
+  emitter.
 
   A single node can't have two different emitters, so to solve this we need
   two nodes that emit the same particle.
@@ -41,7 +42,7 @@ const emitters = [
   emitter, we can map the emitter array to nodes containing them and all of the
   particle actions.
 */
-fxr.root.nodes = emitters.map(emitter => new BasicNode([
+const fxr = new FXR(1, true, emitters.map(emitter => new BasicNode([
   // This is one of the emitters from the array above
   emitter,
   /*
@@ -85,4 +86,4 @@ fxr.root.nodes = emitters.map(emitter => new BasicNode([
       new Keyframe(3, 255),
     ])
   })
-]))
+])))

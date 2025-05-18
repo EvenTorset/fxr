@@ -1587,7 +1587,8 @@ enum ResourceType {
  */
 export enum ScaleCondition {
   /**
-   * Always scale the property, unless the {@link ScalingMode scaling mode} is {@link ScalingMode.InstancesOnly}.
+   * Always scale the property, unless the scaling mode is {@link ScalingMode.InstancesOnly}
+   * or {@link ScalingMode.ParticleModifierOnly}.
    */
   True = 1,
   /**
@@ -1603,9 +1604,13 @@ export enum ScaleCondition {
    */
   DistanceIfNotMinusOne = 4,
   /**
-   * Always scale the property.
+   * Always scale the property, unless the scaling mode is {@link ScalingMode.ParticleModifierOnly}.
    */
-  InstanceSize = 5
+  InstanceSize = 5,
+  /**
+   * Only scale the property if the scaling mode is {@link ScalingMode.ParticleModifierOnly}.
+   */
+  ParticleModifier = 6,
 }
 
 /**
@@ -1629,6 +1634,13 @@ export enum ScalingMode {
    * translations, only individual appearance instances.
    */
   InstancesOnly = 2,
+  /**
+   * Only scale the scale properties in {@link ParticleModifier} actions.
+   * 
+   * Note: The {@link ParticleModifier.prototype.speed speed} property will
+   * *not* be scaled.
+   */
+  ParticleModifierOnly = 3,
 }
 
 /**
@@ -1680,6 +1692,11 @@ type KeysOfType<T, U> = {
 type Entries<T> = {
   [K in keyof T]: [K, T[K]]
 }[keyof T][]
+
+export type AtLeastOne<T> = [T, ...T[]]
+export type OptionalTail<Head, Tail> =
+  | AtLeastOne<Head>
+  | [...AtLeastOne<Head>, Tail]
 
 export type AnyExternalValue =
   | ExternalValue.DarkSouls3
@@ -2192,7 +2209,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       translation: { default: [0, 0, 0], scale: 1 },
-      unk_er_f1_0: { default: 0, field: 1 },
+      alignWithMotion: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2200,7 +2217,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: {
-        fields1: ['unk_er_f1_0'],
+        fields1: ['alignWithMotion'],
         properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
@@ -2708,9 +2725,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: true,
     props: {
       speed: { default: 0, scale: 1, time: 1 },
-      scaleX: { default: 1 },
-      scaleY: { default: 1 },
-      scaleZ: { default: 1 },
+      scaleX: { default: 1, scale: 6 },
+      scaleY: { default: 1, scale: 6 },
+      scaleZ: { default: 1, scale: 6 },
       color: { default: [1, 1, 1, 1], color: 2 },
       uniformScale: { default: false, field: 0 },
     },
@@ -8849,6 +8866,10 @@ function valueWithType<T extends ValueType>(type: T, val: number): TypeMap.Prope
   return (type === ValueType.Scalar ? val : arrayOf(type + 1, () => val)) as TypeMap.PropertyValue[T]
 }
 
+function isNodeArray<T>(list: T | Node[]): list is Node[] {
+  return list[0] instanceof Node
+}
+
 const GameVersionMap = {
   [Game.DarkSouls3]: FXRVersion.DarkSouls3,
   [Game.Sekiro]: FXRVersion.Sekiro,
@@ -9623,21 +9644,76 @@ export interface FXRReadOptions {
 }
 
 /**
+ * A set of rules for filtering out certain values when serializing objects.
+ */
+export enum FXRSerializeFilter {
+  /**
+   * Do not filter out anything from the output JSON.
+   * 
+   * This filter option keeps all information about the object in the JSON
+   * output.
+   */
+  None = 0,
+  /**
+   * Filter out all default values in order to make the output JSON more
+   * compact.
+   * 
+   * This is the most compact filter option.
+   */
+  Defaults,
+  /**
+   * Filter out all unknown properties with default values in order to make the
+   * output JSON more compact.
+   * 
+   * This filter option keeps labeled properties and default actions in the
+   * output JSON.
+   */
+  DefaultUnknowns,
+  /**
+   * Filter out all unknown properties with default values and default action
+   * values in order to make the output JSON more compact.
+   * 
+   * This filter option keeps labeled properties in the output JSON.
+   */
+  DefaultUnknownsAndActions,
+}
+
+/**
  * An object containing options for the `serialize` method in most classes that
  * are part of the FXR tree structure.
  */
 export interface FXRSerializeOptions {
   /**
-   * Excludes all properties with default values from the output JSON.
+   * A rule used to filter out certain values in the output JSON, which can be
+   * used to reduce the size of the output without losing any important
+   * information.
    */
-  excludeDefaults?: boolean
+  filter?: FXRSerializeFilter
   /**
-   * Forces actions to not turn into `undefined` when {@link excludeDefaults}
-   * is `true`. This is mainly used internally to stop generic classes from
-   * outputting nonsense, but it may also be useful if you want to prevent
-   * actions from disappearing entirely from the output.
+   * Forces actions to not be filtered out. This is mainly used internally to
+   * stop generic classes from outputting nonsense when the {@link filter}
+   * allows removing default actions, but it may also be useful if you want to
+   * prevent actions from disappearing entirely from the output.
    */
   requireActionDefinition?: boolean
+}
+
+/**
+ * Note: This assumes the case is a default value.
+ */
+function serializeFilter(
+  c: 'nodeList' | 'action' | 'property' | 'unknownProperty',
+  filter = FXRSerializeFilter.None
+): boolean {
+  switch (filter) {
+    case FXRSerializeFilter.None: return false
+    case FXRSerializeFilter.Defaults: return true
+    case FXRSerializeFilter.DefaultUnknowns:
+      return c === 'unknownProperty' || c === 'nodeList'
+    case FXRSerializeFilter.DefaultUnknownsAndActions:
+      return c === 'unknownProperty' || c === 'action' || c === 'nodeList'
+  }
+  return false
 }
 
 /**
@@ -9663,7 +9739,7 @@ class FXR {
    * @param rootChildren A list of nodes to add as direct children of the root
    * node.
    */
-  constructor(id: number, terminate: boolean, rootChildren: Node[])
+  constructor(id: number, terminate?: boolean, rootChildren?: Node[])
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9677,7 +9753,7 @@ class FXR {
    * @param rootChildren A list of nodes to add as direct children of the root
    * node.
    */
-  constructor(id: number, duration: number, rootChildren: Node[])
+  constructor(id: number, duration?: number, rootChildren?: Node[])
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9690,7 +9766,7 @@ class FXR {
    * @param rootChildren A list of nodes to add as direct children of the root
    * node.
    */
-  constructor(id: number, states: State[], rootChildren: Node[])
+  constructor(id: number, states?: State[], rootChildren?: Node[])
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9703,7 +9779,7 @@ class FXR {
    * effect to terminate when {@link ExternalValue external value} 0 becomes 1.
    * @param root The root node of the effect.
    */
-  constructor(id: number, terminate: boolean, root: RootNode | GenericNode)
+  constructor(id: number, terminate?: boolean, root?: RootNode | GenericNode)
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9716,7 +9792,7 @@ class FXR {
    * with a condition that compares the state time to the duration value.
    * @param root The root node of the effect.
    */
-  constructor(id: number, duration: number, root: RootNode | GenericNode)
+  constructor(id: number, duration?: number, root?: RootNode | GenericNode)
 
   /**
    * @param id Internal FXR ID. This ID is used to refer to the effect in other
@@ -9728,7 +9804,7 @@ class FXR {
    * @param states A list of states for the effect.
    * @param root The root node of the effect.
    */
-  constructor(id: number, states: State[], root: RootNode | GenericNode)
+  constructor(id: number, states?: State[], root?: RootNode | GenericNode)
 
   constructor(
     public id: number,
@@ -10354,6 +10430,28 @@ class FXR {
       }
     }
     return false
+  }
+
+  /**
+   * Scale the rate of time for the entire effect, including states.
+   * @param factor The factor to scale the rate of time by. Setting this to 2
+   * will make the node play twice as fast. Setting it to 0.5 will make it
+   * play half as fast.
+   * @param [options={}] Extra options for changing how the scaling is applied
+   * to different properties and descendant nodes.
+   */
+  scaleRateOfTime(factor: number, options: { scaleTracerDuration?: boolean } = {}) {
+    for (const state of this.states) {
+      for (const con of state.conditions) {
+        if (con.leftOperandType === OperandType.StateTime && con.rightOperandType === OperandType.Literal) {
+          con.rightOperandValue /= factor
+        } else if (con.rightOperandType === OperandType.StateTime && con.leftOperandType === OperandType.Literal) {
+          con.leftOperandValue /= factor
+        }
+      }
+    }
+    this.root.scaleRateOfTime(factor, options)
+    return this
   }
 
 }
@@ -11066,7 +11164,7 @@ class GenericNode extends Node {
       configs: this.configs.map(config => config.serialize(options)),
       nodes: this.nodes.map(node => node.serialize(options)),
     }
-    if (options?.excludeDefaults && obj.nodes.length === 1) {
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 1) {
       delete obj.nodes
     }
     return obj
@@ -11172,12 +11270,11 @@ class RootNode extends Node {
       unk10500: this.unk10500.serialize(options),
       nodes: this.nodes.map(node => node.serialize(options))
     }
-    if (options?.excludeDefaults) {
-      const defaultless = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
-      if (defaultless.nodes.length === 0) {
-        delete defaultless.nodes
-      }
-      return defaultless
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 0) {
+      delete obj.nodes
+    }
+    if (serializeFilter('action', options?.filter)) {
+      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
     }
     return obj
   }
@@ -11290,7 +11387,7 @@ abstract class NodeWithConfigs extends Node {
       configs: this.configs.map(e => e.serialize(options)),
       nodes: this.nodes.map(e => e.serialize(options))
     }
-    if (options?.excludeDefaults && obj.nodes.length === 0) {
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 0) {
       delete obj.nodes
     }
     return obj
@@ -11389,29 +11486,22 @@ class BasicNode extends NodeWithConfigs {
   declare configs: BasicConfig[]
 
   /**
-   * @param actions A list of actions to construct a {@link BasicConfig} with.
+   * @param list A list of configs, or a list of actions to construct a
+   * {@link BasicConfig} with.
    * @param nodes A list of child nodes.
    */
-  constructor(actions?: AnyAction[], nodes?: Node[])
-
-  /**
-   * @param configs A list of configs.
-   * @param nodes A list of child nodes.
-   */
-  constructor(configs?: BasicConfig[], nodes?: Node[])
-
-  constructor(configsOrConfigActions: BasicConfig[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(list: BasicConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (list.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicConfig(configsOrConfigActions)
+        new BasicConfig(list)
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        configsOrConfigActions,
+        list,
         nodes
       )
     }
@@ -11602,6 +11692,26 @@ class BasicNode extends NodeWithConfigs {
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
+  }
+
+  static chain(...links: OptionalTail<BasicConfig[] | AnyAction[], Node[]>) {
+    const start = new BasicNode(links[0])
+    let node = start
+    for (let i = 1; i < links.length; i++) {
+      const link = links[i]
+      if (link.length === 0) {
+        throw new Error('Each chain link must contain at least one config, action, or node.')
+      }
+      if (i < links.length - 1 && isNodeArray(link)) {
+        throw new Error('Only the last link in a chain can contain nodes.')
+      }
+      if (!isNodeArray(link)) {
+        node.nodes = [ node = new BasicNode(link) ]
+      } else {
+        node.nodes = links[i] as Node[]
+      }
+    }
+    return start
   }
 
 }
@@ -11833,16 +11943,12 @@ class LevelsOfDetailConfig implements IConfig {
   toJSON() { return this.serialize() }
 
   serialize(options?: FXRSerializeOptions): any {
-    const obj = {
+    return {
       type: this.type,
       duration: this.duration instanceof Property ? this.duration.serialize(options) : this.duration,
       thresholds: this.thresholds.slice(0, 5),
-      ...!options?.excludeDefaults && this.unk_ac6_f1_5 !== 0 && { unk_ac6_f1_5: this.unk_ac6_f1_5 }
+      ...!serializeFilter('unknownProperty', options?.filter) && this.unk_ac6_f1_5 !== 0 && { unk_ac6_f1_5: this.unk_ac6_f1_5 }
     }
-    if (options?.excludeDefaults) {
-      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
-    }
-    return obj
   }
 
   minify() {
@@ -11998,7 +12104,7 @@ class BasicConfig implements IConfig {
       nodeForceMovement: this.nodeForceMovement.serialize(options),
       particleForceMovement: this.particleForceMovement.serialize(options),
     }
-    if (options?.excludeDefaults) {
+    if (serializeFilter('action', options?.filter)) {
       return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
     }
     return obj
@@ -12316,7 +12422,7 @@ class NodeEmitterConfig implements IConfig {
       emissionAudio: this.emissionAudio.serialize(options),
       nodeForceMovement: this.nodeForceMovement.serialize(options),
     }
-    if (options?.excludeDefaults) {
+    if (serializeFilter('action', options?.filter)) {
       return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
     }
     return obj
@@ -12466,7 +12572,7 @@ class Action implements IAction {
 
   serialize(options?: FXRSerializeOptions) {
     if (this.type === 0) {
-      return options?.excludeDefaults && !options?.requireActionDefinition ? undefined : null
+      return serializeFilter('action', options?.filter) && !options?.requireActionDefinition ? undefined : null
     }
     const o: {
       type: ActionType
@@ -12564,7 +12670,9 @@ class DataAction implements IAction {
         Object.entries(this.$data.props ?? {})
           .filter(([propName, prop]) => {
             return !('omit' in prop) && !(
-              options?.excludeDefaults && JSON.stringify(prop.default) === JSON.stringify(this[propName])
+              serializeFilter('property', options?.filter) && JSON.stringify(prop.default) === JSON.stringify(this[propName]) ||
+              serializeFilter('unknownProperty', options?.filter) && propName.startsWith('unk_')
+                && JSON.stringify(prop.default) === JSON.stringify(this[propName])
             )
           })
           .map(([propName]) => {
@@ -12577,7 +12685,7 @@ class DataAction implements IAction {
       )
     }
     if (
-      options?.excludeDefaults &&
+      serializeFilter('action', options?.filter) &&
       !options.requireActionDefinition &&
       ActionData[this.type].slotDefault && Object.keys(obj).length === 1
     ) {
@@ -12688,16 +12796,38 @@ class DataAction implements IAction {
     if ('props' in this.$data) {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('scale' in v) {
-          if (v.scale === ScaleCondition.True && options.mode !== ScalingMode.InstancesOnly) {
-            this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.InstanceSize) {
-            this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.IfNotMinusOne && this[k] !== -1) {
-            this[k] *= factor
-          } else if (v.scale === ScaleCondition.Distance && options.mode === ScalingMode.All) {
-            this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.DistanceIfNotMinusOne && options.mode === ScalingMode.All && this[k] !== -1) {
-            this[k] *= factor
+          switch (true) {
+            case v.scale === ScaleCondition.True
+              && options.mode !== ScalingMode.InstancesOnly
+              && options.mode !== ScalingMode.ParticleModifierOnly:
+
+            case v.scale === ScaleCondition.InstanceSize
+              && options.mode !== ScalingMode.ParticleModifierOnly:
+
+            case v.scale === ScaleCondition.Distance
+              && options.mode === ScalingMode.All:
+
+            case v.scale === ScaleCondition.ParticleModifier
+              && options.mode === ScalingMode.ParticleModifierOnly:
+
+              {
+                this[k] = anyValueMult(factor, this[k])
+                break
+              }
+
+
+            case v.scale === ScaleCondition.IfNotMinusOne
+              && options.mode !== ScalingMode.ParticleModifierOnly
+              && this[k] !== -1:
+
+            case v.scale === ScaleCondition.DistanceIfNotMinusOne
+              && options.mode === ScalingMode.All
+              && this[k] !== -1:
+
+              {
+                this[k] *= factor
+                break
+              }
           }
         }
       }
@@ -13141,11 +13271,11 @@ class NodeTranslation extends DataAction {
    */
   translation: Vector3Value
   /**
-   * Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+   * When set to 1, this makes the node align with the direction it's moving. There are cases of this being set to 2 in vanilla, and it seems to behave similarly to when it is set to 0, so this is not a boolean. The actual differences between 0 and 2 are unknown.
    * 
    * **Default**: `0`
    */
-  unk_er_f1_0: number
+  alignWithMotion: number
   constructor(props: Partial<Props<NodeTranslation>> = {}) {
     super(ActionType.NodeTranslation)
     this.assign(props)
@@ -14617,7 +14747,7 @@ class ParticleModifier extends DataAction {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   scaleX: ScalarValue
   /**
@@ -14627,7 +14757,7 @@ class ParticleModifier extends DataAction {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   scaleY: ScalarValue
   /**
@@ -14637,7 +14767,7 @@ class ParticleModifier extends DataAction {
    * 
    * **Default**: `1`
    * 
-   * **Argument**: {@link PropertyArgument.ActiveTime Active time}
+   * **Argument**: {@link PropertyArgument.EmissionTime Emission time}
    */
   scaleZ: ScalarValue
   /**
@@ -22012,6 +22142,8 @@ class GPUStandardParticle extends DataAction {
   /**
    * Unknown integer.
    * 
+   * When set to `1`, this seems to allow the emitter to be rotated, but it also limits the direction particles can move. For example, with a box emitter shape, this makes the particles only able to move along one of the three axes of the box.
+   * 
    * **Default**: `0`
    */
   unk_ds3_f1_5: number
@@ -27656,7 +27788,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 1 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer1ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer1ColorMultiplier}
    */
   layer1Color: Vector4Value
   /**
@@ -27674,7 +27811,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 2 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer2ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer2ColorMultiplier}
    */
   layer2Color: Vector4Value
   /**
@@ -27692,7 +27834,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 3 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer3ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer3ColorMultiplier}
    */
   layer3Color: Vector4Value
   /**
@@ -27710,7 +27857,12 @@ class LensFlare extends DataAction {
   /**
    * Layer 4 color.
    * 
+   * Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer4ColorMultiplier}.
+   * 
    * **Default**: `[1, 1, 1, 1]`
+   * 
+   * See also:
+   * - {@link layer4ColorMultiplier}
    */
   layer4Color: Vector4Value
   /**
@@ -27823,6 +27975,8 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer1Color layer's color}.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
@@ -27930,6 +28084,8 @@ class LensFlare extends DataAction {
   layer2UniformScale: boolean
   /**
    * Multiplier for the {@link layer2Color layer's color}.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -28039,6 +28195,8 @@ class LensFlare extends DataAction {
   /**
    * Multiplier for the {@link layer3Color layer's color}.
    * 
+   * Values in this are unrestricted and can go above 1.
+   * 
    * **Default**: `[1, 1, 1, 1]`
    * 
    * See also:
@@ -28146,6 +28304,8 @@ class LensFlare extends DataAction {
   layer4UniformScale: boolean
   /**
    * Multiplier for the {@link layer4Color layer's color}.
+   * 
+   * Values in this are unrestricted and can go above 1.
    * 
    * **Default**: `[1, 1, 1, 1]`
    * 
@@ -33120,6 +33280,23 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
     super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
   }
 
+  /**
+   * Creates a new sequence property that steps from one value to another.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static basic<T extends ValueType>(
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): SteppedProperty<T> {
+    return new SteppedProperty(false, [
+      new Keyframe(0, startValue),
+      new Keyframe(duration, endValue),
+    ])
+  }
+
 }
 
 class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {
@@ -33134,7 +33311,7 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
   /**
    * Creates a new sequence property that linearly transitions from one value
-   * to another.
+   * to another over a given duration.
    * @param loop Controls whether the animation should loop or not.
    * @param duration The duration of the animation.
    * @param startValue The value at the start of the animation.
@@ -33150,6 +33327,33 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
       new Keyframe(0, startValue),
       new Keyframe(duration, endValue),
     ])
+  }
+
+  /**
+   * Creates a new sequence property that linearly transitions from one value
+   * to another at a given speed.
+   * @param loop Controls whether the animation should loop or not.
+   * @param speed The speed for the animation to move at.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static withSpeed<T extends ValueType>(
+    loop: boolean,
+    speed: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): LinearProperty<T> {
+    if (getComponentCount(startValue) !== getComponentCount(endValue)) {
+      throw new Error('Start and end values do not have the same number of components.')
+    }
+    const ss = isScalarValue(startValue)
+    const es = isScalarValue(endValue)
+    const duration = ss && es ?
+      Math.abs(endValue - startValue) / speed :
+      !ss && !es ?
+        Math.hypot(...startValue.map((e, i) => e - endValue[i])) / speed :
+        1
+    return LinearProperty.basic(loop, duration, startValue, endValue)
   }
 
   /**
