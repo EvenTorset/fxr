@@ -10356,6 +10356,28 @@ class FXR {
     return false
   }
 
+  /**
+   * Scale the rate of time for the entire effect, including states.
+   * @param factor The factor to scale the rate of time by. Setting this to 2
+   * will make the node play twice as fast. Setting it to 0.5 will make it
+   * play half as fast.
+   * @param [options={}] Extra options for changing how the scaling is applied
+   * to different properties and descendant nodes.
+   */
+  scaleRateOfTime(factor: number, options: { scaleTracerDuration?: boolean } = {}) {
+    for (const state of this.states) {
+      for (const con of state.conditions) {
+        if (con.leftOperandType === OperandType.StateTime && con.rightOperandType === OperandType.Literal) {
+          con.rightOperandValue /= factor
+        } else if (con.rightOperandType === OperandType.StateTime && con.leftOperandType === OperandType.Literal) {
+          con.leftOperandValue /= factor
+        }
+      }
+    }
+    this.root.scaleRateOfTime(factor, options)
+    return this
+  }
+
 }
 
 //#region State
