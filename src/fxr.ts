@@ -2192,7 +2192,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       translation: { default: [0, 0, 0], scale: 1 },
-      unk_er_f1_0: { default: 0, field: 1 },
+      alignWithMotion: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2200,7 +2200,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: {
-        fields1: ['unk_er_f1_0'],
+        fields1: ['alignWithMotion'],
         properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing
@@ -13141,11 +13141,11 @@ class NodeTranslation extends DataAction {
    */
   translation: Vector3Value
   /**
-   * Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+   * When set to 1, this makes the node align with the direction it's moving. There are cases of this being set to 2 in vanilla, and it seems to behave similarly to when it is set to 0, so this is not a boolean. The actual differences between 0 and 2 are unknown.
    * 
    * **Default**: `0`
    */
-  unk_er_f1_0: number
+  alignWithMotion: number
   constructor(props: Partial<Props<NodeTranslation>> = {}) {
     super(ActionType.NodeTranslation)
     this.assign(props)

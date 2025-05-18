@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Renamed properties
+The following properties have been renamed and some have had their documentation updated. The changes improve accuracy with the games and/or consisitency with other parts of the library.
+- In `NodeTranslation`:
+  - `unk_er_f1_0` -> `alignWithMotion`
+
 ### Documentation changes
 The following changes have no effects on anything functional.
 - Documented the value ranges for the color properties in the `LensFlare` action.

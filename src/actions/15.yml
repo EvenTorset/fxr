@@ -15,10 +15,10 @@ properties:
     scale: true
     desc: |
       An offset for the position of the node.
-  unk_er_f1_0:
+  alignWithMotion:
     field: int
     desc: |
-      Unknown. An integer that has at least three valid values: 0, 1, 2. It did not exist until Elden Ring.
+      When set to 1, this makes the node align with the direction it's moving. There are cases of this being set to 2 in vanilla, and it seems to behave similarly to when it is set to 0, so this is not a boolean. The actual differences between 0 and 2 are unknown.
 games:
   DS3:
     properties1:
@@ -26,6 +26,6 @@ games:
   SDT: DS3
   ER:
     fields1:
-      - unk_er_f1_0
+      - alignWithMotion
     properties1: DS3
   AC6: ER
