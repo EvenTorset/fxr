@@ -12,8 +12,6 @@ import {
   the screen with a grid of rectangles using different colors and blend modes.
 */
 
-const fxr = new FXR(402030)
-
 // Width and height of screen
 const w = 1.6
 const h = 0.9
@@ -36,7 +34,7 @@ const colors = [
   [1, 1, 0, 1], // Yellow
 ]
 
-fxr.root.nodes = [
+const fxr = new FXR(1, true, [
   new BasicNode([
     // This node attaches itself to the camera and moves forward a bit so you
     // can see it.
@@ -67,4 +65,4 @@ fxr.root.nodes = [
       })
     ])
   }))
-]
+])

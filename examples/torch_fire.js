@@ -15,11 +15,12 @@ import {
   QuadLine,
   RandomRangeProperty,
   SphereEmitterShape,
+  randomSeed,
 } from '@cccode/fxr'
 
-const fxr = new FXR(402030)
+const qlSeed = randomSeed()
 
-fxr.root.nodes = [
+const fxr = new FXR(402030, true, [
   new BasicNode([
     new PeriodicEmitter({ interval: 0.1 }),
     new SphereEmitterShape({ radius: 0.05 }),
@@ -58,7 +59,7 @@ fxr.root.nodes = [
   ]),
   new BasicNode([
     NodeTransform({ rotation: [90, 0, 0] }),
-    new PeriodicEmitter({ interval: 0.1, perInterval: 2 }),
+    new PeriodicEmitter({ interval: 0.1, perEmission: 2 }),
     new SphereEmitterShape({ radius: 0.075 }),
     new ParticleAttributes({
       duration: 2,
@@ -75,8 +76,8 @@ fxr.root.nodes = [
       blendMode: BlendMode.Add,
       startColor: [1, 0.15, 0.025, 1],
       endColor: [1, 0, 0, 0],
-      width: RandomRangeProperty(0.002, 0.004, 91846942),
-      length: RandomRangeProperty(0.02, 0.04, 91846942),
+      width: RandomRangeProperty(0.002, 0.004, qlSeed),
+      length: RandomRangeProperty(0.02, 0.04, qlSeed),
       color1: new LinearProperty(false, [
         new Keyframe(0, [0, 0, 0, 0]),
         new Keyframe(0.5, [1, 1, 1, 1]),
@@ -100,4 +101,4 @@ fxr.root.nodes = [
       flickerBrightness: 0.7,
     })
   ])
-]
+])
