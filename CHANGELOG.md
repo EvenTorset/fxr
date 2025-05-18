@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [v24.0.0](https://github.com/EvenTorset/fxr/compare/v23.0.0...v24.0.0) - 2025-05-18
 
 ### Renamed properties
 The following properties have been renamed and some have had their documentation updated. The changes improve accuracy with the games and/or consisitency with other parts of the library.
@@ -27,7 +27,7 @@ The following changes have no effects on anything functional.
 - Partially documented the behavior of `unk_ds3_f1_5` in `GPUStandardParticle` actions.
 - Fixed the argument for the scale properties in the `ParticleModifier` action being the *active* time instead of *emission* time.
 
-## [23.0.0] - 2025-04-25
+## [v23.0.0](https://github.com/EvenTorset/fxr/compare/v22.0.0...v23.0.0) - 2025-04-25
 
 ### Renamed properties
 The following properties have been renamed and some have had their documentation updated. The changes improve accuracy with the games and/or consisitency with other parts of the library.
@@ -54,7 +54,7 @@ The following properties have been renamed and some have had their documentation
   - `RadialBlur`
   - These offsets are based on the particle size, so the actual offset in-game would previously be scaled by the square of the scaling factor.
 
-## [22.0.0] - 2025-04-10
+## [v22.0.0](https://github.com/EvenTorset/fxr/compare/v21.1.0...v22.0.0) - 2025-04-10
 
 - Named and documented **16** fields in `LensFlare` actions, and fixed some issues with other fields:
   - `unk_er_f1_17` -> `layer1Reflection`
@@ -83,7 +83,7 @@ The following properties have been renamed and some have had their documentation
   - Their type has been changed to boolean, and their default value is now `true`. The default value before was `0`, so this is a breaking change for rotated particles without this property set.
 - Fixed the `FXRUtility.line` function not always rotating the line correctly, *again*. Something must have changed that caused this to break twice without any direct changes, but I don't know what.
 
-## [21.1.0] - 2025-04-07
+## [v21.1.0](https://github.com/EvenTorset/fxr/compare/v21.0.1...v21.1.0) - 2025-04-07
 
 - Added a bunch of static utility methods to the `HermiteKeyframe` class for easily generating keyframes with different easing functions. Some of them are based on the [CSS easing function keywords](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/ease.svg) with the same names, though they may not match exactly:
   - `HermiteKeyframe.ease`: Starts somewhat slow, but speeds up until the end where it slows down again.
@@ -105,11 +105,11 @@ The following properties have been renamed and some have had their documentation
   - `unk_ds3_f2_10`
   - `unk_ds3_f2_13`
 
-## [21.0.1] - 2025-04-04
+## [v21.0.1](https://github.com/EvenTorset/fxr/compare/v21.0.0...v21.0.1) - 2025-04-04
 
 - The `nodes` array property in node JSON objects is now excluded when empty and the `excludeDefaults` option is `true`.
 
-## [21.0.0] - 2025-04-04
+## [v21.0.0](https://github.com/EvenTorset/fxr/compare/v20.1.1...v21.0.0) - 2025-04-04
 
 - The two tracer actions have been renamed:
   - Action 606: `Tracer` -> `LegacyTracer`
@@ -144,19 +144,19 @@ The following properties have been renamed and some have had their documentation
     ```
   - This makes it easier for other tools using the library to display parts of the documentation for it.
 
-## [20.1.1] - 2025-03-19
+## [v20.1.1](https://github.com/EvenTorset/fxr/compare/v20.1.0...v20.1.1) - 2025-03-19
 
 - Fixed the `anyValueMult` and `anyValueSum` functions creating invalid properties when operating on a value property and a component sequence property.
 
-## [20.1.0] - 2025-03-15
+## [v20.1.0](https://github.com/EvenTorset/fxr/compare/v20.0.1...v20.1.0) - 2025-03-15
 
 - Added a new member to the `PropertyArgument` enum to describe the argument given to properties in modifiers: `ExternalValue`.
 
-## [20.0.1] - 2025-03-10
+## [v20.0.1](https://github.com/EvenTorset/fxr/compare/v20.0.0...v20.0.1) - 2025-03-10
 
 - Fixed a bug in the JSON schemas.
 
-## [20.0.0] - 2025-03-10
+## [v20.0.0](https://github.com/EvenTorset/fxr/compare/v19.0.2...v20.0.0) - 2025-03-10
 
 - Added two JSON Schemas that can be used to validate FXR JSON objects. They are accessible through subpath exports:
   - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects. Also available at https://fxr-docs.pages.dev/json/schema.json
@@ -171,11 +171,11 @@ The following properties have been renamed and some have had their documentation
 - Added the TypeScript type of action properties that have one to the [actions.json file on the docs site](https://fxr-docs.pages.dev/data/actions.json).
 - Updated the description for the `particleRandomTurnIntervalMax` field in `GPUStandardParticle` and `GPUStandardCorrectParticle` to mention the fact that the value will be rounded to the nearest 1/30s due to how the value is stored.
 
-## [19.0.2] - 2025-03-03
+## [v19.0.2](https://github.com/EvenTorset/fxr/compare/v19.0.1...v19.0.2) - 2025-03-03
 
 - Fixed a couple of small TypeScript errors. There should not be any functional changes.
 
-## [19.0.1] - 2025-02-20
+## [v19.0.1](https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1) - 2025-02-20
 
 - To match the behavior of the games, the field count in property modifiers is now ignored when reading FXR files unless it is reading it as a generic modifier. The field count is now calculated based on the modifer and value types instead, and if the calculated count does not match the count in the file it will print a warning to notify the user about the error, but it will continue to correctly read the file and not throw because of the field count value being wrong.
   - The games apparently ignore this field count value and just reads the correct number of fields anyway.
@@ -183,7 +183,7 @@ The following properties have been renamed and some have had their documentation
   - It may still fail at reading the modifier fields if there are not enough fields to read, but that most likely errors in-game as well.
   - TL;DR: The library can now read some files that contain certain invalid values, but still work in-game.
 
-## [19.0.0] - 2025-02-18
+## [v19.0.0](https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0) - 2025-02-18
 
 - Named and documented some properties in the `Tracer` and `DynamicTracer` actions:
   - `unk_ds3_f1_7` -> `segmentSubdivision`
@@ -195,16 +195,16 @@ The following properties have been renamed and some have had their documentation
 - Fixed the `FXRUtility.outlineEmitters` function using the `sizeX` property instead of `sizeY` for the height of `RectangleEmitterShape`s.
 - Fixed the `FXRUtility.line` function not always rotating the line correctly. This function is used by many of the other functions in the `FXRUtility` namespace, so this also fixes issues with those.
 
-## [18.0.2] - 2024-12-21
+## [v18.0.2](https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2) - 2024-12-21
 
 - Fixed the `depth` parameter for the `clone` method in the base `Node` class not being marked as optional. It *is* optional, and always has been for all of the subclasses.
 - Added a note about proxy nodes not being able to contain child nodes to the `ProxyNode` class description since it is the only node type with that property.
 
-## [18.0.1] - 2024-12-05
+## [v18.0.1](https://github.com/EvenTorset/fxr/compare/v18.0.0...v18.0.1) - 2024-12-05
 
 - The `Recolor.isPrimary` function now returns `true` instead of throwing an error when the `action` parameter is `undefined`. This fixes an issue where trying to use one of the recolor functions that use the `Recolor.isPrimary` function without giving it context would cause it to throw an error.
 
-## [18.0.0] - 2024-12-05
+## [v18.0.0](https://github.com/EvenTorset/fxr/compare/v17.0.0...v18.0.0) - 2024-12-05
 
 - Updated action 604 with new names and documentation for all of the layer-specific properties and fields.
   - `mask` is now `layer1`, and the old `layer1` and `layer2` fields are now `layer2` and `layer3` respectively.
@@ -261,7 +261,7 @@ The following properties have been renamed and some have had their documentation
 - Fixed the documented default value of some boolean fields being `0` instead of `false`. The actual default value was `false`, so this was just an error in the documentation.
 - Replaced all data action constructor parameter interfaces with types based on the classes. This doesn't change anything functionally, but cleans up the code and the documentation site a lot. ~10k lines of code was removed by doing this.
 
-## [17.0.0] - 2024-11-12
+## [v17.0.0](https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0) - 2024-11-12
 
 - Named and documented three actions:
   - 700 - `SimulateTermination`
@@ -298,7 +298,7 @@ If you need to update your scripts, here's a table of things to find and replace
 | `.effects` | `.configs` |
 | `.stateEffectMap` | `.stateConfigMap` |
 
-## [16.0.0] - 2024-09-13
+## [v16.0.0](https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0) - 2024-09-13
 
 - Named and documented action 800: `ParticleForceCollision`. This enables collision with the full 3D environment for regular particles, but also causes the game to crash if a particle despawns. It is most likely an unfinished action, and it only exists in AC6, where it's used just once, in an effect that also causes the game to crash. It seems very stable as long as the particles don't despawn, though.
 - The `valueAt` method on properties should now give the correct value for sequence properties and component sequence properties with keyframes that are out of order. These properties can be considered invalid in some sense, but they are still functional in-game, and this method should now reflect that.
@@ -317,16 +317,16 @@ If you need to update your scripts, here's a table of things to find and replace
 - Updated the description for the `DataAction` class. It was very out of date.
 - Updated the description for most color properties to mention if the values are clamped or not.
 
-## [15.2.0] - 2024-09-01
+## [v15.2.0](https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0) - 2024-09-01
 
 - Added a `getResources` method to nodes. This does the same thing that the `FXR` method with the same name does, except it only lists resources used in the node it is called on, and optionally descendant nodes.
 
-## [15.1.0] - 2024-09-01
+## [v15.1.0](https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0) - 2024-09-01
 
 - Added a `depth` argument to the `clone` method on nodes that controls how many levels of descendants to clone. It defaults to `Infinity` (same behavior as before), and can be set to 0 to not clone any child nodes.
 - Updated links in the readme to work with the FXR Playground update.
 
-## [15.0.0] - 2024-08-28
+## [v15.0.0](https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0) - 2024-08-28
 
 - Added `Game.Heuristic`, which can be used with `FXR.read` to let the library figure out what game an FXR file is for.
   - This is now the default `game` value for the `FXR.read` function. (*Was `Game.EldenRing` previously.*)
@@ -345,7 +345,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - Fixed the return type of the `hex` template tag. It was previously `number[]`, and is now `Vector4` like it should be.
 - `BasicEffect` and `NodeEmitterEffect` can now be constructed without any arguments to make a default effect.
 
-## [14.1.0] - 2024-08-14
+## [v14.1.0](https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0) - 2024-08-14
 
 - Added a `find` method to FXR objects, which finds and returns a value at a given path in the FXR. For example, a path like `root/nodes/0` would be the first child node of the root node.
 - Added a `getActiveEffect` method to nodes that contain effects, which returns the effect that would be active when a given state index is active.
@@ -354,11 +354,11 @@ If you need to update your scripts, here's a table of things to find and replace
 - The `minify` method on properties now also minify the modifiers.
 - The `minify` method on Stepped and Linear properties now removes keyframes that aren't doing anything. For example, if you have a linear scalar property with these keyframe values: `0, 1, 1, 1, 0`, then the middle keyframe is not doing anything, because it has two equivalent ones surrounding it, so when minified, this property would end up having these keyframe values: `0, 1, 1, 0`.
 
-## [14.0.1] - 2024-08-11
+## [v14.0.1](https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1) - 2024-08-11
 
 - Fixed a problem related to TypeScript. There are no functional changes at all in this update, the problem only occurred in rare cases when trying to use a generic Property as a type in TS. Any JavaScript using the library won't notice anything different, because there really is nothing different.
 
-## [14.0.0] - 2024-08-07
+## [v14.0.0](https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0) - 2024-08-07
 
 - Added more utility functions:
   - `FXRUtility.box` - Creates an outline of a cuboid shape.
@@ -378,7 +378,7 @@ If you need to update your scripts, here's a table of things to find and replace
   - More is likely to be added to this in the future, if there are other things like this that is useful to have easy access to.
 - All of the position offset, speed, and acceleration fields in the GPU particle actions have been converted to vector fields. This got rid of 68 fields in total, so it can simplify things a lot.
 
-## [13.0.0] - 2024-08-04
+## [v13.0.0](https://github.com/EvenTorset/fxr/compare/v12.2.0...v13.0.0) - 2024-08-04
 
 - Many new recolor-related features have been added to make recoloring even easier.
   - There is now a template tag for converting hex color strings into color vectors for FXRs. This tag is simply called `hex`, so it is now possible to do something like `` hex`5588ff` `` and it would be equivalent to `[0.333, 0.533, 1, 1]`. It supports 3-, 4-, 6-, and 8-digit hex values. This can be used anywhere where you would normally put color vectors.
@@ -422,11 +422,11 @@ If you need to update your scripts, here's a table of things to find and replace
 - The Node.js setup guide has been updated to use the new `@cccode/create-fxr` module to set up the project folder, which eliminates some manual steps that are important to get right.
 - The editing example in the readme has been updated to use some of the new recolor features instead of doing it the old way.
 
-## [12.2.0] - 2024-07-14
+## [v12.2.0](https://github.com/EvenTorset/fxr/compare/v12.1.0...v12.2.0) - 2024-07-14
 
 - The static FXR.read method now returns an instance of the class it was called from instead of the FXR class specifically. This means that it's now possible to extend the class without rewriting the static read method from scratch as long as the constructor is similar.
 
-## [12.1.0] - 2024-07-11
+## [v12.1.0](https://github.com/EvenTorset/fxr/compare/v12.0.0...v12.1.0) - 2024-07-11
 
 - The following Node methods now have a new recurse parameter that controls whether or not the method should be applied to descendant nodes:
   - scale
@@ -438,7 +438,7 @@ If you need to update your scripts, here's a table of things to find and replace
   - walkProperties
 - This new recurse parameter for the Node methods defaults to true, so calling them without it works just like before this change.
 
-## [12.0.0] - 2024-06-27
+## [v12.0.0](https://github.com/EvenTorset/fxr/compare/v11.0.0...v12.0.0) - 2024-06-27
 
 - The ComponentSequenceProperty.combineComponents method has been improved so that it should now return an equal HermiteProperty if all of the components have the same number of keyframes and keyframe positions. This method is used internally to, for example, enable correct recoloring of these properties, so the output structure of recolored AC6 effects should now look a lot nicer if they were originally of this type.
 - Added .minify methods to all types of properties.
@@ -456,7 +456,7 @@ If you need to update your scripts, here's a table of things to find and replace
 - Added some missing documentation for the game parameter in the FXR.read function.
 - Added a Modifier.isEffective function that can be used to check if a given modifier would have any effect if applied to a property. This is never useful for most people, but it is used internally to filter modifiers when splitting a vector property into its components and when minifying properties.
 
-## [11.0.0] - 2024-06-09
+## [v11.0.0](https://github.com/EvenTorset/fxr/compare/v10.0.1...v11.0.0) - 2024-06-09
 
 - Added subclasses and documentation for pretty much all remaining actions, including the ones not used in any of the games:
   - 10003 - LightShaft
@@ -487,33 +487,3 @@ If you need to update your scripts, here's a table of things to find and replace
 - The LinearProperty.sine function now has a parameter for the phase shift.
 - External values 2000 and 70200 for AC6 have been documented thanks to lugia19.
 - Fixed action 301 (EqualDistanceEmitter) missing a type for one of its fields, potentially causing issues when writing to DS3's structure.
-
-[Unreleased]: https://github.com/EvenTorset/fxr/compare/v23.0.0...HEAD
-[23.0.0]: https://github.com/EvenTorset/fxr/compare/v22.0.0...v23.0.0
-[22.0.0]: https://github.com/EvenTorset/fxr/compare/v21.1.0...v22.0.0
-[21.1.0]: https://github.com/EvenTorset/fxr/compare/v21.0.1...v21.1.0
-[21.0.1]: https://github.com/EvenTorset/fxr/compare/v21.0.0...v21.0.1
-[21.0.0]: https://github.com/EvenTorset/fxr/compare/v20.1.1...v21.0.0
-[20.1.1]: https://github.com/EvenTorset/fxr/compare/v20.1.0...v20.1.1
-[20.1.0]: https://github.com/EvenTorset/fxr/compare/v20.0.1...v20.1.0
-[20.0.1]: https://github.com/EvenTorset/fxr/compare/v20.0.0...v20.0.1
-[20.0.0]: https://github.com/EvenTorset/fxr/compare/v19.0.2...v20.0.0
-[19.0.2]: https://github.com/EvenTorset/fxr/compare/v19.0.1...v19.0.2
-[19.0.1]: https://github.com/EvenTorset/fxr/compare/v19.0.0...v19.0.1
-[19.0.0]: https://github.com/EvenTorset/fxr/compare/v18.0.2...v19.0.0
-[18.0.2]: https://github.com/EvenTorset/fxr/compare/v18.0.1...v18.0.2
-[18.0.1]: https://github.com/EvenTorset/fxr/compare/v18.0.0...v18.0.1
-[18.0.0]: https://github.com/EvenTorset/fxr/compare/v17.0.0...v18.0.0
-[17.0.0]: https://github.com/EvenTorset/fxr/compare/v16.0.0...v17.0.0
-[16.0.0]: https://github.com/EvenTorset/fxr/compare/v15.2.0...v16.0.0
-[15.2.0]: https://github.com/EvenTorset/fxr/compare/v15.1.0...v15.2.0
-[15.1.0]: https://github.com/EvenTorset/fxr/compare/v15.0.0...v15.1.0
-[15.0.0]: https://github.com/EvenTorset/fxr/compare/v14.1.0...v15.0.0
-[14.1.0]: https://github.com/EvenTorset/fxr/compare/v14.0.1...v14.1.0
-[14.0.1]: https://github.com/EvenTorset/fxr/compare/v14.0.0...v14.0.1
-[14.0.0]: https://github.com/EvenTorset/fxr/compare/v13.0.0...v14.0.0
-[13.0.0]: https://github.com/EvenTorset/fxr/compare/v12.2.0...v13.0.0
-[12.2.0]: https://github.com/EvenTorset/fxr/compare/v12.1.0...v12.2.0
-[12.1.0]: https://github.com/EvenTorset/fxr/compare/v12.0.0...v12.1.0
-[12.0.0]: https://github.com/EvenTorset/fxr/compare/v11.0.0...v12.0.0
-[11.0.0]: https://github.com/EvenTorset/fxr/compare/v10.0.1...v11.0.0
