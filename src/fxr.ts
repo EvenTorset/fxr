@@ -33150,6 +33150,23 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
     super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
   }
 
+  /**
+   * Creates a new sequence property that steps from one value to another.
+   * @param duration The duration of the animation.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static basic<T extends ValueType>(
+    duration: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): SteppedProperty<T> {
+    return new SteppedProperty(false, [
+      new Keyframe(0, startValue),
+      new Keyframe(duration, endValue),
+    ])
+  }
+
 }
 
 class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {

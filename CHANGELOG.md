@@ -7,6 +7,9 @@ The following properties have been renamed and some have had their documentation
 - In `NodeTranslation`:
   - `unk_er_f1_0` -> `alignWithMotion`
 
+### New features
+- Added a `SteppedProperty.basic` function for easily creating a property that keeps a value for a given duration and then switches instantly to a different value.
+
 ### Documentation changes
 The following changes have no effects on anything functional.
 - Documented the value ranges for the color properties in the `LensFlare` action.
