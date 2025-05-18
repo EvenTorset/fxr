@@ -9632,14 +9632,51 @@ export interface FXRReadOptions {
 }
 
 /**
+ * A set of rules for filtering out certain values when serializing objects.
+ */
+export enum FXRSerializeFilter {
+  /**
+   * Do not filter out anything from the output JSON.
+   * 
+   * This filter option keeps all information about the object in the JSON
+   * output.
+   */
+  None = 0,
+  /**
+   * Filter out all default values in order to make the output JSON more
+   * compact.
+   * 
+   * This is the most compact filter option.
+   */
+  Defaults,
+  /**
+   * Filter out all unknown properties with default values in order to make the
+   * output JSON more compact.
+   * 
+   * This filter option keeps labeled properties and default actions in the
+   * output JSON.
+   */
+  DefaultUnknowns,
+  /**
+   * Filter out all unknown properties with default values and default action
+   * values in order to make the output JSON more compact.
+   * 
+   * This filter option keeps labeled properties in the output JSON.
+   */
+  DefaultUnknownsAndActions,
+}
+
+/**
  * An object containing options for the `serialize` method in most classes that
  * are part of the FXR tree structure.
  */
 export interface FXRSerializeOptions {
   /**
-   * Excludes all properties with default values from the output JSON.
+   * A rule used to filter out certain values in the output JSON, which can be
+   * used to reduce the size of the output without losing any important
+   * information.
    */
-  excludeDefaults?: boolean
+  filter?: FXRSerializeFilter
   /**
    * Forces actions to not turn into `undefined` when {@link excludeDefaults}
    * is `true`. This is mainly used internally to stop generic classes from
@@ -9647,6 +9684,24 @@ export interface FXRSerializeOptions {
    * actions from disappearing entirely from the output.
    */
   requireActionDefinition?: boolean
+}
+
+/**
+ * Note: This assumes the case is a default value.
+ */
+function serializeFilter(
+  c: 'nodeList' | 'action' | 'property' | 'unknownProperty',
+  filter = FXRSerializeFilter.None
+): boolean {
+  switch (filter) {
+    case FXRSerializeFilter.None: return false
+    case FXRSerializeFilter.Defaults: return true
+    case FXRSerializeFilter.DefaultUnknowns:
+      return c === 'unknownProperty' || c === 'nodeList'
+    case FXRSerializeFilter.DefaultUnknownsAndActions:
+      return c === 'unknownProperty' || c === 'action' || c === 'nodeList'
+  }
+  return false
 }
 
 /**
@@ -11097,7 +11152,7 @@ class GenericNode extends Node {
       configs: this.configs.map(config => config.serialize(options)),
       nodes: this.nodes.map(node => node.serialize(options)),
     }
-    if (options?.excludeDefaults && obj.nodes.length === 1) {
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 1) {
       delete obj.nodes
     }
     return obj
@@ -11203,12 +11258,11 @@ class RootNode extends Node {
       unk10500: this.unk10500.serialize(options),
       nodes: this.nodes.map(node => node.serialize(options))
     }
-    if (options?.excludeDefaults) {
-      const defaultless = Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
-      if (defaultless.nodes.length === 0) {
-        delete defaultless.nodes
-      }
-      return defaultless
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 0) {
+      delete obj.nodes
+    }
+    if (serializeFilter('action', options?.filter)) {
+      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
     }
     return obj
   }
@@ -11321,7 +11375,7 @@ abstract class NodeWithConfigs extends Node {
       configs: this.configs.map(e => e.serialize(options)),
       nodes: this.nodes.map(e => e.serialize(options))
     }
-    if (options?.excludeDefaults && obj.nodes.length === 0) {
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 0) {
       delete obj.nodes
     }
     return obj
@@ -11877,16 +11931,12 @@ class LevelsOfDetailConfig implements IConfig {
   toJSON() { return this.serialize() }
 
   serialize(options?: FXRSerializeOptions): any {
-    const obj = {
+    return {
       type: this.type,
       duration: this.duration instanceof Property ? this.duration.serialize(options) : this.duration,
       thresholds: this.thresholds.slice(0, 5),
-      ...!options?.excludeDefaults && this.unk_ac6_f1_5 !== 0 && { unk_ac6_f1_5: this.unk_ac6_f1_5 }
+      ...!serializeFilter('unknownProperty', options?.filter) && this.unk_ac6_f1_5 !== 0 && { unk_ac6_f1_5: this.unk_ac6_f1_5 }
     }
-    if (options?.excludeDefaults) {
-      return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
-    }
-    return obj
   }
 
   minify() {
@@ -12042,7 +12092,7 @@ class BasicConfig implements IConfig {
       nodeForceMovement: this.nodeForceMovement.serialize(options),
       particleForceMovement: this.particleForceMovement.serialize(options),
     }
-    if (options?.excludeDefaults) {
+    if (serializeFilter('action', options?.filter)) {
       return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
     }
     return obj
@@ -12360,7 +12410,7 @@ class NodeEmitterConfig implements IConfig {
       emissionAudio: this.emissionAudio.serialize(options),
       nodeForceMovement: this.nodeForceMovement.serialize(options),
     }
-    if (options?.excludeDefaults) {
+    if (serializeFilter('action', options?.filter)) {
       return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
     }
     return obj
@@ -12510,7 +12560,7 @@ class Action implements IAction {
 
   serialize(options?: FXRSerializeOptions) {
     if (this.type === 0) {
-      return options?.excludeDefaults && !options?.requireActionDefinition ? undefined : null
+      return serializeFilter('action', options?.filter) && !options?.requireActionDefinition ? undefined : null
     }
     const o: {
       type: ActionType
@@ -12608,7 +12658,9 @@ class DataAction implements IAction {
         Object.entries(this.$data.props ?? {})
           .filter(([propName, prop]) => {
             return !('omit' in prop) && !(
-              options?.excludeDefaults && JSON.stringify(prop.default) === JSON.stringify(this[propName])
+              serializeFilter('property', options?.filter) && JSON.stringify(prop.default) === JSON.stringify(this[propName]) ||
+              serializeFilter('unknownProperty', options?.filter) && propName.startsWith('unk_')
+                && JSON.stringify(prop.default) === JSON.stringify(this[propName])
             )
           })
           .map(([propName]) => {
@@ -12621,7 +12673,7 @@ class DataAction implements IAction {
       )
     }
     if (
-      options?.excludeDefaults &&
+      serializeFilter('action', options?.filter) &&
       !options.requireActionDefinition &&
       ActionData[this.type].slotDefault && Object.keys(obj).length === 1
     ) {

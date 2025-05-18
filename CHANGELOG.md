@@ -7,6 +7,13 @@ The following properties have been renamed and some have had their documentation
 - In `NodeTranslation`:
   - `unk_er_f1_0` -> `alignWithMotion`
 
+### Other breaking changes
+- The `excludeDefaults` option for the `serialize` methods has been replaced with a new `filter` option that allows for even more customizability of the output JSON. It can have the following values:
+  - `FXRSerializeFilter.None`: This is the default value, and it works the same way the old `excludeDefaults` option did when it was set to `false`. This keeps all information in the object without filtering anything.
+  - `FXRSerializeFilter.Defaults`: This works the same way the old `excludeDefaults` option did when it was set to `true`. This removes *all* default values from the output JSON, making the output as compact as possible.
+  - `FXRSerializeFilter.DefaultUnknowns`: This removes only default *unknown* properties and empty node lists. Default actions and labeled properties will remain.
+  - `FXRSerializeFilter.DefaultUnknownsAndActions`: This removes only default *unknown* properties, default actions, and empty node lists. Labeled properties will remain.
+
 ### New features
 - Added a `scaleRateOfTime` method to `FXR` objects, which does the same thing as the one on nodes, except this is always recursive and it also applies to states.
 - Added a `SteppedProperty.basic` function for easily creating a property that keeps a value for a given duration and then switches instantly to a different value.
