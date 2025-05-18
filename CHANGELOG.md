@@ -19,6 +19,7 @@ The following properties have been renamed and some have had their documentation
 - Added a `SteppedProperty.basic` function for easily creating a property that keeps a value for a given duration and then switches instantly to a different value.
 - Added a `LinearProperty.withSpeed` function for easily creating a property that goes from one value to another at a given speed. The duration is calculated from the speed and the Euclidean distance between the two values.
 - Added a `BasicNode.chain` function, which makes it much easier to generate deep chains of basic nodes for advanced transforms and motion.
+- Added `ScalingMode.ParticleModifierOnly`, which is an option for the `scale` methods to only scale the scale properties of `ParticleModifier` actions. Try putting more instances of the word "scale" in one patch note. *Scale*.
 
 ### Documentation changes
 The following changes have no effects on anything functional.

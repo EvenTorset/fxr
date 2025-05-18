@@ -1587,7 +1587,8 @@ enum ResourceType {
  */
 export enum ScaleCondition {
   /**
-   * Always scale the property, unless the {@link ScalingMode scaling mode} is {@link ScalingMode.InstancesOnly}.
+   * Always scale the property, unless the scaling mode is {@link ScalingMode.InstancesOnly}
+   * or {@link ScalingMode.ParticleModifierOnly}.
    */
   True = 1,
   /**
@@ -1603,9 +1604,13 @@ export enum ScaleCondition {
    */
   DistanceIfNotMinusOne = 4,
   /**
-   * Always scale the property.
+   * Always scale the property, unless the scaling mode is {@link ScalingMode.ParticleModifierOnly}.
    */
-  InstanceSize = 5
+  InstanceSize = 5,
+  /**
+   * Only scale the property if the scaling mode is {@link ScalingMode.ParticleModifierOnly}.
+   */
+  ParticleModifier = 6,
 }
 
 /**
@@ -1629,6 +1634,13 @@ export enum ScalingMode {
    * translations, only individual appearance instances.
    */
   InstancesOnly = 2,
+  /**
+   * Only scale the scale properties in {@link ParticleModifier} actions.
+   * 
+   * Note: The {@link ParticleModifier.prototype.speed speed} property will
+   * *not* be scaled.
+   */
+  ParticleModifierOnly = 3,
 }
 
 /**
@@ -2713,9 +2725,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: true,
     props: {
       speed: { default: 0, scale: 1, time: 1 },
-      scaleX: { default: 1 },
-      scaleY: { default: 1 },
-      scaleZ: { default: 1 },
+      scaleX: { default: 1, scale: 6 },
+      scaleY: { default: 1, scale: 6 },
+      scaleZ: { default: 1, scale: 6 },
       color: { default: [1, 1, 1, 1], color: 2 },
       uniformScale: { default: false, field: 0 },
     },
@@ -12784,16 +12796,38 @@ class DataAction implements IAction {
     if ('props' in this.$data) {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('scale' in v) {
-          if (v.scale === ScaleCondition.True && options.mode !== ScalingMode.InstancesOnly) {
-            this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.InstanceSize) {
-            this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.IfNotMinusOne && this[k] !== -1) {
-            this[k] *= factor
-          } else if (v.scale === ScaleCondition.Distance && options.mode === ScalingMode.All) {
-            this[k] = anyValueMult(factor, this[k])
-          } else if (v.scale === ScaleCondition.DistanceIfNotMinusOne && options.mode === ScalingMode.All && this[k] !== -1) {
-            this[k] *= factor
+          switch (true) {
+            case v.scale === ScaleCondition.True
+              && options.mode !== ScalingMode.InstancesOnly
+              && options.mode !== ScalingMode.ParticleModifierOnly:
+
+            case v.scale === ScaleCondition.InstanceSize
+              && options.mode !== ScalingMode.ParticleModifierOnly:
+
+            case v.scale === ScaleCondition.Distance
+              && options.mode === ScalingMode.All:
+
+            case v.scale === ScaleCondition.ParticleModifier
+              && options.mode === ScalingMode.ParticleModifierOnly:
+
+              {
+                this[k] = anyValueMult(factor, this[k])
+                break
+              }
+
+
+            case v.scale === ScaleCondition.IfNotMinusOne
+              && options.mode !== ScalingMode.ParticleModifierOnly
+              && this[k] !== -1:
+
+            case v.scale === ScaleCondition.DistanceIfNotMinusOne
+              && options.mode === ScalingMode.All
+              && this[k] !== -1:
+
+              {
+                this[k] *= factor
+                break
+              }
           }
         }
       }
