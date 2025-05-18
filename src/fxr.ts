@@ -1681,6 +1681,11 @@ type Entries<T> = {
   [K in keyof T]: [K, T[K]]
 }[keyof T][]
 
+export type AtLeastOne<T> = [T, ...T[]]
+export type OptionalTail<Head, Tail> =
+  | AtLeastOne<Head>
+  | [...AtLeastOne<Head>, Tail]
+
 export type AnyExternalValue =
   | ExternalValue.DarkSouls3
   | ExternalValue.Sekiro
@@ -8849,6 +8854,10 @@ function valueWithType<T extends ValueType>(type: T, val: number): TypeMap.Prope
   return (type === ValueType.Scalar ? val : arrayOf(type + 1, () => val)) as TypeMap.PropertyValue[T]
 }
 
+function isNodeArray<T>(list: T | Node[]): list is Node[] {
+  return list[0] instanceof Node
+}
+
 const GameVersionMap = {
   [Game.DarkSouls3]: FXRVersion.DarkSouls3,
   [Game.Sekiro]: FXRVersion.Sekiro,
@@ -11411,29 +11420,22 @@ class BasicNode extends NodeWithConfigs {
   declare configs: BasicConfig[]
 
   /**
-   * @param actions A list of actions to construct a {@link BasicConfig} with.
+   * @param list A list of configs, or a list of actions to construct a
+   * {@link BasicConfig} with.
    * @param nodes A list of child nodes.
    */
-  constructor(actions?: AnyAction[], nodes?: Node[])
-
-  /**
-   * @param configs A list of configs.
-   * @param nodes A list of child nodes.
-   */
-  constructor(configs?: BasicConfig[], nodes?: Node[])
-
-  constructor(configsOrConfigActions: BasicConfig[] | AnyAction[] = [], nodes: Node[] = []) {
+  constructor(list: BasicConfig[] | AnyAction[] = [], nodes: Node[] = []) {
     if (!Array.isArray(nodes) || nodes.some(e => !(e instanceof Node))) {
       throw new Error('Non-node passed as node to BasicNode.')
     }
-    if (configsOrConfigActions.every(e => e instanceof Action || e instanceof DataAction)) {
+    if (list.every(e => e instanceof Action || e instanceof DataAction)) {
       super(NodeType.Basic, [
-        new BasicConfig(configsOrConfigActions)
+        new BasicConfig(list)
       ], nodes)
     } else {
       super(
         NodeType.Basic,
-        configsOrConfigActions,
+        list,
         nodes
       )
     }
@@ -11624,6 +11626,26 @@ class BasicNode extends NodeWithConfigs {
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     )
+  }
+
+  static chain(...links: OptionalTail<BasicConfig[] | AnyAction[], Node[]>) {
+    const start = new BasicNode(links[0])
+    let node = start
+    for (let i = 1; i < links.length; i++) {
+      const link = links[i]
+      if (link.length === 0) {
+        throw new Error('Each chain link must contain at least one config, action, or node.')
+      }
+      if (i < links.length - 1 && isNodeArray(link)) {
+        throw new Error('Only the last link in a chain can contain nodes.')
+      }
+      if (!isNodeArray(link)) {
+        node.nodes = [ node = new BasicNode(link) ]
+      } else {
+        node.nodes = links[i] as Node[]
+      }
+    }
+    return start
   }
 
 }

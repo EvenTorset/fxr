@@ -10,6 +10,7 @@ The following properties have been renamed and some have had their documentation
 ### New features
 - Added a `scaleRateOfTime` method to `FXR` objects, which does the same thing as the one on nodes, except this is always recursive and it also applies to states.
 - Added a `SteppedProperty.basic` function for easily creating a property that keeps a value for a given duration and then switches instantly to a different value.
+- Added a `BasicNode.chain` function, which makes it much easier to generate deep chains of basic nodes for advanced transforms and motion.
 
 ### Documentation changes
 The following changes have no effects on anything functional.
