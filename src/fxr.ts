@@ -33225,7 +33225,7 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
   /**
    * Creates a new sequence property that linearly transitions from one value
-   * to another.
+   * to another over a given duration.
    * @param loop Controls whether the animation should loop or not.
    * @param duration The duration of the animation.
    * @param startValue The value at the start of the animation.
@@ -33241,6 +33241,33 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
       new Keyframe(0, startValue),
       new Keyframe(duration, endValue),
     ])
+  }
+
+  /**
+   * Creates a new sequence property that linearly transitions from one value
+   * to another at a given speed.
+   * @param loop Controls whether the animation should loop or not.
+   * @param speed The speed for the animation to move at.
+   * @param startValue The value at the start of the animation.
+   * @param endValue The value at the end of the animation.
+   */
+  static withSpeed<T extends ValueType>(
+    loop: boolean,
+    speed: number,
+    startValue: TypeMap.PropertyValue[T],
+    endValue: TypeMap.PropertyValue[T]
+  ): LinearProperty<T> {
+    if (getComponentCount(startValue) !== getComponentCount(endValue)) {
+      throw new Error('Start and end values do not have the same number of components.')
+    }
+    const ss = isScalarValue(startValue)
+    const es = isScalarValue(endValue)
+    const duration = ss && es ?
+      Math.abs(endValue - startValue) / speed :
+      !ss && !es ?
+        Math.hypot(...startValue.map((e, i) => e - endValue[i])) / speed :
+        1
+    return LinearProperty.basic(loop, duration, startValue, endValue)
   }
 
   /**
