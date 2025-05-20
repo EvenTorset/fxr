@@ -10,7 +10,7 @@ declare global {
 /**
  * Values representing different games supported by the library.
  */
-enum Game {
+const enum Game {
   /**
    * Using this with the {@link FXR.read} function will cause it to try to find
    * out what game the FXR is for automatically.
@@ -63,7 +63,7 @@ enum Game {
 /**
  * FXR file format version numbers supported by the library.
  */
-enum FXRVersion {
+const enum FXRVersion {
   /**
    * Used in Dark Souls 3.
    */
@@ -78,7 +78,7 @@ enum FXRVersion {
 /**
  * Values used to represent different types of FXR actions.
  */
-export enum ActionType {
+export const enum ActionType {
   /**
    * This action does nothing. It fits into most action slots and acts as a way to disable the effects of the other actions that go in those slots.
    */
@@ -808,7 +808,7 @@ export enum ActionType {
 /**
  * Values used to represent different modes of attachment.
  */
-export enum AttachMode {
+export const enum AttachMode {
   /**
    * Completely detached.
    */
@@ -834,7 +834,7 @@ export enum AttachMode {
 /**
  * Values used to represent different types of blend modes.
  */
-export enum BlendMode {
+export const enum BlendMode {
   /**
    * Seemingly identical to {@link Add}?
    */
@@ -880,7 +880,7 @@ export enum BlendMode {
 /**
  * Values used to represent different types of node configurations, also known as "effects". There is one for each {@link NodeType type of node} that supports multiple configs.
  */
-export enum ConfigType {
+export const enum ConfigType {
   /**
    * Manages the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
    * 
@@ -904,7 +904,7 @@ export enum ConfigType {
 /**
  * Used by {@link ActionType.Distortion Distortion} particles to control what type of distortion to apply.
  */
-export enum DistortionMode {
+export const enum DistortionMode {
   /**
    * Distorts the background as if you stuck something into it and stirred it. It is animated, and the stir speed is controlled by a property.
    */
@@ -930,7 +930,7 @@ export enum DistortionMode {
 /**
  * Possible shapes for {@link ActionType.Distortion distortion} particles.
  */
-export enum DistortionShape {
+export const enum DistortionShape {
   /**
    * A flat rectangle.
    */
@@ -954,7 +954,7 @@ export enum DistortionShape {
  * 
  * Not related to the {@link ActionSlots.EmitterShapeAction emitter shape actions}.
  */
-export enum EmitterShape {
+export const enum EmitterShape {
   /**
    * A simple line.
    */
@@ -990,7 +990,7 @@ export enum EmitterShape {
 /**
  * Values representing different shapes of the volume where force actions apply their force.
  */
-export enum ForceVolumeShape {
+export const enum ForceVolumeShape {
   /**
    * Allows the force to affect everything, everywhere.
    */
@@ -1025,7 +1025,7 @@ export enum ForceVolumeShape {
  * - {@link ActionType.EllipticalSpread EllipticalDirectionSpread}
  * - {@link ActionType.RectangularSpread RectangularDirectionSpread}
  */
-export enum InitialDirection {
+export const enum InitialDirection {
   /**
    * The direction will depend on the emitter shape.
    * | Emitter&nbsp;Shape | Direction |
@@ -1069,7 +1069,7 @@ export enum InitialDirection {
  * 
  * These values and the fields they are used in require more testing. It's best to not assume they will work exactly as described. Values not covered by this enum are also used in vanilla effects, so there are a lot of unknown things about this.
  */
-export enum LightingMode {
+export const enum LightingMode {
   /**
    * Same as {@link Lit}, but this seems to sometimes have an extra light source from somewhere?
    */
@@ -1087,7 +1087,7 @@ export enum LightingMode {
 /**
  * Values representing different orientation modes for {@link ActionType.Model Model} particles.
  */
-export enum ModelOrientationMode {
+export const enum ModelOrientationMode {
   /**
    * Faces global north.
    */
@@ -1121,7 +1121,7 @@ export enum ModelOrientationMode {
 /**
  * Values used to represent different types of FXR nodes.
  */
-export enum NodeType {
+export const enum NodeType {
   /**
    * The root of the FXR tree structure.
    * 
@@ -1157,7 +1157,7 @@ export enum NodeType {
 /**
  * Values representing different orientation modes for most particles.
  */
-export enum OrientationMode {
+export const enum OrientationMode {
   /**
    * Faces global south.
    * 
@@ -1211,7 +1211,7 @@ export enum OrientationMode {
  * 
  * There is no way to change what argument is given to a property. Each property has one specific argument given to it, and this is sometimes the only difference between two properties in the same action.
  */
-export enum PropertyArgument {
+export const enum PropertyArgument {
   /**
    * A constant value of 0.
    */
@@ -1241,7 +1241,7 @@ export enum PropertyArgument {
 /**
  * Used by {@link ActionType.LensFlare lens flares} to control the direction of the offset vector.
  */
-export enum ReflectionMode {
+export const enum ReflectionMode {
   /**
    * No offsets. The flare(s) will appear at the source's position.
    */
@@ -1259,7 +1259,7 @@ export enum ReflectionMode {
 /**
  * Values representing different orientation modes for {@link ActionType.RichModel RichModel} particles.
  */
-export enum RichModelOrientationMode {
+export const enum RichModelOrientationMode {
   /**
    * Faces global north.
    * 
@@ -1289,7 +1289,7 @@ export enum RichModelOrientationMode {
 /**
  * Values representing different orientation modes for {@link ActionType.Tracer Tracer} and {@link ActionType.LegacyTracer LegacyTracer} particles.
  */
-export enum TracerOrientationMode {
+export const enum TracerOrientationMode {
   /**
    * The tracer source is perpendicular to the direction it's travelling and the direction of the camera.
    */
@@ -1317,7 +1317,7 @@ export enum TracerOrientationMode {
 }
 /*#Enums end*/
 
-enum ValueType {
+const enum ValueType {
   Scalar = 0,
   Vector2 = 1,
   Vector3 = 2,
@@ -1531,7 +1531,7 @@ namespace ExternalValue {
   }
 }
 
-enum Operator {
+const enum Operator {
   NotEqual = 0,
   Equal = 1,
   GreaterThanOrEqual = 2,
@@ -1571,7 +1571,7 @@ enum OperandType {
   StateTime = -1,
 }
 
-enum ResourceType {
+const enum ResourceType {
   Texture = 0,
   Model = 1,
   Anibnd = 2,
@@ -1585,7 +1585,7 @@ enum ResourceType {
  * Used internally in {@link DataAction.prototype.scale} to handle some special
  * properties that should not always be scaled.
  */
-export enum ScaleCondition {
+export const enum ScaleCondition {
   /**
    * Always scale the property, unless the scaling mode is {@link ScalingMode.InstancesOnly}
    * or {@link ScalingMode.ParticleModifierOnly}.
@@ -1617,7 +1617,7 @@ export enum ScaleCondition {
  * Controls what properties are scaled by the `scale` methods for nodes,
  * configs, and actions.
  */
-export enum ScalingMode {
+export const enum ScalingMode {
   /**
    * Scale all scaling properties.
    */
@@ -1650,7 +1650,7 @@ export enum ScalingMode {
  * Used internally to track how time-based values should be scaled by
  * {@link DataAction.prototype.scaleRateOfTime}.
  */
-export enum TimeOperation {
+export const enum TimeOperation {
   Multiply = 1,
   Divide = 2,
   DivideIfPositive = 3,
@@ -1666,7 +1666,7 @@ export enum TimeOperation {
 /**
  * Controls the sampling behavior of functions used to generate color palettes.
  */
-export enum PaletteMode {
+export const enum PaletteMode {
   /**
    * Only add the first set of colors found for each palette slot.
    */
@@ -6079,6 +6079,33 @@ const ConfigActionSlots = {
   ]
 }
 
+const GameNames = {
+  [Game.Heuristic]: '[ Unknown -2 ]',
+  [Game.Generic]: '[ Unknown -1 ]',
+  [Game.DarkSouls3]: 'Dark Souls III',
+  [Game.Sekiro]: 'Sekiro',
+  [Game.EldenRing]: 'Elden Ring',
+  [Game.ArmoredCore6]: 'Armored Core VI',
+}
+
+const ValueTypeNames = {
+  [ValueType.Scalar]: 'Scalar',
+  [ValueType.Vector2]: 'Vector2',
+  [ValueType.Vector3]: 'Vector3',
+  [ValueType.Vector4]: 'Vector4',
+}
+
+const BlendModeNames = {
+  [BlendMode.Unk0]: 'Unk0',
+  [BlendMode.Source]: 'Source',
+  [BlendMode.Normal]: 'Normal',
+  [BlendMode.Multiply]: 'Multiply',
+  [BlendMode.Add]: 'Add',
+  [BlendMode.Subtract]: 'Subtract',
+  [BlendMode.Unk6]: 'Unk6',
+  [BlendMode.Unk7]: 'Unk7',
+}
+
 function getActionGameData(type: ActionType, game: Game): FilledActionGameDataEntry {
   const adt = ActionData[type]
   if (!('props' in adt)) {
@@ -6091,7 +6118,7 @@ function getActionGameData(type: ActionType, game: Game): FilledActionGameDataEn
     }
   }
   if (!(game in adt.games)) {
-    throw new Error(`${ActionType[type]} does not have game data for ${Game[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
+    throw new Error(`${DataActions[type].name} does not have game data for ${GameNames[game]}! This either means that the game does not support this type of action, or that the library is missing data for this action in that game for some other reason.`)
   }
   const data = {...((typeof adt.games[game] === 'number' ? adt.games[adt.games[game] as number] : adt.games[game]) as ActionGameDataEntry)}
   data.fields1 ??= Object.assign([], { fieldsCount: 0 })
@@ -6885,7 +6912,7 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
     case ModifierType.RandomDelta: {
       const expFieldCount = (valueType + 1) * 2
       if (fieldCount !== expFieldCount) {
-        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} RandomDelta modifier: ${fieldCount}, expected ${expFieldCount}.`)
+        console.warn(`Warning: Invalid field count for ${ValueTypeNames[valueType]} RandomDelta modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
@@ -6902,7 +6929,7 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
     case ModifierType.RandomRange: {
       const expFieldCount = (valueType + 1) * 3
       if (fieldCount !== expFieldCount) {
-        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} RandomRange modifier: ${fieldCount}, expected ${expFieldCount}.`)
+        console.warn(`Warning: Invalid field count for ${ValueTypeNames[valueType]} RandomRange modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
@@ -6920,7 +6947,7 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
     case ModifierType.RandomFraction: {
       const expFieldCount = (valueType + 1) * 2
       if (fieldCount !== expFieldCount) {
-        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} RandomFraction modifier: ${fieldCount}, expected ${expFieldCount}.`)
+        console.warn(`Warning: Invalid field count for ${ValueTypeNames[valueType]} RandomFraction modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
@@ -6937,7 +6964,7 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
     case ModifierType.ExternalValue1: {
       const expFieldCount = 1
       if (fieldCount !== expFieldCount) {
-        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} ExternalValue1 modifier: ${fieldCount}, expected ${expFieldCount}.`)
+        console.warn(`Warning: Invalid field count for ${ValueTypeNames[valueType]} ExternalValue1 modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], this) as NumericalField[]
       return new ExternalValue1Modifier(fields[0].value, properties[0])
@@ -6945,7 +6972,7 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
     case ModifierType.ExternalValue2: {
       const expFieldCount = 1
       if (fieldCount !== expFieldCount) {
-        console.warn(`Warning: Invalid field count for ${ValueType[valueType]} ExternalValue2 modifier: ${fieldCount}, expected ${expFieldCount}.`)
+        console.warn(`Warning: Invalid field count for ${ValueTypeNames[valueType]} ExternalValue2 modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], this) as NumericalField[]
       return new ExternalValue2Modifier(fields[0].value, properties[0])
@@ -8571,12 +8598,12 @@ function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[t
 
 function validateDataActionProp(container: any, name: string, prop: ActionDataProp) {
   if (!(container[name] instanceof Property) && typeof container[name] !== typeof prop.default) {
-    throw new Error(`${ActionType[container.type]}.${name} is not of the correct type.`)
+    throw new Error(`${DataActions[container.type].name}.${name} is not of the correct type.`)
   }
 
   if ('s10' in prop) {
     if (!Array.isArray(container[name]) || container[name].some(e => typeof e !== 'number')) {
-      throw new Error(`${ActionType[container.type]}.${name} must be an array of numbers.`)
+      throw new Error(`${DataActions[container.type].name}.${name} must be an array of numbers.`)
     }
     return
   }
@@ -8584,7 +8611,7 @@ function validateDataActionProp(container: any, name: string, prop: ActionDataPr
   const cc = getComponentCount(container[name])
   const defCC = getComponentCount(prop.default)
   if (cc !== defCC) {
-    throw new Error(`${ActionType[container.type]}.${name} has ${cc} components, but is expected to have ${defCC}.`)
+    throw new Error(`${DataActions[container.type].name}.${name} has ${cc} components, but is expected to have ${defCC}.`)
   }
 }
 
@@ -12244,7 +12271,7 @@ class BasicConfig implements IConfig {
         } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Unk7) {
           blendMode = BlendMode.Add
         }
-        const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+        const key = `commonParticle${BlendModeNames[blendMode]}` as KeysOfType<
           Recolor.ColorPalette,
           Recolor.PaletteSlots['CommonParticle'][]
         >
@@ -34560,7 +34587,7 @@ namespace Recolor {
           } else if (blendMode === BlendMode.Unk0 || blendMode === BlendMode.Unk7) {
             blendMode = BlendMode.Add
           }
-          const key = `commonParticle${BlendMode[blendMode]}` as KeysOfType<
+          const key = `commonParticle${BlendModeNames[blendMode]}` as KeysOfType<
             ColorPalette,
             PaletteSlots['CommonParticle'][]
           >

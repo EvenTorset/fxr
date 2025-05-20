@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v24.0.0...HEAD)
+
+### Source code
+- Many of the enums in the library has been changed to `const enum`s, which has lead to an ~8% file size reduction of the library when minified. This should not have any effect on functionality, other than some small changes to some error messages.
+
 ## [v24.0.0](https://github.com/EvenTorset/fxr/compare/v23.0.0...v24.0.0) - 2025-05-18
 
 ### Renamed properties
