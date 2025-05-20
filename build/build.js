@@ -488,7 +488,7 @@ export default async function(writeToDist = true) {
       /**
        * ${data.desc.trim().replace(/\n/g, '\n * ')}
        */
-      export const enum ${data.name} {
+      export enum ${data.name} {
         ${Object.entries(data.members).map(([name, member]) => '  ' + `
           /**
            * ${member.desc.trim().replace(/\n/g, '\n   * ')}
