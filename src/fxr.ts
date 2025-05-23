@@ -6129,14 +6129,12 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   const func: PropertyFunction = (typeEnumA & 0b00000000_11110000) >>> 4
   const loop: boolean =       !!((typeEnumA & 0b00010000_00000000) >>> 12)
   br.position += 4 // TypeEnumB
-  const count = br.readInt32()
+  const fieldCount = br.readInt32()
   br.assertInt32(0)
-  const offset = br.readInt32()
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
   const modifiers: IModifier<any>[] = []
   if (!modifierProp) {
-    const modOffset = br.readInt32()
-    br.assertInt32(0)
+    const modOffset = br.readOffset()
     const modCount = br.readInt32()
     br.assertInt32(0)
     br.stepIn(modOffset)
@@ -6145,7 +6143,7 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     }
     br.stepOut()
   }
-  const fields = readFieldsAt(br, offset, count, [func, type]).map(f => f.value)
+  const fields = readFieldsAt(br, fieldOffset, fieldCount, [func, type]).map(f => f.value)
   switch (func) {
     case PropertyFunction.Zero:
     case PropertyFunction.One:
@@ -6233,14 +6231,10 @@ function readAction(
   propertyCount2: number,
   section10Count: number
 ): Action {
-  const fieldOffset = br.readInt32()
-  br.assertInt32(0)
-  const section10Offset = br.readInt32()
-  br.assertInt32(0)
-  const propertyOffset = br.readInt32()
-  br.assertInt32(0)
-  br.assertInt32(0)
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
+  const section10Offset = br.readOffset()
+  const propertyOffset = br.readOffset()
+  br.position += 8 // Unknown offset
 
   br.stepIn(propertyOffset)
   const properties1: AnyProperty[] = []
@@ -6337,14 +6331,10 @@ function readDataAction(
   section10Count: number
 ): DataAction {
   const game = br.game === Game.Heuristic ? Game.EldenRing : br.game
-  const fieldOffset = br.readInt32()
-  br.assertInt32(0)
-  const section10Offset = br.readInt32()
-  br.assertInt32(0)
-  const propertyOffset = br.readInt32()
-  br.assertInt32(0)
-  br.assertInt32(0)
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
+  const section10Offset = br.readOffset()
+  const propertyOffset = br.readOffset()
+  br.position += 8 // Unknown offset
 
   const adt = ActionData[type]
   if (!('props' in adt)) {
@@ -6644,12 +6634,9 @@ function readNode(br: BinaryReader): Node {
   const actionCount = br.readInt32()
   const nodeCount = br.readInt32()
   br.assertInt32(0)
-  const configOffset = br.readInt32()
-  br.assertInt32(0)
-  const actionOffset = br.readInt32()
-  br.assertInt32(0)
-  const nodeOffset = br.readInt32()
-  br.assertInt32(0)
+  const configOffset = br.readOffset()
+  const actionOffset = br.readOffset()
+  const nodeOffset = br.readOffset()
   br.stepIn(nodeOffset)
   const nodes = []
   for (let i = 0; i < nodeCount; ++i) {
@@ -6804,8 +6791,7 @@ function readConfig(br: BinaryReader): IConfig {
   const actionCount = br.readInt32()
   br.assertInt32(0)
   br.assertInt32(0)
-  const actionOffset = br.readInt32()
-  br.assertInt32(0)
+  const actionOffset = br.readOffset()
   br.stepIn(actionOffset)
   const actions = []
   for (let i = 0; i < actionCount; ++i) {
@@ -6868,10 +6854,8 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
   br.position += 4 // typeEnumB
   const fieldCount = br.readInt32()
   const propertyCount = br.readInt32()
-  const fieldOffset = br.readInt32()
-  br.assertInt32(0)
-  const propertyOffset = br.readInt32()
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
+  const propertyOffset = br.readOffset()
   br.stepIn(propertyOffset)
   const properties = []
   for (let i = 0; i < propertyCount; ++i) {
@@ -6989,8 +6973,7 @@ function writeModifierFields(modifier: IModifier<ValueType>, bw: BinaryWriter, i
 
 //#region Functions - Section10
 function readSection10(br: BinaryReader) {
-  const offset = br.readInt32()
-  br.assertInt32(0)
+  const offset = br.readOffset()
   const count = br.readInt32()
   br.assertInt32(0)
   const values: number[] = []
@@ -7023,8 +7006,7 @@ function writeSection10Fields(s10: number[], bw: BinaryWriter, index: number): n
 function readState(br: BinaryReader) {
   br.assertInt32(0)
   const count = br.readInt32()
-  const offset = br.readInt32()
-  br.assertInt32(0)
+  const offset = br.readOffset()
   br.stepIn(offset)
   const conditions: StateCondition[] = []
   for (let i = 0; i < count; ++i) {
@@ -7064,8 +7046,7 @@ function readStateCondition(br: BinaryReader) {
   br.assertInt32(0)
   const hasLeftValue = !!br.assertInt32(0, 1)
   br.assertInt32(0)
-  const leftOffset = br.readInt32()
-  br.assertInt32(0)
+  const leftOffset = br.readOffset()
   br.assertInt32(0)
   br.assertInt32(0)
   br.assertInt32(0)
@@ -7076,8 +7057,7 @@ function readStateCondition(br: BinaryReader) {
   br.assertInt32(0)
   const hasRightValue = !!br.assertInt32(0, 1)
   br.assertInt32(0)
-  const rightOffset = br.readInt32()
-  br.assertInt32(0)
+  const rightOffset = br.readOffset()
   br.assertInt32(0)
   br.assertInt32(0)
   br.assertInt32(0)
@@ -9295,6 +9275,7 @@ class BinaryReader extends DataView<ArrayBuffer> {
   round: boolean = false
   game: Game = Game.Heuristic
   steps: number[] = []
+  memOffset: bigint = 0n
 
   getInt16(offset: number) {
     return super.getInt16(offset, this.littleEndian)
@@ -9324,6 +9305,14 @@ class BinaryReader extends DataView<ArrayBuffer> {
 
   getFloat64(offset: number) {
     return super.getFloat64(offset, this.littleEndian)
+  }
+
+  getBigInt64(offset: number) {
+    return super.getBigInt64(offset, this.littleEndian)
+  }
+
+  getBigUint64(offset: number) {
+    return super.getBigUint64(offset, this.littleEndian)
   }
 
   readUint8() {
@@ -9367,6 +9356,23 @@ class BinaryReader extends DataView<ArrayBuffer> {
     const value = this.getFloat32(this.position)
     this.position += 4
     return value
+  }
+
+  readInt64() {
+    const value = this.getBigInt64(this.position)
+    this.position += 8
+    return value
+  }
+
+  readUint64() {
+    const value = this.getBigUint64(this.position)
+    this.position += 8
+    return value
+  }
+
+  readOffset() {
+    const o = this.readUint64()
+    return Number(o - this.memOffset)
   }
 
   getInt32s(offset: number, count: number) {
@@ -9917,8 +9923,8 @@ class FXR {
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
     br.assertInt32(1) // StateMachineCount
-    br.position += 4 * 4
-    // br.readInt32() // StateOffset
+    const statesOffset = br.readInt32()
+    br.position += 3 * 4
     // br.readInt32() // StateCount
     // br.readInt32() // ConditionOffset
     // br.readInt32() // ConditionCount
@@ -9968,8 +9974,8 @@ class FXR {
     br.position = stateListOffset
     br.assertInt32(0)
     const stateCount = br.readInt32()
-    const statesOffset = br.readInt32()
-    br.assertInt32(0)
+    const statesPtr = br.readInt64()
+    br.memOffset = statesPtr - BigInt(statesOffset)
     br.stepIn(statesOffset)
     const states: State[] = []
     for (let i = 0; i < stateCount; ++i) {

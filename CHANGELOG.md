@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v24.0.0...HEAD)
+
+### Improvements and new features
+- The parsing functions have been updated to also support reading FXRs that have been extracted from the game's memory.
+
 ## [v24.0.0](https://github.com/EvenTorset/fxr/compare/v23.0.0...v24.0.0) - 2025-05-18
 
 ### Renamed properties
