@@ -27,6 +27,10 @@
 
 ### Improvements and new features
 - The parsing functions have been updated to also support reading FXRs that have been extracted from the game's memory.
+- The `getColor` function on nodes has been updated with various improvements to be more accurate:
+  - The `rgbMultiplier` and `alphaMultiplier` properties are now used in the calculation, meaning the output color will have the respective components multiplied by those factors.
+  - The color multiplier properties in `LensFlare` actions are now factored in, and the base color properties are clamped like they should be.
+  - The average of the `colorMin` and `colorMax` properties in the four GPU particle actions is now added onto the base color instead of multiplied, and it now fades out over the life of the particle.
 
 ## [v24.0.0](https://github.com/EvenTorset/fxr/compare/v23.0.0...v24.0.0) - 2025-05-18
 

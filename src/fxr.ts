@@ -8850,6 +8850,20 @@ function isNodeArray<T>(list: T | Node[]): list is Node[] {
   return list[0] instanceof Node
 }
 
+function getLoop(prop: AnyValue): boolean {
+  if (prop instanceof SequenceProperty || prop instanceof ComponentSequenceProperty) {
+    return prop.loop
+  }
+  return false
+}
+
+function setLoop(prop: AnyValue, loop: boolean): AnyValue {
+  if (prop instanceof SequenceProperty || prop instanceof ComponentSequenceProperty) {
+    prop.loop = loop
+  }
+  return prop
+}
+
 const GameVersionMap = {
   [Game.DarkSouls3]: FXRVersion.DarkSouls3,
   [Game.Sekiro]: FXRVersion.Sekiro,
@@ -11569,6 +11583,16 @@ class BasicNode extends NodeWithConfigs {
             a.color3,
           ),
         )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         config.particleModifier instanceof ParticleModifier && (
@@ -11597,6 +11621,16 @@ class BasicNode extends NodeWithConfigs {
             ),
           ),
         )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         config.particleModifier instanceof ParticleModifier &&
@@ -11615,6 +11649,16 @@ class BasicNode extends NodeWithConfigs {
             ),
           )
         )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         config.particleModifier instanceof ParticleModifier && (
@@ -11625,7 +11669,17 @@ class BasicNode extends NodeWithConfigs {
         colorProp = anyValueMult(
           clampVec4Value(config.particleModifier.color),
           clampVec4Value(a.color),
-        ) as any
+        )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         a instanceof GPUStandardParticle ||
@@ -11634,9 +11688,24 @@ class BasicNode extends NodeWithConfigs {
         a instanceof GPUSparkCorrectParticle
       ) {
         colorProp = anyValueSum(
-          anyValueMult(0.5, anyValueSum(a.colorMin, a.colorMax)),
+          LinearProperty.basic(
+            false,
+            a.particleDuration * a.particleDurationMultiplier,
+            anyValueMult(0.5, anyValueSum(a.colorMin, a.colorMax)),
+            [0, 0, 0, 0]
+          ),
           a.color
-        ) as any
+        )
+        const loop = getLoop(colorProp)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         a instanceof PointLight ||
@@ -11646,10 +11715,10 @@ class BasicNode extends NodeWithConfigs {
         modified = true
       } else if (a instanceof LensFlare) {
         switch (opts.layer ?? 1) {
-          case 1: colorProp = a.layer1Color as any; break
-          case 2: colorProp = a.layer2Color as any; break
-          case 3: colorProp = a.layer3Color as any; break
-          case 4: colorProp = a.layer4Color as any; break
+          case 1: colorProp = anyValueMult(clampVec4Value(a.layer1Color), a.layer1ColorMultiplier) as any; break
+          case 2: colorProp = anyValueMult(clampVec4Value(a.layer2Color), a.layer2ColorMultiplier) as any; break
+          case 3: colorProp = anyValueMult(clampVec4Value(a.layer3Color), a.layer3ColorMultiplier) as any; break
+          case 4: colorProp = anyValueMult(clampVec4Value(a.layer4Color), a.layer4ColorMultiplier) as any; break
         }
         modified = true
       } else if (a instanceof LightShaft) {
