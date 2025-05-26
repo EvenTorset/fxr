@@ -4,7 +4,7 @@
 
 ### Breaking changes
 - The `tangent1` and `tangent2` properties of `HermiteKeyframe`s have been renamed to `t1` and `t2` respectively in order to shorten the JSON form of these keyframes. This should allow these keyframes to be inlined more often, which should make it easier to read the JSON for humans.
-- The `unk_sdt_f2_32` property in the following actions has been changed to a boolean and the documentation has been updated:
+- The `unk_sdt_f2_32` property in the following actions has been changed to a boolean and the documentation has been updated, and the default value has changed from `0` to `false` (equivalent for output FXRs):
   - `PointSprite`
   - `Line`
   - `QuadLine`
@@ -15,6 +15,15 @@
   - `GPUStandardParticle`
   - `GPUStandardCorrectParticle`
   - `Tracer`
+- The `bloom` property in the following actions has had its default value changed from `true` to `false` and its documentation has been updated:
+  - `PointSprite`
+  - `Line`
+  - `QuadLine`
+  - `BillboardEx`
+  - `MultiTextureBillboardEx`
+  - `LegacyTracer`
+  - `Tracer`
+- The four layer bloom color properties in the `LensFlare` action have had their default value changed from `[1, 1, 1, 1]` to `[1, 1, 1, 0]` to be consistent with all other bloom color properties.
 
 ### Improvements and new features
 - The parsing functions have been updated to also support reading FXRs that have been extracted from the game's memory.

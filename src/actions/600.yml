@@ -133,9 +133,10 @@ properties:
     default: 0
   bloom:
     field: bool
-    default: true
     desc: |
       Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
+
+      When enabled, this also allows bloom from other particles to be seen through this particle.
 
       Note:
       - This has no effect if the "Effects Quality" setting is set to "Low".

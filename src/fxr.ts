@@ -3081,7 +3081,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -3164,7 +3164,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -3249,7 +3249,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -3364,7 +3364,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -3501,7 +3501,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -3743,7 +3743,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -5043,7 +5043,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 1 },
       unk_ds3_f2_10: { default: 0, field: 1 },
@@ -5189,10 +5189,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       layer4AttenuationRadius: { default: -1, field: 2 },
       unk_er_f1_57: { default: 1, field: 1 },
       bloom: { default: false, field: 0 },
-      layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      layer3BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      layer4BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
+      layer1BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
+      layer2BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
+      layer3BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
+      layer4BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ac6_f1_75: { default: -1, field: 2 },
       unk_ac6_f1_76: { default: -1, field: 2 },
       unk_ac6_f1_77: { default: -1, field: 2 },
@@ -15663,11 +15663,13 @@ class PointSprite extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -16146,11 +16148,13 @@ class Line extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -16650,11 +16654,13 @@ class QuadLine extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -17405,11 +17411,13 @@ class BillboardEx extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -18335,11 +18343,13 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -19859,11 +19869,13 @@ class LegacyTracer extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -27427,11 +27439,13 @@ class Tracer extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -28392,7 +28406,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -28402,7 +28416,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -28412,7 +28426,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -28422,7 +28436,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
