@@ -2,6 +2,9 @@
 
 ## [Unreleased](https://github.com/EvenTorset/fxr/compare/v24.0.0...HEAD)
 
+### Breaking changes
+- The `tangent1` and `tangent2` properties of `HermiteKeyframe`s have been renamed to `t1` and `t2` respectively in order to shorten the JSON form of these keyframes. This should allow these keyframes to be inlined more often, which should make it easier to read the JSON for humans.
+
 ### Improvements and new features
 - The parsing functions have been updated to also support reading FXRs that have been extracted from the game's memory.
 

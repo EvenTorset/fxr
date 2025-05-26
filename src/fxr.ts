@@ -1776,8 +1776,8 @@ export interface IBezierKeyframe<T extends ValueType> extends IBasicKeyframe<T> 
 }
 
 export interface IHermiteKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
-  tangent1: TypeMap.PropertyValue[T]
-  tangent2: TypeMap.PropertyValue[T]
+  t1: TypeMap.PropertyValue[T]
+  t2: TypeMap.PropertyValue[T]
 }
 
 export type AnyKeyframe<T extends ValueType> =
@@ -7565,8 +7565,8 @@ const hermiteInterpKeyframes = (() => {
 
     if (Array.isArray(prevKeyframe.value)) {
       return prevKeyframe.value.map((_, i) => {
-        const t1 = prevKeyframe.tangent1[i] / Math.PI * 2
-        const t2 = prevKeyframe.tangent2[i] / Math.PI * 2
+        const t1 = prevKeyframe.t1[i] / Math.PI * 2
+        const t2 = prevKeyframe.t2[i] / Math.PI * 2
         return lerp(
           prevKeyframe.value[i],
           nextKeyframe.value[i],
@@ -7574,8 +7574,8 @@ const hermiteInterpKeyframes = (() => {
         )
       }) as TypeMap.PropertyValue[T]
     } else {
-      const t1 = (prevKeyframe.tangent1 as number) / Math.PI * 2
-      const t2 = (prevKeyframe.tangent2 as number) / Math.PI * 2
+      const t1 = (prevKeyframe.t1 as number) / Math.PI * 2
+      const t2 = (prevKeyframe.t2 as number) / Math.PI * 2
       return lerp(
         prevKeyframe.value as number,
         nextKeyframe.value as number,
@@ -32264,8 +32264,8 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
   static copy<T extends ValueType, K extends AnyKeyframe<T>>(orig: K): K {
     if ('p1' in orig) {
       return new BezierKeyframe(orig.position, orig.value, orig.p1, orig.p2) as K
-    } else if ('tangent1' in orig) {
-      return new HermiteKeyframe(orig.position, orig.value, orig.tangent1, orig.tangent2) as K
+    } else if ('t1' in orig) {
+      return new HermiteKeyframe(orig.position, orig.value, orig.t1, orig.t2) as K
     }
     return new Keyframe(orig.position, orig.value) as K
   }
@@ -32277,8 +32277,8 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
       }
       if ('p1' in kf) {
         return new BezierKeyframe(kf.position, kf.value[i], kf.p1[i], kf.p2[i]) as ScalarKeyframeFromAny<K, T>
-      } else if ('tangent1' in kf) {
-        return new HermiteKeyframe(kf.position, kf.value[i], kf.tangent1[i], kf.tangent2[i]) as ScalarKeyframeFromAny<K, T>
+      } else if ('t1' in kf) {
+        return new HermiteKeyframe(kf.position, kf.value[i], kf.t1[i], kf.t2[i]) as ScalarKeyframeFromAny<K, T>
       }
       return new Keyframe(kf.position, kf.value[i]) as ScalarKeyframeFromAny<K, T>
     } else {
@@ -32346,8 +32346,8 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
   constructor(
     position: number,
     value: TypeMap.PropertyValue[T],
-    public tangent1: TypeMap.PropertyValue[T],
-    public tangent2: TypeMap.PropertyValue[T],
+    public t1: TypeMap.PropertyValue[T],
+    public t2: TypeMap.PropertyValue[T],
   ) {
     super(position, value)
   }
@@ -32747,13 +32747,13 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent1 as number) ] :
-              e => ((e as IHermiteKeyframe<T>).tangent1 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IHermiteKeyframe<T>).t1 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).t1 as Vector).map(e => new FloatField(e))
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent2 as number) ] :
-              e => ((e as IHermiteKeyframe<T>).tangent2 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IHermiteKeyframe<T>).t2 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).t2 as Vector).map(e => new FloatField(e))
           ),
         ]
       default:
@@ -32872,8 +32872,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           keyframes: this.keyframes.map(e => ({
             position: e.position,
             value: e.value,
-            tangent1: (e as IHermiteKeyframe<T>).tangent1,
-            tangent2: (e as IHermiteKeyframe<T>).tangent2,
+            t1: (e as IHermiteKeyframe<T>).t1,
+            t2: (e as IHermiteKeyframe<T>).t2,
           }))
         }
         if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.serialize(options))
@@ -33053,8 +33053,8 @@ class ComponentSequenceProperty<T extends ValueType>
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
-        ...comp.keyframes.map(e => new FloatField(e.tangent1)),
-        ...comp.keyframes.map(e => new FloatField(e.tangent2)),
+        ...comp.keyframes.map(e => new FloatField(e.t1)),
+        ...comp.keyframes.map(e => new FloatField(e.t2)),
       ])
     ]
   }
@@ -33086,8 +33086,8 @@ class ComponentSequenceProperty<T extends ValueType>
       components: this.components.map(e => e.keyframes.map(f => ({
         position: f.position,
         value: f.value,
-        tangent1: f.tangent1,
-        tangent2: f.tangent2,
+        t1: f.t1,
+        t2: f.t2,
       })))
     }
     if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.serialize(options))
@@ -33204,8 +33204,8 @@ class ComponentSequenceProperty<T extends ValueType>
       return new HermiteProperty(this.loop, arrayOf(this.components[0].keyframes.length, i => new HermiteKeyframe(
         this.components[0].keyframes[i].position,
         this.components.map(c => c.keyframes[i].value) as Vector,
-        this.components.map(c => c.keyframes[i].tangent1) as Vector,
-        this.components.map(c => c.keyframes[i].tangent2) as Vector,
+        this.components.map(c => c.keyframes[i].t1) as Vector,
+        this.components.map(c => c.keyframes[i].t2) as Vector,
       ))).withModifiers(...this.modifiers) as HermiteProperty<T>
     }
     const positions = new Set<number>
