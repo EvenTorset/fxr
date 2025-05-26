@@ -327,11 +327,11 @@ properties:
 
       Other values are used in AC6, but what they do is unknown.
   unk_sdt_f2_32:
-    field: int
+    field: bool
     desc: |
-      Unknown integer.
+      Unknown boolean.
 
-      When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+      When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
   unk_sdt_f2_33:
     field: int
     default: 0

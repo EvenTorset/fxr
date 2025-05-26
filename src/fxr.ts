@@ -3106,7 +3106,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -1, field: 1 },
@@ -3189,7 +3189,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       unk_sdt_f2_30: { default: 0, field: 1 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3274,7 +3274,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3389,7 +3389,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -3526,7 +3526,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -3658,7 +3658,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_29: { default: 0, field: 2 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3768,7 +3768,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -4370,7 +4370,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -4597,7 +4597,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -5068,7 +5068,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -15881,13 +15881,13 @@ class PointSprite extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -16366,13 +16366,13 @@ class Line extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -16868,13 +16868,13 @@ class QuadLine extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -17625,13 +17625,13 @@ class BillboardEx extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -18557,13 +18557,13 @@ class MultiTextureBillboardEx extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -19437,13 +19437,13 @@ class Model extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it can cause some ugly "outline" effects on things seen through particles.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -20077,13 +20077,13 @@ class LegacyTracer extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -23275,13 +23275,13 @@ class GPUStandardParticle extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * Like in most other actions with this field, when enabled, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles, and it may also fix an issue where some other particles can be seen through particles emitted by this action.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -24707,13 +24707,13 @@ class GPUStandardCorrectParticle extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * Like in most other actions with this field, when enabled, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles, and it may also fix an issue where some other particles can be seen through particles emitted by this action.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -27645,13 +27645,13 @@ class Tracer extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
