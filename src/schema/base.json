@@ -721,10 +721,10 @@
       "properties": {
         "position": { "type": "number" },
         "value": { "$ref": "#PropertyValue" },
-        "tangent1": { "$ref": "#PropertyValue" },
-        "tangent2": { "$ref": "#PropertyValue" }
+        "t1": { "$ref": "#PropertyValue" },
+        "t2": { "$ref": "#PropertyValue" }
       },
-      "required": ["position", "value", "tangent1", "tangent2"]
+      "required": ["position", "value", "t1", "t2"]
     },
     "ScalarHermiteKeyframe": {
       "$id": "#ScalarHermiteKeyframe",
@@ -732,10 +732,10 @@
       "properties": {
         "position": { "type": "number" },
         "value": { "type": "number" },
-        "tangent1": { "type": "number" },
-        "tangent2": { "type": "number" }
+        "t1": { "type": "number" },
+        "t2": { "type": "number" }
       },
-      "required": ["position", "value", "tangent1", "tangent2"]
+      "required": ["position", "value", "t1", "t2"]
     },
     "Vector2HermiteKeyframe": {
       "$id": "#Vector2HermiteKeyframe",
@@ -743,10 +743,10 @@
       "properties": {
         "position": { "type": "number" },
         "value": { "$ref": "#Vector2" },
-        "tangent1": { "$ref": "#Vector2" },
-        "tangent2": { "$ref": "#Vector2" }
+        "t1": { "$ref": "#Vector2" },
+        "t2": { "$ref": "#Vector2" }
       },
-      "required": ["position", "value", "tangent1", "tangent2"]
+      "required": ["position", "value", "t1", "t2"]
     },
     "Vector3HermiteKeyframe": {
       "$id": "#Vector3HermiteKeyframe",
@@ -754,10 +754,10 @@
       "properties": {
         "position": { "type": "number" },
         "value": { "$ref": "#Vector3" },
-        "tangent1": { "$ref": "#Vector3" },
-        "tangent2": { "$ref": "#Vector3" }
+        "t1": { "$ref": "#Vector3" },
+        "t2": { "$ref": "#Vector3" }
       },
-      "required": ["position", "value", "tangent1", "tangent2"]
+      "required": ["position", "value", "t1", "t2"]
     },
     "Vector4HermiteKeyframe": {
       "$id": "#Vector4HermiteKeyframe",
@@ -765,10 +765,10 @@
       "properties": {
         "position": { "type": "number" },
         "value": { "$ref": "#Vector4" },
-        "tangent1": { "$ref": "#Vector4" },
-        "tangent2": { "$ref": "#Vector4" }
+        "t1": { "$ref": "#Vector4" },
+        "t2": { "$ref": "#Vector4" }
       },
-      "required": ["position", "value", "tangent1", "tangent2"]
+      "required": ["position", "value", "t1", "t2"]
     },
 
     "ConstantProperty": {
