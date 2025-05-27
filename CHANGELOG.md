@@ -24,6 +24,7 @@
   - `LegacyTracer`
   - `Tracer`
 - The four layer bloom color properties in the `LensFlare` action have had their default value changed from `[1, 1, 1, 1]` to `[1, 1, 1, 0]` to be consistent with all other bloom color properties.
+- The `ScalingMode` enum has been split into and replaced by three boolean options, and the options argument for the `scale` functions now have a `ScaleOptions` interface that documents all of the options. This allows you to do some combinations of property filters that were not available before.
 
 ### Improvements and new features
 - The parsing functions have been updated to also support reading FXRs that have been extracted from the game's memory.
