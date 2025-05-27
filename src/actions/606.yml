@@ -273,9 +273,10 @@ properties:
     field: int
   bloom:
     field: bool
-    default: true
     desc: |
       Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
+
+      When enabled, this also allows bloom from other particles to be seen through this particle.
 
       Note:
       - This has no effect if the "Effects Quality" setting is set to "Low".
@@ -424,11 +425,11 @@ properties:
   unk_sdt_f2_31:
     field: int
   unk_sdt_f2_32:
-    field: int
+    field: bool
     desc: |
-      Unknown integer.
+      Unknown boolean.
 
-      When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+      When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
   specular:
     field: int
     resource: texture

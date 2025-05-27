@@ -1587,60 +1587,31 @@ enum ResourceType {
  */
 export enum ScaleCondition {
   /**
-   * Always scale the property, unless the scaling mode is {@link ScalingMode.InstancesOnly}
-   * or {@link ScalingMode.ParticleModifierOnly}.
+   * Always scale the property, unless {@link ScaleOptions.scaleStructural scaleStructural}
+   * is *disabled*.
    */
   True = 1,
   /**
-   * Only scale the property if the value is not -1.
+   * Only scale the property if {@link ScaleOptions.scaleViewDistance scaleViewDistance}
+   * and {@link ScaleOptions.scaleStructural scaleStructural} are *enabled*.
    */
-  IfNotMinusOne = 2,
+  Distance = 2,
   /**
-   * Only scale the property if view distance properties are being scaled.
+   * Only scale the property if the value is not -1 and
+   * {@link ScaleOptions.scaleViewDistance scaleViewDistance} and
+   * {@link ScaleOptions.scaleStructural scaleStructural} are *enabled*.
    */
-  Distance = 3,
+  DistanceIfNotMinusOne = 3,
   /**
-   * Only scale the property if view distance properties are being scaled and the value is not -1.
+   * Only scale the property if {@link ScaleOptions.scaleParticleModifier scaleParticleModifier}
+   * is *disabled*.
    */
-  DistanceIfNotMinusOne = 4,
+  InstanceSize = 4,
   /**
-   * Always scale the property, unless the scaling mode is {@link ScalingMode.ParticleModifierOnly}.
+   * Only scale the property if {@link ScaleOptions.scaleParticleModifier scaleParticleModifier}
+   * is *enabled*.
    */
-  InstanceSize = 5,
-  /**
-   * Only scale the property if the scaling mode is {@link ScalingMode.ParticleModifierOnly}.
-   */
-  ParticleModifier = 6,
-}
-
-/**
- * Controls what properties are scaled by the `scale` methods for nodes,
- * configs, and actions.
- */
-export enum ScalingMode {
-  /**
-   * Scale all scaling properties.
-   */
-  All = 0,
-  /**
-   * Scale all non-view distance-based scaling properties.
-   */
-  NoViewDistance = 1,
-  /**
-   * Only scale properties that control the size of instances.
-   * 
-   * "Instances" here refer to particles and certain other visual effects, like
-   * light sources. This option will not change the size of emitters, or any
-   * translations, only individual appearance instances.
-   */
-  InstancesOnly = 2,
-  /**
-   * Only scale the scale properties in {@link ParticleModifier} actions.
-   * 
-   * Note: The {@link ParticleModifier.prototype.speed speed} property will
-   * *not* be scaled.
-   */
-  ParticleModifierOnly = 3,
+  ParticleModifier = 5,
 }
 
 /**
@@ -1776,8 +1747,8 @@ export interface IBezierKeyframe<T extends ValueType> extends IBasicKeyframe<T> 
 }
 
 export interface IHermiteKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
-  tangent1: TypeMap.PropertyValue[T]
-  tangent2: TypeMap.PropertyValue[T]
+  t1: TypeMap.PropertyValue[T]
+  t2: TypeMap.PropertyValue[T]
 }
 
 export type AnyKeyframe<T extends ValueType> =
@@ -1854,7 +1825,7 @@ export interface IConfig {
    * Scale the config by the given `factor`. This can be used to change
    * the size of effect created by the config.
    */
-  scale(factor: number, options?: { mode?: ScalingMode }): this
+  scale(factor: number, options?: ScaleOptions): this
 
   toJSON(): any
   serialize(options?: FXRSerializeOptions): any
@@ -1880,6 +1851,35 @@ export interface NodeColorOptions {
   activeState?: number
   side?: 'start' | 'end' | 'middle'
   layer?: number
+}
+
+export interface ScaleOptions {
+  /**
+   * Scale the scale properties in {@link ParticleModifier} actions _instead
+   * of_ those in the appearance actions.
+   * 
+   * Defaults to `false`.
+   */
+  scaleParticleModifier?: boolean
+  /**
+   * Scale properties that are based on the distance to the camera, such as the
+   * min/max distance for many apperance actions.
+   * 
+   * Defaults to `false`.
+   */
+  scaleViewDistance?: boolean
+  /**
+   * Scale properties that control the size of the structure of the effect,
+   * i.e. ones that don't affect the size of the appearance instances, except
+   * the emitter size for GPU particle actions.
+   * 
+   * Defaults to `true`.
+   */
+  scaleStructural?: boolean
+}
+
+const defaultScaleOptions: ScaleOptions = {
+  scaleStructural: true,
 }
 
 export type AnyAction = Action | DataAction
@@ -2725,9 +2725,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: true,
     props: {
       speed: { default: 0, scale: 1, time: 1 },
-      scaleX: { default: 1, scale: 6 },
-      scaleY: { default: 1, scale: 6 },
-      scaleZ: { default: 1, scale: 6 },
+      scaleX: { default: 1, scale: 5 },
+      scaleY: { default: 1, scale: 5 },
+      scaleZ: { default: 1, scale: 5 },
       color: { default: [1, 1, 1, 1], color: 2 },
       uniformScale: { default: false, field: 0 },
     },
@@ -2763,11 +2763,11 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: true,
     props: {
       duration: { default: -1, time: 3 },
-      threshold0: { default: 10000, field: 1, scale: 3 },
-      threshold1: { default: 10000, field: 1, scale: 3 },
-      threshold2: { default: 10000, field: 1, scale: 3 },
-      threshold3: { default: 10000, field: 1, scale: 3 },
-      threshold4: { default: 10000, field: 1, scale: 3 },
+      threshold0: { default: 10000, field: 1, scale: 2 },
+      threshold1: { default: 10000, field: 1, scale: 2 },
+      threshold2: { default: 10000, field: 1, scale: 2 },
+      threshold3: { default: 10000, field: 1, scale: 2 },
+      threshold4: { default: 10000, field: 1, scale: 2 },
       unk_ac6_f1_5: { default: 0, field: 1 },
     },
     games: {
@@ -3061,7 +3061,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      size: { default: 1, scale: 5 },
+      size: { default: 1, scale: 4 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3081,32 +3081,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -1, field: 1 },
@@ -3143,7 +3143,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      length: { default: 1, scale: 5 },
+      length: { default: 1, scale: 4 },
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       startColor: { default: [1, 1, 1, 1], color: 2 },
@@ -3164,32 +3164,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       unk_sdt_f2_30: { default: 0, field: 1 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3226,8 +3226,8 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 5 },
-      length: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
+      length: { default: 1, scale: 4 },
       color1: { default: [1, 1, 1, 1], color: 1 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       startColor: { default: [1, 1, 1, 1], color: 2 },
@@ -3249,32 +3249,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3315,8 +3315,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0 },
       offsetY: { default: 0 },
       offsetZ: { default: 0 },
-      width: { default: 1, scale: 5 },
-      height: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
+      height: { default: 1, scale: 4 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -3364,32 +3364,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -3435,8 +3435,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0 },
       offsetY: { default: 0 },
       offsetZ: { default: 0 },
-      width: { default: 1, scale: 5 },
-      height: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
+      height: { default: 1, scale: 4 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -3501,32 +3501,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 2 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -3575,9 +3575,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       model: { default: 80201, field: 1, resource: 1 },
-      sizeX: { default: 1, scale: 5 },
-      sizeY: { default: 1, scale: 5 },
-      sizeZ: { default: 1, scale: 5 },
+      sizeX: { default: 1, scale: 4 },
+      sizeY: { default: 1, scale: 4 },
+      sizeZ: { default: 1, scale: 4 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -3640,25 +3640,25 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 2 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 2 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_26: { default: 1, field: 1 },
       unk_ds3_f2_27: { default: 0, field: 1 },
       unk_sdt_f2_29: { default: 0, field: 2 },
       unk_sdt_f2_30: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       unk_sdt_f2_33: { default: 0, field: 1 },
       unk_sdt_f2_34: { default: 0, field: 2 },
       unk_sdt_f2_35: { default: -2, field: 1 },
@@ -3701,7 +3701,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
       widthMultiplier: { default: 1 },
       startFadeEndpoint: { default: 0 },
       endFadeEndpoint: { default: 0 },
@@ -3725,7 +3725,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, scale: 5, time: 5 },
+      segmentDuration: { default: 1, field: 2, scale: 4, time: 5 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -3743,32 +3743,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 2 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -3808,9 +3808,9 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0 },
       offsetY: { default: 0 },
       offsetZ: { default: 0 },
-      sizeX: { default: 1, scale: 5 },
-      sizeY: { default: 1, scale: 5 },
-      sizeZ: { default: 1, scale: 5 },
+      sizeX: { default: 1, scale: 4 },
+      sizeY: { default: 1, scale: 4 },
+      sizeZ: { default: 1, scale: 4 },
       color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_7: { default: [1, 1, 1, 1] },
       intensity: { default: 1 },
@@ -3855,19 +3855,19 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 1, field: 2 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
       unk_ds3_f2_29: { default: 0, field: 1 },
@@ -3879,7 +3879,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_sdt_f2_35: { default: -1, field: 1 },
       unk_sdt_f2_36: { default: -2, field: 1 },
       unk_sdt_f2_37: { default: 0, field: 1 },
-      unk_sdt_f2_38: { default: 0, field: 2, scale: 3 },
+      unk_sdt_f2_38: { default: 0, field: 2, scale: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -3913,8 +3913,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetX: { default: 0 },
       offsetY: { default: 0 },
       offsetZ: { default: 0 },
-      width: { default: 1, scale: 5 },
-      height: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
+      height: { default: 1, scale: 4 },
       color: { default: [1, 1, 1, 1], color: 2 },
       unk_ds3_p1_6: { default: [1, 1, 1, 1] },
       blurRadius: { default: 0.5 },
@@ -3941,19 +3941,19 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0.5, field: 2 },
       unk_ds3_f2_21: { default: 1, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 2 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
       unk_ds3_f2_29: { default: 0, field: 2 },
@@ -3988,7 +3988,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       diffuseColor: { default: [1, 1, 1, 1], color: 1 },
       specularColor: { default: [1, 1, 1, 1], color: 1 },
-      radius: { default: 10, scale: 5 },
+      radius: { default: 10, scale: 4 },
       unk_ds3_p1_3: { default: 0 },
       unk_ds3_p1_4: { default: 0 },
       unk_ds3_p1_5: { default: 0 },
@@ -4026,7 +4026,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 100, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
-      maxViewDistance: { default: 0, field: 2, scale: 3 },
+      maxViewDistance: { default: 0, field: 2, scale: 2 },
       volumeDensity: { default: 0, field: 2 },
       unk_sdt_f2_25: { default: 0, field: 2 },
       phaseFunction: { default: true, field: 0 },
@@ -4188,8 +4188,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
       particleAngularAccelerationZ: { default: 0, time: 4 },
-      particleGrowthRateX: { default: 0, scale: 5, time: 1 },
-      particleGrowthRateY: { default: 0, scale: 5, time: 1 },
+      particleGrowthRateX: { default: 0, scale: 4, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 4, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
@@ -4249,29 +4249,29 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
       particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
-      particleSizeX: { default: 1, field: 2, scale: 5 },
-      particleSizeY: { default: 1, field: 2, scale: 5 },
+      particleSizeX: { default: 1, field: 2, scale: 4 },
+      particleSizeY: { default: 1, field: 2, scale: 4 },
       unk_ds3_f1_73: { default: 1, field: 2 },
-      particleSizeXMin: { default: 0, field: 2, scale: 5 },
-      particleSizeYMin: { default: 0, field: 2, scale: 5 },
+      particleSizeXMin: { default: 0, field: 2, scale: 4 },
+      particleSizeYMin: { default: 0, field: 2, scale: 4 },
       unk_ds3_f1_76: { default: 0, field: 2 },
-      particleSizeXMax: { default: 0, field: 2, scale: 5 },
-      particleSizeYMax: { default: 0, field: 2, scale: 5 },
+      particleSizeXMax: { default: 0, field: 2, scale: 4 },
+      particleSizeYMax: { default: 0, field: 2, scale: 4 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 5, time: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 4, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 4, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 5, time: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 4, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 4, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 5, time: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 4, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 4, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 5, time: 4 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 4, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 4, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 5, time: 4 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 4, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 4, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4322,7 +4322,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 5, time: 2 },
+      particleTraceLength: { default: 1, field: 2, scale: 4, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4352,25 +4352,25 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -4416,8 +4416,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p1_7: { default: 0 },
       unk_ds3_p1_8: { default: 0 },
       particleAngularAccelerationZ: { default: 0, time: 4 },
-      particleGrowthRateX: { default: 0, scale: 5, time: 1 },
-      particleGrowthRateY: { default: 0, scale: 5, time: 1 },
+      particleGrowthRateX: { default: 0, scale: 4, time: 1 },
+      particleGrowthRateY: { default: 0, scale: 4, time: 1 },
       unk_ds3_p1_12: { default: 0 },
       color: { default: [1, 1, 1, 1], color: 1 },
       unk_ds3_p1_14: { default: 1 },
@@ -4477,29 +4477,29 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleAngularAccelerationMin: { default: [0, 0, 0], field: 4, time: 4 },
       particleAngularAccelerationMax: { default: [0, 0, 0], field: 4, time: 4 },
       particleUniformScale: { default: false, field: 0 },
-      particleSizeX: { default: 1, field: 2, scale: 5 },
-      particleSizeY: { default: 1, field: 2, scale: 5 },
+      particleSizeX: { default: 1, field: 2, scale: 4 },
+      particleSizeY: { default: 1, field: 2, scale: 4 },
       unk_ds3_f1_73: { default: 1, field: 2 },
-      particleSizeXMin: { default: 0, field: 2, scale: 5 },
-      particleSizeYMin: { default: 0, field: 2, scale: 5 },
+      particleSizeXMin: { default: 0, field: 2, scale: 4 },
+      particleSizeYMin: { default: 0, field: 2, scale: 4 },
       unk_ds3_f1_76: { default: 0, field: 2 },
-      particleSizeXMax: { default: 0, field: 2, scale: 5 },
-      particleSizeYMax: { default: 0, field: 2, scale: 5 },
+      particleSizeXMax: { default: 0, field: 2, scale: 4 },
+      particleSizeYMax: { default: 0, field: 2, scale: 4 },
       unk_ds3_f1_79: { default: 0, field: 2 },
-      particleGrowthRateXStatic: { default: 0, field: 2, scale: 5, time: 1 },
-      particleGrowthRateYStatic: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateXStatic: { default: 0, field: 2, scale: 4, time: 1 },
+      particleGrowthRateYStatic: { default: 0, field: 2, scale: 4, time: 1 },
       unk_ds3_f1_82: { default: 0, field: 2 },
-      particleGrowthRateXMin: { default: 0, field: 2, scale: 5, time: 1 },
-      particleGrowthRateYMin: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateXMin: { default: 0, field: 2, scale: 4, time: 1 },
+      particleGrowthRateYMin: { default: 0, field: 2, scale: 4, time: 1 },
       unk_ds3_f1_85: { default: 0, field: 2 },
-      particleGrowthRateXMax: { default: 0, field: 2, scale: 5, time: 1 },
-      particleGrowthRateYMax: { default: 0, field: 2, scale: 5, time: 1 },
+      particleGrowthRateXMax: { default: 0, field: 2, scale: 4, time: 1 },
+      particleGrowthRateYMax: { default: 0, field: 2, scale: 4, time: 1 },
       unk_ds3_f1_88: { default: 0, field: 2 },
-      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 5, time: 4 },
-      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationXMin: { default: 0, field: 2, scale: 4, time: 4 },
+      particleGrowthAccelerationYMin: { default: 0, field: 2, scale: 4, time: 4 },
       unk_ds3_f1_91: { default: 0, field: 2 },
-      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 5, time: 4 },
-      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 5, time: 4 },
+      particleGrowthAccelerationXMax: { default: 0, field: 2, scale: 4, time: 4 },
+      particleGrowthAccelerationYMax: { default: 0, field: 2, scale: 4, time: 4 },
       unk_ds3_f1_94: { default: 0, field: 2 },
       rgbMultiplier: { default: 1, field: 2 },
       alphaMultiplier: { default: 1, field: 2 },
@@ -4550,7 +4550,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       particleRandomTurnIntervalMax: { default: 1, field: 1, time: 2 },
       traceParticles: { default: false, field: 0 },
       unk_ds3_f1_149: { default: 1, field: 2 },
-      particleTraceLength: { default: 1, field: 2, scale: 5, time: 2 },
+      particleTraceLength: { default: 1, field: 2, scale: 4, time: 2 },
       traceParticlesThreshold: { default: 0, field: 2 },
       traceParticleHead: { default: false, field: 0 },
       unk_ds3_f1_153: { default: 0, field: 1 },
@@ -4579,25 +4579,25 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 1 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
       unk_sdt_f2_29: { default: 0, field: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unkHideIndoors: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -4623,8 +4623,8 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: false,
     slotDefault: false,
     props: {
-      width: { default: 1, scale: 5 },
-      height: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
+      height: { default: 1, scale: 4 },
       color1: { default: [1, 1, 1, 1], color: 2 },
       color2: { default: [1, 1, 1, 1], color: 2 },
       color3: { default: [1, 1, 1, 1], color: 1 },
@@ -4741,10 +4741,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_60: { default: 0, field: 1 },
       unk_ac6_f1_61: { default: 0, field: 1 },
       unk_ac6_f1_62: { default: 0, field: 1 },
-      particleLengthMin: { default: 1, field: 2, scale: 5 },
-      particleLengthMax: { default: 1, field: 2, scale: 5 },
-      particleWidthMin: { default: 1, field: 2, scale: 5 },
-      particleWidthMax: { default: 1, field: 2, scale: 5 },
+      particleLengthMin: { default: 1, field: 2, scale: 4 },
+      particleLengthMax: { default: 1, field: 2, scale: 4 },
+      particleWidthMin: { default: 1, field: 2, scale: 4 },
+      particleWidthMax: { default: 1, field: 2, scale: 4 },
       unk_ac6_f1_67: { default: 1, field: 2 },
       unk_ac6_f1_68: { default: 1, field: 2 },
       particleDurationMultiplier: { default: 1, field: 2 },
@@ -4793,19 +4793,19 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f2_11: { default: 0, field: 1 },
       unk_ac6_f2_12: { default: 0, field: 1 },
       unk_ac6_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ac6_f2_20: { default: 0, field: 1 },
       unk_ac6_f2_21: { default: 0, field: 1 },
       unk_ac6_f2_22: { default: 0, field: 1 },
       unk_ac6_f2_23: { default: 0, field: 1 },
       unk_ac6_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ac6_f2_27: { default: 1, field: 1 },
       unk_ac6_f2_28: { default: 0, field: 1 },
       unk_ac6_f2_29: { default: 0, field: 2 },
@@ -4900,10 +4900,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_60: { default: 0, field: 1 },
       unk_ac6_f1_61: { default: 0, field: 1 },
       unk_ac6_f1_62: { default: 0, field: 1 },
-      particleLengthMin: { default: 1, field: 2, scale: 5 },
-      particleLengthMax: { default: 1, field: 2, scale: 5 },
-      particleWidthMin: { default: 1, field: 2, scale: 5 },
-      particleWidthMax: { default: 1, field: 2, scale: 5 },
+      particleLengthMin: { default: 1, field: 2, scale: 4 },
+      particleLengthMax: { default: 1, field: 2, scale: 4 },
+      particleWidthMin: { default: 1, field: 2, scale: 4 },
+      particleWidthMax: { default: 1, field: 2, scale: 4 },
       unk_ac6_f1_67: { default: 1, field: 2 },
       unk_ac6_f1_68: { default: 1, field: 2 },
       particleDurationMultiplier: { default: 1, field: 2 },
@@ -4952,19 +4952,19 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f2_11: { default: 0, field: 1 },
       unk_ac6_f2_12: { default: 0, field: 1 },
       unk_ac6_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ac6_f2_20: { default: 0, field: 1 },
       unk_ac6_f2_21: { default: 0, field: 1 },
       unk_ac6_f2_22: { default: 0, field: 1 },
       unk_ac6_f2_23: { default: 0, field: 1 },
       unk_ac6_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ac6_f2_27: { default: 1, field: 1 },
       unk_ac6_f2_28: { default: 0, field: 1 },
       unk_ac6_f2_29: { default: 0, field: 2 },
@@ -4996,7 +4996,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       texture: { default: 1, field: 1, resource: 0, textureType: 'a' },
       blendMode: { default: BlendMode.Normal, field: 1 },
-      width: { default: 1, scale: 5 },
+      width: { default: 1, scale: 4 },
       widthMultiplier: { default: 1 },
       startFadeEndpoint: { default: 0 },
       endFadeEndpoint: { default: 0 },
@@ -5020,7 +5020,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       orientation: { default: TracerOrientationMode.LocalZ, field: 1 },
       normalMap: { default: 0, field: 1, resource: 0, textureType: 'n' },
       segmentInterval: { default: 0, field: 2, time: 2 },
-      segmentDuration: { default: 1, field: 2, scale: 5, time: 5 },
+      segmentDuration: { default: 1, field: 2, scale: 4, time: 5 },
       concurrentSegments: { default: 100, field: 1 },
       segmentSubdivision: { default: 0, field: 1 },
       unk_ds3_f1_8: { default: 0, field: 2 },
@@ -5043,32 +5043,32 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f2_1: { default: 0, field: 1 },
       unk_ds3_f2_2: { default: 8, field: 1 },
       unk_ds3_f2_3: { default: 0, field: 1 },
-      bloom: { default: true, field: 0 },
+      bloom: { default: false, field: 0 },
       bloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ds3_f2_9: { default: 0, field: 1 },
       unk_ds3_f2_10: { default: 0, field: 1 },
       unk_ds3_f2_11: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 0, field: 1 },
       unk_ds3_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_ds3_f2_20: { default: 0, field: 2 },
       unk_ds3_f2_21: { default: 0, field: 1 },
       unk_ds3_f2_22: { default: 0, field: 1 },
       unk_ds3_f2_23: { default: 0, field: 1 },
       unk_ds3_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_ds3_f2_27: { default: 1, field: 1 },
       unk_ds3_f2_28: { default: 0, field: 1 },
-      unk_ds3_f2_29: { default: 0, field: 2, scale: 3 },
+      unk_ds3_f2_29: { default: 0, field: 2, scale: 2 },
       shadowDarkness: { default: 0, field: 2 },
       unk_sdt_f2_31: { default: 0, field: 1 },
-      unk_sdt_f2_32: { default: 0, field: 1 },
+      unk_sdt_f2_32: { default: false, field: 0 },
       specular: { default: 0, field: 1, resource: 0, textureType: '3m' },
       glossiness: { default: 0.25, field: 2 },
       lighting: { default: -1, field: 1 },
@@ -5112,8 +5112,8 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       texture: { default: 50004, field: 1, resource: 0, textureType: 'd' },
-      depth: { default: 1, field: 2, scale: 5 },
-      size: { default: 1, field: 2, scale: 5 },
+      depth: { default: 1, field: 2, scale: 4 },
+      size: { default: 1, field: 2, scale: 4 },
       descent: { default: 0.15, field: 2, time: 2 },
       duration: { default: 0.15, field: 2, time: 2 },
     },
@@ -5130,17 +5130,17 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: false,
     slotDefault: false,
     props: {
-      layer1Width: { default: 1, scale: 5 },
-      layer1Height: { default: 1, scale: 5 },
+      layer1Width: { default: 1, scale: 4 },
+      layer1Height: { default: 1, scale: 4 },
       layer1Color: { default: [1, 1, 1, 1], color: 1 },
-      layer2Width: { default: 1, scale: 5 },
-      layer2Height: { default: 1, scale: 5 },
+      layer2Width: { default: 1, scale: 4 },
+      layer2Height: { default: 1, scale: 4 },
       layer2Color: { default: [1, 1, 1, 1], color: 1 },
-      layer3Width: { default: 1, scale: 5 },
-      layer3Height: { default: 1, scale: 5 },
+      layer3Width: { default: 1, scale: 4 },
+      layer3Height: { default: 1, scale: 4 },
       layer3Color: { default: [1, 1, 1, 1], color: 1 },
-      layer4Width: { default: 1, scale: 5 },
-      layer4Height: { default: 1, scale: 5 },
+      layer4Width: { default: 1, scale: 4 },
+      layer4Height: { default: 1, scale: 4 },
       layer4Color: { default: [1, 1, 1, 1], color: 1 },
       layer1: { default: 1, field: 1, resource: 0, textureType: 'a' },
       layer2: { default: 0, field: 1, resource: 0, textureType: 'a' },
@@ -5189,10 +5189,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       layer4AttenuationRadius: { default: -1, field: 2 },
       unk_er_f1_57: { default: 1, field: 1 },
       bloom: { default: false, field: 0 },
-      layer1BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      layer2BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      layer3BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
-      layer4BloomColor: { default: [1, 1, 1, 1], field: 5, color: 2 },
+      layer1BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
+      layer2BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
+      layer3BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
+      layer4BloomColor: { default: [1, 1, 1, 0], field: 5, color: 2 },
       unk_ac6_f1_75: { default: -1, field: 2 },
       unk_ac6_f1_76: { default: -1, field: 2 },
       unk_ac6_f1_77: { default: -1, field: 2 },
@@ -5257,9 +5257,9 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       model: { default: 80201, resource: 1 },
-      sizeX: { default: 1, scale: 5 },
-      sizeY: { default: 1, scale: 5 },
-      sizeZ: { default: 1, scale: 5 },
+      sizeX: { default: 1, scale: 4 },
+      sizeY: { default: 1, scale: 4 },
+      sizeZ: { default: 1, scale: 4 },
       rotationX: { default: 0 },
       rotationY: { default: 0 },
       rotationZ: { default: 0 },
@@ -5341,19 +5341,19 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_er_f2_11: { default: 0, field: 1 },
       unk_er_f2_12: { default: 0, field: 1 },
       unk_er_f2_13: { default: 0, field: 1 },
-      minFadeDistance: { default: -1, field: 2, scale: 4 },
-      minDistance: { default: -1, field: 2, scale: 4 },
-      maxFadeDistance: { default: -1, field: 2, scale: 4 },
-      maxDistance: { default: -1, field: 2, scale: 4 },
-      minDistanceThreshold: { default: -1, field: 2, scale: 4 },
-      maxDistanceThreshold: { default: -1, field: 2, scale: 4 },
+      minFadeDistance: { default: -1, field: 2, scale: 3 },
+      minDistance: { default: -1, field: 2, scale: 3 },
+      maxFadeDistance: { default: -1, field: 2, scale: 3 },
+      maxDistance: { default: -1, field: 2, scale: 3 },
+      minDistanceThreshold: { default: -1, field: 2, scale: 3 },
+      maxDistanceThreshold: { default: -1, field: 2, scale: 3 },
       unk_er_f2_20: { default: 0, field: 1 },
       unk_er_f2_21: { default: 0, field: 1 },
       unk_er_f2_22: { default: 0, field: 1 },
       unk_er_f2_23: { default: 0, field: 1 },
       unk_er_f2_24: { default: 0, field: 1 },
       unkDepthBlend1: { default: 1, field: 2 },
-      unkDepthBlend2: { default: 0, field: 2, scale: 3 },
+      unkDepthBlend2: { default: 0, field: 2, scale: 2 },
       unk_er_f2_27: { default: 0, field: 1 },
       unk_er_f2_28: { default: 1, field: 1 },
       unk_er_f2_29: { default: 0, field: 1 },
@@ -5784,7 +5784,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     props: {
       rateOfTime: { default: 1, field: 2 },
       limitViewDistance: { default: false, field: 0 },
-      maxViewDistance: { default: 0, field: 2, scale: 3 },
+      maxViewDistance: { default: 0, field: 2, scale: 2 },
       unk_ds3_f1_2: { default: 0, field: 2 },
       unk_ds3_f1_3: { default: 0, field: 2 },
       unk_ds3_f1_4: { default: 0, field: 2 },
@@ -5820,10 +5820,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       specularColor: { default: [1, 1, 1, 1], color: 1 },
       diffuseMultiplier: { default: 1 },
       specularMultiplier: { default: 1 },
-      near: { default: 0.01, scale: 5 },
-      far: { default: 50, scale: 5 },
-      radiusX: { default: 50, scale: 5 },
-      radiusY: { default: 50, scale: 5 },
+      near: { default: 0.01, scale: 4 },
+      far: { default: 50, scale: 4 },
+      radiusX: { default: 50, scale: 4 },
+      radiusY: { default: 50, scale: 4 },
       unk_ds3_p1_6: { default: 1 },
       unk_ds3_p1_7: { default: 1 },
       unk_sdt_p1_10: { default: 1 },
@@ -6129,14 +6129,12 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   const func: PropertyFunction = (typeEnumA & 0b00000000_11110000) >>> 4
   const loop: boolean =       !!((typeEnumA & 0b00010000_00000000) >>> 12)
   br.position += 4 // TypeEnumB
-  const count = br.readInt32()
+  const fieldCount = br.readInt32()
   br.assertInt32(0)
-  const offset = br.readInt32()
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
   const modifiers: IModifier<any>[] = []
   if (!modifierProp) {
-    const modOffset = br.readInt32()
-    br.assertInt32(0)
+    const modOffset = br.readOffset()
     const modCount = br.readInt32()
     br.assertInt32(0)
     br.stepIn(modOffset)
@@ -6145,7 +6143,7 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
     }
     br.stepOut()
   }
-  const fields = readFieldsAt(br, offset, count, [func, type]).map(f => f.value)
+  const fields = readFieldsAt(br, fieldOffset, fieldCount, [func, type]).map(f => f.value)
   switch (func) {
     case PropertyFunction.Zero:
     case PropertyFunction.One:
@@ -6233,14 +6231,10 @@ function readAction(
   propertyCount2: number,
   section10Count: number
 ): Action {
-  const fieldOffset = br.readInt32()
-  br.assertInt32(0)
-  const section10Offset = br.readInt32()
-  br.assertInt32(0)
-  const propertyOffset = br.readInt32()
-  br.assertInt32(0)
-  br.assertInt32(0)
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
+  const section10Offset = br.readOffset()
+  const propertyOffset = br.readOffset()
+  br.position += 8 // Unknown offset
 
   br.stepIn(propertyOffset)
   const properties1: AnyProperty[] = []
@@ -6337,14 +6331,10 @@ function readDataAction(
   section10Count: number
 ): DataAction {
   const game = br.game === Game.Heuristic ? Game.EldenRing : br.game
-  const fieldOffset = br.readInt32()
-  br.assertInt32(0)
-  const section10Offset = br.readInt32()
-  br.assertInt32(0)
-  const propertyOffset = br.readInt32()
-  br.assertInt32(0)
-  br.assertInt32(0)
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
+  const section10Offset = br.readOffset()
+  const propertyOffset = br.readOffset()
+  br.position += 8 // Unknown offset
 
   const adt = ActionData[type]
   if (!('props' in adt)) {
@@ -6644,12 +6634,9 @@ function readNode(br: BinaryReader): Node {
   const actionCount = br.readInt32()
   const nodeCount = br.readInt32()
   br.assertInt32(0)
-  const configOffset = br.readInt32()
-  br.assertInt32(0)
-  const actionOffset = br.readInt32()
-  br.assertInt32(0)
-  const nodeOffset = br.readInt32()
-  br.assertInt32(0)
+  const configOffset = br.readOffset()
+  const actionOffset = br.readOffset()
+  const nodeOffset = br.readOffset()
   br.stepIn(nodeOffset)
   const nodes = []
   for (let i = 0; i < nodeCount; ++i) {
@@ -6804,8 +6791,7 @@ function readConfig(br: BinaryReader): IConfig {
   const actionCount = br.readInt32()
   br.assertInt32(0)
   br.assertInt32(0)
-  const actionOffset = br.readInt32()
-  br.assertInt32(0)
+  const actionOffset = br.readOffset()
   br.stepIn(actionOffset)
   const actions = []
   for (let i = 0; i < actionCount; ++i) {
@@ -6868,10 +6854,8 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
   br.position += 4 // typeEnumB
   const fieldCount = br.readInt32()
   const propertyCount = br.readInt32()
-  const fieldOffset = br.readInt32()
-  br.assertInt32(0)
-  const propertyOffset = br.readInt32()
-  br.assertInt32(0)
+  const fieldOffset = br.readOffset()
+  const propertyOffset = br.readOffset()
   br.stepIn(propertyOffset)
   const properties = []
   for (let i = 0; i < propertyCount; ++i) {
@@ -6989,8 +6973,7 @@ function writeModifierFields(modifier: IModifier<ValueType>, bw: BinaryWriter, i
 
 //#region Functions - Section10
 function readSection10(br: BinaryReader) {
-  const offset = br.readInt32()
-  br.assertInt32(0)
+  const offset = br.readOffset()
   const count = br.readInt32()
   br.assertInt32(0)
   const values: number[] = []
@@ -7023,8 +7006,7 @@ function writeSection10Fields(s10: number[], bw: BinaryWriter, index: number): n
 function readState(br: BinaryReader) {
   br.assertInt32(0)
   const count = br.readInt32()
-  const offset = br.readInt32()
-  br.assertInt32(0)
+  const offset = br.readOffset()
   br.stepIn(offset)
   const conditions: StateCondition[] = []
   for (let i = 0; i < count; ++i) {
@@ -7064,8 +7046,7 @@ function readStateCondition(br: BinaryReader) {
   br.assertInt32(0)
   const hasLeftValue = !!br.assertInt32(0, 1)
   br.assertInt32(0)
-  const leftOffset = br.readInt32()
-  br.assertInt32(0)
+  const leftOffset = br.readOffset()
   br.assertInt32(0)
   br.assertInt32(0)
   br.assertInt32(0)
@@ -7076,8 +7057,7 @@ function readStateCondition(br: BinaryReader) {
   br.assertInt32(0)
   const hasRightValue = !!br.assertInt32(0, 1)
   br.assertInt32(0)
-  const rightOffset = br.readInt32()
-  br.assertInt32(0)
+  const rightOffset = br.readOffset()
   br.assertInt32(0)
   br.assertInt32(0)
   br.assertInt32(0)
@@ -7585,8 +7565,8 @@ const hermiteInterpKeyframes = (() => {
 
     if (Array.isArray(prevKeyframe.value)) {
       return prevKeyframe.value.map((_, i) => {
-        const t1 = prevKeyframe.tangent1[i] / Math.PI * 2
-        const t2 = prevKeyframe.tangent2[i] / Math.PI * 2
+        const t1 = prevKeyframe.t1[i] / Math.PI * 2
+        const t2 = prevKeyframe.t2[i] / Math.PI * 2
         return lerp(
           prevKeyframe.value[i],
           nextKeyframe.value[i],
@@ -7594,8 +7574,8 @@ const hermiteInterpKeyframes = (() => {
         )
       }) as TypeMap.PropertyValue[T]
     } else {
-      const t1 = (prevKeyframe.tangent1 as number) / Math.PI * 2
-      const t2 = (prevKeyframe.tangent2 as number) / Math.PI * 2
+      const t1 = (prevKeyframe.t1 as number) / Math.PI * 2
+      const t2 = (prevKeyframe.t2 as number) / Math.PI * 2
       return lerp(
         prevKeyframe.value as number,
         nextKeyframe.value as number,
@@ -8870,6 +8850,20 @@ function isNodeArray<T>(list: T | Node[]): list is Node[] {
   return list[0] instanceof Node
 }
 
+function getLoop(prop: AnyValue): boolean {
+  if (prop instanceof SequenceProperty || prop instanceof ComponentSequenceProperty) {
+    return prop.loop
+  }
+  return false
+}
+
+function setLoop(prop: AnyValue, loop: boolean): AnyValue {
+  if (prop instanceof SequenceProperty || prop instanceof ComponentSequenceProperty) {
+    prop.loop = loop
+  }
+  return prop
+}
+
 const GameVersionMap = {
   [Game.DarkSouls3]: FXRVersion.DarkSouls3,
   [Game.Sekiro]: FXRVersion.Sekiro,
@@ -9295,6 +9289,7 @@ class BinaryReader extends DataView<ArrayBuffer> {
   round: boolean = false
   game: Game = Game.Heuristic
   steps: number[] = []
+  memOffset: bigint = 0n
 
   getInt16(offset: number) {
     return super.getInt16(offset, this.littleEndian)
@@ -9324,6 +9319,14 @@ class BinaryReader extends DataView<ArrayBuffer> {
 
   getFloat64(offset: number) {
     return super.getFloat64(offset, this.littleEndian)
+  }
+
+  getBigInt64(offset: number) {
+    return super.getBigInt64(offset, this.littleEndian)
+  }
+
+  getBigUint64(offset: number) {
+    return super.getBigUint64(offset, this.littleEndian)
   }
 
   readUint8() {
@@ -9367,6 +9370,23 @@ class BinaryReader extends DataView<ArrayBuffer> {
     const value = this.getFloat32(this.position)
     this.position += 4
     return value
+  }
+
+  readInt64() {
+    const value = this.getBigInt64(this.position)
+    this.position += 8
+    return value
+  }
+
+  readUint64() {
+    const value = this.getBigUint64(this.position)
+    this.position += 8
+    return value
+  }
+
+  readOffset() {
+    const o = this.readUint64()
+    return Number(o - this.memOffset)
   }
 
   getInt32s(offset: number, count: number) {
@@ -9917,8 +9937,8 @@ class FXR {
     const id = br.readInt32()
     const stateListOffset = br.readInt32()
     br.assertInt32(1) // StateMachineCount
-    br.position += 4 * 4
-    // br.readInt32() // StateOffset
+    const statesOffset = br.readInt32()
+    br.position += 3 * 4
     // br.readInt32() // StateCount
     // br.readInt32() // ConditionOffset
     // br.readInt32() // ConditionCount
@@ -9968,8 +9988,8 @@ class FXR {
     br.position = stateListOffset
     br.assertInt32(0)
     const stateCount = br.readInt32()
-    const statesOffset = br.readInt32()
-    br.assertInt32(0)
+    const statesPtr = br.readInt64()
+    br.memOffset = statesPtr - BigInt(statesOffset)
     br.stepIn(statesOffset)
     const states: State[] = []
     for (let i = 0; i < stateCount; ++i) {
@@ -10874,7 +10894,7 @@ abstract class Node {
    * @param options.recurse Controls whether or not the scaling should be applied to
    * all descendant nodes. Defaults to true.
    */
-  scale(factor: number, options: { recurse?: boolean, mode?: ScalingMode } = {}) {
+  scale(factor: number, options: ScaleOptions & { recurse?: boolean } = defaultScaleOptions) {
     if (this instanceof NodeWithConfigs || this instanceof GenericNode) {
       for (const config of this.configs) {
         config.scale(factor, options)
@@ -11563,6 +11583,16 @@ class BasicNode extends NodeWithConfigs {
             a.color3,
           ),
         )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         config.particleModifier instanceof ParticleModifier && (
@@ -11591,6 +11621,16 @@ class BasicNode extends NodeWithConfigs {
             ),
           ),
         )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         config.particleModifier instanceof ParticleModifier &&
@@ -11609,6 +11649,16 @@ class BasicNode extends NodeWithConfigs {
             ),
           )
         )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         config.particleModifier instanceof ParticleModifier && (
@@ -11619,7 +11669,17 @@ class BasicNode extends NodeWithConfigs {
         colorProp = anyValueMult(
           clampVec4Value(config.particleModifier.color),
           clampVec4Value(a.color),
-        ) as any
+        )
+        const loop = getLoop(colorProp) || getLoop(a.rgbMultiplier) || getLoop(a.alphaMultiplier)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         a instanceof GPUStandardParticle ||
@@ -11628,9 +11688,24 @@ class BasicNode extends NodeWithConfigs {
         a instanceof GPUSparkCorrectParticle
       ) {
         colorProp = anyValueSum(
-          anyValueMult(0.5, anyValueSum(a.colorMin, a.colorMax)),
+          LinearProperty.basic(
+            false,
+            a.particleDuration * a.particleDurationMultiplier,
+            anyValueMult(0.5, anyValueSum(a.colorMin, a.colorMax)),
+            [0, 0, 0, 0]
+          ),
           a.color
-        ) as any
+        )
+        const loop = getLoop(colorProp)
+        colorProp = setLoop(anyValueMult(
+          combineComponents(
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.rgbMultiplier,
+            a.alphaMultiplier,
+          ),
+          setLoop(colorProp, true)
+        ), loop) as any
         modified = true
       } else if (
         a instanceof PointLight ||
@@ -11640,10 +11715,10 @@ class BasicNode extends NodeWithConfigs {
         modified = true
       } else if (a instanceof LensFlare) {
         switch (opts.layer ?? 1) {
-          case 1: colorProp = a.layer1Color as any; break
-          case 2: colorProp = a.layer2Color as any; break
-          case 3: colorProp = a.layer3Color as any; break
-          case 4: colorProp = a.layer4Color as any; break
+          case 1: colorProp = anyValueMult(clampVec4Value(a.layer1Color), a.layer1ColorMultiplier) as any; break
+          case 2: colorProp = anyValueMult(clampVec4Value(a.layer2Color), a.layer2ColorMultiplier) as any; break
+          case 3: colorProp = anyValueMult(clampVec4Value(a.layer3Color), a.layer3ColorMultiplier) as any; break
+          case 4: colorProp = anyValueMult(clampVec4Value(a.layer4Color), a.layer4ColorMultiplier) as any; break
         }
         modified = true
       } else if (a instanceof LightShaft) {
@@ -11895,7 +11970,7 @@ class NodeConfig implements IConfig {
     )
   }
 
-  scale(factor: number, options?: { mode?: ScalingMode }) {
+  scale(factor: number, options: ScaleOptions = defaultScaleOptions) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -11965,8 +12040,8 @@ class LevelsOfDetailConfig implements IConfig {
     )
   }
 
-  scale(factor: number, options: { mode?: ScalingMode } = {}) {
-    if (options.mode === ScalingMode.All) {
+  scale(factor: number, options: ScaleOptions = defaultScaleOptions) {
+    if (options.scaleStructural && options.scaleViewDistance) {
       this.thresholds = this.thresholds.slice(0, 5).map(t => t * factor)
     }
     return this
@@ -12167,7 +12242,7 @@ class BasicConfig implements IConfig {
     })
   }
 
-  scale(factor: number, options: { mode?: ScalingMode } = {}) {
+  scale(factor: number, options: ScaleOptions = defaultScaleOptions) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -12470,7 +12545,7 @@ class NodeEmitterConfig implements IConfig {
     })
   }
 
-  scale(factor: number, options: { mode?: ScalingMode } = {}) {
+  scale(factor: number, options: ScaleOptions = defaultScaleOptions) {
     for (const action of this.walkActions()) if (action instanceof DataAction) {
       action.scale(factor, options)
     }
@@ -12792,23 +12867,23 @@ class DataAction implements IAction {
    * used with actions that have scaling properties.
    * @param factor The factor to scale by.
    */
-  scale(factor: number, options: { mode?: ScalingMode } = {}) {
+  scale(factor: number, options: ScaleOptions = defaultScaleOptions) {
     if ('props' in this.$data) {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('scale' in v) {
           switch (true) {
             case v.scale === ScaleCondition.True
-              && options.mode !== ScalingMode.InstancesOnly
-              && options.mode !== ScalingMode.ParticleModifierOnly:
+              && options.scaleStructural:
 
             case v.scale === ScaleCondition.InstanceSize
-              && options.mode !== ScalingMode.ParticleModifierOnly:
+              && !options.scaleParticleModifier:
 
             case v.scale === ScaleCondition.Distance
-              && options.mode === ScalingMode.All:
+              && options.scaleStructural
+              && options.scaleViewDistance:
 
             case v.scale === ScaleCondition.ParticleModifier
-              && options.mode === ScalingMode.ParticleModifierOnly:
+              && options.scaleParticleModifier:
 
               {
                 this[k] = anyValueMult(factor, this[k])
@@ -12816,12 +12891,9 @@ class DataAction implements IAction {
               }
 
 
-            case v.scale === ScaleCondition.IfNotMinusOne
-              && options.mode !== ScalingMode.ParticleModifierOnly
-              && this[k] !== -1:
-
             case v.scale === ScaleCondition.DistanceIfNotMinusOne
-              && options.mode === ScalingMode.All
+              && options.scaleStructural
+              && options.scaleViewDistance
               && this[k] !== -1:
 
               {
@@ -15657,11 +15729,13 @@ class PointSprite extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -15875,13 +15949,13 @@ class PointSprite extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -16140,11 +16214,13 @@ class Line extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -16360,13 +16436,13 @@ class Line extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -16644,11 +16720,13 @@ class QuadLine extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -16862,13 +16940,13 @@ class QuadLine extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -17399,11 +17477,13 @@ class BillboardEx extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -17619,13 +17699,13 @@ class BillboardEx extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -18329,11 +18409,13 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -18551,13 +18633,13 @@ class MultiTextureBillboardEx extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -19431,13 +19513,13 @@ class Model extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it can cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it can cause some ugly "outline" effects on things seen through particles.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Unknown integer.
    * 
@@ -19853,11 +19935,13 @@ class LegacyTracer extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -20071,13 +20155,13 @@ class LegacyTracer extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -23269,13 +23353,13 @@ class GPUStandardParticle extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * Like in most other actions with this field, when enabled, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles, and it may also fix an issue where some other particles can be seen through particles emitted by this action.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -24701,13 +24785,13 @@ class GPUStandardCorrectParticle extends DataAction {
    */
   unkHideIndoors: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * Like in most other actions with this field, when set to 1, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles.
+   * Like in most other actions with this field, when enabled, it may stop {@link unk_sdt_f2_29} from doing whatever it is doing, but that field may also not work exactly the same in this action, so it's tricky to confirm. It can also cause some ugly "outline" effects on things seen through particles, and it may also fix an issue where some other particles can be seen through particles emitted by this action.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -27421,11 +27505,13 @@ class Tracer extends DataAction {
   /**
    * Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
    * 
+   * When enabled, this also allows bloom from other particles to be seen through this particle.
+   * 
    * Note:
    * - This has no effect if the "Effects Quality" setting is set to "Low".
    * - This does not affect the natural bloom effect from high color values.
    * 
-   * **Default**: `true`
+   * **Default**: `false`
    * 
    * See also:
    * - {@link bloomColor}
@@ -27639,13 +27725,13 @@ class Tracer extends DataAction {
    */
   unk_sdt_f2_31: number
   /**
-   * Unknown integer.
+   * Unknown boolean.
    * 
-   * When set to 1, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles.
+   * When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
    * 
-   * **Default**: `0`
+   * **Default**: `false`
    */
-  unk_sdt_f2_32: number
+  unk_sdt_f2_32: boolean
   /**
    * Specular texture ID.
    * 
@@ -28386,7 +28472,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -28396,7 +28482,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -28406,7 +28492,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -28416,7 +28502,7 @@ class LensFlare extends DataAction {
   /**
    * The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
    * 
-   * **Default**: `[1, 1, 1, 1]`
+   * **Default**: `[1, 1, 1, 0]`
    * 
    * See also:
    * - {@link bloom}
@@ -32258,8 +32344,8 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
   static copy<T extends ValueType, K extends AnyKeyframe<T>>(orig: K): K {
     if ('p1' in orig) {
       return new BezierKeyframe(orig.position, orig.value, orig.p1, orig.p2) as K
-    } else if ('tangent1' in orig) {
-      return new HermiteKeyframe(orig.position, orig.value, orig.tangent1, orig.tangent2) as K
+    } else if ('t1' in orig) {
+      return new HermiteKeyframe(orig.position, orig.value, orig.t1, orig.t2) as K
     }
     return new Keyframe(orig.position, orig.value) as K
   }
@@ -32271,8 +32357,8 @@ class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
       }
       if ('p1' in kf) {
         return new BezierKeyframe(kf.position, kf.value[i], kf.p1[i], kf.p2[i]) as ScalarKeyframeFromAny<K, T>
-      } else if ('tangent1' in kf) {
-        return new HermiteKeyframe(kf.position, kf.value[i], kf.tangent1[i], kf.tangent2[i]) as ScalarKeyframeFromAny<K, T>
+      } else if ('t1' in kf) {
+        return new HermiteKeyframe(kf.position, kf.value[i], kf.t1[i], kf.t2[i]) as ScalarKeyframeFromAny<K, T>
       }
       return new Keyframe(kf.position, kf.value[i]) as ScalarKeyframeFromAny<K, T>
     } else {
@@ -32340,8 +32426,8 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
   constructor(
     position: number,
     value: TypeMap.PropertyValue[T],
-    public tangent1: TypeMap.PropertyValue[T],
-    public tangent2: TypeMap.PropertyValue[T],
+    public t1: TypeMap.PropertyValue[T],
+    public t2: TypeMap.PropertyValue[T],
   ) {
     super(position, value)
   }
@@ -32741,13 +32827,13 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent1 as number) ] :
-              e => ((e as IHermiteKeyframe<T>).tangent1 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IHermiteKeyframe<T>).t1 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).t1 as Vector).map(e => new FloatField(e))
           ),
           ...this.keyframes.flatMap(
             this.valueType === ValueType.Scalar ?
-              e => [ new FloatField((e as IHermiteKeyframe<T>).tangent2 as number) ] :
-              e => ((e as IHermiteKeyframe<T>).tangent2 as Vector).map(e => new FloatField(e))
+              e => [ new FloatField((e as IHermiteKeyframe<T>).t2 as number) ] :
+              e => ((e as IHermiteKeyframe<T>).t2 as Vector).map(e => new FloatField(e))
           ),
         ]
       default:
@@ -32866,8 +32952,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           keyframes: this.keyframes.map(e => ({
             position: e.position,
             value: e.value,
-            tangent1: (e as IHermiteKeyframe<T>).tangent1,
-            tangent2: (e as IHermiteKeyframe<T>).tangent2,
+            t1: (e as IHermiteKeyframe<T>).t1,
+            t2: (e as IHermiteKeyframe<T>).t2,
           }))
         }
         if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(mod => mod.serialize(options))
@@ -33047,8 +33133,8 @@ class ComponentSequenceProperty<T extends ValueType>
       ...this.components.flatMap(comp => [
         ...comp.keyframes.map(e => new FloatField(e.position)),
         ...comp.keyframes.map(e => new FloatField(e.value)),
-        ...comp.keyframes.map(e => new FloatField(e.tangent1)),
-        ...comp.keyframes.map(e => new FloatField(e.tangent2)),
+        ...comp.keyframes.map(e => new FloatField(e.t1)),
+        ...comp.keyframes.map(e => new FloatField(e.t2)),
       ])
     ]
   }
@@ -33080,8 +33166,8 @@ class ComponentSequenceProperty<T extends ValueType>
       components: this.components.map(e => e.keyframes.map(f => ({
         position: f.position,
         value: f.value,
-        tangent1: f.tangent1,
-        tangent2: f.tangent2,
+        t1: f.t1,
+        t2: f.t2,
       })))
     }
     if (this.modifiers.length > 0) o.modifiers = this.modifiers.map(e => e.serialize(options))
@@ -33198,8 +33284,8 @@ class ComponentSequenceProperty<T extends ValueType>
       return new HermiteProperty(this.loop, arrayOf(this.components[0].keyframes.length, i => new HermiteKeyframe(
         this.components[0].keyframes[i].position,
         this.components.map(c => c.keyframes[i].value) as Vector,
-        this.components.map(c => c.keyframes[i].tangent1) as Vector,
-        this.components.map(c => c.keyframes[i].tangent2) as Vector,
+        this.components.map(c => c.keyframes[i].t1) as Vector,
+        this.components.map(c => c.keyframes[i].t2) as Vector,
       ))).withModifiers(...this.modifiers) as HermiteProperty<T>
     }
     const positions = new Set<number>

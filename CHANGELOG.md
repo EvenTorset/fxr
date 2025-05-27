@@ -1,5 +1,38 @@
 # Changelog
 
+## [v25.0.0](https://github.com/EvenTorset/fxr/compare/v24.0.0...v25.0.0) - 2025-05-27
+
+### Breaking changes
+- The `tangent1` and `tangent2` properties of `HermiteKeyframe`s have been renamed to `t1` and `t2` respectively in order to shorten the JSON form of these keyframes. This should allow these keyframes to be inlined more often, which should make it easier to read the JSON for humans.
+- The `unk_sdt_f2_32` property in the following actions has been changed to a boolean and the documentation has been updated, and the default value has changed from `0` to `false` (equivalent for output FXRs):
+  - `PointSprite`
+  - `Line`
+  - `QuadLine`
+  - `BillboardEx`
+  - `MultiTextureBillboardEx`
+  - `Model`
+  - `LegacyTracer`
+  - `GPUStandardParticle`
+  - `GPUStandardCorrectParticle`
+  - `Tracer`
+- The `bloom` property in the following actions has had its default value changed from `true` to `false` and its documentation has been updated:
+  - `PointSprite`
+  - `Line`
+  - `QuadLine`
+  - `BillboardEx`
+  - `MultiTextureBillboardEx`
+  - `LegacyTracer`
+  - `Tracer`
+- The four layer bloom color properties in the `LensFlare` action have had their default value changed from `[1, 1, 1, 1]` to `[1, 1, 1, 0]` to be consistent with all other bloom color properties.
+- The `ScalingMode` enum has been split into and replaced by three boolean options, and the options argument for the `scale` functions now have a `ScaleOptions` interface that documents all of the options. This allows you to do some combinations of property filters that were not available before.
+
+### Improvements and new features
+- The parsing functions have been updated to also support reading FXRs that have been extracted from the game's memory.
+- The `getColor` function on nodes has been updated with various improvements to be more accurate:
+  - The `rgbMultiplier` and `alphaMultiplier` properties are now used in the calculation, meaning the output color will have the respective components multiplied by those factors.
+  - The color multiplier properties in `LensFlare` actions are now factored in, and the base color properties are clamped like they should be.
+  - The average of the `colorMin` and `colorMax` properties in the four GPU particle actions is now added onto the base color instead of multiplied, and it now fades out over the life of the particle.
+
 ## [v24.0.0](https://github.com/EvenTorset/fxr/compare/v23.0.0...v24.0.0) - 2025-05-18
 
 ### Renamed properties

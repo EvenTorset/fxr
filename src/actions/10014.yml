@@ -554,7 +554,7 @@ properties:
   layer1BloomColor:
     field: vec4
     components: 4
-    default: [1, 1, 1, 1]
+    default: [1, 1, 1, 0]
     color: true
     desc: |
        The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
@@ -564,7 +564,7 @@ properties:
   layer2BloomColor:
     field: vec4
     components: 4
-    default: [1, 1, 1, 1]
+    default: [1, 1, 1, 0]
     color: true
     desc: |
       The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
@@ -574,7 +574,7 @@ properties:
   layer3BloomColor:
     field: vec4
     components: 4
-    default: [1, 1, 1, 1]
+    default: [1, 1, 1, 0]
     color: true
     desc: |
       The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
@@ -584,7 +584,7 @@ properties:
   layer4BloomColor:
     field: vec4
     components: 4
-    default: [1, 1, 1, 1]
+    default: [1, 1, 1, 0]
     color: true
     desc: |
       The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.

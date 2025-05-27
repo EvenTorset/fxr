@@ -65,11 +65,10 @@ const resourceMap = {
 
 const scaleMap = {
   true: 1,
-  ifNotMinusOne: 2,
-  distance: 3,
-  distanceIfNotMinusOne: 4,
-  instanceSize: 5,
-  particleModifier: 6,
+  distance: 2,
+  distanceIfNotMinusOne: 3,
+  instanceSize: 4,
+  particleModifier: 5,
 }
 
 const timeMap = {
