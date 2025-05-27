@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/EvenTorset/fxr/compare/v24.0.0...HEAD)
+## [v25.0.0](https://github.com/EvenTorset/fxr/compare/v24.0.0...v25.0.0) - 2025-05-27
 
 ### Breaking changes
 - The `tangent1` and `tangent2` properties of `HermiteKeyframe`s have been renamed to `t1` and `t2` respectively in order to shorten the JSON form of these keyframes. This should allow these keyframes to be inlined more often, which should make it easier to read the JSON for humans.
