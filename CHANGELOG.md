@@ -1,5 +1,21 @@
 # Changelog
 
+## [v26.0.0](https://github.com/EvenTorset/fxr/compare/v25.0.0...v26.0.0) - 2025-05-30
+
+### Initial Nightreign support
+This update adds support for reading and writing FXR files for Elden Ring Nightreign.
+
+Note that all new fields, properties, and section10s from Nightreign are still unknown and untested.
+
+Some actions that are not used in vanilla Nightreign will not get support for writing for Nightreign until they have been tested and confirmed to work. These include:
+- `ParticleForceCollision`
+- `LightShaft` (doubt this exists in NR, since it hasn't existed since Sekiro)
+- `GPUSparkParticle`
+- `GPUSparkCorrectParticle`
+- `CancelForce`
+- `GravityForce`
+- `ForceCollision`
+
 ## [v25.0.0](https://github.com/EvenTorset/fxr/compare/v24.0.0...v25.0.0) - 2025-05-27
 
 ### Breaking changes

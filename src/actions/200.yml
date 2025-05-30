@@ -9,5 +9,6 @@ inGames:
   - SDT
   - ER
   - AC6
+  - NR
 desc: |
   Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.

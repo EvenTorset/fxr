@@ -211,6 +211,46 @@ properties:
     argument: ParticleAge
     desc: |
       Multiplier for {@link speedUV}
+  unk_nr_p1_24:
+    type: ScalarValue
+  unk_nr_p1_25:
+    type: ScalarValue
+  unk_nr_p1_26:
+    type: ScalarValue
+  unk_nr_p1_27:
+    type: ScalarValue
+  unk_nr_p1_28:
+    type: ScalarValue
+  unk_nr_p1_29:
+    type: ScalarValue
+  unk_nr_p1_30:
+    type: ScalarValue
+  unk_nr_p1_31:
+    type: ScalarValue
+  unk_nr_p1_32:
+    type: ScalarValue
+  unk_nr_p1_33:
+    type: ScalarValue
+  unk_nr_p1_34:
+    type: ScalarValue
+  unk_nr_p1_35:
+    type: ScalarValue
+  unk_nr_p1_36:
+    type: ScalarValue
+  unk_nr_p1_37:
+    type: ScalarValue
+  unk_nr_p1_38:
+    type: ScalarValue
+  unk_nr_p1_39:
+    type: ScalarValue
+  unk_nr_p1_40:
+    type: ScalarValue
+  unk_nr_p1_41:
+    type: ScalarValue
+  unk_nr_p1_42:
+    type: ScalarValue
+  unk_nr_p1_43:
+    type: ScalarValue
   offsetU:
     omitClassProp: true
     type: ScalarValue
@@ -442,6 +482,46 @@ properties:
     default: 1
   unk_ac6_f1_34:
     field: int
+  unk_nr_f1_35:
+    field: int
+  unk_nr_f1_36:
+    field: int
+  unk_nr_f1_37:
+    field: int
+  unk_nr_f1_38:
+    field: int
+  unk_nr_f1_39:
+    field: int
+  unk_nr_f1_40:
+    field: int
+  unk_nr_f1_41:
+    field: int
+  unk_nr_f1_42:
+    field: int
+  unk_nr_f1_43:
+    field: int
+  unk_nr_f1_44:
+    field: int
+  unk_nr_f1_45:
+    field: int
+  unk_nr_f1_46:
+    field: int
+  unk_nr_f1_47:
+    field: int
+  unk_nr_f1_48:
+    field: int
+  unk_nr_f1_49:
+    field: int
+  unk_nr_f1_50:
+    field: int
+  unk_nr_f1_51:
+    field: int
+  unk_nr_f1_52:
+    field: int
+  unk_nr_f1_53:
+    field: int
+  unk_nr_f1_54:
+    field: int
   unk_er_f1_24:
     field: float
   unk_er_f1_25:
@@ -606,6 +686,22 @@ properties:
     default: -2
   unk_er_f2_37:
     field: int
+  unk_nr_s10_0:
+    type: number[]
+    default: []
+    s10: true
+  unk_nr_s10_1:
+    type: number[]
+    default: []
+    s10: true
+  unk_nr_s10_2:
+    type: number[]
+    default: []
+    s10: true
+  unk_nr_s10_3:
+    type: number[]
+    default: []
+    s10: true
 games:
   ER:
     fields1:
@@ -774,3 +870,112 @@ games:
       - speedUV
       - speedMultiplierUV
     properties2: ER
+  NR:
+    fields1:
+      - orientation
+      - scaleVariationX
+      - scaleVariationY
+      - scaleVariationZ
+      - uniformScale
+      - unk_er_f1_5
+      - unk_er_f1_6
+      - dither
+      - unk_er_f1_8
+      - unk_er_f1_9
+      - anibnd
+      - animation
+      - loopAnimation
+      - animationSpeed
+      - unk_er_f1_14
+      - unk_er_f1_15
+      - unk_er_f1_16
+      - unk_er_f1_17
+      - unk_er_f1_18
+      - unk_er_f1_19
+      - unk_er_f1_20
+      - unk_er_f1_21
+      - unk_er_f1_22
+      - unkBlendMode
+      - unk_ac6_f1_24
+      - unk_ac6_f1_25
+      - unk_ac6_f1_26
+      - unk_ac6_f1_27
+      - unk_ac6_f1_28
+      - unk_ac6_f1_29
+      - unk_ac6_f1_30
+      - unk_ac6_f1_31
+      - unk_ac6_f1_32
+      - unk_ac6_f1_33
+      - unk_ac6_f1_34
+      - unk_nr_f1_35
+      - unk_nr_f1_36
+      - unk_nr_f1_37
+      - unk_nr_f1_38
+      - unk_nr_f1_39
+      - unk_nr_f1_40
+      - unk_nr_f1_41
+      - unk_nr_f1_42
+      - unk_nr_f1_43
+      - unk_nr_f1_44
+      - unk_nr_f1_45
+      - unk_nr_f1_46
+      - unk_nr_f1_47
+      - unk_nr_f1_48
+      - unk_nr_f1_49
+      - unk_nr_f1_50
+      - unk_nr_f1_51
+      - unk_nr_f1_52
+      - unk_nr_f1_53
+      - unk_nr_f1_54
+    fields2: ER
+    properties1:
+      - model
+      - sizeX
+      - sizeY
+      - sizeZ
+      - rotationX
+      - rotationY
+      - rotationZ
+      - angularSpeedX
+      - angularSpeedMultiplierX
+      - angularSpeedY
+      - angularSpeedMultiplierY
+      - angularSpeedZ
+      - angularSpeedMultiplierZ
+      - color1
+      - color2
+      - color3
+      - unk_er_p1_16
+      - unk_er_p1_17
+      - rgbMultiplier2
+      - unk_er_p1_19
+      - unk_er_p1_20
+      - offsetUV
+      - speedUV
+      - speedMultiplierUV
+      - unk_nr_p1_24
+      - unk_nr_p1_25
+      - unk_nr_p1_26
+      - unk_nr_p1_27
+      - unk_nr_p1_28
+      - unk_nr_p1_29
+      - unk_nr_p1_30
+      - unk_nr_p1_31
+      - unk_nr_p1_32
+      - unk_nr_p1_33
+      - unk_nr_p1_34
+      - unk_nr_p1_35
+      - unk_nr_p1_36
+      - unk_nr_p1_37
+      - unk_nr_p1_38
+      - unk_nr_p1_39
+      - unk_nr_p1_40
+      - unk_nr_p1_41
+      - unk_nr_p1_42
+      - unk_nr_p1_43
+    properties2: ER
+    section10s:
+      - unk_nr_s10_0
+      - unk_nr_s10_1
+      - unk_nr_s10_2
+      - unk_nr_s10_3

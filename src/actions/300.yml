@@ -57,3 +57,4 @@ games:
       - maxConcurrent
   ER: SDT
   AC6: SDT
+  NR: SDT

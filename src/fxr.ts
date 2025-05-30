@@ -57,7 +57,11 @@ enum Game {
   /**
    * Armored Core VI Fires of Rubicon
    */
-  ArmoredCore6 = 3
+  ArmoredCore6 = 3,
+  /**
+   * Elden Ring Nightreign
+   */
+  Nightreign = 4,
 }
 
 /**
@@ -1529,6 +1533,23 @@ namespace ExternalValue {
      */
     ScanDistance = 70200,
   }
+  export enum Nightreign {
+    /**
+     * This value will be set to 1 when the effect is meant to end due to the
+     * source of the effect going away, for example when the SpawnOneShotFFX
+     * event ends and it has IsRestrictToDummyPoly enabled. The value is
+     * otherwise 0.
+     */
+    Terminate = 0,
+    Unk1 = 1, // Precipitation?
+    Unk2 = 2, // Time of day?
+    Unk1000 = 1000, // Distance?
+    Unk2000 = 2000, // Hit effect variation?
+    Unk2100 = 2100,
+    Unk2200 = 2200,
+    Unk4000 = 4000,
+    Unk10000 = 10000, // Blood visibility?
+  }
 }
 
 enum Operator {
@@ -2200,7 +2221,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeTranslation]: {
@@ -2220,7 +2242,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['alignWithMotion'],
         properties1: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeSpin]: {
@@ -2243,7 +2266,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.StaticNodeTransform]: {
@@ -2260,7 +2284,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.RandomNodeTransform]: {
@@ -2279,7 +2304,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeAttachToCamera]: {
@@ -2296,7 +2322,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleAcceleration]: {
@@ -2317,7 +2344,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleSpeed]: {
@@ -2338,7 +2366,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleSpeedRandomTurns]: {
@@ -2360,7 +2389,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleSpeedPartialFollow]: {
@@ -2384,7 +2414,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeSound]: {
@@ -2402,7 +2433,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.EmissionSound]: {
@@ -2419,7 +2451,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeAccelerationRandomTurns]: {
@@ -2443,7 +2476,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleAccelerationRandomTurns]: {
@@ -2465,7 +2499,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleAccelerationPartialFollow]: {
@@ -2489,7 +2524,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeAccelerationPartialFollow]: {
@@ -2515,7 +2551,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeAccelerationSpin]: {
@@ -2545,7 +2582,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeSpeed]: {
@@ -2567,7 +2605,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeSpeedRandomTurns]: {
@@ -2590,7 +2629,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeSpeedPartialFollow]: {
@@ -2615,7 +2655,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeSpeedSpin]: {
@@ -2644,7 +2685,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.NodeAttributes]: {
@@ -2665,7 +2707,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleAttributes]: {
@@ -2683,7 +2726,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.Unk130]: {
@@ -2716,7 +2760,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ParticleModifier]: {
@@ -2738,7 +2783,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.SFXReference]: {
@@ -2754,7 +2800,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.LevelsOfDetailThresholds]: {
@@ -2780,7 +2827,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.ArmoredCore6]: {
         fields1: ['threshold0','threshold1','threshold2','threshold3','threshold4','unk_ac6_f1_5'],
         properties1: Game.DarkSouls3
-      }
+      },
+      [Game.Nightreign]: Game.ArmoredCore6
     }
   },
   [ActionType.StateConfigMap]: {
@@ -2796,7 +2844,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.SelectAllNodes]: {
@@ -2817,7 +2866,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.PeriodicEmitter]: {
@@ -2841,7 +2891,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['interval','perEmission','totalEmissions','maxConcurrent']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.EqualDistanceEmitter]: {
@@ -2866,7 +2917,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['threshold','totalEmissions','maxConcurrent']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.OneTimeEmitter]: {
@@ -2887,7 +2939,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.DiskEmitterShape]: {
@@ -2906,7 +2959,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.RectangleEmitterShape]: {
@@ -2926,7 +2980,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.SphereEmitterShape]: {
@@ -2944,7 +2999,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.BoxEmitterShape]: {
@@ -2965,7 +3021,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.CylinderEmitterShape]: {
@@ -2985,7 +3042,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['radius','height']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NoSpread]: {
@@ -3011,7 +3069,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_er_f1_0'],
         properties1: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.EllipticalSpread]: {
@@ -3033,7 +3092,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_er_f1_0'],
         properties1: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.RectangularSpread]: {
@@ -3051,7 +3111,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.PointSprite]: {
@@ -3134,7 +3195,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.Line]: {
@@ -3217,7 +3279,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.QuadLine]: {
@@ -3302,7 +3365,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.BillboardEx]: {
@@ -3423,7 +3487,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unkHideIndoors','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_sdt_f2_42','unk_sdt_f2_43','unk_sdt_f2_44','unk_ac6_f2_45'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
-      }
+      },
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.MultiTextureBillboardEx]: {
@@ -3566,7 +3631,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','unk_sdt_f2_38','unk_sdt_f2_39','unk_sdt_f2_40','unk_sdt_f2_41','unk_er_f2_42','unk_er_f2_43','unk_er_f2_44','unk_er_f2_45','unk_ac6_f2_46'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
-      }
+      },
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.Model]: {
@@ -3691,7 +3757,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','unk_ds3_f2_4','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_26','unk_ds3_f2_27','unk_sdt_f2_29','unk_sdt_f2_30','unk_sdt_f2_31','unk_sdt_f2_32','unk_sdt_f2_33','unk_sdt_f2_34','unk_sdt_f2_35','unk_sdt_f2_36','unk_sdt_f2_37','unk_ac6_f2_38'],
         properties1: Game.Sekiro,
         properties2: Game.Sekiro
-      }
+      },
+      [Game.Nightreign]: Game.ArmoredCore6
     }
   },
   [ActionType.LegacyTracer]: {
@@ -3796,7 +3863,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.Distortion]: {
@@ -3900,7 +3968,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.Sekiro,
         properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold','unk_er_p2_7','unk_er_p2_8']
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.RadialBlur]: {
@@ -3978,7 +4047,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.PointLight]: {
@@ -4036,6 +4106,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_er_f2_30: { default: 1, field: 2 },
       unk_er_f2_31: { default: 1, field: 1 },
       unk_er_f2_32: { default: 0, field: 1 },
+      unk_nr_f2_33: { default: 0, field: 1 },
       unk_ds3_f2_12: { default: 1, field: 2 },
     },
     games: {
@@ -4057,7 +4128,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.DarkSouls3,
         properties2: Game.Sekiro
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: {
+        fields1: Game.DarkSouls3,
+        fields2: ['unk_ds3_f2_0','jitterAndFlicker','jitterAcceleration','unk_ds3_f2_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','fadeOutTime','shadowDarkness','unk_ds3_f2_15','unk_ds3_f2_16','unk_ds3_f2_17','unk_ds3_f2_18','unk_ds3_f2_19','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','maxViewDistance','volumeDensity','unk_sdt_f2_25','phaseFunction','asymmetryParam','adaptationExponent','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_nr_f2_33'],
+        properties1: Game.DarkSouls3,
+        properties2: Game.Sekiro
+      }
     }
   },
   [ActionType.SimulateTermination]: {
@@ -4076,7 +4153,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.EldenRing]: {
         properties1: ['duration']
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.InstantTermination]: {
@@ -4099,7 +4177,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['speed','speedMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.ParticleForceSpeed]: {
@@ -4118,7 +4197,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['speed','speedMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeForceAcceleration]: {
@@ -4136,7 +4216,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['acceleration','accelerationMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.ParticleForceAcceleration]: {
@@ -4155,7 +4236,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['acceleration','accelerationMultiplier']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.ParticleForceCollision]: {
@@ -4398,7 +4480,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.DarkSouls3,
         properties2: Game.DarkSouls3
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.GPUStandardCorrectParticle]: {
@@ -4615,7 +4698,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['particleFollowFactor','unk_ds3_p1_1','unk_ds3_p1_2','unk_ds3_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','unk_ds3_p1_7','unk_ds3_p1_8','particleAngularAccelerationZ','particleGrowthRateX','particleGrowthRateY','unk_ds3_p1_12','color','unk_ds3_p1_14','unk_ds3_p1_15','unkParticleAcceleration','unk_ds3_p1_17','particleGravity','particleRandomTurnAngle','unk_ds3_p1_20'],
         properties2: ['unk_ds3_p2_0','unk_ds3_p2_1','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','unk_ds3_p2_6']
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.LightShaft]: {
@@ -5103,7 +5187,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: ['unk_ds3_f2_0','unk_ds3_f2_1','unk_ds3_f2_2','unk_ds3_f2_3','bloom','bloomColor','unk_ds3_f2_9','unk_ds3_f2_10','unk_ds3_f2_11','unk_ds3_f2_12','unk_ds3_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ds3_f2_20','unk_ds3_f2_21','unk_ds3_f2_22','unk_ds3_f2_23','unk_ds3_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ds3_f2_27','unk_ds3_f2_28','unk_ds3_f2_29','shadowDarkness','unk_sdt_f2_31','unk_sdt_f2_32','specular','glossiness','lighting','unk_sdt_f2_36','unk_sdt_f2_37','specularity','unk_er_f2_39','unk_er_f2_40','unk_ac6_f2_41'],
         properties1: Game.Sekiro,
         properties2: Game.DarkSouls3
-      }
+      },
+      [Game.Nightreign]: Game.ArmoredCore6
     }
   },
   [ActionType.WaterInteraction]: {
@@ -5122,7 +5207,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['texture','depth','size','descent','duration']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.LensFlare]: {
@@ -5248,7 +5334,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['layer1','layer2','layer3','layer4','blendMode','unk_er_f1_4','sourceSize','opacityTransitionDuration','unk_er_f1_8','layer1Count','layer1ScaleVariationX','layer1ScaleVariationY','layer1UniformScale','layer1ColorMultiplier','layer1Reflection','layer1Offset','layer1OffsetVariation','layer1AttenuationRadius','layer2Count','layer2ScaleVariationX','layer2ScaleVariationY','layer2UniformScale','layer2ColorMultiplier','layer2Reflection','layer2Offset','layer2OffsetVariation','layer2AttenuationRadius','layer3Count','layer3ScaleVariationX','layer3ScaleVariationY','layer3UniformScale','layer3ColorMultiplier','layer3Reflection','layer3Offset','layer3OffsetVariation','layer3AttenuationRadius','layer4Count','layer4ScaleVariationX','layer4ScaleVariationY','layer4UniformScale','layer4ColorMultiplier','layer4Reflection','layer4Offset','layer4OffsetVariation','layer4AttenuationRadius','unk_er_f1_57','bloom','layer1BloomColor','layer2BloomColor','layer3BloomColor','layer4BloomColor','unk_ac6_f1_75','unk_ac6_f1_76','unk_ac6_f1_77','unk_ac6_f1_78','unk_ac6_f1_79','unk_ac6_f1_80'],
         fields2: Game.EldenRing,
         properties1: Game.EldenRing
-      }
+      },
+      [Game.Nightreign]: Game.ArmoredCore6
     }
   },
   [ActionType.RichModel]: {
@@ -5280,6 +5367,26 @@ const ActionData: Record<string, ActionDataEntry> = {
       offsetUV: { default: [0, 0] },
       speedUV: { default: [0, 0], time: 1 },
       speedMultiplierUV: { default: [1, 1] },
+      unk_nr_p1_24: { default: 0 },
+      unk_nr_p1_25: { default: 0 },
+      unk_nr_p1_26: { default: 0 },
+      unk_nr_p1_27: { default: 0 },
+      unk_nr_p1_28: { default: 0 },
+      unk_nr_p1_29: { default: 0 },
+      unk_nr_p1_30: { default: 0 },
+      unk_nr_p1_31: { default: 0 },
+      unk_nr_p1_32: { default: 0 },
+      unk_nr_p1_33: { default: 0 },
+      unk_nr_p1_34: { default: 0 },
+      unk_nr_p1_35: { default: 0 },
+      unk_nr_p1_36: { default: 0 },
+      unk_nr_p1_37: { default: 0 },
+      unk_nr_p1_38: { default: 0 },
+      unk_nr_p1_39: { default: 0 },
+      unk_nr_p1_40: { default: 0 },
+      unk_nr_p1_41: { default: 0 },
+      unk_nr_p1_42: { default: 0 },
+      unk_nr_p1_43: { default: 0 },
       offsetU: { default: 0, omit: 1 },
       offsetV: { default: 0, omit: 1 },
       speedU: { default: 0, omit: 1 },
@@ -5328,6 +5435,26 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ac6_f1_32: { default: 0, field: 1 },
       unk_ac6_f1_33: { default: 1, field: 1 },
       unk_ac6_f1_34: { default: 0, field: 1 },
+      unk_nr_f1_35: { default: 0, field: 1 },
+      unk_nr_f1_36: { default: 0, field: 1 },
+      unk_nr_f1_37: { default: 0, field: 1 },
+      unk_nr_f1_38: { default: 0, field: 1 },
+      unk_nr_f1_39: { default: 0, field: 1 },
+      unk_nr_f1_40: { default: 0, field: 1 },
+      unk_nr_f1_41: { default: 0, field: 1 },
+      unk_nr_f1_42: { default: 0, field: 1 },
+      unk_nr_f1_43: { default: 0, field: 1 },
+      unk_nr_f1_44: { default: 0, field: 1 },
+      unk_nr_f1_45: { default: 0, field: 1 },
+      unk_nr_f1_46: { default: 0, field: 1 },
+      unk_nr_f1_47: { default: 0, field: 1 },
+      unk_nr_f1_48: { default: 0, field: 1 },
+      unk_nr_f1_49: { default: 0, field: 1 },
+      unk_nr_f1_50: { default: 0, field: 1 },
+      unk_nr_f1_51: { default: 0, field: 1 },
+      unk_nr_f1_52: { default: 0, field: 1 },
+      unk_nr_f1_53: { default: 0, field: 1 },
+      unk_nr_f1_54: { default: 0, field: 1 },
       unk_er_f1_24: { default: 0, field: 2 },
       unk_er_f1_25: { default: 1, field: 1 },
       unk_er_f2_0: { default: 0, field: 1 },
@@ -5365,6 +5492,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_er_f2_35: { default: -2, field: 1 },
       unk_er_f2_36: { default: -2, field: 1 },
       unk_er_f2_37: { default: 0, field: 1 },
+      unk_nr_s10_0: { default: [], s10: 1 },
+      unk_nr_s10_1: { default: [], s10: 1 },
+      unk_nr_s10_2: { default: [], s10: 1 },
+      unk_nr_s10_3: { default: [], s10: 1 },
     },
     games: {
       [Game.EldenRing]: {
@@ -5378,6 +5509,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: Game.EldenRing,
         properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','offsetUV','speedUV','speedMultiplierUV'],
         properties2: Game.EldenRing
+      },
+      [Game.Nightreign]: {
+        fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unkBlendMode','unk_ac6_f1_24','unk_ac6_f1_25','unk_ac6_f1_26','unk_ac6_f1_27','unk_ac6_f1_28','unk_ac6_f1_29','unk_ac6_f1_30','unk_ac6_f1_31','unk_ac6_f1_32','unk_ac6_f1_33','unk_ac6_f1_34','unk_nr_f1_35','unk_nr_f1_36','unk_nr_f1_37','unk_nr_f1_38','unk_nr_f1_39','unk_nr_f1_40','unk_nr_f1_41','unk_nr_f1_42','unk_nr_f1_43','unk_nr_f1_44','unk_nr_f1_45','unk_nr_f1_46','unk_nr_f1_47','unk_nr_f1_48','unk_nr_f1_49','unk_nr_f1_50','unk_nr_f1_51','unk_nr_f1_52','unk_nr_f1_53','unk_nr_f1_54'],
+        fields2: Game.EldenRing,
+        properties1: ['model','sizeX','sizeY','sizeZ','rotationX','rotationY','rotationZ','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ','color1','color2','color3','unk_er_p1_16','unk_er_p1_17','rgbMultiplier2','unk_er_p1_19','unk_er_p1_20','offsetUV','speedUV','speedMultiplierUV','unk_nr_p1_24','unk_nr_p1_25','unk_nr_p1_26','unk_nr_p1_27','unk_nr_p1_28','unk_nr_p1_29','unk_nr_p1_30','unk_nr_p1_31','unk_nr_p1_32','unk_nr_p1_33','unk_nr_p1_34','unk_nr_p1_35','unk_nr_p1_36','unk_nr_p1_37','unk_nr_p1_38','unk_nr_p1_39','unk_nr_p1_40','unk_nr_p1_41','unk_nr_p1_42','unk_nr_p1_43'],
+        properties2: Game.EldenRing,
+        section10s: ['unk_nr_s10_0','unk_nr_s10_1','unk_nr_s10_2','unk_nr_s10_3']
       }
     }
   },
@@ -5449,7 +5587,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.CancelForce]: {
@@ -5551,7 +5690,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: Game.DarkSouls3
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.GravityForce]: {
@@ -5694,7 +5834,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         properties1: ['noiseOffsetX','noiseOffsetY','noiseOffsetZ','force']
       },
       [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.Unk10400]: {
@@ -5774,7 +5915,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.Unk10500]: {
@@ -5790,9 +5932,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_f1_4: { default: 0, field: 2 },
       unk_ds3_f1_5: { default: 0, field: 2 },
       unk_ds3_f1_6: { default: 0, field: 1 },
-      initialSimulationTime: { default: 0, field: {[Game.DarkSouls3]: 1, [Game.Sekiro]: 1, [Game.EldenRing]: 1, [Game.ArmoredCore6]: 2}, time: 2 },
+      initialSimulationTime: { default: 0, field: {[Game.DarkSouls3]: 1, [Game.Sekiro]: 1, [Game.EldenRing]: 1, [Game.ArmoredCore6]: 2, [Game.Nightreign]: 1}, time: 2 },
       unk_ds3_f1_8: { default: 0, field: 1 },
       unk_sdt_f1_9: { default: 0, field: 1 },
+      unk_nr_f1_10: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -5807,6 +5950,10 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.ArmoredCore6]: {
         fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','initialSimulationTime','unk_ds3_f1_8','unk_sdt_f1_9'],
+        properties1: Game.EldenRing
+      },
+      [Game.Nightreign]: {
+        fields1: ['limitViewDistance','maxViewDistance','unk_ds3_f1_2','unk_ds3_f1_3','unk_ds3_f1_4','unk_ds3_f1_5','unk_ds3_f1_6','initialSimulationTime','unk_ds3_f1_8','unk_sdt_f1_9','unk_nr_f1_10'],
         properties1: Game.EldenRing
       }
     }
@@ -5855,6 +6002,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_er_f1_25: { default: 1, field: 2 },
       unk_er_f1_26: { default: 1, field: 1 },
       unk_er_f1_27: { default: 0, field: 1 },
+      unk_nr_f1_28: { default: 0, field: 1 },
       unk_ds3_f1_0: { default: 1, field: 1 },
       unk_ds3_f1_5: { default: 1, field: 2 },
       unk_ds3_f1_7: { default: 0, field: 1 },
@@ -5873,7 +6021,11 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','adaptationExponent','unk_er_f1_24','unk_er_f1_25','unk_er_f1_26','unk_er_f1_27'],
         properties1: Game.Sekiro
       },
-      [Game.ArmoredCore6]: Game.EldenRing
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: {
+        fields1: ['unk_sdt_f1_0','jitterAndFlicker','jitterAcceleration','unk_sdt_f1_3','jitterX','jitterY','jitterZ','flickerIntervalMin','flickerIntervalMax','flickerBrightness','shadows','separateSpecular','shadowDarkness','unk_ds3_f1_3','unk_ds3_f1_4','fadeOutTime','unk_sdt_f1_16','unk_sdt_f1_17','unk_sdt_f1_18','volumeDensity','unk_sdt_f1_20','phaseFunction','asymmetryParam','adaptationExponent','unk_er_f1_24','unk_er_f1_25','unk_er_f1_26','unk_er_f1_27','unk_nr_f1_28'],
+        properties1: Game.Sekiro
+      }
     }
   }
   /*#ActionData end*/
@@ -8869,6 +9021,7 @@ const GameVersionMap = {
   [Game.Sekiro]: FXRVersion.Sekiro,
   [Game.EldenRing]: FXRVersion.Sekiro,
   [Game.ArmoredCore6]: FXRVersion.Sekiro,
+  [Game.Nightreign]: FXRVersion.Sekiro,
 }
 
 const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry<any>>> = {
@@ -9921,7 +10074,19 @@ class FXR {
     br.game = game
 
     br.assertASCII('FXR\0')
-    br.assertInt16(0)
+
+    if (game === Game.Heuristic) {
+      const unk4 = br.assertInt16(0, 1) // Minor version???
+      if (unk4 === 1) {
+        br.game = game = Game.Nightreign
+      }
+    } else if (game === Game.Generic) {
+      br.assertInt16(0, 1)
+    } else if (game === Game.Nightreign) {
+      br.assertInt16(1)
+    } else {
+      br.assertInt16(0)
+    }
     if (game === Game.Generic || game === Game.Heuristic) {
       const version = br.assertInt16(
         FXRVersion.DarkSouls3,
@@ -11244,6 +11409,7 @@ class RootNode extends Node {
         ]
       case Game.EldenRing:
       case Game.ArmoredCore6:
+      case Game.Nightreign:
         return [
           this.termination,
           this.unk10100,
@@ -21685,6 +21851,12 @@ class PointLight extends DataAction {
    */
   unk_er_f2_32: number
   /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f2_33: number
+  /**
    * Unknown. Only used in Dark Souls 3.
    * 
    * **Default**: `1`
@@ -29048,6 +29220,126 @@ class RichModel extends DataAction {
    */
   speedMultiplierUV: Vector2Value
   /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_24: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_25: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_26: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_27: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_28: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_29: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_30: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_31: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_32: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_33: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_34: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_35: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_36: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_37: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_38: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_39: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_40: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_41: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_42: ScalarValue
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_p1_43: ScalarValue
+  /**
    * Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
    * 
    * **Default**: `1`
@@ -29352,6 +29644,126 @@ class RichModel extends DataAction {
    */
   unk_ac6_f1_34: number
   /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_35: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_36: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_37: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_38: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_39: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_40: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_41: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_42: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_43: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_44: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_45: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_46: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_47: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_48: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_49: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_50: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_51: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_52: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_53: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_54: number
+  /**
    * Unknown float.
    * 
    * **Default**: `0`
@@ -29631,6 +30043,30 @@ class RichModel extends DataAction {
    * **Default**: `0`
    */
   unk_er_f2_37: number
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `[]`
+   */
+  unk_nr_s10_0: number[]
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `[]`
+   */
+  unk_nr_s10_1: number[]
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `[]`
+   */
+  unk_nr_s10_2: number[]
+  /**
+   * Unknown scalar.
+   * 
+   * **Default**: `[]`
+   */
+  unk_nr_s10_3: number[]
   constructor(props: Partial<Props<RichModel>> = {}) {
     super(ActionType.RichModel)
     this.assign(props)
@@ -31792,6 +32228,12 @@ class Unk10500 extends DataAction {
    * **Default**: `0`
    */
   unk_sdt_f1_9: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_10: number
   constructor(props: Partial<Props<Unk10500>> = {}) {
     super(ActionType.Unk10500)
     this.assign(props)
@@ -32135,6 +32577,12 @@ class SpotLight extends DataAction {
    * **Default**: `0`
    */
   unk_er_f1_27: number
+  /**
+   * Unknown integer.
+   * 
+   * **Default**: `0`
+   */
+  unk_nr_f1_28: number
   /**
    * Unknown integer.
    * 
@@ -33841,6 +34289,13 @@ namespace Modifier {
       [ModifierType.RandomFraction]: 16,
     },
     [Game.ArmoredCore6]: {
+      [ModifierType.RandomDelta]: 0,
+      [ModifierType.RandomRange]: 4,
+      [ModifierType.ExternalValue1]: 8,
+      [ModifierType.ExternalValue2]: 12,
+      [ModifierType.RandomFraction]: 16,
+    },
+    [Game.Nightreign]: {
       [ModifierType.RandomDelta]: 0,
       [ModifierType.RandomRange]: 4,
       [ModifierType.ExternalValue1]: 8,

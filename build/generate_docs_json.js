@@ -14,6 +14,7 @@ const gameMap = {
   SDT: 'Sekiro',
   ER: 'EldenRing',
   AC6: 'ArmoredCore6',
+  NR: 'Nightreign',
 }
 
 const fieldTypeNameMap = {
