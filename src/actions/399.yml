@@ -9,5 +9,6 @@ inGames:
   - SDT
   - ER
   - AC6
+  - NR
 desc: |
   Emits one particle once.

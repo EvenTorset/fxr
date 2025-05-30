@@ -41,6 +41,7 @@ properties:
       SDT: int
       ER: int
       AC6: float
+      NR: int
     lib: float
     time: inv
     desc: |
@@ -52,6 +53,8 @@ properties:
   unk_ds3_f1_8:
     field: int
   unk_sdt_f1_9:
+    field: int
+  unk_nr_f1_10:
     field: int
 games:
   DS3:
@@ -104,4 +107,18 @@ games:
       - initialSimulationTime
       - unk_ds3_f1_8
       - unk_sdt_f1_9
+    properties1: ER
+  NR:
+    fields1:
+      - limitViewDistance
+      - maxViewDistance
+      - unk_ds3_f1_2
+      - unk_ds3_f1_3
+      - unk_ds3_f1_4
+      - unk_ds3_f1_5
+      - unk_ds3_f1_6
+      - initialSimulationTime
+      - unk_ds3_f1_8
+      - unk_sdt_f1_9
+      - unk_nr_f1_10
     properties1: ER

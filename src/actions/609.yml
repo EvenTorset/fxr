@@ -279,6 +279,8 @@ properties:
     default: 1
   unk_er_f2_32:
     field: int
+  unk_nr_f2_33:
+    field: int
   unk_ds3_f2_12:
     field: float
     default: 1
@@ -407,3 +409,42 @@ games:
     properties1: DS3
     properties2: SDT
   AC6: ER
+  NR:
+    fields1: DS3
+    fields2:
+      - unk_ds3_f2_0
+      - jitterAndFlicker
+      - jitterAcceleration
+      - unk_ds3_f2_3
+      - jitterX
+      - jitterY
+      - jitterZ
+      - flickerIntervalMin
+      - flickerIntervalMax
+      - flickerBrightness
+      - shadows
+      - separateSpecular
+      - fadeOutTime
+      - shadowDarkness
+      - unk_ds3_f2_15
+      - unk_ds3_f2_16
+      - unk_ds3_f2_17
+      - unk_ds3_f2_18
+      - unk_ds3_f2_19
+      - unk_ds3_f2_20
+      - unk_ds3_f2_21
+      - unk_ds3_f2_22
+      - unk_ds3_f2_23
+      - maxViewDistance
+      - volumeDensity
+      - unk_sdt_f2_25
+      - phaseFunction
+      - asymmetryParam
+      - adaptationExponent
+      - unk_er_f2_29
+      - unk_er_f2_30
+      - unk_er_f2_31
+      - unk_er_f2_32
+      - unk_nr_f2_33
+    properties1: DS3
+    properties2: SDT

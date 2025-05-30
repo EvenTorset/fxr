@@ -47,6 +47,7 @@ const gameMap = {
   SDT: 'Game.Sekiro',
   ER: 'Game.EldenRing',
   AC6: 'Game.ArmoredCore6',
+  NR: 'Game.Nightreign',
 }
 
 const argumentNames = {

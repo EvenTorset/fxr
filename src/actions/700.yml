@@ -7,6 +7,7 @@ meta:
 inGames:
   - ER
   - AC6
+  - NR
 desc: |
   Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
 

@@ -7,6 +7,7 @@ meta:
 inGames:
   - ER
   - AC6
+  - NR
 desc: |
   Makes the effect instantly disappear when it terminates.
 
