@@ -1,5 +1,10 @@
 # Changelog
 
+## [v26.0.1](https://github.com/EvenTorset/fxr/compare/v26.0.0...v26.0.1) - 2025-05-30
+
+### Bug fixes
+- Fixed writing FXR files for Nightreign not working correctly.
+
 ## [v26.0.0](https://github.com/EvenTorset/fxr/compare/v25.0.0...v26.0.0) - 2025-05-30
 
 ### Initial Nightreign support

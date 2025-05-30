@@ -10192,15 +10192,8 @@ class FXR {
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
   toArrayBuffer(game: Game = Game.Heuristic) {
-    heuristic: if (game === Game.Heuristic) {
+    if (game === Game.Heuristic) {
       if (this.#gameHint === Game.Heuristic) {
-        if (
-          anyMatch(this.root.walkActions(), a => a.type === ActionType.ParticleForceCollision) ||
-          anyMatch(this.root.walkProperties(), p => p instanceof ComponentSequenceProperty)
-        ) {
-          game = Game.ArmoredCore6
-          break heuristic
-        }
         throw new Error('What game this FXR is for is unknowable. Please provide a game to write the FXR for.')
       }
       game = this.#gameHint
@@ -10209,7 +10202,7 @@ class FXR {
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
     bw.writeString('FXR\0')
-    bw.writeInt16(0)
+    bw.writeInt16(game === Game.Nightreign ? 1 : 0)
     bw.writeUint16(version)
     bw.writeInt32(1)
     bw.writeInt32(this.id)
