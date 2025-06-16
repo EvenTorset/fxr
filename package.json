@@ -50,7 +50,7 @@
   },
   "homepage": "https://fxr-docs.pages.dev/",
   "devDependencies": {
-    "@types/node": "^22.15.18",
+    "@types/node": "^24.0.1",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.3",
     "fabulous-json": "^1.0.2",
