@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v26.0.1...HEAD)
+
+### Breaking changes
+- `ExternalValue.Nightreign.Unk2` -> `ExternalValue.Nightreign.TimeOfDay`
+
+### Improvements
+- The `ConstantProperty` constructor now has an optional `modifiers` parameter, meaning you can pass a list of property modifiers directly to the constructor instead of having to use the `withModifiers` method now.
+- Added Nightreign structures for the following actions:
+  - `GPUSparkParticle`
+  - `GPUSparkCorrectParticle`
+
+### Bug fixes
+- Fixed the `radius` field in `ParticleForceCollision` not being scaled by the scale methods. Since this is directly related to the size of particles, it will now be scaled as if it controlled the particle size in some way, meaning it will *always* be scaled no matter what scaling options are used.
+- Fixed unknown section10s being described as "Unknown scalar." in the documentation.
+
 ## [v26.0.1](https://github.com/EvenTorset/fxr/compare/v26.0.0...v26.0.1) - 2025-05-30
 
 ### Bug fixes
