@@ -6581,8 +6581,8 @@ function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actio
   }
   bw.convertedDataActions.set(action,
     action.type in ActionDataConversion && 'write' in action.$convert ?
-    action.$convert.write(Object.assign(Object.create(null), action), game) :
-    action
+      action.$convert.write(action.clone(), game) :
+      action
   )
   const ade = action.$data
   const data = getActionGameData(action.type, game)

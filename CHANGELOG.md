@@ -12,6 +12,7 @@
   - `GPUSparkCorrectParticle`
 
 ### Bug fixes
+- Fixed the `toArrayBuffer` method in `FXR` instances modifying some properties of actions with conversion functions. This caused various problems with FXRs that were saved to files multiple times, or saved and then reloaded (with `fxr-reloader`) or vice versa.
 - Fixed the `radius` field in `ParticleForceCollision` not being scaled by the scale methods. Since this is directly related to the size of particles, it will now be scaled as if it controlled the particle size in some way, meaning it will *always* be scaled no matter what scaling options are used.
 - Fixed unknown section10s being described as "Unknown scalar." in the documentation.
 
