@@ -5621,7 +5621,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.WindForce]: {
@@ -5756,7 +5757,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ForceCollision]: {
@@ -5776,7 +5778,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.TurbulenceForce]: {

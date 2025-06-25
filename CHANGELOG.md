@@ -10,6 +10,9 @@
 - Added Nightreign structures for the following actions:
   - `GPUSparkParticle`
   - `GPUSparkCorrectParticle`
+  - `CancelForce`
+  - `GravityForce`
+  - `ForceCollision`
 
 ### Bug fixes
 - Fixed the `toArrayBuffer` method in `FXR` instances modifying some properties of actions with conversion functions. This caused various problems with FXRs that were saved to files multiple times, or saved and then reloaded (with `fxr-reloader`) or vice versa.
