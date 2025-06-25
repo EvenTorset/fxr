@@ -6349,7 +6349,11 @@ function writeProperty(
   bw.writeInt16(typeEnumA)
   bw.writeUint8(0)
   bw.writeUint8(1)
-  bw.writeInt32(typeEnumB)
+  if (game === Game.DarkSouls3 || game === Game.Sekiro || game === Game.EldenRing) {
+    bw.writeInt32(typeEnumB)
+  } else {
+    bw.writeInt32(0)
+  }
   bw.writeInt32(prop.fieldCount)
   bw.writeInt32(0)
   bw.reserveInt32(`${isModifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
@@ -6364,6 +6368,10 @@ function writeProperty(
 }
 
 function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, game: Game, index: number, modifiers: IModifier<any>[]) {
+  if (prop.modifiers.length === 0) {
+    bw.fill(`PropertyModifiersOffset${index}`, 0)
+    return
+  }
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
   for (const modifier of prop.modifiers) {
     writeModifier(modifier, bw, game, modifiers)
@@ -7158,9 +7166,13 @@ function writeSection10(s10: number[], bw: BinaryWriter, section10s: number[][])
 }
 
 function writeSection10Fields(s10: number[], bw: BinaryWriter, index: number): number {
-  bw.fill(`Section10FieldsOffset${index}`, bw.position)
-  for (const value of s10) {
-    bw.writeInt32(value)
+  if (s10.length === 0) {
+    bw.fill(`Section10FieldsOffset${index}`, 0)
+  } else {
+    bw.fill(`Section10FieldsOffset${index}`, bw.position)
+    for (const value of s10) {
+      bw.writeInt32(value)
+    }
   }
   return s10.length
 }
