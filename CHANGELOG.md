@@ -4,6 +4,7 @@
 
 ### Breaking changes
 - `ExternalValue.Nightreign.Unk2` -> `ExternalValue.Nightreign.TimeOfDay`
+- `ExternalValue.Nightreign.Unk10000` -> `ExternalValue.Nightreign.BloodVisibility`
 
 ### Improvements
 - The `ConstantProperty` constructor now has an optional `modifiers` parameter, meaning you can pass a list of property modifiers directly to the constructor instead of having to use the `withModifiers` method now.

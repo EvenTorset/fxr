@@ -1553,7 +1553,13 @@ namespace ExternalValue {
     Unk2100 = 2100,
     Unk2200 = 2200,
     Unk4000 = 4000,
-    Unk10000 = 10000, // Blood visibility?
+    /**
+     * Based on the "Display Blood" setting.
+     * - Off: `-1`
+     * - On: `0`
+     * - Mild: `1`
+     */
+    BloodVisibility = 10000,
   }
 }
 
