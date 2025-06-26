@@ -1,6 +1,6 @@
 # Changelog
 
-## [v27.0.0](https://github.com/EvenTorset/fxr/compare/v26.0.1...v27.0.0)
+## [v27.0.0](https://github.com/EvenTorset/fxr/compare/v26.0.1...v27.0.0) - 2025-06-26
 
 ### Breaking changes
 - `ExternalValue.Nightreign.Unk2` -> `ExternalValue.Nightreign.TimeOfDay`
